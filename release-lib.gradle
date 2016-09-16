@@ -39,7 +39,7 @@ bintray {
     pkg {
         repo = 'reportportal'
         name = "$project.name"
-        desc = "$description"
+        desc = "$project.description"
         websiteUrl = 'https://reportportal.github.io/'
         issueTrackerUrl = "https://github.com/reportportal/$project.name/issues"
         vcsUrl = "https://github.com/reportportal/$project.name"

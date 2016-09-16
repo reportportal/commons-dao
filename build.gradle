@@ -14,8 +14,9 @@ plugins {
 }
 
 apply plugin: 'java'
+apply from: 'release-lib.gradle'
 
-description = 'EPAM Report portal. Report Portal DAO Layer'
+project.description = 'EPAM Report portal. Report Portal DAO Layer'
 
 repositories {
     mavenCentral()
