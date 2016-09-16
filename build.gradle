@@ -4,10 +4,6 @@ buildscript {
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
     }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
-
-    }
 }
 
 
@@ -18,15 +14,14 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'spring-boot'
+apply from: 'release-lib.gradle'
 
 description = 'EPAM Report portal. Report Portal DAO Layer'
 
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/libs-milestone' }
+    maven { url  "http://dl.bintray.com/epam/reportportal" }
 
 }
 
@@ -35,14 +30,14 @@ targetCompatibility = 1.8
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-starter-parent:Camden.RC1"
-
+        mavenBom "org.springframework.boot:spring-boot-dependencies:1.4.0.RELEASE"
     }
 }
 
 dependencies {
-    /*compile 'com.epam.ta.reportportal:reportportal-model:2.5.1'
-    compile 'com.epam.ta.reportportal:commons-rules:2.5.2.1'*/
+    compile 'com.epam.reportportal:commons-model:2.6.0'
+    compile 'com.epam.reportportal:commons-rules:2.6.0'
+
     compile 'org.aspectj:aspectjrt:1.8.7'
     compile 'net.coobird:thumbnailator:0.4.7'
     compile 'commons-validator:commons-validator:1.5.1'
@@ -61,7 +56,10 @@ dependencies {
     compile 'org.reflections:reflections:0.9.9-RC1'
 
     /* just for password encoder. To make sure Guava and Spring's Crypto generate the same  hash functions */
-    testCompile "junit:junit:4.12"
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:2.0.2-beta'
+
     testCompile 'org.springframework:spring-test'
     testCompile "org.springframework.security:spring-security-crypto"
     testCompile "org.springframework.security:spring-security-core"
@@ -72,52 +70,3 @@ dependencies {
     testCompile 'org.mongodb:mongo-java-driver:3.0.1'
 
 }
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            groupId 'com.epam.reportportal'
-            artifactId 'commons-model'
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['mavenJava']
-    pkg {
-        repo = 'reportportal'
-        name = "$project.name"
-        desc = "$description"
-        websiteUrl = 'https://reportportal.github.io/'
-        issueTrackerUrl = "https://github.com/eportportal/$project.name/issues"
-        vcsUrl = "https://github.com/reportportal/$project.name"
-        githubRepo = "reportportal/$project.name"
-        githubReleaseNotesFile = 'CHANGELOG.md'
-
-        userOrg = 'reportportal'
-        licenses = ['GPL-3.0']
-
-
-    }
-}
-//afterReleaseBuild.dependsOn bintrayUpload
