@@ -13,7 +13,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-project.description = 'EPAM Report portal. Report Portal DAO Layer'
+project.description = 'EPAM Report portal. Common DAO Layer'
 
 apply plugin: 'java'
 apply from: 'release-lib.gradle'
