@@ -17,11 +17,12 @@ project.description = 'EPAM Report portal. Common DAO Layer'
 
 apply plugin: 'java'
 apply from: 'release-lib.gradle'
+apply from: 'build-quality.gradle'
 
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/libs-milestone' }
-    maven { url  "http://dl.bintray.com/epam/reportportal" }
+    maven { url "http://dl.bintray.com/epam/reportportal" }
 
 }
 

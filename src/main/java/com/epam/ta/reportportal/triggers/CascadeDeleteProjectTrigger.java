@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package com.epam.ta.reportportal.triggers;
 
 import java.util.HashSet;
@@ -48,24 +48,29 @@ import com.epam.ta.reportportal.database.support.RepositoryProvider;
 @Component
 public class CascadeDeleteProjectTrigger extends AbstractMongoEventListener<Project> {
 
-	@Autowired
-	private LaunchRepository launchRepository;
+	private final LaunchRepository launchRepository;
+	private final RepositoryProvider repositoryProvider;
+	private final UserRepository userRepository;
+	private final ProjectRepository projectRepository;
+	private final TestItemRepository testItemRepository;
 
 	@Autowired
-	private RepositoryProvider repositoryProvider;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProjectRepository projectRepository;
-
-	@Autowired
-	private TestItemRepository testItemRepository;
+	public CascadeDeleteProjectTrigger(LaunchRepository launchRepository, RepositoryProvider repositoryProvider,
+			UserRepository userRepository, ProjectRepository projectRepository, TestItemRepository testItemRepository) {
+		this.launchRepository = launchRepository;
+		this.repositoryProvider = repositoryProvider;
+		this.userRepository = userRepository;
+		this.projectRepository = projectRepository;
+		this.testItemRepository = testItemRepository;
+	}
 
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<Project> event) {
-		Project project = projectRepository.findOne(event.getDBObject().get("name").toString());
+		Object name = event.getDBObject().get("name");
+		if (name == null) {
+			return;
+		}
+		Project project = projectRepository.findOne(name.toString());
 		if (project != null) {
 			List<Launch> launches = launchRepository.findLaunchIdsByProject(project);
 			testItemRepository.delete(testItemRepository.findIdsByLaunch(launches));
@@ -113,8 +118,8 @@ public class CascadeDeleteProjectTrigger extends AbstractMongoEventListener<Proj
 			if (null == projectName) {
 				repository.deleteAll();
 			} else {
-				List<? extends Shareable> entitesForRemoving = repository.findByProject(projectName);
-				repository.delete(entitesForRemoving);
+				List<? extends Shareable> entitiesForRemoving = repository.findByProject(projectName);
+				repository.delete(entitiesForRemoving);
 			}
 		}
 	}

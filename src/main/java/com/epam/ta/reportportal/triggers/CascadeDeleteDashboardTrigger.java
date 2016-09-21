@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package com.epam.ta.reportportal.triggers;
 
 import java.util.List;
@@ -48,19 +48,25 @@ import com.google.common.collect.Sets;
 @Component
 public class CascadeDeleteDashboardTrigger extends AbstractMongoEventListener<Dashboard> {
 
-	@Autowired
-	private WidgetRepository widgetRepository;
+	private final WidgetRepository widgetRepository;
+	private final FavoriteResourceRepository favoriteResourceRepository;
+	private final DashboardRepository dashBoardRepository;
 
 	@Autowired
-	private FavoriteResourceRepository favoriteResourceRepository;
-
-	@Autowired
-	private DashboardRepository dashBoardRepository;
+	public CascadeDeleteDashboardTrigger(WidgetRepository widgetRepository, FavoriteResourceRepository favoriteResourceRepository,
+			DashboardRepository dashboardRepository) {
+		this.widgetRepository = widgetRepository;
+		this.favoriteResourceRepository = favoriteResourceRepository;
+		this.dashBoardRepository = dashboardRepository;
+	}
 
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<Dashboard> event) {
-		Dashboard dashboard = dashBoardRepository.findOne(event.getDBObject().get("id").toString());
-
+		Object id = event.getDBObject().get("id");
+		if (id == null) {
+			return;
+		}
+		Dashboard dashboard = dashBoardRepository.findOne(id.toString());
 		if (dashboard != null) {
 			deleteWidgets(dashboard.getWidgets(), dashboard.getAcl().getOwnerUserId());
 			removeFromFavorites(dashboard.getAcl().getOwnerUserId(), FavoriteResourceTypes.DASHBOARD.name(), dashboard.getId());

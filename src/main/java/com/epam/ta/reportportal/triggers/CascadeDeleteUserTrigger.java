@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package com.epam.ta.reportportal.triggers;
 
 import java.util.List;
@@ -45,28 +45,33 @@ import com.epam.ta.reportportal.database.support.RepositoryProvider;
 @Component
 public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 
-	@Autowired
-	private DataStorage dataStorage;
+	private final DataStorage dataStorage;
+	private final RepositoryProvider repositoryProvider;
+	private final ProjectRepository projectRepository;
+	private final FavoriteResourceRepository favoriteResourceRepository;
+	private final UserPreferenceRepository userPreferenceRepository;
+	private final UserRepository userRepository;
 
 	@Autowired
-	private RepositoryProvider repositoryProvider;
-
-	@Autowired
-	private ProjectRepository projectRepository;
-
-	@Autowired
-	private FavoriteResourceRepository favoriteResourceRepository;
-
-	@Autowired
-	private UserPreferenceRepository userPreferenceRepository;
-
-	@Autowired
-	private UserRepository userRepository;
+	public CascadeDeleteUserTrigger(DataStorage dataStorage, RepositoryProvider repositoryProvider, ProjectRepository projectRepository,
+			FavoriteResourceRepository favoriteResourceRepository, UserPreferenceRepository userPreferenceRepository,
+			UserRepository userRepository) {
+		this.dataStorage = dataStorage;
+		this.repositoryProvider = repositoryProvider;
+		this.projectRepository = projectRepository;
+		this.favoriteResourceRepository = favoriteResourceRepository;
+		this.userPreferenceRepository = userPreferenceRepository;
+		this.userRepository = userRepository;
+	}
 
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<User> event) {
 		// don't use here cacheable methods
-		String login = event.getDBObject().get("login").toString();
+		final Object loginObject = event.getDBObject().get("login");
+		if (loginObject == null) {
+			return;
+		}
+		String login = loginObject.toString();
 		User user = userRepository.findPhotoIdByLogin(login);
 		removeNonsharedItems(login);
 		favoriteResourceRepository.removeFavoriteResources(login);

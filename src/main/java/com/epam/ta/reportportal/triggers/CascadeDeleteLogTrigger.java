@@ -37,16 +37,23 @@ import com.epam.ta.reportportal.database.entity.Log;
 @Component
 public class CascadeDeleteLogTrigger extends AbstractMongoEventListener<Log> {
 
-	@Autowired
-	private DataStorage dataStorage;
+	private final DataStorage dataStorage;
+	private final LogRepository logRepository;
 
 	@Autowired
-	private LogRepository logRepository;
+	public CascadeDeleteLogTrigger(DataStorage dataStorage, LogRepository logRepository) {
+		this.dataStorage = dataStorage;
+		this.logRepository = logRepository;
+	}
 
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<Log> event) {
 
-		Log log = logRepository.findOne(event.getDBObject().get("id").toString());
+		final Object id = event.getDBObject().get("id");
+		if (id == null) {
+			return;
+		}
+		Log log = logRepository.findOne(id.toString());
 
 		if (null != log.getBinaryContent()) {
 			dataStorage.deleteData(log.getBinaryContent().getBinaryDataId());
@@ -54,6 +61,7 @@ public class CascadeDeleteLogTrigger extends AbstractMongoEventListener<Log> {
 			if (null != log.getBinaryContent().getThumbnailId())
 				dataStorage.deleteData(log.getBinaryContent().getThumbnailId());
 		}
+
 	}
 
 }

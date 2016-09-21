@@ -17,19 +17,20 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package com.epam.ta.reportportal.triggers;
 
-import com.epam.ta.reportportal.database.dao.LogRepository;
-import com.epam.ta.reportportal.database.dao.TestItemRepository;
-import com.epam.ta.reportportal.database.entity.Log;
-import com.epam.ta.reportportal.database.entity.item.TestItem;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.epam.ta.reportportal.database.dao.LogRepository;
+import com.epam.ta.reportportal.database.dao.TestItemRepository;
+import com.epam.ta.reportportal.database.entity.Log;
+import com.epam.ta.reportportal.database.entity.item.TestItem;
 
 /**
  * Delete test items from database by cascading with logs and binary data
@@ -39,26 +40,31 @@ import java.util.List;
 @Component
 public class CascadeDeleteTestItemTrigger extends AbstractMongoEventListener<TestItem> {
 
-	@Autowired
-	private LogRepository logRepository;
+	private final LogRepository logRepository;
+	private final TestItemRepository testItemRepository;
 
 	@Autowired
-	private TestItemRepository testItemRepository;
+	public CascadeDeleteTestItemTrigger(LogRepository logRepository, TestItemRepository testItemRepository) {
+		this.logRepository = logRepository;
+		this.testItemRepository = testItemRepository;
+	}
 
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<TestItem> event) {
 
-		final String id = event.getDBObject().get("id").toString();
+		final Object id = event.getDBObject().get("id");
+		if (id == null) {
+			return;
+		}
+		String itemId = id.toString();
 
 		/* Delete logs */
-		List<Log> logs = logRepository.findByTestItemRef(id);
+		List<Log> logs = logRepository.findByTestItemRef(itemId);
 		logRepository.delete(logs);
 
 		/* Delete descendants */
-		List<TestItem> items = testItemRepository.findDescendants(id);
-		if (!items.isEmpty()) {
-			testItemRepository.delete(items);
-		}
+		List<TestItem> items = testItemRepository.findDescendants(itemId);
+		testItemRepository.delete(items);
 
 	}
 }
