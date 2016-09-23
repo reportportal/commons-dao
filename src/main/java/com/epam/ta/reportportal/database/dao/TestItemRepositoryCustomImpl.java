@@ -277,6 +277,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		query.fields().include("tags");
 		query.fields().include("itemDescription");
 		query.fields().include("statistics");
+		query.fields().include("type");
 		query.fields().include(ID_REFERENCE);
 		return mongoTemplate.find(query, TestItem.class);
 	}
