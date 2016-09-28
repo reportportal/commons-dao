@@ -17,11 +17,15 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.search.Filter;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,22 +33,24 @@ import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
+import com.epam.ta.reportportal.database.search.Filter;
 
 /**
- * Interface with set of custom operations to all ReportPortal Mongo Repositories
+ * Interface with set of custom operations to all ReportPortal Mongo
+ * Repositories
  *
- * @param <T>  - Entity Type
- * @param <ID> - Entity ID Type
+ * @param <T>
+ *            - Entity Type
+ * @param <ID>
+ *            - Entity ID Type
  * @author Andrei Varabyeu
  */
 @NoRepositoryBean
 public interface ReportPortalRepository<T, ID extends Serializable> extends MongoRepository<T, ID> {
 
 	/**
-	 * Finds entry wrapper with null-safe wrapper {@link com.google.common.base.Optional}
+	 * Finds entry wrapper with null-safe wrapper
+	 * {@link com.google.common.base.Optional}
 	 *
 	 * @param id
 	 * @return
@@ -94,8 +100,8 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	T findOneNoJoin(ID id);
 
 	/**
-	 * Load chart data according specified input parameters. Result should be returned from
-	 * {@link DocumentCallbackHandler} object
+	 * Load chart data according specified input parameters. Result should be
+	 * returned from {@link DocumentCallbackHandler} object
 	 *
 	 * @param filter
 	 * @param sorting
@@ -108,10 +114,16 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 			String collectionName);
 
 	/**
-	 * Partial update. Updates only non-null fields from provided object. DOES NOT removes NULL fields from DB object
+	 * Partial update. Updates only non-null fields from provided object. DOES
+	 * NOT removes NULL fields from DB object
 	 *
-	 * @param t Object to be updated
+	 * @param t
+	 *            Object to be updated
 	 */
 	void partialUpdate(T t);
+
+	void delete(Collection<String> ids);
+
+	List<T> find(Collection<String> ids);
 
 }

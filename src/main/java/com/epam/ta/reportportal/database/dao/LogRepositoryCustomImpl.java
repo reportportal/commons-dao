@@ -17,19 +17,28 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
+
+import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.*;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.epam.ta.reportportal.commons.DbUtils;
@@ -37,10 +46,10 @@ import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Log;
 import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
-import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 
 /**
- * Log Repository Custom implementation. Adds several custom methods to default interface
+ * Log Repository Custom implementation. Adds several custom methods to default
+ * interface
  * 
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
@@ -58,38 +67,31 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<Log> findLogIdsByTestItem(TestItem testStep) {
-		Query q = Query.query(Criteria.where(ITEM_REFERENCE).is(testStep.getId()));
-		q.fields().include(ID_REFERENCE);
-		return mongoTemplate.find(q, Log.class);
-	}
-
-	@Override
 	public long getNumberOfLogByTestItem(TestItem testStep) {
-		Query q = Query.query(Criteria.where(ITEM_REFERENCE).is(testStep.getId()));
+		Query q = query(where(ITEM_REFERENCE).is(testStep.getId()));
 		return mongoTemplate.count(q, Log.class);
 	}
 
 	@Override
 	public List<Log> findLogsByTestItem(Iterable<TestItem> testItems) {
-		Query q = Query.query(Criteria.where(ITEM_REFERENCE).in(DbUtils.toIds(testItems)));
+		Query q = query(where(ITEM_REFERENCE).in(DbUtils.toIds(testItems)));
 		return mongoTemplate.find(q, Log.class);
 	}
 
 	@Override
 	public List<Log> findModifiedBeforeThan(Date date) {
-		return mongoTemplate.find(ModifiableQueryBuilder.findModifiedLaterThan(date), Log.class);
+		return mongoTemplate.find(findModifiedLaterThan(date), Log.class);
 	}
 
 	@Override
 	public List<Log> findModifiedLaterAgo(Time time) {
-		return mongoTemplate.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(time), Log.class);
+		return mongoTemplate.find(findModifiedLaterThanPeriod(time), Log.class);
 	}
 
 	@Override
 	public List<Log> findModifiedLaterAgo(Time time, Iterable<TestItem> testItems) {
-		return mongoTemplate.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(time)
-				.addCriteria(Criteria.where(ITEM_REFERENCE).in(DbUtils.toIds(testItems))), Log.class);
+		return mongoTemplate.find(findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(DbUtils.toIds(testItems))),
+				Log.class);
 	}
 
 	@Override
@@ -97,7 +99,7 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		if (itemRef == null || limit <= 0) {
 			return new ArrayList<>();
 		}
-		Query query = Query.query(Criteria.where(ITEM_REFERENCE).is(itemRef)).with(SORT_DESC_LOG_TIME);
+		Query query = query(where(ITEM_REFERENCE).is(itemRef)).with(SORT_DESC_LOG_TIME);
 		if (!isLoadBinaryData) {
 			query.fields().exclude(BINARY_CONTENT);
 		}
@@ -111,19 +113,33 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public boolean hasLogsAddedLately(Time time, TestItem testItem) {
-		return mongoTemplate.count(ModifiableQueryBuilder.findModifiedLately(time, testItem), Log.class) > 0;
+		return mongoTemplate.count(findModifiedLately(time, testItem), Log.class) > 0;
 	}
 
 	@Override
 	public List<Log> findLogsByFileId(String fileId) {
-		Query query = Query.query(Criteria.where(BINARY_CONTENT_ID).is(fileId));
+		Query query = query(where(BINARY_CONTENT_ID).is(fileId));
 		return mongoTemplate.find(query, Log.class);
 	}
 
 	@Override
 	public List<Log> findTestItemErrorLogs(String testItemId) {
-		Query query = Query.query(Criteria.where(ITEM_REFERENCE).is(testItemId))
-				.addCriteria(Criteria.where(LOG_LEVEL).gte(LogLevel.ERROR_INT));
+		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(LogLevel.ERROR_INT));
 		return mongoTemplate.find(query, Log.class);
+	}
+
+	@Override
+	public List<String> findLogIdsByItemRefs(List<String> ids) {
+		Aggregation aggregation = newAggregation(match(where("testItemRef").in(ids)), group("id"));
+		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
+		return results.getMappedResults().stream().map(it -> it.get("_id").toString()).collect(toList());
+	}
+
+	@Override
+	public List<String> findBinaryIdsByLogRefs(List<String> ids) {
+		Aggregation aggregation = newAggregation(match(where("id").in(ids).andOperator(where("binaryContent").exists(true))),
+				group("binaryContent.binaryDataId", "binaryContent.thumbnailId"));
+		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
+		return results.getMappedResults().stream().flatMap(it -> (Stream<String>) it.values().stream()).collect(toList());
 	}
 }

@@ -153,6 +153,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> findInIssueTypeItems(String issueType, String launchId);
 
+	List<String> findItemIdsByLaunchRef(List<String> launchRef);
+
 	/**
 	 * Get elements in launch branches specified by has_childs status.
 	 * 

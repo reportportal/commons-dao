@@ -17,25 +17,21 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package com.epam.ta.reportportal.config;
 
-import com.epam.ta.reportportal.database.CustomMongoConverters;
-import com.epam.ta.reportportal.database.DataStorage;
-import com.epam.ta.reportportal.database.GridFSDataStorage;
-import com.epam.ta.reportportal.database.dao.LaunchMetaInfoRepository;
-import com.epam.ta.reportportal.database.dao.ReportPortalRepositoryFactoryBean;
-import com.epam.ta.reportportal.database.dao.UserRepository;
-import com.epam.ta.reportportal.database.support.RepositoriesFactoryBean;
-import com.epam.ta.reportportal.database.support.RepositoryProvider;
-import com.epam.ta.reportportal.database.support.impl.DefaultRepositoryProviderImpl;
-import com.epam.ta.reportportal.triggers.CascadeDeleteLaunchTrigger;
-import com.google.common.base.Strings;
-import com.mongodb.*;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -48,23 +44,29 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.repository.support.Repositories;
 
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.epam.ta.reportportal.database.CustomMongoConverters;
+import com.epam.ta.reportportal.database.DataStorage;
+import com.epam.ta.reportportal.database.GridFSDataStorage;
+import com.epam.ta.reportportal.database.dao.LaunchMetaInfoRepository;
+import com.epam.ta.reportportal.database.dao.ReportPortalRepositoryFactoryBean;
+import com.epam.ta.reportportal.database.dao.UserRepository;
+import com.epam.ta.reportportal.database.support.RepositoriesFactoryBean;
+import com.epam.ta.reportportal.database.support.RepositoryProvider;
+import com.epam.ta.reportportal.database.support.impl.DefaultRepositoryProviderImpl;
+import com.epam.ta.reportportal.triggers.CascadeDeleteDashboardTrigger;
+import com.google.common.base.Strings;
+import com.mongodb.*;
 
 /**
  * MongoDB configuration
  *
  * @author Andrei Varabyeu
  */
-@EnableMongoRepositories(basePackageClasses = UserRepository.class,
-		repositoryImplementationPostfix = "CustomImpl",
-		repositoryFactoryBeanClass = ReportPortalRepositoryFactoryBean.class)
+@EnableMongoRepositories(basePackageClasses = UserRepository.class, repositoryImplementationPostfix = "CustomImpl", repositoryFactoryBeanClass = ReportPortalRepositoryFactoryBean.class)
 @EnableMongoAuditing
 @Configuration
 @EnableConfigurationProperties(MongodbConfiguration.MongoProperies.class)
-@ComponentScan(basePackageClasses = CascadeDeleteLaunchTrigger.class)
+@ComponentScan(basePackageClasses = CascadeDeleteDashboardTrigger.class)
 public class MongodbConfiguration {
 
 	@Autowired
@@ -81,8 +83,8 @@ public class MongodbConfiguration {
 
 		List<MongoCredential> credentials = Collections.emptyList();
 		if (!Strings.isNullOrEmpty(mongoProperties.getUser()) && !Strings.isNullOrEmpty(mongoProperties.getPassword())) {
-			credentials = Collections.singletonList(MongoCredential
-					.createCredential(mongoProperties.getUser(), mongoProperties.getDbName(), mongoProperties.getPassword().toCharArray()));
+			credentials = Collections.singletonList(MongoCredential.createCredential(mongoProperties.getUser(), mongoProperties.getDbName(),
+					mongoProperties.getPassword().toCharArray()));
 		}
 
 		MongoClient mongoClient = new MongoClient(new ServerAddress(mongoProperties.getHost(), mongoProperties.getPort()), credentials,
@@ -146,7 +148,6 @@ public class MongodbConfiguration {
 	public LaunchMetaInfoRepository launchMetaInfoRepository() {
 		return new LaunchMetaInfoRepository.LaunchMetaInfoRepositoryImpl();
 	}
-
 
 	@ConfigurationProperties("rp.mongo")
 	public static class MongoProperies {

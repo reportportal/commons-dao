@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database;
 
@@ -137,6 +137,11 @@ public class GridFSDataStorage implements DataStorage {
 	@Override
 	public void deleteAll() {
 		gridFs.delete(queryForAll());
+	}
+
+	@Override
+	public void delete(List<String> ids) {
+		gridFs.delete(query(where("_id").in(ids)));
 	}
 
 	/**
