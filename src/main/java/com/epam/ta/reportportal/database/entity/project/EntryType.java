@@ -24,13 +24,12 @@ package com.epam.ta.reportportal.database.entity.project;
 import java.util.Arrays;
 
 /**
- * UserType enumeration<br>
- * Used for supporting different user_account/project types processing
+ * Project Type enumeration<br>
+ * Used for supporting different project types processing
  *
  * @author Andrei_Ramanchuk
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-//TODO Exception handling
 public enum EntryType {
 
     //@formatter:off
