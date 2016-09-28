@@ -28,11 +28,13 @@ import java.util.Arrays;
  * Used for supporting different user_account/project types processing
  *
  * @author Andrei_Ramanchuk
+ * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
 //TODO Exception handling
 public enum EntryType {
 
     //@formatter:off
+    PERSONAL,
     INTERNAL,
     UPSA;
 
