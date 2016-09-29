@@ -12,18 +12,15 @@ import com.epam.ta.reportportal.database.dao.TestItemRepository;
 @Service
 public class CascadeDeleteItemsService {
 
-	private CascadeDeleteLogsService cascadeDeleteLogsService;
 	private LogRepository logRepository;
 	private TestItemRepository testItemRepository;
-	@Autowired
 	private DataStorage dataStorage;
 
 	@Autowired
-	public CascadeDeleteItemsService(CascadeDeleteLogsService cascadeDeleteLogsService, TestItemRepository testItemRepository,
-			LogRepository logRepository) {
-		this.cascadeDeleteLogsService = cascadeDeleteLogsService;
+	public CascadeDeleteItemsService(TestItemRepository testItemRepository, LogRepository logRepository, DataStorage dataStorage) {
 		this.testItemRepository = testItemRepository;
 		this.logRepository = logRepository;
+		this.dataStorage = dataStorage;
 	}
 
 	public void delete(List<String> ids) {
@@ -31,6 +28,5 @@ public class CascadeDeleteItemsService {
 		dataStorage.delete(toDelete);
 		logRepository.deleteByItemRef(ids);
 		testItemRepository.delete(ids);
-		cascadeDeleteLogsService.delete(toDelete);
 	}
 }

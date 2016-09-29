@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,16 @@ public class LogRepositoryTest extends BaseDaoTest {
 		logRepository.save(logs);
 		final List<String> byItemRefs = logRepository.findLogIdsByItemRefs(asList("item1", "item2"));
 		Assertions.assertThat(byItemRefs).hasSize(3).hasSameElementsAs(logs.stream().map(Log::getId).collect(toList()));
+	}
+
+	@Test
+	public void deleteByItemRef() {
+		final String itemRef = "itemRef";
+		final Log log = new Log();
+		log.setTestItemRef(itemRef);
+		logRepository.save(log);
+		logRepository.deleteByItemRef(singletonList(itemRef));
+		Assert.assertFalse(logRepository.exists(log.getId()));
 
 	}
 
