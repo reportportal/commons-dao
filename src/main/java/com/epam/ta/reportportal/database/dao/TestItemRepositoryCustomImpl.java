@@ -30,7 +30,6 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -319,7 +318,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public List<String> findItemIdsByLaunchRef(List<String> launchRef) {
 		Aggregation aggregation = newAggregation(match(where("launchRef").in(launchRef)), group("id"));
 		AggregationResults<Map> aggregationResults = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
-		return aggregationResults.getMappedResults().stream().flatMap(it -> (Stream<String>) it.values().stream()).collect(toList());
+		return aggregationResults.getMappedResults().stream().map(it -> it.get("_id").toString()).collect(toList());
 	}
 
 	/**

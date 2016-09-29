@@ -37,7 +37,7 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	}
 
 	@Test
-	public void test() {
+	public void findItemIdsByLaunchRef() {
 		List<String> ids = testItemRepository.findItemIdsByLaunchRef(singletonList("launch"));
 		assertThat(ids.size()).isEqualTo(3);
 	}

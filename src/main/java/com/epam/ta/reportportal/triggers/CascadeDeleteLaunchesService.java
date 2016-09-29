@@ -16,7 +16,8 @@ public class CascadeDeleteLaunchesService {
 	private TestItemRepository testItemRepository;
 
 	@Autowired
-	public CascadeDeleteLaunchesService(CascadeDeleteItemsService cascadeDeleteItemsService, LaunchRepository launchRepository, TestItemRepository testItemRepository) {
+	public CascadeDeleteLaunchesService(CascadeDeleteItemsService cascadeDeleteItemsService, LaunchRepository launchRepository,
+			TestItemRepository testItemRepository) {
 		this.cascadeDeleteItemsService = cascadeDeleteItemsService;
 		this.launchRepository = launchRepository;
 		this.testItemRepository = testItemRepository;
@@ -26,6 +27,5 @@ public class CascadeDeleteLaunchesService {
 		List<String> itemIdsByLaunchRef = testItemRepository.findItemIdsByLaunchRef(ids);
 		launchRepository.delete(ids);
 		cascadeDeleteItemsService.delete(itemIdsByLaunchRef);
-
 	}
 }

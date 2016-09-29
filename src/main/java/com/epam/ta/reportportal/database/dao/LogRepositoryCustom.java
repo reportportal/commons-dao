@@ -120,4 +120,7 @@ public interface LogRepositoryCustom {
 
 	List<String> findBinaryIdsByLogRefs(List<String> ids);
 
+	List<String> findBinaryIdsByItemRefs(List<String> ids);
+
+	void deleteByItemRef(List<String> ids);
 }

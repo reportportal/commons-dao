@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -141,5 +142,18 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				group("binaryContent.binaryDataId", "binaryContent.thumbnailId"));
 		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
 		return results.getMappedResults().stream().flatMap(it -> (Stream<String>) it.values().stream()).collect(toList());
+	}
+
+	@Override
+	public List<String> findBinaryIdsByItemRefs(List<String> ids) {
+		Aggregation aggregation = newAggregation(match(where("testItemRef").in(ids).andOperator(where("binaryContent").exists(true))),
+				group("binaryContent.binaryDataId", "binaryContent.thumbnailId"));
+		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
+		return results.getMappedResults().stream().flatMap(it -> (Stream<String>) it.values().stream()).collect(toList());
+	}
+
+	@Override
+	public void deleteByItemRef(List<String> ids) {
+		mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Log.class).remove(query(where("testItemRef").in(ids)));
 	}
 }

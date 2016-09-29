@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
+import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNORDERED;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -207,7 +208,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 
 	@Override
 	public void delete(Collection<String> ids) {
-		getMongoOperations().remove(query(where("_id").in(ids)), getEntityInformation().getJavaType());
+		getMongoOperations().bulkOps(UNORDERED, getEntityInformation().getJavaType()).remove(query(where("_id").in(ids)));
 	}
 
 	@Override
