@@ -97,4 +97,6 @@ public interface DataStorage {
 	 * Deletes all data from storage. Full clean up
 	 */
 	void deleteAll();
+
+	void delete(List<String> id);
 }

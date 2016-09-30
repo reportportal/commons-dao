@@ -17,19 +17,21 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.commons.accessible.Accessible;
-import com.epam.ta.reportportal.database.search.CriteriaMap;
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.QueryBuilder;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Lists;
-import com.mongodb.WriteResult;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -44,25 +46,29 @@ import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.epam.ta.reportportal.commons.accessible.Accessible;
+import com.epam.ta.reportportal.database.search.CriteriaMap;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.QueryBuilder;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Lists;
+import com.mongodb.WriteResult;
 
 /**
- * Implementation of ReportPortal Repository. Adds possibility to search documents/tables using
- * custom queries
+ * Implementation of ReportPortal Repository. Adds possibility to search
+ * documents/tables using custom queries
  *
- * @param <T>  - Entity Type
- * @param <ID> - Entity ID Type
+ * @param <T>
+ *            - Entity Type
+ * @param <ID>
+ *            - Entity ID Type
  * @author Andrei Varabyeu
  */
 class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongoRepository<T, ID> implements ReportPortalRepository<T, ID> {
@@ -87,8 +93,9 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 	}
 
 	/**
-	 * Included fields list. Contains cache Class (collection to be queried) -> DbRef fields mapping
-	 * To improve performance we do not need to load refs in some cases
+	 * Included fields list. Contains cache Class (collection to be queried) ->
+	 * DbRef fields mapping To improve performance we do not need to load refs
+	 * in some cases
 	 */
 	private static LoadingCache<Class<?>, List<String>> INCLUDED_FIELDS = CacheBuilder.newBuilder()
 			.build(new CacheLoader<Class<?>, List<String>>() {
@@ -96,8 +103,8 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 				public List<String> load(Class<?> clazz) throws Exception {
 					List<String> included = new ArrayList<>();
 					for (Field f : clazz.getDeclaredFields()) {
-						if (!f.isAnnotationPresent(DBRef.class) && !Modifier.isStatic(f.getModifiers()) && !f
-								.isAnnotationPresent(Transient.class)) {
+						if (!f.isAnnotationPresent(DBRef.class) && !Modifier.isStatic(f.getModifiers())
+								&& !f.isAnnotationPresent(Transient.class)) {
 							included.add(CriteriaMap.getQueryCriteria(f));
 						}
 					}
@@ -136,14 +143,12 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 			}
 		});
 
-		WriteResult writeResult = mongoOperations
-				.updateFirst(Query.query(Criteria.where(persistentEntity.getIdProperty().getFieldName()).is(id)), update,
-						getEntityInformation().getCollectionName());
+		WriteResult writeResult = mongoOperations.updateFirst(query(where(persistentEntity.getIdProperty().getFieldName()).is(id)), update,
+				getEntityInformation().getCollectionName());
 		if (1 != writeResult.getN()) {
 			throw new IncorrectResultSizeDataAccessException(1, writeResult.getN());
 		}
 	}
-
 
 	@Override
 	public Page<T> findByFilter(Filter filter, Pageable pageable) {
@@ -173,7 +178,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 	@SuppressWarnings("unchecked")
 	public T findOneNoJoin(ID id) {
 		Class<T> entityType = getEntityInformation().getJavaType();
-		Query q = Query.query(Criteria.where(getEntityInformation().getIdAttribute()).is(id));
+		Query q = query(where(getEntityInformation().getIdAttribute()).is(id));
 		org.springframework.data.mongodb.core.query.Field fields = q.fields();
 		for (String include : INCLUDED_FIELDS.getUnchecked(entityType)) {
 			fields.include(include);
@@ -200,6 +205,16 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 		return getMongoOperations().find(query, entityType);
 	}
 
+	@Override
+	public void delete(Collection<String> ids) {
+		getMongoOperations().remove(query(where("_id").in(ids)), getEntityInformation().getJavaType());
+	}
+
+	@Override
+	public List<T> find(Collection<String> ids) {
+		return getMongoOperations().find(query(where("_id").in(ids)), getEntityInformation().getJavaType());
+	}
+
 	/**
 	 * Find entry by id load specified fields
 	 *
@@ -210,7 +225,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 	protected T findById(ID id, List<String> fieldsToLoad) {
 		Class<T> entityType = getEntityInformation().getJavaType();
 		String idField = getEntityInformation().getIdAttribute();
-		Query q = Query.query(Criteria.where(idField).is(id));
+		Query q = query(where(idField).is(id));
 		for (String field : fieldsToLoad) {
 			q.fields().include(field);
 		}

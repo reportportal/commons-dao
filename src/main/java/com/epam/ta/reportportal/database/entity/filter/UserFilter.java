@@ -17,8 +17,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.database.entity.filter;
 
 import java.io.Serializable;
@@ -41,9 +41,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
  */
 
 @Document
-@CompoundIndexes({ 
-@CompoundIndex(name = "project_name_name", def = "{'projectName': 1,'name': 1}") 
-})
+@CompoundIndexes({ @CompoundIndex(name = "project_name_name", def = "{'projectName': 1,'name': 1}") })
 public class UserFilter extends Shareable implements Serializable, Identifiable<String> {
 
 	private static final long serialVersionUID = 2746422761895104850L;
@@ -68,6 +66,16 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 	@FilterCriteria(IS_LINK)
 	private boolean isLink;
 
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -87,7 +95,7 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public boolean isLink() {
 		return isLink;
 	}
@@ -118,54 +126,39 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((filter == null) ? 0 : filter.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + (isLink ? 1231 : 1237);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((projectName == null) ? 0 : projectName.hashCode());
-		result = prime * result + ((selectionOptions == null) ? 0 : selectionOptions.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		UserFilter that = (UserFilter) o;
+
+		if (isLink != that.isLink)
+			return false;
+		if (id != null ? !id.equals(that.id) : that.id != null)
+			return false;
+		if (name != null ? !name.equals(that.name) : that.name != null)
+			return false;
+		if (filter != null ? !filter.equals(that.filter) : that.filter != null)
+			return false;
+		if (selectionOptions != null ? !selectionOptions.equals(that.selectionOptions) : that.selectionOptions != null)
+			return false;
+		if (projectName != null ? !projectName.equals(that.projectName) : that.projectName != null)
+			return false;
+		return description != null ? description.equals(that.description) : that.description == null;
+
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UserFilter other = (UserFilter) obj;
-		if (filter == null) {
-			if (other.filter != null)
-				return false;
-		} else if (!filter.equals(other.filter))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (isLink != other.isLink)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (projectName == null) {
-			if (other.projectName != null)
-				return false;
-		} else if (!projectName.equals(other.projectName))
-			return false;
-		if (selectionOptions == null) {
-			if (other.selectionOptions != null)
-				return false;
-		} else if (!selectionOptions.equals(other.selectionOptions))
-			return false;
-		return true;
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (filter != null ? filter.hashCode() : 0);
+		result = 31 * result + (selectionOptions != null ? selectionOptions.hashCode() : 0);
+		result = 31 * result + (projectName != null ? projectName.hashCode() : 0);
+		result = 31 * result + (isLink ? 1 : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		return result;
 	}
 }

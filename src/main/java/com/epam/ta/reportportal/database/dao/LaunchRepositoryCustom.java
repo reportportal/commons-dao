@@ -167,14 +167,6 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	List<Launch> findLaunchesByProjectId(String projectId, Date from, String mode);
 
 	/**
-	 * Find launches
-	 *
-	 * @param launchIds
-	 * @return
-	 */
-	List<Launch> findLaunches(List<String> launchIds);
-
-	/**
 	 * Find launches quantity. 'IN_PROGRESS' launches are excluded
 	 * 
 	 * @param projectId
@@ -202,4 +194,6 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type);
 
 	void dropIssueStatisticsType(String id, StatisticSubType type);
+
+	List<String> findLaunchIdsByProjectIds(List<String> ids);
 }

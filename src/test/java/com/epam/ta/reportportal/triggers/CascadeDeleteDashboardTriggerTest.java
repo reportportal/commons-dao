@@ -20,19 +20,17 @@
  */
 package com.epam.ta.reportportal.triggers;
 
+import static org.mockito.Mockito.*;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
+
 import com.epam.ta.reportportal.database.dao.DashboardRepository;
 import com.epam.ta.reportportal.database.dao.FavoriteResourceRepository;
 import com.epam.ta.reportportal.database.dao.WidgetRepository;
 import com.epam.ta.reportportal.database.entity.Dashboard;
 import com.mongodb.BasicDBObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
-
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 public class CascadeDeleteDashboardTriggerTest {
 

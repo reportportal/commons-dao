@@ -17,15 +17,17 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.search;
+
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.*;
+import static com.epam.ta.reportportal.database.entity.statistics.IssueCounter.GROUP_TOTAL;
 
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
-import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
@@ -43,7 +45,8 @@ public class UpdateStatisticsQueryBuilder {
 	/* MongoDB issue statistic object */
 	private static final String ISSUE_COUNTER = "statistics.issueCounter";
 
-	private UpdateStatisticsQueryBuilder() {}
+	private UpdateStatisticsQueryBuilder() {
+	}
 
 	public static Update fromItemStatusAware(final Status status, final int totalCounter, final int statusCounter) {
 		Update updateStatusAware = new Update().inc(EXECUTION_COUNTER + ".total", totalCounter);
@@ -74,30 +77,26 @@ public class UpdateStatisticsQueryBuilder {
 	}
 
 	/**
-	 * Aware issue statistic field is specified, or to to_investigate field instead.
+	 * Aware issue statistic field is specified, or to to_investigate field
+	 * instead.
 	 * 
 	 * @param issueType
 	 *            - <b>null</b> is cannot be specified
 	 * @param issueTypeCounter
-	 *            - count of issues for specified issue counter field (or not specified)
+	 *            - count of issues for specified issue counter field (or not
+	 *            specified)
 	 * @return Update - MongoDB update object
 	 */
 	/* RESET methods in old statistics */
 	public static Update fromIssueTypeAware(final StatisticSubType subType, int issueTypeCounter) {
 		Update issueTypeAware = new Update();
-		issueTypeAware.inc(
-				ISSUE_COUNTER + "."
-						+ (subType != null
-								? TestItemIssueType.valueOf(subType.getTypeRef()).awareStatisticsField() + "." + subType.getLocator()
-								: TestItemIssueType.TO_INVESTIGATE.awareStatisticsField() + "."
-										+ TestItemIssueType.TO_INVESTIGATE.getLocator()),
-				issueTypeCounter).inc(
-						ISSUE_COUNTER + "."
-								+ (subType != null
-										? TestItemIssueType.valueOf(subType.getTypeRef()).awareStatisticsField() + "."
-												+ IssueCounter.GROUP_TOTAL
-										: TestItemIssueType.TO_INVESTIGATE.awareStatisticsField() + "." + IssueCounter.GROUP_TOTAL),
-						issueTypeCounter);
+		issueTypeAware
+				.inc(ISSUE_COUNTER + "."
+						+ (subType != null ? valueOf(subType.getTypeRef()).awareStatisticsField() + "." + subType.getLocator()
+								: TO_INVESTIGATE.awareStatisticsField() + "." + TO_INVESTIGATE.getLocator()),
+						issueTypeCounter)
+				.inc(ISSUE_COUNTER + "." + (subType != null ? valueOf(subType.getTypeRef()).awareStatisticsField() + "." + GROUP_TOTAL
+						: TO_INVESTIGATE.awareStatisticsField() + "." + GROUP_TOTAL), issueTypeCounter);
 		return issueTypeAware;
 	}
 
@@ -108,13 +107,12 @@ public class UpdateStatisticsQueryBuilder {
 	 * @return MongoDB
 	 */
 	public static Update dropIssueTypeAware(final StatisticSubType subType) {
-		return new Update().unset(
-				ISSUE_COUNTER + "." + TestItemIssueType.valueOf(subType.getTypeRef()).awareStatisticsField() + "." + subType.getLocator());
+		return new Update().unset(ISSUE_COUNTER + "." + valueOf(subType.getTypeRef()).awareStatisticsField() + "." + subType.getLocator());
 	}
 
 	/**
-	 * Complex update operator for MongoDB with positive or negative increment for all defined issue
-	 * sub-types of specified test item.
+	 * Complex update operator for MongoDB with positive or negative increment
+	 * for all defined issue sub-types of specified test item.
 	 * 
 	 * @param item
 	 * @param isReset
@@ -127,32 +125,28 @@ public class UpdateStatisticsQueryBuilder {
 		Update issueStatusAware = new Update();
 		issueCounter.getAutomationBug().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.AUTOMATION_BUG.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.AUTOMATION_BUG.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + AUTOMATION_BUG.awareStatisticsField() + "." + k, isReset ? negative : v)
+					.inc(ISSUE_COUNTER + "." + AUTOMATION_BUG.awareStatisticsField() + ".total", isReset ? negative : v);
 		});
 		issueCounter.getProductBug().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.PRODUCT_BUG.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.PRODUCT_BUG.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + PRODUCT_BUG.awareStatisticsField() + "." + k, isReset ? negative : v)
+					.inc(ISSUE_COUNTER + "." + PRODUCT_BUG.awareStatisticsField() + ".total", isReset ? negative : v);
 		});
 		issueCounter.getSystemIssue().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.SYSTEM_ISSUE.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.SYSTEM_ISSUE.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + SYSTEM_ISSUE.awareStatisticsField() + "." + k, isReset ? negative : v)
+					.inc(ISSUE_COUNTER + "." + SYSTEM_ISSUE.awareStatisticsField() + ".total", isReset ? negative : v);
 		});
 		issueCounter.getNoDefect().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + TestItemIssueType.NO_DEFECT.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.NO_DEFECT.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + NO_DEFECT.awareStatisticsField() + "." + k, isReset ? negative : v)
+					.inc(ISSUE_COUNTER + "." + NO_DEFECT.awareStatisticsField() + ".total", isReset ? negative : v);
 		});
 		issueCounter.getToInvestigate().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.TO_INVESTIGATE.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + TestItemIssueType.TO_INVESTIGATE.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + TO_INVESTIGATE.awareStatisticsField() + "." + k, isReset ? negative : v)
+					.inc(ISSUE_COUNTER + "." + TO_INVESTIGATE.awareStatisticsField() + ".total", isReset ? negative : v);
 		});
 		return issueStatusAware;
 	}

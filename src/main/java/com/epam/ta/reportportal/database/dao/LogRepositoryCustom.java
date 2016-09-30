@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -29,21 +29,14 @@ import com.epam.ta.reportportal.database.entity.Log;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 
 /**
- * Custom repository implementation. Is not used for know to avoid misunderstanding. Adds
- * possibility to extend current implementation with several new methods
+ * Custom repository implementation. Is not used for know to avoid
+ * misunderstanding. Adds possibility to extend current implementation with
+ * several new methods
  * 
  * @author Andrei Varabyeu
  * 
  */
 public interface LogRepositoryCustom {
-
-	/**
-	 * Finds logs for specified Test Step
-	 * 
-	 * @param testStep
-	 * @return
-	 */
-	List<Log> findLogIdsByTestItem(TestItem testStep);
 
 	/**
 	 * Finds logs for specified test steps
@@ -86,8 +79,9 @@ public interface LogRepositoryCustom {
 	long getNumberOfLogByTestItem(TestItem testStep);
 
 	/**
-	 * Load specified number of last logs for specified test item. binaryData field will be loaded
-	 * if it specified in appropriate input parameter, all other fields will be fully loaded.
+	 * Load specified number of last logs for specified test item. binaryData
+	 * field will be loaded if it specified in appropriate input parameter, all
+	 * other fields will be fully loaded.
 	 * 
 	 * @param itemRef
 	 * @param limit
@@ -121,4 +115,12 @@ public interface LogRepositoryCustom {
 	 * @return
 	 */
 	List<Log> findTestItemErrorLogs(String testItemId);
+
+	List<String> findLogIdsByItemRefs(List<String> ids);
+
+	List<String> findBinaryIdsByLogRefs(List<String> ids);
+
+	List<String> findBinaryIdsByItemRefs(List<String> ids);
+
+	void deleteByItemRef(List<String> ids);
 }
