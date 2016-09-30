@@ -67,7 +67,7 @@ public class User implements Serializable, Identifiable<String> {
 	private UserRole role;
 
 	@FilterCriteria(TYPE)
-	private EntryType type;
+	private UserType type;
 
 	@FilterCriteria(EXPIRED)
 	private boolean isExpired;
@@ -134,12 +134,12 @@ public class User implements Serializable, Identifiable<String> {
 		this.role = role;
 	}
 
-	public EntryType getEntryType() {
+	public UserType getType() {
 		return type;
 	}
 
-	public void setEntryType(EntryType value) {
-		this.type = value;
+	public void setType(UserType type) {
+		this.type = type;
 	}
 
 	public void setIsExpired(boolean value) {
