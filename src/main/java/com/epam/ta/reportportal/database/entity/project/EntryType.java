@@ -22,17 +22,19 @@
 package com.epam.ta.reportportal.database.entity.project;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
- * UserType enumeration<br>
- * Used for supporting different user_account/project types processing
+ * Project Type enumeration<br>
+ * Used for supporting different project types processing
  *
  * @author Andrei_Ramanchuk
+ * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-//TODO Exception handling
 public enum EntryType {
 
     //@formatter:off
+    PERSONAL,
     INTERNAL,
     UPSA;
 
@@ -41,11 +43,11 @@ public enum EntryType {
         return EntryType.valueOf(type);
     }
 
-    public static EntryType findByName(String name) {
-        return Arrays.stream(EntryType.values()).filter(type -> type.name().equals(name)).findAny().orElse(null);
+    public static Optional<EntryType> findByName(String name) {
+        return Arrays.stream(EntryType.values()).filter(type -> type.name().equals(name)).findAny();
     }
 
     public static boolean isPresent(String name) {
-        return null != findByName(name);
+        return findByName(name).isPresent();
     }
 }
