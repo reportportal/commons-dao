@@ -33,14 +33,14 @@ public class FilterBuilderTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void checkFilterNoConditions() {
-		Filter.builder().createFilter();
+		Filter.builder().build();
 	}
 
 	@Test
 	public void checkFiltePositive() {
 		Filter filter = Filter.builder().withTarget(User.class).withCondition(
-				FilterCondition.builder().withCondition(Condition.EQUALS).withSearchCriteria("xxx").withValue("xxx").createCondition())
-				.createFilter();
+				FilterCondition.builder().withCondition(Condition.EQUALS).withSearchCriteria("xxx").withValue("xxx").build())
+				.build();
 		Assert.assertThat("Incorrect conditions count", filter.getFilterConditions(), hasSize(1));
 
 	}

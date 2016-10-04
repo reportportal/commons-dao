@@ -166,7 +166,7 @@ public class FilterCondition implements Serializable {
 		}
 
 
-		public FilterCondition createCondition() {
+		public FilterCondition build() {
 			Preconditions.checkArgument(null != condition, "Condition should not be null");
 			Preconditions.checkArgument(!isNullOrEmpty(value), "Value should not be empty");
 			Preconditions.checkArgument(!isNullOrEmpty(searchCriteria), "Search criteria should not be empty");

@@ -34,20 +34,20 @@ public class ConditionBuilderTest {
 	public void checkEmptyValue() {
 		FilterCondition.builder()
 				.withCondition(Condition.EQUALS)
-				.withSearchCriteria("xxx").createCondition();
+				.withSearchCriteria("xxx").build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void checkEmptyCondition() {
 		FilterCondition.builder()
 				.withValue("hello")
-				.withSearchCriteria("xxx").createCondition();
+				.withSearchCriteria("xxx").build();
 	}
 
 	@Test
 	public void checkConditionPositive() {
 		FilterCondition condition = FilterCondition.builder().withValue("hello").withSearchCriteria("xxx").withCondition(Condition.EQUALS)
-				.createCondition();
+				.build();
 		Assert.assertThat("Incorrect condition", condition.getCondition(), is(Condition.EQUALS));
 		Assert.assertThat("Incorrect value", condition.getValue(), is("hello"));
 		Assert.assertThat("Incorrect search criteria", condition.getSearchCriteria(), is("xxx"));
@@ -56,7 +56,7 @@ public class ConditionBuilderTest {
 
 	@Test
 	public void checkEquals() {
-		FilterCondition condition = FilterCondition.builder().eq("xxx", "hello").createCondition();
+		FilterCondition condition = FilterCondition.builder().eq("xxx", "hello").build();
 		Assert.assertThat("Incorrect condition", condition.getCondition(), is(Condition.EQUALS));
 		Assert.assertThat("Incorrect value", condition.getValue(), is("hello"));
 		Assert.assertThat("Incorrect search criteria", condition.getSearchCriteria(), is("xxx"));

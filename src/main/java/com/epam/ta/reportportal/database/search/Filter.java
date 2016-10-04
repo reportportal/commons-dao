@@ -146,10 +146,10 @@ public class Filter implements Serializable {
 			return this;
 		}
 
-		public Filter createFilter() {
+		public Filter build() {
 			Set<FilterCondition> filterConditions = this.conditions.build();
 			Preconditions.checkArgument(null != target, "Target should not be null");
-			Preconditions.checkArgument(!filterConditions.isEmpty(), "Condition should not be null");
+			Preconditions.checkArgument(!filterConditions.isEmpty(), "Filter should contain at least one condition");
 			return new Filter(target, filterConditions);
 		}
 	}
