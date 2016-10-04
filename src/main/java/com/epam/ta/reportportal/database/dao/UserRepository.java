@@ -89,7 +89,4 @@ public interface UserRepository extends ReportPortalRepository<User, String>, Us
 	@Query(fields = "{'photoId' : 1}")
 	User findPhotoIdByLogin(String login);
 
-	@Query(fields = "{'email' : 1}")
-	boolean emailExists(String email);
-
 }

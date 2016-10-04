@@ -21,7 +21,11 @@
 
 package com.epam.ta.reportportal.database.search;
 
+import com.google.common.base.Preconditions;
+
 import java.io.Serializable;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Filter condition class for filters specifics
@@ -116,5 +120,57 @@ public class FilterCondition implements Serializable {
 		final StringBuilder sb = new StringBuilder("FilterCondition {").append("condition = ").append(condition).append(", value = ")
 				.append(value).append(", searchCriteria = ").append(searchCriteria).append(", negative = ").append(negative).append("}");
 		return sb.toString();
+	}
+
+	public static ConditionBuilder builder(){
+		return new ConditionBuilder();
+	}
+
+	/**
+	 * Builder for {@link FilterCondition}
+	 */
+	public static class ConditionBuilder {
+		private Condition condition;
+		private boolean negative;
+		private String value;
+		private String searchCriteria;
+
+		private ConditionBuilder() {
+
+		}
+
+		public FilterCondition.ConditionBuilder withCondition(Condition condition) {
+			this.condition = condition;
+			return this;
+		}
+
+		public FilterCondition.ConditionBuilder withNegative(boolean negative) {
+			this.negative = negative;
+			return this;
+		}
+
+		public FilterCondition.ConditionBuilder withValue(String value) {
+			this.value = value;
+			return this;
+		}
+
+		public FilterCondition.ConditionBuilder withSearchCriteria(String searchCriteria) {
+			this.searchCriteria = searchCriteria;
+			return this;
+		}
+
+		public FilterCondition.ConditionBuilder eq(String searchCriteria, String value) {
+			return withCondition(Condition.EQUALS)
+					.withSearchCriteria(searchCriteria)
+					.withValue(value);
+		}
+
+
+		public FilterCondition build() {
+			Preconditions.checkArgument(null != condition, "Condition should not be null");
+			Preconditions.checkArgument(!isNullOrEmpty(value), "Value should not be empty");
+			Preconditions.checkArgument(!isNullOrEmpty(searchCriteria), "Search criteria should not be empty");
+			return new FilterCondition(condition, negative, value, searchCriteria);
+		}
 	}
 }

@@ -17,24 +17,24 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.search;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
-import org.springframework.util.Assert;
-
-import com.google.common.collect.Sets;
-
 /**
  * Filter for building queries to database. Contains CriteriaHolder which is mapping between request
  * search criterias and DB search criterias and value to be filtered
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class Filter implements Serializable {
 
@@ -120,4 +120,38 @@ public class Filter implements Serializable {
 		sb.append('}');
 		return sb.toString();
 	}
+
+	public static FilterBuilder builder() {
+		return new FilterBuilder();
+	}
+
+	/**
+	 * Builder for {@link Filter}
+	 */
+	public static class FilterBuilder {
+		private Class<?> target;
+		private ImmutableSet.Builder<FilterCondition> conditions = ImmutableSet.builder();
+
+		private FilterBuilder() {
+
+		}
+
+		public FilterBuilder withTarget(Class<?> target) {
+			this.target = target;
+			return this;
+		}
+
+		public FilterBuilder withCondition(FilterCondition condition) {
+			this.conditions.add(condition);
+			return this;
+		}
+
+		public Filter build() {
+			Set<FilterCondition> filterConditions = this.conditions.build();
+			Preconditions.checkArgument(null != target, "Target should not be null");
+			Preconditions.checkArgument(!filterConditions.isEmpty(), "Filter should contain at least one condition");
+			return new Filter(target, filterConditions);
+		}
+	}
+
 }
