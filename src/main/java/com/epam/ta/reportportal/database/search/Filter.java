@@ -17,25 +17,24 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.search;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
-import org.springframework.util.Assert;
-
-import com.google.common.collect.Sets;
-
 /**
  * Filter for building queries to database. Contains CriteriaHolder which is mapping between request
  * search criterias and DB search criterias and value to be filtered
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class Filter implements Serializable {
 
@@ -122,16 +121,16 @@ public class Filter implements Serializable {
 		return sb.toString();
 	}
 
-	public static FilterBuilder builder(){
+	public static FilterBuilder builder() {
 		return new FilterBuilder();
 	}
 
+	/**
+	 * Builder for {@link Filter}
+	 */
 	public static class FilterBuilder {
 		private Class<?> target;
-		private Condition condition;
-		private boolean negative;
-		private String value;
-		private String searchCriteria;
+		private ImmutableSet.Builder<FilterCondition> conditions = ImmutableSet.builder();
 
 		private FilterBuilder() {
 
@@ -142,33 +141,16 @@ public class Filter implements Serializable {
 			return this;
 		}
 
-		public FilterBuilder withCondition(Condition condition) {
-			this.condition = condition;
+		public FilterBuilder withCondition(FilterCondition condition) {
+			this.conditions.add(condition);
 			return this;
 		}
-
-		public FilterBuilder withNegative(boolean negative) {
-			this.negative = negative;
-			return this;
-		}
-
-		public FilterBuilder withValue(String value) {
-			this.value = value;
-			return this;
-		}
-
-		public FilterBuilder withSearchCriteria(String searchCriteria) {
-			this.searchCriteria = searchCriteria;
-			return this;
-		}
-
 
 		public Filter createFilter() {
+			Set<FilterCondition> filterConditions = this.conditions.build();
 			Preconditions.checkArgument(null != target, "Target should not be null");
-			Preconditions.checkArgument(null != condition, "Condition should not be null");
-			Preconditions.checkArgument(null != value, "Value should not be null");
-			Preconditions.checkArgument(null != searchCriteria, "Search criteria should not be null");
-			return new Filter(target, condition, negative, value, searchCriteria);
+			Preconditions.checkArgument(!filterConditions.isEmpty(), "Condition should not be null");
+			return new Filter(target, filterConditions);
 		}
 	}
 
