@@ -215,6 +215,13 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 		return getMongoOperations().find(query(where("_id").in(ids)), getEntityInformation().getJavaType());
 	}
 
+	@Override
+	public boolean exists(Filter filter) {
+		Class<T> entityType = getEntityInformation().getJavaType();
+		Query query = QueryBuilder.newBuilder().with(filter).build();
+		return getMongoOperations().exists(query, entityType);
+	}
+
 	/**
 	 * Find entry by id load specified fields
 	 *

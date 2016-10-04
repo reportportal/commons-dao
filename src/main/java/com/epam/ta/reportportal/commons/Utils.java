@@ -26,6 +26,7 @@ import java.util.Set;
 import com.epam.ta.reportportal.database.entity.favorite.FavoriteResource;
 import com.epam.ta.reportportal.database.search.Condition;
 import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.FilterBuilder;
 import com.epam.ta.reportportal.database.search.FilterCondition;
 import com.google.common.collect.Sets;
 
@@ -45,6 +46,6 @@ public class Utils {
 				new FilterCondition(Condition.EQUALS, false, userName, FavoriteResource.USERNAME_CRITERIA),
 				new FilterCondition(Condition.EQUALS, false, type, FavoriteResource.TYPE_CRITERIA),
 				new FilterCondition(Condition.EQUALS, false, resourceId, FavoriteResource.RESOURCE_ID_CRITERIA));
-		return new Filter(FavoriteResource.class, conditions);
+		return new FilterBuilder().setTarget(FavoriteResource.class).setFilterConditions(conditions).createFilter();
 	}
 }

@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.Sets;
@@ -120,4 +121,55 @@ public class Filter implements Serializable {
 		sb.append('}');
 		return sb.toString();
 	}
+
+	public static FilterBuilder builder(){
+		return new FilterBuilder();
+	}
+
+	public static class FilterBuilder {
+		private Class<?> target;
+		private Condition condition;
+		private boolean negative;
+		private String value;
+		private String searchCriteria;
+
+		private FilterBuilder() {
+
+		}
+
+		public FilterBuilder withTarget(Class<?> target) {
+			this.target = target;
+			return this;
+		}
+
+		public FilterBuilder withCondition(Condition condition) {
+			this.condition = condition;
+			return this;
+		}
+
+		public FilterBuilder withNegative(boolean negative) {
+			this.negative = negative;
+			return this;
+		}
+
+		public FilterBuilder withValue(String value) {
+			this.value = value;
+			return this;
+		}
+
+		public FilterBuilder withSearchCriteria(String searchCriteria) {
+			this.searchCriteria = searchCriteria;
+			return this;
+		}
+
+
+		public Filter createFilter() {
+			Preconditions.checkArgument(null != target, "Target should not be null");
+			Preconditions.checkArgument(null != condition, "Condition should not be null");
+			Preconditions.checkArgument(null != value, "Value should not be null");
+			Preconditions.checkArgument(null != searchCriteria, "Search criteria should not be null");
+			return new Filter(target, condition, negative, value, searchCriteria);
+		}
+	}
+
 }

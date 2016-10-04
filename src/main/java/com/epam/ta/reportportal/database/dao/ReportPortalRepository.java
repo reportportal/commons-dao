@@ -21,11 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
+import com.epam.ta.reportportal.database.search.Filter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,16 +29,17 @@ import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import com.epam.ta.reportportal.database.search.Filter;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface with set of custom operations to all ReportPortal Mongo
  * Repositories
  *
- * @param <T>
- *            - Entity Type
- * @param <ID>
- *            - Entity ID Type
+ * @param <T>  - Entity Type
+ * @param <ID> - Entity ID Type
  * @author Andrei Varabyeu
  */
 @NoRepositoryBean
@@ -52,33 +49,34 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	 * Finds entry wrapper with null-safe wrapper
 	 * {@link com.google.common.base.Optional}
 	 *
-	 * @param id
-	 * @return
+	 * @param id Entity ID
+	 * @return Optional of object
 	 */
 	Optional<T> findOneNullSafe(ID id);
 
 	/**
 	 * Finds entities list according provided filter
 	 *
-	 * @param q
-	 * @return
+	 * @param filter Query representation
+	 * @return Found Objects
 	 */
 	List<T> findByFilter(Filter filter);
 
 	/**
 	 * Find entries via specified filter and sorting field
 	 *
-	 * @param filter
-	 * @param sorting
-	 * @return
+	 * @param filter  Query representation
+	 * @param sorting Sorting Representation
+	 * @return Found objects
 	 */
 	List<T> findByFilterWithSorting(Filter filter, Sort sorting);
 
 	/**
 	 * Finds entities list according provided filter
 	 *
-	 * @param q
-	 * @return
+	 * @param filter   Filter - Query representation
+	 * @param pageable Page Representation
+	 * @return Found Paged objects
 	 */
 	Page<T> findByFilter(Filter filter, Pageable pageable);
 
@@ -117,13 +115,18 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	 * Partial update. Updates only non-null fields from provided object. DOES
 	 * NOT removes NULL fields from DB object
 	 *
-	 * @param t
-	 *            Object to be updated
+	 * @param t Object to be updated
 	 */
 	void partialUpdate(T t);
 
 	void delete(Collection<String> ids);
 
 	List<T> find(Collection<String> ids);
+
+	/**
+	 * @param filter Query representation
+	 * @return TRUE if entity exists in database
+	 */
+	boolean exists(Filter filter);
 
 }
