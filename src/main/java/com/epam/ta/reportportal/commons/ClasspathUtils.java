@@ -38,8 +38,8 @@ public class ClasspathUtils {
     /*
      * Reflections object for scanning classpath of context class loader
      */
-    private static final Reflections REFLECTIONS = new ConfigurationBuilder().addClassLoader(ClasspathHelper.contextClassLoader())
-            .addUrls(ClasspathHelper.forJavaClassPath()).addScanners(new SubTypesScanner()).build();
+    private static final Reflections REFLECTIONS = new Reflections(new ConfigurationBuilder().addClassLoader(ClasspathHelper.contextClassLoader())
+            .addUrls(ClasspathHelper.forJavaClassPath()).addScanners(new SubTypesScanner()));
 
     /**
      * Finds in classpath subclasses of provided class
