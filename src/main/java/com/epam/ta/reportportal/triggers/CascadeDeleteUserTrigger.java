@@ -20,6 +20,7 @@
  */
 package com.epam.ta.reportportal.triggers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.support.RepositoryProvider;
 
+import static java.util.Collections.singletonList;
+
 /**
  * Deletes user-related data before delete of user entity
  *
@@ -52,17 +55,19 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 	private final FavoriteResourceRepository favoriteResourceRepository;
 	private final UserPreferenceRepository userPreferenceRepository;
 	private final UserRepository userRepository;
+	private final CascadeDeleteProjectsService cascadeDeleteProjectsService;
 
 	@Autowired
 	public CascadeDeleteUserTrigger(DataStorage dataStorage, RepositoryProvider repositoryProvider, ProjectRepository projectRepository,
 			FavoriteResourceRepository favoriteResourceRepository, UserPreferenceRepository userPreferenceRepository,
-			UserRepository userRepository) {
+			UserRepository userRepository, CascadeDeleteProjectsService cascadeDeleteProjectsService) {
 		this.dataStorage = dataStorage;
 		this.repositoryProvider = repositoryProvider;
 		this.projectRepository = projectRepository;
 		this.favoriteResourceRepository = favoriteResourceRepository;
 		this.userPreferenceRepository = userPreferenceRepository;
 		this.userRepository = userRepository;
+		this.cascadeDeleteProjectsService = cascadeDeleteProjectsService;
 	}
 
 	@Override
@@ -100,7 +105,7 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 	}
 
 	private void removePersonalProject(String user) {
-		projectRepository.delete(PersonalProjectUtils.personalProjectName(user));
+		cascadeDeleteProjectsService.delete(singletonList(PersonalProjectUtils.personalProjectName(user)));
 	}
 
 	/**
