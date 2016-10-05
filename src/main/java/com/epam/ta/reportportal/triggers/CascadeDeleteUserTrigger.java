@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.triggers;
 import java.util.List;
 import java.util.Set;
 
+import com.epam.ta.reportportal.database.personal.PersonalProjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
@@ -80,6 +81,7 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 		if (!StringUtils.isEmpty(user.getPhotoId())) {
 			dataStorage.deleteData(user.getPhotoId());
 		}
+		removePersonalProject(user.getId());
 		clearProject(login);
 
 	}
@@ -95,6 +97,10 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 			project.getUsers().remove(id);
 		}
 		projectRepository.save(projects);
+	}
+
+	private void removePersonalProject(String user) {
+		projectRepository.delete(PersonalProjectUtils.personalProjectName(user));
 	}
 
 	/**
