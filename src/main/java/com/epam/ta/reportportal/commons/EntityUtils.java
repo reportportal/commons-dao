@@ -42,7 +42,7 @@ public class EntityUtils {
 	/**
 	 * Normalize any ID for database ID fields, for example
 	 * 
-	 * @param id
+	 * @param id ID to normalize
 	 * @return String
 	 */
 	public static String normalizeId(String id) {
@@ -52,7 +52,7 @@ public class EntityUtils {
 	/**
 	 * Normalized provided user name
 	 * 
-	 * @param username
+	 * @param username Username to normalize
 	 * @return String
 	 */
 	public static String normalizeUsername(String username) {
@@ -62,7 +62,7 @@ public class EntityUtils {
 	/**
 	 * Normalized provided project name
 	 * 
-	 * @param projectName
+	 * @param projectName Project to normalize
 	 * @return String
 	 */
 	public static String normalizeProjectName(String projectName) {
@@ -72,7 +72,7 @@ public class EntityUtils {
 	/**
 	 * Normalized provided email address
 	 * 
-	 * @param email
+	 * @param email email to normalize
 	 * @return String
 	 */
 	public static String normalizeEmail(String email) {
@@ -82,7 +82,7 @@ public class EntityUtils {
 	/**
 	 * Remove leading and trailing spaces from list of string
 	 * 
-	 * @param strings
+	 * @param strings Strings to trim
 	 * @return String
 	 */
 	public static Iterable<String> trimStrings(Iterable<String> strings) {
@@ -94,7 +94,7 @@ public class EntityUtils {
 	/**
 	 * Convert declined symbols on allowed for WS and UI
 	 * 
-	 * @param input
+	 * @param input Input to be escaped
 	 * @return Iterable<String>
 	 */
 	public static Iterable<String> update(Iterable<String> input) {

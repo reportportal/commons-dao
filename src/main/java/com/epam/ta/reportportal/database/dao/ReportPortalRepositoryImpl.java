@@ -27,13 +27,8 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
@@ -61,6 +56,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteResult;
 
+import javax.annotation.Nonnull;
+
 /**
  * Implementation of ReportPortal Repository. Adds possibility to search
  * documents/tables using custom queries
@@ -72,23 +69,22 @@ import com.mongodb.WriteResult;
  * @author Andrei Varabyeu
  */
 class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongoRepository<T, ID> implements ReportPortalRepository<T, ID> {
-	Logger log = LoggerFactory.getLogger(ReportPortalRepositoryImpl.class);
 
 	private MongoOperations mongoOperations;
 
 	private MongoEntityInformation<T, ID> mongoEntityInformation;
 
-	public ReportPortalRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
+	ReportPortalRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
 		super(metadata, mongoOperations);
 		this.mongoEntityInformation = metadata;
 		this.mongoOperations = mongoOperations;
 	}
 
-	protected MongoOperations getMongoOperations() {
+	MongoOperations getMongoOperations() {
 		return mongoOperations;
 	}
 
-	protected MongoEntityInformation<T, ID> getEntityInformation() {
+	MongoEntityInformation<T, ID> getEntityInformation() {
 		return mongoEntityInformation;
 	}
 
@@ -100,7 +96,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 	private static LoadingCache<Class<?>, List<String>> INCLUDED_FIELDS = CacheBuilder.newBuilder()
 			.build(new CacheLoader<Class<?>, List<String>>() {
 				@Override
-				public List<String> load(Class<?> clazz) throws Exception {
+				public List<String> load(@Nonnull Class<?> clazz) throws Exception {
 					List<String> included = new ArrayList<>();
 					for (Field f : clazz.getDeclaredFields()) {
 						if (!f.isAnnotationPresent(DBRef.class) && !Modifier.isStatic(f.getModifiers())
@@ -155,14 +151,24 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 		return findPage(QueryBuilder.newBuilder().with(filter).with(pageable).build(), pageable);
 	}
 
+	@Override
+	public Page<T> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude) {
+		Query query = QueryBuilder.newBuilder().with(filter).with(pageable).build();
+		org.springframework.data.mongodb.core.query.Field fields = query.fields();
+		if (null != exclude){
+			Arrays.stream(exclude).forEach(fields::exclude);
+		}
+		return findPage(query, pageable);
+	}
+
 	/**
 	 * Finds page by provided {@link Query} and {@link Pageable} criterias
 	 *
-	 * @param q
-	 * @param p
-	 * @return
+	 * @param q Query for entity
+	 * @param p Pageable descriptor
+	 * @return Page of entities
 	 */
-	protected Page<T> findPage(Query q, Pageable p) {
+	Page<T> findPage(Query q, Pageable p) {
 		Class<T> entityType = getEntityInformation().getJavaType();
 		long size = getMongoOperations().count(q, entityType);
 		List<T> content = getMongoOperations().find(q, entityType);
@@ -225,11 +231,11 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 	/**
 	 * Find entry by id load specified fields
 	 *
-	 * @param id
-	 * @param fieldsToLoad
-	 * @return
+	 * @param id Entity ID
+	 * @param fieldsToLoad Fields to load
+	 * @return Found entity
 	 */
-	protected T findById(ID id, List<String> fieldsToLoad) {
+	T findById(ID id, List<String> fieldsToLoad) {
 		Class<T> entityType = getEntityInformation().getJavaType();
 		String idField = getEntityInformation().getIdAttribute();
 		Query q = query(where(idField).is(id));
