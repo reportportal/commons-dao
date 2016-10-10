@@ -49,6 +49,7 @@ public class User implements Serializable, Identifiable<String> {
 	public static final String LOGIN = "login";
 	public static final String EXPIRED = "expired";
 	public static final String TYPE = "type";
+	public static final String EMAIL = "email";
 
 	private static final long serialVersionUID = 6589946977687369280L;
 
@@ -59,7 +60,7 @@ public class User implements Serializable, Identifiable<String> {
 	private String password;
 
 	@Indexed(unique = true)
-	@FilterCriteria("email")
+	@FilterCriteria(EMAIL)
 	private String email;
 
 	private String photoId;
