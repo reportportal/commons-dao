@@ -22,26 +22,21 @@
 package com.epam.ta.reportportal.database.entity;
 
 /**
- * Biderectional tree representation
+ * Bidirectional tree representation
  * 
  * @author Andrei Varabyeu
- * 
- * @param <T>
- *            - Type of object in tree view
+ *
  */
 public interface BidirectionalTree {
 
 	/**
-	 * Returns parent of current element
 	 * 
-	 * @return
+	 * @return parent of current element
 	 */
 	String getParent();
 
 	/**
-	 * Returns true in case tree has childs
-	 * 
-	 * @return
+	 * @return true in case tree has childs
 	 */
 	boolean hasChilds();
 

@@ -81,10 +81,20 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	Page<T> findByFilter(Filter filter, Pageable pageable);
 
 	/**
+	 * Finds entities list according provided filter
+	 *
+	 * @param filter   Filter - Query representation
+	 * @param pageable Page Representation
+	 * @param exclude Fields to exclude from query
+	 * @return Found Paged objects
+	 */
+	Page<T> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude);
+
+	/**
 	 * Find entry by id, load only id field
 	 *
-	 * @param id
-	 * @return
+	 * @param id Entity ID
+	 * @return Found Entity
 	 */
 	T findEntryById(ID id);
 
@@ -92,8 +102,8 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	 * Finds object by id, but doesn't load joined entities (
 	 * {@link org.springframework.data.mongodb.core.mapping.DBRef})
 	 *
-	 * @param id
-	 * @return
+	 * @param id Entity ID
+	 * @return Found ID
 	 */
 	T findOneNoJoin(ID id);
 
@@ -101,12 +111,12 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	 * Load chart data according specified input parameters. Result should be
 	 * returned from {@link DocumentCallbackHandler} object
 	 *
-	 * @param filter
-	 * @param sorting
-	 * @param chartFields
-	 * @param quantity
-	 * @param callback
-	 * @param collectionName
+	 * @param filter Query filter
+	 * @param sorting Sorting
+	 * @param chartFields Chart fields to load
+	 * @param quantity Quantity
+	 * @param callback Results callback
+	 * @param collectionName Name of collection to load data from
 	 */
 	void loadWithCallback(Filter filter, Sort sorting, int quantity, List<String> chartFields, DocumentCallbackHandler callback,
 			String collectionName);

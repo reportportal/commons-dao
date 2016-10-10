@@ -22,9 +22,7 @@
 package com.epam.ta.reportportal.database.entity;
 
 /**
- * Describe Objects which should be logged by
- * {@link com.epam.ta.reportportal.aop.logging.ActivityLoggingAspect}
- * 
+ *
  * @author Dzmitry_Kavalets
  */
 public enum ObjectType {

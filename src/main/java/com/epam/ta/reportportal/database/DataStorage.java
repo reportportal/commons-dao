@@ -37,26 +37,26 @@ public interface DataStorage {
 	/**
 	 * Saves data into storage
 	 * 
-	 * @param binaryData
-	 * @param filename
+	 * @param binaryData {@link BinaryData}
+	 * @param filename Filename
 	 * @return id of the data
 	 */
 	String saveData(BinaryData binaryData, String filename);
 
 	/**
 	 * Save data into storage with metadata (project name, at least)
-	 * 
-	 * @param binaryData
-	 * @param filename
-	 * @param metainfo
+	 *
+	 * @param binaryData {@link BinaryData}
+	 * @param filename Filename
+	 * @param metaInfo Metadata
 	 * @return String
 	 */
-	String saveData(BinaryData binaryData, String filename, Map<String, String> metainfo);
+	String saveData(BinaryData binaryData, String filename, Map<String, String> metaInfo);
 
 	/**
 	 * Obtains data from storage
 	 * 
-	 * @param dataId
+	 * @param dataId Data ID
 	 * @return BinaryData
 	 */
 	BinaryData fetchData(String dataId);
@@ -64,7 +64,7 @@ public interface DataStorage {
 	/**
 	 * Obtains data from storage
 	 * 
-	 * @param filename
+	 * @param filename Filename
 	 * @return BinaryData
 	 */
 	BinaryData findByFilename(String filename);
@@ -72,7 +72,7 @@ public interface DataStorage {
 	/**
 	 * Obtain database object from GridFS.files collection by filename
 	 * 
-	 * @param filename
+	 * @param filename Filename
 	 * @return GridFSDBFile
 	 */
 	GridFSDBFile findGridFSFileByFilename(String filename);
@@ -80,8 +80,8 @@ public interface DataStorage {
 	/**
 	 * Get project out-dated files from storage
 	 * 
-	 * @param period
-	 * @param project
+	 * @param period Time period
+	 * @param project Project name
 	 * @return List<GridFSDBFile>
 	 */
 	List<GridFSDBFile> findModifiedLaterAgo(Time period, String project);
@@ -89,7 +89,7 @@ public interface DataStorage {
 	/**
 	 * Deletes some data from storage
 	 * 
-	 * @param dataId
+	 * @param dataId Data ID
 	 */
 	void deleteData(String dataId);
 
@@ -98,5 +98,9 @@ public interface DataStorage {
 	 */
 	void deleteAll();
 
+	/**
+	 * Deletes data with specified IDs
+	 * @param id IDs to delete
+	 */
 	void delete(List<String> id);
 }

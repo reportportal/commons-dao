@@ -6,13 +6,19 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.FilterCondition;
+import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Launch;
+import org.springframework.data.domain.Page;
 
 public class LaunchRepositoryTest extends BaseDaoTest {
 
@@ -29,13 +35,30 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 		assertThat(expected).hasSameElementsAs(launchIdsByProjectIds);
 	}
 
+	@Test
+	public void findByWithExcludeTest() {
+		findByProjectIdsData();
+		final Page<Launch> foundLaunches = launchRepository.findByFilterExcluding(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(com.epam.ta.reportportal.database.search.Condition.IN)
+						.withValue("project1,project2").withSearchCriteria("project").build())
+				.build(), null, "name");
+
+		boolean nonNullName = StreamSupport.stream(foundLaunches.spliterator(), false).filter(l -> l.getName() != null).findAny().isPresent();
+		assertThat(nonNullName).isFalse();
+	}
+
 	public List<Launch> findByProjectIdsData() {
 		final Launch launch1 = new Launch();
 		launch1.setProjectRef("project1");
+		launch1.setName("launch1");
 		final Launch launch2 = new Launch();
 		launch2.setProjectRef("project2");
+		launch2.setName("launch2");
 		final Launch launch3 = new Launch();
 		launch3.setProjectRef("project2");
+		launch3.setName("launch3");
 		final Launch launch4 = new Launch();
 		return launchRepository.save(asList(launch1, launch2, launch3, launch4));
 	}
