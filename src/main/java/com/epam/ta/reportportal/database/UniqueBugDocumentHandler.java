@@ -21,13 +21,13 @@
 
 package com.epam.ta.reportportal.database;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
@@ -98,8 +98,8 @@ public class UniqueBugDocumentHandler implements DocumentCallbackHandler {
 		// Sorting
 		for (Map.Entry<String, List<ChartObject>> entry : result.entrySet()) {
 			Collections.sort(entry.getValue(), (o1, o2) -> {
-				DateTime one = new DateTime(Long.valueOf(o1.getStartTime()));
-				DateTime next = new DateTime(Long.valueOf(o2.getStartTime()));
+				Instant one = Instant.ofEpochMilli(Long.valueOf(o1.getStartTime()));
+				Instant next = Instant.ofEpochMilli(Long.valueOf(o2.getStartTime()));
 				return one.compareTo(next);
 			});
 			result.put(entry.getKey(), entry.getValue());
