@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,14 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.search;
 
+import static java.util.stream.Stream.of;
+
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,11 +32,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.epam.ta.reportportal.commons.Predicates;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.google.common.collect.Lists;
 
 /**
- * Holds criteria mappings for specified class. After initialization reads specified package and
- * stores this information in Map where key is request search criteria
+ * Holds criteria mappings for specified class. After initialization reads
+ * specified package and stores this information in Map where key is request
+ * search criteria
  * 
  * @author Andrei Varabyeu
  * 
@@ -55,7 +53,7 @@ public class CriteriaMap<T> {
 	public CriteriaMap(Class<T> clazz) {
 		// TODO check class is Mongo document
 		classCriterias = new HashMap<>();
-		lookupClass(clazz, new LinkedList<>());
+		lookupClass(clazz, new ArrayList<>());
 	}
 
 	private void lookupClass(Class<?> clazz, List<Field> parents) {
@@ -63,8 +61,9 @@ public class CriteriaMap<T> {
 			if (f.isAnnotationPresent(FilterCriteria.class)) {
 				String searchCriteria;
 				String queryCriteria;
-				if (f.getType().isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class)) {
-					List<Field> currentParents = Lists.newLinkedList(parents);
+				if (of(f.getType().getDeclaredFields()).filter(df -> df.isAnnotationPresent(FilterCriteria.class)).findFirst().isPresent()
+						|| (f.getType().isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class))) {
+					List<Field> currentParents = new ArrayList<>(parents);
 					currentParents.add(f);
 					lookupClass(f.getType(), currentParents);
 				} else {

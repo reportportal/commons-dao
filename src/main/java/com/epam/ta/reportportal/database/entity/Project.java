@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ public class Project implements Serializable, Identifiable<String> {
 	public static final String CREATION_DATE = "creationDate";
 
 	@Id
+	@FilterCriteria("name")
 	private String name;
 
 	@Indexed
@@ -59,12 +60,14 @@ public class Project implements Serializable, Identifiable<String> {
 
 	private String addInfo;
 
+	@FilterCriteria("configuration")
 	private Configuration configuration;
 
 	// @Indexed
 	@FilterCriteria(USERS)
 	private Map<String, UserConfig> users;
 
+	@FilterCriteria("creationDate")
 	private Date creationDate;
 
 	public Project() {}
@@ -182,6 +185,7 @@ public class Project implements Serializable, Identifiable<String> {
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
 		private List<String> externalSystem;
+		@FilterCriteria("entryType")
 		private EntryType entryType;
 		private ProjectSpecific projectSpecific;
 		private String interruptJobTime;
