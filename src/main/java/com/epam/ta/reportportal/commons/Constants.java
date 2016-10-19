@@ -31,9 +31,6 @@ import java.util.ResourceBundle;
  */
 public enum Constants {
 	//@formatter:off
-	
-	APPLICATION_NAME("Application.name"),
-	
 	NONAME_USER("Users.noname"),
 	
 	DEFAULT_USER("Users.DefaultUser"),
