@@ -34,7 +34,6 @@ public enum Constants {
 	
 	APPLICATION_NAME("Application.name"),
 	
-	DEFAULT_PROJECT("Projects.default_project"),
 	NONAME_USER("Users.noname"),
 	
 	DEFAULT_USER("Users.DefaultUser"),

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.epam.ta.reportportal.database.personal.PersonalProjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.entity.widget.Widget;
 import com.epam.ta.reportportal.database.support.RepositoryProvider;
+
+import static com.epam.ta.reportportal.database.personal.PersonalProjectUtils.personalProjectName;
 
 @Service
 public class CascadeDeleteProjectsService {
@@ -58,7 +61,7 @@ public class CascadeDeleteProjectsService {
 			return;
 		}
 		for (User user : usersForUpdate) {
-			user.setDefaultProject(Constants.DEFAULT_PROJECT.toString());
+			user.setDefaultProject(personalProjectName(user.getId()));
 		}
 		userRepository.save(usersForUpdate);
 	}
