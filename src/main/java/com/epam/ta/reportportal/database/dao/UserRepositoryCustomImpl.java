@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Date;
 import java.util.List;
@@ -73,12 +74,13 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public void replaceUserPhoto(String login, BinaryData binaryData) {
+	public String replaceUserPhoto(String login, BinaryData binaryData) {
 		/*
 		 * Clean out-dated user photo (if exists) and create newest one
 		 */
 		String photoFilename = photoFilename(login);
 		Query q = query(Criteria.where("login").is(login));
+		q.fields().include("photoId");
 
 		User user = mongoOperations.findOne(q, User.class);
 		if (null == user) {
@@ -96,7 +98,8 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		String dataId = dataStorage.saveData(binaryData, photoFilename(login));
 		user.setPhotoId(dataId);
-		mongoOperations.save(user);
+		mongoOperations.updateFirst(q, Update.update("photoId", dataId), User.class);
+		return dataId;
 	}
 
 	@Override

@@ -58,8 +58,9 @@ interface UserRepositoryCustom {
 	 *
 	 * @param login      User Login
 	 * @param binaryData Replacement
+	 * @return ID of new photo
 	 */
-	void replaceUserPhoto(String login, BinaryData binaryData);
+	String replaceUserPhoto(String login, BinaryData binaryData);
 
 	/**
 	 * Finds user's photo
