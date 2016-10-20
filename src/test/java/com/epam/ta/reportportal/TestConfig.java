@@ -77,6 +77,7 @@ public class TestConfig {
 		return mongoDbFactory;
 	}
 
+
 	@Bean
 	@Primary
 	public CacheManager getGlobalCacheManager() {

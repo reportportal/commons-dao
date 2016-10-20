@@ -22,13 +22,12 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.BinaryData;
-import com.epam.ta.reportportal.database.entity.project.EntryType;
 import com.epam.ta.reportportal.database.entity.user.User;
+import com.epam.ta.reportportal.database.entity.user.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Set of custom DAO methods for {@link com.epam.ta.reportportal.database.entity.user.User} entity
@@ -40,44 +39,35 @@ interface UserRepositoryCustom {
 	/**
 	 * Expires set of users which are logged in last time before provided date
 	 *
-	 * @param lastLogin
+	 * @param lastLogin Last login date
 	 */
 	void expireUsersLoggedOlderThan(Date lastLogin);
 
 	/**
 	 * Finds users by specified type and last synchronized before specified date
 	 *
-	 * @param type
-	 * @param lastSynchronized
-	 * @param pageable
-	 * @return
+	 * @param type             Type of User
+	 * @param lastSynchronized Last synchronization date
+	 * @param pageable         Pageable
+	 * @return List of found Users
 	 */
-	Page<User> findByTypeAndLastSynchronizedBefore(EntryType type, Date lastSynchronized, Pageable pageable);
+	Page<User> findByTypeAndLastSynchronizedBefore(UserType type, Date lastSynchronized, Pageable pageable);
 
 	/**
 	 * Saves provided binary data as user's photo
 	 *
-	 * @param login
-	 * @param binaryData
-	 * @return
+	 * @param login      User Login
+	 * @param binaryData Replacement
 	 */
-	String saveUserPhoto(String login, BinaryData binaryData);
+	void replaceUserPhoto(String login, BinaryData binaryData);
 
 	/**
 	 * Finds user's photo
 	 *
-	 * @param login
-	 * @return
+	 * @param login Username
+	 * @return User's Photo
 	 */
 	BinaryData findUserPhoto(String login);
-
-	/**
-	 * Deletes user photo
-	 *
-	 * @param login
-	 * @return
-	 */
-	void deleteUserPhoto(String login);
 
 	/**
 	 * Deletes user photo by provided photo ID
@@ -87,13 +77,6 @@ interface UserRepositoryCustom {
 	void deleteUserPhotoById(String photoId);
 
 	/**
-	 * Finds photo IDs, id fields(login) of all users
-	 *
-	 * @return
-	 */
-	List<User> findAllPhotos();
-
-	/**
 	 * Fetch users by Email
 	 *
 	 * @param email Email
@@ -101,7 +84,20 @@ interface UserRepositoryCustom {
 	 */
 	User findByEmail(String email);
 
+	/**
+	 * Finds users by login or email
+	 *
+	 * @param term     login OR email
+	 * @param pageable Pageable
+	 * @return Found users
+	 */
 	Page<User> findByLoginNameOrEmail(String term, Pageable pageable);
 
+	/**
+	 * Updates last login date field of user entity
+	 *
+	 * @param user User
+	 * @param date Date
+	 */
 	void updateLastLoginDate(String user, Date date);
 }
