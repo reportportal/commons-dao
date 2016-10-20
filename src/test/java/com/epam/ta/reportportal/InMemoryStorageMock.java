@@ -23,6 +23,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -45,6 +46,20 @@ class InMemoryStorageMock implements DataStorage {
 			this.id = id;
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (this == o)
+				return true;
+			if (o == null || getClass() != o.getClass())
+				return false;
+			DataKey dataKey = (DataKey) o;
+			return Objects.equals(filename, dataKey.filename) && Objects.equals(id, dataKey.id);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(filename, id);
+		}
 	}
 
 	@Override
@@ -55,9 +70,9 @@ class InMemoryStorageMock implements DataStorage {
 	}
 
 	@Override
-	@Deprecated
-	public BinaryData fetchData(String filename) {
-		return inMemoryStorage.entrySet().stream().filter(e -> filename.equals(e.getKey().filename)).findAny().get().getValue();
+	public BinaryData fetchData(String dataId) {
+		return inMemoryStorage.entrySet().stream()
+				.filter(e -> dataId.equals(e.getKey().id)).findAny().map(Map.Entry::getValue).orElse(null);
 	}
 
 	@Override
