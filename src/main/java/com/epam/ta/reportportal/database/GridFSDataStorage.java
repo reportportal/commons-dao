@@ -27,6 +27,7 @@ import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilena
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Query;
@@ -82,8 +83,7 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public List<GridFSDBFile> findModifiedLaterAgo(Time period, String project) {
-		List<GridFSDBFile> list = gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project));
-		return list;
+		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project));
 	}
 
 	/*
@@ -106,15 +106,10 @@ public class GridFSDataStorage implements DataStorage {
 	 * .String)
 	 */
 	@Override
-	public BinaryData findByFilename(String filename) {
-		GridFSDBFile file = gridFs.findOne(findByFilenameQuery(filename));
-		return null == file ? null : new BinaryData(file.getContentType(), file.getLength(), file.getInputStream());
-	}
-
-	@Override
-	public GridFSDBFile findGridFSFileByFilename(String filename) {
-		GridFSDBFile file = gridFs.findOne(findByFilenameQuery(filename));
-		return file;
+	public List<BinaryData> findByFilename(String filename) {
+		return gridFs.find(findByFilenameQuery(filename)).stream()
+				.map(file -> new BinaryData(file.getContentType(), file.getLength(), file.getInputStream()))
+				.collect(Collectors.toList());
 	}
 
 	/*
@@ -144,10 +139,15 @@ public class GridFSDataStorage implements DataStorage {
 		gridFs.delete(query(where("_id").in(ids)));
 	}
 
+	@Override
+	public void deleteByFilename(String filename) {
+		gridFs.delete(findByFilenameQuery(filename));
+	}
+
 	/**
 	 * Returns empty query which should find all objects
 	 * 
-	 * @return
+	 * @return Mongo's Query
 	 */
 	private Query queryForAll() {
 		return new Query();
@@ -156,8 +156,8 @@ public class GridFSDataStorage implements DataStorage {
 	/**
 	 * Find by ID query
 	 * 
-	 * @param id
-	 * @return
+	 * @param id Object ID
+	 * @return Mongo's Query
 	 */
 	private Query findByIdQuery(ObjectId id) {
 		return query(where(ID_FIELD).is(id));
@@ -166,8 +166,8 @@ public class GridFSDataStorage implements DataStorage {
 	/**
 	 * Find by name query
 	 * 
-	 * @param id
-	 * @return
+	 * @param filename Filename
+	 * @return Mongo's Query
 	 */
 	private Query findByFilenameQuery(String filename) {
 		return query(whereFilename().is(filename));

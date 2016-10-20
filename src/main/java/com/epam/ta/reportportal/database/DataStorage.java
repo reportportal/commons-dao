@@ -17,28 +17,27 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database;
+
+import com.mongodb.gridfs.GridFSDBFile;
 
 import java.util.List;
 import java.util.Map;
 
-import com.mongodb.gridfs.GridFSDBFile;
-
 /**
  * Binary data storage
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public interface DataStorage {
 
 	/**
 	 * Saves data into storage
-	 * 
+	 *
 	 * @param binaryData {@link BinaryData}
-	 * @param filename Filename
+	 * @param filename   Filename
 	 * @return id of the data
 	 */
 	String saveData(BinaryData binaryData, String filename);
@@ -47,15 +46,15 @@ public interface DataStorage {
 	 * Save data into storage with metadata (project name, at least)
 	 *
 	 * @param binaryData {@link BinaryData}
-	 * @param filename Filename
-	 * @param metaInfo Metadata
+	 * @param filename   Filename
+	 * @param metaInfo   Metadata
 	 * @return String
 	 */
 	String saveData(BinaryData binaryData, String filename, Map<String, String> metaInfo);
 
 	/**
 	 * Obtains data from storage
-	 * 
+	 *
 	 * @param dataId Data ID
 	 * @return BinaryData
 	 */
@@ -63,24 +62,17 @@ public interface DataStorage {
 
 	/**
 	 * Obtains data from storage
-	 * 
+	 *
 	 * @param filename Filename
 	 * @return BinaryData
 	 */
-	BinaryData findByFilename(String filename);
+	List<BinaryData> findByFilename(String filename);
 
-	/**
-	 * Obtain database object from GridFS.files collection by filename
-	 * 
-	 * @param filename Filename
-	 * @return GridFSDBFile
-	 */
-	GridFSDBFile findGridFSFileByFilename(String filename);
 
 	/**
 	 * Get project out-dated files from storage
-	 * 
-	 * @param period Time period
+	 *
+	 * @param period  Time period
 	 * @param project Project name
 	 * @return List<GridFSDBFile>
 	 */
@@ -88,7 +80,7 @@ public interface DataStorage {
 
 	/**
 	 * Deletes some data from storage
-	 * 
+	 *
 	 * @param dataId Data ID
 	 */
 	void deleteData(String dataId);
@@ -100,7 +92,15 @@ public interface DataStorage {
 
 	/**
 	 * Deletes data with specified IDs
+	 *
 	 * @param id IDs to delete
 	 */
 	void delete(List<String> id);
+
+	/**
+	 * Deletes data matching provided filename
+	 *
+	 * @param filename Filenames
+	 */
+	void deleteByFilename(String filename);
 }

@@ -42,6 +42,6 @@ public class UserUtils {
 	 * @return
 	 */
 	public static String photoFilename(String username) {
-		return PHOTO_FILENAME_PREFIX.concat(username);
+		return PHOTO_FILENAME_PREFIX.concat(username.toLowerCase());
 	}
 }

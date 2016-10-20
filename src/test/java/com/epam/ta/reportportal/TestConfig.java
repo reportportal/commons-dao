@@ -24,6 +24,7 @@ import static com.epam.ta.reportportal.config.CacheConfiguration.*;
 
 import java.util.concurrent.TimeUnit;
 
+import com.epam.ta.reportportal.database.DataStorage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -75,6 +76,12 @@ public class TestConfig {
 		SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(MockMongoClient.create(fongo), "reportportal");
 		mongoDbFactory.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 		return mongoDbFactory;
+	}
+
+	@Bean
+	@Primary
+	public DataStorage dataStorage() {
+		return new InMemoryStorageMock();
 	}
 
 	@Bean
