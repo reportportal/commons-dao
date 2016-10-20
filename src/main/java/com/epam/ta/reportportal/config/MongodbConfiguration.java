@@ -118,7 +118,6 @@ public class MongodbConfiguration {
 	}
 
 	@Bean
-	@Profile("!unittest")
 	DataStorage dataStorage() throws UnknownHostException {
 		return new GridFSDataStorage(gridFsTemplate());
 	}
