@@ -76,11 +76,25 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
+	public String uploadUserPhoto(String login, BinaryData binaryData) {
+		String photoFilename = photoFilename(login);
+		/* make sure no junks here */
+		if (!login.equalsIgnoreCase(Constants.NONAME_USER.toString())) {
+			dataStorage.deleteByFilename(photoFilename);
+		}
+
+		return dataStorage.saveData(binaryData, photoFilename);
+	}
+
+	@Override
 	public String replaceUserPhoto(String login, BinaryData binaryData) {
 		Query q = query(where(User.LOGIN).is(login));
 		q.fields().include(User.LOGIN).include(User.PHOTO_ID);
 
 		User user = mongoOperations.findOne(q, User.class);
+		if (null == user){
+			throw new ReportPortalException("User with name '" + login + "' not found");
+		}
 		return replaceUserPhoto(user, binaryData);
 	}
 
@@ -89,18 +103,12 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		/*
 		 * Clean out-dated user photo (if exists) and create newest one
 		 */
-		String photoFilename = photoFilename(user.getId());
-
 		if (!StringUtils.isEmpty(user.getPhotoId())) {
             /* make sure this is nothing associated with user */
 			dataStorage.deleteData(user.getPhotoId());
 		}
 
-		if (!user.getId().equalsIgnoreCase(Constants.NONAME_USER.toString())) {
-			dataStorage.deleteByFilename(photoFilename);
-		}
-
-		String dataId = dataStorage.saveData(binaryData, photoFilename);
+		String dataId = uploadUserPhoto(user.getLogin(), binaryData);
 		user.setPhotoId(dataId);
 		mongoOperations.updateFirst(query(where(User.LOGIN).is(user.getId())), update(User.PHOTO_ID, dataId), User.class);
 		return dataId;

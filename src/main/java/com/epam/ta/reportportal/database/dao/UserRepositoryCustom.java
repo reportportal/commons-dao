@@ -54,7 +54,17 @@ interface UserRepositoryCustom {
 	Page<User> findByTypeAndLastSynchronizedBefore(UserType type, Date lastSynchronized, Pageable pageable);
 
 	/**
-	 * Saves provided binary data as user's photo
+	 * Uploads photo for specified login. Doesn't check whether such user present in database.
+	 * Makes sure this is no duplicate photos with the same filename
+	 * @param login Login of user to generate filename
+	 * @param binaryData Photo
+	 * @return ID of uploaded binary data
+	 */
+	String uploadUserPhoto(String login, BinaryData binaryData);
+
+	/**
+	 * Saves provided binary data as user's photo.
+	 * Updates user with new photoID. Throws exception if no such user present in database
 	 *
 	 * @param login      User Login
 	 * @param binaryData Replacement
