@@ -47,6 +47,7 @@ public class User implements Serializable, Identifiable<String> {
 	public static final String IS_EXPIRED = "isExpired";
 	public static final String NAME = "name";
 	public static final String LOGIN = "login";
+	public static final String PHOTO_ID = "photoId";
 	public static final String EXPIRED = "expired";
 	public static final String TYPE = "type";
 	public static final String EMAIL = "email";

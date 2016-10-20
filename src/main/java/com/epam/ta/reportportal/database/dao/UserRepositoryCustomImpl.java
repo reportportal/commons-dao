@@ -37,6 +37,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
 
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
 import static com.epam.ta.reportportal.database.entity.user.User.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
 
@@ -62,12 +64,12 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public void expireUsersLoggedOlderThan(Date lastLogin) {
-		mongoOperations.updateMulti(query(Criteria.where(MetaInfo.LAST_LOGIN_PATH).lt(lastLogin)), update(IS_EXPIRED, true), User.class);
+		mongoOperations.updateMulti(query(where(MetaInfo.LAST_LOGIN_PATH).lt(lastLogin)), update(IS_EXPIRED, true), User.class);
 	}
 
 	@Override
 	public Page<User> findByTypeAndLastSynchronizedBefore(UserType type, Date lastSynchronized, Pageable pageable) {
-		Query q = query(Criteria.where("type").is(type).and(MetaInfo.SYNCHRONIZATION_DATE).lt(lastSynchronized)).with(pageable);
+		Query q = query(where("type").is(type).and(MetaInfo.SYNCHRONIZATION_DATE).lt(lastSynchronized)).with(pageable);
 		long count = mongoOperations.count(q, User.class);
 		return new PageImpl<>(mongoOperations.find(q, User.class), pageable, count);
 
@@ -75,30 +77,32 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public String replaceUserPhoto(String login, BinaryData binaryData) {
+		Query q = query(where(User.LOGIN).is(login));
+		q.fields().include(User.LOGIN).include(User.PHOTO_ID);
+
+		User user = mongoOperations.findOne(q, User.class);
+		return replaceUserPhoto(user, binaryData);
+	}
+
+	@Override
+	public String replaceUserPhoto(User user, BinaryData binaryData) {
 		/*
 		 * Clean out-dated user photo (if exists) and create newest one
 		 */
-		String photoFilename = photoFilename(login);
-		Query q = query(Criteria.where("login").is(login));
-		q.fields().include("photoId");
-
-		User user = mongoOperations.findOne(q, User.class);
-		if (null == user) {
-			throw new ReportPortalException("User with name ' " + login + "' not found");
-		}
+		String photoFilename = photoFilename(user.getId());
 
 		if (!StringUtils.isEmpty(user.getPhotoId())) {
             /* make sure this is nothing associated with user */
 			dataStorage.deleteData(user.getPhotoId());
 		}
 
-		if (!login.equalsIgnoreCase(Constants.NONAME_USER.toString())) {
+		if (!user.getId().equalsIgnoreCase(Constants.NONAME_USER.toString())) {
 			dataStorage.deleteByFilename(photoFilename);
 		}
 
-		String dataId = dataStorage.saveData(binaryData, photoFilename(login));
+		String dataId = dataStorage.saveData(binaryData, photoFilename);
 		user.setPhotoId(dataId);
-		mongoOperations.updateFirst(q, Update.update("photoId", dataId), User.class);
+		mongoOperations.updateFirst(query(where(User.LOGIN).is(user.getId())), update(User.PHOTO_ID, dataId), User.class);
 		return dataId;
 	}
 
@@ -112,8 +116,8 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public BinaryData findUserPhoto(String login) {
 		BinaryData photo = null;
-		Query q = query(Criteria.where("login").is(login));
-		q.fields().include("photoId");
+		Query q = query(where(User.LOGIN).is(login));
+		q.fields().include(User.PHOTO_ID);
 		User user = mongoOperations.findOne(q, User.class);
 		if (user != null && user.getPhotoId() != null)
 			photo = dataStorage.fetchData(user.getPhotoId());
@@ -126,16 +130,16 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public User findByEmail(String email) {
-		final Query query = query(Criteria.where("email").is(EntityUtils.normalizeUsername(email)));
+		final Query query = query(where("email").is(EntityUtils.normalizeUsername(email)));
 		return mongoOperations.findOne(query, User.class);
 	}
 
 	@Override
 	public Page<User> findByLoginNameOrEmail(String term, Pageable pageable) {
 		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
-		Criteria email = Criteria.where("email").regex(regex);
-		Criteria login = Criteria.where(LOGIN).regex(regex);
-		Criteria fullName = Criteria.where("fullName").regex(regex);
+		Criteria email = where(User.EMAIL).regex(regex);
+		Criteria login = where(LOGIN).regex(regex);
+		Criteria fullName = where("fullName").regex(regex);
 		Criteria criteria = new Criteria().orOperator(email, login, fullName);
 		Query query = query(criteria).with(pageable);
 		List<User> users = mongoOperations.find(query, User.class);
@@ -144,7 +148,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public void updateLastLoginDate(String user, Date date) {
-		mongoOperations.updateFirst(query(Criteria.where("_id").is(user)), update("metaInfo.lastLogin", date), User.class);
+		mongoOperations.updateFirst(query(where("_id").is(user)), update("metaInfo.lastLogin", date), User.class);
 
 	}
 
