@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,20 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity.project;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.database.entity.Project;
@@ -45,6 +49,10 @@ import com.google.common.collect.Lists;
 public class ProjectUtils {
 	private static final String INIT_FROM = "reportportal@example.com";
 	private static final String OWNER = "OWNER";
+
+	private ProjectUtils() {
+
+	}
 
 	/**
 	 * Setup default project email configuration
@@ -68,22 +76,22 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project excludeProjectRecipients(Iterable<User> users, Project project) {
-		/* Current recipients of specified project */
-		List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
-		if ((null != cases) && (null != users)) {
-			cases.stream().forEach(c -> {
-				// saved - list of saved user emails before changes
-				List<String> saved = c.getRecipients();
-				c.setRecipients(saved.stream().filter(processRecipients(users)).collect(Collectors.toList()));
-			});
-			project.getConfiguration().getEmailConfig().setEmailCases(cases);
+		if (users != null) {
+			Set<String> toExclude = stream(users.spliterator(), false)
+					.map(user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream)
+					.collect(toSet());
+			/* Current recipients of specified project */
+			List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+			if (null != cases) {
+				cases.stream().forEach(c -> {
+					// saved - list of saved user emails before changes
+					List<String> saved = c.getRecipients();
+					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(toList()));
+				});
+				project.getConfiguration().getEmailConfig().setEmailCases(cases);
+			}
 		}
 		return project;
-	}
-
-	private static Predicate<String> processRecipients(final Iterable<User> users) {
-		return input -> !StreamSupport.stream(users.spliterator(), false).filter(user -> user.getEmail().equalsIgnoreCase(input))
-				.findFirst().isPresent();
 	}
 
 	/**
@@ -100,8 +108,7 @@ public class ProjectUtils {
 			cases.stream().forEach(c -> {
 				List<String> saved = c.getRecipients();
 				if (saved.stream().filter(email -> email.equalsIgnoreCase(oldEmail)).findFirst().isPresent()) {
-					c.setRecipients(
-							saved.stream().filter(processRecipientsEmails(Lists.newArrayList(oldEmail))).collect(Collectors.toList()));
+					c.setRecipients(saved.stream().filter(processRecipientsEmails(Lists.newArrayList(oldEmail))).collect(toList()));
 					c.getRecipients().add(newEmail);
 				}
 			});
@@ -111,8 +118,7 @@ public class ProjectUtils {
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {
-		return input -> !StreamSupport.stream(emails.spliterator(), false).filter(email -> email.equalsIgnoreCase(input)).findFirst()
-				.isPresent();
+		return input -> !stream(emails.spliterator(), false).filter(email -> email.equalsIgnoreCase(input)).findFirst().isPresent();
 	}
 
 	/**
