@@ -75,6 +75,18 @@ public class MongodbConfiguration {
 	@Bean
 	@Profile("!unittest")
 	MongoDbFactory mongoDbFactory() throws UnknownHostException {
+
+
+		SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongo(), mongoProperties.getDbName());
+
+		mongoDbFactory.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+
+		return mongoDbFactory;
+	}
+
+	@Bean
+	@Profile("!unittest")
+	MongoClient mongo() throws UnknownHostException {
 		MongoClientOptions.Builder mongoClientBuilder = MongoClientOptions.builder();
 		mongoClientBuilder.connectionsPerHost(mongoProperties.getConnectionsPerHost())
 				.threadsAllowedToBlockForConnectionMultiplier(mongoProperties.getThreadsAllowedToBlockForConnectionMultiplier())
@@ -87,14 +99,8 @@ public class MongodbConfiguration {
 					mongoProperties.getPassword().toCharArray()));
 		}
 
-		MongoClient mongoClient = new MongoClient(new ServerAddress(mongoProperties.getHost(), mongoProperties.getPort()), credentials,
+		return new MongoClient(new ServerAddress(mongoProperties.getHost(), mongoProperties.getPort()), credentials,
 				mongoClientBuilder.build());
-
-		SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongoClient, mongoProperties.getDbName());
-
-		mongoDbFactory.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-
-		return mongoDbFactory;
 	}
 
 	@Bean

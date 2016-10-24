@@ -17,23 +17,24 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
 
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.*;
+import static java.util.Collections.singletonList;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.hateoas.Identifiable;
 
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
+import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
 
@@ -70,7 +71,8 @@ public class Project implements Serializable, Identifiable<String> {
 	@FilterCriteria("creationDate")
 	private Date creationDate;
 
-	public Project() {}
+	public Project() {
+	}
 
 	public Date getCreationDate() {
 		return creationDate;
@@ -182,6 +184,12 @@ public class Project implements Serializable, Identifiable<String> {
 
 	public static class Configuration implements Serializable {
 
+		private static final String AB_COLOR = "#f7d63e";
+		private static final String PB_COLOR = "#ec3900";
+		private static final String SI_COLOR = "#0274d1";
+		private static final String ND_COLOR = "#777777";
+		private static final String TI_COLOR = "#ffb743";
+
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
 		private List<String> externalSystem;
@@ -192,12 +200,65 @@ public class Project implements Serializable, Identifiable<String> {
 		private String keepLogs;
 		private String keepScreenshots;
 		private Boolean isAutoAnalyzerEnabled;
+		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
 		// Project Email Settings
 		private ProjectEmailConfig emailConfig;
 
 		public Configuration() {
 			externalSystem = new ArrayList<>();
+			this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
+				{
+					put(AUTOMATION_BUG, singletonList(new StatisticSubType(AUTOMATION_BUG.getLocator(), AUTOMATION_BUG.getValue(),
+							"Automation Bug", "AB", AB_COLOR)));
+					put(PRODUCT_BUG, singletonList(
+							new StatisticSubType(PRODUCT_BUG.getLocator(), PRODUCT_BUG.getValue(), "Product Bug", "PB", PB_COLOR)));
+					put(SYSTEM_ISSUE, singletonList(
+							new StatisticSubType(SYSTEM_ISSUE.getLocator(), SYSTEM_ISSUE.getValue(), "System Issue", "SI", SI_COLOR)));
+					put(NO_DEFECT,
+							singletonList(new StatisticSubType(NO_DEFECT.getLocator(), NO_DEFECT.getValue(), "No Defect", "ND", ND_COLOR)));
+					put(TO_INVESTIGATE, singletonList(new StatisticSubType(TO_INVESTIGATE.getLocator(), TO_INVESTIGATE.getValue(),
+							"To Investigate", "TI", TI_COLOR)));
+				}
+			};
+		}
+
+		public StatisticSubType getByLocator(String locator) {
+			/* If locator is predefined group */
+			TestItemIssueType type = fromValue(locator);
+			if (null != type) {
+				Optional<StatisticSubType> typeOptional = subTypes.values().stream().flatMap(Collection::stream)
+						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
+				return typeOptional.isPresent() ? typeOptional.get() : null;
+			}
+			/* If not */
+			Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
+					.filter(one -> one.getLocator().equalsIgnoreCase(locator)).findFirst();
+			return exist.isPresent() ? exist.get() : null;
+		}
+
+		public void setByLocator(StatisticSubType type) {
+			TestItemIssueType global = fromValue(type.getLocator());
+			if (null == global) {
+				Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
+						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
+				if (exist.isPresent()) {
+					if (null != type.getLongName())
+						exist.get().setLongName(type.getLongName());
+					if (null != type.getShortName())
+						exist.get().setShortName(type.getShortName());
+					if (null != type.getHexColor())
+						exist.get().setHexColor(type.getHexColor());
+				}
+			}
+		}
+
+		public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
+			this.subTypes = subTypes;
+		}
+
+		public Map<TestItemIssueType, List<StatisticSubType>> getSubTypes() {
+			return subTypes;
 		}
 
 		public void setEntryType(EntryType value) {

@@ -47,7 +47,6 @@ import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.ProjectSettings;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
@@ -92,7 +91,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public void updateIssueStatistics(TestItem item, ProjectSettings settings) {
+	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
 				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1), Launch.class);
 	}
@@ -110,7 +109,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public void resetIssueStatistics(TestItem item, ProjectSettings settings) {
+	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
 				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1), Launch.class);
 	}

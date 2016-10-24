@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -26,12 +26,12 @@ import java.util.Map;
 
 import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Launch;
-import com.epam.ta.reportportal.database.entity.ProjectSettings;
+import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 
-public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestItem, ProjectSettings> {
+public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
 	boolean hasDescendants(Object... id);
 
@@ -56,8 +56,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	Map<String, String> findPathNames(Iterable<String> path);
 
 	/**
-	 * Finds items modified later than provided period with provided status which is item of
-	 * provided launch
+	 * Finds items modified later than provided period with provided status
+	 * which is item of provided launch
 	 * 
 	 * @param period
 	 * @param status
@@ -68,8 +68,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch, boolean hasChild);
 
 	/**
-	 * Finds items modified later than provided period with provided status which is item of
-	 * provided launch
+	 * Finds items modified later than provided period with provided status
+	 * which is item of provided launch
 	 * 
 	 * @param period
 	 * @param status
@@ -165,7 +165,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	List<TestItem> findByHasChildStatus(boolean hasChildren, String launch);
 
 	/**
-	 * Get all test items without descendants under specified launches with specified sub-types.
+	 * Get all test items without descendants under specified launches with
+	 * specified sub-types.
 	 * 
 	 * @param launchesIds
 	 * @param hasChild
