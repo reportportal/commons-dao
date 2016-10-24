@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -31,13 +31,12 @@ import org.springframework.data.domain.Sort;
 import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.ProjectSettings;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 
-public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem, ProjectSettings> {
+public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
 	/**
 	 * Whether launch contains items
@@ -83,7 +82,8 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	List<Launch> findModifiedLaterAgo(Time period, Status status, String project);
 
 	/**
-	 * Find launches by filter load only id and number fields. Load specified quantity of launches.
+	 * Find launches by filter load only id and number fields. Load specified
+	 * quantity of launches.
 	 * 
 	 * @param filter
 	 * @param sort
@@ -156,7 +156,8 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from);
 
 	/**
-	 * Find launches by specified projectId, mode and from date. 'IN_PROGRESS' launches are excluded
+	 * Find launches by specified projectId, mode and from date. 'IN_PROGRESS'
+	 * launches are excluded
 	 * 
 	 * 
 	 * @param projectId
