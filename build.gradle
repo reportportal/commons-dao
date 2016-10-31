@@ -63,6 +63,6 @@ dependencies {
     testCompile "org.springframework.security:spring-security-crypto"
     testCompile "org.springframework.security:spring-security-core"
     testCompile 'com.github.fakemongo:fongo:2.0.6'
-    testCompile('org.hibernate:hibernate-validator:5.3.0.Final')
+    testCompile('org.hibernate:hibernate-validator')
 
 }
