@@ -30,15 +30,15 @@ targetCompatibility = 1.8
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:1.4.0.RELEASE"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:1.4.1.RELEASE"
     }
 }
 
 dependencies {
-    compile 'com.epam.reportportal:commons-model:2.6.0'
+    compile 'com.epam.reportportal:commons-model:2.7.0-ALPHA-2'
     compile 'com.epam.reportportal:commons-rules:2.6.0'
 
-    compile 'net.coobird:thumbnailator:0.4.7'
+    compile 'net.coobird:thumbnailator:0.4.8'
     compile 'commons-validator:commons-validator:1.5.1'
 
     compile 'org.springframework.data:spring-data-mongodb'
@@ -50,7 +50,7 @@ dependencies {
 
     compile('com.google.guava:guava:19.0')
     compile 'com.google.code.findbugs:jsr305:3.0.1'
-    compile 'org.apache.commons:commons-lang3:3.2.1'
+    compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.reflections:reflections:0.9.10'
 
     /* just for password encoder. To make sure Guava and Spring's Crypto generate the same  hash functions */
@@ -63,8 +63,6 @@ dependencies {
     testCompile "org.springframework.security:spring-security-crypto"
     testCompile "org.springframework.security:spring-security-core"
     testCompile 'com.github.fakemongo:fongo:2.0.6'
-    testCompile('org.hibernate:hibernate-validator:5.0.2.Final') {
-        exclude(module: 'validation-api')
-    }
+    testCompile('org.hibernate:hibernate-validator')
 
 }
