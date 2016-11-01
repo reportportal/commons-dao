@@ -48,11 +48,11 @@ public class CriteriaMap<T> {
 	/**
 	 * Request search criteria to criteria holder mapping
 	 */
-	private Map<String, CriteriaHolder> classCriterias;
+	private Map<String, CriteriaHolder> classCriteria;
 
 	public CriteriaMap(Class<T> clazz) {
 		// TODO check class is Mongo document
-		classCriterias = new HashMap<>();
+		classCriteria = new HashMap<>();
 		lookupClass(clazz, new ArrayList<>());
 	}
 
@@ -64,18 +64,22 @@ public class CriteriaMap<T> {
 				if (of(f.getType().getDeclaredFields()).filter(df -> df.isAnnotationPresent(FilterCriteria.class)).findFirst().isPresent()
 						|| (f.getType().isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class))) {
 					List<Field> currentParents = new ArrayList<>(parents);
+					searchCriteria = parents.isEmpty() ? getSearchCriteria(f) : getSearchCriteria(f, currentParents);
+					queryCriteria = parents.isEmpty() ? getQueryCriteria(f) : getQueryCriteria(f, currentParents);
+					classCriteria.put(searchCriteria,
+							new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class)));
 					currentParents.add(f);
 					lookupClass(f.getType(), currentParents);
 				} else {
 					searchCriteria = getSearchCriteria(f);
 					queryCriteria = getQueryCriteria(f);
 					if (parents.isEmpty()) {
-						classCriterias.put(searchCriteria,
+						classCriteria.put(searchCriteria,
 								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class)));
 					} else {
 						searchCriteria = getSearchCriteria(f, parents);
 						queryCriteria = getQueryCriteria(f, parents);
-						classCriterias.put(getSearchCriteria(f, parents),
+						classCriteria.put(getSearchCriteria(f, parents),
 								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), false));
 					}
 				}
@@ -132,9 +136,9 @@ public class CriteriaMap<T> {
 	 * @return
 	 */
 	public CriteriaHolder getCriteriaHolder(String searchCriteria) {
-		BusinessRule.expect(classCriterias.containsKey(searchCriteria), Predicates.equalTo(Boolean.TRUE))
+		BusinessRule.expect(classCriteria.containsKey(searchCriteria), Predicates.equalTo(Boolean.TRUE))
 				.verify(ErrorType.INCORRECT_FILTER_PARAMETERS, "Criteria '" + searchCriteria + "' not defined");
-		return classCriterias.get(searchCriteria);
+		return classCriteria.get(searchCriteria);
 	}
 
 	/**
@@ -144,11 +148,11 @@ public class CriteriaMap<T> {
 	 * @return
 	 */
 	public Optional<CriteriaHolder> getCriteriaHolderUnchecked(String searchCriteria) {
-		return Optional.ofNullable(classCriterias.get(searchCriteria));
+		return Optional.ofNullable(classCriteria.get(searchCriteria));
 	}
 
 	@Override
 	public String toString() {
-		return "CriteriaMap [classCriterias=" + classCriterias + "]";
+		return "CriteriaMap [classCriteria=" + classCriteria + "]";
 	}
 }

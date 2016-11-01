@@ -38,7 +38,7 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 
 /**
- * Holds mapping between request search criterias and DB engine search criterias. Should be used for
+ * Holds mapping between request search criteria and DB engine search criteria. Should be used for
  * conversion request query parameters to DB engine query parameters.
  * 
  * @author Andrei Varabyeu

@@ -32,6 +32,7 @@ public class CriteriaMapTest {
 	@Test
 	public void projectCriteria() {
 		CriteriaMap<Project> projectCriteriaMap = new CriteriaMap<>(Project.class);
+		assertThat(projectCriteriaMap.getCriteriaHolder("configuration").getQueryCriteria()).isEqualTo("configuration");
 		assertThat(projectCriteriaMap.getCriteriaHolder("name").getQueryCriteria()).isEqualTo("name");
 		assertThat(projectCriteriaMap.getCriteriaHolder("configuration$entryType").getQueryCriteria()).isEqualTo("configuration.entryType");
 		assertThat(projectCriteriaMap.getCriteriaHolder("users").getQueryCriteria()).isEqualTo("users");
