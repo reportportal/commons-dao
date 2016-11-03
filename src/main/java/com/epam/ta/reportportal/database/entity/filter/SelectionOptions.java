@@ -17,8 +17,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.database.entity.filter;
 
 import java.io.Serializable;
@@ -36,8 +36,6 @@ public class SelectionOptions implements Serializable {
 	private String sortingColumnName;
 
 	private boolean isAsc;
-
-	private int quantity;
 
 	private int pageNumber;
 
@@ -57,14 +55,6 @@ public class SelectionOptions implements Serializable {
 		this.isAsc = isAsc;
 	}
 
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
 	public int getPageNumber() {
 		return pageNumber;
 	}
@@ -79,7 +69,6 @@ public class SelectionOptions implements Serializable {
 		int result = 1;
 		result = prime * result + (isAsc ? 1231 : 1237);
 		result = prime * result + pageNumber;
-		result = prime * result + quantity;
 		result = prime * result + ((sortingColumnName == null) ? 0 : sortingColumnName.hashCode());
 		return result;
 	}
@@ -96,8 +85,6 @@ public class SelectionOptions implements Serializable {
 		if (isAsc != other.isAsc)
 			return false;
 		if (pageNumber != other.pageNumber)
-			return false;
-		if (quantity != other.quantity)
 			return false;
 		if (sortingColumnName == null) {
 			if (other.sortingColumnName != null)
