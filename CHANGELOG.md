@@ -15,3 +15,9 @@
 
 ### BugFixes
 * Fixed issue with Launches cascade delete
+
+## 2.7.0
+##### Released: XXX November 2016
+
+### BugFixes
+* EPMRPP-21206 - Update personal project defaults
