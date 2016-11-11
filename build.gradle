@@ -35,7 +35,7 @@ dependencyManagement {
 }
 
 dependencies {
-    compile 'com.epam.reportportal:commons-model:2.7.0-ALPHA-5'
+    compile 'com.epam.reportportal:commons-model:2.7.0-ALPHA-6'
     compile 'com.epam.reportportal:commons-rules:2.7.0-ALPHA-2'
 
     compile 'net.coobird:thumbnailator:0.4.8'
