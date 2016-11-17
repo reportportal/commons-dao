@@ -86,10 +86,6 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		return awareStatistics;
 	}
 
-	public int level() {
-		return level;
-	}
-
 	private static final LevelComparator LEVEL_COMPARATOR = new LevelComparator();
 
 	/**
