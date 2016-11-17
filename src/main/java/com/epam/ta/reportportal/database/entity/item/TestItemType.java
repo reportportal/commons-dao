@@ -108,8 +108,8 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	}
 
 	public static class Constants {
-		private static final int SUITE_LEVEL = 0;
-		private static final int TEST_LEVEL = 1;
-		private static final int STEP_LEVEL = 2;
+		public static final int SUITE_LEVEL = 0;
+		public static final int TEST_LEVEL = 1;
+		public static final int STEP_LEVEL = 2;
 	}
 }

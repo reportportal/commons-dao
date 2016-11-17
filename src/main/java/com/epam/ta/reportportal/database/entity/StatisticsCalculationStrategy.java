@@ -17,13 +17,16 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * Statistics calculation strategy
- * 
+ *
  * @author Andrei Varabyeu
  */
 public enum StatisticsCalculationStrategy {
@@ -31,11 +34,26 @@ public enum StatisticsCalculationStrategy {
 	/**
 	 * Test based strategy. Only tests should be caclulated as statistics items
 	 */
-	TEST_BASED,
+	STEP_BASED,
 
 	/**
 	 * All (including befores and afters) should be calculated as statistics items
 	 */
-	ALL_ITEMS_BASED
+	ALL_ITEMS_BASED,
+
+	/**
+	 * Optimized for BDD-based launches. Does NOT calculates stats for step/scenario level, only starting from TEST level
+	 */
+	TEST_BASED;
+
+	/**
+	 * Loads strategy by it's string name. Case matters.
+	 *
+	 * @param strategy Strategy string
+	 * @return Optional of found enum value
+	 */
+	public static Optional<StatisticsCalculationStrategy> fromString(String strategy) {
+		return Arrays.stream(values()).filter(s -> s.name().equals(strategy)).findAny();
+	}
 
 }
