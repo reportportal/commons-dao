@@ -107,7 +107,7 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		}
 	}
 
-	private static class Constants {
+	public static class Constants {
 		private static final int SUITE_LEVEL = 0;
 		private static final int TEST_LEVEL = 1;
 		private static final int STEP_LEVEL = 2;
