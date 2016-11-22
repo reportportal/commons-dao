@@ -45,7 +45,7 @@ public class CascadeDeleteUserTriggerTest {
 		userRepository = mock(UserRepository.class);
 		cascadeDeleteUserTrigger = new CascadeDeleteUserTrigger(mock(DataStorage.class), mock(RepositoryProvider.class),
 				mock(ProjectRepository.class), mock(FavoriteResourceRepository.class), mock(UserPreferenceRepository.class),
-				userRepository, mock(CascadeDeleteProjectsService.class));
+				userRepository);
 	}
 
 	@Test

@@ -17,18 +17,21 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.entity.item.Activity;
 
 /**
- * Repository interface for {@link com.epam.ta.reportportal.database.entity.item.Activity}
- * instances. Provide basic CRUD operations due to the extension of
+ * Repository interface for
+ * {@link com.epam.ta.reportportal.database.entity.item.Activity} instances.
+ * Provide basic CRUD operations due to the extension of
  * {@link org.springframework.data.repository.CrudRepository}
  * 
  * @author Dzmitry_Kavalets
  */
 public interface ActivityRepository extends ReportPortalRepository<Activity, String>, ActivityRepositoryCustom {
+
+	void deleteByProjectRef(String projectRef);
 }

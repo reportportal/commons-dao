@@ -75,4 +75,6 @@ public interface LaunchRepository extends LaunchRepositoryCustom, ReportPortalRe
 	 */
 	@Query(value = "{ '_id': ?0 }", fields = "{'id' : 1, 'startTime':1, 'status':1, 'projectRef':1 }")
 	Launch loadStatusProjectRefAndStartTime(String id);
+
+	void deleteByProjectRef(String projectRef);
 }

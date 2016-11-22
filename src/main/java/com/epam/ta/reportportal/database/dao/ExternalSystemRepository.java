@@ -41,4 +41,6 @@ public interface ExternalSystemRepository extends ReportPortalRepository<Externa
 
 	@Query(value = " { 'projectRef' : ?0 } ")
 	List<ExternalSystem> findByProjectRef(String rpProject);
+
+	void deleteByProjectRef(String projectRef);
 }
