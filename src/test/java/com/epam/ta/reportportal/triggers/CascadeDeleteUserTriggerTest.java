@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ public class CascadeDeleteUserTriggerTest {
 		userRepository = mock(UserRepository.class);
 		cascadeDeleteUserTrigger = new CascadeDeleteUserTrigger(mock(DataStorage.class), mock(RepositoryProvider.class),
 				mock(ProjectRepository.class), mock(FavoriteResourceRepository.class), mock(UserPreferenceRepository.class),
-				userRepository, mock(CascadeDeleteProjectsService.class));
+				userRepository);
 	}
 
 	@Test

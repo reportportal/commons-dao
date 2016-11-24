@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.database.BinaryData;
 import com.epam.ta.reportportal.database.DataStorage;
 import com.epam.ta.reportportal.database.entity.BinaryContent;
 import com.epam.ta.reportportal.database.entity.Log;
-import com.epam.ta.reportportal.triggers.CascadeDeleteLogsService;
 
 public class LogRepositoryTest extends BaseDaoTest {
 
@@ -31,8 +30,6 @@ public class LogRepositoryTest extends BaseDaoTest {
 	private LogRepository logRepository;
 	@Autowired
 	private DataStorage dataStorage;
-	@Autowired
-	private CascadeDeleteLogsService cascadeDeleteLogsService;
 
 	private Log saved;
 	private String filename;
@@ -56,7 +53,7 @@ public class LogRepositoryTest extends BaseDaoTest {
 		assertTrue(logRepository.exists(saved.getId()));
 		assertNotNull(dataStorage.fetchData(thumbnail));
 		assertNotNull(dataStorage.fetchData(filename));
-		cascadeDeleteLogsService.delete(singletonList(saved.getId()));
+		logRepository.delete(singletonList(saved.getId()));
 		assertFalse(logRepository.exists(saved.getId()));
 		assertNull(dataStorage.fetchData(thumbnail));
 		assertNull(dataStorage.fetchData(filename));

@@ -6,19 +6,18 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.FilterCondition;
-import org.assertj.core.api.Condition;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Launch;
-import org.springframework.data.domain.Page;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.FilterCondition;
 
 public class LaunchRepositoryTest extends BaseDaoTest {
 
@@ -38,15 +37,24 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 	@Test
 	public void findByWithExcludeTest() {
 		findByProjectIdsData();
-		final Page<Launch> foundLaunches = launchRepository.findByFilterExcluding(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder()
-						.withCondition(com.epam.ta.reportportal.database.search.Condition.IN)
-						.withValue("project1,project2").withSearchCriteria("project").build())
-				.build(), null, "name");
+		final Page<Launch> foundLaunches = launchRepository
+				.findByFilterExcluding(
+						Filter.builder().withTarget(Launch.class)
+								.withCondition(
+										FilterCondition.builder().withCondition(com.epam.ta.reportportal.database.search.Condition.IN)
+												.withValue("project1,project2").withSearchCriteria("project").build())
+								.build(),
+						null, "name");
 
-		boolean nonNullName = StreamSupport.stream(foundLaunches.spliterator(), false).filter(l -> l.getName() != null).findAny().isPresent();
+		boolean nonNullName = StreamSupport.stream(foundLaunches.spliterator(), false).anyMatch(l -> l.getName() != null);
 		assertThat(nonNullName).isFalse();
+	}
+
+	@Test
+	public void deleteByProjectRef() {
+		findByProjectIdsData();
+		launchRepository.deleteByProjectRef("project1");
+		Assert.assertTrue(launchRepository.findLaunchIdsByProjectId("project1").isEmpty());
 	}
 
 	public List<Launch> findByProjectIdsData() {

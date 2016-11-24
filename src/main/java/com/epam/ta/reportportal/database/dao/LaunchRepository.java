@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,4 +75,6 @@ public interface LaunchRepository extends LaunchRepositoryCustom, ReportPortalRe
 	 */
 	@Query(value = "{ '_id': ?0 }", fields = "{'id' : 1, 'startTime':1, 'status':1, 'projectRef':1 }")
 	Launch loadStatusProjectRefAndStartTime(String id);
+
+	void deleteByProjectRef(String projectRef);
 }
