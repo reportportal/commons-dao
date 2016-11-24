@@ -82,8 +82,8 @@ public final class PersonalProjectUtils {
 		Project.Configuration defaultConfig = new Project.Configuration();
 		defaultConfig.setEntryType(EntryType.PERSONAL);
 		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
-		defaultConfig.setKeepLogs(KeepLogsDelay.TWO_WEEKS.getValue());
-		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.ONE_WEEK.getValue());
+		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
+		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
 		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
 		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.TEST_BASED);
 		defaultConfig.setExternalSystem(Collections.emptyList());
