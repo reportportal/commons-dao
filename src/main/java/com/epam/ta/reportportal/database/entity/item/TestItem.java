@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -200,10 +201,6 @@ public class TestItem implements Serializable, Identifiable<String>, Bidirection
 	}
 
 	public List<String> getPath() {
-		// null-safe getter
-		if (path == null) {
-			path = new ArrayList<>();
-		}
 		return path;
 	}
 

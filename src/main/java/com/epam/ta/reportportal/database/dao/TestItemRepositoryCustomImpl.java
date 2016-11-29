@@ -41,6 +41,7 @@ import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.commons.DbUtils;
@@ -88,6 +89,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public void dropIssueStatisticsType(String id, StatisticSubType type) {
 		mongoTemplate.updateMulti(query(where(ID_REFERENCE).is(id)), dropIssueTypeAware(type), TestItem.class);
+	}
+
+	@Override
+	public void setHasParents(String id) {
+		mongoTemplate.updateFirst(query(where(ID_REFERENCE).is(id)), Update.update("has_childs", true), TestItem.class);
 	}
 
 	@Override
