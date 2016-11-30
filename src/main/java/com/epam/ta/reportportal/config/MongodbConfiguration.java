@@ -168,24 +168,7 @@ public class MongodbConfiguration {
 		private Integer connectTimeout;
 		private Integer socketTimeout;
 		private Integer maxWaitTime;
-		private Boolean autoConnectRetry;
 		private Boolean socketKeepAlive;
-		private Boolean slaveOk;
-		private Integer writeTimeout;
-		private Integer writeNumber;
-		private Boolean writeFsync;
-
-//		rp.mongo.connectionsPerHost=50
-//		rp.mongo.threadsAllowedToBlockForConnectionMultiplier=50
-//		rp.mongo.connectTimeout=20000
-//		rp.mongo.socketTimeout=60000
-//		rp.mongo.maxWaitTime=120000
-//		rp.mongo.autoConnectRetry=true
-//		rp.mongo.socketKeepAlive=true
-//		rp.mongo.slaveOk=true
-//		rp.mongo.writeTimeout=0
-//		rp.mongo.writeNumber=1
-//		rp.mongo.writeFsync=false
 
 		public String getUser() {
 			return user;
