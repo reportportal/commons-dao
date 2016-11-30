@@ -92,8 +92,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public void setHasParents(String id) {
-		mongoTemplate.updateFirst(query(where(ID_REFERENCE).is(id)), Update.update("has_childs", true), TestItem.class);
+	public void updateHasChilds(String id, boolean hasChildren) {
+		mongoTemplate.updateFirst(query(where(ID_REFERENCE).is(id)), Update.update("has_childs", hasChildren), TestItem.class);
 	}
 
 	@Override

@@ -133,14 +133,15 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 		PersistentEntity<T, MongoPersistentProperty> persistentEntity = (PersistentEntity<T, MongoPersistentProperty>) mongoOperations
 				.getConverter().getMappingContext().getPersistentEntity(getEntityInformation().getJavaType());
 		persistentEntity.doWithProperties((PropertyHandler<MongoPersistentProperty>) persistentProperty -> {
-//			persistentProperty.getField().getType().isPrimitive()
-			Object value = Accessible.on(t).field(persistentProperty.getField()).getValue();
-			if (null != value) {
-				update.set(persistentProperty.getFieldName(), value);
+			if (!persistentEntity.isIdProperty(persistentProperty)){
+				Object value = Accessible.on(t).field(persistentProperty.getField()).getValue();
+				if (null != value) {
+					update.set(persistentProperty.getFieldName(), value);
+				}
 			}
 		});
 
-		WriteResult writeResult = mongoOperations.updateFirst(query(where(getEntityInformation().getIdAttribute()).is(id)), update,
+		WriteResult writeResult = mongoOperations.updateFirst(query(where(persistentEntity.getIdProperty().getFieldName()).is(id)), update,
 				getEntityInformation().getCollectionName());
 		if (1 != writeResult.getN()) {
 			throw new IncorrectResultSizeDataAccessException(1, writeResult.getN());
