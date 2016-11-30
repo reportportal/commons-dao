@@ -176,4 +176,12 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	List<TestItem> findForSpecifiedSubType(List<String> launchesIds, boolean hasChild, StatisticSubType type);
 
 	void dropIssueStatisticsType(String id, StatisticSubType type);
+
+	/**
+	 * Updates hasChilds value
+	 *
+	 * @param id TestItem ID
+	 * @param hasChilds hasChilds field value
+	 */
+	void updateHasChilds(String id, boolean hasChilds);
 }
