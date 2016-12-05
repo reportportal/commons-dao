@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
 
@@ -64,6 +64,16 @@ public class Dashboard extends Shareable implements Serializable, Identifiable<S
 
 	@CreatedDate
 	private Date creationDate;
+
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public Dashboard() {
 		widgets = new ArrayList<>();
@@ -120,7 +130,8 @@ public class Dashboard extends Shareable implements Serializable, Identifiable<S
 		private List<Integer> widgetSize;
 		private List<Integer> widgetPosition;
 
-		public WidgetObject() {}
+		public WidgetObject() {
+		}
 
 		public WidgetObject(String widgetId, List<Integer> widgetSize, List<Integer> widgetPosition) {
 			this.setWidgetId(widgetId);

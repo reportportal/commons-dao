@@ -67,3 +67,7 @@ dependencies {
     testCompile('org.hibernate:hibernate-validator')
 
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2'
+}
