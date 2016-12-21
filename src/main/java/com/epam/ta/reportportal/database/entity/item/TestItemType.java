@@ -17,8 +17,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.database.entity.item;
 
 import java.io.Serializable;
@@ -62,9 +62,13 @@ AFTER_TEST(2, false);
 		return null;
 	}
 
+	public int getLevel() {
+		return level;
+	}
+
 	/**
 	 * Is level of current item higher than level of specified
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -74,7 +78,7 @@ AFTER_TEST(2, false);
 
 	/**
 	 * Is level of current item lower than level of specified
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -91,9 +95,9 @@ AFTER_TEST(2, false);
 	/**
 	 * Level Comparator for TestItem types. Returns TRUE of level of first
 	 * object is <b>lower</b> than level of second object
-	 * 
+	 *
 	 * @author Andrei Varabyeu
-	 * 
+	 *
 	 */
 	private static class LevelComparator implements Comparator<TestItemType>, Serializable {
 

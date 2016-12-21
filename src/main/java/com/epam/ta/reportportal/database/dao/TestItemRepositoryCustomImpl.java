@@ -67,6 +67,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ISSUE_TYPE = "issue.issueType";
 	private static final String ISSUE_TICKET = "issue.externalSystemIssues";
 	private static final String ISSUE_DESCRIPTION = "issue.issueDescription";
+	private static final String ISSUE = "issue";
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
 
@@ -377,6 +378,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				+ type.getLocator();
 		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds)).addCriteria(where(HAS_CHILD).is(hasChild))
 				.addCriteria(where(issueField).exists(true)).with(new Sort(Sort.Direction.ASC, START_TIME));
+		return mongoTemplate.find(query, TestItem.class);
+	}
+
+	@Override
+	public List<TestItem> findTestItemWithIssues(String launchId) {
+		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
+				where(ISSUE).exists(true));
+		Query query = query(externalIssues);
 		return mongoTemplate.find(query, TestItem.class);
 	}
 }
