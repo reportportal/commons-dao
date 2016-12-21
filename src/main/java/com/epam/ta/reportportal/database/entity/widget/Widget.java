@@ -17,8 +17,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.database.entity.widget;
 
 import java.io.Serializable;
@@ -42,9 +42,9 @@ public class Widget extends Shareable implements Serializable, Identifiable<Stri
 
 	public static final String USER_NAME = "userName";
 	public static final String NAME = "name";
-    public static final String WIDGET = "widget";
-    public static final String GADGET_TYPE = "contentOptions.gadgetType";
-    public static final String CONTENT_FIELDS = "contentOptions.contentFields";
+	public static final String WIDGET = "widget";
+	public static final String GADGET_TYPE = "contentOptions.gadgetType";
+	public static final String CONTENT_FIELDS = "contentOptions.contentFields";
 
 	private static final long serialVersionUID = -8462041796130099338L;
 
@@ -57,8 +57,18 @@ public class Widget extends Shareable implements Serializable, Identifiable<Stri
 
 	private String applyingFilterId;
 
-	//TODO consider creating separate level for project related objects.
+	// TODO consider creating separate level for project related objects.
 	private String projectName;
+
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	@Override
 	public String getId() {
