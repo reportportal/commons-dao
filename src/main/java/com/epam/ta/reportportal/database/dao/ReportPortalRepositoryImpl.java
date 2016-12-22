@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,9 +133,11 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 		PersistentEntity<T, MongoPersistentProperty> persistentEntity = (PersistentEntity<T, MongoPersistentProperty>) mongoOperations
 				.getConverter().getMappingContext().getPersistentEntity(getEntityInformation().getJavaType());
 		persistentEntity.doWithProperties((PropertyHandler<MongoPersistentProperty>) persistentProperty -> {
-			Object value = Accessible.on(t).field(persistentProperty.getField()).getValue();
-			if (null != value) {
-				update.set(persistentProperty.getFieldName(), value);
+			if (!persistentEntity.isIdProperty(persistentProperty)){
+				Object value = Accessible.on(t).field(persistentProperty.getField()).getValue();
+				if (null != value) {
+					update.set(persistentProperty.getFieldName(), value);
+				}
 			}
 		});
 

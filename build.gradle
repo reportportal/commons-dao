@@ -20,7 +20,6 @@ apply from: 'release-lib.gradle'
 apply from: 'build-quality.gradle'
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url "http://dl.bintray.com/epam/reportportal" }
 
@@ -36,8 +35,9 @@ dependencyManagement {
 }
 
 dependencies {
-    compile 'com.epam.reportportal:commons-model:2.7.0-bdd'
-    compile 'com.epam.reportportal:commons-rules:2.7.0-ALPHA-4'
+    compile 'com.epam.reportportal:commons-model:2.7.0'
+    compile 'com.epam.reportportal:commons-rules:2.7.0'
+
 
     compile 'net.coobird:thumbnailator:0.4.8'
     compile 'commons-validator:commons-validator:1.5.1'

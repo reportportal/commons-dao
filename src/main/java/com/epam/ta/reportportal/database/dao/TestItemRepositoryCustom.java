@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,5 +175,21 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> findForSpecifiedSubType(List<String> launchesIds, boolean hasChild, StatisticSubType type);
 
+	/**
+	 * Get test-items for specified launch with any issue type
+	 *
+	 * @param launchId
+	 * @return
+	 */
+	List<TestItem> findTestItemWithIssues(String launchId);
+
 	void dropIssueStatisticsType(String id, StatisticSubType type);
+
+	/**
+	 * Updates hasChilds value
+	 *
+	 * @param id TestItem ID
+	 * @param hasChilds hasChilds field value
+	 */
+	void updateHasChilds(String id, boolean hasChilds);
 }

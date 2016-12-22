@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.commons.DbUtils;
@@ -66,6 +67,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ISSUE_TYPE = "issue.issueType";
 	private static final String ISSUE_TICKET = "issue.externalSystemIssues";
 	private static final String ISSUE_DESCRIPTION = "issue.issueDescription";
+	private static final String ISSUE = "issue";
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
 
@@ -88,6 +90,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public void dropIssueStatisticsType(String id, StatisticSubType type) {
 		mongoTemplate.updateMulti(query(where(ID_REFERENCE).is(id)), dropIssueTypeAware(type), TestItem.class);
+	}
+
+	@Override
+	public void updateHasChilds(String id, boolean hasChildren) {
+		mongoTemplate.updateFirst(query(where(ID_REFERENCE).is(id)), Update.update("has_childs", hasChildren), TestItem.class);
 	}
 
 	@Override
@@ -371,6 +378,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				+ type.getLocator();
 		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds)).addCriteria(where(HAS_CHILD).is(hasChild))
 				.addCriteria(where(issueField).exists(true)).with(new Sort(Sort.Direction.ASC, START_TIME));
+		return mongoTemplate.find(query, TestItem.class);
+	}
+
+	@Override
+	public List<TestItem> findTestItemWithIssues(String launchId) {
+		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
+				where(ISSUE).exists(true));
+		Query query = query(externalIssues);
 		return mongoTemplate.find(query, TestItem.class);
 	}
 }

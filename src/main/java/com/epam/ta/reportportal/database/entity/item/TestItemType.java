@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.database.entity.item;
 
 import java.io.Serializable;
@@ -62,9 +62,13 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		return null;
 	}
 
+	public int getLevel() {
+		return level;
+	}
+
 	/**
 	 * Is level of current item higher than level of specified
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -74,7 +78,7 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 
 	/**
 	 * Is level of current item lower than level of specified
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -91,9 +95,9 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	/**
 	 * Level Comparator for TestItem types. Returns TRUE of level of first
 	 * object is <b>lower</b> than level of second object
-	 * 
+	 *
 	 * @author Andrei Varabyeu
-	 * 
+	 *
 	 */
 	private static class LevelComparator implements Comparator<TestItemType>, Serializable {
 

@@ -3,7 +3,7 @@
  * 
  * 
  * This file is part of EPAM Report Portal.
- * https://github.com/epam/ReportPortal
+ * https://github.com/reportportal/commons-dao
  * 
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,27 @@
 
 package com.epam.ta.reportportal.database.dao;
 
+import static com.epam.ta.reportportal.config.CacheConfiguration.USERS_CACHE;
+import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
+import static com.epam.ta.reportportal.database.entity.user.User.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
+
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
 import com.epam.ta.reportportal.commons.Constants;
 import com.epam.ta.reportportal.commons.EntityUtils;
 import com.epam.ta.reportportal.database.BinaryData;
@@ -28,26 +49,6 @@ import com.epam.ta.reportportal.database.DataStorage;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.entity.user.UserType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
-
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
-import static com.epam.ta.reportportal.database.entity.user.User.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
 
 /**
  * Default Implementation of {@link UserRepositoryCustom}
@@ -86,13 +87,14 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return dataStorage.saveData(binaryData, photoFilename);
 	}
 
+	@CacheEvict(key = "#p0", value = USERS_CACHE, beforeInvocation = true)
 	@Override
 	public String replaceUserPhoto(String login, BinaryData binaryData) {
 		Query q = query(where(User.LOGIN).is(login));
 		q.fields().include(User.LOGIN).include(User.PHOTO_ID);
 
 		User user = mongoOperations.findOne(q, User.class);
-		if (null == user){
+		if (null == user) {
 			throw new ReportPortalException("User with name '" + login + "' not found");
 		}
 		return replaceUserPhoto(user, binaryData);
@@ -104,7 +106,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		 * Clean out-dated user photo (if exists) and create newest one
 		 */
 		if (!StringUtils.isEmpty(user.getPhotoId())) {
-            /* make sure this is nothing associated with user */
+			/* make sure this is nothing associated with user */
 			dataStorage.deleteData(user.getPhotoId());
 		}
 
