@@ -27,21 +27,21 @@ import java.util.Comparator;
 public enum TestItemType implements Comparable<TestItemType> {
 
 //@formatter:off
-SUITE(0, true),
-STORY(0, true),
-TEST(1, true),
-SCENARIO(1, true),
-STEP(2, true),
-BEFORE_CLASS(2, false),
-BEFORE_GROUPS(2, false),
-BEFORE_METHOD(2, false),
-BEFORE_SUITE(1, false),
-BEFORE_TEST(2, false),
-AFTER_CLASS(2, false),
-AFTER_GROUPS(2, false),
-AFTER_METHOD(2, false),
-AFTER_SUITE(1, false),
-AFTER_TEST(2, false);
+SUITE(Constants.SUITE_LEVEL, true),
+STORY(Constants.SUITE_LEVEL, true),
+TEST(Constants.TEST_LEVEL, true),
+SCENARIO(Constants.TEST_LEVEL, true),
+STEP(Constants.STEP_LEVEL, true),
+BEFORE_CLASS(Constants.STEP_LEVEL, false),
+BEFORE_GROUPS(Constants.STEP_LEVEL, false),
+BEFORE_METHOD(Constants.STEP_LEVEL, false),
+BEFORE_SUITE(Constants.TEST_LEVEL, false),
+BEFORE_TEST(Constants.STEP_LEVEL, false),
+AFTER_CLASS(Constants.STEP_LEVEL, false),
+AFTER_GROUPS(Constants.STEP_LEVEL, false),
+AFTER_METHOD(Constants.STEP_LEVEL, false),
+AFTER_SUITE(Constants.TEST_LEVEL, false),
+AFTER_TEST(Constants.STEP_LEVEL, false);
 //@formatter:on
 
 	private int level;
@@ -107,4 +107,9 @@ AFTER_TEST(2, false);
 		}
 	}
 
+	public static class Constants {
+		public static final int SUITE_LEVEL = 0;
+		public static final int TEST_LEVEL = 1;
+		public static final int STEP_LEVEL = 2;
+	}
 }
