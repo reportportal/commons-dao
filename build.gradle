@@ -22,7 +22,7 @@ apply from: 'build-quality.gradle'
 repositories {
     mavenCentral()
     maven { url "http://dl.bintray.com/epam/reportportal" }
-
+    maven { url 'https://jitpack.io' }
 }
 
 sourceCompatibility = 1.8
@@ -30,12 +30,16 @@ targetCompatibility = 1.8
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:1.4.1.RELEASE"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:1.4.2.RELEASE"
     }
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
-    compile 'com.epam.reportportal:commons-model:2.7.0'
+    compile 'com.github.reportportal:commons-model:master-SNAPSHOT'
     compile 'com.epam.reportportal:commons-rules:2.7.0'
 
 
@@ -66,4 +70,7 @@ dependencies {
     testCompile 'com.github.fakemongo:fongo:2.0.6'
     testCompile('org.hibernate:hibernate-validator')
 
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.2'
+    }
 }
