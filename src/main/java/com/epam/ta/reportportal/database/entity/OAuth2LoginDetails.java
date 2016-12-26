@@ -26,6 +26,8 @@ public class OAuth2LoginDetails implements Serializable {
 
 	private String authenticationScheme;
 
+	private String clientAuthenticationScheme;
+
 	private String grantType;
 
 	private String tokenName = "access_token";
@@ -112,6 +114,14 @@ public class OAuth2LoginDetails implements Serializable {
 		this.userAuthorizationUri = userAuthorizationUri;
 	}
 
+	public String getClientAuthenticationScheme() {
+		return clientAuthenticationScheme;
+	}
+
+	public void setClientAuthenticationScheme(String clientAuthenticationScheme) {
+		this.clientAuthenticationScheme = clientAuthenticationScheme;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -122,22 +132,21 @@ public class OAuth2LoginDetails implements Serializable {
 		return Objects.equals(id, that.id) && Objects.equals(clientId, that.clientId) && Objects.equals(accessTokenUri, that.accessTokenUri)
 				&& Objects.equals(userAuthorizationUri, that.userAuthorizationUri) && Objects.equals(scope, that.scope) && Objects
 				.equals(clientSecret, that.clientSecret) && Objects.equals(authenticationScheme, that.authenticationScheme) && Objects
-				.equals(grantType, that.grantType) && Objects.equals(tokenName, that.tokenName) && Objects
-				.equals(restrictions, that.restrictions);
+				.equals(clientAuthenticationScheme, that.clientAuthenticationScheme) && Objects.equals(grantType, that.grantType) && Objects
+				.equals(tokenName, that.tokenName) && Objects.equals(restrictions, that.restrictions);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects
-				.hash(id, clientId, accessTokenUri, userAuthorizationUri, scope, clientSecret, authenticationScheme, grantType, tokenName,
-						restrictions);
+		return Objects.hash(id, clientId, accessTokenUri, userAuthorizationUri, scope, clientSecret, authenticationScheme,
+				clientAuthenticationScheme, grantType, tokenName, restrictions);
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this).add("id", id).add("clientId", clientId).add("accessTokenUri", accessTokenUri)
 				.add("userAuthorizationUri", userAuthorizationUri).add("scope", scope).add("clientSecret", clientSecret)
-				.add("authenticationScheme", authenticationScheme).add("grantType", grantType).add("tokenName", tokenName)
-				.add("restrictions", restrictions).toString();
+				.add("authenticationScheme", authenticationScheme).add("clientAuthenticationScheme", clientAuthenticationScheme)
+				.add("grantType", grantType).add("tokenName", tokenName).add("restrictions", restrictions).toString();
 	}
 }
