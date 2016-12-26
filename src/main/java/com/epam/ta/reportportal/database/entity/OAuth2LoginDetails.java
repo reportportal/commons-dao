@@ -1,12 +1,13 @@
 package com.epam.ta.reportportal.database.entity;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Andrei Varabyeu
  */
-public class OAuth2LoginDetails {
+public class OAuth2LoginDetails implements Serializable {
 
 	private String id;
 
