@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -61,6 +62,8 @@ public class ServerSettings implements Serializable, Modifiable, Identifiable<St
 
 	private ServerEmailConfig serverEmailConfig;
 
+	private List<OAuth2LoginDetails> oAuth2LoginDetails;
+
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
 	@Field(LAST_MODIFIED)
@@ -98,5 +101,13 @@ public class ServerSettings implements Serializable, Modifiable, Identifiable<St
 
 	public boolean getActive() {
 		return active;
+	}
+
+	public List<OAuth2LoginDetails> getoAuth2LoginDetails() {
+		return oAuth2LoginDetails;
+	}
+
+	public void setoAuth2LoginDetails(List<OAuth2LoginDetails> oAuth2LoginDetails) {
+		this.oAuth2LoginDetails = oAuth2LoginDetails;
 	}
 }
