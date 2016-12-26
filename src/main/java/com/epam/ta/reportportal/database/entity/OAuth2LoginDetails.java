@@ -1,8 +1,11 @@
 package com.epam.ta.reportportal.database.entity;
 
+import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Andrei Varabyeu
@@ -14,6 +17,8 @@ public class OAuth2LoginDetails implements Serializable {
 	private String clientId;
 
 	private String accessTokenUri;
+
+	private String userAuthorizationUri;
 
 	private List<String> scope;
 
@@ -97,5 +102,42 @@ public class OAuth2LoginDetails implements Serializable {
 
 	public void setRestrictions(Map<String, ?> restrictions) {
 		this.restrictions = restrictions;
+	}
+
+	public String getUserAuthorizationUri() {
+		return userAuthorizationUri;
+	}
+
+	public void setUserAuthorizationUri(String userAuthorizationUri) {
+		this.userAuthorizationUri = userAuthorizationUri;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		OAuth2LoginDetails that = (OAuth2LoginDetails) o;
+		return Objects.equals(id, that.id) && Objects.equals(clientId, that.clientId) && Objects.equals(accessTokenUri, that.accessTokenUri)
+				&& Objects.equals(userAuthorizationUri, that.userAuthorizationUri) && Objects.equals(scope, that.scope) && Objects
+				.equals(clientSecret, that.clientSecret) && Objects.equals(authenticationScheme, that.authenticationScheme) && Objects
+				.equals(grantType, that.grantType) && Objects.equals(tokenName, that.tokenName) && Objects
+				.equals(restrictions, that.restrictions);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects
+				.hash(id, clientId, accessTokenUri, userAuthorizationUri, scope, clientSecret, authenticationScheme, grantType, tokenName,
+						restrictions);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("id", id).add("clientId", clientId).add("accessTokenUri", accessTokenUri)
+				.add("userAuthorizationUri", userAuthorizationUri).add("scope", scope).add("clientSecret", clientSecret)
+				.add("authenticationScheme", authenticationScheme).add("grantType", grantType).add("tokenName", tokenName)
+				.add("restrictions", restrictions).toString();
 	}
 }
