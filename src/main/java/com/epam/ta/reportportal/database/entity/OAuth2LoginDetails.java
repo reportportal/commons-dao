@@ -12,8 +12,6 @@ import java.util.Objects;
  */
 public class OAuth2LoginDetails implements Serializable {
 
-	private String id;
-
 	private String clientId;
 
 	private String accessTokenUri;
@@ -33,14 +31,6 @@ public class OAuth2LoginDetails implements Serializable {
 	private String tokenName = "access_token";
 
 	private Map<String, ?> restrictions;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getClientId() {
 		return clientId;
@@ -129,7 +119,7 @@ public class OAuth2LoginDetails implements Serializable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		OAuth2LoginDetails that = (OAuth2LoginDetails) o;
-		return Objects.equals(id, that.id) && Objects.equals(clientId, that.clientId) && Objects.equals(accessTokenUri, that.accessTokenUri)
+		return Objects.equals(clientId, that.clientId) && Objects.equals(accessTokenUri, that.accessTokenUri)
 				&& Objects.equals(userAuthorizationUri, that.userAuthorizationUri) && Objects.equals(scope, that.scope) && Objects
 				.equals(clientSecret, that.clientSecret) && Objects.equals(authenticationScheme, that.authenticationScheme) && Objects
 				.equals(clientAuthenticationScheme, that.clientAuthenticationScheme) && Objects.equals(grantType, that.grantType) && Objects
@@ -138,13 +128,13 @@ public class OAuth2LoginDetails implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, clientId, accessTokenUri, userAuthorizationUri, scope, clientSecret, authenticationScheme,
+		return Objects.hash(clientId, accessTokenUri, userAuthorizationUri, scope, clientSecret, authenticationScheme,
 				clientAuthenticationScheme, grantType, tokenName, restrictions);
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("id", id).add("clientId", clientId).add("accessTokenUri", accessTokenUri)
+		return MoreObjects.toStringHelper(this).add("clientId", clientId).add("accessTokenUri", accessTokenUri)
 				.add("userAuthorizationUri", userAuthorizationUri).add("scope", scope).add("clientSecret", clientSecret)
 				.add("authenticationScheme", authenticationScheme).add("clientAuthenticationScheme", clientAuthenticationScheme)
 				.add("grantType", grantType).add("tokenName", tokenName).add("restrictions", restrictions).toString();
