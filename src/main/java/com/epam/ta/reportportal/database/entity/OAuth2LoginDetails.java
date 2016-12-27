@@ -30,7 +30,7 @@ public class OAuth2LoginDetails implements Serializable {
 
 	private String tokenName = "access_token";
 
-	private Map<String, ?> restrictions;
+	private Map<String, String> restrictions;
 
 	public String getClientId() {
 		return clientId;
@@ -88,11 +88,11 @@ public class OAuth2LoginDetails implements Serializable {
 		this.tokenName = tokenName;
 	}
 
-	public Map<String, ?> getRestrictions() {
+	public Map<String, String> getRestrictions() {
 		return restrictions;
 	}
 
-	public void setRestrictions(Map<String, ?> restrictions) {
+	public void setRestrictions(Map<String, String> restrictions) {
 		this.restrictions = restrictions;
 	}
 
