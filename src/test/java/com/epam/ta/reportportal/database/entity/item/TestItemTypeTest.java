@@ -38,6 +38,18 @@ public class TestItemTypeTest {
 	}
 
 	@Test
+	public void checkEquals() {
+		Assert.assertThat(ERROR_MESSAGE, TestItemType.TEST.higherThan(TestItemType.TEST), CoreMatchers.is(false));
+		Assert.assertThat(ERROR_MESSAGE, TestItemType.STEP.higherThan(TestItemType.STEP), CoreMatchers.is(false));
+	}
+
+	@Test
+	public void checkSameLevel() {
+		Assert.assertThat(ERROR_MESSAGE, TestItemType.TEST.sameLevel(TestItemType.TEST), CoreMatchers.is(true));
+		Assert.assertThat(ERROR_MESSAGE, TestItemType.STEP.sameLevel(TestItemType.STEP), CoreMatchers.is(true));
+	}
+
+	@Test
 	public void checkLowerThan() {
 		Assert.assertThat(ERROR_MESSAGE, TestItemType.TEST.lowerThan(TestItemType.SUITE), CoreMatchers.is(true));
 		Assert.assertThat(ERROR_MESSAGE, TestItemType.STEP.lowerThan(TestItemType.TEST), CoreMatchers.is(true));

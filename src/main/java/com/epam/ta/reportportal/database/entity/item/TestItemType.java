@@ -26,7 +26,7 @@ import java.util.Comparator;
 
 public enum TestItemType implements Comparable<TestItemType> {
 
-//@formatter:off
+	//@formatter:off
 SUITE(Constants.SUITE_LEVEL, true),
 STORY(Constants.SUITE_LEVEL, true),
 TEST(Constants.TEST_LEVEL, true),
@@ -62,14 +62,14 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		return null;
 	}
 
-	public int getLevel() {
-		return level;
+	public boolean sameLevel(TestItemType other) {
+		return 0 == LEVEL_COMPARATOR.compare(this, other);
 	}
 
 	/**
 	 * Is level of current item higher than level of specified
 	 *
-	 * @param type
+	 * @param type Item to compare
 	 * @return
 	 */
 	public boolean higherThan(TestItemType type) {
@@ -79,7 +79,7 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	/**
 	 * Is level of current item lower than level of specified
 	 *
-	 * @param type
+	 * @param type Item to compare
 	 * @return
 	 */
 	public boolean lowerThan(TestItemType type) {
@@ -97,13 +97,12 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	 * object is <b>lower</b> than level of second object
 	 *
 	 * @author Andrei Varabyeu
-	 *
 	 */
 	private static class LevelComparator implements Comparator<TestItemType>, Serializable {
 
 		@Override
 		public int compare(TestItemType o1, TestItemType o2) {
-			return (o1.level == o2.level) ? 1 : (o1.level < o2.level) ? 1 : -1;
+			return (o1.level == o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
 		}
 	}
 
