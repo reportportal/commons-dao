@@ -19,6 +19,7 @@ apply plugin: 'java'
 apply from: 'release-lib.gradle'
 apply from: 'build-quality.gradle'
 
+
 repositories {
     mavenCentral()
     maven { url "http://dl.bintray.com/epam/reportportal" }
