@@ -51,11 +51,10 @@ dependencies {
     compile 'org.springframework.data:spring-data-mongodb'
     compile("org.springframework.boot:spring-boot")
     compile("org.springframework:spring-context-support")
-    compile("org.springframework:spring-aspects")
     compile 'org.springframework.data:spring-data-redis'
 
 
-    compile('com.google.guava:guava:19.0')
+    compile('com.google.guava:guava:21.0')
     compile 'com.google.code.findbugs:jsr305:3.0.1'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.reflections:reflections:0.9.10'
