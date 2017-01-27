@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.entity.filter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -121,31 +122,17 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-
 		UserFilter that = (UserFilter) o;
-
-		if (isLink != that.isLink)
-			return false;
-		if (id != null ? !id.equals(that.id) : that.id != null)
-			return false;
-		if (name != null ? !name.equals(that.name) : that.name != null)
-			return false;
-		if (filter != null ? !filter.equals(that.filter) : that.filter != null)
-			return false;
-		if (selectionOptions != null ? !selectionOptions.equals(that.selectionOptions) : that.selectionOptions != null)
-			return false;
-		return (projectName != null ? !projectName.equals(that.projectName) : that.projectName != null);
-
+		return isLink == that.isLink &&
+				Objects.equals(id, that.id) &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(filter, that.filter) &&
+				Objects.equals(selectionOptions, that.selectionOptions) &&
+				Objects.equals(projectName, that.projectName);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = id != null ? id.hashCode() : 0;
-		result = 31 * result + (name != null ? name.hashCode() : 0);
-		result = 31 * result + (filter != null ? filter.hashCode() : 0);
-		result = 31 * result + (selectionOptions != null ? selectionOptions.hashCode() : 0);
-		result = 31 * result + (projectName != null ? projectName.hashCode() : 0);
-		result = 31 * result + (isLink ? 1 : 0);
-		return result;
+		return Objects.hash(id, name, filter, selectionOptions, projectName, isLink);
 	}
 }
