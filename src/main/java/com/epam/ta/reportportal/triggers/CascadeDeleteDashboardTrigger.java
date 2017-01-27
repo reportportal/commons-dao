@@ -20,14 +20,6 @@
  */
 package com.epam.ta.reportportal.triggers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
-import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
-import org.springframework.stereotype.Component;
-
-import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.Preconditions;
 import com.epam.ta.reportportal.commons.Utils;
 import com.epam.ta.reportportal.database.dao.DashboardRepository;
@@ -38,6 +30,15 @@ import com.epam.ta.reportportal.database.entity.favorite.FavoriteResource;
 import com.epam.ta.reportportal.database.entity.widget.Widget;
 import com.epam.ta.reportportal.ws.model.favorites.FavoriteResourceTypes;
 import com.google.common.collect.Sets;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
+import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Deletes all dashboard's binary data related to specified {@link Dashboard}
@@ -83,7 +84,9 @@ public class CascadeDeleteDashboardTrigger extends AbstractMongoEventListener<Da
 		if (!Preconditions.NOT_EMPTY_COLLECTION.test(widgets)) {
 			return;
 		}
-		List<Widget> ownedWidgets = widgetRepository.findOnlyOwnedEntities(Sets.newHashSet(DbUtils.toWidgetIds(widgets)), owner);
+		List<Widget> ownedWidgets = widgetRepository
+				.findOnlyOwnedEntities(newHashSet(widgets.stream().map(Dashboard.WidgetObject::getWidgetId).collect(
+						Collectors.toList())), owner);
 		widgetRepository.delete(ownedWidgets);
 	}
 

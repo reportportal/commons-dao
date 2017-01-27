@@ -69,7 +69,7 @@ public class Preconditions {
 	public static final Predicate<TestItem> TEST_ITEM_FINISHED = item -> null != item.getEndTime();
 
 	public static final Predicate<List<TestItem>> HAS_IN_PROGRESS_ITEMS = descendants -> descendants.stream()
-			.filter(descendant -> Status.IN_PROGRESS.equals(descendant.getStatus())).findFirst().isPresent();
+			.anyMatch(descendant -> Status.IN_PROGRESS.equals(descendant.getStatus()));
  
 	public static Predicate<AclEntry> hasACLPermission(final String projectId, final AclPermissions permissions) {
 		return input -> input != null && input.getProjectId().equals(projectId) && (permissions == null || input.getPermissions()
@@ -81,7 +81,7 @@ public class Preconditions {
 	}
 	
 	public static Predicate<Acl> isSharedTo(final String projectName) {
-		return input -> input.getEntries().stream().filter(hasACLPermission(projectName, AclPermissions.READ)).findFirst().isPresent();
+		return input -> input.getEntries().stream().anyMatch(hasACLPermission(projectName, AclPermissions.READ));
 	}
 
 	public static final Predicate<FilterCondition> HAS_ANY_MODE = hasMode(null);
@@ -139,7 +139,7 @@ public class Preconditions {
 	 * @return
 	 */
 	public static <T> Predicate<Iterable<T>> contains(final Predicate<T> filter) {
-		return iterable -> StreamSupport.stream(iterable.spliterator(), false).filter(filter).findFirst().isPresent();
+		return iterable -> StreamSupport.stream(iterable.spliterator(), false).anyMatch(filter);
 	}
 
 	/**

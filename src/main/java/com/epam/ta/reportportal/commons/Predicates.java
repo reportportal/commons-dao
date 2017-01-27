@@ -17,11 +17,12 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package com.epam.ta.reportportal.commons;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -32,48 +33,48 @@ import java.util.stream.StreamSupport;
  */
 public class Predicates {
 
-	private Predicates() {
-		//statics only
-	}
+    private Predicates() {
+        //statics only
+    }
 
-	public static <T> Predicate<T> notNull() {
-		return t -> t != null;
-	}
+    public static <T> Predicate<T> notNull() {
+        return Objects::nonNull;
+    }
 
-	public static <T> Predicate<T> isNull() {
-		return t -> t == null;
-	}
+    public static <T> Predicate<T> isNull() {
+        return Objects::isNull;
+    }
 
-	public static <T> Predicate<T> equalTo(T target) {
-		return (target == null) ? Predicates.<T> isNull() : t -> t.equals(target);
-	}
+    public static <T> Predicate<T> equalTo(T target) {
+        return (target == null) ? Predicates.<T>isNull() : t -> t.equals(target);
+    }
 
-	public static <T> Predicate<T> not(Predicate<T> predicate) {
-		return item -> !predicate.test(item);
-	}
+    public static <T> Predicate<T> not(Predicate<T> predicate) {
+        return item -> !predicate.test(item);
+    }
 
-	public static <T> Predicate<T> in(Collection<? extends T> target) {
-		return target::contains;
-	}
+    public static <T> Predicate<T> in(Collection<? extends T> target) {
+        return target::contains;
+    }
 
-	public static <T> Predicate<T> alwaysFalse() {
-		return t -> false;
-	}
+    public static <T> Predicate<T> alwaysFalse() {
+        return t -> false;
+    }
 
-	public static <T> Predicate<T> and(List<? extends Predicate<? super T>> components) {
-		return t -> !components.stream().filter(predicate -> !predicate.test(t)).findFirst().isPresent();
-	}
+    public static <T> Predicate<T> and(List<? extends Predicate<? super T>> components) {
+        return t -> !components.stream().anyMatch(predicate -> !predicate.test(t));
+    }
 
-	@SuppressWarnings("unchecked")
-	public static <T> Predicate<T> or(Predicate<? super T>... components) {
-		return t -> Stream.of(components).filter(predicate -> predicate.test(t)).findFirst().isPresent();
-	}
+    @SuppressWarnings("unchecked")
+    public static <T> Predicate<T> or(Predicate<? super T>... components) {
+        return t -> Stream.of(components).anyMatch(predicate -> predicate.test(t));
+    }
 
-	public static <T> Predicate<T> or(Iterable<? extends Predicate<? super T>> components) {
-		return t -> StreamSupport.stream(components.spliterator(), false).filter(predicate -> predicate.test(t)).findFirst().isPresent();
-	}
+    public static <T> Predicate<T> or(Iterable<? extends Predicate<? super T>> components) {
+        return t -> StreamSupport.stream(components.spliterator(), false).anyMatch(predicate -> predicate.test(t));
+    }
 
-	public static Predicate<Optional<?>> isPresent() {
-		return Optional::isPresent;
-	}
+    public static Predicate<Optional<?>> isPresent() {
+        return Optional::isPresent;
+    }
 }

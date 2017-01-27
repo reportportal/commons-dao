@@ -17,11 +17,10 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.commons;
 
-import com.epam.ta.reportportal.database.entity.Dashboard.WidgetObject;
 import org.springframework.hateoas.Identifiable;
 
 import java.util.List;
@@ -30,33 +29,22 @@ import java.util.stream.StreamSupport;
 
 /**
  * Useful utils to be able to work with mongo database
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class DbUtils {
 
-	private DbUtils() {
+    private DbUtils() {
 
-	}
+    }
 
-	/**
-	 * Converts objects to IDs
-	 * 
-	 * @param objects
-	 * @return
-	 */
-	public static List<String> toIds(Iterable<? extends Identifiable<String>> objects) {
-		return StreamSupport.stream(objects.spliterator(), false).map(Identifiable::getId).collect(Collectors.toList());
-	}
-
-	/**
-	 * Converts WidgetObjects to IDs
-	 * 
-	 * @param widgets
-	 * @return
-	 */
-	public static List<String> toWidgetIds(List<WidgetObject> widgets) {
-		return widgets.stream().map(WidgetObject::getWidgetId).collect(Collectors.toList());
-	}
+    /**
+     * Converts objects to IDs
+     *
+     * @param objects Objects to be converter
+     * @return Converted list
+     */
+    public static List<String> toIds(Iterable<? extends Identifiable<String>> objects) {
+        return StreamSupport.stream(objects.spliterator(), false).map(Identifiable::getId).collect(Collectors.toList());
+    }
 }
