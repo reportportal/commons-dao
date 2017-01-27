@@ -65,16 +65,6 @@ public class Dashboard extends Shareable implements Serializable, Identifiable<S
 	@CreatedDate
 	private Date creationDate;
 
-	private String description;
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public Dashboard() {
 		widgets = new ArrayList<>();
 	}

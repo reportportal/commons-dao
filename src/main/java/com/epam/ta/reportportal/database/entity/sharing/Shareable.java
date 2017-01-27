@@ -48,7 +48,17 @@ public class Shareable implements Serializable {
 	public static final Sort NAME_OWNER_SORT = new Sort(new Order(Direction.ASC, "name"), new Order(Direction.ASC, Shareable.OWNER));
 
 	private Acl acl;
-	
+
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Acl getAcl() {
 		return acl;
 	}

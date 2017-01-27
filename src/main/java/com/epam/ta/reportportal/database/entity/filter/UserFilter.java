@@ -66,16 +66,6 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 	@FilterCriteria(IS_LINK)
 	private boolean isLink;
 
-	private String description;
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -144,9 +134,7 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 			return false;
 		if (selectionOptions != null ? !selectionOptions.equals(that.selectionOptions) : that.selectionOptions != null)
 			return false;
-		if (projectName != null ? !projectName.equals(that.projectName) : that.projectName != null)
-			return false;
-		return description != null ? description.equals(that.description) : that.description == null;
+		return (projectName != null ? !projectName.equals(that.projectName) : that.projectName != null);
 
 	}
 
@@ -158,7 +146,6 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 		result = 31 * result + (selectionOptions != null ? selectionOptions.hashCode() : 0);
 		result = 31 * result + (projectName != null ? projectName.hashCode() : 0);
 		result = 31 * result + (isLink ? 1 : 0);
-		result = 31 * result + (description != null ? description.hashCode() : 0);
 		return result;
 	}
 }

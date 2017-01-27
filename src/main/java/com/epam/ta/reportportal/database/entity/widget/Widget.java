@@ -60,16 +60,6 @@ public class Widget extends Shareable implements Serializable, Identifiable<Stri
 	// TODO consider creating separate level for project related objects.
 	private String projectName;
 
-	private String description;
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	@Override
 	public String getId() {
 		return this.id;

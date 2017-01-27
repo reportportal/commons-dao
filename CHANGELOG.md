@@ -21,3 +21,10 @@
 
 ### BugFixes
 * EPMRPP-21206 - Update personal project defaults
+
+
+## 3.0
+##### Released: XXX 2017
+
+### BugFixes
+* EPMRPP-23564 - GET shared dashboard request does not contain 'description' parameter
