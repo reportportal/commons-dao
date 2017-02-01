@@ -44,6 +44,7 @@ public class Shareable implements Serializable {
 	public static final String ID = "_id";
 	public static final String ACL = "acl";
 	public static final String OWNER = "acl.ownerUserId";
+	public static final String DESCRIPTION = "description";
 
 	public static final Sort NAME_OWNER_SORT = new Sort(new Order(Direction.ASC, "name"), new Order(Direction.ASC, Shareable.OWNER));
 
