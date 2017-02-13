@@ -95,7 +95,7 @@ public class FilterRules {
 	 * @return Predicate
 	 */
 	public static Predicate<String> number() {
-		return NumberUtils::isNumber;
+		return NumberUtils::isCreatable;
 	}
 
 	/**

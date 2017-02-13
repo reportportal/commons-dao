@@ -30,7 +30,6 @@ import java.util.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
@@ -45,7 +44,7 @@ import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
  * 
  */
 @Document
-public class Project implements Serializable, Identifiable<String> {
+public class Project implements Serializable {
 	private static final long serialVersionUID = -7944375232686172158L;
 
 	public static final String USERS = "users";
@@ -82,7 +81,6 @@ public class Project implements Serializable, Identifiable<String> {
 		this.creationDate = creationDate;
 	}
 
-	@Override
 	public String getId() {
 		return this.name;
 	}

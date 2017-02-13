@@ -30,9 +30,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.hateoas.Identifiable;
 
-import com.epam.ta.reportportal.database.entity.project.EntryType;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 
 /**
@@ -42,7 +40,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
  * 
  */
 @Document
-public class User implements Serializable, Identifiable<String> {
+public class User implements Serializable {
 
 	public static final String IS_EXPIRED = "isExpired";
 	public static final String NAME = "name";
@@ -84,7 +82,6 @@ public class User implements Serializable, Identifiable<String> {
 	public User() {
 	}
 
-	@Override
 	public String getId() {
 		return this.login;
 	}

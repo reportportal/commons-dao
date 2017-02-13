@@ -49,12 +49,21 @@ import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 public class ReportPortalRepositoryFactoryBean<R extends MongoRepository<T, ID>, ID extends Serializable, T> extends
 		MongoRepositoryFactoryBean<R, T, ID> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.data.mongodb.repository.support. MongoRepositoryFactoryBean
-	 * #getFactoryInstance(org.springframework.data.mongodb .core.MongoOperations)
+	/**
+	 * Creates a new {@link MongoRepositoryFactoryBean} for the given repository interface.
+	 *
+	 * @param repositoryInterface must not be {@literal null}.
 	 */
+	public ReportPortalRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
+		super(repositoryInterface);
+	}
+
+	/*
+         * (non-Javadoc)
+         *
+         * @see org.springframework.data.mongodb.repository.support. MongoRepositoryFactoryBean
+         * #getFactoryInstance(org.springframework.data.mongodb .core.MongoOperations)
+         */
 	@Override
 	protected RepositoryFactorySupport getFactoryInstance(MongoOperations operations) {
 		return new ReportPortalRepositoryFactory<T, Serializable>(operations);

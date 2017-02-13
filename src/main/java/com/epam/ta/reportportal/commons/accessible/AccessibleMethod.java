@@ -61,10 +61,9 @@ class AccessibleMethod {
 		try {
 			return m.invoke(bean, args);
 		} catch (IllegalArgumentException e) {
-			Throwables.propagate(e);
 			throw new RuntimeException(e);
 		} catch (InvocationTargetException e) {
-			Throwables.propagateIfPossible(e);
+			Throwables.throwIfUnchecked(e);
 			throw new RuntimeException(e);
 		}
 

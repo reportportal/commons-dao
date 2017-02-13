@@ -21,11 +21,13 @@
 
 package com.epam.ta.reportportal.commons;
 
-import org.springframework.hateoas.Identifiable;
+
+import com.epam.ta.reportportal.database.entity.item.TestItem;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Useful utils to be able to work with mongo database
@@ -44,7 +46,7 @@ public class DbUtils {
      * @param objects Objects to be converter
      * @return Converted list
      */
-    public static List<String> toIds(Iterable<? extends Identifiable<String>> objects) {
-        return StreamSupport.stream(objects.spliterator(), false).map(Identifiable::getId).collect(Collectors.toList());
+    public static List<String> toIds(Iterable<TestItem> objects) {
+        return stream(objects.spliterator(), false).map(TestItem::getId).collect(toList());
     }
 }

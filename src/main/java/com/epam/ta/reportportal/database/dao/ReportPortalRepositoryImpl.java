@@ -41,6 +41,7 @@ import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -132,7 +133,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         }
 
         Update update = new Update();
-        PersistentEntity<T, MongoPersistentProperty> persistentEntity = (PersistentEntity<T, MongoPersistentProperty>) mongoOperations
+        final MongoPersistentEntity<?> persistentEntity = mongoOperations
                 .getConverter().getMappingContext().getPersistentEntity(getEntityInformation().getJavaType());
         persistentEntity.doWithProperties((PropertyHandler<MongoPersistentProperty>) persistentProperty -> {
             if (!persistentEntity.isIdProperty(persistentProperty)) {

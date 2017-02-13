@@ -34,7 +34,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.BidirectionalTree;
 import com.epam.ta.reportportal.database.entity.Interruptable;
@@ -49,7 +48,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
 @Document
 
 @CompoundIndexes({ @CompoundIndex(name = "parent_start_time", def = "{'parent': 1, 'start_time': 1}", background = true), })
-public class TestItem implements Serializable, Identifiable<String>, BidirectionalTree, Interruptable {
+public class TestItem implements Serializable, BidirectionalTree, Interruptable {
 
 	public static final String START_TIME_CRITERIA = "start_time";
 	public static final String LAUNCH_CRITERIA = "launch";
@@ -133,7 +132,6 @@ public class TestItem implements Serializable, Identifiable<String>, Bidirection
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
 	}
 
-	@Override
 	public String getId() {
 		return this.id;
 	}

@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 
@@ -41,7 +40,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
  */
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "testItemRef_logTime", def = "{'testItemRef': 1, 'logTime': 1}", background = true) })
-public class Log implements Serializable, Modifiable, Identifiable<String> {
+public class Log implements Serializable, Modifiable {
 
 	private static final long serialVersionUID = -8253927638921956991L;
 
@@ -71,7 +70,6 @@ public class Log implements Serializable, Modifiable, Identifiable<String> {
 	@FilterCriteria("level")
 	private LogLevel level;
 
-	@Override
 	public String getId() {
 		return id;
 	}

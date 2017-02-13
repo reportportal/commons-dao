@@ -32,7 +32,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.Modifiable;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
@@ -42,7 +41,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
  */
 @Document
 @CompoundIndexes(@CompoundIndex(name = "loggedObjectRef_creationDate", def = "{'loggedObjectRef' : 1, 'lastModifiedDate' : 1 }", background = true))
-public class Activity implements Serializable, Modifiable, Identifiable<String> {
+public class Activity implements Serializable, Modifiable {
 
 	public static final String LOGGED_OBJECT_REF = "loggedObjectRef";
 	public static final String PROJECT_REF = "projectRef";
@@ -167,7 +166,6 @@ public class Activity implements Serializable, Modifiable, Identifiable<String> 
 		return serialVersionUID;
 	}
 
-	@Override
 	public String getId() {
 		return id;
 	}

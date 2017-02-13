@@ -31,7 +31,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 
@@ -43,7 +42,7 @@ import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "projectName_creationDate", def = "{'projectName': 1, 'creationDate': 1}") })
-public class Dashboard extends Shareable implements Serializable, Identifiable<String> {
+public class Dashboard extends Shareable implements Serializable {
 
 	private static final long serialVersionUID = -3353164425951585301L;
 
@@ -89,7 +88,6 @@ public class Dashboard extends Shareable implements Serializable, Identifiable<S
 		this.id = id;
 	}
 
-	@Override
 	public String getId() {
 		return this.id;
 	}

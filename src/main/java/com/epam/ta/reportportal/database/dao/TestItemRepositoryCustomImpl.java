@@ -30,6 +30,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,6 @@ import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.database.Time;
@@ -172,11 +172,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	private Collection<String> obtainIds(Iterable<Launch> launches) {
-		List<String> ids = new ArrayList<>();
-		for (Identifiable<String> launch : launches) {
-			ids.add(launch.getId());
-		}
-		return ids;
+		return StreamSupport.stream(launches.spliterator(), false)
+				.map(Launch::getId)
+				.collect(toList());
 	}
 
 	@Override

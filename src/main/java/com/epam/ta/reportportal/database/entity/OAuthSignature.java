@@ -27,7 +27,6 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 
@@ -37,7 +36,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
  * @author Andrei_Ramanchuk
  */
 @Document
-public class OAuthSignature implements Serializable, Identifiable<String> {
+public class OAuthSignature implements Serializable {
 	/**
 	 * Generated ID
 	 */
@@ -64,7 +63,6 @@ public class OAuthSignature implements Serializable, Identifiable<String> {
 
 	private String accessToken;
 
-	@Override
 	public String getId() {
 		return id;
 	}

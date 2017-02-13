@@ -27,7 +27,6 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.item.issue.ExternalSystemType;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
@@ -38,7 +37,7 @@ import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
  * @author Andrei_Ramanchuk
  */
 @Document
-public class ExternalSystem implements Serializable, Identifiable<String> {
+public class ExternalSystem implements Serializable {
 	private static final long serialVersionUID = -6449163583685872125L;
 
 	@Id
@@ -59,7 +58,6 @@ public class ExternalSystem implements Serializable, Identifiable<String> {
 	private String project;
 	private List<PostFormField> fields;
 
-	@Override
 	public String getId() {
 		return id;
 	}

@@ -23,14 +23,12 @@ package com.epam.ta.reportportal.database.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 import com.epam.ta.reportportal.ws.model.settings.ServerEmailConfig;
@@ -46,7 +44,7 @@ import com.epam.ta.reportportal.ws.model.settings.ServerEmailConfig;
  *
  */
 @Document
-public class ServerSettings implements Serializable, Modifiable, Identifiable<String> {
+public class ServerSettings implements Serializable, Modifiable {
 	/**
 	 * Default ID
 	 */
@@ -74,7 +72,6 @@ public class ServerSettings implements Serializable, Modifiable, Identifiable<St
 		this.profile = profile;
 	}
 
-	@Override
 	public String getId() {
 		return profile;
 	}

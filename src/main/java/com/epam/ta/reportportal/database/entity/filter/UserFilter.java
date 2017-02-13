@@ -28,7 +28,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 import com.epam.ta.reportportal.database.search.Filter;
@@ -43,7 +42,7 @@ import com.epam.ta.reportportal.database.search.FilterCriteria;
 
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "project_name_name", def = "{'projectName': 1,'name': 1}") })
-public class UserFilter extends Shareable implements Serializable, Identifiable<String> {
+public class UserFilter extends Shareable implements Serializable {
 
 	private static final long serialVersionUID = 2746422761895104850L;
 
@@ -95,7 +94,6 @@ public class UserFilter extends Shareable implements Serializable, Identifiable<
 		this.isLink = isLink;
 	}
 
-	@Override
 	public String getId() {
 		return id;
 	}

@@ -25,7 +25,6 @@ import java.io.Serializable;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 
@@ -38,7 +37,7 @@ import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 // UI get widgets one by one using id fields, so additional indexing isn't
 // required for widgets
 @Document
-public class Widget extends Shareable implements Serializable, Identifiable<String> {
+public class Widget extends Shareable implements Serializable {
 
 	public static final String USER_NAME = "userName";
 	public static final String NAME = "name";
@@ -60,7 +59,6 @@ public class Widget extends Shareable implements Serializable, Identifiable<Stri
 	// TODO consider creating separate level for project related objects.
 	private String projectName;
 
-	@Override
 	public String getId() {
 		return this.id;
 	}

@@ -26,13 +26,12 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.Identifiable;
 
 /**
  * @author Dzmitry_Kavalets
  */
 @Document
-public class UserPreference implements Serializable, Identifiable<String> {
+public class UserPreference implements Serializable {
 
 	private static final long serialVersionUID = 5896663390864360204L;
 
@@ -96,8 +95,4 @@ public class UserPreference implements Serializable, Identifiable<String> {
 		}
 	}
 
-	@Override
-	public String getId() {
-		return null;
-	}
 }

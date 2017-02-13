@@ -32,7 +32,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.hateoas.Identifiable;
 
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
@@ -47,7 +46,7 @@ import com.epam.ta.reportportal.ws.model.launch.Mode;
  */
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "projectRef_start_time", def = "{'projectRef': 1, 'start_time': -1}", background = true) })
-public class Launch implements Serializable, Identifiable<String>, Interruptable {
+public class Launch implements Serializable, Interruptable {
 
 	private static final long serialVersionUID = 7234458635123992134L;
 
@@ -111,7 +110,6 @@ public class Launch implements Serializable, Identifiable<String>, Interruptable
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
 	}
 
-	@Override
 	public String getId() {
 		return this.id;
 	}
