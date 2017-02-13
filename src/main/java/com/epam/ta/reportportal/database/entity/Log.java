@@ -47,6 +47,7 @@ public class Log implements Serializable, Modifiable {
 	public static final String TEST_ITEM_ID = "item";
 
 	@Id
+	@FilterCriteria("id")
 	private String id;
 
 	@FilterCriteria("time")
