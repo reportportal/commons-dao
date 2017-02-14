@@ -279,7 +279,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         final AggregationResults<Map> aggregate =
                 mongoOperations.aggregate( a, getEntityInformation().getCollectionName(), Map.class);
 
-        if (aggregate.getUniqueMappedResult().containsKey("ind")) {
+        if (!aggregate.getUniqueMappedResult().containsKey("ind")) {
             throw new ReportPortalException(ErrorType.INCORRECT_FILTER_PARAMETERS, "Unable to calculate page number. Check your input parameters");
         }
 
