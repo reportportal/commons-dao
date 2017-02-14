@@ -25,9 +25,12 @@ import com.epam.ta.reportportal.commons.accessible.Accessible;
 import com.epam.ta.reportportal.database.search.CriteriaMap;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteResult;
@@ -43,6 +46,7 @@ import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
@@ -247,24 +251,37 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
     @Override
     public long getPageNumber(String entityId, Filter filterable, Pageable pageable) {
 
-        Aggregation a = Aggregation.newAggregation(
-                /* find items matching an provided filter */
-                match(new Criteria()
-                        .andOperator(toArray(toCriteriaList(filterable), Criteria.class))),
-                /* sort results as requested */
-                sort(pageable.getSort()),
+        ImmutableList.Builder<AggregationOperation> pipelineBuilder = ImmutableList.<AggregationOperation>builder()
+                .add(
+                        match(new Criteria().andOperator(toArray(toCriteriaList(filterable), Criteria.class)))
+                );
+
+        if (null != pageable.getSort()){
+            pipelineBuilder.add(
+                    /* sort results as requested */
+                    sort(pageable.getSort())
+            );
+        }
+
+        pipelineBuilder.add(
                 /* group items into one field pushing all results into one array */
                 group("result").push("$_id").as("array"),
                 /* unwind array adding index to each result */
-                unwind("array", "ind",false),
+                unwind("array", "ind", false),
                 /* find needed item. How we know its index in query result */
                 match(where("array").is(ObjectId.isValid(entityId) ? new ObjectId(entityId) : entityId)),
                 /* grab index only */
-                project("ind")
-        );
+                project("ind"));
+
+        /* find items matching an provided filter */
+        Aggregation a = Aggregation.newAggregation(Iterables.toArray(pipelineBuilder.build(), AggregationOperation.class));
 
         final AggregationResults<Map> aggregate =
                 mongoOperations.aggregate( a, getEntityInformation().getCollectionName(), Map.class);
+
+        if (aggregate.getUniqueMappedResult().containsKey("ind")) {
+            throw new ReportPortalException(ErrorType.INCORRECT_FILTER_PARAMETERS, "Unable to calculate page number. Check your input parameters");
+        }
 
         /* result returned as long. Calculate page number */
         return (long) Math.ceil (((Long) aggregate.getUniqueMappedResult().get("ind")).doubleValue() / (double) pageable.getPageSize());
