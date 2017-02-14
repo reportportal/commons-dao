@@ -315,7 +315,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findInIssueTypeItems(String issueType, String launchId) {
-		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(ISSUE_TYPE).regex(issueType));
+		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(ISSUE_TYPE).regex(Pattern.quote(issueType)));
 		return mongoTemplate.find(query, TestItem.class);
 	}
 

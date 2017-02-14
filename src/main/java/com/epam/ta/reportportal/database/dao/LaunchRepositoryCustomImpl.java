@@ -184,7 +184,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode) {
 		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
-				match(where(distinctBy).regex("(?i).*" + containsValue + ".*")), group(distinctBy), limit(AUTOCOMPLETE_LIMITATION));
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy), limit(AUTOCOMPLETE_LIMITATION));
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
 		return result.getMappedResults().stream().map(entry -> entry.get("_id").toString()).collect(toList());
 	}
