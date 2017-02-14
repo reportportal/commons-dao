@@ -117,11 +117,9 @@ public class CriteriaHolder {
 		Object castedValue;
 		if (Number.class.isAssignableFrom(getDataType())) {
 			/* Verify correct number */
-			BusinessRule.expect(oneValue, FilterRules.number()).verify(errorType,
-					Suppliers.formattedSupplier("Cannot convert '{}' to valid number", oneValue));
-			Long parsedLong = NumberUtils.createNumber(oneValue).longValue();
+			Long parsedLong = NumberUtils.toLong(oneValue, -1);
 			BusinessRule.expect(parsedLong, FilterRules.numberIsPositive()).verify(errorType,
-					Suppliers.formattedSupplier("Numeric values shouldn't be empty.'{}' is not acceptable, parameters", oneValue));
+					Suppliers.formattedSupplier("Cannot convert '{}' to valid positive number", oneValue));
 			castedValue = parsedLong;
 		} else if (Date.class.isAssignableFrom(getDataType())) {
 			/* Verify correct date */
