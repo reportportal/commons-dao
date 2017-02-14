@@ -46,7 +46,6 @@ import org.bson.Document;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Nullable;
@@ -54,7 +53,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -90,10 +88,10 @@ public class QueryBuilder {
         return new QueryBuilder();
     }
 
-    public static List<CriteriaDefinition> toCriteriaList(Filter filter) {
+    public static List<Criteria> toCriteriaList(Filter filter) {
         /* Get map of defined @FilterCriteria fields */
         CriteriaMap<?> map = criteriaMapFactory.getCriteriaMap(filter.getTarget());
-        final Function<FilterCondition, CriteriaDefinition> transformer = filterConverter(
+        final Function<FilterCondition, Criteria> transformer = filterConverter(
                 map);
 
         return filter.getFilterConditions().stream()
@@ -226,12 +224,12 @@ public class QueryBuilder {
         }
     }
 
-    public static Function<FilterCondition, CriteriaDefinition> filterConverter(CriteriaMap<?> map) {
-        return new Function<FilterCondition, CriteriaDefinition>() {
+    public static Function<FilterCondition, Criteria> filterConverter(CriteriaMap<?> map) {
+        return new Function<FilterCondition, Criteria>() {
 
             @Nullable
             @Override
-            public CriteriaDefinition apply(@Nullable FilterCondition filterCondition) {
+            public Criteria apply(@Nullable FilterCondition filterCondition) {
                 boolean reload = false;
                 ComplexSearchCriteria filterCriteria = filterSearchCriteriaPreProcessor(
                         filterCondition.getSearchCriteria());
