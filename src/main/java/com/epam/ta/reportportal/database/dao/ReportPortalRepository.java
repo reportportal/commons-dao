@@ -118,8 +118,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param callback       Results callback
      * @param collectionName Name of collection to load data from
      */
-    void loadWithCallback(Filter filter, Sort sorting, int quantity, List<String> chartFields,
-            DocumentCallbackHandler callback,
+    void loadWithCallback(Filter filter, Sort sorting, int quantity, List<String> chartFields, DocumentCallbackHandler callback,
             String collectionName);
 
     /**
@@ -147,4 +146,15 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @return Count of entities
      */
     long countByFilter(Filter filter);
+
+    /**
+     * Calculates number of page for given entityID with provided filter and page request
+     *
+     * @param entityId   ID of entity
+     * @param filterable Filter to be applied
+     * @param pageable   Paging details to be applied
+     * @return Number of page if select with provided filter and paging
+     */
+    long getPageNumber(String entityId, Filter filterable, Pageable pageable);
+
 }

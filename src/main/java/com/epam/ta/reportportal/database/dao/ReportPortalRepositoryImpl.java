@@ -28,8 +28,10 @@ import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteResult;
+import org.bson.types.ObjectId;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
@@ -40,9 +42,12 @@ import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
@@ -52,12 +57,11 @@ import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static com.epam.ta.reportportal.database.search.QueryBuilder.toCriteriaList;
+import static com.google.common.collect.Iterables.toArray;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -238,6 +242,32 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         Class<T> entityType = getEntityInformation().getJavaType();
         Query query = QueryBuilder.newBuilder().with(filter).build();
         return getMongoOperations().exists(query, entityType);
+    }
+
+    @Override
+    public long getPageNumber(String entityId, Filter filterable, Pageable pageable) {
+
+        Aggregation a = Aggregation.newAggregation(
+                /* find items matching an provided filter */
+                match(new Criteria()
+                        .andOperator(toArray(toCriteriaList(filterable), Criteria.class))),
+                /* sort results as requested */
+                sort(pageable.getSort()),
+                /* group items into one field pushing all results into one array */
+                group("result").push("$_id").as("array"),
+                /* unwind array adding index to each result */
+                unwind("array", "ind",false),
+                /* find needed item. How we know its index in query result */
+                match(where("array").is(ObjectId.isValid(entityId) ? new ObjectId(entityId) : entityId)),
+                /* grab index only */
+                project("ind")
+        );
+
+        final AggregationResults<Map> aggregate =
+                mongoOperations.aggregate( a, getEntityInformation().getCollectionName(), Map.class);
+
+        /* result returned as long. Calculate page number */
+        return (long) Math.ceil (((Long) aggregate.getUniqueMappedResult().get("ind")).doubleValue() / (double) pageable.getPageSize());
     }
 
     /**
