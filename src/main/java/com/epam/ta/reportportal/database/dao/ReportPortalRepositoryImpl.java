@@ -41,7 +41,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -61,11 +60,20 @@ import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.database.search.QueryBuilder.toCriteriaList;
 import static com.google.common.collect.Iterables.toArray;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwind;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -274,7 +282,8 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
                 project("ind"));
 
         /* find items matching an provided filter */
-        Aggregation a = Aggregation.newAggregation(Iterables.toArray(pipelineBuilder.build(), AggregationOperation.class));
+        Aggregation a = Aggregation
+                .newAggregation(toArray(pipelineBuilder.build(), AggregationOperation.class));
 
         final AggregationResults<Map> aggregate =
                 mongoOperations.aggregate( a, getEntityInformation().getCollectionName(), Map.class);
@@ -284,7 +293,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         }
 
         /* result returned as long. Calculate page number */
-        return (long) Math.ceil (((Long) aggregate.getUniqueMappedResult().get("ind")).doubleValue() / (double) pageable.getPageSize());
+        return (long) Math.ceil ((((Long) aggregate.getUniqueMappedResult().get("ind")).doubleValue() + 1d) / (double) pageable.getPageSize());
     }
 
     /**
