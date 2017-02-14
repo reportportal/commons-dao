@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bson.types.ObjectId;
 
 import com.epam.ta.reportportal.commons.Predicates;
@@ -118,7 +119,7 @@ public class CriteriaHolder {
 			/* Verify correct number */
 			BusinessRule.expect(oneValue, FilterRules.number()).verify(errorType,
 					Suppliers.formattedSupplier("Cannot convert '{}' to valid number", oneValue));
-			Long parsedLong = Long.parseLong(oneValue);
+			Long parsedLong = NumberUtils.createNumber(oneValue).longValue();
 			BusinessRule.expect(parsedLong, FilterRules.numberIsPositive()).verify(errorType,
 					Suppliers.formattedSupplier("Numeric values shouldn't be empty.'{}' is not acceptable, parameters", oneValue));
 			castedValue = parsedLong;
