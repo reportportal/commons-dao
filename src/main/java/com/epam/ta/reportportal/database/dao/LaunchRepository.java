@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -30,9 +30,8 @@ import java.util.List;
 /**
  * Repository interface for {@link Launch} instances. Provides basic CRUD operations due to the
  * extension of {@link CrudRepository}
- * 
+ *
  * @author Henadzi_Vrubleuski
- * 
  */
 public interface LaunchRepository extends LaunchRepositoryCustom, ReportPortalRepository<Launch, String> {
 
@@ -46,21 +45,27 @@ public interface LaunchRepository extends LaunchRepositoryCustom, ReportPortalRe
 
 	/**
 	 * Find Launch by given name.
-	 * 
-	 * @param build
-	 * @return
+	 *
+	 * @param name Launch name
+	 * @return List of {@link Launch}
 	 */
 	List<Launch> findByName(String name);
 
 	/**
 	 * Finds launches IDs by provided project ID
-	 * 
-	 * @param id
-	 * @return
+	 *
+	 * @param id ID of Project
+	 * @return List of {@link Launch}
 	 */
 	@Query(value = FIND_LAUNCH_ENTRY_BY_PROJECT_ID, fields = "{'id' : 1}")
 	List<Launch> findLaunchIdsByProjectId(String id);
 
+	/**
+	 * Finds Number and Mode of Launch by its ID
+	 *
+	 * @param id ID of Launch
+	 * @return {@link Launch}
+	 */
 	@Query(value = FIND_BY_ID, fields = NAME_NUMBER_MODE_FIELDS)
 	Launch findNameNumberAndModeById(String id);
 
@@ -69,12 +74,17 @@ public interface LaunchRepository extends LaunchRepositoryCustom, ReportPortalRe
 	 * <li>id;
 	 * <li>startTime;
 	 * <li>status.
-	 * 
-	 * @param id
-	 * @return
+	 *
+	 * @param id ID of Launch
+	 * @return {@link Launch}
 	 */
 	@Query(value = "{ '_id': ?0 }", fields = "{'id' : 1, 'startTime':1, 'status':1, 'projectRef':1 }")
 	Launch loadStatusProjectRefAndStartTime(String id);
 
+	/**
+	 * Deletes all launches of provided project
+	 *
+	 * @param projectRef Project Name
+	 */
 	void deleteByProjectRef(String projectRef);
 }

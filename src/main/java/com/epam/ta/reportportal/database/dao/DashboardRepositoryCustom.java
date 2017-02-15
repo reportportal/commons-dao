@@ -17,25 +17,24 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.Dashboard;
 import org.springframework.data.domain.Sort;
 
-import com.epam.ta.reportportal.database.entity.Dashboard;
+import java.util.List;
 
 public interface DashboardRepositoryCustom {
 
 	/**
 	 * Finds dashboards by user project, load with sorting all fields
-	 * 
-	 * @param sort
-	 * @param userName
-	 * @param projectName
-	 * @returnList <Dashboard>
+	 *
+	 * @param sort        Sorting details
+	 * @param userName    Name of user
+	 * @param projectName Name of project
+	 * @return List of {@link Dashboard}
 	 */
 	List<Dashboard> findAll(String userName, Sort sort, String projectName);
 }
