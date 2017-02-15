@@ -48,6 +48,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
@@ -225,50 +226,45 @@ public class QueryBuilder {
     }
 
     public static Function<FilterCondition, Criteria> filterConverter(CriteriaMap<?> map) {
-        return new Function<FilterCondition, Criteria>() {
+        return filterCondition -> {
+			boolean reload = false;
+			ComplexSearchCriteria filterCriteria = filterSearchCriteriaPreProcessor(
+					filterCondition.getSearchCriteria());
+			Optional<CriteriaHolder> criteriaHolder = map
+					.getCriteriaHolderUnchecked(filterCriteria.getGlobalSearchCriteria());
+			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT)
+					.verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
+							Suppliers.formattedSupplier("Filter parameter {} is not defined",
+									filterCondition.getSearchCriteria()));
 
-            @Nullable
-            @Override
-            public Criteria apply(@Nullable FilterCondition filterCondition) {
-                boolean reload = false;
-                ComplexSearchCriteria filterCriteria = filterSearchCriteriaPreProcessor(
-                        filterCondition.getSearchCriteria());
-                Optional<CriteriaHolder> criteriaHolder = map
-                        .getCriteriaHolderUnchecked(filterCriteria.getGlobalSearchCriteria());
-                BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT)
-                        .verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
-                                Suppliers.formattedSupplier("Filter parameter {} is not defined",
-                                        filterCondition.getSearchCriteria()));
+			Criteria searchCriteria;
+			CriteriaHolder updated = null;
+			if (criteriaHolder.get().isReference()) {
+				searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria().concat(REFERENCE_POSTFIX));
+			} else {
+				if (criteriaHolder.get().getQueryCriteria().contains(IssueCounter.DEFECTS_FOR_DB)) {
+					String rebuilded = criteriaRebuilder(criteriaHolder.get().getQueryCriteria(),
+							filterCriteria.getExtension());
+					searchCriteria = Criteria.where(rebuilded);
+					updated = new CriteriaHolder(criteriaHolder.get().getFilterCriteria(), rebuilded, Integer.class,
+							criteriaHolder.get().isReference());
+					reload = true;
+				} else {
+					searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria());
+				}
+			}
 
-                Criteria searchCriteria;
-                CriteriaHolder updated = null;
-                if (criteriaHolder.get().isReference()) {
-                    searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria().concat(REFERENCE_POSTFIX));
-                } else {
-                    if (criteriaHolder.get().getQueryCriteria().contains(IssueCounter.DEFECTS_FOR_DB)) {
-                        String rebuilded = criteriaRebuilder(criteriaHolder.get().getQueryCriteria(),
-                                filterCriteria.getExtension());
-                        searchCriteria = Criteria.where(rebuilded);
-                        updated = new CriteriaHolder(criteriaHolder.get().getFilterCriteria(), rebuilded, Integer.class,
-                                criteriaHolder.get().isReference());
-                        reload = true;
-                    } else {
-                        searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria());
-                    }
-                }
+		/* Does FilterCondition contains negative=true? */
+			if (filterCondition.isNegative()) {
+				searchCriteria = searchCriteria.not();
+			}
 
-			/* Does FilterCondition contains negative=true? */
-                if (filterCondition.isNegative()) {
-                    searchCriteria = searchCriteria.not();
-                }
-
-                if (reload) {
-                    filterCondition.getCondition().addCondition(searchCriteria, filterCondition, updated);
-                } else {
-                    filterCondition.getCondition().addCondition(searchCriteria, filterCondition, criteriaHolder.get());
-                }
-                return searchCriteria;
-            }
-        };
+			if (reload) {
+				filterCondition.getCondition().addCondition(searchCriteria, filterCondition, updated);
+			} else {
+				filterCondition.getCondition().addCondition(searchCriteria, filterCondition, criteriaHolder.get());
+			}
+			return searchCriteria;
+		};
     }
 }
