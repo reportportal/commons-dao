@@ -17,23 +17,21 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.Dashboard;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.epam.ta.reportportal.database.entity.Dashboard;
+import java.util.List;
 
 /**
  * Repository interface for {@link Dashboard} instances. Provides basic CRUD operations due to the
  * extension of {@link CrudRepository}
- * 
+ *
  * @author Aliaksei_Makayed
- * 
  */
 public interface DashboardRepository extends DashboardRepositoryCustom, ShareableRepository<Dashboard, String> {
 
@@ -48,19 +46,11 @@ public interface DashboardRepository extends DashboardRepositoryCustom, Shareabl
 	String SELECT_BY_USER_ID_PROJECT = "{'acl.ownerUserId': ?0, '_id' : ?1, 'projectName' : ?2}";
 
 	/**
-	 * Finds entry by IDs.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	Dashboard findDashboardById(String id);
-
-	/**
 	 * Find dashboard by user,projectName and id, load all fields
-	 * 
-	 * @param userName
-	 * @param projectName
-	 * @param id
+	 *
+	 * @param userName    Name of user
+	 * @param projectName Name of project
+	 * @param id          ID of dashboard
 	 * @return {@link Dashboard}
 	 */
 	// TODO consider to move this method to root repository
@@ -68,11 +58,11 @@ public interface DashboardRepository extends DashboardRepositoryCustom, Shareabl
 	Dashboard findOne(String userName, String id, String projectName);
 
 	/**
-	 * Find dashboard by user and projectName, load only id field
-	 * 
-	 * @param userName
-	 * @param projectName
-	 * @param id
+	 * Find ID of dashboard by user and projectName, load only id field
+	 *
+	 * @param userName    Name of user
+	 * @param projectName Name of project
+	 * @param dashName    Name of dashboard
 	 * @return {@link Dashboard}
 	 */
 	@Query(value = SELECT_BY_USER_PROJECT_DASHNAME, fields = ID_FIELD)
@@ -80,15 +70,21 @@ public interface DashboardRepository extends DashboardRepositoryCustom, Shareabl
 
 	/**
 	 * Find dashboard by user, projectName and id, load only id field
-	 * 
-	 * @param userName
-	 * @param projectName
-	 * @param id
+	 *
+	 * @param userName    Name of user
+	 * @param projectName Name of project
+	 * @param id          ID of dashboard
 	 * @return {@link Dashboard}
 	 */
 	@Query(value = SELECT_BY_USER_ID_PROJECT, fields = ID_FIELD)
 	Dashboard findOneLoadId(String userName, String id, String projectName);
 
+	/**
+	 * Find all dashboards of specified project
+	 *
+	 * @param projectRef Project ID
+	 * @return {@link Dashboard} list
+	 */
 	@Override
 	@Query(value = "{'projectName' : ?0}")
 	List<Dashboard> findByProject(String projectRef);

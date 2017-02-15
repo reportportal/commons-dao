@@ -27,7 +27,7 @@ import java.io.Serializable;
  * Project custom statistic sub-type object representation<br>
  * It could contain user configured project specific sub-types, which referenced
  * to global predefined statistics issue type from
- * {@see com.epam.ta.reportportal.database.entity.statistics.IssueCounter}<br>
+ * {@link com.epam.ta.reportportal.database.entity.statistics.IssueCounter} <br>
  * 
  * except 'toInvestigate' field (for a while, may be sub-types for
  * to_investigate could be used as assignments to project users for

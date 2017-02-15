@@ -17,40 +17,39 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-
 import com.epam.ta.reportportal.database.entity.favorite.FavoriteResource;
 
+import java.util.List;
+
 /**
- * 
  * @author Dzmitry_Kavalets
  */
 public interface FavoriteResourceRepositoryCustom {
 
 	/**
 	 * Find favorite resources of specified user
-	 * 
-	 * @param userName
-	 * @return
+	 *
+	 * @param userName Name of user
+	 * @return {@link FavoriteResource}
 	 */
 	List<FavoriteResource> findFavoriteResourcesByUser(String userName);
 
 	/**
 	 * Remove favorite resources of specified user
-	 * 
-	 * @param userName
+	 *
+	 * @param userName Name of user
 	 */
 	void removeFavoriteResources(String userName);
 
 	/**
 	 * Remove favorite resources by user and project
-	 * 
-	 * @param userName
-	 * @param projectName
+	 *
+	 * @param userName    Name of user
+	 * @param projectName Name of project
 	 */
 	void removeFavoriteResources(String userName, String projectName);
 

@@ -67,11 +67,11 @@ public class UpdateStatisticsQueryBuilder {
 		Update updateStatusAware = new Update().inc(EXECUTION_COUNTER + ".total", isReset ? iTotal *= -1 : iTotal);
 		if (item.getStatus().awareStatisticsField() != null && !item.getStatus().awareStatisticsField().isEmpty()) {
 			updateStatusAware = updateStatusAware.inc(EXECUTION_COUNTER + "." + Status.PASSED.awareStatisticsField(),
-					isReset ? iPassed *= -1 : iPassed);
+					isReset ? iPassed * -1 : iPassed);
 			updateStatusAware = updateStatusAware.inc(EXECUTION_COUNTER + "." + Status.FAILED.awareStatisticsField(),
-					isReset ? iFailed *= -1 : iFailed);
+					isReset ? iFailed * -1 : iFailed);
 			updateStatusAware = updateStatusAware.inc(EXECUTION_COUNTER + "." + Status.SKIPPED.awareStatisticsField(),
-					isReset ? iSkipped *= -1 : iSkipped);
+					isReset ? iSkipped * -1 : iSkipped);
 		}
 		return updateStatusAware;
 	}

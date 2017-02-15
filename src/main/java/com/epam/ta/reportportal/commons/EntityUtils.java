@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.commons;
 
@@ -29,9 +29,8 @@ import java.util.stream.StreamSupport;
 /**
  * Some useful utils for working with entities<br>
  * For example: usernames, project names, tags, etc.
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class EntityUtils {
 
@@ -41,7 +40,7 @@ public class EntityUtils {
 
 	/**
 	 * Normalize any ID for database ID fields, for example
-	 * 
+	 *
 	 * @param id ID to normalize
 	 * @return String
 	 */
@@ -51,7 +50,7 @@ public class EntityUtils {
 
 	/**
 	 * Normalized provided user name
-	 * 
+	 *
 	 * @param username Username to normalize
 	 * @return String
 	 */
@@ -61,7 +60,7 @@ public class EntityUtils {
 
 	/**
 	 * Normalized provided project name
-	 * 
+	 *
 	 * @param projectName Project to normalize
 	 * @return String
 	 */
@@ -71,7 +70,7 @@ public class EntityUtils {
 
 	/**
 	 * Normalized provided email address
-	 * 
+	 *
 	 * @param email email to normalize
 	 * @return String
 	 */
@@ -81,7 +80,7 @@ public class EntityUtils {
 
 	/**
 	 * Remove leading and trailing spaces from list of string
-	 * 
+	 *
 	 * @param strings Strings to trim
 	 * @return String
 	 */
@@ -93,9 +92,9 @@ public class EntityUtils {
 
 	/**
 	 * Convert declined symbols on allowed for WS and UI
-	 * 
+	 *
 	 * @param input Input to be escaped
-	 * @return Iterable<String>
+	 * @return Updated input
 	 */
 	public static Iterable<String> update(Iterable<String> input) {
 		final String oldSeparator = ",";

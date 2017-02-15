@@ -74,7 +74,7 @@ public interface DataStorage {
 	 *
 	 * @param period  Time period
 	 * @param project Project name
-	 * @return List<GridFSDBFile>
+	 * @return List of {@link GridFSDBFile}
 	 */
 	List<GridFSDBFile> findModifiedLaterAgo(Time period, String project);
 
