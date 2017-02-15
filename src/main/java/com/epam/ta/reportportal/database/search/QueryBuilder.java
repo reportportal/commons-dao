@@ -173,7 +173,7 @@ public class QueryBuilder {
      *
      * @param filterSearchCriteria - initial searchCriteria parameter from FilterCondition object
      * @return ComplexSearchCriteria -
-     * {@see com.epam.ta.reportportal.database.search.ComplexSearchCriteria}
+     * @see com.epam.ta.reportportal.database.search.QueryBuilder.ComplexSearchCriteria
      */
     public static ComplexSearchCriteria filterSearchCriteriaPreProcessor(String filterSearchCriteria) {
         String[] split = filterSearchCriteria.split("\\$");

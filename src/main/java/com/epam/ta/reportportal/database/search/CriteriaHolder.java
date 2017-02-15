@@ -104,14 +104,14 @@ public class CriteriaHolder {
 	}
 
 	/**
-	 * Casting provided criteriaHolder by specified Class<?> for specified value.
+	 * Casting provided criteriaHolder by specified {@link Class} for specified value.
 	 * 
 	 * NOTE:<br>
 	 * errorType - error which should be thrown when unable cast value
 	 * 
-	 * @param oneValue
-	 * @param errorType
-	 * @return
+	 * @param oneValue Value to cast
+	 * @param errorType ErrorType in case of error
+	 * @return Casted value
 	 */
 	public Object castValue(String oneValue, ErrorType errorType) {
 		Object castedValue;

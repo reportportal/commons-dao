@@ -38,6 +38,8 @@ public interface ActivityRepositoryCustom {
 	 * Find activities for specified test item
 	 *
 	 * @param testItemId ID of Item
+	 * @param filter     Filtering details
+	 * @param pageable   Paging details
 	 * @return Found Activities
 	 */
 	List<Activity> findActivitiesByTestItemId(String testItemId, Filter filter, Pageable pageable);
