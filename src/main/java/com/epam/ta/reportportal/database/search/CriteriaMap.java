@@ -90,8 +90,8 @@ public class CriteriaMap<T> {
 		}
 	}
 
-	private Class<?> getDataType(Field f){
-		if (isDynamicInnerFields(f)){
+	private Class<?> getDataType(Field f) {
+		if (isDynamicInnerFields(f)) {
 			return (Class<?>) ((ParameterizedType) f.getGenericType()).getActualTypeArguments()[1];
 		} else {
 			return f.getType();
@@ -159,6 +159,7 @@ public class CriteriaMap<T> {
 
 	/**
 	 * Returns holder for specified request search criteria. If field contains dynamic part, uses 'starts with' condition
+	 * Rebuild criteria if its dynamic
 	 *
 	 * @param searchCriteria Front-end search criteria
 	 * @return Search criteria details
@@ -167,7 +168,16 @@ public class CriteriaMap<T> {
 		Optional<CriteriaHolder> criteriaHolder = ofNullable(classCriteria.get(searchCriteria));
 		if (!criteriaHolder.isPresent()) {
 			return classCriteria.entrySet().stream().filter(it -> it.getValue().isHasDynamicPart())
-					.filter(it -> searchCriteria.startsWith(it.getKey())).findAny().map(Map.Entry::getValue);
+					.filter(it -> searchCriteria.startsWith(it.getKey())).findAny()
+					.map(Map.Entry::getValue)
+					.map(it -> {
+						String dynamicPart = searchCriteria.substring(it.getFilterCriteria().length(), searchCriteria.length());
+						String queryCriteria = it.getQueryCriteria() + dynamicPart
+								.replace(CriteriaMap.SEARCH_CRITERIA_SEPARATOR, CriteriaMap.QUERY_CRITERIA_SEPARATOR);
+						String filterCriteria = it.getFilterCriteria() + dynamicPart;
+						return new CriteriaHolder(filterCriteria, queryCriteria, it.getDataType(), it.isReference(), false);
+
+					});
 		}
 		return criteriaHolder;
 	}

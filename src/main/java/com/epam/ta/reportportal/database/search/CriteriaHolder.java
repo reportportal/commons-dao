@@ -91,29 +91,8 @@ public class CriteriaHolder {
 		return filterCriteria;
 	}
 
-	/**
-	 * Deprecated in favor of {@link #getQueryCriteria(String)}
-	 */
-	@Deprecated
 	public String getQueryCriteria() {
 		return queryCriteria;
-	}
-
-	/**
-	 * Returns query criteria. In case of field may contain dynamic part, builds query criteria based on provided front-end filter
-	 *
-	 * @param filter
-	 * @return
-	 */
-	public String getQueryCriteria(String filter) {
-		if (this.hasDynamicPart) {
-			//criteria now has format: "{staticPart}{dynamicPart}". Trim the static part
-			String dynamicPart = filter.substring(this.filterCriteria.length(), filter.length());
-			return this.queryCriteria + dynamicPart.replace(CriteriaMap.SEARCH_CRITERIA_SEPARATOR, CriteriaMap.QUERY_CRITERIA_SEPARATOR);
-		} else {
-			return this.queryCriteria;
-		}
-
 	}
 
 	public boolean isReference() {

@@ -156,7 +156,7 @@ public class QueryBuilder {
 			if (criteriaHolder.get().isReference()) {
 				searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria().concat(REFERENCE_POSTFIX));
 			} else {
-				searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria(filterCondition.getSearchCriteria()));
+				searchCriteria = Criteria.where(criteriaHolder.get().getQueryCriteria());
 			}
 
 			/* Does FilterCondition contains negative=true? */
