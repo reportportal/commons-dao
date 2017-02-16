@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
+import com.mongodb.DBObject;
 import org.junit.Test;
 
 import com.epam.ta.reportportal.database.entity.Project;
@@ -58,6 +59,21 @@ public class CriteriaMapTest {
 		Query q = QueryBuilder.newBuilder().with(filter).build();
 
 		assertThat(q.getQueryObject().get("statistics.issueCounter.productBug.total")).isEqualTo("10");
+
+	}
+
+	@Test
+	public void dynamicCriteriaCastTest() {
+		Filter filter = Filter.builder()
+				.withCondition(
+						FilterCondition.builder().withCondition(Condition.GREATER_THAN_OR_EQUALS)
+								.withSearchCriteria("statistics$defects$product_bug$total")
+								.withValue("10").build())
+				.withTarget(TestItem.class)
+				.build();
+		Query q = QueryBuilder.newBuilder().with(filter).build();
+
+		assertThat(((DBObject) q.getQueryObject().get("statistics.issueCounter.productBug.total")).get("$gte")).isEqualTo(10L);
 
 	}
 }

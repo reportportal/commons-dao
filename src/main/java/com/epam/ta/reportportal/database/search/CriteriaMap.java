@@ -28,6 +28,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
@@ -67,7 +68,7 @@ public class CriteriaMap<T> {
 					searchCriteria = parents.isEmpty() ? getSearchCriteria(f) : getSearchCriteria(f, currentParents);
 					queryCriteria = parents.isEmpty() ? getQueryCriteria(f) : getQueryCriteria(f, currentParents);
 					classCriteria.put(searchCriteria,
-							new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class),
+							new CriteriaHolder(searchCriteria, queryCriteria, getDataType(f), f.isAnnotationPresent(DBRef.class),
 									dynamicNestedFields));
 					currentParents.add(f);
 					lookupClass(f.getType(), currentParents);
@@ -76,16 +77,24 @@ public class CriteriaMap<T> {
 					queryCriteria = getQueryCriteria(f);
 					if (parents.isEmpty()) {
 						classCriteria.put(searchCriteria,
-								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class),
+								new CriteriaHolder(searchCriteria, queryCriteria, getDataType(f), f.isAnnotationPresent(DBRef.class),
 										dynamicNestedFields));
 					} else {
 						searchCriteria = getSearchCriteria(f, parents);
 						queryCriteria = getQueryCriteria(f, parents);
 						classCriteria.put(getSearchCriteria(f, parents),
-								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), false, dynamicNestedFields));
+								new CriteriaHolder(searchCriteria, queryCriteria, getDataType(f), false, dynamicNestedFields));
 					}
 				}
 			}
+		}
+	}
+
+	private Class<?> getDataType(Field f){
+		if (isDynamicInnerFields(f)){
+			return (Class<?>) ((ParameterizedType) f.getGenericType()).getActualTypeArguments()[1];
+		} else {
+			return f.getType();
 		}
 	}
 
