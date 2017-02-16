@@ -21,25 +21,24 @@
 
 package com.epam.ta.reportportal.database.search;
 
-import static java.util.stream.Stream.of;
+import com.epam.ta.reportportal.commons.Predicates;
+import com.epam.ta.reportportal.commons.validation.BusinessRule;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.epam.ta.reportportal.commons.Predicates;
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Stream.of;
 
 /**
  * Holds criteria mappings for specified class. After initialization reads
  * specified package and stores this information in Map where key is request
  * search criteria
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class CriteriaMap<T> {
 	public static final String SEARCH_CRITERIA_SEPARATOR = "$";
@@ -59,15 +58,17 @@ public class CriteriaMap<T> {
 	private void lookupClass(Class<?> clazz, List<Field> parents) {
 		for (Field f : clazz.getDeclaredFields()) {
 			if (f.isAnnotationPresent(FilterCriteria.class)) {
+				boolean dynamicNestedFields = isDynamicInnerFields(f);
 				String searchCriteria;
 				String queryCriteria;
-				if (of(f.getType().getDeclaredFields()).filter(df -> df.isAnnotationPresent(FilterCriteria.class)).findFirst().isPresent()
-						|| (f.getType().isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class))) {
+				if (of(f.getType().getDeclaredFields()).anyMatch(df -> df.isAnnotationPresent(FilterCriteria.class)) || (
+						f.getType().isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class))) {
 					List<Field> currentParents = new ArrayList<>(parents);
 					searchCriteria = parents.isEmpty() ? getSearchCriteria(f) : getSearchCriteria(f, currentParents);
 					queryCriteria = parents.isEmpty() ? getQueryCriteria(f) : getQueryCriteria(f, currentParents);
 					classCriteria.put(searchCriteria,
-							new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class)));
+							new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class),
+									dynamicNestedFields));
 					currentParents.add(f);
 					lookupClass(f.getType(), currentParents);
 				} else {
@@ -75,12 +76,13 @@ public class CriteriaMap<T> {
 					queryCriteria = getQueryCriteria(f);
 					if (parents.isEmpty()) {
 						classCriteria.put(searchCriteria,
-								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class)));
+								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), f.isAnnotationPresent(DBRef.class),
+										dynamicNestedFields));
 					} else {
 						searchCriteria = getSearchCriteria(f, parents);
 						queryCriteria = getQueryCriteria(f, parents);
 						classCriteria.put(getSearchCriteria(f, parents),
-								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), false));
+								new CriteriaHolder(searchCriteria, queryCriteria, f.getType(), false, dynamicNestedFields));
 					}
 				}
 			}
@@ -89,6 +91,10 @@ public class CriteriaMap<T> {
 
 	private String getSearchCriteria(Field f) {
 		return f.getAnnotation(FilterCriteria.class).value();
+	}
+
+	private boolean isDynamicInnerFields(Field f) {
+		return Map.class.isAssignableFrom(f.getType());
 	}
 
 	private String getSearchCriteria(Field f, List<Field> parents) {
@@ -131,24 +137,30 @@ public class CriteriaMap<T> {
 
 	/**
 	 * Returns holder for specified request search criteria
-	 * 
-	 * @param searchCriteria
-	 * @return
+	 *
+	 * @param searchCriteria Front-end search criteria
+	 * @return Search criteria details
 	 */
 	public CriteriaHolder getCriteriaHolder(String searchCriteria) {
-		BusinessRule.expect(classCriteria.containsKey(searchCriteria), Predicates.equalTo(Boolean.TRUE))
+		Optional<CriteriaHolder> criteria = getCriteriaHolderUnchecked(searchCriteria);
+		BusinessRule.expect(criteria, Predicates.isPresent())
 				.verify(ErrorType.INCORRECT_FILTER_PARAMETERS, "Criteria '" + searchCriteria + "' not defined");
-		return classCriteria.get(searchCriteria);
+		return criteria.get();
 	}
 
 	/**
-	 * Returns holder for specified request search criteria
-	 * 
-	 * @param searchCriteria
-	 * @return
+	 * Returns holder for specified request search criteria. If field contains dynamic part, uses 'starts with' condition
+	 *
+	 * @param searchCriteria Front-end search criteria
+	 * @return Search criteria details
 	 */
 	public Optional<CriteriaHolder> getCriteriaHolderUnchecked(String searchCriteria) {
-		return Optional.ofNullable(classCriteria.get(searchCriteria));
+		Optional<CriteriaHolder> criteriaHolder = ofNullable(classCriteria.get(searchCriteria));
+		if (!criteriaHolder.isPresent()) {
+			return classCriteria.entrySet().stream().filter(it -> it.getValue().isHasDynamicPart())
+					.filter(it -> searchCriteria.startsWith(it.getKey())).findAny().map(Map.Entry::getValue);
+		}
+		return criteriaHolder;
 	}
 
 	@Override

@@ -23,9 +23,12 @@ package com.epam.ta.reportportal.database.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import org.junit.Test;
 
 import com.epam.ta.reportportal.database.entity.Project;
+import org.springframework.data.mongodb.core.query.Query;
 
 public class CriteriaMapTest {
 
@@ -37,5 +40,24 @@ public class CriteriaMapTest {
 		assertThat(projectCriteriaMap.getCriteriaHolder("configuration$entryType").getQueryCriteria()).isEqualTo("configuration.entryType");
 		assertThat(projectCriteriaMap.getCriteriaHolder("users").getQueryCriteria()).isEqualTo("users");
 		assertThat(projectCriteriaMap.getCriteriaHolder("creationDate").getQueryCriteria()).isEqualTo("creationDate");
+	}
+
+
+	@Test
+	public void dynamicCriteriaTest() {
+		CriteriaMap<TestItem> testItemCriteriaMap = new CriteriaMap<>(TestItem.class);
+
+		assertThat(testItemCriteriaMap.getCriteriaHolderUnchecked(IssueCounter.PRODUCT_BUG_CRITERIA)).isPresent();
+
+		Filter filter = Filter.builder()
+				.withCondition(
+					FilterCondition.builder().withCondition(Condition.EQUALS).withSearchCriteria("statistics$defects$product_bug$total")
+						.withValue("10").build())
+				.withTarget(TestItem.class)
+				.build();
+		Query q = QueryBuilder.newBuilder().with(filter).build();
+
+		assertThat(q.getQueryObject().get("statistics.issueCounter.productBug.total")).isEqualTo("10");
+
 	}
 }
