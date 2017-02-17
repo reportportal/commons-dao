@@ -58,7 +58,7 @@ public class CriteriaMapTest {
 				.build();
 		Query q = QueryBuilder.newBuilder().with(filter).build();
 
-		assertThat(q.getQueryObject().get("statistics.issueCounter.productBug.total")).isEqualTo("10");
+		assertThat(q.getQueryObject().get("statistics.issueCounter.productBug.total")).isEqualTo(10L);
 
 	}
 
