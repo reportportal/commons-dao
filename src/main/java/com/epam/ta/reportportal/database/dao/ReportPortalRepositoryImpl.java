@@ -251,10 +251,6 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 
     @Override
     public long getPageNumber(String entityId, Filter filterable, Pageable pageable) {
-        //        //        DBObject queryObject = QueryBuilder.newBuilder().with(filterable).build().getQueryObject();
-        //        DBObject mappedQueryObject = queryMapper.getMappedObject(queryObject, mongoOperations
-        //                .getConverter()
-        //                .getMappingContext().getPersistentEntity(getEntityInformation().getJavaType()));
         Class<T> javaType = this.getEntityInformation().getJavaType();
         ImmutableList.Builder<AggregationOperation> pipelineBuilder = ImmutableList.<AggregationOperation>builder()
                 .add(
