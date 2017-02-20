@@ -32,6 +32,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import org.bson.types.ObjectId;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -44,8 +45,8 @@ import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
@@ -59,20 +60,11 @@ import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.epam.ta.reportportal.database.search.QueryBuilder.toCriteriaList;
 import static com.google.common.collect.Iterables.toArray;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwind;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -90,11 +82,13 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
     private static final String ID_FIELD = "_id";
     private MongoOperations mongoOperations;
     private MongoEntityInformation<T, ID> mongoEntityInformation;
+    private QueryMapper queryMapper;
 
     ReportPortalRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
         super(metadata, mongoOperations);
         this.mongoEntityInformation = metadata;
         this.mongoOperations = mongoOperations;
+        this.queryMapper = new QueryMapper(mongoOperations.getConverter());
     }
 
     MongoOperations getMongoOperations() {
@@ -257,10 +251,15 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 
     @Override
     public long getPageNumber(String entityId, Filter filterable, Pageable pageable) {
-
+        Class<T> javaType = this.getEntityInformation().getJavaType();
         ImmutableList.Builder<AggregationOperation> pipelineBuilder = ImmutableList.<AggregationOperation>builder()
                 .add(
-                        match(new Criteria().andOperator(toArray(toCriteriaList(filterable), Criteria.class)))
+                        new MatchOperation(new Criteria().andOperator(toArray(toCriteriaList(filterable), Criteria.class))){
+                            @Override
+                            public DBObject toDBObject(AggregationOperationContext context) {
+                                return  super.toDBObject(new TypeBasedAggregationOperationContext(javaType, mongoOperations.getConverter().getMappingContext(), queryMapper));
+                            }
+                        }
                 );
 
         if (null != pageable.getSort()){
