@@ -21,16 +21,11 @@
 
 package com.epam.ta.reportportal.database.entity.user;
 
-import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.ProjectRole;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * User entry related utilities
@@ -72,20 +67,5 @@ public class UserUtils {
     public static boolean isEmailValid(String email) {
         EmailValidator validator = EmailValidator.getInstance();
         return validator.isValid(email);
-    }
-
-    /**
-     * Transforms to map Project->ProjectRole
-     *
-     * @param user     Username
-     * @param projects List of assigned projects
-     * @return Project->ProjectRole map
-     */
-    public static Map<String, ProjectRole> getUserRoles(String user, List<Project> projects) {
-        return projects
-                .stream()
-                .filter(p -> p.getUsers().containsKey(user))
-                .collect(Collectors.
-                        toMap(Project::getName, p -> p.getUsers().get(user).getProjectRole()));
     }
 }

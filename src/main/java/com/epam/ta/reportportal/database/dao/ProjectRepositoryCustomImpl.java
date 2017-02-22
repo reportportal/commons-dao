@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.epam.ta.reportportal.database.entity.ProjectRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -108,6 +109,16 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 		Project first = mongoTemplate.findOne(query, Project.class);
 		first.getConfiguration().setExternalSystem(Collections.emptyList());
 		mongoTemplate.save(first);
+	}
+
+	@Override
+	public Map<String, ProjectRole> findProjectRoles(String login) {
+		final Query q = Query.query(userExists(login));
+		q.fields().include("users");
+		return mongoTemplate.find(q, Project.class)
+				.stream()
+				.collect(Collectors.
+						toMap(Project::getName, p -> p.getUsers().get(login).getProjectRole()));
 	}
 
 	private Criteria userExists(String login) {

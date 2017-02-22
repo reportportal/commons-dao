@@ -17,13 +17,14 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Project.UserConfig;
+import com.epam.ta.reportportal.database.entity.ProjectRole;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
@@ -36,63 +37,72 @@ import java.util.Map;
  */
 public interface ProjectRepositoryCustom {
 
-	/**
-	 * Whether user assigned to project
-	 *
-	 * @param project
-	 * @param login
-	 * @return
-	 */
-	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
-	boolean isAssignedToProject(String project, String login);
+    /**
+     * Whether user assigned to project
+     *
+     * @param project
+     * @param login
+     * @return
+     */
+    @Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
+    boolean isAssignedToProject(String project, String login);
 
-	/**
-	 * Finds projects contain specified user
-	 *
-	 * @param login
-	 * @return
-	 */
-	List<Project> findUserProjects(String login);
+    /**
+     * Finds projects contain specified user
+     *
+     * @param login
+     * @return
+     */
+    List<Project> findUserProjects(String login);
 
-	/**
-	 * Finds projects contains specified user and has specified projectType
-	 *
-	 * @param login       User login
-	 * @param projectType projectType
-	 * @return
-	 */
-	List<Project> findUserProjects(String login, String projectType);
+    /**
+     * Finds projects contains specified user and has specified projectType
+     *
+     * @param login       User login
+     * @param projectType projectType
+     * @return
+     */
+    List<Project> findUserProjects(String login, String projectType);
 
-	/**
-	 * Get project usernames which contains specified value (for auto-complete on UI)
-	 *
-	 * @param projectName
-	 * @param value
-	 * @return
-	 */
-	List<String> findProjectUsers(String projectName, String value);
+    /**
+     * Get project usernames which contains specified value (for auto-complete on UI)
+     *
+     * @param projectName
+     * @param value
+     * @return
+     */
+    List<String> findProjectUsers(String projectName, String value);
 
-	/**
-	 * Remove user from all projects
-	 *
-	 * @param userId
-	 */
-	void removeUserFromProjects(String userId);
+    /**
+     * Remove user from all projects
+     *
+     * @param userId
+     */
+    void removeUserFromProjects(String userId);
 
-	/**
-	 * Add users to project
-	 *
-	 * @param projectId
-	 * @param users
-	 */
-	void addUsers(String projectId, Map<String, UserConfig> users);
+    /**
+     * Add users to project
+     *
+     * @param projectId
+     * @param users
+     */
+    void addUsers(String projectId, Map<String, UserConfig> users);
 
-	/**
-	 * Find all project names
-	 *
-	 * @return
-	 */
-	List<String> findAllProjectNames();
+    /**
+     * Find all project names
+     *
+     * @return Project Names
+     */
+    List<String> findAllProjectNames();
 
-	void clearExternalSystems(String projectId);
+    void clearExternalSystems(String projectId);
+
+    /**
+     * Returns map Project->ProjectRole
+     *
+     * @param login username
+     * @return Project->ProjectRole map
+     */
+    Map<String, ProjectRole> findProjectRoles(String login);
+
 }
