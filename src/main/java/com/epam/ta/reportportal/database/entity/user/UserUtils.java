@@ -66,8 +66,8 @@ public class UserUtils {
     /**
      * Validate email format against RFC822
      *
-     * @param email
-     * @return
+     * @param email Email to be validated
+     * @return TRUE of email is valid
      */
     public static boolean isEmailValid(String email) {
         EmailValidator validator = EmailValidator.getInstance();
