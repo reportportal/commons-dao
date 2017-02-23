@@ -21,17 +21,17 @@
 
 package com.epam.ta.reportportal.database.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
-
+import com.epam.ta.reportportal.database.search.FilterCriteria;
+import com.epam.ta.reportportal.ws.model.settings.GoogleAnalyticsConfig;
+import com.epam.ta.reportportal.ws.model.settings.ServerEmailConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.epam.ta.reportportal.database.search.FilterCriteria;
-import com.epam.ta.reportportal.ws.model.settings.ServerEmailConfig;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * <b>GLOBAL SERVER SETTINGS</b> stored in database for beans properties definitions<br>
@@ -62,6 +62,8 @@ public class ServerSettings implements Serializable, Modifiable {
 	private ServerEmailConfig serverEmailConfig;
 
 	private Map<String, OAuth2LoginDetails> oAuth2LoginDetails;
+
+	private GoogleAnalyticsConfig googleAnalyticsConfig;
 
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
@@ -108,4 +110,12 @@ public class ServerSettings implements Serializable, Modifiable {
 	public void setoAuth2LoginDetails(Map<String, OAuth2LoginDetails> oAuth2LoginDetails) {
 		this.oAuth2LoginDetails = oAuth2LoginDetails;
 	}
+
+    public GoogleAnalyticsConfig getGoogleAnalyticsConfig() {
+        return googleAnalyticsConfig;
+    }
+
+    public void setGoogleAnalyticsConfig(GoogleAnalyticsConfig googleAnalyticsConfig) {
+        this.googleAnalyticsConfig = googleAnalyticsConfig;
+    }
 }
