@@ -1,4 +1,4 @@
-package com.epam.ta.reportportal.database.entity;
+package com.epam.ta.reportportal.database.entity.settings;
 
 import com.google.common.base.MoreObjects;
 

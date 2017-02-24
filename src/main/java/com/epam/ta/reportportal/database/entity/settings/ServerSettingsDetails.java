@@ -19,11 +19,10 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package com.epam.ta.reportportal.database.entity;
+package com.epam.ta.reportportal.database.entity.settings;
 
+import com.epam.ta.reportportal.database.entity.Modifiable;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
-import com.epam.ta.reportportal.ws.model.settings.GoogleAnalyticsConfig;
-import com.epam.ta.reportportal.ws.model.settings.ServerEmailConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -44,7 +43,7 @@ import java.util.Map;
  *
  */
 @Document
-public class ServerSettings implements Serializable, Modifiable {
+public class ServerSettingsDetails implements Serializable, Modifiable {
 	/**
 	 * Default ID
 	 */
@@ -59,11 +58,11 @@ public class ServerSettings implements Serializable, Modifiable {
 	 */
 	private boolean active;
 
-	private ServerEmailConfig serverEmailConfig;
+	private ServerEmailDetails serverEmailDetails;
 
 	private Map<String, OAuth2LoginDetails> oAuth2LoginDetails;
 
-	private GoogleAnalyticsConfig googleAnalyticsConfig;
+	private GoogleAnalyticsDetails googleAnalyticsDetails;
 
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
@@ -87,12 +86,12 @@ public class ServerSettings implements Serializable, Modifiable {
 		return lastModified;
 	}
 
-	public void setServerEmailConfig(ServerEmailConfig config) {
-		this.serverEmailConfig = config;
+	public void setServerEmailDetails(ServerEmailDetails config) {
+		this.serverEmailDetails = config;
 	}
 
-	public ServerEmailConfig getServerEmailConfig() {
-		return serverEmailConfig;
+	public ServerEmailDetails getServerEmailDetails() {
+		return serverEmailDetails;
 	}
 
 	public void setActive(boolean is) {
@@ -111,11 +110,11 @@ public class ServerSettings implements Serializable, Modifiable {
 		this.oAuth2LoginDetails = oAuth2LoginDetails;
 	}
 
-    public GoogleAnalyticsConfig getGoogleAnalyticsConfig() {
-        return googleAnalyticsConfig;
+    public GoogleAnalyticsDetails getGoogleAnalyticsDetails() {
+        return googleAnalyticsDetails;
     }
 
-    public void setGoogleAnalyticsConfig(GoogleAnalyticsConfig googleAnalyticsConfig) {
-        this.googleAnalyticsConfig = googleAnalyticsConfig;
+    public void setGoogleAnalyticsDetails(GoogleAnalyticsDetails googleAnalyticsDetails) {
+        this.googleAnalyticsDetails = googleAnalyticsDetails;
     }
 }
