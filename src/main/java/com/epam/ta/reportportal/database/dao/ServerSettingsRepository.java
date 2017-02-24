@@ -21,7 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.entity.settings.ServerSettingsDetails;
+import com.epam.ta.reportportal.database.entity.settings.ServerSettings;
 
 /**
  * 
@@ -30,5 +30,5 @@ import com.epam.ta.reportportal.database.entity.settings.ServerSettingsDetails;
  * @author Andrei_Ramanchuk
  *
  */
-public interface ServerSettingsRepository extends ReportPortalRepository<ServerSettingsDetails, String> {
+public interface ServerSettingsRepository extends ReportPortalRepository<ServerSettings, String> {
 }

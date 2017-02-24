@@ -43,7 +43,7 @@ import java.util.Map;
  *
  */
 @Document
-public class ServerSettingsDetails implements Serializable, Modifiable {
+public class ServerSettings implements Serializable, Modifiable {
 	/**
 	 * Default ID
 	 */
