@@ -21,15 +21,10 @@
 package com.epam.ta.reportportal.triggers;
 
 import com.epam.ta.reportportal.commons.Preconditions;
-import com.epam.ta.reportportal.commons.Utils;
 import com.epam.ta.reportportal.database.dao.DashboardRepository;
-import com.epam.ta.reportportal.database.dao.FavoriteResourceRepository;
 import com.epam.ta.reportportal.database.dao.WidgetRepository;
 import com.epam.ta.reportportal.database.entity.Dashboard;
-import com.epam.ta.reportportal.database.entity.favorite.FavoriteResource;
 import com.epam.ta.reportportal.database.entity.widget.Widget;
-import com.epam.ta.reportportal.ws.model.favorites.FavoriteResourceTypes;
-import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
@@ -50,14 +45,11 @@ import static com.google.common.collect.Sets.newHashSet;
 public class CascadeDeleteDashboardTrigger extends AbstractMongoEventListener<Dashboard> {
 
 	private final WidgetRepository widgetRepository;
-	private final FavoriteResourceRepository favoriteResourceRepository;
 	private final DashboardRepository dashBoardRepository;
 
 	@Autowired
-	public CascadeDeleteDashboardTrigger(WidgetRepository widgetRepository, FavoriteResourceRepository favoriteResourceRepository,
-			DashboardRepository dashboardRepository) {
+	public CascadeDeleteDashboardTrigger(WidgetRepository widgetRepository, DashboardRepository dashboardRepository) {
 		this.widgetRepository = widgetRepository;
-		this.favoriteResourceRepository = favoriteResourceRepository;
 		this.dashBoardRepository = dashboardRepository;
 	}
 
@@ -70,14 +62,7 @@ public class CascadeDeleteDashboardTrigger extends AbstractMongoEventListener<Da
 		Dashboard dashboard = dashBoardRepository.findOne(id.toString());
 		if (dashboard != null) {
 			deleteWidgets(dashboard.getWidgets(), dashboard.getAcl().getOwnerUserId());
-			removeFromFavorites(dashboard.getAcl().getOwnerUserId(), FavoriteResourceTypes.DASHBOARD.name(), dashboard.getId());
 		}
-	}
-
-	private void removeFromFavorites(String userName, String type, String resourceId) {
-		List<FavoriteResource> favoriteResources = favoriteResourceRepository
-				.findByFilter(Utils.getUniqueFavoriteFilter(userName, type, resourceId));
-		favoriteResourceRepository.delete(favoriteResources);
 	}
 
 	private void deleteWidgets(List<Dashboard.WidgetObject> widgets, String owner) {
