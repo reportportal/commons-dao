@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 
 import com.epam.ta.reportportal.database.dao.DashboardRepository;
-import com.epam.ta.reportportal.database.dao.FavoriteResourceRepository;
 import com.epam.ta.reportportal.database.dao.WidgetRepository;
 import com.epam.ta.reportportal.database.entity.Dashboard;
 import com.mongodb.BasicDBObject;
@@ -40,8 +39,7 @@ public class CascadeDeleteDashboardTriggerTest {
 	@Before
 	public void setUp() {
 		this.dashboardRepository = mock(DashboardRepository.class);
-		this.cascadeDeleteDashboardTrigger = new CascadeDeleteDashboardTrigger(mock(WidgetRepository.class),
-				mock(FavoriteResourceRepository.class), dashboardRepository);
+		this.cascadeDeleteDashboardTrigger = new CascadeDeleteDashboardTrigger(mock(WidgetRepository.class), dashboardRepository);
 	}
 
 	@Test

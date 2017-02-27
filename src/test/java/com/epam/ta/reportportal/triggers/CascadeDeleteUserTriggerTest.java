@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 
 import com.epam.ta.reportportal.database.DataStorage;
-import com.epam.ta.reportportal.database.dao.FavoriteResourceRepository;
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
 import com.epam.ta.reportportal.database.dao.UserPreferenceRepository;
 import com.epam.ta.reportportal.database.dao.UserRepository;
@@ -44,8 +43,7 @@ public class CascadeDeleteUserTriggerTest {
 	public void setUp() {
 		userRepository = mock(UserRepository.class);
 		cascadeDeleteUserTrigger = new CascadeDeleteUserTrigger(mock(DataStorage.class), mock(RepositoryProvider.class),
-				mock(ProjectRepository.class), mock(FavoriteResourceRepository.class), mock(UserPreferenceRepository.class),
-				userRepository);
+				mock(ProjectRepository.class), mock(UserPreferenceRepository.class), userRepository);
 	}
 
 	@Test
