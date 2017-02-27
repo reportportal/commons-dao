@@ -19,19 +19,19 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package com.epam.ta.reportportal.database.entity;
+package com.epam.ta.reportportal.database.entity.settings;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
-
+import com.epam.ta.reportportal.database.entity.Modifiable;
+import com.epam.ta.reportportal.database.search.FilterCriteria;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.epam.ta.reportportal.database.search.FilterCriteria;
-import com.epam.ta.reportportal.ws.model.settings.ServerEmailConfig;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <b>GLOBAL SERVER SETTINGS</b> stored in database for beans properties definitions<br>
@@ -59,9 +59,11 @@ public class ServerSettings implements Serializable, Modifiable {
 	 */
 	private boolean active;
 
-	private ServerEmailConfig serverEmailConfig;
+	private ServerEmailDetails serverEmailDetails;
 
 	private Map<String, OAuth2LoginDetails> oAuth2LoginDetails;
+
+	private List<AnalyticsDetails> analyticsDetails;
 
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
@@ -85,12 +87,12 @@ public class ServerSettings implements Serializable, Modifiable {
 		return lastModified;
 	}
 
-	public void setServerEmailConfig(ServerEmailConfig config) {
-		this.serverEmailConfig = config;
+	public void setServerEmailDetails(ServerEmailDetails config) {
+		this.serverEmailDetails = config;
 	}
 
-	public ServerEmailConfig getServerEmailConfig() {
-		return serverEmailConfig;
+	public ServerEmailDetails getServerEmailDetails() {
+		return serverEmailDetails;
 	}
 
 	public void setActive(boolean is) {
@@ -108,4 +110,12 @@ public class ServerSettings implements Serializable, Modifiable {
 	public void setoAuth2LoginDetails(Map<String, OAuth2LoginDetails> oAuth2LoginDetails) {
 		this.oAuth2LoginDetails = oAuth2LoginDetails;
 	}
+
+    public List<AnalyticsDetails> getAnalyticsDetails() {
+        return analyticsDetails;
+    }
+
+    public void setAnalyticsDetails(List<AnalyticsDetails> analyticsDetails) {
+        this.analyticsDetails = analyticsDetails;
+    }
 }

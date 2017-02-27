@@ -21,7 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.entity.ServerSettings;
+import com.epam.ta.reportportal.database.entity.settings.ServerSettings;
 
 /**
  * 
