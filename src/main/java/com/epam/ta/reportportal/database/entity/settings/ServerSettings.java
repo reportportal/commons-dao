@@ -30,6 +30,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,7 +63,7 @@ public class ServerSettings implements Serializable, Modifiable {
 
 	private Map<String, OAuth2LoginDetails> oAuth2LoginDetails;
 
-	private GoogleAnalyticsDetails googleAnalyticsDetails;
+	private List<AnalyticsDetails> analyticsDetails;
 
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
@@ -110,11 +111,11 @@ public class ServerSettings implements Serializable, Modifiable {
 		this.oAuth2LoginDetails = oAuth2LoginDetails;
 	}
 
-    public GoogleAnalyticsDetails getGoogleAnalyticsDetails() {
-        return googleAnalyticsDetails;
+    public List<AnalyticsDetails> getAnalyticsDetails() {
+        return analyticsDetails;
     }
 
-    public void setGoogleAnalyticsDetails(GoogleAnalyticsDetails googleAnalyticsDetails) {
-        this.googleAnalyticsDetails = googleAnalyticsDetails;
+    public void setAnalyticsDetails(List<AnalyticsDetails> analyticsDetails) {
+        this.analyticsDetails = analyticsDetails;
     }
 }

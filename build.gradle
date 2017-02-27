@@ -40,7 +40,7 @@ configurations.all {
 }
 
 dependencies {
-    compile 'com.github.reportportal:commons-model:2f5e0f4'
+    compile 'com.github.reportportal:commons-model:987c2c'
 //    compile 'com.epam.reportportal:commons-rules:2.7.0'
     compile 'com.github.reportportal:commons-rules:7fa95723ba'
 
