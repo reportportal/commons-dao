@@ -22,14 +22,18 @@ import com.epam.ta.reportportal.database.DataStorage;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.entity.user.UserType;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
 
@@ -71,6 +75,26 @@ public class UserRepositoryTest extends BaseDaoTest {
 
 		/* make sure duplicates are removed */
 		Assert.assertEquals("Incorrect count of files", 1, dataStorage.findByFilename(photoFilename(username)).size());
+	}
+
+	@Test
+	public void testUsernamesSearch() throws IOException {
+
+		User user1 = new User();
+		user1.setLogin("usernameSearchUser");
+		user1.setEmail(user1.getLogin() + "@epam.com");
+		user1.setType(UserType.INTERNAL);
+
+		User user2 = new User();
+		user2.setLogin("usernameSearchUser2");
+		user2.setEmail(user2.getLogin() + "@epam.com");
+		user2.setType(UserType.INTERNAL);
+
+		userRepository.save(Arrays.asList(user1, user2));
+
+		Page<String> users = userRepository.searchForUserLogin("search", null);
+		Assert.assertThat("Incorrect search user name query!", users.getTotalElements(), Matchers.equalTo(2L));
+
 	}
 
 }
