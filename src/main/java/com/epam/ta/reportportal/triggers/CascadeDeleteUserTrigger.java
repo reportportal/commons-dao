@@ -51,18 +51,16 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 	private final DataStorage dataStorage;
 	private final RepositoryProvider repositoryProvider;
 	private final ProjectRepository projectRepository;
-	private final FavoriteResourceRepository favoriteResourceRepository;
 	private final UserPreferenceRepository userPreferenceRepository;
 	private final UserRepository userRepository;
 
 	@Autowired
 	public CascadeDeleteUserTrigger(DataStorage dataStorage, RepositoryProvider repositoryProvider, ProjectRepository projectRepository,
-			FavoriteResourceRepository favoriteResourceRepository, UserPreferenceRepository userPreferenceRepository,
+			UserPreferenceRepository userPreferenceRepository,
 			UserRepository userRepository) {
 		this.dataStorage = dataStorage;
 		this.repositoryProvider = repositoryProvider;
 		this.projectRepository = projectRepository;
-		this.favoriteResourceRepository = favoriteResourceRepository;
 		this.userPreferenceRepository = userPreferenceRepository;
 		this.userRepository = userRepository;
 	}
@@ -77,7 +75,6 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 		String login = loginObject.toString();
 		User user = userRepository.findPhotoIdByLogin(login);
 		removeNonsharedItems(login);
-		favoriteResourceRepository.removeFavoriteResources(login);
 		userPreferenceRepository.deleteByUserName(login);
 
 		if (!StringUtils.isEmpty(user.getPhotoId())) {
