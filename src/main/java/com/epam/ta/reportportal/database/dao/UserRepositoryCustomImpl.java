@@ -31,6 +31,7 @@ import static org.springframework.data.mongodb.core.query.Update.update;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,12 +141,12 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public User findByEmail(String email) {
-		final Query query = query(where("email").is(EntityUtils.normalizeUsername(email)));
+		final Query query = query(where(User.EMAIL).is(EntityUtils.normalizeUsername(email)));
 		return mongoOperations.findOne(query, User.class);
 	}
 
 	@Override
-	public Page<User> findByLoginNameOrEmail(String term, Pageable pageable) {
+	public Page<User> searchForUser(String term, Pageable pageable) {
 		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
 		Criteria email = where(User.EMAIL).regex(regex);
 		Criteria login = where(LOGIN).regex(regex);
@@ -153,6 +154,18 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		Criteria criteria = new Criteria().orOperator(email, login, fullName);
 		Query query = query(criteria).with(pageable);
 		List<User> users = mongoOperations.find(query, User.class);
+		return new PageImpl<>(users, pageable, mongoOperations.count(query, User.class));
+	}
+
+	@Override
+	public Page<String> searchForUserLogin(String term, Pageable pageable) {
+		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
+		Criteria login = where(LOGIN).regex(regex);
+		Criteria fullName = where("fullName").regex(regex);
+		Criteria criteria = new Criteria().orOperator(login, fullName);
+		Query query = query(criteria).with(pageable);
+		query.fields().include(LOGIN);
+		List<String> users = mongoOperations.find(query, User.class).stream().map(User::getLogin).collect(Collectors.toList());
 		return new PageImpl<>(users, pageable, mongoOperations.count(query, User.class));
 	}
 
