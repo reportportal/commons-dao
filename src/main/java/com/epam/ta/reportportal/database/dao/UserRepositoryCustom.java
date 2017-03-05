@@ -105,13 +105,22 @@ interface UserRepositoryCustom {
 	User findByEmail(String email);
 
 	/**
-	 * Finds users by login or email
+	 * Finds users by login or email or full name. Term is transformed to regex pattern
 	 *
-	 * @param term     login OR email
+	 * @param term     login OR email OR full name
 	 * @param pageable Pageable
 	 * @return Found users
 	 */
-	Page<User> findByLoginNameOrEmail(String term, Pageable pageable);
+	Page<User> searchForUser(String term, Pageable pageable);
+
+	/**
+	 * Finds users by login OR full name. Term is transformed to regex pattern
+	 *
+	 * @param term     login OR full name
+	 * @param pageable Pageable
+	 * @return Found users
+	 */
+	Page<String> searchForUserLogin(String term, Pageable pageable);
 
 	/**
 	 * Updates last login date field of user entity

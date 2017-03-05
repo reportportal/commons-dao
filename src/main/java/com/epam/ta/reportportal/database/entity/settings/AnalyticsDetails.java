@@ -31,7 +31,6 @@ public class AnalyticsDetails implements Serializable {
 
     private Boolean enabled;
 
-    private String type;
 
     public AnalyticsDetails() {
     }
@@ -57,17 +56,9 @@ public class AnalyticsDetails implements Serializable {
         this.enabled = enabled;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("type", type)
+        return MoreObjects.toStringHelper(this).add("id", id)
                 .add("enabled", enabled).toString();
     }
 }
