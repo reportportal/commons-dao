@@ -34,7 +34,8 @@ public enum InterruptionJobDelay {
 	THREE_HOURS("3 hours", 3L),
 	SIX_HOURS("6 hours", 6L),
 	TWELVE_HOURS("12 hours", 12L),
-	ONE_DAY("1 day", 24L);
+	ONE_DAY("1 day", 24L),
+	ONE_WEEK("1 week", 168L);
 	//@formatter:on
 	
 	private String value;
