@@ -8,7 +8,7 @@ buildscript {
 
 
 plugins {
-    id "io.spring.dependency-management" version "0.6.0.RELEASE"
+    id "io.spring.dependency-management" version "1.0.0.RELEASE"
     id 'net.researchgate.release' version '2.4.1'
     id "com.jfrog.bintray" version "1.7"
 }
@@ -31,7 +31,7 @@ targetCompatibility = 1.8
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:1.5.1.RELEASE"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:1.5.2.RELEASE"
     }
 }
 
