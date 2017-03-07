@@ -27,25 +27,13 @@ import java.io.Serializable;
 
 public class AnalyticsDetails implements Serializable {
 
-    private String id;
-
     private Boolean enabled;
-
 
     public AnalyticsDetails() {
     }
 
-    public AnalyticsDetails(String id, Boolean enabled) {
-        this.id = id;
+    public AnalyticsDetails(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Boolean getEnabled() {
@@ -58,7 +46,7 @@ public class AnalyticsDetails implements Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id)
+        return MoreObjects.toStringHelper(this)
                 .add("enabled", enabled).toString();
     }
 }
