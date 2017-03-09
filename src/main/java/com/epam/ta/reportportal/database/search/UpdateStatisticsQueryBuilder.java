@@ -64,7 +64,7 @@ public class UpdateStatisticsQueryBuilder {
 		int iPassed = current.getExecutionCounter().getPassed();
 		int iFailed = current.getExecutionCounter().getFailed();
 		int iSkipped = current.getExecutionCounter().getSkipped();
-		Update updateStatusAware = new Update().inc(EXECUTION_COUNTER + ".total", isReset ? iTotal *= -1 : iTotal);
+		Update updateStatusAware = new Update().inc(EXECUTION_COUNTER + ".total", isReset ? iTotal * -1 : iTotal);
 		if (item.getStatus().awareStatisticsField() != null && !item.getStatus().awareStatisticsField().isEmpty()) {
 			updateStatusAware = updateStatusAware.inc(EXECUTION_COUNTER + "." + Status.PASSED.awareStatisticsField(),
 					isReset ? iPassed * -1 : iPassed);

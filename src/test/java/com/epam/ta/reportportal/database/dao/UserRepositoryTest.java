@@ -33,7 +33,6 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
 
