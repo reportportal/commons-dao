@@ -120,7 +120,7 @@ interface UserRepositoryCustom {
 	 * @param pageable Pageable
 	 * @return Found users
 	 */
-	Page<String> searchForUserLogin(String term, Pageable pageable);
+	Page<User> searchForUserLogin(String term, Pageable pageable);
 
 	/**
 	 * Updates last login date field of user entity
