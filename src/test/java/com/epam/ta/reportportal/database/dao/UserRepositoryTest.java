@@ -91,7 +91,7 @@ public class UserRepositoryTest extends BaseDaoTest {
 
 		userRepository.save(Arrays.asList(user1, user2));
 
-		Page<String> users = userRepository.searchForUserLogin("search", null);
+		Page<User> users = userRepository.searchForUserLogin("search", null);
 		Assert.assertThat("Incorrect search user name query!", users.getTotalElements(), Matchers.equalTo(2L));
 
 	}
