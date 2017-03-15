@@ -50,6 +50,8 @@ public class User implements Serializable {
 	public static final String TYPE = "type";
 	public static final String EMAIL = "email";
 
+	public static final String FULLNAME_DB_FIELD = "fullName";
+
 	private static final long serialVersionUID = 6589946977687369280L;
 
 	@Id

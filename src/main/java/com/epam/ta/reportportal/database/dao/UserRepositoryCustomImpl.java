@@ -150,7 +150,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
 		Criteria email = where(User.EMAIL).regex(regex);
 		Criteria login = where(LOGIN).regex(regex);
-		Criteria fullName = where("fullName").regex(regex);
+		Criteria fullName = where(FULLNAME_DB_FIELD).regex(regex);
 		Criteria criteria = new Criteria().orOperator(email, login, fullName);
 		Query query = query(criteria).with(pageable);
 		List<User> users = mongoOperations.find(query, User.class);
@@ -158,14 +158,15 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public Page<String> searchForUserLogin(String term, Pageable pageable) {
+	public Page<User> searchForUserLogin(String term, Pageable pageable) {
 		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
 		Criteria login = where(LOGIN).regex(regex);
-		Criteria fullName = where("fullName").regex(regex);
+		Criteria fullName = where(FULLNAME_DB_FIELD).regex(regex);
 		Criteria criteria = new Criteria().orOperator(login, fullName);
 		Query query = query(criteria).with(pageable);
 		query.fields().include(LOGIN);
-		List<String> users = mongoOperations.find(query, User.class).stream().map(User::getLogin).collect(Collectors.toList());
+		query.fields().include(FULLNAME_DB_FIELD);
+		List<User> users = mongoOperations.find(query, User.class);
 		return new PageImpl<>(users, pageable, mongoOperations.count(query, User.class));
 	}
 

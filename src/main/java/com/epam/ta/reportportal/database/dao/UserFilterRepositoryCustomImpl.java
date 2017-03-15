@@ -17,21 +17,22 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.filter.UserFilter;
+import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.epam.ta.reportportal.database.entity.filter.UserFilter;
-import com.epam.ta.reportportal.database.entity.sharing.Shareable;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCustom {
 
@@ -51,8 +52,8 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 
 	@Override
 	public UserFilter findOneByName(String userName, String name, String projectName) {
-		Query query = ShareableRepositoryUtils.createOwnedEntityQuery(userName).addCriteria(Criteria.where(NAME).is(name))
-				.addCriteria(Criteria.where(UserFilter.PROJECT_NAME).is(projectName));
+		Query query = ShareableRepositoryUtils.createOwnedEntityQuery(userName).addCriteria(where(NAME).is(name))
+				.addCriteria(where(UserFilter.PROJECT_NAME).is(projectName));
 		query.fields().include(ID);
 		return mongoTemplate.findOne(query, UserFilter.class);
 	}
@@ -65,8 +66,8 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 		} else {
 			query = ShareableRepositoryUtils.createOwnedEntityQuery(userName);
 		}
-		query.addCriteria(Criteria.where("isLink").is(false))
-				.addCriteria(Criteria.where(UserFilter.PROJECT_NAME).is(projectName)).with(sort);
+		query.addCriteria(where("isLink").is(false))
+				.addCriteria(where(UserFilter.PROJECT_NAME).is(projectName)).with(sort);
 		query.with(sort);
 		query.fields().include(ID);
 		query.fields().include(NAME);
@@ -81,10 +82,10 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 
 	@Override
 	public UserFilter findOneLoadACL(String userName, String id, String projectName) {
-		Query query = Query.query(Criteria.where(OWNER).is(userName)).addCriteria(Criteria.where(ID).is(id))
-				.addCriteria(Criteria.where(PROJECT).is(projectName));
-		Query shared = Query.query(Criteria.where(ID).is(id)).addCriteria(Criteria.where(ENTRIES).size(1))
-				.addCriteria(Criteria.where(PROJECT).is(projectName));
+		Query query = Query.query(where(OWNER).is(userName)).addCriteria(where(ID).is(id))
+				.addCriteria(where(PROJECT).is(projectName));
+		Query shared = Query.query(where(ID).is(id)).addCriteria(where(ENTRIES).size(1))
+				.addCriteria(where(PROJECT).is(projectName));
 		query.fields().include(TARGET).include(ACL).include(LINK);
 		shared.fields().include(TARGET).include(ACL).include(LINK);
 		UserFilter filter = mongoTemplate.findOne(query, UserFilter.class);
@@ -93,8 +94,13 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 
 	@Override
 	public List<UserFilter> findAvailableFilters(String projectName, String[] ids, String userName) {
-		Query query = Query.query(Criteria.where(PROJECT).is(projectName)).addCriteria(
-				Criteria.where(ID).in(Arrays.asList(ids)).orOperator(Criteria.where(ENTRIES).size(1), Criteria.where(OWNER).is(userName)));
-		return mongoTemplate.find(query, UserFilter.class);
+		//where ID from provided array AND it's shared on project
+		Query q = Query.query(where(ID).in(Arrays.asList(ids))
+				.andOperator(new Criteria()
+						.orOperator(
+								where(OWNER).is(userName),
+								where(PROJECT).is(projectName),
+								where(ENTRIES).elemMatch(where("projectId").is(projectName)))));
+		return mongoTemplate.find(q, UserFilter.class);
 	}
 }
