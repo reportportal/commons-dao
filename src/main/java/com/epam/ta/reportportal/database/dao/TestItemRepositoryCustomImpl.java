@@ -287,7 +287,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<TestItem> findTestItemWithInvestigated(String launchId) {
 		Criteria internalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE_TYPE).ne(TestItemIssueType.TO_INVESTIGATE.name()), where(ISSUE_DESCRIPTION).exists(true));
+				where(ISSUE_TYPE).ne(TestItemIssueType.TO_INVESTIGATE.name()));
 
 		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId), where(ISSUE_TYPE).exists(true),
 				where(ISSUE_TICKET).exists(true));

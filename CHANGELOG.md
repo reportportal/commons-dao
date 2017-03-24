@@ -28,3 +28,4 @@
 
 ### BugFixes
 * EPMRPP-23564 - GET shared dashboard request does not contain 'description' parameter
+* EPMRPP-24914 - Item with investigated defect type only is not included in scope of analysis
