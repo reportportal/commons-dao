@@ -35,13 +35,18 @@ dependencyManagement {
     }
 }
 
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+project.ext {
+    releaseMode = project.hasProperty("releaseMode")
 }
 
 dependencies {
-//    compile 'com.epam.reportportal:commons-rules:2.7.0'
-    compile 'com.github.reportportal:commons-rules:7fa95723ba'
+
+    if (releaseMode) {
+        compile 'com.epam.reportportal:commons-rules:3.0.0-BETA-1'
+    } else {
+        compile 'com.github.reportportal:commons-rules:7fa95723ba'
+    }
+
 
 
     compile 'net.coobird:thumbnailator:0.4.8'
