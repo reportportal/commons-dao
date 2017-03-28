@@ -1,21 +1,21 @@
 package com.epam.ta.reportportal.database.dao;
 
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-
+import com.epam.ta.reportportal.BaseDaoTest;
+import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
+import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
+import com.epam.ta.reportportal.database.entity.statistics.Statistics;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.epam.ta.reportportal.BaseDaoTest;
-import com.epam.ta.reportportal.database.entity.Status;
-import com.epam.ta.reportportal.database.entity.item.TestItem;
-import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
-import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
-import com.epam.ta.reportportal.database.entity.statistics.Statistics;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestItemRepositoryTest extends BaseDaoTest {
 
@@ -29,7 +29,9 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		testItem.setLaunchRef(launch);
 		TestItem testItem1 = new TestItem();
 		testItem1.setLaunchRef(launch);
+		testItem1.setType(TestItemType.SUITE);
 		TestItem testItem2 = new TestItem();
+		testItem2.setType(TestItemType.SUITE);
 		testItem2.setLaunchRef(launch);
 		testItemRepository.save(testItem2);
 		testItemRepository.save(testItem1);
@@ -40,6 +42,12 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	public void findItemIdsByLaunchRef() {
 		List<String> ids = testItemRepository.findItemIdsByLaunchRef(singletonList("launch"));
 		assertThat(ids.size()).isEqualTo(3);
+	}
+
+	@Test
+	public void findItemsWithType() {
+		List<TestItem> items = testItemRepository.findItemsWithStatus("launch", TestItemType.SUITE);
+		assertThat(items.size()).isEqualTo(2);
 	}
 
 	@Test

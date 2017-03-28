@@ -21,17 +21,14 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.StreamSupport;
-
+import com.epam.ta.reportportal.commons.DbUtils;
+import com.epam.ta.reportportal.database.Time;
+import com.epam.ta.reportportal.database.entity.*;
+import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
+import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -44,13 +41,16 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import com.epam.ta.reportportal.commons.DbUtils;
-import com.epam.ta.reportportal.database.Time;
-import com.epam.ta.reportportal.database.entity.*;
-import com.epam.ta.reportportal.database.entity.item.TestItem;
-import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
-import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
+
+import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * Implementation of Test Items repository routines
@@ -70,6 +70,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ISSUE = "issue";
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
+	private static final String TYPE = "type";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -324,6 +325,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		Aggregation aggregation = newAggregation(match(where("launchRef").in(launchRef)), group("id"));
 		AggregationResults<Map> aggregationResults = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
 		return aggregationResults.getMappedResults().stream().map(it -> it.get("_id").toString()).collect(toList());
+	}
+
+	@Override
+	public List<TestItem> findItemsWithStatus(String launchId, TestItemType type) {
+		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(TYPE).is(type));
+		return mongoTemplate.find(query, TestItem.class);
 	}
 
 	/**
