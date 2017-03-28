@@ -71,6 +71,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
 	private static final String TYPE = "type";
+	private static final String NAME = "name";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -216,10 +217,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#
 	 * getMostFailedTestCases(java.util.List, java.lang.String)
-	 * 
+	 *
 	 * Most Failed Test Cases widget related method
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -321,17 +322,24 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<String> findItemIdsByLaunchRef(List<String> launchRef) {
-		Aggregation aggregation = newAggregation(match(where("launchRef").in(launchRef)), group("id"));
+	public List<String> findItemIdsByLaunchRef(List<String> launchRefs) {
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchRefs)), group(ID_REFERENCE));
 		AggregationResults<Map> aggregationResults = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
 		return aggregationResults.getMappedResults().stream().map(it -> it.get("_id").toString()).collect(toList());
 	}
 
 	@Override
-	public List<TestItem> findItemsWithStatus(String launchId, TestItemType type) {
+	public List<TestItem> findItemsWithType(String launchId, TestItemType type) {
 		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(TYPE).is(type));
 		return mongoTemplate.find(query, TestItem.class);
 	}
+
+	@Override
+	public List<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRef) {
+		Query query = query(where(LAUNCH_REFERENCE).in(launchRef)).addCriteria(where(NAME).is(name));
+		query.fields().include("_id");
+        return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toList());
+    }
 
 	/**
 	 * Create part of history criteria. Define launch id, and path size

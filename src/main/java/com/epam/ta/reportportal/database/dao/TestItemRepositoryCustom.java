@@ -157,10 +157,10 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
     /**
      * Get test-items ids for specified launches.
      *
-     * @param launchRef
+     * @param launchRefs
      * @return
      */
-	List<String> findItemIdsByLaunchRef(List<String> launchRef);
+	List<String> findItemIdsByLaunchRef(List<String> launchRefs);
 
     /**
      * Get test-items for specified launch with specified test item type.
@@ -169,7 +169,15 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
      * @param type
      * @return
      */
-    List<TestItem> findItemsWithStatus(String launchId, TestItemType type);
+    List<TestItem> findItemsWithType(String launchId, TestItemType type);
+
+    /**
+     * Get ids of test-items with specified name for specified launches.
+     * @param name
+     * @param launchRefs
+     * @return
+     */
+    List<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRefs);
 
 	/**
 	 * Get elements in launch branches specified by has_childs status.

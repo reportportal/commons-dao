@@ -30,6 +30,7 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		TestItem testItem1 = new TestItem();
 		testItem1.setLaunchRef(launch);
 		testItem1.setType(TestItemType.SUITE);
+		testItem1.setName("testName");
 		TestItem testItem2 = new TestItem();
 		testItem2.setType(TestItemType.SUITE);
 		testItem2.setLaunchRef(launch);
@@ -46,8 +47,14 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 
 	@Test
 	public void findItemsWithType() {
-		List<TestItem> items = testItemRepository.findItemsWithStatus("launch", TestItemType.SUITE);
+		List<TestItem> items = testItemRepository.findItemsWithType("launch", TestItemType.SUITE);
 		assertThat(items.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void findIdsWithNameByLaunchesRef(){
+		List<String> ids = testItemRepository.findIdsWithNameByLaunchesRef("testName", singletonList("launch"));
+		assertThat(ids.size()).isEqualTo(1);
 	}
 
 	@Test
