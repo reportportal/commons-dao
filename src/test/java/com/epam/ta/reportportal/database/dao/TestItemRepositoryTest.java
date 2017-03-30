@@ -7,6 +7,8 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +56,8 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 
 	@Test
 	public void findIdsWithNameByLaunchesRef(){
-		Set<String> ids = testItemRepository.findIdsWithNameByLaunchesRef("testName", singletonList("launch"));
+		Set<String> ids = testItemRepository
+                .findIdsWithNameByLaunchesRef("testName", ImmutableSet.<String>builder().add("launch").build());
 		assertThat(ids.size()).isEqualTo(1);
 	}
 

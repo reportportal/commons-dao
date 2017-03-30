@@ -178,7 +178,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
      * @param launchRefs
      * @return
      */
-    Set<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRefs);
+    Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRefs);
 
 	/**
 	 * Get elements in launch branches specified by has_childs status.

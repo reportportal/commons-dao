@@ -336,7 +336,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Set<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRef) {
+	public Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRef) {
 		Query query = query(where(LAUNCH_REFERENCE).in(launchRef)).addCriteria(where(NAME).is(name));
 		query.fields().include("_id");
         return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toSet());
