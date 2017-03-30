@@ -48,6 +48,7 @@ import java.util.stream.StreamSupport;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -335,10 +336,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRef) {
+	public Set<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRef) {
 		Query query = query(where(LAUNCH_REFERENCE).in(launchRef)).addCriteria(where(NAME).is(name));
 		query.fields().include("_id");
-        return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toList());
+        return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toSet());
     }
 
 	/**

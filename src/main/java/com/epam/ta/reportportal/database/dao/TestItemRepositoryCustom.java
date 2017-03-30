@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
@@ -177,7 +178,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
      * @param launchRefs
      * @return
      */
-    List<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRefs);
+    Set<String> findIdsWithNameByLaunchesRef(String name, List<String> launchRefs);
 
 	/**
 	 * Get elements in launch branches specified by has_childs status.

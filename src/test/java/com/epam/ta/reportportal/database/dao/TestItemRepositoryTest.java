@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +54,7 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 
 	@Test
 	public void findIdsWithNameByLaunchesRef(){
-		List<String> ids = testItemRepository.findIdsWithNameByLaunchesRef("testName", singletonList("launch"));
+		Set<String> ids = testItemRepository.findIdsWithNameByLaunchesRef("testName", singletonList("launch"));
 		assertThat(ids.size()).isEqualTo(1);
 	}
 
