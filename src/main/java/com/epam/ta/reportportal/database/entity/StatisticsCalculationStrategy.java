@@ -32,7 +32,7 @@ import java.util.Optional;
 public enum StatisticsCalculationStrategy {
 
 	/**
-	 * Test based strategy. Only tests should be caclulated as statistics items
+	 * Step based strategy. Only steps should be calculated as statistics items
 	 */
 	STEP_BASED,
 

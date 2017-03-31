@@ -21,15 +21,17 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-import java.util.Map;
-
 import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
@@ -41,7 +43,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Finds testItems by specified launch IDs
-	 * 
+	 *
 	 * @param launches
 	 * @return
 	 */
@@ -49,7 +51,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Get names of path field of test item
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -58,7 +60,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Finds items modified later than provided period with provided status
 	 * which is item of provided launch
-	 * 
+	 *
 	 * @param period
 	 * @param status
 	 * @param launch
@@ -70,7 +72,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Finds items modified later than provided period with provided status
 	 * which is item of provided launch
-	 * 
+	 *
 	 * @param period
 	 * @param status
 	 * @param launch
@@ -80,7 +82,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Get list of distinct values from TestItems collection
-	 * 
+	 *
 	 * @param launchId
 	 *            - parent launch id
 	 * @param containsValue
@@ -93,7 +95,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Get list of unique tickets for specified list of launches
-	 * 
+	 *
 	 * @param launchesId
 	 * @return
 	 */
@@ -101,7 +103,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Get content of Most Failed Test Cases widget
-	 * 
+	 *
 	 * @param launchIds
 	 * @param criteria
 	 * @return
@@ -110,7 +112,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Whether some of provided items has logs
-	 * 
+	 *
 	 * @param items
 	 * @return
 	 */
@@ -118,7 +120,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Load states of specified testItems in specified launches
-	 * 
+	 *
 	 * @param items
 	 * @param launchesIds
 	 * @param parentsIds
@@ -128,7 +130,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Find test items of specified launch with investigated issues.
-	 * 
+	 *
 	 * @param launchId
 	 * @return
 	 */
@@ -146,18 +148,41 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Get test-items for specified launch with specified issue type.
-	 * 
+	 *
 	 * @param issueType
 	 * @param launchId
 	 * @return
 	 */
 	List<TestItem> findInIssueTypeItems(String issueType, String launchId);
 
-	List<String> findItemIdsByLaunchRef(List<String> launchRef);
+    /**
+     * Get test-items ids for specified launches.
+     *
+     * @param launchRefs
+     * @return
+     */
+	List<String> findItemIdsByLaunchRef(List<String> launchRefs);
+
+    /**
+     * Get test-items for specified launch with specified test item type.
+     *
+     * @param launchId
+     * @param type
+     * @return
+     */
+    List<TestItem> findItemsWithType(String launchId, TestItemType type);
+
+    /**
+     * Get ids of test-items with specified name for specified launches.
+     * @param name
+     * @param launchRefs
+     * @return
+     */
+    Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRefs);
 
 	/**
 	 * Get elements in launch branches specified by has_childs status.
-	 * 
+	 *
 	 * @param hasChildren
 	 * @param launch
 	 * @return
@@ -167,7 +192,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Get all test items without descendants under specified launches with
 	 * specified sub-types.
-	 * 
+	 *
 	 * @param launchesIds
 	 * @param hasChild
 	 * @param type
