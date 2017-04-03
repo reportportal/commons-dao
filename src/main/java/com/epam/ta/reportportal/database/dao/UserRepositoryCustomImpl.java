@@ -31,7 +31,6 @@ import static org.springframework.data.mongodb.core.query.Update.update;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,23 +146,14 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public Page<User> searchForUser(String term, Pageable pageable) {
-		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
-		Criteria email = where(User.EMAIL).regex(regex);
-		Criteria login = where(LOGIN).regex(regex);
-		Criteria fullName = where(FULLNAME_DB_FIELD).regex(regex);
-		Criteria criteria = new Criteria().orOperator(email, login, fullName);
-		Query query = query(criteria).with(pageable);
+		Query query = buildSearchUserQuery(term, pageable);
 		List<User> users = mongoOperations.find(query, User.class);
 		return new PageImpl<>(users, pageable, mongoOperations.count(query, User.class));
 	}
 
 	@Override
 	public Page<User> searchForUserLogin(String term, Pageable pageable) {
-		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
-		Criteria login = where(LOGIN).regex(regex);
-		Criteria fullName = where(FULLNAME_DB_FIELD).regex(regex);
-		Criteria criteria = new Criteria().orOperator(login, fullName);
-		Query query = query(criteria).with(pageable);
+		Query query = buildSearchUserQuery(term, pageable);
 		query.fields().include(LOGIN);
 		query.fields().include(FULLNAME_DB_FIELD);
 		List<User> users = mongoOperations.find(query, User.class);
@@ -174,6 +164,15 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	public void updateLastLoginDate(String user, Date date) {
 		mongoOperations.updateFirst(query(where("_id").is(user)), update("metaInfo.lastLogin", date), User.class);
 
+	}
+
+	private Query buildSearchUserQuery(String term, Pageable pageable) {
+		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
+		Criteria login = where(LOGIN).regex(regex);
+		Criteria fullName = where(FULLNAME_DB_FIELD).regex(regex);
+		Criteria email = where(User.EMAIL).regex(regex);
+		Criteria criteria = new Criteria().orOperator(email, login, fullName);
+		return query(criteria).with(pageable);
 	}
 
 }
