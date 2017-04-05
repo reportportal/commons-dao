@@ -85,7 +85,7 @@ public final class PersonalProjectUtils {
 		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
 		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
 		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
-		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.TEST_BASED);
+		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
 		defaultConfig.setExternalSystem(Collections.emptyList());
 		defaultConfig.setIsAutoAnalyzerEnabled(false);
 
