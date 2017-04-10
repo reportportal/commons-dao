@@ -227,12 +227,12 @@ public class Project implements Serializable {
 			if (null != type) {
 				Optional<StatisticSubType> typeOptional = subTypes.values().stream().flatMap(Collection::stream)
 						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
-				return typeOptional.isPresent() ? typeOptional.get() : null;
+				return typeOptional.orElse(null);
 			}
 			/* If not */
 			Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
 					.filter(one -> one.getLocator().equalsIgnoreCase(locator)).findFirst();
-			return exist.isPresent() ? exist.get() : null;
+			return exist.orElse(null);
 		}
 
 		public void setByLocator(StatisticSubType type) {

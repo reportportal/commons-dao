@@ -35,7 +35,7 @@ public enum AuthType {
 	BASIC(true);
 	//@formatter:on
 
-	boolean requiresPassword;
+	final boolean requiresPassword;
 
 	AuthType(boolean requiresPassword) {
 		this.requiresPassword = requiresPassword;
