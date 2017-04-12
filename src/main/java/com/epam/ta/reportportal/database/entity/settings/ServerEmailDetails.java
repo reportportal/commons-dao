@@ -29,15 +29,15 @@ public class ServerEmailDetails implements Serializable {
 
     private String host;
 
-    private int port = 25;
+    private Integer port;
 
-    private String protocol = "smtp";
+    private String protocol;
 
-    private Boolean authEnabled = false;
+    private Boolean authEnabled;
 
-    private boolean starTlsEnabled;
+    private Boolean starTlsEnabled;
 
-    private boolean sslEnabled;
+    private Boolean sslEnabled;
 
     private String username;
 
@@ -45,23 +45,27 @@ public class ServerEmailDetails implements Serializable {
 
     private String from;
 
-    private boolean debug;
-
     public ServerEmailDetails() {
     }
 
-    public ServerEmailDetails(String host, int port, String protocol, Boolean authEnabled, boolean starTlsEnabled,
-                              boolean sslEnabled, String username, String password, String from, boolean debug) {
-        this.host = host;
+    public void setPort(Integer port) {
         this.port = port;
-        this.protocol = protocol;
-        this.authEnabled = authEnabled;
+    }
+
+    public Boolean getStarTlsEnabled() {
+        return starTlsEnabled;
+    }
+
+    public void setStarTlsEnabled(Boolean starTlsEnabled) {
         this.starTlsEnabled = starTlsEnabled;
+    }
+
+    public Boolean getSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(Boolean sslEnabled) {
         this.sslEnabled = sslEnabled;
-        this.username = username;
-        this.password = password;
-        this.from = from;
-        this.debug = debug;
     }
 
     public void setHost(String host) {
@@ -120,14 +124,6 @@ public class ServerEmailDetails implements Serializable {
         return authEnabled;
     }
 
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
     public boolean isSslEnabled() {
         return sslEnabled;
     }
@@ -148,6 +144,6 @@ public class ServerEmailDetails implements Serializable {
     public String toString() {
         return MoreObjects.toStringHelper(this).add("host", host).add("port", port).add("protocol", protocol)
                 .add("authEnabled", authEnabled).add("starTlsEnabled", starTlsEnabled).add("sslEnabled", sslEnabled)
-                .add("username", username).add("password", password).add("from", from).add("debug", debug).toString();
+                .add("username", username).add("password", password).add("from", from).toString();
     }
 }
