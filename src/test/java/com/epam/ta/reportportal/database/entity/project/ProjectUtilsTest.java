@@ -26,13 +26,13 @@ import static java.util.Collections.singletonList;
 
 import java.util.List;
 
+import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.ws.model.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
 
 public class ProjectUtilsTest {
 
@@ -42,7 +42,7 @@ public class ProjectUtilsTest {
 	public void excludeProjectRecipientsTest() {
 		Project project = project();
 		excludeProjectRecipients(usersToExclude(), project);
-		EmailSenderCase emailSenderCase = project.getConfiguration().getEmailConfig().getEmailCases().get(0);
+		EmailSenderCase emailSenderCase = project.getConfiguration().getEmailConfig().getEmailSenderCases().get(0);
 		Assert.assertEquals(1, emailSenderCase.getRecipients().size());
 		Assert.assertEquals(aliveUser, emailSenderCase.getRecipients().get(0));
 	}
@@ -61,7 +61,7 @@ public class ProjectUtilsTest {
 		final Project project = new Project();
 		final Project.Configuration configuration = new Project.Configuration();
 		final ProjectEmailConfig emailConfig = new ProjectEmailConfig();
-		emailConfig.setEmailCases(singletonList(new EmailSenderCase(asList("user1", "user1@fake.com", "user2@fake.com", aliveUser),
+		emailConfig.setEmailSenderCases(singletonList(new EmailSenderCase(asList("user1", "user1@fake.com", "user2@fake.com", aliveUser),
 				"ALWAYS", asList("launch"), asList("tag"))));
 		configuration.setEmailConfig(emailConfig);
 		project.setConfiguration(configuration);
