@@ -27,6 +27,8 @@ import java.io.Serializable;
 
 public class ServerEmailDetails implements Serializable {
 
+    private Boolean enabled;
+
     private String host;
 
     private Integer port;
@@ -46,6 +48,14 @@ public class ServerEmailDetails implements Serializable {
     private String from;
 
     public ServerEmailDetails() {
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setPort(Integer port) {
@@ -142,7 +152,7 @@ public class ServerEmailDetails implements Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("host", host).add("port", port).add("protocol", protocol)
+        return MoreObjects.toStringHelper(this).add("enabled", enabled).add("host", host).add("port", port).add("protocol", protocol)
                 .add("authEnabled", authEnabled).add("starTlsEnabled", starTlsEnabled).add("sslEnabled", sslEnabled)
                 .add("username", username).add("password", password).add("from", from).toString();
     }
