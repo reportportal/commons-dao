@@ -50,6 +50,20 @@ public class ServerEmailDetails implements Serializable {
     public ServerEmailDetails() {
     }
 
+    public ServerEmailDetails(Boolean enabled, String host, Integer port, String protocol, Boolean authEnabled, Boolean starTlsEnabled,
+            Boolean sslEnabled, String username, String password, String from) {
+        this.enabled = enabled;
+        this.host = host;
+        this.port = port;
+        this.protocol = protocol;
+        this.authEnabled = authEnabled;
+        this.starTlsEnabled = starTlsEnabled;
+        this.sslEnabled = sslEnabled;
+        this.username = username;
+        this.password = password;
+        this.from = from;
+    }
+
     public Boolean getEnabled() {
         return enabled;
     }
