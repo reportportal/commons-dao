@@ -58,8 +58,36 @@ public class ServerEmailDetails implements Serializable {
         this.enabled = enabled;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public Boolean getAuthEnabled() {
+        return authEnabled;
+    }
+
+    public void setAuthEnabled(Boolean authEnabled) {
+        this.authEnabled = authEnabled;
     }
 
     public Boolean getStarTlsEnabled() {
@@ -78,68 +106,20 @@ public class ServerEmailDetails implements Serializable {
         this.sslEnabled = sslEnabled;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol.toLowerCase();
-    }
-
-    public String getProtocol() {
-        return protocol;
+    public String getUsername() {
+        return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setPassword(String pass) {
-        this.password = pass;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public void setAuthEnabled(Boolean authEnabled) {
-        this.authEnabled = authEnabled;
-    }
-
-    public boolean isStarTlsEnabled() {
-        return starTlsEnabled;
-    }
-
-    public void setStarTlsEnabled(boolean starTlsEnabled) {
-        this.starTlsEnabled = starTlsEnabled;
-    }
-
-    public Boolean getAuthEnabled() {
-        return authEnabled;
-    }
-
-    public boolean isSslEnabled() {
-        return sslEnabled;
-    }
-
-    public void setSslEnabled(boolean sslEnabled) {
-        this.sslEnabled = sslEnabled;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFrom() {
