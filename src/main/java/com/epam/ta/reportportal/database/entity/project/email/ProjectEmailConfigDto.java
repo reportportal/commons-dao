@@ -2,21 +2,21 @@ package com.epam.ta.reportportal.database.entity.project.email;
 
 import java.util.List;
 
-public class ProjectEmailConfig {
+public class ProjectEmailConfigDto {
 
     private Boolean emailEnabled;
 
     private String from;
 
-    private List<EmailSenderCase> emailSenderCases;
+    private List<EmailSenderCaseDto> emailSenderCaseDtos;
 
-    public ProjectEmailConfig() {
+    public ProjectEmailConfigDto() {
     }
 
-    public ProjectEmailConfig(Boolean emailEnabled, String from, List<EmailSenderCase> emailSenderCases) {
+    public ProjectEmailConfigDto(Boolean emailEnabled, String from, List<EmailSenderCaseDto> emailSenderCaseDtos) {
         this.emailEnabled = emailEnabled;
         this.from = from;
-        this.emailSenderCases = emailSenderCases;
+        this.emailSenderCaseDtos = emailSenderCaseDtos;
     }
 
     public Boolean getEmailEnabled() {
@@ -35,20 +35,20 @@ public class ProjectEmailConfig {
         this.from = from;
     }
 
-    public List<EmailSenderCase> getEmailSenderCases() {
-        return emailSenderCases;
+    public List<EmailSenderCaseDto> getEmailSenderCaseDtos() {
+        return emailSenderCaseDtos;
     }
 
-    public void setEmailSenderCases(List<EmailSenderCase> emailSenderCases) {
-        this.emailSenderCases = emailSenderCases;
+    public void setEmailSenderCaseDtos(List<EmailSenderCaseDto> emailSenderCaseDtos) {
+        this.emailSenderCaseDtos = emailSenderCaseDtos;
     }
 
     @Override
     public String toString() {
-        return "ProjectEmailConfig{" +
+        return "ProjectEmailConfigDto{" +
                 "emailEnabled=" + emailEnabled +
                 ", from='" + from + '\'' +
-                ", emailSenderCases=" + emailSenderCases +
+                ", emailSenderCaseDtos=" + emailSenderCaseDtos +
                 '}';
     }
 }

@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.database.entity.project.email;
 
 import java.util.List;
 
-public class EmailSenderCase {
+public class EmailSenderCaseDto {
 
 
     private List<String> recipients;
@@ -13,10 +13,10 @@ public class EmailSenderCase {
 
     private List<String> tags;
 
-    public EmailSenderCase() {
+    public EmailSenderCaseDto() {
     }
 
-    public EmailSenderCase(List<String> recipients, String sendCase, List<String> launchNames, List<String> tags) {
+    public EmailSenderCaseDto(List<String> recipients, String sendCase, List<String> launchNames, List<String> tags) {
         this.recipients = recipients;
         this.sendCase = sendCase;
         this.launchNames = launchNames;
@@ -60,7 +60,7 @@ public class EmailSenderCase {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EmailSenderCase that = (EmailSenderCase) o;
+        EmailSenderCaseDto that = (EmailSenderCaseDto) o;
 
         if (recipients != null ? !recipients.equals(that.recipients) : that.recipients != null) return false;
         if (sendCase != null ? !sendCase.equals(that.sendCase) : that.sendCase != null) return false;

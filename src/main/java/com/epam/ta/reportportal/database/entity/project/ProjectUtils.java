@@ -34,8 +34,8 @@ import java.util.function.Predicate;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
+import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCaseDto;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfigDto;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.collect.Lists;
@@ -61,9 +61,9 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailCofiguration(Project project) {
-		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS.name(), Lists.newArrayList(),
+		EmailSenderCaseDto defaultOne = new EmailSenderCaseDto(Lists.newArrayList(OWNER), SendCase.ALWAYS.name(), Lists.newArrayList(),
 				Lists.newArrayList());
-		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Lists.newArrayList(defaultOne));
+		ProjectEmailConfigDto config = new ProjectEmailConfigDto(false, INIT_FROM, Lists.newArrayList(defaultOne));
 		project.getConfiguration().setEmailConfig(config);
 		return project;
 	}
@@ -81,14 +81,14 @@ public class ProjectUtils {
 					.map(user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream)
 					.collect(toSet());
 			/* Current recipients of specified project */
-			List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailSenderCases();
+			List<EmailSenderCaseDto> cases = project.getConfiguration().getEmailConfig().getEmailSenderCaseDtos();
 			if (null != cases) {
 				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
 					List<String> saved = c.getRecipients();
 					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(toList()));
 				});
-				project.getConfiguration().getEmailConfig().setEmailSenderCases(cases);
+				project.getConfiguration().getEmailConfig().setEmailSenderCaseDtos(cases);
 			}
 		}
 		return project;
@@ -103,7 +103,7 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
-		List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailSenderCases();
+		List<EmailSenderCaseDto> cases = project.getConfiguration().getEmailConfig().getEmailSenderCaseDtos();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.forEach(c -> {
 				List<String> saved = c.getRecipients();
@@ -112,7 +112,7 @@ public class ProjectUtils {
 					c.getRecipients().add(newEmail);
 				}
 			});
-			project.getConfiguration().getEmailConfig().setEmailSenderCases(cases);
+			project.getConfiguration().getEmailConfig().setEmailSenderCaseDtos(cases);
 		}
 		return project;
 	}
