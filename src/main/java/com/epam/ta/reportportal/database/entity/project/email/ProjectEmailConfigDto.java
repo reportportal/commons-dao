@@ -1,8 +1,9 @@
 package com.epam.ta.reportportal.database.entity.project.email;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ProjectEmailConfigDto {
+public class ProjectEmailConfigDto implements Serializable {
 
     private Boolean emailEnabled;
 

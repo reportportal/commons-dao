@@ -1,9 +1,9 @@
 package com.epam.ta.reportportal.database.entity.project.email;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class EmailSenderCaseDto {
-
+public class EmailSenderCaseDto implements Serializable{
 
     private List<String> recipients;
 
