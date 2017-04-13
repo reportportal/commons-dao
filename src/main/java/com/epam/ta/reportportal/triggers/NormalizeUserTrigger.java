@@ -21,11 +21,12 @@
  
 package com.epam.ta.reportportal.triggers;
 
-import com.epam.ta.reportportal.commons.EntityUtils;
 import com.epam.ta.reportportal.database.entity.user.User;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.stereotype.Component;
+
+import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
 
 /**
  * Normalizes data for {@link User} entity to be stored into Mongo
@@ -42,7 +43,7 @@ class NormalizeUserTrigger extends AbstractMongoEventListener<User> {
 	@Override
 	public void onBeforeConvert(BeforeConvertEvent<User> event) {
 		User source = event.getSource();
-		source.setLogin(EntityUtils.normalizeUsername(source.getLogin()));
+		source.setLogin(normalizeId(source.getLogin()));
 		super.onBeforeConvert(event);
 	}
 }

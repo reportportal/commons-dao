@@ -21,11 +21,12 @@
  
 package com.epam.ta.reportportal.triggers;
 
-import com.epam.ta.reportportal.commons.EntityUtils;
 import com.epam.ta.reportportal.database.entity.Project;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.stereotype.Component;
+
+import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
 
 /**
  * Normalizes data for {@link Project} entity to be stored into Mongo
@@ -42,7 +43,7 @@ class NormalizeProjectTrigger extends AbstractMongoEventListener<Project> {
 	@Override
 	public void onBeforeConvert(BeforeConvertEvent<Project> event) {
 		Project source = event.getSource();
-		source.setName(EntityUtils.normalizeProjectName(source.getName()));
+		source.setName(normalizeId(source.getName()));
 		super.onBeforeConvert(event);
 	}
 
