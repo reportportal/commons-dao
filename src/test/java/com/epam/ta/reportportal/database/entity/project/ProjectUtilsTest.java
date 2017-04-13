@@ -22,7 +22,6 @@ package com.epam.ta.reportportal.database.entity.project;
 
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCaseDto;
 import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.database.entity.user.User;
 import org.junit.Assert;
