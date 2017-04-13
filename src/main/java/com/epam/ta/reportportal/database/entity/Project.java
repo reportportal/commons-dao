@@ -27,7 +27,7 @@ import static java.util.Collections.singletonList;
 import java.io.Serializable;
 import java.util.*;
 
-import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfigDto;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -201,7 +201,7 @@ public class Project implements Serializable {
 		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
 		// Project Email Settings
-		private ProjectEmailConfigDto emailConfig;
+		private ProjectEmailConfig emailConfig;
 
 		public Configuration() {
 			externalSystem = new ArrayList<>();
@@ -307,11 +307,11 @@ public class Project implements Serializable {
 			return isAutoAnalyzerEnabled;
 		}
 
-		public void setEmailConfig(ProjectEmailConfigDto config) {
+		public void setEmailConfig(ProjectEmailConfig config) {
 			this.emailConfig = config;
 		}
 
-		public ProjectEmailConfigDto getEmailConfig() {
+		public ProjectEmailConfig getEmailConfig() {
 			return emailConfig;
 		}
 

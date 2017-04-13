@@ -3,7 +3,7 @@ package com.epam.ta.reportportal.database.entity.project.email;
 import java.io.Serializable;
 import java.util.List;
 
-public class EmailSenderCaseDto implements Serializable{
+public class EmailSenderCase implements Serializable{
 
     private List<String> recipients;
 
@@ -13,10 +13,10 @@ public class EmailSenderCaseDto implements Serializable{
 
     private List<String> tags;
 
-    public EmailSenderCaseDto() {
+    public EmailSenderCase() {
     }
 
-    public EmailSenderCaseDto(List<String> recipients, String sendCase, List<String> launchNames, List<String> tags) {
+    public EmailSenderCase(List<String> recipients, String sendCase, List<String> launchNames, List<String> tags) {
         this.recipients = recipients;
         this.sendCase = sendCase;
         this.launchNames = launchNames;
@@ -60,7 +60,7 @@ public class EmailSenderCaseDto implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EmailSenderCaseDto that = (EmailSenderCaseDto) o;
+        EmailSenderCase that = (EmailSenderCase) o;
 
         if (recipients != null ? !recipients.equals(that.recipients) : that.recipients != null) return false;
         if (sendCase != null ? !sendCase.equals(that.sendCase) : that.sendCase != null) return false;

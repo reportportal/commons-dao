@@ -3,18 +3,18 @@ package com.epam.ta.reportportal.database.entity.project.email;
 import java.io.Serializable;
 import java.util.List;
 
-public class ProjectEmailConfigDto implements Serializable {
+public class ProjectEmailConfig implements Serializable {
 
     private Boolean emailEnabled;
 
     private String from;
 
-    private List<EmailSenderCaseDto> emailCases;
+    private List<EmailSenderCase> emailCases;
 
-    public ProjectEmailConfigDto() {
+    public ProjectEmailConfig() {
     }
 
-    public ProjectEmailConfigDto(Boolean emailEnabled, String from, List<EmailSenderCaseDto> emailCases) {
+    public ProjectEmailConfig(Boolean emailEnabled, String from, List<EmailSenderCase> emailCases) {
         this.emailEnabled = emailEnabled;
         this.from = from;
         this.emailCases = emailCases;
@@ -36,17 +36,17 @@ public class ProjectEmailConfigDto implements Serializable {
         this.from = from;
     }
 
-    public List<EmailSenderCaseDto> getEmailCases() {
+    public List<EmailSenderCase> getEmailCases() {
         return emailCases;
     }
 
-    public void setEmailCases(List<EmailSenderCaseDto> emailCases) {
+    public void setEmailCases(List<EmailSenderCase> emailCases) {
         this.emailCases = emailCases;
     }
 
     @Override
     public String toString() {
-        return "ProjectEmailConfigDto{" +
+        return "ProjectEmailConfig{" +
                 "emailEnabled=" + emailEnabled +
                 ", from='" + from + '\'' +
                 ", emailCases=" + emailCases +

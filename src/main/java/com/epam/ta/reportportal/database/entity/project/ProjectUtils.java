@@ -23,8 +23,8 @@ package com.epam.ta.reportportal.database.entity.project;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCaseDto;
-import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfigDto;
+import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.collect.Lists;
@@ -61,9 +61,9 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailCofiguration(Project project) {
-		EmailSenderCaseDto defaultOne = new EmailSenderCaseDto(Lists.newArrayList(OWNER), SendCase.ALWAYS.name(), Lists.newArrayList(),
+		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS.name(), Lists.newArrayList(),
 				Lists.newArrayList());
-		ProjectEmailConfigDto config = new ProjectEmailConfigDto(false, INIT_FROM, Lists.newArrayList(defaultOne));
+		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Lists.newArrayList(defaultOne));
 		project.getConfiguration().setEmailConfig(config);
 		return project;
 	}
@@ -81,7 +81,7 @@ public class ProjectUtils {
 					.map(user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream)
 					.collect(toSet());
 			/* Current recipients of specified project */
-			List<EmailSenderCaseDto> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+			List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 			if (null != cases) {
 				cases.forEach(c -> {
 					// saved - list of saved user emails before changes
@@ -103,7 +103,7 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
-		List<EmailSenderCaseDto> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+		List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.forEach(c -> {
 				List<String> saved = c.getRecipients();
