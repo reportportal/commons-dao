@@ -21,7 +21,6 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

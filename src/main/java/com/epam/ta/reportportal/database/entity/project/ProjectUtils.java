@@ -107,7 +107,7 @@ public class ProjectUtils {
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.stream().forEach(c -> {
 				List<String> saved = c.getRecipients();
-				if (saved.stream().filter(email -> email.equalsIgnoreCase(oldEmail)).findFirst().isPresent()) {
+				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
 					c.setRecipients(saved.stream().filter(processRecipientsEmails(Lists.newArrayList(oldEmail))).collect(toList()));
 					c.getRecipients().add(newEmail);
 				}
@@ -118,7 +118,7 @@ public class ProjectUtils {
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {
-		return input -> !stream(emails.spliterator(), false).filter(email -> email.equalsIgnoreCase(input)).findFirst().isPresent();
+		return input -> stream(emails.spliterator(), false).noneMatch(email -> email.equalsIgnoreCase(input));
 	}
 
 	/**

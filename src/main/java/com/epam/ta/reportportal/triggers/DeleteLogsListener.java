@@ -61,6 +61,7 @@ public class DeleteLogsListener extends AbstractMongoEventListener<Log> {
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName())
 				.find(queryMapper.getMappedObject(event.getDBObject(), mongoMappingContext.getPersistentEntity(Log.class)))) {
 			if (dbObject.containsField("binary_content")) {
+				@SuppressWarnings("unchecked")
 				Map<String, Object> binaries = (Map<String, Object>) dbObject.get("binary_content");
 				if (binaries.containsKey("id")) {
 					ids.add(binaries.get("id").toString());
