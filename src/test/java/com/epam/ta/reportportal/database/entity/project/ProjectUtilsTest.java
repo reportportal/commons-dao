@@ -42,7 +42,7 @@ public class ProjectUtilsTest {
 	public void excludeProjectRecipientsTest() {
 		Project project = project();
 		excludeProjectRecipients(usersToExclude(), project);
-		EmailSenderCaseDto emailSenderCaseDto = project.getConfiguration().getEmailConfig().getEmailSenderCaseDtos().get(0);
+		EmailSenderCaseDto emailSenderCaseDto = project.getConfiguration().getEmailConfig().getEmailCases().get(0);
 		Assert.assertEquals(1, emailSenderCaseDto.getRecipients().size());
 		Assert.assertEquals(aliveUser, emailSenderCaseDto.getRecipients().get(0));
 	}
@@ -61,7 +61,7 @@ public class ProjectUtilsTest {
 		final Project project = new Project();
 		final Project.Configuration configuration = new Project.Configuration();
 		final ProjectEmailConfigDto emailConfig = new ProjectEmailConfigDto();
-		emailConfig.setEmailSenderCaseDtos(singletonList(new EmailSenderCaseDto(asList("user1", "user1@fake.com", "user2@fake.com", aliveUser),
+		emailConfig.setEmailCases(singletonList(new EmailSenderCaseDto(asList("user1", "user1@fake.com", "user2@fake.com", aliveUser),
 				"ALWAYS", asList("launch"), asList("tag"))));
 		configuration.setEmailConfig(emailConfig);
 		project.setConfiguration(configuration);

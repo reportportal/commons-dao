@@ -9,15 +9,15 @@ public class ProjectEmailConfigDto implements Serializable {
 
     private String from;
 
-    private List<EmailSenderCaseDto> emailSenderCaseDtos;
+    private List<EmailSenderCaseDto> emailCases;
 
     public ProjectEmailConfigDto() {
     }
 
-    public ProjectEmailConfigDto(Boolean emailEnabled, String from, List<EmailSenderCaseDto> emailSenderCaseDtos) {
+    public ProjectEmailConfigDto(Boolean emailEnabled, String from, List<EmailSenderCaseDto> emailCases) {
         this.emailEnabled = emailEnabled;
         this.from = from;
-        this.emailSenderCaseDtos = emailSenderCaseDtos;
+        this.emailCases = emailCases;
     }
 
     public Boolean getEmailEnabled() {
@@ -36,12 +36,12 @@ public class ProjectEmailConfigDto implements Serializable {
         this.from = from;
     }
 
-    public List<EmailSenderCaseDto> getEmailSenderCaseDtos() {
-        return emailSenderCaseDtos;
+    public List<EmailSenderCaseDto> getEmailCases() {
+        return emailCases;
     }
 
-    public void setEmailSenderCaseDtos(List<EmailSenderCaseDto> emailSenderCaseDtos) {
-        this.emailSenderCaseDtos = emailSenderCaseDtos;
+    public void setEmailCases(List<EmailSenderCaseDto> emailCases) {
+        this.emailCases = emailCases;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ProjectEmailConfigDto implements Serializable {
         return "ProjectEmailConfigDto{" +
                 "emailEnabled=" + emailEnabled +
                 ", from='" + from + '\'' +
-                ", emailSenderCaseDtos=" + emailSenderCaseDtos +
+                ", emailCases=" + emailCases +
                 '}';
     }
 }
