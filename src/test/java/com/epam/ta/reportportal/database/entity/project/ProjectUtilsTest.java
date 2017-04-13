@@ -20,19 +20,18 @@
  */
 package com.epam.ta.reportportal.database.entity.project;
 
-import static com.epam.ta.reportportal.database.entity.project.ProjectUtils.excludeProjectRecipients;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
+import com.epam.ta.reportportal.database.entity.user.User;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.ws.model.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
+import java.util.List;
+
+import static com.epam.ta.reportportal.database.entity.project.ProjectUtils.excludeProjectRecipients;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 public class ProjectUtilsTest {
 
