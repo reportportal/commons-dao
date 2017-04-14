@@ -27,7 +27,6 @@ import static java.util.Collections.singletonList;
 import java.io.Serializable;
 import java.util.*;
 
-import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,6 +35,7 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
+import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
 
 /**
  * Initial representation of Project object
