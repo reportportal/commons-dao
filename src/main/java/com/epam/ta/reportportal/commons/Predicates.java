@@ -46,7 +46,7 @@ public class Predicates {
     }
 
     public static <T> Predicate<T> equalTo(T target) {
-        return (target == null) ? Predicates.<T>isNull() : t -> t.equals(target);
+        return (target == null) ? Predicates.isNull() : t -> t.equals(target);
     }
 
     public static <T> Predicate<T> not(Predicate<T> predicate) {
@@ -62,7 +62,7 @@ public class Predicates {
     }
 
     public static <T> Predicate<T> and(List<? extends Predicate<? super T>> components) {
-        return t -> !components.stream().anyMatch(predicate -> !predicate.test(t));
+        return t -> components.stream().allMatch(predicate -> predicate.test(t));
     }
 
     @SuppressWarnings("unchecked")

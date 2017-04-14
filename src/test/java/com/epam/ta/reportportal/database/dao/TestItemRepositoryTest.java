@@ -7,7 +7,6 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.After;
 import org.junit.Before;
