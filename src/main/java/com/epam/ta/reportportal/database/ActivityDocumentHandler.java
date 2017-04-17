@@ -47,7 +47,7 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
 
 	private static final String ID = "_id";
 	private static final String HISTORY = "history";
-	private List<ChartObject> result;
+	private final List<ChartObject> result;
 
 	public ActivityDocumentHandler() {
 		result = new ArrayList<>();
@@ -59,15 +59,20 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
 		ChartObject activity = new ChartObject();
 		Map<String, String> objectValues = new HashMap<>();
 		for (String key : keySet) {
-			if (key.equals(HISTORY)) {
+			switch (key) {
+			case HISTORY:
 				Map<String, String> historyProps = transformHistoryMap(dbObject, "history");
 				objectValues.putAll(historyProps);
-			} else if (key.equals(Modifiable.LAST_MODIFIED)) {
+				break;
+			case Modifiable.LAST_MODIFIED:
 				objectValues.put(key, String.valueOf(((Date) dbObject.get(key)).getTime()));
-			} else if (key.equals(ID)) {
+				break;
+			case ID:
 				activity.setId(dbObject.get(ID).toString());
-			} else {
+				break;
+			default:
 				objectValues.put(key, dbObject.get(key).toString());
+				break;
 			}
 		}
 		activity.setValues(objectValues);

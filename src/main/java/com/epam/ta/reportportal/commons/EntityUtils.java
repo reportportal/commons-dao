@@ -22,9 +22,14 @@
 package com.epam.ta.reportportal.commons;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Some useful utils for working with entities<br>
@@ -53,7 +58,9 @@ public class EntityUtils {
 	 *
 	 * @param username Username to normalize
 	 * @return String
+	 * @deprecated in favor of {@link #normalizeId(String)}
 	 */
+	@Deprecated
 	public static String normalizeUsername(String username) {
 		return Preconditions.checkNotNull(username, "Username shouldn't be null").toLowerCase();
 	}
@@ -63,7 +70,9 @@ public class EntityUtils {
 	 *
 	 * @param projectName Project to normalize
 	 * @return String
+	 * @deprecated in favor of {@link #normalizeId(String)}
 	 */
+	@Deprecated
 	public static String normalizeProjectName(String projectName) {
 		return Preconditions.checkNotNull(projectName, "Project name shouldn't be null").toLowerCase();
 	}
@@ -73,7 +82,9 @@ public class EntityUtils {
 	 *
 	 * @param email email to normalize
 	 * @return String
+	 * @deprecated in favor of {@link #normalizeId(String)}
 	 */
+	@Deprecated
 	public static String normalizeEmail(String email) {
 		return Preconditions.checkNotNull(email, "Email shouldn't be null").toLowerCase();
 	}
@@ -86,8 +97,10 @@ public class EntityUtils {
 	 */
 	public static Iterable<String> trimStrings(Iterable<String> strings) {
 		Preconditions.checkNotNull(strings, "List of strings shouldn't be null");
-		return StreamSupport.stream(strings.spliterator(), false).filter(string -> !string.isEmpty()).map(String::trim)
-				.collect(Collectors.toList());
+		return stream(strings.spliterator(), false)
+				.filter(string -> !isNullOrEmpty(string))
+				.map(String::trim)
+				.collect(toList());
 	}
 
 	/**
@@ -104,9 +117,9 @@ public class EntityUtils {
 		final String andSymbol = "&";
 		final String slashSymbol = "/";
 		final String backSlashSymbol = "\\";
-		return StreamSupport.stream(input.spliterator(), false)
+		return stream(input.spliterator(), false)
 				.map(string -> string.replace(oldSeparator, newSeparator).replace(percentSymbol, emptyString)
 						.replace(andSymbol, emptyString).replace(slashSymbol, emptyString).replace(backSlashSymbol, emptyString))
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 }

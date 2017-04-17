@@ -125,11 +125,8 @@ public class LaunchesTableDocumentHandler implements DocumentCallbackHandler {
 					return innerValue;
 				}
 			} else {
-				isExist = false;
 				// return 0 if subtype is absent
-				if (innerDbObject instanceof Map) {
-					return Integer.valueOf(0);
-				}
+				return 0;
 			}
 		}
 		return innerDbObject;
