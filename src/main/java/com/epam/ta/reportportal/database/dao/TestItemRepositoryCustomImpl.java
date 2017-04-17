@@ -73,6 +73,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String START_TIME = "start_time";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";
+	private static final String STATUS = "status";
+	private static final String PARENT = "parent";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -401,5 +403,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				where(ISSUE).exists(true));
 		Query query = query(externalIssues);
 		return mongoTemplate.find(query, TestItem.class);
+	}
+
+	@Override
+	public boolean hasChildrenWithStatuses(String itemId, Status... statuses) {
+		Query query = query(where(PARENT).is(itemId)).addCriteria(where(STATUS).in((Object[]) statuses));
+		return mongoTemplate.count(query, TestItem.class) > 0;
 	}
 }

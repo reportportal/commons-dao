@@ -7,7 +7,6 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.After;
 import org.junit.Before;
@@ -27,9 +26,10 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 
 	@Before
 	public void setUp() {
-		TestItem testItem = new TestItem();
 		String launch = "launch";
+		TestItem testItem = new TestItem();
 		testItem.setLaunchRef(launch);
+		testItem.setId("testItem");
 		TestItem testItem1 = new TestItem();
 		testItem1.setLaunchRef(launch);
 		testItem1.setType(TestItemType.SUITE);
@@ -40,6 +40,10 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		testItemRepository.save(testItem2);
 		testItemRepository.save(testItem1);
 		testItemRepository.save(testItem);
+		TestItem child = new TestItem();
+		child.setStatus(Status.FAILED);
+		child.setParent(testItem.getId());
+		testItemRepository.save(child);
 	}
 
 	@Test
@@ -59,6 +63,16 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		Set<String> ids = testItemRepository
                 .findIdsWithNameByLaunchesRef("testName", ImmutableSet.<String>builder().add("launch").build());
 		assertThat(ids.size()).isEqualTo(1);
+	}
+
+	@Test
+	public void hasChildrenWithStatus(){
+		assertThat(testItemRepository.hasChildrenWithStatuses("testItem", Status.FAILED)).isTrue();
+	}
+
+	@Test
+	public void negativeHasChildrenWithStatus(){
+		assertThat(testItemRepository.hasChildrenWithStatuses("testItem", Status.PASSED, Status.CANCELLED)).isFalse();
 	}
 
 	@Test
