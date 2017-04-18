@@ -208,6 +208,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> findTestItemWithIssues(String launchId);
 
+	boolean hasChildrenWithStatuses(String itemId, Status... status);
+
 	void dropIssueStatisticsType(String id, StatisticSubType type);
 
 	/**
