@@ -43,9 +43,9 @@ project.ext {
 dependencies {
 
     if (releaseMode) {
-        compile 'com.epam.reportportal:commons-rules:3.0.0-RC1'
+        compile 'com.epam.reportportal:commons-rules:3.0.0'
     } else {
-        compile 'com.github.reportportal:commons-rules:3.0.0-RC1'
+        compile 'com.github.reportportal:commons-rules:3.0.0'
     }
 
 
