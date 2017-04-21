@@ -21,13 +21,10 @@
 
 package com.epam.ta.reportportal.database.entity.project;
 
-import com.epam.ta.reportportal.commons.SendCase;
-import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
-import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
-import com.epam.ta.reportportal.database.entity.user.User;
-import com.google.common.collect.Lists;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +32,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
+import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
+import com.epam.ta.reportportal.database.entity.user.User;
+import com.epam.ta.reportportal.ws.model.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
+import com.google.common.collect.Lists;
 
 /**
  * Project related utility methods
@@ -83,7 +83,7 @@ public class ProjectUtils {
 			/* Current recipients of specified project */
 			List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 			if (null != cases) {
-				cases.forEach(c -> {
+				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
 					List<String> saved = c.getRecipients();
 					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(toList()));
@@ -105,7 +105,7 @@ public class ProjectUtils {
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
 		List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
-			cases.forEach(c -> {
+			cases.stream().forEach(c -> {
 				List<String> saved = c.getRecipients();
 				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
 					c.setRecipients(saved.stream().filter(processRecipientsEmails(Lists.newArrayList(oldEmail))).collect(toList()));
