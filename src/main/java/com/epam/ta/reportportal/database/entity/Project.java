@@ -37,6 +37,7 @@ import com.epam.ta.reportportal.database.entity.project.EntryType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 
+
 /**
  * Initial representation of Project object
  * 

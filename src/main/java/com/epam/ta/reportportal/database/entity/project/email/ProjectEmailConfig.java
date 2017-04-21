@@ -26,51 +26,51 @@ import java.util.List;
 
 public class ProjectEmailConfig implements Serializable {
 
-    private Boolean emailEnabled;
+	private Boolean emailEnabled;
 
-    private String from;
+	private String from;
 
-    private List<EmailSenderCase> emailCases;
+	private List<EmailSenderCase> emailCases;
 
-    public ProjectEmailConfig() {
-    }
+	public ProjectEmailConfig() {
+	}
 
-    public ProjectEmailConfig(Boolean emailEnabled, String from, List<EmailSenderCase> emailCases) {
-        this.emailEnabled = emailEnabled;
-        this.from = from;
-        this.emailCases = emailCases;
-    }
+	public ProjectEmailConfig(Boolean emailEnabled, String from, List<EmailSenderCase> emailCases) {
+		this.emailEnabled = emailEnabled;
+		this.from = from;
+		this.emailCases = emailCases;
+	}
 
-    public Boolean getEmailEnabled() {
-        return emailEnabled;
-    }
+	public Boolean getEmailEnabled() {
+		return emailEnabled;
+	}
 
-    public void setEmailEnabled(Boolean emailEnabled) {
-        this.emailEnabled = emailEnabled;
-    }
+	public void setEmailEnabled(Boolean emailEnabled) {
+		this.emailEnabled = emailEnabled;
+	}
 
-    public String getFrom() {
-        return from;
-    }
+	public String getFrom() {
+		return from;
+	}
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
+	public void setFrom(String from) {
+		this.from = from;
+	}
 
-    public List<EmailSenderCase> getEmailCases() {
-        return emailCases;
-    }
+	public List<EmailSenderCase> getEmailCases() {
+		return emailCases;
+	}
 
-    public void setEmailCases(List<EmailSenderCase> emailCases) {
-        this.emailCases = emailCases;
-    }
+	public void setEmailCases(List<EmailSenderCase> emailCases) {
+		this.emailCases = emailCases;
+	}
 
-    @Override
-    public String toString() {
-        return "ProjectEmailConfig{" +
-                "emailEnabled=" + emailEnabled +
-                ", from='" + from + '\'' +
-                ", emailCases=" + emailCases +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ProjectEmailConfig{" +
+				"emailEnabled=" + emailEnabled +
+				", from='" + from + '\'' +
+				", emailCases=" + emailCases +
+				'}';
+	}
 }
