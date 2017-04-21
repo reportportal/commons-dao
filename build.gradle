@@ -16,6 +16,7 @@ plugins {
 project.description = 'EPAM Report portal. Common DAO Layer'
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 apply from: 'release-lib.gradle'
 apply from: 'build-quality.gradle'
 
@@ -79,3 +80,11 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '3.2'
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+build.dependsOn jacocoTestReport
