@@ -396,7 +396,7 @@ public class Project implements Serializable {
         return sb.toString();
     }
 
-    public static class Metadata {
+    public static class Metadata implements Serializable {
 
         public Metadata() {
         }
