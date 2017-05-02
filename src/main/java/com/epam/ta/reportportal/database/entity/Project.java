@@ -401,18 +401,18 @@ public class Project implements Serializable {
         public Metadata() {
         }
 
-        public Metadata(List<String> demoDataPrefix) {
-            this.demoDataPrefix = demoDataPrefix;
+        public Metadata(List<String> demoDataPostfix) {
+            this.demoDataPostfix = demoDataPostfix;
         }
 
-        private List<String> demoDataPrefix;
+        private List<String> demoDataPostfix;
 
-        public List<String> getDemoDataPrefix() {
-            return demoDataPrefix;
+        public List<String> getDemoDataPostfix() {
+            return demoDataPostfix;
         }
 
-        public void setDemoDataPrefix(List<String> demoDataPrefix) {
-            this.demoDataPrefix = demoDataPrefix;
+        public void setDemoDataPostfix(List<String> demoDataPostfix) {
+            this.demoDataPostfix = demoDataPostfix;
         }
 
         @Override
@@ -421,13 +421,15 @@ public class Project implements Serializable {
                 return true;
             if (o == null || getClass() != o.getClass())
                 return false;
+
             Metadata metadata = (Metadata) o;
-            return Objects.equals(demoDataPrefix, metadata.demoDataPrefix);
+
+            return demoDataPostfix != null ? demoDataPostfix.equals(metadata.demoDataPostfix) : metadata.demoDataPostfix == null;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(demoDataPrefix);
+            return demoDataPostfix != null ? demoDataPostfix.hashCode() : 0;
         }
     }
 }
