@@ -75,7 +75,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String NAME = "name";
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
-	private static final String IGNORE_DEFECT_REGEX = "^(nd|ti)";
+	private static final String IGNORE_DEFECT_REGEX = "^(nd)";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -293,10 +293,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<TestItem> findTestItemWithInvestigated(String launchId) {
 		Criteria internalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
+				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i").ne(TestItemIssueType.TO_INVESTIGATE.getLocator()),
 				where(ISSUE_TYPE).exists(true));
 
 		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId), where(ISSUE_TYPE).exists(true),
+				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
 				where(ISSUE_TICKET).exists(true));
 
 		Query query = query(new Criteria().orOperator(internalIssues, externalIssues));
