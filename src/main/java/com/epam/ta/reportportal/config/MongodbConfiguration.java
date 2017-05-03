@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -56,6 +57,8 @@ import com.epam.ta.reportportal.database.support.impl.DefaultRepositoryProviderI
 import com.epam.ta.reportportal.triggers.CascadeDeleteDashboardTrigger;
 import com.google.common.base.Strings;
 import com.mongodb.*;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * MongoDB configuration
@@ -95,7 +98,8 @@ public class MongodbConfiguration {
 
 		List<MongoCredential> credentials = Collections.emptyList();
 		if (!Strings.isNullOrEmpty(mongoProperties.getUser()) && !Strings.isNullOrEmpty(mongoProperties.getPassword())) {
-			credentials = Collections.singletonList(MongoCredential.createCredential(mongoProperties.getUser(), mongoProperties.getDbName(),
+			credentials = Collections.singletonList(MongoCredential.createCredential(mongoProperties.getUser(),
+					ofNullable(mongoProperties.getAuthDbName()).orElse(mongoProperties.getDbName()),
 					mongoProperties.getPassword().toCharArray()));
 		}
 
@@ -158,6 +162,7 @@ public class MongodbConfiguration {
 	@ConfigurationProperties("rp.mongo")
 	public static class MongoProperies {
 		private String dbName;
+		private String authDbName;
 		private String host;
 		private Integer port;
 		private String user;
@@ -255,6 +260,14 @@ public class MongodbConfiguration {
 
 		public void setSocketKeepAlive(Boolean socketKeepAlive) {
 			this.socketKeepAlive = socketKeepAlive;
+		}
+
+		public String getAuthDbName() {
+			return authDbName;
+		}
+
+		public void setAuthDbName(String authDbName) {
+			this.authDbName = authDbName;
 		}
 	}
 }
