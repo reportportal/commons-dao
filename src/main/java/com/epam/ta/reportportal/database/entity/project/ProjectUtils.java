@@ -34,10 +34,10 @@ import java.util.function.Predicate;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.ws.model.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
 import com.google.common.collect.Lists;
 
 /**

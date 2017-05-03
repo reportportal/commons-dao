@@ -27,17 +27,19 @@ import java.io.Serializable;
 
 public class ServerEmailDetails implements Serializable {
 
+    private Boolean enabled;
+
     private String host;
 
-    private int port = 25;
+    private Integer port;
 
-    private String protocol = "smtp";
+    private String protocol;
 
-    private Boolean authEnabled = false;
+    private Boolean authEnabled;
 
-    private boolean starTlsEnabled;
+    private Boolean starTlsEnabled;
 
-    private boolean sslEnabled;
+    private Boolean sslEnabled;
 
     private String username;
 
@@ -45,13 +47,12 @@ public class ServerEmailDetails implements Serializable {
 
     private String from;
 
-    private boolean debug;
-
     public ServerEmailDetails() {
     }
 
-    public ServerEmailDetails(String host, int port, String protocol, Boolean authEnabled, boolean starTlsEnabled,
-                              boolean sslEnabled, String username, String password, String from, boolean debug) {
+    public ServerEmailDetails(Boolean enabled, String host, Integer port, String protocol, Boolean authEnabled, Boolean starTlsEnabled,
+            Boolean sslEnabled, String username, String password, String from) {
+        this.enabled = enabled;
         this.host = host;
         this.port = port;
         this.protocol = protocol;
@@ -61,79 +62,78 @@ public class ServerEmailDetails implements Serializable {
         this.username = username;
         this.password = password;
         this.from = from;
-        this.debug = debug;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getHost() {
         return host;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol.toLowerCase();
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public String getProtocol() {
         return protocol;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setPassword(String pass) {
-        this.password = pass;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setAuthEnabled(Boolean authEnabled) {
-        this.authEnabled = authEnabled;
-    }
-
-    public boolean isStarTlsEnabled() {
-        return starTlsEnabled;
-    }
-
-    public void setStarTlsEnabled(boolean starTlsEnabled) {
-        this.starTlsEnabled = starTlsEnabled;
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public Boolean getAuthEnabled() {
         return authEnabled;
     }
 
-    public boolean isDebug() {
-        return debug;
+    public void setAuthEnabled(Boolean authEnabled) {
+        this.authEnabled = authEnabled;
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
+    public Boolean getStarTlsEnabled() {
+        return starTlsEnabled;
     }
 
-    public boolean isSslEnabled() {
+    public void setStarTlsEnabled(Boolean starTlsEnabled) {
+        this.starTlsEnabled = starTlsEnabled;
+    }
+
+    public Boolean getSslEnabled() {
         return sslEnabled;
     }
 
-    public void setSslEnabled(boolean sslEnabled) {
+    public void setSslEnabled(Boolean sslEnabled) {
         this.sslEnabled = sslEnabled;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFrom() {
@@ -146,8 +146,8 @@ public class ServerEmailDetails implements Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("host", host).add("port", port).add("protocol", protocol)
+        return MoreObjects.toStringHelper(this).add("enabled", enabled).add("host", host).add("port", port).add("protocol", protocol)
                 .add("authEnabled", authEnabled).add("starTlsEnabled", starTlsEnabled).add("sslEnabled", sslEnabled)
-                .add("username", username).add("password", password).add("from", from).add("debug", debug).toString();
+                .add("username", username).add("password", password).add("from", from).toString();
     }
 }
