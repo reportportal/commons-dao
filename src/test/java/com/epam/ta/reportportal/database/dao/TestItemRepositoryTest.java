@@ -4,6 +4,8 @@ import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
@@ -30,11 +32,14 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		TestItem testItem = new TestItem();
 		testItem.setLaunchRef(launch);
 		testItem.setId("testItem");
+		testItem.setIssue(new TestItemIssue(TestItemIssueType.SYSTEM_ISSUE.getLocator(), null));
 		TestItem testItem1 = new TestItem();
 		testItem1.setLaunchRef(launch);
 		testItem1.setType(TestItemType.SUITE);
+		testItem1.setIssue(new TestItemIssue(TestItemIssueType.NO_DEFECT.getLocator(), null));
 		testItem1.setName("testName");
 		TestItem testItem2 = new TestItem();
+		testItem2.setIssue(new TestItemIssue("nd_custom", null));
 		testItem2.setType(TestItemType.SUITE);
 		testItem2.setLaunchRef(launch);
 		testItemRepository.save(testItem2);
@@ -44,6 +49,12 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		child.setStatus(Status.FAILED);
 		child.setParent(testItem.getId());
 		testItemRepository.save(child);
+	}
+
+	@Test
+	public void findTestItemWithInvestigated(){
+		List<TestItem> ids = testItemRepository.findTestItemWithInvestigated("launch");
+		assertThat(ids.size()).isEqualTo(1);
 	}
 
 	@Test
