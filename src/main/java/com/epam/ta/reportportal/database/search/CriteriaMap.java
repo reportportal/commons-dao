@@ -90,49 +90,7 @@ public class CriteriaMap<T> {
 		}
 	}
 
-	private Class<?> getDataType(Field f) {
-		if (isDynamicInnerFields(f)) {
-			return (Class<?>) ((ParameterizedType) f.getGenericType()).getActualTypeArguments()[1];
-		} else {
-			return f.getType();
-		}
-	}
 
-	private String getSearchCriteria(Field f) {
-		return f.getAnnotation(FilterCriteria.class).value();
-	}
-
-	private boolean isDynamicInnerFields(Field f) {
-		return Map.class.isAssignableFrom(f.getType());
-	}
-
-	private String getSearchCriteria(Field f, List<Field> parents) {
-		StringBuilder criteriaBuilder = new StringBuilder();
-		for (Field parent : parents) {
-			criteriaBuilder.append(getSearchCriteria(parent));
-			criteriaBuilder.append(SEARCH_CRITERIA_SEPARATOR);
-		}
-		if (criteriaBuilder.length() > 0) {
-			/* Remove last separator */
-			return criteriaBuilder.append(getSearchCriteria(f)).toString();
-		} else {
-			return "";
-		}
-	}
-
-	private String getQueryCriteria(Field f, List<Field> parents) {
-		StringBuilder criteriaBuilder = new StringBuilder();
-		for (Field parent : parents) {
-			criteriaBuilder.append(getQueryCriteria(parent));
-			criteriaBuilder.append(QUERY_CRITERIA_SEPARATOR);
-		}
-		if (criteriaBuilder.length() > 0) {
-			/* Remove last separator */
-			return criteriaBuilder.append(getQueryCriteria(f)).toString();
-		} else {
-			return "";
-		}
-	}
 
 	public static String getQueryCriteria(Field f) {
 		String queryCriteria;
@@ -180,6 +138,57 @@ public class CriteriaMap<T> {
 					});
 		}
 		return criteriaHolder;
+	}
+
+	/**
+	 * @return allowed search criteria values
+	 */
+	public Set<String> getAllowedSearchCriterias() {
+		return this.classCriteria.keySet();
+	}
+
+	private Class<?> getDataType(Field f) {
+		if (isDynamicInnerFields(f)) {
+			return (Class<?>) ((ParameterizedType) f.getGenericType()).getActualTypeArguments()[1];
+		} else {
+			return f.getType();
+		}
+	}
+
+	private String getSearchCriteria(Field f) {
+		return f.getAnnotation(FilterCriteria.class).value();
+	}
+
+	private boolean isDynamicInnerFields(Field f) {
+		return Map.class.isAssignableFrom(f.getType());
+	}
+
+	private String getSearchCriteria(Field f, List<Field> parents) {
+		StringBuilder criteriaBuilder = new StringBuilder();
+		for (Field parent : parents) {
+			criteriaBuilder.append(getSearchCriteria(parent));
+			criteriaBuilder.append(SEARCH_CRITERIA_SEPARATOR);
+		}
+		if (criteriaBuilder.length() > 0) {
+			/* Remove last separator */
+			return criteriaBuilder.append(getSearchCriteria(f)).toString();
+		} else {
+			return "";
+		}
+	}
+
+	private String getQueryCriteria(Field f, List<Field> parents) {
+		StringBuilder criteriaBuilder = new StringBuilder();
+		for (Field parent : parents) {
+			criteriaBuilder.append(getQueryCriteria(parent));
+			criteriaBuilder.append(QUERY_CRITERIA_SEPARATOR);
+		}
+		if (criteriaBuilder.length() > 0) {
+			/* Remove last separator */
+			return criteriaBuilder.append(getQueryCriteria(f)).toString();
+		} else {
+			return "";
+		}
 	}
 
 	@Override
