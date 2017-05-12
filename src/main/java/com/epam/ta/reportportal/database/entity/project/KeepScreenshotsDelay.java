@@ -21,6 +21,8 @@
  
 package com.epam.ta.reportportal.database.entity.project;
 
+import java.util.Arrays;
+
 /**
  * Keep Screenshots Delay values enumerator
  * Describe possible values of 'Keep screenshots' parameter on UI project page
@@ -58,12 +60,8 @@ public enum KeepScreenshotsDelay {
 	}
 
 	public static KeepScreenshotsDelay findByName(String name) {
-		for (KeepScreenshotsDelay delay : KeepScreenshotsDelay.values()) {
-			if (delay.getValue().equals(name)) {
-				return delay;
-			}
-		}
-		return null;
+		return Arrays.stream(KeepScreenshotsDelay.values()).filter(delay -> delay.getValue()
+				.equalsIgnoreCase(name)).findAny().orElse(null);
 	}
 
 	public static boolean isPresent(String name) {

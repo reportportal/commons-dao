@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database.entity.item.issue;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 
@@ -80,15 +81,11 @@ public enum ExternalSystemType {
 	}
 
 	public static Optional<ExternalSystemType> findByName(String name) {
-		for (ExternalSystemType type : ExternalSystemType.values()) {
-			if (type.name().equalsIgnoreCase(name)) {
-				return Optional.of(type);
-			}
-		}
-		return Optional.empty();
+		return Arrays.stream(ExternalSystemType.values()).filter(type -> type.name()
+				.equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
-		return null != findByName(name);
+		return findByName(name).isPresent();
 	}
 }

@@ -21,6 +21,8 @@
 
 package com.epam.ta.reportportal.database.entity;
 
+import java.util.Arrays;
+
 public enum LogLevel {
 
 	//@formatter:off
@@ -63,12 +65,8 @@ public enum LogLevel {
 	 * Convert the string passed as argument to a Level. If there are no such level throws exception
 	 */
 	public static LogLevel toLevel(String levelString) {
-		for (LogLevel level : LogLevel.values()) {
-			if (level.name().equalsIgnoreCase(levelString)) {
-				return level;
-			}
-		}
-		return null;
+		return Arrays.stream(LogLevel.values()).filter(level -> level.name()
+				.equalsIgnoreCase(levelString)).findAny().orElse(null);
 	}
 
 	/**

@@ -36,9 +36,9 @@
  */
 package com.epam.ta.reportportal.database.entity.user;
 
+import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.collect.Lists;
+import java.util.stream.Collectors;
 
 /**
  * @author Dzmitry_Kavalets
@@ -54,21 +54,12 @@ public enum ImageFormat {
 	}
 
 	public static ImageFormat fromValue(String value) {
-		ImageFormat[] formats = ImageFormat.values();
-		for (ImageFormat format : formats) {
-			if (value.toUpperCase().equals(format.value)) {
-				return format;
-			}
-		}
-		return null;
+		return Arrays.stream(ImageFormat.values()).filter(format -> format.value
+				.equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 
 	public static List<String> getValues() {
-		List<String> allowed = Lists.newArrayList();
-		ImageFormat[] formats = ImageFormat.values();
-		for (ImageFormat format : formats) {
-			allowed.add(format.value);
-		}
-		return allowed;
+		return Arrays.stream(ImageFormat.values()).map(format -> format.value)
+				.collect(Collectors.toList());
 	}
 }
