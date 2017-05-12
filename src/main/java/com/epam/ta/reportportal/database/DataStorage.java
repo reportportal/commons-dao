@@ -70,7 +70,7 @@ public interface DataStorage {
 
 
 	/**
-	 * Get project out-dated files from storage
+	 * Get project out-dated files from storage except photos
 	 *
 	 * @param period  Time period
 	 * @param project Project name

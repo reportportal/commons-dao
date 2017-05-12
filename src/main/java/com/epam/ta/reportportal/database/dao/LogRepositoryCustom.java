@@ -21,12 +21,13 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Log;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Custom repository implementation. Is not used for know to avoid
@@ -37,6 +38,22 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
  * 
  */
 public interface LogRepositoryCustom {
+
+    /**
+     * Removes binary content field for specified fileId
+     *
+     * @param fileId
+     * @return true if successfully removed
+     */
+    void removeBinaryContent(String fileId);
+
+    /**
+     * Streaming logs' id modified later than period
+     * @param time
+     * @param item
+     * @return
+     */
+    Stream<Log> streamIdsByPeriodAndItem(Time time, String item);
 
 	/**
 	 * Finds logs for specified test steps
