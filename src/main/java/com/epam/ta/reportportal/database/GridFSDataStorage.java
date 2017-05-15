@@ -28,6 +28,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,7 +84,7 @@ public class GridFSDataStorage implements DataStorage {
 	 * com.epam.ta.reportportal.util.Time, java.lang.String)
 	 */
 	@Override
-	public List<GridFSDBFile> findModifiedLaterAgo(Time period, String project) {
+	public List<GridFSDBFile> findModifiedLaterAgo(Duration period, String project) {
 		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project)
 				.addCriteria(where("filename").not().regex(PHOTO_PREFIX)));
 	}

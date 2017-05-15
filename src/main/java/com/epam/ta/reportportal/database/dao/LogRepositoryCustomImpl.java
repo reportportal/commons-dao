@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Log;
 import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
@@ -35,9 +34,12 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.*;
 import static java.util.stream.Collectors.toList;
@@ -82,12 +84,12 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findModifiedLaterAgo(Time time) {
+	public List<Log> findModifiedLaterAgo(Duration time) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time), Log.class);
 	}
 
 	@Override
-	public List<Log> findModifiedLaterAgo(Time time, Iterable<TestItem> testItems) {
+	public List<Log> findModifiedLaterAgo(Duration time, Iterable<TestItem> testItems) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(DbUtils.toIds(testItems))),
 				Log.class);
 	}
@@ -110,7 +112,7 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasLogsAddedLately(Time time, TestItem testItem) {
+	public boolean hasLogsAddedLately(Duration time, TestItem testItem) {
 		return mongoTemplate.count(findModifiedLately(time, testItem), Log.class) > 0;
 	}
 
@@ -163,9 +165,8 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public Stream<Log> streamIdsByPeriodAndItem(Time time, String item) {
-		Query query = findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).is(item));
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-				mongoTemplate.stream(query, Log.class), 0), false);
+	public void deleteByPeriodAndItemsRef(Duration time, List<String> itemsRef){
+		Query query = findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(itemsRef));
+		mongoTemplate.remove(query, Log.class);
 	}
 }

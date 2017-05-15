@@ -1,14 +1,10 @@
 package com.epam.ta.reportportal.database.dao;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.epam.ta.reportportal.BaseDaoTest;
+import com.epam.ta.reportportal.database.BinaryData;
+import com.epam.ta.reportportal.database.DataStorage;
+import com.epam.ta.reportportal.database.entity.BinaryContent;
+import com.epam.ta.reportportal.database.entity.Log;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Assert;
@@ -16,11 +12,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.epam.ta.reportportal.BaseDaoTest;
-import com.epam.ta.reportportal.database.BinaryData;
-import com.epam.ta.reportportal.database.DataStorage;
-import com.epam.ta.reportportal.database.entity.BinaryContent;
-import com.epam.ta.reportportal.database.entity.Log;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.*;
 
 public class LogRepositoryTest extends BaseDaoTest {
 
@@ -92,6 +93,15 @@ public class LogRepositoryTest extends BaseDaoTest {
 		logRepository.deleteByItemRef(singletonList(itemRef));
 		Assert.assertFalse(logRepository.exists(log.getId()));
 
+	}
+
+	@Test
+	public void findModifiedLaterAgo() {
+		final Log log = new Log();
+		logRepository.save(log);
+		List<Log> logs = mongoTemplate.find(findModifiedLaterThanPeriod(Duration.ofHours(-26)), Log.class);
+		Assert.assertTrue(logs.size() == 2);
+		Assert.assertTrue(logs.contains(saved));
 	}
 
 	@After

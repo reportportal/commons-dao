@@ -21,13 +21,12 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Log;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Custom repository implementation. Is not used for know to avoid
@@ -46,14 +45,6 @@ public interface LogRepositoryCustom {
      * @return true if successfully removed
      */
     void removeBinaryContent(String fileId);
-
-    /**
-     * Streaming logs' id modified later than period
-     * @param time
-     * @param item
-     * @return
-     */
-    Stream<Log> streamIdsByPeriodAndItem(Time time, String item);
 
 	/**
 	 * Finds logs for specified test steps
@@ -77,7 +68,7 @@ public interface LogRepositoryCustom {
 	 * @param time
 	 * @return
 	 */
-	List<Log> findModifiedLaterAgo(Time time);
+	List<Log> findModifiedLaterAgo(Duration time);
 
 	/**
 	 * Finds entities modified later than period
@@ -85,7 +76,7 @@ public interface LogRepositoryCustom {
 	 * @param time
 	 * @return
 	 */
-	List<Log> findModifiedLaterAgo(Time time, Iterable<TestItem> testItems);
+	List<Log> findModifiedLaterAgo(Duration time, Iterable<TestItem> testItems);
 
 	/**
 	 * Get number of logs which attached to the specified {@link TestItem}
@@ -114,7 +105,7 @@ public interface LogRepositoryCustom {
 	 * @param testItem
 	 * @return
 	 */
-	boolean hasLogsAddedLately(Time period, TestItem testItem);
+	boolean hasLogsAddedLately(Duration period, TestItem testItem);
 
 	/**
 	 * Get list of log items with specified file id
@@ -140,4 +131,11 @@ public interface LogRepositoryCustom {
 	List<String> findBinaryIdsByItemRefs(List<String> ids);
 
 	void deleteByItemRef(List<String> ids);
+
+	/**
+	 * Remove all items' {@link Log} records that modified before the time
+	 * @param time
+	 * @param itemRef
+	 */
+	void deleteByPeriodAndItemsRef(Duration time, List<String> itemRef);
 }

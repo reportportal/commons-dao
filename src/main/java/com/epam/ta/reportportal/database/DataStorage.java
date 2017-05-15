@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database;
 
 import com.mongodb.gridfs.GridFSDBFile;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -76,7 +77,7 @@ public interface DataStorage {
 	 * @param project Project name
 	 * @return List of {@link GridFSDBFile}
 	 */
-	List<GridFSDBFile> findModifiedLaterAgo(Time period, String project);
+	List<GridFSDBFile> findModifiedLaterAgo(Duration period, String project);
 
 	/**
 	 * Deletes some data from storage
