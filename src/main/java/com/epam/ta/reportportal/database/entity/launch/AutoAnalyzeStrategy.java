@@ -20,6 +20,8 @@
  */ 
 package com.epam.ta.reportportal.database.entity.launch;
 
+import java.util.Arrays;
+
 /**
  * Auto-analyze types enumerator for launches
  * 
@@ -34,12 +36,7 @@ public enum AutoAnalyzeStrategy {
 	//@formatter:on
 
 	public static AutoAnalyzeStrategy fromValue(String value) {
-		AutoAnalyzeStrategy[] values = AutoAnalyzeStrategy.values();
-		for (AutoAnalyzeStrategy type : values) {
-			if (type.name().equalsIgnoreCase(value)) {
-				return type;
-			}
-		}
-		return null;
+		return Arrays.stream(AutoAnalyzeStrategy.values()).filter(type -> type.name()
+				.equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 }

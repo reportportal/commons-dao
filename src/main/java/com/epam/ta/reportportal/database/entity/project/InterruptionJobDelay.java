@@ -21,6 +21,8 @@
  
 package com.epam.ta.reportportal.database.entity.project;
 
+import java.util.Arrays;
+
 /**
  * Interruption job delay parameters enumerator<br>
  * User for supporting UI types of project parameter
@@ -60,12 +62,8 @@ public enum InterruptionJobDelay {
 	}
 
 	public static InterruptionJobDelay findByName(String name) {
-		for (InterruptionJobDelay delay : InterruptionJobDelay.values()) {
-			if (delay.getValue().equals(name)) {
-				return delay;
-			}
-		}
-		return null;
+		return Arrays.stream(InterruptionJobDelay.values()).filter(delay -> delay.getValue()
+				.equalsIgnoreCase(name)).findAny().orElse(null);
 	}
 
 	public static boolean isPresent(String name) {

@@ -21,13 +21,14 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.stereotype.Repository;
-
 import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.entity.Project;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * DAO for the {@link Project} entity
@@ -38,9 +39,15 @@ import com.epam.ta.reportportal.database.entity.Project;
 @Repository("projectRepository")
 public interface ProjectRepository extends ReportPortalRepository<Project, String>, ProjectRepositoryCustom {
 
+	String KEEP_CONFIGURATION_FIELDS = "{'_id' : 1, 'configuration.keepLogs' : 1, 'configuration.keepScreenshots' : 1," +
+						"'configuration.interruptJobTime' : 1}";
+
 	Project findByName(String name);
 
 	List<Project> findByCustomer(String customer);
+
+	@Query(value = "{}", fields = KEEP_CONFIGURATION_FIELDS)
+	Stream<Project> streamAllIdsAndConfiguration();
 
 	@CacheEvict(allEntries = true,  value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
 	@Override

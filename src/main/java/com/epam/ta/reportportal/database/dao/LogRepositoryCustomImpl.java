@@ -21,18 +21,10 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.*;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
+import com.epam.ta.reportportal.commons.DbUtils;
+import com.epam.ta.reportportal.database.entity.Log;
+import com.epam.ta.reportportal.database.entity.LogLevel;
+import com.epam.ta.reportportal.database.entity.item.TestItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -40,12 +32,20 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
-import com.epam.ta.reportportal.commons.DbUtils;
-import com.epam.ta.reportportal.database.Time;
-import com.epam.ta.reportportal.database.entity.Log;
-import com.epam.ta.reportportal.database.entity.LogLevel;
-import com.epam.ta.reportportal.database.entity.item.TestItem;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.*;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * Log Repository Custom implementation. Adds several custom methods to default
@@ -84,12 +84,12 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findModifiedLaterAgo(Time time) {
+	public List<Log> findModifiedLaterAgo(Duration time) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time), Log.class);
 	}
 
 	@Override
-	public List<Log> findModifiedLaterAgo(Time time, Iterable<TestItem> testItems) {
+	public List<Log> findModifiedLaterAgo(Duration time, Iterable<TestItem> testItems) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(DbUtils.toIds(testItems))),
 				Log.class);
 	}
@@ -112,7 +112,7 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasLogsAddedLately(Time time, TestItem testItem) {
+	public boolean hasLogsAddedLately(Duration time, TestItem testItem) {
 		return mongoTemplate.count(findModifiedLately(time, testItem), Log.class) > 0;
 	}
 
@@ -154,5 +154,19 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public void deleteByItemRef(List<String> ids) {
 		mongoTemplate.remove(query(where("testItemRef").in(ids)), Log.class);
+	}
+
+	@Override
+	public void removeBinaryContent(String fileId) {
+		Query query = query(where(BINARY_CONTENT_ID).is(fileId));
+		Update update = new Update();
+		update.unset(BINARY_CONTENT);
+		mongoTemplate.findAndModify(query,update, Log.class);
+	}
+
+	@Override
+	public void deleteByPeriodAndItemsRef(Duration time, List<String> itemsRef){
+		Query query = findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(itemsRef));
+		mongoTemplate.remove(query, Log.class);
 	}
 }

@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
@@ -41,14 +40,13 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -184,14 +182,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch, boolean hasChilds) {
+	public List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch, boolean hasChilds) {
 		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where("has_childs").is(hasChilds));
 		return mongoTemplate.find(q, TestItem.class);
 	}
 
 	@Override
-	public List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch) {
+	public List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch) {
 		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status)
 				.addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()));
 		return mongoTemplate.find(q, TestItem.class);
@@ -315,7 +313,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasTestItemsAddedLately(Time period, Launch launch, Status status) {
+	public boolean hasTestItemsAddedLately(Duration period, Launch launch, Status status) {
 		Query query = ModifiableQueryBuilder.findModifiedLately(period).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where(HasStatus.STATUS).is(status.name()));
 		return (mongoTemplate.count(query, TestItem.class) > 0);

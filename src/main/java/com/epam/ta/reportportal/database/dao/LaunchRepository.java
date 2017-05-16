@@ -26,6 +26,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Repository interface for {@link Launch} instances. Provides basic CRUD operations due to the
@@ -42,6 +43,15 @@ public interface LaunchRepository extends LaunchRepositoryCustom, ReportPortalRe
 	String FIND_BY_ID = "{ '_id' : ?0 }";
 
 	String NAME_NUMBER_MODE_FIELDS = "{'number' : 1, 'name' : 1, 'mode' : 1, 'start_time' : 1, 'status' : 1}";
+
+	/**
+	 * Streaming launches by provided project ID
+	 *
+	 * @param id
+	 * @return
+	 */
+	@Query(value = FIND_LAUNCH_ENTRY_BY_PROJECT_ID, fields = "{'id' : 1}")
+	Stream<Launch> streamIdsByProject(String id);
 
 	/**
 	 * Find Launch by given name.

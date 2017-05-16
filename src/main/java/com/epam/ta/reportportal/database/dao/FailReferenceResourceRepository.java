@@ -21,11 +21,11 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.item.FailReferenceResource;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import com.epam.ta.reportportal.database.entity.item.FailReferenceResource;
+
+import java.util.List;
 
 /**
  * Repository interface for {@link FailReferenceResource} instances. Provides basic CRUD operations
@@ -40,4 +40,7 @@ public interface FailReferenceResourceRepository extends ReportPortalRepository<
 
 	@Query(FIND_BY_LAUNCH_REF)
 	List<FailReferenceResource> findAllLaunchIssues(String launchId);
+
+	@Query(value = FIND_BY_LAUNCH_REF, delete = true)
+	void deleteAllIssuesForLaunch(String launchId);
 }
