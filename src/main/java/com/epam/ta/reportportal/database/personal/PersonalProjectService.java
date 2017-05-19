@@ -20,13 +20,16 @@
  */
 package com.epam.ta.reportportal.database.personal;
 
+import com.epam.ta.reportportal.database.dao.ProjectRepository;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
 import com.epam.ta.reportportal.database.entity.ProjectSpecific;
 import com.epam.ta.reportportal.database.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.database.entity.project.*;
 import com.epam.ta.reportportal.database.entity.user.User;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
@@ -37,17 +40,30 @@ import java.util.Collections;
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-public final class PersonalProjectUtils {
+public final class PersonalProjectService {
 
-	private PersonalProjectUtils() {
+	private ProjectRepository projectRepository;
+
+	@Autowired
+	public PersonalProjectService(ProjectRepository projectRepository) {
+		this.projectRepository = projectRepository;
 	}
 
 	/**
 	 * @param username Name of user
 	 * @return Corresponding personal project name
 	 */
-	public static String personalProjectName(String username) {
-		return (username + "_personal").toLowerCase();
+	@VisibleForTesting
+	String generatePersonalProjectName(String username) {
+		String initialName = (username + "_personal").toLowerCase();
+
+		String name = initialName;
+		//iterate until we find free project name
+		for (int i = 1; projectRepository.exists(name); i++) {
+			name = initialName + "_" + i;
+		}
+
+		return name;
 	}
 
 	/**
@@ -56,9 +72,9 @@ public final class PersonalProjectUtils {
 	 * @param user User project should be created for
 	 * @return Built Project object
 	 */
-	public static Project generatePersonalProject(User user) {
+	public Project generatePersonalProject(User user) {
 		Project project = new Project();
-		project.setName(personalProjectName(user.getLogin()));
+		project.setName(generatePersonalProjectName(user.getLogin()));
 		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
 		Project.UserConfig userConfig = new Project.UserConfig();

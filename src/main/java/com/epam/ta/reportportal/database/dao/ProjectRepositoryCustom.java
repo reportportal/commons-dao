@@ -113,4 +113,6 @@ public interface ProjectRepositoryCustom {
 	 */
 	void addDemoDataPostfix(String project, String postfix);
 
+	String findPersonalProjectName(String user);
+
 }

@@ -37,7 +37,7 @@ import com.epam.ta.reportportal.database.dao.*;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.database.personal.PersonalProjectUtils;
+import com.epam.ta.reportportal.database.personal.PersonalProjectService;
 import com.epam.ta.reportportal.database.support.RepositoryProvider;
 
 /**
@@ -99,7 +99,7 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 	}
 
 	private void removePersonalProject(String user) {
-		projectRepository.delete(singletonList(PersonalProjectUtils.personalProjectName(user)));
+		projectRepository.delete(singletonList(projectRepository.findPersonalProjectName(user)));
 	}
 
 	/**

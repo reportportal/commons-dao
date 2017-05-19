@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Project.UserConfig;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
+import com.epam.ta.reportportal.database.entity.project.EntryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -117,6 +118,13 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public void addDemoDataPostfix(String project, String postfix) {
 		mongoTemplate.updateFirst(projectById(project), new Update().push("metadata.demoDataPostfix", postfix), Project.class);
+	}
+
+	@Override
+	public String findPersonalProjectName(String user) {
+		Query query = Query.query(userExists(user)).addCriteria(Criteria.where(PROJECT_TYPE).is(EntryType.PERSONAL));
+		query.fields().include("name");
+		return mongoTemplate.findOne(query, Project.class).getName();
 	}
 
 	private Criteria userExists(String login) {
