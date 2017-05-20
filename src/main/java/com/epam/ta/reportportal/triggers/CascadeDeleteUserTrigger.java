@@ -37,7 +37,6 @@ import com.epam.ta.reportportal.database.dao.*;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.sharing.Shareable;
 import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.database.personal.PersonalProjectService;
 import com.epam.ta.reportportal.database.support.RepositoryProvider;
 
 /**
