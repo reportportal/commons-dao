@@ -54,6 +54,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -190,9 +191,8 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
      */
     Page<T> findPage(Query q, Pageable p) {
         Class<T> entityType = getEntityInformation().getJavaType();
-        long size = getMongoOperations().count(q, entityType);
         List<T> content = getMongoOperations().find(q, entityType);
-        return new PageImpl<>(content, p, size);
+        return PageableExecutionUtils.getPage(content, p, () -> getMongoOperations().count(q, entityType));
     }
 
     @Override

@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.database.personal.PersonalProjectService.PERSONAL_PROJECT_POSTFIX;
+
 /**
  * Project repository routines custom implementation
  *
@@ -122,7 +124,9 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public String findPersonalProjectName(String user) {
-		Query query = Query.query(userExists(user)).addCriteria(Criteria.where(PROJECT_TYPE).is(EntryType.PERSONAL));
+		Query query = Query.query(userExists(user))
+				.addCriteria(Criteria.where(PROJECT_TYPE).is(EntryType.PERSONAL))
+				.addCriteria(Criteria.where(PROJECT_ID).regex("^" + user + PERSONAL_PROJECT_POSTFIX));
 		query.fields().include("name");
 		return mongoTemplate.findOne(query, Project.class).getName();
 	}

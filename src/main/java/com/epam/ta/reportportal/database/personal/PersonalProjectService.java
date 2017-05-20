@@ -42,6 +42,7 @@ import java.util.Collections;
  */
 public final class PersonalProjectService {
 
+	public static final String PERSONAL_PROJECT_POSTFIX = "_personal";
 	private ProjectRepository projectRepository;
 
 	@Autowired
@@ -55,7 +56,7 @@ public final class PersonalProjectService {
 	 */
 	@VisibleForTesting
 	String generatePersonalProjectName(String username) {
-		String initialName = (username + "_personal").toLowerCase();
+		String initialName = (username + PERSONAL_PROJECT_POSTFIX).toLowerCase();
 
 		String name = initialName;
 		//iterate until we find free project name
