@@ -34,6 +34,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -123,12 +124,12 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
-	public String findPersonalProjectName(String user) {
+	public Optional<String> findPersonalProjectName(String user) {
 		Query query = Query.query(userExists(user))
 				.addCriteria(Criteria.where(PROJECT_TYPE).is(EntryType.PERSONAL))
 				.addCriteria(Criteria.where(PROJECT_ID).regex("^" + user + PERSONAL_PROJECT_POSTFIX));
 		query.fields().include("name");
-		return mongoTemplate.findOne(query, Project.class).getName();
+        return Optional.ofNullable(mongoTemplate.findOne(query, Project.class)).map(Project::getName);
 	}
 
 	private Criteria userExists(String login) {

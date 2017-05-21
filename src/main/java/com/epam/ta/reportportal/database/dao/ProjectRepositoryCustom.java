@@ -29,6 +29,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Some custom queries defined for project repository
@@ -113,6 +114,6 @@ public interface ProjectRepositoryCustom {
 	 */
 	void addDemoDataPostfix(String project, String postfix);
 
-	String findPersonalProjectName(String user);
+	Optional<String> findPersonalProjectName(String user);
 
 }
