@@ -219,4 +219,11 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param hasChilds hasChilds field value
 	 */
 	void updateHasChilds(String id, boolean hasChilds);
+
+    /**
+     * Get test items without parent with specified launch.
+     * @param launchId launch reference
+     * @return list of test items
+     */
+    List<TestItem> findWithoutParentByLaunchRef(String launchId);
 }
