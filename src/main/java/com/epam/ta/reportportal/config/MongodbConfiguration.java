@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.epam.ta.reportportal.database.personal.PersonalProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -68,7 +69,7 @@ import static java.util.Optional.ofNullable;
 @EnableMongoAuditing
 @Configuration
 @EnableConfigurationProperties(MongodbConfiguration.MongoProperies.class)
-@ComponentScan(basePackageClasses = CascadeDeleteDashboardTrigger.class)
+@ComponentScan(basePackageClasses = { PersonalProjectService.class, CascadeDeleteDashboardTrigger.class})
 public class MongodbConfiguration {
 
 	@Autowired

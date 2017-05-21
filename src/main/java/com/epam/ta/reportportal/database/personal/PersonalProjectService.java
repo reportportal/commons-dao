@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
@@ -40,6 +41,7 @@ import java.util.Collections;
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
+@Service
 public final class PersonalProjectService {
 
 	public static final String PERSONAL_PROJECT_POSTFIX = "_personal";
