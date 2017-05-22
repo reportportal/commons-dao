@@ -98,7 +98,7 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 	}
 
 	private void removePersonalProject(String user) {
-		projectRepository.delete(singletonList(projectRepository.findPersonalProjectName(user)));
+		projectRepository.findPersonalProjectName(user).ifPresent(p -> projectRepository.delete(p));
 	}
 
 	/**

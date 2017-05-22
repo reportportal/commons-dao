@@ -97,7 +97,7 @@ public class DeleteProjectListener extends AbstractMongoEventListener<Project> {
 			return;
 		}
 		for (User user : usersForUpdate) {
-			user.setDefaultProject(projectRepository.findPersonalProjectName(user.getId()));
+			user.setDefaultProject(projectRepository.findPersonalProjectName(user.getId()).orElse(null));
 		}
 		userRepository.save(usersForUpdate);
 	}
