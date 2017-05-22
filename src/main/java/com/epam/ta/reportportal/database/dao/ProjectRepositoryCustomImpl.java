@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Project.UserConfig;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
+import com.epam.ta.reportportal.database.entity.project.EntryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -33,8 +34,11 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.epam.ta.reportportal.database.personal.PersonalProjectService.PERSONAL_PROJECT_POSTFIX;
 
 /**
  * Project repository routines custom implementation
@@ -117,6 +121,15 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public void addDemoDataPostfix(String project, String postfix) {
 		mongoTemplate.updateFirst(projectById(project), new Update().push("metadata.demoDataPostfix", postfix), Project.class);
+	}
+
+	@Override
+	public Optional<String> findPersonalProjectName(String user) {
+		Query query = Query.query(userExists(user))
+				.addCriteria(Criteria.where(PROJECT_TYPE).is(EntryType.PERSONAL))
+				.addCriteria(Criteria.where(PROJECT_ID).regex("^" + user + PERSONAL_PROJECT_POSTFIX));
+		query.fields().include("name");
+        return Optional.ofNullable(mongoTemplate.findOne(query, Project.class)).map(Project::getName);
 	}
 
 	private Criteria userExists(String login) {
