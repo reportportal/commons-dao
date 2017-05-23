@@ -38,6 +38,8 @@ package com.epam.ta.reportportal.database.search;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 
+import java.util.List;
+
 /**
  * Can be used to generate Mongo queries
  *
@@ -45,5 +47,5 @@ import org.springframework.data.mongodb.core.query.Criteria;
  */
 public interface Queryable {
 
-	Criteria toCriteria();
+	List<Criteria> toCriteria();
 }

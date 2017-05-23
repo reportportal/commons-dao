@@ -29,9 +29,11 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.database.search.QueryBuilder.filterConverter;
 import static java.util.stream.Collectors.toList;
@@ -81,11 +83,11 @@ public class Filter implements Serializable, Queryable {
 		this.filterConditions.addAll(conditions);
 	}
 
-	public Criteria toCriteria() {
+	public List<Criteria> toCriteria() {
 		/* Get map of defined @FilterCriteria fields */
 		CriteriaMap<?> map = criteriaMapFactory.getCriteriaMap(this.target);
 		final Function<FilterCondition, Criteria> transformer = filterConverter(map);
-		return new Criteria().andOperator(this.filterConditions.stream().map(transformer).toArray(Criteria[]::new));
+		return this.filterConditions.stream().map(transformer).collect(Collectors.toList());
 	}
 
 	@Override

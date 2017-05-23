@@ -85,7 +85,7 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Queryable filter) {
-		query.addCriteria(filter.toCriteria());
+		filter.toCriteria().forEach(c -> query.addCriteria(c));
 		return this;
 	}
 

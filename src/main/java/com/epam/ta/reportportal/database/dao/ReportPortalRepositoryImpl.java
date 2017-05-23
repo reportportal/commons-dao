@@ -49,6 +49,7 @@ import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
@@ -251,7 +252,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         Class<T> javaType = this.getEntityInformation().getJavaType();
         ImmutableList.Builder<AggregationOperation> pipelineBuilder = ImmutableList.<AggregationOperation>builder()
                 .add(
-                        new MatchOperation(filterable.toCriteria()){
+                        new MatchOperation(new Criteria().andOperator(toArray(filterable.toCriteria(), Criteria.class))) {
                             @Override
                             public DBObject toDBObject(AggregationOperationContext context) {
                                 return  super.toDBObject(new TypeBasedAggregationOperationContext(javaType, mongoOperations.getConverter().getMappingContext(), queryMapper));
