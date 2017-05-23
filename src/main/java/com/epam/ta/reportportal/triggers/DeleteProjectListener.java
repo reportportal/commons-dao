@@ -20,7 +20,6 @@
  */
 package com.epam.ta.reportportal.triggers;
 
-import static com.epam.ta.reportportal.database.personal.PersonalProjectUtils.personalProjectName;
 
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +51,7 @@ public class DeleteProjectListener extends AbstractMongoEventListener<Project> {
 
 	private final MongoTemplate mongoTemplate;
 	private final UserRepository userRepository;
+	private final ProjectRepository projectRepository;
 	private final LaunchRepository launchRepository;
 	private final ActivityRepository activityRepository;
 	private final ExternalSystemRepository externalSystemRepository;
@@ -60,11 +60,13 @@ public class DeleteProjectListener extends AbstractMongoEventListener<Project> {
 	private final QueryMapper queryMapper;
 
 	@Autowired
-	public DeleteProjectListener(MongoTemplate mongoTemplate, UserRepository userRepository, LaunchRepository launchRepository,
+	public DeleteProjectListener(MongoTemplate mongoTemplate, UserRepository userRepository, ProjectRepository projectRepository,
+			LaunchRepository launchRepository,
 			RepositoryProvider repositoryProvider, MongoMappingContext context, ExternalSystemRepository externalSystemRepository,
 			ActivityRepository activityRepository) {
 		this.mongoTemplate = mongoTemplate;
 		this.userRepository = userRepository;
+		this.projectRepository = projectRepository;
 		this.launchRepository = launchRepository;
 		this.repositoryProvider = repositoryProvider;
 		this.activityRepository = activityRepository;
@@ -95,7 +97,7 @@ public class DeleteProjectListener extends AbstractMongoEventListener<Project> {
 			return;
 		}
 		for (User user : usersForUpdate) {
-			user.setDefaultProject(personalProjectName(user.getId()));
+			user.setDefaultProject(projectRepository.findPersonalProjectName(user.getId()).orElse(null));
 		}
 		userRepository.save(usersForUpdate);
 	}

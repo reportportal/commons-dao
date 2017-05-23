@@ -97,7 +97,7 @@ public class UniqueBugDocumentHandler implements DocumentCallbackHandler {
 	public Map<String, List<ChartObject>> getResult() {
 		// Sorting
 		for (Map.Entry<String, List<ChartObject>> entry : result.entrySet()) {
-			Collections.sort(entry.getValue(), (o1, o2) -> {
+			entry.getValue().sort((o1, o2) -> {
 				Instant one = Instant.ofEpochMilli(Long.valueOf(o1.getStartTime()));
 				Instant next = Instant.ofEpochMilli(Long.valueOf(o2.getStartTime()));
 				return one.compareTo(next);
