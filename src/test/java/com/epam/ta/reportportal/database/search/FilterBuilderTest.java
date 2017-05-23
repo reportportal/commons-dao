@@ -39,9 +39,9 @@ public class FilterBuilderTest {
 	@Test
 	public void checkFiltePositive() {
 		Filter filter = Filter.builder().withTarget(User.class).withCondition(
-				FilterCondition.builder().withCondition(Condition.EQUALS).withSearchCriteria("xxx").withValue("xxx").build())
+				FilterCondition.builder().withCondition(Condition.EQUALS).withSearchCriteria("login").withValue("xxx").build())
 				.build();
-		Assert.assertThat("Incorrect conditions count", filter.getFilterConditions(), hasSize(1));
+		Assert.assertThat("Incorrect conditions count", filter.toCriteria().getCriteriaObject().keySet(), hasSize(1));
 
 	}
 
