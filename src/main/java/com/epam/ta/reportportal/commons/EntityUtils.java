@@ -22,10 +22,6 @@
 package com.epam.ta.reportportal.commons;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;

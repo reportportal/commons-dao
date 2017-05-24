@@ -243,14 +243,14 @@ public class Project implements Serializable {
             if (null == global) {
                 Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
                         .filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
-                if (exist.isPresent()) {
+                exist.ifPresent(statisticSubType -> {
                     if (null != type.getLongName())
-                        exist.get().setLongName(type.getLongName());
+                        statisticSubType.setLongName(type.getLongName());
                     if (null != type.getShortName())
-                        exist.get().setShortName(type.getShortName());
+                        statisticSubType.setShortName(type.getShortName());
                     if (null != type.getHexColor())
-                        exist.get().setHexColor(type.getHexColor());
-                }
+                        statisticSubType.setHexColor(type.getHexColor());
+                });
             }
         }
 

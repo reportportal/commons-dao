@@ -11,6 +11,7 @@ import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
 import com.google.common.collect.ImmutableSet;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,12 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		assertThat(executionCounter.getPassed()).isEqualTo(3);
 		assertThat(executionCounter.getSkipped()).isEqualTo(0);
 	}
+
+    @Test
+    public void findWithoutParentByLaunchRef () {
+        List<TestItem> items = testItemRepository.findWithoutParentByLaunchRef("launch");
+        assertThat(items.size()).isEqualTo(3);
+    }
 
 	@After
 	public void cleanUp() {

@@ -411,4 +411,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		Query query = query(where(PARENT).is(itemId)).addCriteria(where(STATUS).in((Object[]) statuses));
 		return mongoTemplate.count(query, TestItem.class) > 0;
 	}
+
+    @Override
+    public List<TestItem> findWithoutParentByLaunchRef(String launchId) {
+        Query query = query(where(PARENT).exists(false)).addCriteria(where(LAUNCH_REFERENCE).is(launchId));
+        return mongoTemplate.find(query, TestItem.class);
+    }
 }
