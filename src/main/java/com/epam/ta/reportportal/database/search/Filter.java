@@ -75,6 +75,17 @@ public class Filter implements Serializable, Queryable {
 
 	}
 
+	@Deprecated
+	public Class<?> getTarget() {
+		return target;
+	}
+
+	@Deprecated
+	public Set<FilterCondition> getFilterConditions() {
+		return filterConditions;
+	}
+
+
 	public void addCondition(FilterCondition filterCondition) {
 		this.filterConditions.add(filterCondition);
 	}

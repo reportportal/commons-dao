@@ -48,4 +48,6 @@ import java.util.List;
 public interface Queryable {
 
 	List<Criteria> toCriteria();
+
+	Class<?> getTarget();
 }
