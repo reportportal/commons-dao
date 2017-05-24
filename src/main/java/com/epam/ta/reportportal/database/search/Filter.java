@@ -24,11 +24,19 @@ package com.epam.ta.reportportal.database.search;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
+
+import static com.epam.ta.reportportal.database.search.QueryBuilder.filterConverter;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Filter for building queries to database. Contains CriteriaHolder which is mapping between request
@@ -36,7 +44,9 @@ import java.util.Set;
  *
  * @author Andrei Varabyeu
  */
-public class Filter implements Serializable {
+public class Filter implements Serializable, Queryable {
+
+	private static CriteriaMapFactory criteriaMapFactory = CriteriaMapFactory.DEFAULT_INSTANCE_SUPPLIER.get();
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,13 +75,16 @@ public class Filter implements Serializable {
 
 	}
 
+	@Deprecated
 	public Class<?> getTarget() {
 		return target;
 	}
 
+	@Deprecated
 	public Set<FilterCondition> getFilterConditions() {
 		return filterConditions;
 	}
+
 
 	public void addCondition(FilterCondition filterCondition) {
 		this.filterConditions.add(filterCondition);
@@ -79,6 +92,13 @@ public class Filter implements Serializable {
 
 	public void addConditions(Collection<FilterCondition> conditions) {
 		this.filterConditions.addAll(conditions);
+	}
+
+	public List<Criteria> toCriteria() {
+		/* Get map of defined @FilterCriteria fields */
+		CriteriaMap<?> map = criteriaMapFactory.getCriteriaMap(this.target);
+		final Function<FilterCondition, Criteria> transformer = filterConverter(map);
+		return this.filterConditions.stream().map(transformer).collect(Collectors.toList());
 	}
 
 	@Override

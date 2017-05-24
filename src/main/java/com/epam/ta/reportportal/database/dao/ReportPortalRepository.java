@@ -21,7 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.Queryable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -60,7 +60,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param filter Query representation
      * @return Found Objects
      */
-    List<T> findByFilter(Filter filter);
+    List<T> findByFilter(Queryable filter);
 
     /**
      * Find entries via specified filter and sorting field
@@ -69,7 +69,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param sorting Sorting Representation
      * @return Found objects
      */
-    List<T> findByFilterWithSorting(Filter filter, Sort sorting);
+    List<T> findByFilterWithSorting(Queryable filter, Sort sorting);
 
     /**
      * Finds entities list according provided filter
@@ -78,7 +78,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param pageable Page Representation
      * @return Found Paged objects
      */
-    Page<T> findByFilter(Filter filter, Pageable pageable);
+    Page<T> findByFilter(Queryable filter, Pageable pageable);
 
     /**
      * Finds entities list according provided filter
@@ -88,7 +88,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param exclude  Fields to exclude from query
      * @return Found Paged objects
      */
-    Page<T> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude);
+    Page<T> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
 
     /**
      * Find entry by id, load only id field
@@ -118,7 +118,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param callback       Results callback
      * @param collectionName Name of collection to load data from
      */
-    void loadWithCallback(Filter filter, Sort sorting, int quantity, List<String> chartFields, DocumentCallbackHandler callback,
+    void loadWithCallback(Queryable filter, Sort sorting, int quantity, List<String> chartFields, DocumentCallbackHandler callback,
             String collectionName);
 
     /**
@@ -137,7 +137,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param filter Query representation
      * @return TRUE if entity exists in database
      */
-    boolean exists(Filter filter);
+    boolean exists(Queryable filter);
 
     /**
      * Counts entities by provided filter
@@ -145,7 +145,7 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param filter Filter
      * @return Count of entities
      */
-    long countByFilter(Filter filter);
+    long countByFilter(Queryable filter);
 
     /**
      * Calculates number of page for given entityID with provided filter and page request
@@ -155,6 +155,6 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
      * @param pageable   Paging details to be applied
      * @return Number of page if select with provided filter and paging
      */
-    long getPageNumber(String entityId, Filter filterable, Pageable pageable);
+    long getPageNumber(String entityId, Queryable filterable, Pageable pageable);
 
 }

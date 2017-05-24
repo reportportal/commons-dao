@@ -23,8 +23,8 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.accessible.Accessible;
 import com.epam.ta.reportportal.database.search.CriteriaMap;
-import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
+import com.epam.ta.reportportal.database.search.Queryable;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.cache.CacheBuilder;
@@ -61,7 +61,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static com.epam.ta.reportportal.database.search.QueryBuilder.toCriteriaList;
 import static com.google.common.collect.Iterables.toArray;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -119,7 +118,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
             });
 
     @Override
-    public void loadWithCallback(Filter filter, Sort sorting, int quantity, List<String> chartFields,
+    public void loadWithCallback(Queryable filter, Sort sorting, int quantity, List<String> chartFields,
             DocumentCallbackHandler callback,
             String collectionName) {
         if (filter == null || sorting == null || chartFields == null || callback == null || collectionName == null) {
@@ -161,18 +160,18 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
     }
 
     @Override
-    public Page<T> findByFilter(Filter filter, Pageable pageable) {
+    public Page<T> findByFilter(Queryable filter, Pageable pageable) {
         return findPage(QueryBuilder.newBuilder().with(filter).with(pageable).build(), pageable);
     }
 
     @Override
-    public long countByFilter(Filter filter) {
+    public long countByFilter(Queryable filter) {
         return getMongoOperations().count(QueryBuilder.newBuilder()
                 .with(filter).build(), getEntityInformation().getJavaType());
     }
 
     @Override
-    public Page<T> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude) {
+    public Page<T> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
         Query query = QueryBuilder.newBuilder().with(filter).with(pageable).build();
         org.springframework.data.mongodb.core.query.Field fields = query.fields();
         if (null != exclude) {
@@ -217,14 +216,14 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
     }
 
     @Override
-    public List<T> findByFilter(Filter filter) {
+    public List<T> findByFilter(Queryable filter) {
         Class<T> entityType = getEntityInformation().getJavaType();
         Query query = QueryBuilder.newBuilder().with(filter).build();
         return getMongoOperations().find(query, entityType);
     }
 
     @Override
-    public List<T> findByFilterWithSorting(Filter filter, Sort sorting) {
+    public List<T> findByFilterWithSorting(Queryable filter, Sort sorting) {
         Class<T> entityType = getEntityInformation().getJavaType();
         Query query = QueryBuilder.newBuilder().with(filter).with(sorting).build();
         return getMongoOperations().find(query, entityType);
@@ -241,18 +240,18 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
     }
 
     @Override
-    public boolean exists(Filter filter) {
+    public boolean exists(Queryable filter) {
         Class<T> entityType = getEntityInformation().getJavaType();
         Query query = QueryBuilder.newBuilder().with(filter).build();
         return getMongoOperations().exists(query, entityType);
     }
 
     @Override
-    public long getPageNumber(String entityId, Filter filterable, Pageable pageable) {
+    public long getPageNumber(String entityId, Queryable filterable, Pageable pageable) {
         Class<T> javaType = this.getEntityInformation().getJavaType();
         ImmutableList.Builder<AggregationOperation> pipelineBuilder = ImmutableList.<AggregationOperation>builder()
                 .add(
-                        new MatchOperation(new Criteria().andOperator(toArray(toCriteriaList(filterable), Criteria.class))){
+                        new MatchOperation(new Criteria().andOperator(toArray(filterable.toCriteria(), Criteria.class))) {
                             @Override
                             public DBObject toDBObject(AggregationOperationContext context) {
                                 return  super.toDBObject(new TypeBasedAggregationOperationContext(javaType, mongoOperations.getConverter().getMappingContext(), queryMapper));
