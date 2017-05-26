@@ -17,16 +17,17 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
+import com.epam.ta.reportportal.database.entity.UserPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
-import com.epam.ta.reportportal.database.entity.UserPreference;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 /**
  * @author Dzmitry_Kavalets
@@ -38,12 +39,23 @@ public class UserPreferenceRepositoryCustomImpl implements UserPreferenceReposit
 
 	@Override
 	public void deleteByUserName(String userName) {
-		Query query = Query.query(Criteria.where("userRef").is(userName));
+		Query query = Query.query(where("userRef").is(userName));
 		mongoTemplate.remove(query, UserPreference.class);
 	}
 
 	public void deleteByUsernameAndProject(String username, String project) {
-		Query query = Query.query(Criteria.where("userRef").is(username)).addCriteria(Criteria.where("projectRef").is(project));
+		Query query = Query.query(where("userRef").is(username)).addCriteria(where("projectRef").is(project));
 		mongoTemplate.remove(query, UserPreference.class);
+	}
+
+	@Override
+	public void deleteUnsharedFilters(String username, String project, String filterId) {
+		Query query = Query.query(where("userRef").ne(username))
+				.addCriteria(where("projectRef").is(project))
+				.addCriteria(where("launchTabs.filters").is(filterId));
+
+		Update update = new Update().pull("launchTabs.filters", filterId);
+		mongoTemplate.updateMulti(query, update, UserPreference.class);
+
 	}
 }
