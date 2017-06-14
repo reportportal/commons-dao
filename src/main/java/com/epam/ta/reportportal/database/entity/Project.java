@@ -21,368 +21,415 @@
 
 package com.epam.ta.reportportal.database.entity;
 
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.*;
-import static java.util.Collections.singletonList;
-
-import java.io.Serializable;
-import java.util.*;
-
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
+import com.epam.ta.reportportal.database.entity.project.EntryType;
+import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
+import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.FilterCriteria;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
-import com.epam.ta.reportportal.database.entity.project.EntryType;
-import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.FilterCriteria;
-import com.epam.ta.reportportal.ws.model.project.email.ProjectEmailConfig;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.AUTOMATION_BUG;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.NO_DEFECT;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.PRODUCT_BUG;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.SYSTEM_ISSUE;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.TO_INVESTIGATE;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.fromValue;
+import static java.util.Collections.singletonList;
 
 /**
  * Initial representation of Project object
- * 
+ *
  * @author Andrei_Kliashchonak
- * 
  */
 @Document
 public class Project implements Serializable {
-	private static final long serialVersionUID = -7944375232686172158L;
+    private static final long serialVersionUID = -7944375232686172158L;
 
-	public static final String USERS = "users";
-	public static final String PROJECT = "project";
-	public static final String CREATION_DATE = "creationDate";
+    public static final String USERS = "users";
+    public static final String PROJECT = "project";
+    public static final String CREATION_DATE = "creationDate";
 
-	@Id
-	@FilterCriteria("name")
-	private String name;
+    @Id
+    @FilterCriteria("name")
+    private String name;
 
-	@Indexed
-	private String customer;
+    @Indexed
+    private String customer;
 
-	private String addInfo;
+    private String addInfo;
 
-	@FilterCriteria("configuration")
-	private Configuration configuration;
+    @FilterCriteria("configuration")
+    private Configuration configuration;
 
-	// @Indexed
-	@FilterCriteria(USERS)
-	private Map<String, UserConfig> users;
+    // @Indexed
+    @FilterCriteria(USERS)
+    private Map<String, UserConfig> users;
 
-	@FilterCriteria("creationDate")
-	private Date creationDate;
+    @FilterCriteria("creationDate")
+    private Date creationDate;
 
-	public Project() {
-	}
+    private Metadata metadata;
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Project() {
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-	public String getId() {
-		return this.name;
-	}
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public String getCustomer() {
-		return customer;
-	}
+    public String getId() {
+        return this.name;
+    }
 
-	public void setCustomer(String customer) {
-		this.customer = customer;
-	}
+    public String getCustomer() {
+        return customer;
+    }
 
-	public String getAddInfo() {
-		return addInfo;
-	}
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
 
-	public void setAddInfo(String addInfo) {
-		this.addInfo = addInfo;
-	}
+    public String getAddInfo() {
+        return addInfo;
+    }
 
-	/*
-	 * Null-safe getter
-	 */
-	public Map<String, UserConfig> getUsers() {
-		return users == null ? users = new HashMap<>() : users;
-	}
+    public void setAddInfo(String addInfo) {
+        this.addInfo = addInfo;
+    }
 
-	public void setUsers(Map<String, UserConfig> users) {
-		this.users = users;
-	}
+    /*
+     * Null-safe getter
+     */
+    public Map<String, UserConfig> getUsers() {
+        return users == null ? users = new HashMap<>() : users;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setUsers(Map<String, UserConfig> users) {
+        this.users = users;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * NULL-safe getter
-	 * 
-	 * @return the configuration
-	 */
-	public Configuration getConfiguration() {
-		return configuration == null ? configuration = new Configuration() : configuration;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @param configuration
-	 *            the configuration to set
-	 */
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
+    /**
+     * NULL-safe getter
+     *
+     * @return the configuration
+     */
+    public Configuration getConfiguration() {
+        return configuration == null ? configuration = new Configuration() : configuration;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((addInfo == null) ? 0 : addInfo.hashCode());
-		result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((users == null) ? 0 : users.hashCode());
-		return result;
-	}
+    /**
+     * @param configuration the configuration to set
+     */
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Project))
-			return false;
-		Project other = (Project) obj;
-		if (addInfo == null) {
-			if (other.addInfo != null)
-				return false;
-		} else if (!addInfo.equals(other.addInfo))
-			return false;
-		if (customer == null) {
-			if (other.customer != null)
-				return false;
-		} else if (!customer.equals(other.customer))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (users == null) {
-			if (other.users != null)
-				return false;
-		} else if (!users.equals(other.users))
-			return false;
-		return true;
-	}
+    public Metadata getMetadata() {
+        return metadata;
+    }
 
-	public static class Configuration implements Serializable {
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
 
-		private static final String AB_COLOR = "#f7d63e";
-		private static final String PB_COLOR = "#ec3900";
-		private static final String SI_COLOR = "#0274d1";
-		private static final String ND_COLOR = "#777777";
-		private static final String TI_COLOR = "#ffb743";
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Project project = (Project) o;
+        return Objects.equals(name, project.name) &&
+                Objects.equals(customer, project.customer) &&
+                Objects.equals(addInfo, project.addInfo) &&
+                Objects.equals(configuration, project.configuration) &&
+                Objects.equals(users, project.users) &&
+                Objects.equals(creationDate, project.creationDate) &&
+                Objects.equals(metadata, project.metadata);
+    }
 
-		private static final long serialVersionUID = 1L;
-		private StatisticsCalculationStrategy statisticsCalculationStrategy;
-		private List<String> externalSystem;
-		@FilterCriteria("entryType")
-		private EntryType entryType;
-		private ProjectSpecific projectSpecific;
-		private String interruptJobTime;
-		private String keepLogs;
-		private String keepScreenshots;
-		private Boolean isAutoAnalyzerEnabled;
-		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, customer, addInfo, configuration, users, creationDate, metadata);
+    }
 
-		// Project Email Settings
-		private ProjectEmailConfig emailConfig;
+    public static class Configuration implements Serializable {
 
-		public Configuration() {
-			externalSystem = new ArrayList<>();
-			this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
-				{
-					put(AUTOMATION_BUG, singletonList(new StatisticSubType(AUTOMATION_BUG.getLocator(), AUTOMATION_BUG.getValue(),
-							"Automation Bug", "AB", AB_COLOR)));
-					put(PRODUCT_BUG, singletonList(
-							new StatisticSubType(PRODUCT_BUG.getLocator(), PRODUCT_BUG.getValue(), "Product Bug", "PB", PB_COLOR)));
-					put(SYSTEM_ISSUE, singletonList(
-							new StatisticSubType(SYSTEM_ISSUE.getLocator(), SYSTEM_ISSUE.getValue(), "System Issue", "SI", SI_COLOR)));
-					put(NO_DEFECT,
-							singletonList(new StatisticSubType(NO_DEFECT.getLocator(), NO_DEFECT.getValue(), "No Defect", "ND", ND_COLOR)));
-					put(TO_INVESTIGATE, singletonList(new StatisticSubType(TO_INVESTIGATE.getLocator(), TO_INVESTIGATE.getValue(),
-							"To Investigate", "TI", TI_COLOR)));
-				}
-			};
-		}
+        private static final String AB_COLOR = "#f7d63e";
+        private static final String PB_COLOR = "#ec3900";
+        private static final String SI_COLOR = "#0274d1";
+        private static final String ND_COLOR = "#777777";
+        private static final String TI_COLOR = "#ffb743";
 
-		public StatisticSubType getByLocator(String locator) {
-			/* If locator is predefined group */
-			TestItemIssueType type = fromValue(locator);
-			if (null != type) {
-				Optional<StatisticSubType> typeOptional = subTypes.values().stream().flatMap(Collection::stream)
-						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
-				return typeOptional.orElse(null);
-			}
-			/* If not */
-			Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
-					.filter(one -> one.getLocator().equalsIgnoreCase(locator)).findFirst();
-			return exist.orElse(null);
-		}
+        private static final long serialVersionUID = 1L;
+        private StatisticsCalculationStrategy statisticsCalculationStrategy;
+        private List<String> externalSystem;
+        @FilterCriteria("entryType")
+        private EntryType entryType;
+        private ProjectSpecific projectSpecific;
+        private String interruptJobTime;
+        private String keepLogs;
+        private String keepScreenshots;
+        private Boolean isAutoAnalyzerEnabled;
+        private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
-		public void setByLocator(StatisticSubType type) {
-			TestItemIssueType global = fromValue(type.getLocator());
-			if (null == global) {
-				Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
-						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
-				if (exist.isPresent()) {
-					if (null != type.getLongName())
-						exist.get().setLongName(type.getLongName());
-					if (null != type.getShortName())
-						exist.get().setShortName(type.getShortName());
-					if (null != type.getHexColor())
-						exist.get().setHexColor(type.getHexColor());
-				}
-			}
-		}
+        // Project Email Settings
+        private ProjectEmailConfig emailConfig;
 
-		public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
-			this.subTypes = subTypes;
-		}
+        public Configuration() {
+            externalSystem = new ArrayList<>();
+            this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
+                {
+                    put(AUTOMATION_BUG,
+                            singletonList(new StatisticSubType(AUTOMATION_BUG.getLocator(), AUTOMATION_BUG.getValue(),
+                                    "Automation Bug", "AB", AB_COLOR)));
+                    put(PRODUCT_BUG, singletonList(
+                            new StatisticSubType(PRODUCT_BUG.getLocator(), PRODUCT_BUG.getValue(), "Product Bug", "PB",
+                                    PB_COLOR)));
+                    put(SYSTEM_ISSUE, singletonList(
+                            new StatisticSubType(SYSTEM_ISSUE.getLocator(), SYSTEM_ISSUE.getValue(), "System Issue",
+                                    "SI", SI_COLOR)));
+                    put(NO_DEFECT,
+                            singletonList(
+                                    new StatisticSubType(NO_DEFECT.getLocator(), NO_DEFECT.getValue(), "No Defect",
+                                            "ND", ND_COLOR)));
+                    put(TO_INVESTIGATE,
+                            singletonList(new StatisticSubType(TO_INVESTIGATE.getLocator(), TO_INVESTIGATE.getValue(),
+                                    "To Investigate", "TI", TI_COLOR)));
+                }
+            };
+        }
 
-		public Map<TestItemIssueType, List<StatisticSubType>> getSubTypes() {
-			return subTypes;
-		}
+        public StatisticSubType getByLocator(String locator) {
+            /* If locator is predefined group */
+            TestItemIssueType type = fromValue(locator);
+            if (null != type) {
+                Optional<StatisticSubType> typeOptional = subTypes.values().stream().flatMap(Collection::stream)
+                        .filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
+                return typeOptional.orElse(null);
+            }
+            /* If not */
+            Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
+                    .filter(one -> one.getLocator().equalsIgnoreCase(locator)).findFirst();
+            return exist.orElse(null);
+        }
 
-		public void setEntryType(EntryType value) {
-			this.entryType = value;
-		}
+        public void setByLocator(StatisticSubType type) {
+            TestItemIssueType global = fromValue(type.getLocator());
+            if (null == global) {
+                Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
+                        .filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
+                exist.ifPresent(statisticSubType -> {
+                    if (null != type.getLongName())
+                        statisticSubType.setLongName(type.getLongName());
+                    if (null != type.getShortName())
+                        statisticSubType.setShortName(type.getShortName());
+                    if (null != type.getHexColor())
+                        statisticSubType.setHexColor(type.getHexColor());
+                });
+            }
+        }
 
-		public EntryType getEntryType() {
-			return entryType;
-		}
+        public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
+            this.subTypes = subTypes;
+        }
 
-		public void setProjectSpecific(ProjectSpecific value) {
-			this.projectSpecific = value;
-		}
+        public Map<TestItemIssueType, List<StatisticSubType>> getSubTypes() {
+            return subTypes;
+        }
 
-		public ProjectSpecific getProjectSpecific() {
-			return projectSpecific;
-		}
+        public void setEntryType(EntryType value) {
+            this.entryType = value;
+        }
 
-		public void setInterruptJobTime(String value) {
-			this.interruptJobTime = value;
-		}
+        public EntryType getEntryType() {
+            return entryType;
+        }
 
-		public String getInterruptJobTime() {
-			return interruptJobTime;
-		}
+        public void setProjectSpecific(ProjectSpecific value) {
+            this.projectSpecific = value;
+        }
 
-		public void setKeepLogs(String value) {
-			this.keepLogs = value;
-		}
+        public ProjectSpecific getProjectSpecific() {
+            return projectSpecific;
+        }
 
-		public String getKeepLogs() {
-			return keepLogs;
-		}
+        public void setInterruptJobTime(String value) {
+            this.interruptJobTime = value;
+        }
 
-		public void setKeepScreenshots(String value) {
-			this.keepScreenshots = value;
-		}
+        public String getInterruptJobTime() {
+            return interruptJobTime;
+        }
 
-		public String getKeepScreenshots() {
-			return keepScreenshots;
-		}
+        public void setKeepLogs(String value) {
+            this.keepLogs = value;
+        }
 
-		public void setIsAutoAnalyzerEnabled(boolean enabled) {
-			this.isAutoAnalyzerEnabled = enabled;
-		}
+        public String getKeepLogs() {
+            return keepLogs;
+        }
 
-		public Boolean getIsAutoAnalyzerEnabled() {
-			return isAutoAnalyzerEnabled;
-		}
+        public void setKeepScreenshots(String value) {
+            this.keepScreenshots = value;
+        }
 
-		public void setEmailConfig(ProjectEmailConfig config) {
-			this.emailConfig = config;
-		}
+        public String getKeepScreenshots() {
+            return keepScreenshots;
+        }
 
-		public ProjectEmailConfig getEmailConfig() {
-			return emailConfig;
-		}
+        public void setIsAutoAnalyzerEnabled(boolean enabled) {
+            this.isAutoAnalyzerEnabled = enabled;
+        }
 
-		/**
-		 * @return the statisticsCalculationStrategy
-		 */
-		public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
-			return statisticsCalculationStrategy;
-		}
+        public Boolean getIsAutoAnalyzerEnabled() {
+            return isAutoAnalyzerEnabled;
+        }
 
-		/**
-		 * @param statisticsCalculationStrategy
-		 *            the statisticsCalculationStrategy to set
-		 */
-		public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
-			this.statisticsCalculationStrategy = statisticsCalculationStrategy;
-		}
+        public void setEmailConfig(ProjectEmailConfig config) {
+            this.emailConfig = config;
+        }
 
-		public void setExternalSystem(List<String> externalSystemIds) {
-			this.externalSystem = externalSystemIds;
-		}
+        public ProjectEmailConfig getEmailConfig() {
+            return emailConfig;
+        }
 
-		public List<String> getExternalSystem() {
-			return externalSystem;
-		}
-	}
+        /**
+         * @return the statisticsCalculationStrategy
+         */
+        public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
+            return statisticsCalculationStrategy;
+        }
 
-	public static class UserConfig implements Serializable {
+        /**
+         * @param statisticsCalculationStrategy the statisticsCalculationStrategy to set
+         */
+        public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
+            this.statisticsCalculationStrategy = statisticsCalculationStrategy;
+        }
 
-		private static final long serialVersionUID = 1L;
-		private ProjectRole proposedRole;
-		private ProjectRole projectRole;
+        public void setExternalSystem(List<String> externalSystemIds) {
+            this.externalSystem = externalSystemIds;
+        }
 
-		public static UserConfig newOne() {
-			return new UserConfig();
-		}
+        public List<String> getExternalSystem() {
+            return externalSystem;
+        }
+    }
 
-		public UserConfig() {
+    public static class UserConfig implements Serializable {
 
-		}
+        private static final long serialVersionUID = 1L;
+        private ProjectRole proposedRole;
+        private ProjectRole projectRole;
 
-		public void setProjectRole(ProjectRole projectRole) {
-			this.projectRole = projectRole;
-		}
+        public static UserConfig newOne() {
+            return new UserConfig();
+        }
 
-		public void setProposedRole(ProjectRole proposedRole) {
-			this.proposedRole = proposedRole;
-		}
+        public UserConfig() {
 
-		public ProjectRole getProjectRole() {
-			return projectRole;
-		}
+        }
 
-		public ProjectRole getProposedRole() {
-			return proposedRole;
-		}
+        public void setProjectRole(ProjectRole projectRole) {
+            this.projectRole = projectRole;
+        }
 
-		public UserConfig withProposedRole(ProjectRole proposedRole) {
-			this.proposedRole = proposedRole;
-			return this;
-		}
+        public void setProposedRole(ProjectRole proposedRole) {
+            this.proposedRole = proposedRole;
+        }
 
-		public UserConfig withProjectRole(ProjectRole projectRole) {
-			this.projectRole = projectRole;
-			return this;
-		}
-	}
+        public ProjectRole getProjectRole() {
+            return projectRole;
+        }
 
-	@Override
-	public String toString() {
-		return new StringBuilder("Project [name=").append(name).append(", customer=").append(customer).append(", addInfo=").append(addInfo)
-				.append(", configuration=").append(configuration).append(", users=").append(users).append("]").toString();
-	}
+        public ProjectRole getProposedRole() {
+            return proposedRole;
+        }
+
+        public UserConfig withProposedRole(ProjectRole proposedRole) {
+            this.proposedRole = proposedRole;
+            return this;
+        }
+
+        public UserConfig withProjectRole(ProjectRole projectRole) {
+            this.projectRole = projectRole;
+            return this;
+        }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Project{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", customer='").append(customer).append('\'');
+        sb.append(", addInfo='").append(addInfo).append('\'');
+        sb.append(", configuration=").append(configuration);
+        sb.append(", users=").append(users);
+        sb.append(", creationDate=").append(creationDate);
+        sb.append(", metadata=").append(metadata);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    public static class Metadata implements Serializable {
+
+        public Metadata() {
+        }
+
+        public Metadata(List<String> demoDataPostfix) {
+            this.demoDataPostfix = demoDataPostfix;
+        }
+
+        private List<String> demoDataPostfix;
+
+        public List<String> getDemoDataPostfix() {
+            return demoDataPostfix;
+        }
+
+        public void setDemoDataPostfix(List<String> demoDataPostfix) {
+            this.demoDataPostfix = demoDataPostfix;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            Metadata metadata = (Metadata) o;
+
+            return demoDataPostfix != null ? demoDataPostfix.equals(metadata.demoDataPostfix) : metadata.demoDataPostfix == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return demoDataPostfix != null ? demoDataPostfix.hashCode() : 0;
+        }
+    }
 }

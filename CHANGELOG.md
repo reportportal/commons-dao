@@ -29,3 +29,5 @@
 ### BugFixes
 * EPMRPP-23564 - GET shared dashboard request does not contain 'description' parameter
 * EPMRPP-24914 - Item with investigated defect type only is not included in scope of analysis
+* EPMRPP-24539 - Do not take into account items with No Defect type in analysis of following launches
+* EPMRPP-25408 - No Defect items are included in scope of analysis in case item has ticket

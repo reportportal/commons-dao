@@ -21,7 +21,6 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -29,6 +28,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +67,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param hasChild
 	 * @return
 	 */
-	List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch, boolean hasChild);
+	List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch, boolean hasChild);
 
 	/**
 	 * Finds items modified later than provided period with provided status
@@ -78,7 +78,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param launch
 	 * @return
 	 */
-	List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch);
+	List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch);
 
 	/**
 	 * Get list of distinct values from TestItems collection
@@ -144,7 +144,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param status
 	 * @return
 	 */
-	boolean hasTestItemsAddedLately(final Time period, Launch launch, Status status);
+	boolean hasTestItemsAddedLately(final Duration period, Launch launch, Status status);
 
 	/**
 	 * Get test-items for specified launch with specified issue type.
@@ -208,6 +208,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> findTestItemWithIssues(String launchId);
 
+	boolean hasChildrenWithStatuses(String itemId, Status... status);
+
 	void dropIssueStatisticsType(String id, StatisticSubType type);
 
 	/**
@@ -217,4 +219,11 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param hasChilds hasChilds field value
 	 */
 	void updateHasChilds(String id, boolean hasChilds);
+
+    /**
+     * Get test items without parent with specified launch.
+     * @param launchId launch reference
+     * @return list of test items
+     */
+    List<TestItem> findWithoutParentByLaunchRef(String launchId);
 }

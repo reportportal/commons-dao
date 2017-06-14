@@ -21,6 +21,8 @@
 
 package com.epam.ta.reportportal.database.entity.project.info;
 
+import java.util.Arrays;
+
 /**
  * Enumerator with project information widget types
  * 
@@ -49,10 +51,7 @@ public enum ProjectInfoWidget {
 	}
 
 	public static ProjectInfoWidget findByCode(String code) {
-		for (ProjectInfoWidget widget : ProjectInfoWidget.values()) {
-			if (widget.getWidgetCode().equals(code))
-				return widget;
-		}
-		return null;
+		return Arrays.stream(ProjectInfoWidget.values()).filter(type -> type.getWidgetCode()
+				.equalsIgnoreCase(code)).findAny().orElse(null);
 	}
 }

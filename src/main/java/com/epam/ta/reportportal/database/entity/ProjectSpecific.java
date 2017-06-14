@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.entity;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -39,15 +40,11 @@ public enum ProjectSpecific {
 	}
 
 	public static Optional<ProjectSpecific> findByName(String name) {
-		for (ProjectSpecific type : ProjectSpecific.values()) {
-			if (type.name().equals(name)) {
-				return Optional.of(type);
-			}
-		}
-		return Optional.empty();
+		return Arrays.stream(ProjectSpecific.values()).filter(type -> type.name()
+				.equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
-		return null != findByName(name);
+		return findByName(name).isPresent();
 	}
 }

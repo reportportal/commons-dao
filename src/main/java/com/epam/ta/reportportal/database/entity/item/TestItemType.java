@@ -21,7 +21,7 @@
 
 package com.epam.ta.reportportal.database.entity.item;
 
-import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Comparator;
 
 public enum TestItemType implements Comparable<TestItemType> {
@@ -53,13 +53,8 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	}
 
 	public static TestItemType fromValue(String value) {
-		TestItemType[] values = TestItemType.values();
-		for (TestItemType type : values) {
-			if (type.name().equals(value)) {
-				return type;
-			}
-		}
-		return null;
+		return Arrays.stream(TestItemType.values()).filter(type -> type.name().equalsIgnoreCase(value))
+				.findAny().orElse(null);
 	}
 
 	public boolean sameLevel(TestItemType other) {
@@ -90,21 +85,14 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		return awareStatistics;
 	}
 
-	private static final LevelComparator LEVEL_COMPARATOR = new LevelComparator();
-
 	/**
 	 * Level Comparator for TestItem types. Returns TRUE of level of first
 	 * object is <b>lower</b> than level of second object
 	 *
 	 * @author Andrei Varabyeu
 	 */
-	private static class LevelComparator implements Comparator<TestItemType>, Serializable {
-
-		@Override
-		public int compare(TestItemType o1, TestItemType o2) {
-			return (o1.level == o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
-		}
-	}
+	private static final Comparator<TestItemType> LEVEL_COMPARATOR =
+			(TestItemType o1, TestItemType o2) -> (o1.level == o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
 
 	public static class Constants {
 		public static final int SUITE_LEVEL = 0;

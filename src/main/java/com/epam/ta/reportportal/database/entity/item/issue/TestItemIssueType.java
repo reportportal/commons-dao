@@ -21,10 +21,11 @@
 
 package com.epam.ta.reportportal.database.entity.item.issue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.epam.ta.reportportal.database.entity.StatisticsAwareness;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Vocabulary for supported test item issues types. They are applied as markers
@@ -80,36 +81,18 @@ public enum TestItemIssueType implements StatisticsAwareness {
 	 * @return TestItemIssueType value
 	 */
 	public static TestItemIssueType fromValue(String value) {
-		TestItemIssueType[] values = TestItemIssueType.values();
-		for (TestItemIssueType valueType : values) {
-			String actualType = valueType.getValue();
-			if (actualType.equalsIgnoreCase(value)) {
-				return valueType;
-			}
-		}
-		return null;
+		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.getValue()
+				.equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 
 	public static TestItemIssueType validate(String value) {
-		TestItemIssueType[] values = TestItemIssueType.values();
-		for (TestItemIssueType valueType : values) {
-			String actualType = valueType.getValue().replace(" ", "_");
-			if (actualType.equalsIgnoreCase(value)) {
-				return valueType;
-			}
-		}
-		return null;
+		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.getValue().replace(" ", "_")
+				.equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 
 	public static TestItemIssueType fromCounterField(String value) {
-		TestItemIssueType[] values = TestItemIssueType.values();
-		for (TestItemIssueType valueType : values) {
-			String actualType = valueType.awareStatisticsField();
-			if (actualType.equalsIgnoreCase(value)) {
-				return valueType;
-			}
-		}
-		return null;
+		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.awareStatisticsField()
+				.equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 
 	@Override
@@ -118,11 +101,8 @@ public enum TestItemIssueType implements StatisticsAwareness {
 	}
 
 	public static List<String> validValues() {
-		List<String> validValues = new ArrayList<>();
-		TestItemIssueType[] values = TestItemIssueType.values();
-		for (TestItemIssueType valueType : values) {
-			validValues.add(valueType.getValue());
-		}
-		return validValues;
+		return Arrays.stream(TestItemIssueType.values())
+				.map(TestItemIssueType::getValue)
+				.collect(Collectors.toList());
 	}
 }

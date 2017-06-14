@@ -21,20 +21,19 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.data.domain.Sort;
-
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
+import org.springframework.data.domain.Sort;
+
+import java.time.Duration;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
@@ -69,7 +68,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @param status
 	 * @return
 	 */
-	List<Launch> findModifiedLaterAgo(Time period, Status status);
+	List<Launch> findModifiedLaterAgo(Duration period, Status status);
 
 	/**
 	 * Finds launches modified later than period
@@ -79,7 +78,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @param project
 	 * @return
 	 */
-	List<Launch> findModifiedLaterAgo(Time period, Status status, String project);
+	List<Launch> findModifiedLaterAgo(Duration period, Status status, String project);
 
 	/**
 	 * Find launches by filter load only id and number fields. Load specified

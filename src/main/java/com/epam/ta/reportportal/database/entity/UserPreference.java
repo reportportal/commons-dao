@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.common.base.MoreObjects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -72,6 +73,12 @@ public class UserPreference implements Serializable {
 		this.launchTabs = launchTabs;
 	}
 
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("id", id).add("projectRef", projectRef).add("userRef", userRef)
+				.add("launchTabs", launchTabs).toString();
+	}
+
 	public static class LaunchTabs implements Serializable {
 
 		private static final long serialVersionUID = -8820884642136353655L;
@@ -92,6 +99,11 @@ public class UserPreference implements Serializable {
 
 		public void setFilters(List<String> filters) {
 			this.filters = filters;
+		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this).add("active", active).add("filters", filters).toString();
 		}
 	}
 

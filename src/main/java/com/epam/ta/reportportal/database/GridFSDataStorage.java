@@ -21,21 +21,21 @@
 
 package com.epam.ta.reportportal.database;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilename;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.google.common.base.Preconditions;
+import com.mongodb.gridfs.GridFSDBFile;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
-import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
-import com.google.common.base.Preconditions;
-import com.mongodb.gridfs.GridFSDBFile;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilename;
 
 /**
  * Stores file in GridFS
@@ -46,6 +46,8 @@ import com.mongodb.gridfs.GridFSDBFile;
 public class GridFSDataStorage implements DataStorage {
 
 	private static final String ID_FIELD = "_id";
+
+	private static final String PHOTO_PREFIX = "^(photo_)";
 
 	private final GridFsOperations gridFs;
 
@@ -82,8 +84,9 @@ public class GridFSDataStorage implements DataStorage {
 	 * com.epam.ta.reportportal.util.Time, java.lang.String)
 	 */
 	@Override
-	public List<GridFSDBFile> findModifiedLaterAgo(Time period, String project) {
-		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project));
+	public List<GridFSDBFile> findModifiedLaterAgo(Duration period, String project) {
+		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project)
+				.addCriteria(where("filename").not().regex(PHOTO_PREFIX)));
 	}
 
 	/*

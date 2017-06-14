@@ -21,25 +21,24 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import static com.epam.ta.reportportal.database.entity.item.Activity.LOGGED_OBJECT_REF;
-import static com.epam.ta.reportportal.database.entity.item.Activity.PROJECT_REF;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.Modifiable;
+import com.epam.ta.reportportal.database.entity.item.Activity;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.epam.ta.reportportal.database.search.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.epam.ta.reportportal.database.Time;
-import com.epam.ta.reportportal.database.entity.Modifiable;
-import com.epam.ta.reportportal.database.entity.item.Activity;
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
-import com.epam.ta.reportportal.database.search.QueryBuilder;
+import java.time.Duration;
+import java.util.List;
+
+import static com.epam.ta.reportportal.database.entity.item.Activity.LOGGED_OBJECT_REF;
+import static com.epam.ta.reportportal.database.entity.item.Activity.PROJECT_REF;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * Activity repository custom implementation
@@ -67,7 +66,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	}
 
 	@Override
-	public void deleteModifiedLaterAgo(String projectId, Time period) {
+	public void deleteModifiedLaterAgo(String projectId, Duration period) {
 		Query query = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period).addCriteria(where(PROJECT_REF).is(projectId));
 		mongoTemplate.remove(query, Activity.class);
 	}

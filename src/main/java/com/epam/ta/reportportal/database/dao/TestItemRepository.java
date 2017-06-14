@@ -21,11 +21,11 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.item.TestItem;
 import org.springframework.data.mongodb.repository.Query;
 
-import com.epam.ta.reportportal.database.entity.item.TestItem;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Repository interface for test items
@@ -39,6 +39,9 @@ public interface TestItemRepository extends TestItemRepositoryCustom, ReportPort
 	String FIND_SUITE_ID_BY_ITEM_ID = "{ 'launchRef' : ?0 }";
 
 	@Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
+	Stream<TestItem> streamIdsByLaunch(String id);
+
+	@Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
 	List<TestItem> findIdsByLaunch(String launch);
 
 	@Query(value = " { 'parent': ?0 } ")
@@ -47,6 +50,4 @@ public interface TestItemRepository extends TestItemRepositoryCustom, ReportPort
 	@Query(value = " { 'status': ?0 , 'launchRef': ?1  } ")
 	List<TestItem> findInStatusItems(String status, String launch);
 
-	@Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
-	List<String> findIdByLaunch(String launch);
 }

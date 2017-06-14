@@ -21,18 +21,15 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
-import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
-import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static java.util.stream.Collectors.toList;
-import static org.bson.types.ObjectId.isValid;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.*;
-import java.util.regex.Pattern;
-
+import com.epam.ta.reportportal.config.CacheConfiguration;
+import com.epam.ta.reportportal.database.entity.Launch;
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
+import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.QueryBuilder;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -43,16 +40,18 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import com.epam.ta.reportportal.config.CacheConfiguration;
-import com.epam.ta.reportportal.database.Time;
-import com.epam.ta.reportportal.database.entity.Launch;
-import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.Status;
-import com.epam.ta.reportportal.database.entity.item.TestItem;
-import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
-import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.QueryBuilder;
+import java.time.Duration;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
+import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
+import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
+import static java.util.stream.Collectors.toList;
+import static org.bson.types.ObjectId.isValid;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * Implementations of custom methods which are cannot be generated via default
@@ -134,14 +133,14 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	// Probably unnecessary method (launch delete remove object from DB
 	// completely)
 	@Override
-	public List<Launch> findModifiedLaterAgo(Time time, Status status) {
+	public List<Launch> findModifiedLaterAgo(Duration time, Status status) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time, status), Launch.class);
 	}
 
 	// Probably unnecessary method (launch delete remove object from DB
 	// completely)
 	@Override
-	public List<Launch> findModifiedLaterAgo(Time time, Status status, String project) {
+	public List<Launch> findModifiedLaterAgo(Duration time, Status status, String project) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time, status).addCriteria(where(PROJECT_ID_REFERENCE).is(project)),
 				Launch.class);
 	}

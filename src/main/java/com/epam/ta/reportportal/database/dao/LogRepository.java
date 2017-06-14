@@ -21,13 +21,12 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.util.Date;
-import java.util.List;
-
+import com.epam.ta.reportportal.database.entity.Log;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.epam.ta.reportportal.database.entity.Log;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Repository interface for {@link Log} instances. Provides basic CRUD operations due to the
@@ -52,7 +51,7 @@ public interface LogRepository extends LogRepositoryCustom, ReportPortalReposito
 	 * Finds log by TestStep ID. Returns fully populated
 	 * {@link com.epam.ta.reportportal.database.entity.Log}
 	 * 
-	 * @param testStep
+	 * @param testItem
 	 * @return
 	 */
 	@Query(value = FIND_LOG_ENTRY_BY_STEP_ID, fields = "{'id' : 1}")

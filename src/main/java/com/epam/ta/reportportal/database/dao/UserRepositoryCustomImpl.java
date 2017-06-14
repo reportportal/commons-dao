@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
 import static com.epam.ta.reportportal.config.CacheConfiguration.USERS_CACHE;
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
 import static com.epam.ta.reportportal.database.entity.user.User.*;
@@ -43,7 +44,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.epam.ta.reportportal.commons.Constants;
-import com.epam.ta.reportportal.commons.EntityUtils;
 import com.epam.ta.reportportal.database.BinaryData;
 import com.epam.ta.reportportal.database.DataStorage;
 import com.epam.ta.reportportal.database.entity.user.User;
@@ -140,7 +140,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public User findByEmail(String email) {
-		final Query query = query(where(User.EMAIL).is(EntityUtils.normalizeUsername(email)));
+		final Query query = query(where(User.EMAIL).is(normalizeId(email)));
 		return mongoOperations.findOne(query, User.class);
 	}
 

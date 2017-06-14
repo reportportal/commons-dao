@@ -21,6 +21,8 @@
  
 package com.epam.ta.reportportal.database.entity.project;
 
+import java.util.Arrays;
+
 /**
  * Keep Launches Delay project parameter enumerator<br>
  * Describe possible values for 'Keep launches' parameter on UI project page
@@ -58,12 +60,8 @@ public enum KeepLogsDelay {
 	}
 
 	public static KeepLogsDelay findByName(String name) {
-		for (KeepLogsDelay delay : KeepLogsDelay.values()) {
-			if (delay.getValue().equals(name)) {
-				return delay;
-			}
-		}
-		return null;
+		return Arrays.stream(KeepLogsDelay.values()).filter(delay -> delay.getValue()
+				.equalsIgnoreCase(name)).findAny().orElse(null);
 	}
 
 	public static boolean isPresent(String name) {

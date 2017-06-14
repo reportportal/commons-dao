@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.entity;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public enum Status implements StatisticsAwareness {
@@ -43,13 +44,8 @@ public enum Status implements StatisticsAwareness {
 	}
 
 	public static Optional<Status> fromValue(String value) {
-		Status[] values = Status.values();
-		for (Status status : values) {
-			if (status.name().equalsIgnoreCase(value)) {
-				return Optional.of(status);
-			}
-		}
-		return Optional.empty();
+		return Arrays.stream(Status.values()).filter(status -> status.name()
+				.equalsIgnoreCase(value)).findAny();
 	}
 
 	@Override

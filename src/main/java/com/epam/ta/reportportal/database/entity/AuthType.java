@@ -17,13 +17,15 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
 
+import java.util.Arrays;
+
 /**
  * Authentication mechanics enum for external system
- * 
+ *
  * @author Andrei_Ramanchuk
  */
 public enum AuthType {
@@ -46,12 +48,8 @@ public enum AuthType {
 	}
 
 	public static AuthType findByName(String name) {
-		for (AuthType type : AuthType.values()) {
-			if (type.name().equals(name)) {
-				return type;
-			}
-		}
-		return null;
+		return Arrays.stream(AuthType.values()).filter(type -> type.name()
+                .equalsIgnoreCase(name)).findAny().orElse(null);
 	}
 
 	public static boolean isPresent(String name) {

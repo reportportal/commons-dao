@@ -29,6 +29,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Some custom queries defined for project repository
@@ -37,72 +38,82 @@ import java.util.Map;
  */
 public interface ProjectRepositoryCustom {
 
-    /**
-     * Whether user assigned to project
-     *
-     * @param project
-     * @param login
-     * @return
-     */
-    @Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
-    boolean isAssignedToProject(String project, String login);
+	/**
+	 * Whether user assigned to project
+	 *
+	 * @param project Project name
+	 * @param login   User name
+	 * @return {@link Boolean#TRUE} if user is assigned to provided project
+	 */
+	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
+	boolean isAssignedToProject(String project, String login);
 
-    /**
-     * Finds projects contain specified user
-     *
-     * @param login
-     * @return
-     */
-    List<Project> findUserProjects(String login);
+	/**
+	 * Finds projects contain specified user
+	 *
+	 * @param login User
+	 * @return List of found projects
+	 */
+	List<Project> findUserProjects(String login);
 
-    /**
-     * Finds projects contains specified user and has specified projectType
-     *
-     * @param login       User login
-     * @param projectType projectType
-     * @return
-     */
-    List<Project> findUserProjects(String login, String projectType);
+	/**
+	 * Finds projects contains specified user and has specified projectType
+	 *
+	 * @param login       User login
+	 * @param projectType projectType
+	 * @return List of found projects
+	 */
+	List<Project> findUserProjects(String login, String projectType);
 
-    /**
-     * Get project usernames which contains specified value (for auto-complete on UI)
-     *
-     * @param projectName
-     * @param value
-     * @return
-     */
-    List<String> findProjectUsers(String projectName, String value);
+	/**
+	 * Get project usernames which contains specified value (for auto-complete on UI)
+	 *
+	 * @param projectName ProjectName
+	 * @param value       User
+	 * @return List of found user names
+	 */
+	List<String> findProjectUsers(String projectName, String value);
 
-    /**
-     * Remove user from all projects
-     *
-     * @param userId
-     */
-    void removeUserFromProjects(String userId);
+	/**
+	 * Remove user from all projects
+	 *
+	 * @param userId UserID which should be removed
+	 */
+	void removeUserFromProjects(String userId);
 
-    /**
-     * Add users to project
-     *
-     * @param projectId
-     * @param users
-     */
-    void addUsers(String projectId, Map<String, UserConfig> users);
+	/**
+	 * Add users to project
+	 *
+	 * @param projectId Project users should be added to
+	 * @param users     Users to add
+	 */
+	void addUsers(String projectId, Map<String, UserConfig> users);
 
-    /**
-     * Find all project names
-     *
-     * @return Project Names
-     */
-    List<String> findAllProjectNames();
+	/**
+	 * Find all project names
+	 *
+	 * @return Project Names
+	 */
+	List<String> findAllProjectNames();
 
-    void clearExternalSystems(String projectId);
+	void clearExternalSystems(String projectId);
 
-    /**
-     * Returns map Project->ProjectRole
-     *
-     * @param login username
-     * @return Project->ProjectRole map
-     */
-    Map<String, ProjectRole> findProjectRoles(String login);
+	/**
+	 * Returns map Project->ProjectRole
+	 *
+	 * @param login username
+	 * @return Project->ProjectRole map
+	 */
+	Map<String, ProjectRole> findProjectRoles(String login);
+
+	/**
+	 * Adds new postfix to the postfixes list
+	 *
+	 * @param project Project postfix should be added to
+	 * @param postfix Postfix to add
+	 */
+	void addDemoDataPostfix(String project, String postfix);
+
+	Optional<String> findPersonalProjectName(String user);
 
 }

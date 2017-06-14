@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
@@ -41,14 +40,13 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -73,6 +71,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String START_TIME = "start_time";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";
+	private static final String STATUS = "status";
+	private static final String PARENT = "parent";
+	private static final String IGNORE_DEFECT_REGEX = "^(nd)";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -181,14 +182,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch, boolean hasChilds) {
+	public List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch, boolean hasChilds) {
 		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where("has_childs").is(hasChilds));
 		return mongoTemplate.find(q, TestItem.class);
 	}
 
 	@Override
-	public List<TestItem> findModifiedLaterAgo(Time period, Status status, Launch launch) {
+	public List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch) {
 		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status)
 				.addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()));
 		return mongoTemplate.find(q, TestItem.class);
@@ -290,9 +291,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<TestItem> findTestItemWithInvestigated(String launchId) {
 		Criteria internalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE_TYPE).ne(TestItemIssueType.TO_INVESTIGATE.getLocator()), where(ISSUE_TYPE).exists(true));
+				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i").ne(TestItemIssueType.TO_INVESTIGATE.getLocator()),
+				where(ISSUE_TYPE).exists(true));
 
 		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId), where(ISSUE_TYPE).exists(true),
+				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
 				where(ISSUE_TICKET).exists(true));
 
 		Query query = query(new Criteria().orOperator(internalIssues, externalIssues));
@@ -310,7 +313,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasTestItemsAddedLately(Time period, Launch launch, Status status) {
+	public boolean hasTestItemsAddedLately(Duration period, Launch launch, Status status) {
 		Query query = ModifiableQueryBuilder.findModifiedLately(period).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where(HasStatus.STATUS).is(status.name()));
 		return (mongoTemplate.count(query, TestItem.class) > 0);
@@ -402,4 +405,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		Query query = query(externalIssues);
 		return mongoTemplate.find(query, TestItem.class);
 	}
+
+	@Override
+	public boolean hasChildrenWithStatuses(String itemId, Status... statuses) {
+		Query query = query(where(PARENT).is(itemId)).addCriteria(where(STATUS).in((Object[]) statuses));
+		return mongoTemplate.count(query, TestItem.class) > 0;
+	}
+
+    @Override
+    public List<TestItem> findWithoutParentByLaunchRef(String launchId) {
+        Query query = query(where(PARENT).exists(false)).addCriteria(where(LAUNCH_REFERENCE).is(launchId));
+        return mongoTemplate.find(query, TestItem.class);
+    }
 }

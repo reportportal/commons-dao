@@ -21,11 +21,12 @@
  
 package com.epam.ta.reportportal.triggers;
 
-import com.epam.ta.reportportal.commons.EntityUtils;
 import com.epam.ta.reportportal.database.entity.Launch;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.stereotype.Component;
+
+import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
 
 /**
  * Normalize launch entity
@@ -40,11 +41,11 @@ public class NormalizeLaunchQueriesTrigger extends AbstractMongoEventListener<La
 	public void onBeforeConvert(BeforeConvertEvent<Launch> event) {
 		Launch source = event.getSource();
 		if (null != source.getProjectRef()) {
-			source.setProjectRef(EntityUtils.normalizeProjectName(source.getProjectRef()));
+			source.setProjectRef(normalizeId(source.getProjectRef()));
 		}
 
 		if (null != source.getUserRef()) {
-			source.setUserRef(EntityUtils.normalizeProjectName(source.getUserRef()));
+			source.setUserRef(normalizeId(source.getUserRef()));
 		}
 	}
 }

@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -29,4 +29,13 @@ public interface UserPreferenceRepositoryCustom {
 	void deleteByUserName(String userName);
 
 	void deleteByUsernameAndProject(String username, String project);
+
+	/**
+	 * Delete unshared filter from user's preferences. Removed provided filter ID from preferences of all users <b>EXCEPT</b> provided one
+	 *
+	 * @param username Username of filter onwner
+	 * @param project  Project of filter owner
+	 * @param filterId ID of filter to be removed
+	 */
+	void deleteUnsharedFilters(String username, String project, String filterId);
 }

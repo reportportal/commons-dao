@@ -20,6 +20,7 @@
  */
 package com.epam.ta.reportportal.database.personal;
 
+import com.epam.ta.reportportal.database.dao.ProjectRepository;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
@@ -27,17 +28,34 @@ import com.epam.ta.reportportal.database.entity.user.User;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link PersonalProjectUtils}
+ * Tests for {@link PersonalProjectService}
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-public class PersonalProjectUtilsTest {
+public class PersonalProjectServiceTest {
 
 	@Test
-	public void personalProjectName() throws Exception {
-		Assert.assertThat("Generated personal space name is incorrect", PersonalProjectUtils.personalProjectName("John"),
+	public void personalProjectNameExisting() throws Exception {
+		ProjectRepository repo = Mockito.mock(ProjectRepository.class);
+		String userName = "John";
+		when(repo.exists(Mockito.anyString())).then(invocation -> "john_personal".equals(invocation.getArguments()[0]));
+
+		Assert.assertThat("Generated personal space name is incorrect", new PersonalProjectService(repo).generatePersonalProjectName(userName),
+				Matchers.is("john_personal_1".toLowerCase()));
+	}
+
+	@Test
+	public void personalProjectNameFree() throws Exception {
+		String userName = "John";
+
+		Assert.assertThat("Generated personal space name is incorrect", new PersonalProjectService(mockProjectRepo()).generatePersonalProjectName(userName),
 				Matchers.is("john_personal".toLowerCase()));
 	}
 
@@ -48,7 +66,7 @@ public class PersonalProjectUtilsTest {
 		user.setLogin(login);
 		user.setFullName("John");
 
-		Project project = PersonalProjectUtils.generatePersonalProject(user);
+		Project project = new PersonalProjectService(mockProjectRepo()).generatePersonalProject(user);
 		Assert.assertThat("Project doesn't have user", project.getUsers(), Matchers.hasKey(login));
 		Assert.assertThat("Incorrect role", project.getUsers().get(login).getProjectRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
 		Assert.assertThat("Incorrect role", project.getUsers().get(login).getProposedRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
@@ -61,7 +79,7 @@ public class PersonalProjectUtilsTest {
 
 	@Test
 	public void defaultConfiguration() throws Exception {
-		Project.Configuration configuration = PersonalProjectUtils.defaultConfiguration();
+		Project.Configuration configuration = PersonalProjectService.defaultConfiguration();
 
 		Assert.assertThat("Incorrect project type", configuration.getEntryType(), Matchers.is(EntryType.PERSONAL));
 		Assert.assertThat("Incorrect keep screenshots config", configuration.getKeepScreenshots(), Matchers.notNullValue());
@@ -69,6 +87,12 @@ public class PersonalProjectUtilsTest {
 		Assert.assertThat("Incorrect interrupt config", configuration.getInterruptJobTime(), Matchers.notNullValue());
 		Assert.assertThat("Incorrect keep logs config", configuration.getKeepLogs(), Matchers.notNullValue());
 
+	}
+
+	private ProjectRepository mockProjectRepo(){
+		ProjectRepository repo = Mockito.mock(ProjectRepository.class);
+		when(repo.exists(Mockito.anyString())).thenReturn(false);
+		return repo;
 	}
 
 }

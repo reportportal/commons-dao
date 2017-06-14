@@ -45,11 +45,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * MongoDB query builder. Constructs MongoDB
@@ -73,8 +70,6 @@ public class QueryBuilder {
 	 */
 	private Query query;
 
-	private static CriteriaMapFactory criteriaMapFactory = CriteriaMapFactory.DEFAULT_INSTANCE_SUPPLIER.get();
-
 	private QueryBuilder() {
 		query = new Query();
 	}
@@ -83,30 +78,21 @@ public class QueryBuilder {
 		return new QueryBuilder();
 	}
 
-	public static List<Criteria> toCriteriaList(Filter filter) {
-		/* Get map of defined @FilterCriteria fields */
-		CriteriaMap<?> map = criteriaMapFactory.getCriteriaMap(filter.getTarget());
-		final Function<FilterCondition, Criteria> transformer = filterConverter(map);
-
-		return filter.getFilterConditions().stream().map(transformer).collect(toList());
-	}
-
 	/**
 	 * Adds {@link com.epam.ta.reportportal.database.search.Filter} using 'AND' condition.
 	 *
 	 * @param filter
 	 * @return QueryBuilder
 	 */
-	public QueryBuilder with(Filter filter) {
-		toCriteriaList(filter).forEach(criteriaDef -> query.addCriteria(criteriaDef));
-
+	public QueryBuilder with(Queryable filter) {
+		filter.toCriteria().forEach(c -> query.addCriteria(c));
 		return this;
 	}
 
 	/**
 	 * Adds {@link org.springframework.data.domain.Pageable} conditions
 	 *
-	 * @param p
+	 * @param p Pageable
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Pageable p) {
@@ -117,7 +103,7 @@ public class QueryBuilder {
 	/**
 	 * Add limit
 	 *
-	 * @param limit
+	 * @param limit Limit
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(int limit) {
@@ -144,7 +130,6 @@ public class QueryBuilder {
 	public Query build() {
 		return query;
 	}
-
 
 	public static Function<FilterCondition, Criteria> filterConverter(CriteriaMap<?> map) {
 		return filterCondition -> {

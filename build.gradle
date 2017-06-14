@@ -16,6 +16,7 @@ plugins {
 project.description = 'EPAM Report portal. Common DAO Layer'
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 apply from: 'release-lib.gradle'
 apply from: 'build-quality.gradle'
 
@@ -31,7 +32,7 @@ targetCompatibility = 1.8
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:1.5.2.RELEASE"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:1.5.4.RELEASE"
     }
 }
 
@@ -42,9 +43,9 @@ project.ext {
 dependencies {
 
     if (releaseMode) {
-        compile 'com.epam.reportportal:commons-rules:3.0.0'
+        compile 'com.epam.reportportal:commons-rules:3.0.1'
     } else {
-        compile 'com.github.reportportal:commons-rules:3.0.0'
+        compile 'com.github.reportportal:commons-rules:3.0.1'
     }
 
 
@@ -79,3 +80,11 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '3.2'
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+build.dependsOn jacocoTestReport

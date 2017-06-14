@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.entity;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -44,11 +45,7 @@ public enum ProjectRole {
 	}
 
 	public static Optional<ProjectRole> forName(final String name) {
-		for (ProjectRole role : ProjectRole.values()) {
-			if (role.name().equals(name)) {
-				return Optional.of(role);
-			}
-		}
-		return Optional.empty();
+		return Arrays.stream(ProjectRole.values()).filter(role -> role.name()
+				.equalsIgnoreCase(name)).findAny();
 	}
 }

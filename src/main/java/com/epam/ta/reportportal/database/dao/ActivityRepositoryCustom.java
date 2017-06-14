@@ -21,12 +21,12 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.database.Time;
 import com.epam.ta.reportportal.database.entity.item.Activity;
 import com.epam.ta.reportportal.database.search.Filter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -60,7 +60,7 @@ public interface ActivityRepositoryCustom {
 	 * @param projectId ID of project
 	 * @param period    Time period
 	 */
-	void deleteModifiedLaterAgo(String projectId, Time period);
+	void deleteModifiedLaterAgo(String projectId, Duration period);
 
 	/**
 	 * Find limiting count of results
