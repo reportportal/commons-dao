@@ -69,6 +69,8 @@ public class ServerSettings implements Serializable, Modifiable {
 	@Field(LAST_MODIFIED)
 	private Date lastModified;
 
+	private String instanceId;
+
 	public void setId(String profile) {
 		this.profile = profile;
 	}
@@ -117,4 +119,12 @@ public class ServerSettings implements Serializable, Modifiable {
     public void setAnalyticsDetails(Map<String, AnalyticsDetails> analyticsDetails) {
         this.analyticsDetails = analyticsDetails;
     }
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
 }
