@@ -126,6 +126,7 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	@Field(LAST_MODIFIED)
 	private Date lastModified;
 
+	@FilterCriteria("uniqueId")
 	private String uniqueId;
 
 	public TestItem() {
