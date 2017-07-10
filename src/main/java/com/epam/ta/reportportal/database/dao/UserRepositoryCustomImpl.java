@@ -21,18 +21,12 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
-import static com.epam.ta.reportportal.config.CacheConfiguration.USERS_CACHE;
-import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
-import static com.epam.ta.reportportal.database.entity.user.User.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
-
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import com.epam.ta.reportportal.commons.Constants;
+import com.epam.ta.reportportal.database.BinaryData;
+import com.epam.ta.reportportal.database.DataStorage;
+import com.epam.ta.reportportal.database.entity.user.User;
+import com.epam.ta.reportportal.database.entity.user.UserType;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -43,12 +37,17 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.epam.ta.reportportal.commons.Constants;
-import com.epam.ta.reportportal.database.BinaryData;
-import com.epam.ta.reportportal.database.DataStorage;
-import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.database.entity.user.UserType;
-import com.epam.ta.reportportal.exception.ReportPortalException;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
+import static com.epam.ta.reportportal.config.CacheConfiguration.USERS_CACHE;
+import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
+import static com.epam.ta.reportportal.database.entity.user.User.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
 
 /**
  * Default Implementation of {@link UserRepositoryCustom}
@@ -156,6 +155,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		Query query = buildSearchUserQuery(term, pageable);
 		query.fields().include(LOGIN);
 		query.fields().include(FULLNAME_DB_FIELD);
+		query.fields().include(TYPE);
 		List<User> users = mongoOperations.find(query, User.class);
 		return new PageImpl<>(users, pageable, mongoOperations.count(query, User.class));
 	}
