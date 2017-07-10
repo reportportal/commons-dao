@@ -126,7 +126,7 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	@Field(LAST_MODIFIED)
 	private Date lastModified;
 
-	private String identifier;
+	private String uniqueId;
 
 	public TestItem() {
 		path = new ArrayList<>();
@@ -269,12 +269,12 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		this.lastModified = lastModified;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUniqueId() {
+		return uniqueId;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 
 	/*
