@@ -21,12 +21,14 @@
 
 package com.epam.ta.reportportal.database.entity.item;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
+import com.epam.ta.reportportal.database.entity.BidirectionalTree;
+import com.epam.ta.reportportal.database.entity.Interruptable;
+import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
+import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
+import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
+import com.epam.ta.reportportal.database.entity.statistics.Statistics;
+import com.epam.ta.reportportal.database.search.FilterCriteria;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -35,15 +37,11 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.epam.ta.reportportal.database.entity.BidirectionalTree;
-import com.epam.ta.reportportal.database.entity.Interruptable;
-import com.epam.ta.reportportal.database.entity.Launch;
-import com.epam.ta.reportportal.database.entity.Status;
-import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
-import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
-import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
-import com.epam.ta.reportportal.database.entity.statistics.Statistics;
-import com.epam.ta.reportportal.database.search.FilterCriteria;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Document
 
@@ -110,8 +108,6 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	@Indexed(background = true)
 	private String launchRef;
 
-	private Launch launch;
-
 	@FilterCriteria("has_childs")
 	@Field("has_childs")
 	private boolean hasChilds;
@@ -122,10 +118,16 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	@FilterCriteria("description")
 	private String itemDescription;
 
+	@FilterCriteria("parameters")
+	private List<String> parameters;
+
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
 	@Field(LAST_MODIFIED)
 	private Date lastModified;
+
+	@FilterCriteria("uniqueId")
+	private String uniqueId;
 
 	public TestItem() {
 		path = new ArrayList<>();
@@ -154,6 +156,14 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	public void setItemDescription(String description) {
 		this.itemDescription = description;
+	}
+
+	public List<String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<String> parameters) {
+		this.parameters = parameters;
 	}
 
 	public TestItemType getType() {
@@ -260,11 +270,19 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		this.lastModified = lastModified;
 	}
 
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+         * (non-Javadoc)
+         *
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -283,6 +301,7 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		result = prime * result + ((statistics == null) ? 0 : statistics.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
 	}
 
@@ -389,6 +408,13 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		if (type != other.type) {
 			return false;
 		}
+		if (parameters == null) {
+			if (other.parameters != null) {
+				return false;
+			}
+		}else if (!parameters.equals(other.parameters)) {
+			return  false;
+		}
 		return true;
 	}
 
@@ -397,6 +423,6 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		return "TestItem{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", type=" + type + ", startTime=" + startTime + ", endTime="
 				+ endTime + ", status=" + status + ", tags=" + tags + ", statistics=" + statistics + ", issue=" + issue + ", path=" + path
 				+ ", parent='" + parent + '\'' + ", launchRef='" + launchRef + '\'' + ", hasChilds=" + hasChilds + ", itemDescription='"
-				+ itemDescription + '\'' + ", lastModified=" + lastModified + '}';
+				+ itemDescription + '\'' + ", lastModified=" + lastModified + ", parameters=" + parameters + '}';
 	}
 }
