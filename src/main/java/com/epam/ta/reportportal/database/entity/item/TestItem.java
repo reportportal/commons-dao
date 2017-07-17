@@ -119,7 +119,7 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	private String itemDescription;
 
 	@FilterCriteria("parameters")
-	private List<Parameters> parameters;
+	private List<Parameter> parameters;
 
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
@@ -158,11 +158,11 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		this.itemDescription = description;
 	}
 
-	public List<Parameters> getParameters() {
+	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(List<Parameters> parameters) {
+	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 

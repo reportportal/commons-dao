@@ -22,12 +22,14 @@ package com.epam.ta.reportportal.database.entity.item;
 
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 
+import java.io.Serializable;
+
 /**
  * Test item parameters dao representation
  *
  * @author Pavel_Bortnik
  */
-public class Parameters {
+public class Parameter implements Serializable {
 
     @FilterCriteria("key")
     private String key;
@@ -56,7 +58,7 @@ public class Parameters {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Parameters that = (Parameters) o;
+        Parameter that = (Parameter) o;
 
         if (key != null ? !key.equals(that.key) : that.key != null) return false;
         return value != null ? value.equals(that.value) : that.value == null;
