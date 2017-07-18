@@ -20,8 +20,14 @@
  */
 package com.epam.ta.reportportal.database.search;
 
+import com.epam.ta.reportportal.database.entity.item.TestItem;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.data.mongodb.core.query.Criteria;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 import static org.hamcrest.Matchers.is;
 
@@ -60,6 +66,26 @@ public class ConditionBuilderTest {
 		Assert.assertThat("Incorrect condition", condition.getCondition(), is(Condition.EQUALS));
 		Assert.assertThat("Incorrect value", condition.getValue(), is("hello"));
 		Assert.assertThat("Incorrect search criteria", condition.getSearchCriteria(), is("xxx"));
+	}
+
+	@Test
+	public void checkDateStartingFrom() {
+
+		FilterCondition condition = FilterCondition.builder()
+				.withSearchCriteria("start_time")
+				.withValue( "0;1439;-6")
+				.withCondition(Condition.BETWEEN)
+				.build();
+		Assert.assertThat("Incorrect condition", condition.getCondition(), is(Condition.BETWEEN));
+
+		Criteria criteria = new Criteria();
+		condition.getCondition().addCondition(criteria, condition,
+				CriteriaMapFactory.DEFAULT_INSTANCE_SUPPLIER.get().getCriteriaMap(TestItem.class).getCriteriaHolder("start_time"));
+
+		long expected = LocalDate.now().atStartOfDay(ZoneId.of("UTC")).plusHours(6).toEpochSecond();
+		long calculated = ((Date) (criteria.getCriteriaObject().get("$gte"))).toInstant().getEpochSecond();
+		Assert.assertThat("Incorrect between range processing", calculated, is(expected));
+
 	}
 
 }
