@@ -44,8 +44,10 @@ dependencies {
 
     if (releaseMode) {
         compile 'com.epam.reportportal:commons-rules:3.0.1'
+        compile 'com.epam.reportportal:commons:3.0.0'
     } else {
         compile 'com.github.reportportal:commons-rules:3.0.1'
+        compile 'com.github.reportportal:commons:1c334ae'
     }
 
 
@@ -72,7 +74,7 @@ dependencies {
     testCompile 'org.springframework:spring-test'
     testCompile 'org.springframework.security:spring-security-crypto'
     testCompile 'org.springframework.security:spring-security-core'
-    testCompile 'com.github.fakemongo:fongo:2.0.6'
+    testCompile 'com.github.fakemongo:fongo:2.1.0'
     testCompile 'org.hibernate:hibernate-validator'
 
 }
