@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
+import com.epam.reportportal.commons.template.TemplateEngine;
 import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
@@ -34,9 +35,11 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
@@ -44,6 +47,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.epam.ta.reportportal.database.dao.LaunchMetaInfoRepository.LAUNCH_META_INFO;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
@@ -56,11 +60,11 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 /**
  * Implementations of custom methods which are cannot be generated via default
  * Spring's repositories mechanism
- * 
+ *
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
  */
-public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
+public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implements LaunchRepositoryCustom {
 
 	public static final String PROJECT_ID_REFERENCE = "projectRef";
 	public static final String LAUNCH_ID_REFERENCE = "launchRef";
@@ -74,212 +78,264 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public static final String NAME = "name";
 	public static final int AUTOCOMPLETE_LIMITATION = 50;
 
-	@Autowired
+	//useful constants for latest launches
+    private static final String META_INFO = "meta_info";
+    private static final String IS_LAST = "is_last";
+    private static final String DOCUMENT = "document";
+
+    @Autowired
 	private MongoTemplate mongoTemplate;
 
-	@Override
-	public List<Launch> findLaunchIdsByProject(Project project) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(isValid(project.getId()) ? new ObjectId(project.getId()) : project.getId()));
-		query.fields().include(ID_REFERENCE);
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @Autowired
+    public LaunchRepositoryCustomImpl(MongoOperations mongoOperations, TemplateEngine templateEngine) {
+        super(Launch.class, mongoOperations, templateEngine);
+    }
 
-	@Override
-	public void updateExecutionStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromItemStatusAware(item.getStatus(), 1, 1), Launch.class);
-	}
+    @Override
+    public List<Launch> findLatestByProject(String project) {
+        return aggregate("aggregation/last_launches.ftl",
+                Collections.singletonMap("project", project), Launch.class);
+    }
 
-	@Override
-	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1), Launch.class);
-	}
+    /*
+    db.launch.aggregate(
+    [
+        { "$match" : { "projectRef" : "${project}"}} ,
+        { "$lookup" : { "from" : "launchMetaInfo" , "localField" : "name" , "foreignField" : "_id" , "as" : "meta"}} ,
+        { "$unwind" : "$meta"} ,
+        { "$project" : { "document" : "$$ROOT", "last" : { "$eq" : [ "$meta.projects.${project}" , "$number"]}}} ,
+        { "$match" : {"last" : true}},
+        { "$replaceRoot" : { newRoot : "$document"}},
+        { "$match" : { "$and" : [ ${filter criteria} ]}},
+    ]
+    )
+     */
+    @Override
+    public List<Launch> findLatest(String project, Filter filter, Sort sort) {
+        Aggregation aggregation = newAggregation(Launch.class,
+                match(Criteria.where(PROJECT_ID_REFERENCE).is(project)),
+                lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
+                unwind(META_INFO),
+                project()
+                        .and(ROOT).as(DOCUMENT)
+                        .andExpression(String.format("meta.projects.%s == number", project)).as(IS_LAST),
+                match(Criteria.where(IS_LAST).is(true)),
+                replaceRoot(DOCUMENT),
+                match(buildCriteria(filter)),
+                sort(sort)
+        );
+        AggregationResults<Launch> results = mongoTemplate.aggregate(aggregation, Launch.class, Launch.class);
+        return results.getMappedResults().stream().collect(toList());
+    }
 
-	@Override
-	public void dropIssueStatisticsType(String id, StatisticSubType type) {
-		mongoTemplate.updateMulti(getLaunchQuery(id), dropIssueTypeAware(type), Launch.class);
-	}
+    private Criteria buildCriteria(Filter filter) {
+        return new Criteria().andOperator(filter.toCriteria().stream().toArray(Criteria[]::new));
+    }
 
-	@Override
-	public List<String> findLaunchIdsByProjectIds(List<String> ids) {
-		Aggregation aggregation = newAggregation(match(where("projectRef").in(ids)), group("id"));
-		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
-		return results.getMappedResults().stream().map(it -> it.get("_id").toString()).collect(toList());
-	}
 
-	@Override
-	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1), Launch.class);
-	}
+    @Override
+    public List<Launch> findLaunchIdsByProject(Project project) {
+        Query query = query(where(PROJECT_ID_REFERENCE).is(isValid(project.getId()) ? new ObjectId(project.getId()) : project.getId()));
+        query.fields().include(ID_REFERENCE);
+        return mongoTemplate.find(query, Launch.class);
+    }
 
-	@Override
-	public void resetExecutionStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromItemStatusAware(item.getStatus(), -1, -1), Launch.class);
-	}
+    @Override
+    public void updateExecutionStatistics(TestItem item) {
+        mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromItemStatusAware(item.getStatus(), 1, 1), Launch.class);
+    }
 
-	@Override
-	public void deleteIssueStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromIssueTypeAware(item, true), Launch.class);
-	}
+    @Override
+    public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
+        mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
+                fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1), Launch.class);
+    }
 
-	// Probably unnecessary method (launch delete remove object from DB
-	// completely)
-	@Override
-	public void deleteExecutionStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromItemStatusAware(item, true), Launch.class);
-	}
+    @Override
+    public void dropIssueStatisticsType(String id, StatisticSubType type) {
+        mongoTemplate.updateMulti(getLaunchQuery(id), dropIssueTypeAware(type), Launch.class);
+    }
 
-	// Probably unnecessary method (launch delete remove object from DB
-	// completely)
-	@Override
-	public List<Launch> findModifiedLaterAgo(Duration time, Status status) {
-		return mongoTemplate.find(findModifiedLaterThanPeriod(time, status), Launch.class);
-	}
+    @Override
+    public List<String> findLaunchIdsByProjectIds(List<String> ids) {
+        Aggregation aggregation = newAggregation(match(where("projectRef").in(ids)), group("id"));
+        AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
+        return results.getMappedResults().stream().map(it -> it.get("_id").toString()).collect(toList());
+    }
 
-	// Probably unnecessary method (launch delete remove object from DB
-	// completely)
-	@Override
-	public List<Launch> findModifiedLaterAgo(Duration time, Status status, String project) {
-		return mongoTemplate.find(findModifiedLaterThanPeriod(time, status).addCriteria(where(PROJECT_ID_REFERENCE).is(project)),
-				Launch.class);
-	}
+    @Override
+    public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
+        mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
+                fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1), Launch.class);
+    }
 
-	@Override
-	public List<Launch> findIdsByFilter(Filter filter, Sort sort, int quantity) {
-		Query query = QueryBuilder.newBuilder().with(filter).with(sort).with(quantity).build();
-		query.fields().include(ID_REFERENCE);
-		query.fields().include(NUMBER);
-		query.fields().include(START_TIME);
-		query.fields().include(STATUS);
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @Override
+    public void resetExecutionStatistics(TestItem item) {
+        mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromItemStatusAware(item.getStatus(), -1, -1), Launch.class);
+    }
 
-	@Override
-	public boolean hasItems(Launch launch) {
-		return hasItems(new Query().addCriteria(where(LAUNCH_ID_REFERENCE).is(launch.getId())));
-	}
+    @Override
+    public void deleteIssueStatistics(TestItem item) {
+        mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromIssueTypeAware(item, true), Launch.class);
+    }
 
-	@Override
-	public boolean hasItems(Launch launch, Status status) {
-		return hasItems(new Query().addCriteria(where(LAUNCH_ID_REFERENCE).is(launch.getId())).addCriteria(where("status").is(status)));
-	}
+    // Probably unnecessary method (launch delete remove object from DB
+    // completely)
+    @Override
+    public void deleteExecutionStatistics(TestItem item) {
+        mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromItemStatusAware(item, true), Launch.class);
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public List<String> findDistinctValues(String projectName, String containsValue, String distinctBy) {
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), unwind(distinctBy),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy),
-				limit(AUTOCOMPLETE_LIMITATION));
-		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
-		List<String> tags = new ArrayList<>(result.getMappedResults().size());
-		for (Map<String, String> entry : result.getMappedResults()) {
-			tags.add(entry.get("_id"));
-		}
-		return tags;
-	}
+    // Probably unnecessary method (launch delete remove object from DB
+    // completely)
+    @Override
+    public List<Launch> findModifiedLaterAgo(Duration time, Status status) {
+        return mongoTemplate.find(findModifiedLaterThanPeriod(time, status), Launch.class);
+    }
 
-	@SuppressWarnings({ "rawtypes" })
-	@Override
-	public List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode) {
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy), limit(AUTOCOMPLETE_LIMITATION));
-		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
-		return result.getMappedResults().stream().map(entry -> entry.get("_id").toString()).collect(toList());
-	}
+    // Probably unnecessary method (launch delete remove object from DB
+    // completely)
+    @Override
+    public List<Launch> findModifiedLaterAgo(Duration time, Status status, String project) {
+        return mongoTemplate.find(findModifiedLaterThanPeriod(time, status).addCriteria(where(PROJECT_ID_REFERENCE).is(project)),
+                Launch.class);
+    }
 
-	@Cacheable(value = { CacheConfiguration.PROJECT_INFO_CACHE })
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from) {
-		Map<String, Integer> output = new HashMap<>();
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
-				match(where(STATUS).ne(IN_PROGRESS.name())), match(where(START_TIME).gt(from)), group("$userRef").count().as("count"));
+    @Override
+    public List<Launch> findIdsByFilter(Filter filter, Sort sort, int quantity) {
+        Query query = QueryBuilder.newBuilder().with(filter).with(sort).with(quantity).build();
+        query.fields().include(ID_REFERENCE);
+        query.fields().include(NUMBER);
+        query.fields().include(START_TIME);
+        query.fields().include(STATUS);
+        return mongoTemplate.find(query, Launch.class);
+    }
 
-		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
-		for (Map<String, String> entry : result.getMappedResults()) {
-			String username = entry.get("_id");
-			String count = String.valueOf(entry.get("count"));
-			output.put(username, Integer.valueOf(count));
-		}
-		return output;
-	}
+    @Override
+    public boolean hasItems(Launch launch) {
+        return hasItems(new Query().addCriteria(where(LAUNCH_ID_REFERENCE).is(launch.getId())));
+    }
 
-	@Override
-	public List<Launch> findLaunchesByProjectId(String projectId, Date from, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS.name()))
-				.addCriteria(where(MODE).is(mode)).addCriteria(where(START_TIME).gt(from)).with(new Sort(Sort.Direction.ASC, START_TIME));
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @Override
+    public boolean hasItems(Launch launch, Status status) {
+        return hasItems(new Query().addCriteria(where(LAUNCH_ID_REFERENCE).is(launch.getId())).addCriteria(where("status").is(status)));
+    }
 
-	@Override
-	public List<Launch> findIdsByFilter(Filter filter) {
-		return findIdsByFilter(filter, 0);
-	}
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public List<String> findDistinctValues(String projectName, String containsValue, String distinctBy) {
+        Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), unwind(distinctBy),
+                match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy),
+                limit(AUTOCOMPLETE_LIMITATION));
+        AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
+        List<String> tags = new ArrayList<>(result.getMappedResults().size());
+        for (Map<String, String> entry : result.getMappedResults()) {
+            tags.add(entry.get("_id"));
+        }
+        return tags;
+    }
 
-	@Override
-	public List<Launch> findIdsByFilter(Filter filter, int limit) {
-		Query query = QueryBuilder.newBuilder().with(filter).with(limit).build();
-		query.fields().include(ID_REFERENCE);
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @SuppressWarnings({"rawtypes"})
+    @Override
+    public List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode) {
+        Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
+                match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy), limit(AUTOCOMPLETE_LIMITATION));
+        AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
+        return result.getMappedResults().stream().map(entry -> entry.get("_id").toString()).collect(toList());
+    }
 
-	@Override
-	public List<Launch> findByUserRef(String userRef) {
-		Query query = query(where(USER_ID_REFERENCE).is(userRef));
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @Cacheable(value = {CacheConfiguration.PROJECT_INFO_CACHE})
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from) {
+        Map<String, Integer> output = new HashMap<>();
+        Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
+                match(where(STATUS).ne(IN_PROGRESS.name())), match(where(START_TIME).gt(from)), group("$userRef").count().as("count"));
 
-	@Override
-	public void updateUserRef(String oldOwner, String newOwner) {
-		mongoTemplate.updateMulti(query(where(USER_ID_REFERENCE).is(oldOwner)), Update.update(USER_ID_REFERENCE, null), Launch.class);
-	}
+        AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
+        for (Map<String, String> entry : result.getMappedResults()) {
+            String username = entry.get("_id");
+            String count = String.valueOf(entry.get("count"));
+            output.put(username, Integer.valueOf(count));
+        }
+        return output;
+    }
 
-	@Override
-	public Long findLaunchesQuantity(String projectId, String mode, Date from) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS.name()))
-				.addCriteria(where(MODE).is(mode));
-		if (null != from) {
-			query = query.addCriteria(where(START_TIME).gt(from));
-		}
-		return mongoTemplate.count(query, Launch.class);
-	}
+    @Override
+    public List<Launch> findLaunchesByProjectId(String projectId, Date from, String mode) {
+        Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS.name()))
+                .addCriteria(where(MODE).is(mode)).addCriteria(where(START_TIME).gt(from)).with(new Sort(Sort.Direction.ASC, START_TIME));
+        return mongoTemplate.find(query, Launch.class);
+    }
 
-	@Override
-	public Optional<Launch> findLastLaunch(String projectId, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS))
-				.addCriteria(where(MODE).is(mode)).limit(1).with(new Sort(Sort.Direction.DESC, START_TIME));
-		List<Launch> launches = mongoTemplate.find(query, Launch.class);
-		return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
-	}
+    @Override
+    public List<Launch> findIdsByFilter(Filter filter) {
+        return findIdsByFilter(filter, 0);
+    }
 
-	@Override
-	public Optional<Launch> findLastLaunch(String projectId, String launchName, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(NAME).is(launchName))
-				.addCriteria(where(MODE).is(mode)).limit(1).with(new Sort(Sort.Direction.DESC, START_TIME));
-		List<Launch> launches = mongoTemplate.find(query, Launch.class);
-		return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
-	}
+    @Override
+    public List<Launch> findIdsByFilter(Filter filter, int limit) {
+        Query query = QueryBuilder.newBuilder().with(filter).with(limit).build();
+        query.fields().include(ID_REFERENCE);
+        return mongoTemplate.find(query, Launch.class);
+    }
 
-	@Override
-	public List<Launch> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit) {
-		final Query query = QueryBuilder.newBuilder().with(filter).with(sort).with(limit).build();
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @Override
+    public List<Launch> findByUserRef(String userRef) {
+        Query query = query(where(USER_ID_REFERENCE).is(userRef));
+        return mongoTemplate.find(query, Launch.class);
+    }
 
-	private Query getLaunchQuery(String id) {
-		return new Query().addCriteria(where("_id").is(new ObjectId(id)));
-	}
+    @Override
+    public void updateUserRef(String oldOwner, String newOwner) {
+        mongoTemplate.updateMulti(query(where(USER_ID_REFERENCE).is(oldOwner)), Update.update(USER_ID_REFERENCE, null), Launch.class);
+    }
 
-	private boolean hasItems(Query query) {
-		return mongoTemplate.count(query, TestItem.class) > 0;
-	}
+    @Override
+    public Long findLaunchesQuantity(String projectId, String mode, Date from) {
+        Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS.name()))
+                .addCriteria(where(MODE).is(mode));
+        if (null != from) {
+            query = query.addCriteria(where(START_TIME).gt(from));
+        }
+        return mongoTemplate.count(query, Launch.class);
+    }
 
-	@Override
-	public List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type) {
-		String issueField = "statistics.issueCounter." + TestItemIssueType.valueOf(type.getTypeRef()).awareStatisticsField() + "."
-				+ type.getLocator();
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectRef)).addCriteria(where(issueField).exists(true));
-		return mongoTemplate.find(query, Launch.class);
-	}
+    @Override
+    public Optional<Launch> findLastLaunch(String projectId, String mode) {
+        Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS))
+                .addCriteria(where(MODE).is(mode)).limit(1).with(new Sort(Sort.Direction.DESC, START_TIME));
+        List<Launch> launches = mongoTemplate.find(query, Launch.class);
+        return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
+    }
+
+    @Override
+    public Optional<Launch> findLastLaunch(String projectId, String launchName, String mode) {
+        Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(NAME).is(launchName))
+                .addCriteria(where(MODE).is(mode)).limit(1).with(new Sort(Sort.Direction.DESC, START_TIME));
+        List<Launch> launches = mongoTemplate.find(query, Launch.class);
+        return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
+    }
+
+    @Override
+    public List<Launch> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit) {
+        final Query query = QueryBuilder.newBuilder().with(filter).with(sort).with(limit).build();
+        return mongoTemplate.find(query, Launch.class);
+    }
+
+    private Query getLaunchQuery(String id) {
+        return new Query().addCriteria(where("_id").is(new ObjectId(id)));
+    }
+
+    private boolean hasItems(Query query) {
+        return mongoTemplate.count(query, TestItem.class) > 0;
+    }
+
+    @Override
+    public List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type) {
+        String issueField = "statistics.issueCounter." + TestItemIssueType.valueOf(type.getTypeRef()).awareStatisticsField() + "."
+                + type.getLocator();
+        Query query = query(where(PROJECT_ID_REFERENCE).is(projectRef)).addCriteria(where(issueField).exists(true));
+        return mongoTemplate.find(query, Launch.class);
+    }
 }

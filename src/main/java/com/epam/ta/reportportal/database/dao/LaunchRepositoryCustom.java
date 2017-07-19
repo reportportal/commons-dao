@@ -45,6 +45,11 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 */
 	boolean hasItems(Launch launch);
 
+	List<Launch> findLatestByProject(String project);
+
+	List<Launch> findLatest(String project, Filter filter, Sort sort);
+
+
 	/**
 	 * Whether launch contains items with provided state
 	 * 

@@ -1,23 +1,22 @@
 package com.epam.ta.reportportal.database.dao;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.sort;
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.stream.StreamSupport;
-
+import com.epam.ta.reportportal.BaseDaoTest;
+import com.epam.ta.reportportal.database.entity.Launch;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.FilterCondition;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import com.epam.ta.reportportal.BaseDaoTest;
-import com.epam.ta.reportportal.database.entity.Launch;
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.FilterCondition;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class LaunchRepositoryTest extends BaseDaoTest {
 
@@ -49,6 +48,17 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 		boolean nonNullName = StreamSupport.stream(foundLaunches.spliterator(), false).anyMatch(l -> l.getName() != null);
 		assertThat(nonNullName).isFalse();
 	}
+
+/*	@Test
+	public void findLatest() {
+		FilterCondition nameCondition = new FilterCondition(Condition.CONTAINS, false, "Demo", "name");
+		FilterCondition numberCondition = new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "2", "number");
+		Filter filter = new Filter(Launch.class, Sets.newHashSet(numberCondition));
+		Sort sort = new Sort(Sort.Direction.ASC, "number");
+		List<Launch> launches = launchRepository.findLatest("default_personal", filter, sort);
+		Assert.assertEquals(launches.size(), 2);
+		System.out.println();
+	}*/
 
 	@Test
 	public void deleteByProjectRef() {
