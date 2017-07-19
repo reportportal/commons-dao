@@ -31,9 +31,11 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
+import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -66,25 +68,25 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  */
 public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implements LaunchRepositoryCustom {
 
-	public static final String PROJECT_ID_REFERENCE = "projectRef";
-	public static final String LAUNCH_ID_REFERENCE = "launchRef";
-	public static final String USER_ID_REFERENCE = "userRef";
-	public static final String ID_REFERENCE = "id";
-	public static final String NUMBER = "number";
-	public static final String MODE = "mode";
-	public static final String STATISTICS = "statistics";
-	public static final String START_TIME = "start_time";
-	public static final String STATUS = "status";
-	public static final String NAME = "name";
-	public static final int AUTOCOMPLETE_LIMITATION = 50;
+    public static final String PROJECT_ID_REFERENCE = "projectRef";
+    public static final String LAUNCH_ID_REFERENCE = "launchRef";
+    public static final String USER_ID_REFERENCE = "userRef";
+    public static final String ID_REFERENCE = "id";
+    public static final String NUMBER = "number";
+    public static final String MODE = "mode";
+    public static final String STATISTICS = "statistics";
+    public static final String START_TIME = "start_time";
+    public static final String STATUS = "status";
+    public static final String NAME = "name";
+    public static final int AUTOCOMPLETE_LIMITATION = 50;
 
-	//useful constants for latest launches
+    //useful constants for latest launches
     private static final String META_INFO = "meta_info";
     private static final String IS_LAST = "is_last";
     private static final String DOCUMENT = "document";
 
     @Autowired
-	private MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     public LaunchRepositoryCustomImpl(MongoOperations mongoOperations, TemplateEngine templateEngine) {
@@ -92,44 +94,50 @@ public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implem
     }
 
     @Override
-    public List<Launch> findLatestByProject(String project) {
+    public List<Launch> findLatest(String project) {
         return aggregate("aggregation/last_launches.ftl",
                 Collections.singletonMap("project", project), Launch.class);
     }
 
     /*
-    db.launch.aggregate(
-    [
-        { "$match" : { "projectRef" : "${project}"}} ,
-        { "$lookup" : { "from" : "launchMetaInfo" , "localField" : "name" , "foreignField" : "_id" , "as" : "meta"}} ,
-        { "$unwind" : "$meta"} ,
-        { "$project" : { "document" : "$$ROOT", "last" : { "$eq" : [ "$meta.projects.${project}" , "$number"]}}} ,
-        { "$match" : {"last" : true}},
-        { "$replaceRoot" : { newRoot : "$document"}},
-        { "$match" : { "$and" : [ ${filter criteria} ]}},
-    ]
-    )
-     */
+        db.launch.aggregate(
+        [
+            { "$match" : { "projectRef" : "${project}"}} ,
+            { "$lookup" : { "from" : "launchMetaInfo" , "localField" : "name" , "foreignField" : "_id" , "as" : "meta"}} ,
+            { "$unwind" : "$meta"} ,
+            { "$project" : { "document" : "$$ROOT", "last" : { "$eq" : [ "$meta.projects.${project}" , "$number"]}}} ,
+            { "$match" : {"last" : true}},
+            { "$replaceRoot" : { newRoot : "$document"}},
+            { "$match" : { <filter_query> }},
+            { "$sort" : { "field1" : <sort_order>}}
+        ]
+        )
+         */
     @Override
-    public List<Launch> findLatest(String project, Filter filter, Sort sort) {
+    public List<Launch> findLatest(String project, Filter filter, Pageable pageable) {
         Aggregation aggregation = newAggregation(Launch.class,
                 match(Criteria.where(PROJECT_ID_REFERENCE).is(project)),
                 lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
                 unwind(META_INFO),
                 project()
                         .and(ROOT).as(DOCUMENT)
-                        .andExpression(String.format("meta.projects.%s == number", project)).as(IS_LAST),
+                        .andExpression(String.format("meta_info.projects.%s == number", project)).as(IS_LAST),
                 match(Criteria.where(IS_LAST).is(true)),
                 replaceRoot(DOCUMENT),
-                match(buildCriteria(filter)),
-                sort(sort)
+                match(buildCriteriaFromFilter(filter)),
+                sort(pageable.getSort()),
+                skip((long) pageable.getPageNumber() * pageable.getPageSize()),
+                limit(pageable.getPageSize())
         );
         AggregationResults<Launch> results = mongoTemplate.aggregate(aggregation, Launch.class, Launch.class);
         return results.getMappedResults().stream().collect(toList());
     }
 
-    private Criteria buildCriteria(Filter filter) {
-        return new Criteria().andOperator(filter.toCriteria().stream().toArray(Criteria[]::new));
+    private Criteria buildCriteriaFromFilter(Filter filter) {
+        if (!CollectionUtils.isEmpty(filter.toCriteria())) {
+            return new Criteria().andOperator(filter.toCriteria().stream().toArray(Criteria[]::new));
+        }
+        return new Criteria();
     }
 
 
