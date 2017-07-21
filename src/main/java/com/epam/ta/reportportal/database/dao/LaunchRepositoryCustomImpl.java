@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
+import com.epam.ta.reportportal.database.search.Queryable;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +104,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         )
          */
     @Override
-    public List<Launch> findLatestLaunches(String project, Filter filter, Pageable pageable) {
+    public List<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable) {
         Aggregation aggregation = newAggregation(Launch.class,
                 match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
                 lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
@@ -319,7 +320,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         return mongoTemplate.find(query, Launch.class);
     }
 
-    private Criteria buildCriteriaFromFilter(Filter filter) {
+    private Criteria buildCriteriaFromFilter(Queryable filter) {
         List<Criteria> criteria = filter.toCriteria();
         if (!CollectionUtils.isEmpty(criteria)) {
             return new Criteria().andOperator(criteria.toArray(new Criteria[0]));
