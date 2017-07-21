@@ -66,7 +66,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
  */
-public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implements LaunchRepositoryCustom {
+public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     public static final String PROJECT_ID_REFERENCE = "projectRef";
     public static final String LAUNCH_ID_REFERENCE = "launchRef";
@@ -88,17 +88,6 @@ public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implem
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Autowired
-    public LaunchRepositoryCustomImpl(MongoOperations mongoOperations, TemplateEngine templateEngine) {
-        super(Launch.class, mongoOperations, templateEngine);
-    }
-
-    @Override
-    public List<Launch> findLatest(String project) {
-        return aggregate("aggregation/last_launches.ftl",
-                Collections.singletonMap("project", project), Launch.class);
-    }
-
     /*
         db.launch.aggregate(
         [
@@ -114,7 +103,7 @@ public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implem
         )
          */
     @Override
-    public List<Launch> findLatest(String project, Filter filter, Pageable pageable) {
+    public List<Launch> findLatestLaunches(String project, Filter filter, Pageable pageable) {
         Aggregation aggregation = newAggregation(Launch.class,
                 match(Criteria.where(PROJECT_ID_REFERENCE).is(project)),
                 lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
@@ -132,14 +121,6 @@ public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implem
         AggregationResults<Launch> results = mongoTemplate.aggregate(aggregation, Launch.class, Launch.class);
         return results.getMappedResults().stream().collect(toList());
     }
-
-    private Criteria buildCriteriaFromFilter(Filter filter) {
-        if (!CollectionUtils.isEmpty(filter.toCriteria())) {
-            return new Criteria().andOperator(filter.toCriteria().stream().toArray(Criteria[]::new));
-        }
-        return new Criteria();
-    }
-
 
     @Override
     public List<Launch> findLaunchIdsByProject(Project project) {
@@ -331,19 +312,27 @@ public class LaunchRepositoryCustomImpl extends BaseAggregatingRepository implem
         return mongoTemplate.find(query, Launch.class);
     }
 
-    private Query getLaunchQuery(String id) {
-        return new Query().addCriteria(where("_id").is(new ObjectId(id)));
-    }
-
-    private boolean hasItems(Query query) {
-        return mongoTemplate.count(query, TestItem.class) > 0;
-    }
-
     @Override
     public List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type) {
         String issueField = "statistics.issueCounter." + TestItemIssueType.valueOf(type.getTypeRef()).awareStatisticsField() + "."
                 + type.getLocator();
         Query query = query(where(PROJECT_ID_REFERENCE).is(projectRef)).addCriteria(where(issueField).exists(true));
         return mongoTemplate.find(query, Launch.class);
+    }
+
+    private Criteria buildCriteriaFromFilter(Filter filter) {
+        List<Criteria> criteria = filter.toCriteria();
+        if (!CollectionUtils.isEmpty(criteria)) {
+            return new Criteria().andOperator(criteria.stream().toArray(Criteria[]::new));
+        }
+        return new Criteria();
+    }
+
+    private Query getLaunchQuery(String id) {
+        return new Query().addCriteria(where("_id").is(new ObjectId(id)));
+    }
+
+    private boolean hasItems(Query query) {
+        return mongoTemplate.count(query, TestItem.class) > 0;
     }
 }

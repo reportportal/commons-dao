@@ -46,13 +46,9 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 */
 	boolean hasItems(Launch launch);
 
-	List<Launch> findLatest(String project);
-
-	List<Launch> findLatest(String project, Filter filter, Pageable pageable);
-
 	/**
 	 * Whether launch contains items with provided state
-	 * 
+	 *
 	 * @param launch
 	 * @return
 	 */
@@ -60,15 +56,25 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Finds launches for specified project
-	 * 
+	 *
 	 * @param project
 	 * @return
 	 */
 	List<Launch> findLaunchIdsByProject(Project project);
 
 	/**
+	 * Find latest unique launches for specified project by filter
+	 *
+	 * @param project
+	 * @param filter
+	 * @param pageable
+	 * @return
+	 */
+	List<Launch> findLatestLaunches(String project, Filter filter, Pageable pageable);
+
+	/**
 	 * Finds launches modified later than period
-	 * 
+	 *
 	 * @param period
 	 * @param status
 	 * @return

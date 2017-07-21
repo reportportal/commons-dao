@@ -4,6 +4,7 @@ import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.FilterCondition;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,17 +49,6 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 		assertThat(nonNullName).isFalse();
 	}
 
-/*	@Test
-	public void findLatest() {
-		FilterCondition numberCondition = new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "2", "number");
-		Filter filter = new Filter(Launch.class, Sets.newHashSet(numberCondition));
-		filter.addCondition(new FilterCondition(Condition.EQUALS, false, "DEFAULT", "mode"));
-		Pageable pageable = new PageRequest(0, 2, new Sort(Sort.Direction.DESC, "number"));
-		List<Launch> launches = launchRepository.findLatest("default_personal", filter, pageable);
-		Assert.assertEquals(2, launches.size());
-		System.out.println();
-	}*/
-
 	@Test
 	public void deleteByProjectRef() {
 		findByProjectIdsData();
@@ -80,8 +70,8 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 		return launchRepository.save(asList(launch1, launch2, launch3, launch4));
 	}
 
-/*	@After
+	@After
 	public void cleanup() {
 		launchRepository.deleteAll();
-	}*/
+	}
 }
