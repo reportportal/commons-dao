@@ -92,17 +92,18 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     /*
         db.launch.aggregate(
         [
-            { "$match" : { "projectRef" : "${project}"}} ,
+            { "$match" : {"$and" : [ { <filter> } ], "projectRef" : "${project}" }} ,
             { "$lookup" : { "from" : "launchMetaInfo" , "localField" : "name" , "foreignField" : "_id" , "as" : "meta"}} ,
             { "$unwind" : "$meta"} ,
-            { "$project" : { "document" : "$$ROOT", "last" : { "$eq" : [ "$meta.projects.${project}" , "$number"]}}} ,
-            { "$match" : {"last" : true}},
+            { "$project" : { "document" : "$$ROOT", "is_last" : { "$eq" : [ "$meta.projects.${project}" , "$number"]}}} ,
+            { "$match" : {"is_last" : true}},
             { "$replaceRoot" : { newRoot : "$document"}},
-            { "$match" : { <filter_query> }},
-            { "$sort" : { "field1" : <sort_order>}}
+            { "$sort" : { "field1" : <sort_order>}},
+            { "$skip" : number },
+            { "$limit" : number }
         ]
         )
-         */
+     */
     @Override
     public List<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable) {
         Aggregation aggregation = newAggregation(Launch.class,
