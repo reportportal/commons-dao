@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Launch;
+import com.epam.ta.reportportal.database.search.Condition;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.FilterCondition;
 import org.junit.After;
@@ -9,6 +10,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -47,6 +51,13 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 
 		boolean nonNullName = StreamSupport.stream(foundLaunches.spliterator(), false).anyMatch(l -> l.getName() != null);
 		assertThat(nonNullName).isFalse();
+	}
+
+	@Test
+	public void test(){
+		Filter filter = new Filter(Launch.class, Condition.EQUALS, false, "name", "name");
+		Pageable pageable = new PageRequest(1,1, new Sort("numer"));
+		launchRepository.findLatestLaunches("project", filter,pageable);
 	}
 
 	@Test

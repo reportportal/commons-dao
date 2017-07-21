@@ -105,7 +105,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     @Override
     public List<Launch> findLatestLaunches(String project, Filter filter, Pageable pageable) {
         Aggregation aggregation = newAggregation(Launch.class,
-                match(Criteria.where(PROJECT_ID_REFERENCE).is(project)),
+                match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
                 lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
                 unwind(META_INFO),
                 project()
@@ -113,13 +113,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
                         .andExpression(String.format("meta_info.projects.%s == number", project)).as(IS_LAST),
                 match(Criteria.where(IS_LAST).is(true)),
                 replaceRoot(DOCUMENT),
-                match(buildCriteriaFromFilter(filter)),
                 sort(pageable.getSort()),
                 skip((long) pageable.getPageNumber() * pageable.getPageSize()),
                 limit(pageable.getPageSize())
         );
         AggregationResults<Launch> results = mongoTemplate.aggregate(aggregation, Launch.class, Launch.class);
-        return results.getMappedResults().stream().collect(toList());
+        return results.getMappedResults();
     }
 
     @Override
@@ -323,7 +322,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     private Criteria buildCriteriaFromFilter(Filter filter) {
         List<Criteria> criteria = filter.toCriteria();
         if (!CollectionUtils.isEmpty(criteria)) {
-            return new Criteria().andOperator(criteria.stream().toArray(Criteria[]::new));
+            return new Criteria().andOperator(criteria.toArray(new Criteria[0]));
         }
         return new Criteria();
     }
