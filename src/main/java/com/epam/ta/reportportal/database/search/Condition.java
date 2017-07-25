@@ -31,9 +31,7 @@ import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAM
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -359,9 +357,9 @@ public enum Condition {
 			} else {
 				String[] values = filter.getValue().split(";");
 				ZoneOffset offset = ZoneOffset.of(values[2]);
-				LocalDateTime localDateTime = LocalDateTime.of(LocalDateTime.now(offset).toLocalDate(), LocalTime.of(0, 0, 0));
-				long start = from(localDateTime.plusMinutes(parseLong(values[0])).toInstant(offset)).getTime();
-				long end = from(localDateTime.plusMinutes(parseLong(values[1])).toInstant(offset)).getTime();
+				ZonedDateTime localDateTime = ZonedDateTime.now(offset).toLocalDate().atStartOfDay(offset);
+				long start = from(localDateTime.plusMinutes(parseLong(values[0])).toInstant()).getTime();
+				long end = from(localDateTime.plusMinutes(parseLong(values[1])).toInstant()).getTime();
 				String newValue = start + "," + end;
 				castedValues = (Object[]) this.castValue(criteriaHolder, newValue, INCORRECT_FILTER_PARAMETERS);
 			}
