@@ -21,6 +21,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.reportportal.commons.template.TemplateEngine;
+import com.epam.reportportal.commons.template.TemplateEngineProvider;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
@@ -48,7 +49,8 @@ abstract class BaseAggregatingRepository {
 
     public BaseAggregatingRepository(Class<?> entityClass, MongoOperations mongoOperations,
             TemplateEngine templateEngine) {
-        this.templateEngine = checkNotNull(templateEngine);
+        //searches for a template in classpath root
+        this.templateEngine =  new TemplateEngineProvider("/").get();
         this.mongoOperations = checkNotNull(mongoOperations);
         this.collection = checkNotNull(mongoOperations.getCollectionName(entityClass));
     }

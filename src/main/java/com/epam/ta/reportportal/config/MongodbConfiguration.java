@@ -20,8 +20,6 @@
  */
 package com.epam.ta.reportportal.config;
 
-import com.epam.reportportal.commons.template.TemplateEngine;
-import com.epam.reportportal.commons.template.TemplateEngineProvider;
 import com.epam.ta.reportportal.database.CustomMongoConverters;
 import com.epam.ta.reportportal.database.DataStorage;
 import com.epam.ta.reportportal.database.GridFSDataStorage;
@@ -168,10 +166,6 @@ public class MongodbConfiguration {
         return new LaunchMetaInfoRepository.LaunchMetaInfoRepositoryImpl();
     }
 
-    @Bean
-    public TemplateEngine getTemplateEngine() {
-        return new TemplateEngineProvider().get();
-    }
 
     @ConfigurationProperties("rp.mongo")
     public static class MongoProperies {
