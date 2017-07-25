@@ -54,13 +54,6 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 	}
 
 	@Test
-	public void test(){
-		Filter filter = new Filter(Launch.class, Condition.EQUALS, false, "name", "name");
-		Pageable pageable = new PageRequest(1,1, new Sort("numer"));
-		launchRepository.findLatestLaunches("project", filter,pageable);
-	}
-
-	@Test
 	public void deleteByProjectRef() {
 		findByProjectIdsData();
 		launchRepository.deleteByProjectRef("project1");

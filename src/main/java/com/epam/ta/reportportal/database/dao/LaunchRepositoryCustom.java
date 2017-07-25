@@ -28,6 +28,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.Queryable;
+import com.epam.ta.reportportal.ws.model.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -71,7 +72,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @param pageable
 	 * @return
 	 */
-	List<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable);
+	Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable);
 
 	/**
 	 * Finds launches modified later than period
