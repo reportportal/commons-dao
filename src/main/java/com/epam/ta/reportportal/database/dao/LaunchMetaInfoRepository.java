@@ -41,6 +41,8 @@ import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
  */
 public interface LaunchMetaInfoRepository {
 
+	String LAUNCH_META_INFO = "launchMetaInfo";
+
 	/**
 	 * Calculates number of launch with specified name
 	 *

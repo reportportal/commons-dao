@@ -1,23 +1,26 @@
 package com.epam.ta.reportportal.database.dao;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.sort;
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.stream.StreamSupport;
-
+import com.epam.ta.reportportal.BaseDaoTest;
+import com.epam.ta.reportportal.database.entity.Launch;
+import com.epam.ta.reportportal.database.search.Condition;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.FilterCondition;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import com.epam.ta.reportportal.BaseDaoTest;
-import com.epam.ta.reportportal.database.entity.Launch;
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.FilterCondition;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class LaunchRepositoryTest extends BaseDaoTest {
 

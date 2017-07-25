@@ -27,6 +27,9 @@ import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.Queryable;
+import com.epam.ta.reportportal.ws.model.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.Duration;
@@ -47,7 +50,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Whether launch contains items with provided state
-	 * 
+	 *
 	 * @param launch
 	 * @return
 	 */
@@ -55,15 +58,25 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Finds launches for specified project
-	 * 
+	 *
 	 * @param project
 	 * @return
 	 */
 	List<Launch> findLaunchIdsByProject(Project project);
 
 	/**
+	 * Find latest unique launches for specified project by filter
+	 *
+	 * @param project
+	 * @param filter
+	 * @param pageable
+	 * @return
+	 */
+	Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable);
+
+	/**
 	 * Finds launches modified later than period
-	 * 
+	 *
 	 * @param period
 	 * @param status
 	 * @return
