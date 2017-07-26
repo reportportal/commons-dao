@@ -199,6 +199,15 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 */
 	Optional<Launch> findLastLaunch(String projectId, String mode);
 
+    /**
+     * Find latest launch. 'IN_PROGRESS' launch is excluded
+     * @param projectName name
+     * @param launchName launch
+     * @param mode mode
+     * @return launch with latest number
+     */
+	Optional<Launch> findLatestLaunch(String projectName, String launchName, String mode);
+
 	/**
 	 * Find last launch within specified project and mode
 	 */

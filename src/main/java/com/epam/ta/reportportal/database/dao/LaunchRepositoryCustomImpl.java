@@ -267,7 +267,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
 	}
 
-	@Override
+    @Override
+    public Optional<Launch> findLatestLaunch(String projectName, String launchName, String mode) {
+        Query query = query(where(PROJECT_ID_REFERENCE).is(projectName)).addCriteria(where(NAME).is(launchName))
+                .addCriteria(where(STATUS).not().is(Status.IN_PROGRESS))
+                .addCriteria(where(MODE).is(mode)).limit(1).with(new Sort(Sort.Direction.DESC, NUMBER));
+        List<Launch> launches = mongoTemplate.find(query, Launch.class);
+        return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
+    }
+
+    @Override
 	public Optional<Launch> findLastLaunch(String projectId, String launchName, String mode) {
 		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(NAME).is(launchName))
 				.addCriteria(where(MODE).is(mode)).limit(1).with(new Sort(Sort.Direction.DESC, START_TIME));
