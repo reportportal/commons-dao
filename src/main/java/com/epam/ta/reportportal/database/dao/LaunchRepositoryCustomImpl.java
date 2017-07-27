@@ -54,6 +54,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.epam.ta.reportportal.database.dao.LaunchMetaInfoRepository.LAUNCH_META_INFO;
+import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
@@ -347,7 +348,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         return Lists.newArrayList(match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
                 lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
                 unwind(META_INFO),
-                customAddFields(project),
+                addFields(IS_LAST, new BasicDBObject("$eq",
+                        Arrays.asList(String.format("$%s.projects.%s", META_INFO, project), "$number"))),
                 match(Criteria.where(IS_LAST).is(true))
         );
     }
@@ -360,16 +362,5 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         return new Criteria();
     }
 
-    /**
-     * Adds a field 'is_last' that says if the launch is last
-     * @param projectName project name
-     * @return aggregation operation
-     */
-    private AggregationOperation customAddFields(String projectName) {
-        return context -> new BasicDBObject("$addFields",
-                new BasicDBObject(IS_LAST,
-                        new BasicDBObject("$eq",
-                                Arrays.asList(String.format("$%s.projects.%s", META_INFO, projectName), "$number"))));
-    }
 
 }
