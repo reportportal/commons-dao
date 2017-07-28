@@ -332,7 +332,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         operations.add(sort(pageable.getSort()));
         operations.add(skip((long) pageable.getPageNumber() * pageable.getPageSize()));
         operations.add(limit(pageable.getPageSize()));
-        return mongoTemplate.aggregate(newAggregation(operations),  Launch.class, Launch.class).getMappedResults();
+        return mongoTemplate.aggregate(newAggregation(operations),  mongoTemplate.getCollectionName(Launch.class),
+                Launch.class).getMappedResults();
     }
 
     /*
