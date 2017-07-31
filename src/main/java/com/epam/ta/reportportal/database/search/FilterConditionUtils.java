@@ -32,10 +32,7 @@ public class FilterConditionUtils {
 	private FilterConditionUtils() {}
 
 	public static FilterCondition LAUNCH_NOT_IN_PROGRESS() {
-		final String value = Status.INTERRUPTED.toString() + "," + Status.CANCELLED.toString() + "," + Status.FAILED.toString() + ","
-				+ Status.PASSED.toString() + "," + Status.RESETED.toString() + "," + Status.SKIPPED.toString() + ","
-				+ Status.STOPPED.toString();
-		return new FilterCondition(Condition.IN, false, value, Launch.STATUS);
+		return new FilterCondition(Condition.NOT_EQUALS, false, Status.IN_PROGRESS.name(), Launch.STATUS);
 	}
 
 	public static FilterCondition LAUNCH_IN_DEFAULT_MODE() {
