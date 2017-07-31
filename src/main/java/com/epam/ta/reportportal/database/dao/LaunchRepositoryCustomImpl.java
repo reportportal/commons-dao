@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -309,13 +310,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     @Override
     public Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable) {
-        Long total = countLatestLaunches(project, filter);
-        List<Launch> launches = findLatest(project, filter, pageable);
-        return new PageImpl<>(launches, pageable, total);
+        Long totalCount = countLatestLaunches(project, filter);
+        List<Launch> launches = Collections.emptyList();
+        if (totalCount > 0) {
+            launches = findLatest(project, filter, pageable);
+        }
+        return new PageImpl<>(launches, pageable, totalCount);
     }
 
     private Long countLatestLaunches(String project, Queryable filter) {
-        Long total = 0L;
+        Long total;
         final String countKey = "count";
         List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
         operations.add(count().as(countKey));
@@ -323,6 +327,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
                 .getUniqueMappedResult();
         if (null != result && result.containsKey(countKey)) {
             total = Long.valueOf(result.get(countKey).toString());
+        } else {
+            throw new ReportPortalException("Count aggregation results problem.");
         }
         return total;
     }
