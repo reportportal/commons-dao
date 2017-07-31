@@ -123,12 +123,13 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findTestItemErrorLogs(String testItemId) {
-		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(LogLevel.ERROR_INT));
+	public List<Log> findTestItemErrorLogs(String testItemId, int limit) {
+		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(LogLevel.ERROR_INT))
+                .limit(limit);
 		return mongoTemplate.find(query, Log.class);
 	}
 
-	@Override
+    @Override
 	public List<String> findLogIdsByItemRefs(List<String> ids) {
 		Aggregation aggregation = newAggregation(match(where("testItemRef").in(ids)), group("id"));
 		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
