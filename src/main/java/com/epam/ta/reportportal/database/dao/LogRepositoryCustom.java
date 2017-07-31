@@ -122,7 +122,7 @@ public interface LogRepositoryCustom {
 	 * @param testItemId
 	 * @return
 	 */
-	List<Log> findTestItemErrorLogs(String testItemId);
+	List<Log> findTestItemErrorLogs(String testItemId, int limit);
 
 	List<String> findLogIdsByItemRefs(List<String> ids);
 

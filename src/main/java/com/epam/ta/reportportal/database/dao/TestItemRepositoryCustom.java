@@ -134,7 +134,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param launchId
 	 * @return
 	 */
-	List<TestItem> findTestItemWithInvestigated(String launchId);
+	List<TestItem> findTestItemWithInvestigated(String launchId, int limit);
 
 	/**
 	 * Whether launch contains any testItems added lately.
