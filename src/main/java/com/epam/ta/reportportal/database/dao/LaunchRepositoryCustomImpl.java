@@ -328,7 +328,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         if (null != result && result.containsKey(countKey)) {
             total = Long.valueOf(result.get(countKey).toString());
         } else {
-            throw new ReportPortalException("Count aggregation results problem.");
+            throw new ReportPortalException("Aggregation results shouldn't be null and should contain the 'count' field");
         }
         return total;
     }
