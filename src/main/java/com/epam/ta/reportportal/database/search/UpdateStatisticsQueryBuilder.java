@@ -32,6 +32,8 @@ import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
 
+import java.util.StringJoiner;
+
 /**
  * MongoDB statistics builder {@link Update}. Allows to update\reset\delete
  * 
@@ -80,7 +82,7 @@ public class UpdateStatisticsQueryBuilder {
 	 * Aware issue statistic field is specified, or to to_investigate field
 	 * instead.
 	 * 
-	 * @param issueType
+	 * @param subType
 	 *            - <b>null</b> is cannot be specified
 	 * @param issueTypeCounter
 	 *            - count of issues for specified issue counter field (or not
@@ -113,36 +115,30 @@ public class UpdateStatisticsQueryBuilder {
 	/**
 	 * Complex update operator for MongoDB with positive or negative increment
 	 * for all defined issue sub-types of specified test item.
-	 * 
+	 *
+     * upd: since there are different methods for incrementing, this is used
+     * only for deleting item's statistics.
+     *
 	 * @param item
-	 * @param isReset
 	 * @return Update
 	 */
 	/* DELETE methods in old statistics */
-	public static Update fromIssueTypeAware(final TestItem item, boolean isReset) {
+	public static Update fromIssueTypeAware(final TestItem item) {
 		IssueCounter issueCounter = item.getStatistics().getIssueCounter();
 		/* MongoDB Update object instance initialization */
 		Update issueStatusAware = new Update();
-		issueCounter.getAutomationBug().forEach((k, v) -> {
-			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + AUTOMATION_BUG.awareStatisticsField() + "." + k, isReset ? negative : v);
-		});
-		issueCounter.getProductBug().forEach((k, v) -> {
-			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + PRODUCT_BUG.awareStatisticsField() + "." + k, isReset ? negative : v);
-		});
-		issueCounter.getSystemIssue().forEach((k, v) -> {
-			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + SYSTEM_ISSUE.awareStatisticsField() + "." + k, isReset ? negative : v);
-		});
-		issueCounter.getNoDefect().forEach((k, v) -> {
-			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + NO_DEFECT.awareStatisticsField() + "." + k, isReset ? negative : v);
-		});
-		issueCounter.getToInvestigate().forEach((k, v) -> {
-			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + TO_INVESTIGATE.awareStatisticsField() + "." + k, isReset ? negative : v);
-		});
+		issueCounter.getAutomationBug().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, AUTOMATION_BUG.awareStatisticsField(), k, v));
+		issueCounter.getProductBug().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, PRODUCT_BUG.awareStatisticsField(), k, v));
+		issueCounter.getSystemIssue().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, SYSTEM_ISSUE.awareStatisticsField(), k, v));
+		issueCounter.getNoDefect().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, NO_DEFECT.awareStatisticsField(), k, v));
+		issueCounter.getToInvestigate().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, TO_INVESTIGATE.awareStatisticsField(), k, v));
 		return issueStatusAware;
 	}
+
+	private static void decreaseIssueStatusAware(Update issueStatusAware, String statisticsField, String defectField, int value) {
+	    int negative = value * -1;
+        StringJoiner joiner = new StringJoiner(".");
+        String key = joiner.add(ISSUE_COUNTER).add(statisticsField).add(defectField).toString();
+        issueStatusAware.inc(key, negative);
+    }
 }

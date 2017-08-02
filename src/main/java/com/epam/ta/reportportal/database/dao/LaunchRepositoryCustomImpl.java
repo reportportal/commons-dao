@@ -141,7 +141,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public void deleteIssueStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromIssueTypeAware(item, true), Launch.class);
+		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromIssueTypeAware(item), Launch.class);
 	}
 
 	// Probably unnecessary method (launch delete remove object from DB
