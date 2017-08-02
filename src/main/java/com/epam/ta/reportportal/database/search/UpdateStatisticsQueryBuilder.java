@@ -125,28 +125,23 @@ public class UpdateStatisticsQueryBuilder {
 		Update issueStatusAware = new Update();
 		issueCounter.getAutomationBug().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + AUTOMATION_BUG.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + AUTOMATION_BUG.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + AUTOMATION_BUG.awareStatisticsField() + "." + k, isReset ? negative : v);
 		});
 		issueCounter.getProductBug().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + PRODUCT_BUG.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + PRODUCT_BUG.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + PRODUCT_BUG.awareStatisticsField() + "." + k, isReset ? negative : v);
 		});
 		issueCounter.getSystemIssue().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + SYSTEM_ISSUE.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + SYSTEM_ISSUE.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + SYSTEM_ISSUE.awareStatisticsField() + "." + k, isReset ? negative : v);
 		});
 		issueCounter.getNoDefect().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + NO_DEFECT.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + NO_DEFECT.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + NO_DEFECT.awareStatisticsField() + "." + k, isReset ? negative : v);
 		});
 		issueCounter.getToInvestigate().forEach((k, v) -> {
 			int negative = v * -1;
-			issueStatusAware.inc(ISSUE_COUNTER + "." + TO_INVESTIGATE.awareStatisticsField() + "." + k, isReset ? negative : v)
-					.inc(ISSUE_COUNTER + "." + TO_INVESTIGATE.awareStatisticsField() + ".total", isReset ? negative : v);
+			issueStatusAware.inc(ISSUE_COUNTER + "." + TO_INVESTIGATE.awareStatisticsField() + "." + k, isReset ? negative : v);
 		});
 		return issueStatusAware;
 	}
