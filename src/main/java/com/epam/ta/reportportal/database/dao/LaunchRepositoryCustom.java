@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.database.search.Queryable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
 import java.time.Duration;
 import java.util.Date;
@@ -189,6 +190,10 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
      */
 
     Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable);
+
+
+    void findLatestWithCallback(String project, Queryable filter, Sort sort,  List<String> contentFields,
+                                long limit, DocumentCallbackHandler callbackHandler);
 
 
     /**

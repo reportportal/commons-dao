@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.config.CacheConfiguration;
+import com.epam.ta.reportportal.database.OverallStatisticsDocumentHandler;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -29,11 +30,14 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.FilterConditionUtils;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -89,8 +94,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     //useful constants for latest launches
     private static final String META_INFO = "meta_info";
     private static final String IS_LAST = "is_last";
+    private static final String RESULT = "result";
 
-	@Autowired
+    @Autowired
 	private MongoTemplate mongoTemplate;
 
 	@Override
@@ -136,7 +142,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public void deleteIssueStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromIssueTypeAware(item, true), Launch.class);
+		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()), fromIssueTypeAware(item), Launch.class);
 	}
 
 	// Probably unnecessary method (launch delete remove object from DB
@@ -307,6 +313,18 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		Query query = query(where(PROJECT_ID_REFERENCE).is(projectRef)).addCriteria(where(issueField).exists(true));
 		return mongoTemplate.find(query, Launch.class);
 	}
+
+    @Override
+    public void findLatestWithCallback(String project, Queryable filter, Sort sort,  List<String> contentFields,
+                                       long limit, DocumentCallbackHandler callbackHandler) {
+        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
+        operations.add(sort(sort));
+        operations.add(limit(limit));
+        DBObject results = mongoTemplate.aggregate(newAggregation(operations),
+                mongoTemplate.getCollectionName(Launch.class), Launch.class).getRawResults();
+        BasicDBList result = (BasicDBList) results.get(RESULT);
+        result.stream().map(it -> (DBObject) it).forEach(callbackHandler::processDocument);
+    }
 
     @Override
     public Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable) {
