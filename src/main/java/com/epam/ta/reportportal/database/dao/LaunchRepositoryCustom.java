@@ -192,8 +192,19 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
     Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable);
 
 
+    /**
+     * Load chart data according specified input parameters and only for latest launches.
+     * Result should be returned from {@link DocumentCallbackHandler} object
+     *
+     * @param project
+     * @param filter
+     * @param sort
+     * @param contentFields
+     * @param limit
+     * @param callbackHandler
+     */
     void findLatestWithCallback(String project, Queryable filter, Sort sort,  List<String> contentFields,
-                                long limit, DocumentCallbackHandler callbackHandler);
+          long limit, DocumentCallbackHandler callbackHandler);
 
 
     /**
