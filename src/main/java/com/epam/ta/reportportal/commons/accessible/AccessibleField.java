@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.commons.accessible;
 
@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 
 /**
  * Setter and Getter for Accessible Field
- * 
+ *
  * @author Andrei Varabyeu
  */
 public class AccessibleField {

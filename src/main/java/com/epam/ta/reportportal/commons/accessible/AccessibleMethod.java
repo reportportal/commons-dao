@@ -17,11 +17,9 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.commons.accessible;
-
-import com.google.common.base.Throwables;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,11 +27,11 @@ import java.lang.reflect.Method;
 /**
  * Accessible method implementation. Set accessibility == true for specified
  * method and can invoke methods
- * 
+ *
  * @author Andrei Varabyeu
- * 
+ *
  */
-class AccessibleMethod {
+public class AccessibleMethod {
 
 	private final Method method;
 	private final Object bean;
@@ -43,7 +41,7 @@ class AccessibleMethod {
 		this.method = method;
 	}
 
-	public Object invoke(Object... args) {
+	public Object invoke(Object... args) throws Throwable {
 		try {
 			return invoke(this.bean, this.method, args);
 		} catch (IllegalAccessException accessException) { //NOSONAR
@@ -57,14 +55,13 @@ class AccessibleMethod {
 
 	}
 
-	private Object invoke(Object bean, Method m, Object... args) throws IllegalAccessException {
+	private Object invoke(Object bean, Method m, Object... args) throws Throwable {
 		try {
 			return m.invoke(bean, args);
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException(e);
 		} catch (InvocationTargetException e) {
-			Throwables.throwIfUnchecked(e);
-			throw new RuntimeException(e);
+			throw e.getTargetException();
 		}
 
 	}
