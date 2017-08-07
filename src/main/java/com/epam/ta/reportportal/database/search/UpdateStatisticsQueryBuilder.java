@@ -127,15 +127,15 @@ public class UpdateStatisticsQueryBuilder {
 		IssueCounter issueCounter = item.getStatistics().getIssueCounter();
 		/* MongoDB Update object instance initialization */
 		Update issueStatusAware = new Update();
-		issueCounter.getAutomationBug().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, AUTOMATION_BUG.awareStatisticsField(), k, v));
-		issueCounter.getProductBug().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, PRODUCT_BUG.awareStatisticsField(), k, v));
-		issueCounter.getSystemIssue().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, SYSTEM_ISSUE.awareStatisticsField(), k, v));
-		issueCounter.getNoDefect().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, NO_DEFECT.awareStatisticsField(), k, v));
-		issueCounter.getToInvestigate().forEach((k, v) -> decreaseIssueStatusAware(issueStatusAware, TO_INVESTIGATE.awareStatisticsField(), k, v));
+		issueCounter.getAutomationBug().forEach((k, v) -> decreaseIssueCounter(issueStatusAware, AUTOMATION_BUG.awareStatisticsField(), k, v));
+		issueCounter.getProductBug().forEach((k, v) -> decreaseIssueCounter(issueStatusAware, PRODUCT_BUG.awareStatisticsField(), k, v));
+		issueCounter.getSystemIssue().forEach((k, v) -> decreaseIssueCounter(issueStatusAware, SYSTEM_ISSUE.awareStatisticsField(), k, v));
+		issueCounter.getNoDefect().forEach((k, v) -> decreaseIssueCounter(issueStatusAware, NO_DEFECT.awareStatisticsField(), k, v));
+		issueCounter.getToInvestigate().forEach((k, v) -> decreaseIssueCounter(issueStatusAware, TO_INVESTIGATE.awareStatisticsField(), k, v));
 		return issueStatusAware;
 	}
 
-	private static void decreaseIssueStatusAware(Update issueStatusAware, String statisticsField, String defectField, int value) {
+	private static void decreaseIssueCounter(Update issueStatusAware, String statisticsField, String defectField, int value) {
 	    int negative = value * -1;
         StringJoiner joiner = new StringJoiner(".");
         String key = joiner.add(ISSUE_COUNTER).add(statisticsField).add(defectField).toString();

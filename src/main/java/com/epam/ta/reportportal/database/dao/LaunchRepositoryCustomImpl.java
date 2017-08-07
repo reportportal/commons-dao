@@ -73,7 +73,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 /**
  * Implementations of custom methods which are cannot be generated via default
  * Spring's repositories mechanism
- * 
+ *
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
  */
@@ -351,12 +351,25 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         return total;
     }
 
+
+    /*
+     *     db.launch.aggregate([
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
+     *        { $lookup : { from : "launchMetaInfo", localField : "name", foreignField : "_id", as:"meta_info"} },
+     *        { $unwind : "$meta_info" },
+     *        { $addFields : { "is_last" : { $eq : ['$meta_info.projects.projectName' , '$number'] } } },
+     *        { $match : { "is_last" : true } },
+     *        { $sort : { "start_time" : -1 } },
+     *        { $skip : skip },
+     *        { $limit : limit }
+     *     ])
+    */
     private List<Launch> findLatest(String project, Queryable filter, Pageable pageable) {
         List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
         operations.add(sort(pageable.getSort()));
         operations.add(skip((long) pageable.getPageNumber() * pageable.getPageSize()));
         operations.add(limit(pageable.getPageSize()));
-        return mongoTemplate.aggregate(newAggregation(operations),  mongoTemplate.getCollectionName(Launch.class),
+        return mongoTemplate.aggregate(newAggregation(operations), mongoTemplate.getCollectionName(Launch.class),
                 Launch.class).getMappedResults();
     }
 
