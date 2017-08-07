@@ -40,11 +40,11 @@ public enum ProjectRole implements Comparable<ProjectRole> {
 		this.roleLevel = level;
 	}
 
-	boolean higherThan(ProjectRole other) {
+	public boolean higherThan(ProjectRole other) {
 		return this.roleLevel > other.roleLevel;
 	}
 
-	boolean sameOrHigherThan(ProjectRole other) {
+	public boolean sameOrHigherThan(ProjectRole other) {
 		return this.roleLevel >= other.roleLevel;
 	}
 
