@@ -92,8 +92,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public static final int AUTOCOMPLETE_LIMITATION = 50;
 
     //useful constants for latest launches
-    private static final String META_INFO = "meta_info";
-    private static final String IS_LAST = "is_last";
+    private static final String ORIGINAL = "original";
     private static final String RESULT = "result";
 
     @Autowired
@@ -351,7 +350,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         return total;
     }
 
-
     /*
      *     db.launch.aggregate([
      *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
@@ -376,6 +374,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     /*
      *     db.launch.aggregate([
      *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
+     *        { $sort : { number : -1 }}
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
      *        }}},
@@ -384,9 +383,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     */
     private List<AggregationOperation> latestLaunchesAggregationOperationsList(String project, Queryable filter) {
         return Lists.newArrayList(match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
-                sort(Sort.Direction.DESC, "number"),
-                group("$name").first("$$ROOT").as("original"),
-                replaceRoot("original")
+                sort(Sort.Direction.DESC, NUMBER),
+                group("$name").first(ROOT).as(ORIGINAL),
+                replaceRoot(ORIGINAL)
         );
     }
 
