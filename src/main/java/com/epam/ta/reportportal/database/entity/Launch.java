@@ -95,7 +95,7 @@ public class Launch implements Serializable, Interruptable {
 	private Statistics statistics;
 
 	@FilterCriteria("number")
-    @Indexed(direction = IndexDirection.DESCENDING)
+    @Indexed()
 	private Long number;
 
 	@LastModifiedDate

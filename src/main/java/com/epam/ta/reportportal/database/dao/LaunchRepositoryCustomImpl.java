@@ -384,6 +384,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     */
     private List<AggregationOperation> latestLaunchesAggregationOperationsList(String project, Queryable filter) {
         return Lists.newArrayList(match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
+                sort(Sort.Direction.DESC, "number"),
                 group("$name").first("$$ROOT").as("original"),
                 replaceRoot("original")
         );
