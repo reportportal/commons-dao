@@ -64,6 +64,7 @@ public class Launch implements Serializable, Interruptable {
 	private String id;
 
 	@FilterCriteria(PROJECT)
+    @Indexed
 	private String projectRef;
 
 	@FilterCriteria(USER)
@@ -95,7 +96,7 @@ public class Launch implements Serializable, Interruptable {
 	private Statistics statistics;
 
 	@FilterCriteria("number")
-    @Indexed()
+    @Indexed
 	private Long number;
 
 	@LastModifiedDate
