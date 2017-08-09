@@ -54,7 +54,7 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 
 	@Test
 	public void findTestItemWithInvestigated(){
-		List<TestItem> ids = testItemRepository.findTestItemWithInvestigated("launch");
+		List<TestItem> ids = testItemRepository.findTestItemWithInvestigated("launch", 50);
 		assertThat(ids.size()).isEqualTo(1);
 	}
 

@@ -159,7 +159,7 @@ public class Preconditions {
 	 * @param principalRole
 	 * @return
 	 */
-	public static Predicate<Integer> isLevelEnough(final int principalRole) {
-		return input -> principalRole >= input;
+	public static Predicate<ProjectRole> isLevelEnough(final ProjectRole principalRole) {
+		return principalRole::sameOrHigherThan;
 	}
 }

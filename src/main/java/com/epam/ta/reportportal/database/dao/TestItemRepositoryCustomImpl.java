@@ -289,7 +289,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> findTestItemWithInvestigated(String launchId) {
+	public List<TestItem> findTestItemWithInvestigated(String launchId, int limit) {
 		Criteria internalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
 				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i").ne(TestItemIssueType.TO_INVESTIGATE.getLocator()),
 				where(ISSUE_TYPE).exists(true));
@@ -298,7 +298,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
 				where(ISSUE_TICKET).exists(true));
 
-		Query query = query(new Criteria().orOperator(internalIssues, externalIssues));
+		Query query = query(new Criteria().orOperator(internalIssues, externalIssues)).limit(limit);
 
 		query.limit(HISTORY_LIMIT);
 		query.fields().include("name");
