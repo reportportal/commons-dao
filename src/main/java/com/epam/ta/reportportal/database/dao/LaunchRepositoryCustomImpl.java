@@ -355,10 +355,10 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     /*
      *     db.launch.aggregate([
      *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
-     *        { $lookup : { from : "launchMetaInfo", localField : "name", foreignField : "_id", as:"meta_info"} },
-     *        { $unwind : "$meta_info" },
-     *        { $addFields : { "is_last" : { $eq : ['$meta_info.projects.projectName' , '$number'] } } },
-     *        { $match : { "is_last" : true } },
+     *        { $group : { "_id" : "$name", "original" : {
+     *              $first : "$$ROOT"
+     *        }}},
+     *        { $replaceRoot : { newRoot : "$original" }
      *        { $sort : { "start_time" : -1 } },
      *        { $skip : skip },
      *        { $limit : limit }
@@ -376,19 +376,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     /*
      *     db.launch.aggregate([
      *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
-     *        { $lookup : { from : "launchMetaInfo", localField : "name", foreignField : "_id", as:"meta_info"} },
-     *        { $unwind : "$meta_info" },
-     *        { $addFields : { "is_last" : { $eq : ['$meta_info.projects.projectName' , '$number'] } } },
-     *        { $match : { "is_last" : true } },
+     *        { $group : { "_id" : "$name", "original" : {
+     *              $first : "$$ROOT"
+     *        }}},
+     *        { $replaceRoot : { newRoot : "$original" }
      *     ])
     */
     private List<AggregationOperation> latestLaunchesAggregationOperationsList(String project, Queryable filter) {
         return Lists.newArrayList(match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
-                lookup(LAUNCH_META_INFO, NAME, "_id", META_INFO),
-                unwind(META_INFO),
-                addFields(IS_LAST, new BasicDBObject("$eq",
-                        Arrays.asList(String.format("$%s.projects.%s", META_INFO, project), "$number"))),
-                match(Criteria.where(IS_LAST).is(true))
+                group("$name").first("$$ROOT").as("original"),
+                replaceRoot("original")
         );
     }
 
