@@ -35,8 +35,8 @@ public enum UserType {
     //@formatter:off
     INTERNAL,
     UPSA,
-    GITHUB;
-
+    GITHUB,
+    LDAP;
     //@formatter:on
 
     public static UserType getByName(String type) {

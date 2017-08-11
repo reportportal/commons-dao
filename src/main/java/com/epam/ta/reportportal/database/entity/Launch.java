@@ -29,6 +29,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -63,6 +64,7 @@ public class Launch implements Serializable, Interruptable {
 	private String id;
 
 	@FilterCriteria(PROJECT)
+    @Indexed
 	private String projectRef;
 
 	@FilterCriteria(USER)
@@ -94,6 +96,7 @@ public class Launch implements Serializable, Interruptable {
 	private Statistics statistics;
 
 	@FilterCriteria("number")
+    @Indexed
 	private Long number;
 
 	@LastModifiedDate
