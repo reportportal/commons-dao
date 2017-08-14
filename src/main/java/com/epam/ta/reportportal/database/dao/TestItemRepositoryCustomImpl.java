@@ -124,7 +124,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void deleteIssueStatistics(TestItem item) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(item, true), TestItem.class);
+		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(item), TestItem.class);
 	}
 
 	@Override

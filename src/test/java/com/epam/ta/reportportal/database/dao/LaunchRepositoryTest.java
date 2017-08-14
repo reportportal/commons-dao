@@ -6,8 +6,11 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.ws.model.launch.Mode;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,6 +59,33 @@ public class LaunchRepositoryTest extends BaseDaoTest {
 		launchRepository.deleteByProjectRef("project1");
 		Assert.assertTrue(launchRepository.findLaunchIdsByProjectId("project1").isEmpty());
 	}
+
+	@Test
+    public void findLatestLaunch() {
+	    String project = "project";
+	    String launch = "launch";
+	    String mode = "DEFAULT";
+	    Launch launch1 = new Launch();
+	    launch1.setName(launch);
+	    launch1.setProjectRef(project);
+	    launch1.setMode(Mode.valueOf(mode));
+	    launch1.setNumber(1L);
+	    launch1.setStatus(Status.PASSED);
+
+	    Launch launch2 = new Launch();
+        launch2.setName(launch);
+        launch2.setProjectRef(project);
+        launch2.setMode(Mode.valueOf(mode));
+        launch2.setNumber(2L);
+        launch2.setStatus(Status.IN_PROGRESS);
+
+        launchRepository.save(asList(launch1, launch2));
+
+        Optional<Launch> latestLaunch = launchRepository.findLatestLaunch(project, launch, mode);
+
+        Assert.assertTrue(latestLaunch.isPresent());
+        Assert.assertEquals(1L, latestLaunch.get().getNumber().longValue());
+    }
 
 	public List<Launch> findByProjectIdsData() {
 		final Launch launch1 = new Launch();

@@ -27,7 +27,11 @@ import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.Queryable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
 import java.time.Duration;
 import java.util.Date;
@@ -176,13 +180,49 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 */
 	Long findLaunchesQuantity(String projectId, String mode, Date from);
 
-	/**
+    /**
+     * Find latest unique launches for specified project by filter
+     *
+     * @param project
+     * @param filter
+     * @param pageable
+     * @return
+     */
+
+    Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable);
+
+
+    /**
+     * Load chart data according specified input parameters and only for latest launches.
+     * Result should be returned from {@link DocumentCallbackHandler} object
+     *
+     * @param project
+     * @param filter
+     * @param sort
+     * @param contentFields
+     * @param limit
+     * @param callbackHandler
+     */
+    void findLatestWithCallback(String project, Queryable filter, Sort sort,  List<String> contentFields,
+          long limit, DocumentCallbackHandler callbackHandler);
+
+
+    /**
 	 * Find last launch. 'IN_PROGRESS' launch is excluded
 	 * 
 	 * @param projectId
 	 * @return
 	 */
 	Optional<Launch> findLastLaunch(String projectId, String mode);
+
+    /**
+     * Find latest launch. 'IN_PROGRESS' launch is excluded
+     * @param projectName name
+     * @param launchName launch
+     * @param mode mode
+     * @return launch with latest number
+     */
+	Optional<Launch> findLatestLaunch(String projectName, String launchName, String mode);
 
 	/**
 	 * Find last launch within specified project and mode
