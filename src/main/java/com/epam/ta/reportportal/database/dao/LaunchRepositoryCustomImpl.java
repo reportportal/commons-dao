@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.config.CacheConfiguration;
-import com.epam.ta.reportportal.database.OverallStatisticsDocumentHandler;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -30,13 +29,11 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.FilterConditionUtils;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -59,8 +56,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.epam.ta.reportportal.database.dao.LaunchMetaInfoRepository.LAUNCH_META_INFO;
-import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
@@ -352,7 +347,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : ""}}}},
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
      *        }}},
@@ -373,7 +368,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"} },
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : ""}} },
      *        { $sort : { number : -1 }}
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
@@ -382,7 +377,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
      *     ])
     */
     private List<AggregationOperation> latestLaunchesAggregationOperationsList(String project, Queryable filter) {
-        return Lists.newArrayList(match(buildCriteriaFromFilter(filter).and(PROJECT_ID_REFERENCE).is(project)),
+        return Lists.newArrayList(match(buildCriteriaFromFilter(filter)
+						.and(PROJECT_ID_REFERENCE).is(project).and(STATUS).ne(IN_PROGRESS)),
                 sort(Sort.Direction.DESC, NUMBER),
                 group("$name").first(ROOT).as(ORIGINAL),
                 replaceRoot(ORIGINAL)
