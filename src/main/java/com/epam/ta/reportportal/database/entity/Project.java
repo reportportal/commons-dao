@@ -153,9 +153,9 @@ public class Project implements Serializable {
      * @param login Login for search
      * @return UserConfig for specified login
      */
-    public UserConfig getUserByLogin(String login) {
+    public UserConfig getUserConfigByLogin(String login) {
         return users.stream().filter(it -> login.equals(it.getLogin())).findAny()
-                .orElseThrow(() -> new ReportPortalException(ErrorType.USER_NOT_FOUND, login));
+                .orElseThrow(() -> new ReportPortalException(ErrorType.USER_NOT_FOUND, login, name));
     }
 
     @Override
