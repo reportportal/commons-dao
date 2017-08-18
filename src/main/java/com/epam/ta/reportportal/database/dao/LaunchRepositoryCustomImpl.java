@@ -31,7 +31,6 @@ import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
@@ -331,7 +330,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     }
 
     private Long countLatestLaunches(String project, Queryable filter) {
-        Long total;
+        Long total = 0L;
         final String countKey = "count";
         List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
         operations.add(count().as(countKey));
@@ -339,19 +338,17 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
                 .getUniqueMappedResult();
         if (null != result && result.containsKey(countKey)) {
             total = Long.valueOf(result.get(countKey).toString());
-        } else {
-            throw new ReportPortalException("Aggregation results shouldn't be null and should contain the 'count' field");
         }
         return total;
     }
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : ""}}}},
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : ""}}},
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
      *        }}},
-     *        { $replaceRoot : { newRoot : "$original" }
+     *        { $replaceRoot : { newRoot : "$original" } } ,
      *        { $sort : { "start_time" : -1 } },
      *        { $skip : skip },
      *        { $limit : limit }

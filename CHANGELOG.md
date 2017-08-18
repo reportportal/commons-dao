@@ -36,7 +36,10 @@
 ##### Released: XXX 2017
 
 ### New Features
-* EPMRPP-26429/EPMRPP-26263 Added possibility to get all latest launches
+* EPMRPP-26429/EPMRPP-26263 - Added possibility to get all latest launches
+* EPMRPP-26416 - Add possibility to use a 'dot' symbol in login of user
 
-### BugFIxes
+### Bug Fixes
 * EPMRPP-29167 - Statistics for deleted elements with custom defect types are still present
+* EPMRPP-29337 - Widgets with Latest Launches ON include statistics for launches with In Progress status
+* EPMRPP-29320 - Unclassified error for Latest Launches view selected in case no results
