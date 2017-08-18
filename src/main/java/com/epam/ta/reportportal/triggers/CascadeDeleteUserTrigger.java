@@ -20,24 +20,24 @@
  */
 package com.epam.ta.reportportal.triggers;
 
-import static java.util.Collections.singletonList;
-
-import java.util.List;
-import java.util.Set;
-
+import com.epam.ta.reportportal.commons.ClasspathUtils;
+import com.epam.ta.reportportal.database.DataStorage;
+import com.epam.ta.reportportal.database.dao.ProjectRepository;
+import com.epam.ta.reportportal.database.dao.ShareableRepository;
+import com.epam.ta.reportportal.database.dao.UserPreferenceRepository;
+import com.epam.ta.reportportal.database.dao.UserRepository;
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.sharing.Shareable;
+import com.epam.ta.reportportal.database.entity.user.User;
+import com.epam.ta.reportportal.database.support.RepositoryProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.stereotype.Component;
 
-import com.epam.ta.reportportal.commons.ClasspathUtils;
-import com.epam.ta.reportportal.database.DataStorage;
-import com.epam.ta.reportportal.database.dao.*;
-import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.sharing.Shareable;
-import com.epam.ta.reportportal.database.entity.user.User;
-import com.epam.ta.reportportal.database.support.RepositoryProvider;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Deletes user-related data before delete of user entity
@@ -92,13 +92,13 @@ public class CascadeDeleteUserTrigger extends AbstractMongoEventListener<User> {
 	private void clearProject(String id) {
 		List<Project> projects = projectRepository.findUserProjects(id);
 		for (Project project : projects) {
-			project.getUsers().remove(id);
+			project.getUsers().removeIf(it -> id.equals(it.getLogin()));
 		}
 		projectRepository.save(projects);
 	}
 
 	private void removePersonalProject(String user) {
-		projectRepository.findPersonalProjectName(user).ifPresent(p -> projectRepository.delete(p));
+		projectRepository.findPersonalProjectName(user).ifPresent(projectRepository::delete);
 	}
 
 	/**
