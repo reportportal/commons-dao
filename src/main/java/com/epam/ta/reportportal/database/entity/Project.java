@@ -31,21 +31,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.AUTOMATION_BUG;
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.NO_DEFECT;
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.PRODUCT_BUG;
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.SYSTEM_ISSUE;
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.TO_INVESTIGATE;
-import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.fromValue;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.*;
 import static java.util.Collections.singletonList;
 
 /**
@@ -75,7 +63,7 @@ public class Project implements Serializable {
 
     // @Indexed
     @FilterCriteria(USERS)
-    private Map<String, UserConfig> users;
+    private List<UserConfig> users;
 
     @FilterCriteria("creationDate")
     private Date creationDate;
@@ -113,15 +101,15 @@ public class Project implements Serializable {
         this.addInfo = addInfo;
     }
 
+    public void setUsers(List<UserConfig> users) {
+        this.users = users;
+    }
+
     /*
      * Null-safe getter
      */
-    public Map<String, UserConfig> getUsers() {
-        return users == null ? users = new HashMap<>() : users;
-    }
-
-    public void setUsers(Map<String, UserConfig> users) {
-        this.users = users;
+    public List<UserConfig> getUsers() {
+        return users == null ? users = Collections.emptyList() : users;
     }
 
     public String getName() {
@@ -344,6 +332,7 @@ public class Project implements Serializable {
     public static class UserConfig implements Serializable {
 
         private static final long serialVersionUID = 1L;
+        private String login;
         private ProjectRole proposedRole;
         private ProjectRole projectRole;
 
@@ -353,6 +342,14 @@ public class Project implements Serializable {
 
         public UserConfig() {
 
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
         }
 
         public void setProjectRole(ProjectRole projectRole) {

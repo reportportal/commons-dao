@@ -28,7 +28,7 @@ import com.epam.ta.reportportal.database.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.database.entity.project.*;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,9 +81,10 @@ public final class PersonalProjectService {
 		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
 		Project.UserConfig userConfig = new Project.UserConfig();
+		userConfig.setLogin(user.getId());
 		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
 		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
-		project.setUsers(ImmutableMap.<String, Project.UserConfig>builder().put(user.getId(), userConfig).build());
+		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
 
 		project.setAddInfo("Personal project of " + user.getFullName());
 		project.setConfiguration(defaultConfiguration());
