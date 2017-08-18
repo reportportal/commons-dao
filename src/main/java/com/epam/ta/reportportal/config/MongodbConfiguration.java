@@ -143,7 +143,11 @@ public class MongodbConfiguration {
                 Arrays.asList(CustomMongoConverters.LogLevelToIntConverter.INSTANCE,
                         CustomMongoConverters.IntToLogLevelConverter.INSTANCE,
                         CustomMongoConverters.ClassToWrapperConverter.INSTANCE,
-                        CustomMongoConverters.WrapperToClassConverter.INSTANCE));
+                        CustomMongoConverters.WrapperToClassConverter.INSTANCE,
+                        CustomMongoConverters.ActivityEventTypeToStringConverter.INSTANCE,
+                        CustomMongoConverters.StringToActivityEventTypeConverter.INSTANCE,
+                        CustomMongoConverters.ActivityObjectTypeToStringConverter.INSTANCE,
+                        CustomMongoConverters.StringToActivityObjectTypeConverter.INSTANCE));
     }
 
     @Bean
