@@ -125,7 +125,7 @@ public class ProjectUtils {
 	 * @param user    User login
 	 * @return        True, if exists
 	 */
-	public boolean doesHaveUser(Project project, String user) {
+	public static boolean doesHaveUser(Project project, String user) {
 		return project.getUsers().stream().anyMatch(it ->
 				user.equals(it.getLogin()));
 	}
@@ -138,7 +138,7 @@ public class ProjectUtils {
 	 * @return     UserConfig for specified login
 	 */
 	@Nullable
-	public Project.UserConfig findUserConfigByLogin(Project project, String user) {
+	public static Project.UserConfig findUserConfigByLogin(Project project, String user) {
 		return project.getUsers().stream().filter(it -> user.equals(it.getLogin())).findAny()
 				.orElse(null);
 	}
