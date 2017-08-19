@@ -21,17 +21,6 @@
 
 package com.epam.ta.reportportal.database.entity.project;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.project.email.EmailSenderCase;
@@ -39,6 +28,18 @@ import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.collect.Lists;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Project related utility methods
@@ -115,6 +116,31 @@ public class ProjectUtils {
 			project.getConfiguration().getEmailConfig().setEmailCases(cases);
 		}
 		return project;
+	}
+
+	/**
+	 * Checks if the user is assigned on project
+	 *
+	 * @param project Specified project
+	 * @param user    User login
+	 * @return        True, if exists
+	 */
+	public boolean doesHaveUser(Project project, String user) {
+		return project.getUsers().stream().anyMatch(it ->
+				user.equals(it.getLogin()));
+	}
+
+	/**
+	 * Finds UserConfig for specified login. Returns null
+	 * if it doesn't exists.
+	 *
+	 * @param user Login for search
+	 * @return     UserConfig for specified login
+	 */
+	@Nullable
+	public Project.UserConfig findUserConfigByLogin(Project project, String user) {
+		return project.getUsers().stream().filter(it -> user.equals(it.getLogin())).findAny()
+				.orElse(null);
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {

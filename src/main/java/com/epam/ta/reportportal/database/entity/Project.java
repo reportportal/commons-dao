@@ -26,8 +26,6 @@ import com.epam.ta.reportportal.database.entity.project.EntryType;
 import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -144,18 +142,6 @@ public class Project implements Serializable {
 
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
-    }
-
-    /**
-     * Finds UserConfig for specified login. Returns null
-     * if it doesn't exists.
-     *
-     * @param login Login for search
-     * @return UserConfig for specified login
-     */
-    public UserConfig getUserConfigByLogin(String login) {
-        return users.stream().filter(it -> login.equals(it.getLogin())).findAny()
-                .orElseThrow(() -> new ReportPortalException(ErrorType.USER_NOT_FOUND, login, name));
     }
 
     @Override
