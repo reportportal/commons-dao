@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Project.UserConfig;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
+import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -83,7 +84,8 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public void removeUserFromProjects(String userId) {
 		Query query = Query.query(Criteria.where(USER_LOGIN).is(userId));
-		mongoTemplate.updateMulti(query, new Update().pull(USER_LOGIN, userId), Project.class);
+		mongoTemplate.updateMulti(query, new Update()
+				.pull("users", new BasicDBObject("login", userId)), Project.class);
 	}
 
 	@Override
