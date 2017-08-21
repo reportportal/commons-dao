@@ -21,17 +21,48 @@
  
 package com.epam.ta.reportportal.database;
 
+import com.epam.ta.reportportal.database.entity.item.Activity;
+import com.epam.ta.reportportal.database.entity.item.ActivityEventType;
+import com.epam.ta.reportportal.database.entity.item.ActivityObjectType;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.converter.ConditionalConverter;
 import org.springframework.core.convert.converter.Converter;
 
 import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.convert.WritingConverter;
+import org.springframework.util.ClassUtils;
 
 public class CustomMongoConverters {
 
 	private CustomMongoConverters() {
 		//statics only
+	}
+
+	class InternalAbstractConditionalEnumConverter implements ConditionalConverter {
+
+		private final ConversionService conversionService;
+
+
+		protected InternalAbstractConditionalEnumConverter(ConversionService conversionService) {
+			this.conversionService = conversionService;
+		}
+
+		@Override
+		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+			for (Class<?> interfaceType : ClassUtils.getAllInterfacesForClass(sourceType.getType())) {
+				if (this.conversionService.canConvert(TypeDescriptor.valueOf(interfaceType), targetType)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 	}
 
 	public enum LogLevelToIntConverter implements Converter<LogLevel, DBObject> {
@@ -80,6 +111,46 @@ public class CustomMongoConverters {
 				throw new ReportPortalException("Unable convert string '" + className + "' to Class object", e);
 			}
 
+		}
+	}
+
+	public enum ActivityEventTypeToStringConverter implements Converter<ActivityEventType, String> {
+		INSTANCE;
+
+		@Override
+		public String convert(ActivityEventType source) {
+			return null == source ? null : source.getValue();
+		}
+	}
+
+	@ReadingConverter
+	public enum StringToActivityEventTypeConverter implements Converter<String, ActivityEventType> {
+		INSTANCE;
+
+		@Override
+		public ActivityEventType convert(String source) {
+			return null == source ? null : ActivityEventType.fromString(source)
+					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
+		}
+	}
+
+	public enum ActivityObjectTypeToStringConverter implements Converter<ActivityObjectType, String> {
+		INSTANCE;
+
+		@Override
+		public String convert(ActivityObjectType source) {
+			return null == source ? null : source.getValue();
+		}
+	}
+
+	@ReadingConverter
+	public enum StringToActivityObjectTypeConverter implements Converter<String, ActivityObjectType> {
+		INSTANCE;
+
+		@Override
+		public ActivityObjectType convert(String source) {
+			return null == source ? null : ActivityObjectType.fromString(source)
+					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
 		}
 	}
 }

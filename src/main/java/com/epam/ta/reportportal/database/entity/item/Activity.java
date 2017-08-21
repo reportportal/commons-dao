@@ -64,10 +64,10 @@ public class Activity implements Serializable, Modifiable {
 	private Date lastModifiedDate;
 
 	@FilterCriteria(OBJECT_TYPE)
-	private String objectType;
+	private ActivityObjectType objectType;
 
 	@FilterCriteria(ACTION_TYPE)
-	private String actionType;
+	private ActivityEventType actionType;
 
 	@FilterCriteria(PROJECT_REF)
 	private String projectRef;
@@ -152,19 +152,19 @@ public class Activity implements Serializable, Modifiable {
 		this.name = name;
 	}
 
-	public String getObjectType() {
+	public ActivityObjectType getObjectType() {
 		return objectType;
 	}
 
-	public void setObjectType(String objectType) {
+	public void setObjectType(ActivityObjectType objectType) {
 		this.objectType = objectType;
 	}
 
-	public String getActionType() {
+	public ActivityEventType getActionType() {
 		return actionType;
 	}
 
-	public void setActionType(String actionType) {
+	public void setActionType(ActivityEventType actionType) {
 		this.actionType = actionType;
 	}
 
