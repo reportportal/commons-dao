@@ -87,7 +87,7 @@ public interface ProjectRepositoryCustom {
 	 * @param projectId Project users should be added to
 	 * @param users     Users to add
 	 */
-	void addUsers(String projectId, Map<String, UserConfig> users);
+	void addUsers(String projectId, List<UserConfig> users);
 
 	/**
 	 * Find all project names

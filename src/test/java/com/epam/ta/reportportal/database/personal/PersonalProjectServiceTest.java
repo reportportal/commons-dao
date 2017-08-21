@@ -29,8 +29,6 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.when;
 
@@ -67,9 +65,11 @@ public class PersonalProjectServiceTest {
 		user.setFullName("John");
 
 		Project project = new PersonalProjectService(mockProjectRepo()).generatePersonalProject(user);
-		Assert.assertThat("Project doesn't have user", project.getUsers(), Matchers.hasKey(login));
-		Assert.assertThat("Incorrect role", project.getUsers().get(login).getProjectRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
-		Assert.assertThat("Incorrect role", project.getUsers().get(login).getProposedRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
+		Project.UserConfig userConfig = project.getUsers().stream().filter(it ->
+				login.equals(it.getLogin())).findFirst().get();
+		Assert.assertThat("Project doesn't have user", userConfig.getLogin(), Matchers.equalTo(login));
+		Assert.assertThat("Incorrect role", userConfig.getProjectRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
+		Assert.assertThat("Incorrect role", userConfig.getProposedRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
 
 		Assert.assertThat("Incorrect date", project.getCreationDate(), Matchers.notNullValue());
 		Assert.assertThat("Incorrect configuration", project.getConfiguration(), Matchers.notNullValue());
