@@ -53,12 +53,15 @@ public final class PersonalProjectService {
 	}
 
 	/**
+     * Prefix from username with replaced dots as underscores
+     *
 	 * @param username Name of user
 	 * @return Corresponding personal project name
 	 */
 	@VisibleForTesting
 	String generatePersonalProjectName(String username) {
-		String initialName = (username + PERSONAL_PROJECT_POSTFIX).toLowerCase();
+        String projectName = username.replaceAll("\\.", "_");
+        String initialName = (projectName + PERSONAL_PROJECT_POSTFIX).toLowerCase();
 
 		String name = initialName;
 		//iterate until we find free project name
