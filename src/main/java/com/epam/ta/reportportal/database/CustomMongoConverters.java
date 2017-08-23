@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.database;
 
 import com.epam.ta.reportportal.database.entity.LogLevel;
-import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -82,13 +81,4 @@ public class CustomMongoConverters {
 
 		}
 	}
-
-	public enum StatusToStringConverter implements Converter<Status, String> {
-        INSTANCE;
-
-        @Override
-        public String convert(Status source) {
-            return source.name();
-        }
-    }
 }
