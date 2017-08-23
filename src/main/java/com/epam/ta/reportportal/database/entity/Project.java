@@ -332,6 +332,7 @@ public class Project implements Serializable {
     public static class UserConfig implements Serializable {
 
         private static final long serialVersionUID = 1L;
+        @Indexed
         private String login;
         private ProjectRole proposedRole;
         private ProjectRole projectRole;

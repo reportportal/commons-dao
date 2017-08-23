@@ -75,7 +75,7 @@ public class CacheConfiguration {
 
 	public static final String USERS_CACHE = "usersCache";
 
-	public static final String ASSIGNED_USERS_CACHE = "assignedUsersCache";
+//	public static final String ASSIGNED_USERS_CACHE = "assignedUsersCache";
 
 	public static final String EXTERNAL_SYSTEM_TICKET_CACHE = "extSystemTicketCache";
 	public static final String EXTERNAL_SYSTEM_TICKET_CACHE_KEY = "#system.url + #system.project + #id";
@@ -99,12 +99,12 @@ public class CacheConfiguration {
 				put(JIRA_PROJECT_CACHE, projectCacheExpiration * 60 * 60 * 24);
 				put(USERS_CACHE, userCacheExpiration * 60);
 				put(PROJECT_INFO_CACHE, projectCacheSize * 60);
-				put(ASSIGNED_USERS_CACHE, userCacheExpiration * 60);
+//				put(ASSIGNED_USERS_CACHE, userCacheExpiration * 60);
 			}
 		});
 		redisCacheManager.setDefaultExpiration(60 * 60);
 		redisCacheManager.setCacheNames(
-				asList(EXTERNAL_SYSTEM_TICKET_CACHE, JIRA_PROJECT_CACHE, USERS_CACHE, PROJECT_INFO_CACHE, ASSIGNED_USERS_CACHE));
+				asList(EXTERNAL_SYSTEM_TICKET_CACHE, JIRA_PROJECT_CACHE, USERS_CACHE, PROJECT_INFO_CACHE));
 		return redisCacheManager;
 	}
 

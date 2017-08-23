@@ -21,9 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.entity.Project;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -49,23 +47,23 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Strin
 	@Query(value = "{}", fields = KEEP_CONFIGURATION_FIELDS)
 	Stream<Project> streamAllIdsAndConfiguration();
 
-	@CacheEvict(allEntries = true,  value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
+//	@CacheEvict(allEntries = true,  value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
 	@Override
 	void delete(Project entity);
 
-	@CacheEvict(allEntries = true, value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
+//	@CacheEvict(allEntries = true, value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
 	@Override
 	void deleteAll();
 
-	@CacheEvict(allEntries = true, value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
+//	@CacheEvict(allEntries = true, value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
 	@Override
 	void delete(Iterable<? extends Project> arg0);
 
-	@CacheEvict(allEntries = true,  value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
+//	@CacheEvict(allEntries = true,  value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
 	@Override
 	void delete(String id);
 
 	@Override
-	@CacheEvict(allEntries = true, value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
+//	@CacheEvict(allEntries = true, value = CacheConfiguration.ASSIGNED_USERS_CACHE, beforeInvocation = true)
 	Project save(Project entity);
 }
