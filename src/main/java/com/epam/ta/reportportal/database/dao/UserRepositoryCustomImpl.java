@@ -90,7 +90,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public String replaceUserPhoto(String login, BinaryData binaryData) {
 		Query q = query(where(User.LOGIN).is(login));
-		q.fields().include(User.LOGIN).include(User.PHOTO_ID);
+		q.fields().include(User.LOGIN).include("_id").include(User.PHOTO_ID);
 
 		User user = mongoOperations.findOne(q, User.class);
 		if (null == user) {
