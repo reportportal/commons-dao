@@ -21,11 +21,9 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Project.UserConfig;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,7 @@ public interface ProjectRepositoryCustom {
 	 * @param login   User name
 	 * @return {@link Boolean#TRUE} if user is assigned to provided project
 	 */
-	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
+//	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
 	boolean isAssignedToProject(String project, String login);
 
 	/**
