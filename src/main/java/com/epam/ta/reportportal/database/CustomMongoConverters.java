@@ -21,12 +21,11 @@
  
 package com.epam.ta.reportportal.database;
 
-import org.springframework.core.convert.converter.Converter;
-
 import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.springframework.core.convert.converter.Converter;
 
 public class CustomMongoConverters {
 
