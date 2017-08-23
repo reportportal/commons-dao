@@ -21,12 +21,12 @@
  
 package com.epam.ta.reportportal.database;
 
-import org.springframework.core.convert.converter.Converter;
-
 import com.epam.ta.reportportal.database.entity.LogLevel;
+import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.springframework.core.convert.converter.Converter;
 
 public class CustomMongoConverters {
 
@@ -82,4 +82,13 @@ public class CustomMongoConverters {
 
 		}
 	}
+
+	public enum StatusToStringConverter implements Converter<Status, String> {
+        INSTANCE;
+
+        @Override
+        public String convert(Status source) {
+            return source.name();
+        }
+    }
 }
