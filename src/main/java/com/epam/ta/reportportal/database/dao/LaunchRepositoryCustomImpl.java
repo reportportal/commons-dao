@@ -344,7 +344,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : "IN_PROGRESS"}}},
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"},
      *        { $sort : { number : -1 }}
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
@@ -366,7 +366,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : "IN_PROGRESS"}} },
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName" },
      *        { $sort : { number : -1 }}
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
@@ -376,7 +376,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     */
     private List<AggregationOperation> latestLaunchesAggregationOperationsList(String project, Queryable filter) {
         return Lists.newArrayList(match(buildCriteriaFromFilter(filter)
-						.and(PROJECT_ID_REFERENCE).is(project).and(STATUS).ne(IN_PROGRESS.name())),
+						.and(PROJECT_ID_REFERENCE).is(project)),
                 sort(Sort.Direction.DESC, NUMBER),
                 group("$name").first(ROOT).as(ORIGINAL),
                 replaceRoot(ORIGINAL)
