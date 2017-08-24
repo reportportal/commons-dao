@@ -43,9 +43,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.convert.QueryMapper;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
@@ -53,10 +53,10 @@ import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static com.google.common.collect.Iterables.toArray;
 import static java.util.stream.Collectors.toList;
 import static org.bson.types.ObjectId.isValid;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -91,7 +91,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     @Autowired
 	private MongoTemplate mongoTemplate;
 
-	@Override
+    @Override
 	public List<Launch> findLaunchIdsByProject(Project project) {
 		Query query = query(where(PROJECT_ID_REFERENCE).is(isValid(project.getId()) ? new ObjectId(project.getId()) : project.getId()));
 		query.fields().include(ID_REFERENCE);
@@ -332,7 +332,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         Long total = 0L;
         final String countKey = "count";
         List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(filter);
-        operations.add(count().as(countKey));
+        operations.add(Aggregation.count().as(countKey));
         Map result = mongoTemplate.aggregate(newAggregation(operations), Launch.class, Map.class)
                 .getUniqueMappedResult();
         if (null != result && result.containsKey(countKey)) {
@@ -374,21 +374,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
      *     ])
     */
     private List<AggregationOperation> latestLaunchesAggregationOperationsList(Queryable filter) {
-        return Lists.newArrayList(buildCriteriaFromFilter(filter),
+        return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
                 sort(Sort.Direction.DESC, NUMBER),
                 group("$name").first(ROOT).as(ORIGINAL),
                 replaceRoot(ORIGINAL)
         );
     }
 
-    private MatchOperation buildCriteriaFromFilter(Queryable filter) {
-        return new MatchOperation(new Criteria().andOperator(toArray(filter.toCriteria(), Criteria.class))) {
-            @Override
-            public DBObject toDBObject(AggregationOperationContext context) {
-                return super.toDBObject(new TypeBasedAggregationOperationContext(Launch.class,
-                        mongoTemplate.getConverter().getMappingContext(), new QueryMapper(mongoTemplate.getConverter())));
-            }
-        };
-    }
 
 }
