@@ -34,7 +34,6 @@ import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
-import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -44,9 +43,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -58,6 +56,7 @@ import java.util.regex.Pattern;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
+import static com.google.common.collect.Iterables.toArray;
 import static java.util.stream.Collectors.toList;
 import static org.bson.types.ObjectId.isValid;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -308,9 +307,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
     @Override
-    public void findLatestWithCallback(String project, Queryable filter, Sort sort,  List<String> contentFields,
+    public void findLatestWithCallback(Queryable filter, Sort sort,  List<String> contentFields,
                                        long limit, DocumentCallbackHandler callbackHandler) {
-        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
+        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(filter);
         operations.add(sort(sort));
         operations.add(limit(limit));
         DBObject results = mongoTemplate.aggregate(newAggregation(operations),
@@ -320,19 +319,19 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     }
 
     @Override
-    public Page<Launch> findLatestLaunches(String project, Queryable filter, Pageable pageable) {
-        Long totalCount = countLatestLaunches(project, filter);
+    public Page<Launch> findLatestLaunches(Queryable filter, Pageable pageable) {
+        Long totalCount = countLatestLaunches(filter);
         List<Launch> launches = Collections.emptyList();
         if (totalCount > 0) {
-            launches = findLatest(project, filter, pageable);
+            launches = findLatest(filter, pageable);
         }
         return new PageImpl<>(launches, pageable, totalCount);
     }
 
-    private Long countLatestLaunches(String project, Queryable filter) {
+    private Long countLatestLaunches(Queryable filter) {
         Long total = 0L;
         final String countKey = "count";
-        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
+        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(filter);
         operations.add(count().as(countKey));
         Map result = mongoTemplate.aggregate(newAggregation(operations), Launch.class, Map.class)
                 .getUniqueMappedResult();
@@ -344,7 +343,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : "IN_PROGRESS"}}},
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName"},
      *        { $sort : { number : -1 }}
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
@@ -355,8 +354,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
      *        { $limit : limit }
      *     ])
     */
-    private List<Launch> findLatest(String project, Queryable filter, Pageable pageable) {
-        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(project, filter);
+    private List<Launch> findLatest(Queryable filter, Pageable pageable) {
+        List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(filter);
         operations.add(sort(pageable.getSort()));
         operations.add(skip((long) pageable.getPageNumber() * pageable.getPageSize()));
         operations.add(limit(pageable.getPageSize()));
@@ -366,7 +365,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
     /*
      *     db.launch.aggregate([
-     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName", "status" : {$ne : "IN_PROGRESS"}} },
+     *        { $match : { "$and" : [ { <filter query> } ], "projectRef" : "projectName" },
      *        { $sort : { number : -1 }}
      *        { $group : { "_id" : "$name", "original" : {
      *              $first : "$$ROOT"
@@ -374,22 +373,22 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
      *        { $replaceRoot : { newRoot : "$original" }
      *     ])
     */
-    private List<AggregationOperation> latestLaunchesAggregationOperationsList(String project, Queryable filter) {
-        return Lists.newArrayList(match(buildCriteriaFromFilter(filter)
-						.and(PROJECT_ID_REFERENCE).is(project).and(STATUS).ne(IN_PROGRESS.name())),
+    private List<AggregationOperation> latestLaunchesAggregationOperationsList(Queryable filter) {
+        return Lists.newArrayList(buildCriteriaFromFilter(filter),
                 sort(Sort.Direction.DESC, NUMBER),
                 group("$name").first(ROOT).as(ORIGINAL),
                 replaceRoot(ORIGINAL)
         );
     }
 
-    private Criteria buildCriteriaFromFilter(Queryable filter) {
-        List<Criteria> criteria = filter.toCriteria();
-        if (!CollectionUtils.isEmpty(criteria)) {
-            return new Criteria().andOperator(criteria.toArray(new Criteria[criteria.size()]));
-        }
-        return new Criteria();
+    private MatchOperation buildCriteriaFromFilter(Queryable filter) {
+        return new MatchOperation(new Criteria().andOperator(toArray(filter.toCriteria(), Criteria.class))) {
+            @Override
+            public DBObject toDBObject(AggregationOperationContext context) {
+                return super.toDBObject(new TypeBasedAggregationOperationContext(Launch.class,
+                        mongoTemplate.getConverter().getMappingContext(), new QueryMapper(mongoTemplate.getConverter())));
+            }
+        };
     }
-
 
 }
