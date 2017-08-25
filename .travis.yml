@@ -1,6 +1,6 @@
 language: java
 
-script: gradle build
+script: gradle build --stacktrace
 
 jdk:
   - oraclejdk8

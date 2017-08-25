@@ -20,7 +20,6 @@
  */
 package com.epam.ta.reportportal.database;
 
-import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.ws.model.widget.ChartObject;
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.BasicDBList;
@@ -37,7 +36,7 @@ import java.util.Map;
 /**
  * @author Pavel Bortnik
  */
-public class ActivityDocumentHandlerTest extends BaseDaoTest {
+public class ActivityDocumentHandlerTest {
     @Test
     public void processDocument() throws Exception {
         ActivityDocumentHandler documentHandler = new ActivityDocumentHandler();
@@ -59,7 +58,7 @@ public class ActivityDocumentHandlerTest extends BaseDaoTest {
                 .put("last_modified", "1502165103000")
                 .put("projectRef", "default_personal")
                 .put("objectType", "project")
-                .put("objectName", "default_personal")
+                .put("name", "default_personal")
                 .build();
         chartObject.setValues(results);
         return chartObject;
@@ -74,7 +73,7 @@ public class ActivityDocumentHandlerTest extends BaseDaoTest {
         dbObject.put("objectType" , "project");
         dbObject.put("actionType" , "update_project");
         dbObject.put("projectRef" , "default_personal");
-        dbObject.put("objectName", "default_personal");
+        dbObject.put("name", "default_personal");
         BasicDBList history = new BasicDBList();
         Map innerHistoryObject = ImmutableMap.<String, String>builder()
                 .put("field", "keepScreenshots")
