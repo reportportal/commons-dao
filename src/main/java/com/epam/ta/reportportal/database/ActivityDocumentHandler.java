@@ -28,7 +28,6 @@ import com.mongodb.MongoException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.epam.ta.reportportal.database.entity.item.Activity.FieldValues.*;
@@ -89,10 +88,5 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
             chartObjectValues.put(key + "$" + NEW_VALUE, historyObject.get(NEW_VALUE));
         });
 		return chartObjectValues;
-	}
-
-	private String getDbRepresentation(Field field) {
-		return field.isAnnotationPresent(org.springframework.data.mongodb.core.mapping.Field.class)
-				? field.getAnnotation(org.springframework.data.mongodb.core.mapping.Field.class).value() : field.getName();
 	}
 }
