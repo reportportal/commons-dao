@@ -29,8 +29,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
@@ -68,8 +70,7 @@ public class ActivityDocumentHandlerTest {
         DBObject dbObject = new BasicDBObject();
         dbObject.put("_id" , "599feab9f2a28708ed6afdc3");
         dbObject.put("userRef" , "default");
-        dbObject.put("last_modified" , Date.from(LocalDateTime.parse("2017-08-08T07:05:03")
-                .atZone(ZoneId.systemDefault()).toInstant()));
+        dbObject.put("last_modified" , Date.from(Instant.ofEpochMilli(1502165103000L)));
         dbObject.put("objectType" , "project");
         dbObject.put("actionType" , "update_project");
         dbObject.put("projectRef" , "default_personal");
