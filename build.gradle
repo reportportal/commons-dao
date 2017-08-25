@@ -87,4 +87,11 @@ jacocoTestReport {
     }
 }
 
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "short"
+    }
+}
+
 build.dependsOn jacocoTestReport
