@@ -59,6 +59,7 @@ public class ActivityDocumentHandlerTest extends BaseDaoTest {
                 .put("last_modified", "1502165103000")
                 .put("projectRef", "default_personal")
                 .put("objectType", "project")
+                .put("objectName", "default_personal")
                 .build();
         chartObject.setValues(results);
         return chartObject;
@@ -73,6 +74,7 @@ public class ActivityDocumentHandlerTest extends BaseDaoTest {
         dbObject.put("objectType" , "project");
         dbObject.put("actionType" , "update_project");
         dbObject.put("projectRef" , "default_personal");
+        dbObject.put("objectName", "default_personal");
         BasicDBList history = new BasicDBList();
         Map innerHistoryObject = ImmutableMap.<String, String>builder()
                 .put("field", "keepScreenshots")

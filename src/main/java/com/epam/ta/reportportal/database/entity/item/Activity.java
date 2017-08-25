@@ -89,8 +89,13 @@ public class Activity implements Serializable, Modifiable {
 		public static final String OLD_VALUE = "oldValue";
 		public static final String NEW_VALUE = "newValue";
 
+		@FilterCriteria("field")
 		private String field;
+
+		@FilterCriteria(OLD_VALUE)
 		private String oldValue;
+
+		@FilterCriteria(NEW_VALUE)
 		private String newValue;
 
 		public static FieldValues newOne() {
