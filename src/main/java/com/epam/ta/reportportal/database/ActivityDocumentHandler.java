@@ -21,24 +21,17 @@
 
 package com.epam.ta.reportportal.database;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.mongodb.core.DocumentCallbackHandler;
-
-import com.epam.ta.reportportal.commons.accessible.Accessible;
-import com.epam.ta.reportportal.commons.accessible.AccessibleField;
 import com.epam.ta.reportportal.database.entity.Modifiable;
-import com.epam.ta.reportportal.database.entity.item.Activity;
 import com.epam.ta.reportportal.ws.model.widget.ChartObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.mongodb.core.DocumentCallbackHandler;
+
+import java.lang.reflect.Field;
+import java.util.*;
+
+import static com.epam.ta.reportportal.database.entity.item.Activity.FieldValues.*;
 
 /**
  * @author Dzmitry_Kavalets
@@ -61,7 +54,7 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
 		for (String key : keySet) {
 			switch (key) {
 			case HISTORY:
-				Map<String, String> historyProps = transformHistoryMap(dbObject, "history");
+				Map<String, String> historyProps = transformHistory(dbObject, "history");
 				objectValues.putAll(historyProps);
 				break;
 			case Modifiable.LAST_MODIFIED:
@@ -83,26 +76,18 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
 		return result;
 	}
 
-	private Map<String, String> transformHistoryMap(DBObject dbObject, String dbField) {
+	private Map<String, String> transformHistory(DBObject dbObject, String dbField) {
 		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> tempHistory = (Map<String, Map<String, String>>) dbObject.get(dbField);
-		if (null == tempHistory)
-			return null;
-
+        List<Map<String, String>> tempHistory = (List<Map<String, String>>) dbObject.get(dbField);
+		if (null == tempHistory) {
+            return null;
+        }
 		Map<String, String> chartObjectValues = new HashMap<>();
-
-		for (Map.Entry<String, Map<String, String>> entry : tempHistory.entrySet()) {
-			Activity.FieldValues fieldValues = new Activity.FieldValues();
-			for (Field field : fieldValues.getClass().getDeclaredFields()) {
-				String innerDbField = getDbRepresentation(field);
-				AccessibleField innerField = Accessible.on(fieldValues).field(field);
-				Map<String, String> values = entry.getValue();
-				if ((values != null) && (null != values.get(innerDbField)))
-					innerField.setValue(values.get(innerDbField));
-			}
-			chartObjectValues.put(entry.getKey() + "$" + Activity.FieldValues.OLD_VALUE, fieldValues.getOldValue());
-			chartObjectValues.put(entry.getKey() + "$" + Activity.FieldValues.NEW_VALUE, fieldValues.getNewValue());
-		}
+        tempHistory.forEach(historyObject -> {
+            String key = historyObject.get(FIELD);
+            chartObjectValues.put(key + "$" + OLD_VALUE, historyObject.get(OLD_VALUE));
+            chartObjectValues.put(key + "$" + NEW_VALUE, historyObject.get(NEW_VALUE));
+        });
 		return chartObjectValues;
 	}
 

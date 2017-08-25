@@ -83,6 +83,7 @@ public class Activity implements Serializable, Modifiable {
 		 * Generated SVUID
 		 */
 		private static final long serialVersionUID = -5372980278266685691L;
+		public static final String FIELD = "field";
 		public static final String OLD_VALUE = "oldValue";
 		public static final String NEW_VALUE = "newValue";
 
