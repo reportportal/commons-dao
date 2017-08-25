@@ -32,7 +32,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import org.bson.types.ObjectId;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -43,12 +42,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
@@ -61,6 +61,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
 import static com.google.common.collect.Iterables.toArray;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -248,16 +249,8 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
 
     @Override
     public long getPageNumber(String entityId, Queryable filterable, Pageable pageable) {
-        Class<T> javaType = this.getEntityInformation().getJavaType();
         ImmutableList.Builder<AggregationOperation> pipelineBuilder = ImmutableList.<AggregationOperation>builder()
-                .add(
-                        new MatchOperation(new Criteria().andOperator(toArray(filterable.toCriteria(), Criteria.class))) {
-                            @Override
-                            public DBObject toDBObject(AggregationOperationContext context) {
-                                return  super.toDBObject(new TypeBasedAggregationOperationContext(javaType, mongoOperations.getConverter().getMappingContext(), queryMapper));
-                            }
-                        }
-                );
+                .add(matchOperationFromFilter(filterable, mongoOperations, this.getEntityInformation().getJavaType()));
 
         if (null != pageable.getSort()){
             pipelineBuilder.add(

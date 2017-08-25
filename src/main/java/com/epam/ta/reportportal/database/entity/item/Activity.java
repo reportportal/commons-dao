@@ -27,6 +27,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -69,6 +70,7 @@ public class Activity implements Serializable, Modifiable {
 	@FilterCriteria(ACTION_TYPE)
 	private ActivityEventType actionType;
 
+    @Indexed
 	@FilterCriteria(PROJECT_REF)
 	private String projectRef;
 
@@ -83,11 +85,17 @@ public class Activity implements Serializable, Modifiable {
 		 * Generated SVUID
 		 */
 		private static final long serialVersionUID = -5372980278266685691L;
+		public static final String FIELD = "field";
 		public static final String OLD_VALUE = "oldValue";
 		public static final String NEW_VALUE = "newValue";
 
+		@FilterCriteria("field")
 		private String field;
+
+		@FilterCriteria(OLD_VALUE)
 		private String oldValue;
+
+		@FilterCriteria(NEW_VALUE)
 		private String newValue;
 
 		public static FieldValues newOne() {
