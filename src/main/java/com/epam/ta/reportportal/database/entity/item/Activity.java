@@ -80,7 +80,6 @@ public class Activity implements Serializable, Modifiable {
 	@FilterCriteria("name")
 	private String name;
 
-	@Document
 	public static class FieldValues implements Serializable {
 		/**
 		 * Generated SVUID
