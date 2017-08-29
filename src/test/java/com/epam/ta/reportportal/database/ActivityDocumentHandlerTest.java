@@ -20,6 +20,9 @@
  */
 package com.epam.ta.reportportal.database;
 
+import com.epam.ta.reportportal.database.entity.item.Activity;
+import com.epam.ta.reportportal.database.search.CriteriaMap;
+import com.epam.ta.reportportal.database.search.CriteriaMapFactory;
 import com.epam.ta.reportportal.ws.model.widget.ChartObject;
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.BasicDBList;
@@ -41,6 +44,9 @@ import java.util.Map;
 public class ActivityDocumentHandlerTest {
     @Test
     public void processDocument() throws Exception {
+        final CriteriaMap<Activity> activity = CriteriaMapFactory.DEFAULT_INSTANCE_SUPPLIER.get()
+                .getCriteriaMap(Activity.class);
+        System.out.println(activity);
         ActivityDocumentHandler documentHandler = new ActivityDocumentHandler();
         documentHandler.processDocument(dbObject());
         ChartObject result = documentHandler.getResult().get(0);
