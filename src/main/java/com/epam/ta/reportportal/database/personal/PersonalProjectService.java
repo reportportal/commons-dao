@@ -36,6 +36,8 @@ import java.sql.Date;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * Generates Personal project for provided user
  *
@@ -89,7 +91,7 @@ public final class PersonalProjectService {
 		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
 		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
 
-		project.setAddInfo("Personal project of " + user.getFullName());
+		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
 		project.setConfiguration(defaultConfiguration());
 
 		/* Default email configuration */
