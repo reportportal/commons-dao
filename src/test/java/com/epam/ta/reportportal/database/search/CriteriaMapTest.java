@@ -21,15 +21,15 @@
 
 package com.epam.ta.reportportal.database.search;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.item.Activity;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.mongodb.DBObject;
 import org.junit.Test;
-
-import com.epam.ta.reportportal.database.entity.Project;
 import org.springframework.data.mongodb.core.query.Query;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CriteriaMapTest {
 
@@ -43,6 +43,12 @@ public class CriteriaMapTest {
 		assertThat(projectCriteriaMap.getCriteriaHolder("creationDate").getQueryCriteria()).isEqualTo("creationDate");
 	}
 
+	@Test
+	public void collectionCriteriaTest() {
+		CriteriaMap<Activity> activityCriteriaMap = new CriteriaMap<>(Activity.class);
+		assertThat(activityCriteriaMap.getCriteriaHolder("history$oldValue").getQueryCriteria()).isEqualTo("history.oldValue");
+		assertThat(activityCriteriaMap.getCriteriaHolder("history$newValue").getQueryCriteria()).isEqualTo("history.newValue");
+	}
 
 	@Test
 	public void dynamicCriteriaTest() {
