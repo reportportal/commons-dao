@@ -447,15 +447,22 @@ public enum Condition {
 		return marker.startsWith(NEGATIVE_MARKER);
 	}
 
-
 	/**
 	 * Makes filter marker negative
 	 *
-	 * @param marker Marker to check
+	 * @param negative Whether condition is negative
+	 * @param marker   Marker to check
 	 * @return TRUE of negative
 	 */
-	public static String makeNegative(String marker) {
-		return marker.startsWith(NEGATIVE_MARKER) ? marker : NEGATIVE_MARKER.concat(marker);
+	public static String makeNegative(boolean negative, String marker) {
+		String result;
+		if (negative) {
+			result = marker.startsWith(NEGATIVE_MARKER) ? marker : NEGATIVE_MARKER.concat(marker);
+		} else {
+			result = marker.startsWith(NEGATIVE_MARKER) ? marker.substring(1, marker.length()) : marker;
+		}
+		return result;
+
 	}
 
 	/**
