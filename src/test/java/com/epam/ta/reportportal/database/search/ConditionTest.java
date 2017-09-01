@@ -45,4 +45,10 @@ public class ConditionTest {
 		Assert.assertThat("Negative check error", Condition.isNegative("!cnt"), equalTo(true));
 	}
 
+	@Test
+	public void testMakeNegative(){
+		Assert.assertThat("Make negative filter error", Condition.makeNegative("cnt"), equalTo("!cnt"));
+		Assert.assertThat("Make negative of already negative filter error", Condition.makeNegative("!cnt"), equalTo("!cnt"));
+	}
+
 }

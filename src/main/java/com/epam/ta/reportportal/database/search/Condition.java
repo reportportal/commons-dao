@@ -388,6 +388,7 @@ public enum Condition {
 
 	public static final String VALUES_SEPARATOR = ",";
 	public static final String TIMESTAMP_SEPARATOR = ";";
+	public static final String NEGATIVE_MARKER = "!";
 
 	private String marker;
 
@@ -443,7 +444,18 @@ public enum Condition {
 	 * @return TRUE of negative
 	 */
 	public static boolean isNegative(String marker) {
-		return marker.startsWith("!");
+		return marker.startsWith(NEGATIVE_MARKER);
+	}
+
+
+	/**
+	 * Makes filter marker negative
+	 *
+	 * @param marker Marker to check
+	 * @return TRUE of negative
+	 */
+	public static String makeNegative(String marker) {
+		return marker.startsWith(NEGATIVE_MARKER) ? marker : NEGATIVE_MARKER.concat(marker);
 	}
 
 	/**
