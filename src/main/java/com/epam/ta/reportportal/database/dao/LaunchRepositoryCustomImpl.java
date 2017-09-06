@@ -366,9 +366,10 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	/**
 	 * Creates a group operation by specified field with sum of contentFields values
-	 * @param field				Grouping field
-	 * @param contentFields		Fields for summing
-	 * @return					Group operation
+	 *
+	 * @param field         Grouping field
+	 * @param contentFields Fields for summing
+	 * @return Group operation
 	 */
 	private GroupOperation groupByFieldWithStatisticsSumming(String field, List<String> contentFields) {
 		GroupOperation groupOperation = Aggregation.group(field);
