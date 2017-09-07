@@ -374,7 +374,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	private GroupOperation groupByFieldWithStatisticsSumming(String field, List<String> contentFields) {
 		GroupOperation groupOperation = Aggregation.group(field);
 		for (String contentField : contentFields) {
-			groupOperation = groupOperation.sum(contentField).as(contentField.replace(".", "$"));
+			groupOperation = groupOperation.sum(contentField).as(contentField.substring(contentField.lastIndexOf(".") + 1));
 		}
 		return groupOperation;
 	}
