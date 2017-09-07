@@ -43,7 +43,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Whether launch contains items
-	 * 
+	 *
 	 * @param launch
 	 * @return
 	 */
@@ -51,7 +51,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Whether launch contains items with provided state
-	 * 
+	 *
 	 * @param launch
 	 * @return
 	 */
@@ -59,7 +59,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Finds launches for specified project
-	 * 
+	 *
 	 * @param project
 	 * @return
 	 */
@@ -67,7 +67,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Finds launches modified later than period
-	 * 
+	 *
 	 * @param period
 	 * @param status
 	 * @return
@@ -76,7 +76,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Finds launches modified later than period
-	 * 
+	 *
 	 * @param period
 	 * @param status
 	 * @param project
@@ -87,7 +87,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	/**
 	 * Find launches by filter load only id and number fields. Load specified
 	 * quantity of launches.
-	 * 
+	 *
 	 * @param filter
 	 * @param sort
 	 * @param quantity
@@ -97,7 +97,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Find launches by filter load only id field.
-	 * 
+	 *
 	 * @param filter
 	 * @return
 	 */
@@ -105,7 +105,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Find launches by filter only id field.
-	 * 
+	 *
 	 * @param filter
 	 * @param limit
 	 * @return
@@ -114,7 +114,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Get list of distinct values from MongoDB collection
-	 * 
+	 *
 	 * @param projectName
 	 * @param containsValue
 	 * @param distinctBy
@@ -124,7 +124,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Find launches by user ref
-	 * 
+	 *
 	 * @param userRef
 	 * @return
 	 */
@@ -132,7 +132,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Update user ref in launches
-	 * 
+	 *
 	 * @param oldOwner
 	 * @param newOwner
 	 */
@@ -140,7 +140,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Get all unique fields for launches in specified mode
-	 * 
+	 *
 	 * @param projectName
 	 * @param containsValue
 	 * @param distinctBy
@@ -151,7 +151,6 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	/**
 	 * Get grouped launches per owner. 'IN_PROGRESS' launches are excluded
 	 *
-	 * 
 	 * @param projectName
 	 * @param mode
 	 * @return
@@ -161,8 +160,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	/**
 	 * Find launches by specified projectId, mode and from date. 'IN_PROGRESS'
 	 * launches are excluded
-	 * 
-	 * 
+	 *
 	 * @param projectId
 	 * @param from
 	 * @param mode
@@ -172,7 +170,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Find launches quantity. 'IN_PROGRESS' launches are excluded
-	 * 
+	 *
 	 * @param projectId
 	 * @param mode
 	 * @param from
@@ -180,46 +178,58 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 */
 	Long findLaunchesQuantity(String projectId, String mode, Date from);
 
-    /**
-     * Find latest unique launches by filter
-     *
-     * @param filter
-     * @param pageable
-     * @return
-     */
+	/**
+	 * Find latest unique launches by filter
+	 *
+	 * @param filter
+	 * @param pageable
+	 * @return
+	 */
 
-    Page<Launch> findLatestLaunches(Queryable filter, Pageable pageable);
+	Page<Launch> findLatestLaunches(Queryable filter, Pageable pageable);
 
+	/**
+	 * Load chart data according specified input parameters grouped by containing
+	 * tag with regex. Result will be stored in {@link DocumentCallbackHandler} object
+	 *
+	 * @param filter			Filter
+	 * @param contentFields		Content fields for creating results
+	 * @param limit				Results limit
+	 * @param tagPrefix			Tag prefix for grouping by
+	 * @param callbackHandler	Results handler
+	 */
+	void cumulativeStatisticsGroupedByTag(Queryable filter, List<String> contentFields, long limit, String tagPrefix,
+			DocumentCallbackHandler callbackHandler);
 
-    /**
-     * Load chart data according specified input parameters and only for latest launches.
-     * Result should be returned from {@link DocumentCallbackHandler} object
-     *
-     * @param filter
-     * @param sort
-     * @param contentFields
-     * @param limit
-     * @param callbackHandler
-     */
-    void findLatestWithCallback(Queryable filter, Sort sort,  List<String> contentFields,
-          long limit, DocumentCallbackHandler callbackHandler);
+	/**
+	 * Load chart data according specified input parameters and only for latest launches.
+	 * Result should be returned from {@link DocumentCallbackHandler} object
+	 *
+	 * @param filter
+	 * @param sort
+	 * @param contentFields
+	 * @param limit
+	 * @param callbackHandler
+	 */
+	void findLatestWithCallback(Queryable filter, Sort sort, List<String> contentFields, long limit,
+			DocumentCallbackHandler callbackHandler);
 
-
-    /**
+	/**
 	 * Find last launch. 'IN_PROGRESS' launch is excluded
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	Optional<Launch> findLastLaunch(String projectId, String mode);
 
-    /**
-     * Find latest launch. 'IN_PROGRESS' launch is excluded
-     * @param projectName name
-     * @param launchName launch
-     * @param mode mode
-     * @return launch with latest number
-     */
+	/**
+	 * Find latest launch. 'IN_PROGRESS' launch is excluded
+	 *
+	 * @param projectName name
+	 * @param launchName  launch
+	 * @param mode        mode
+	 * @return launch with latest number
+	 */
 	Optional<Launch> findLatestLaunch(String projectName, String launchName, String mode);
 
 	/**
