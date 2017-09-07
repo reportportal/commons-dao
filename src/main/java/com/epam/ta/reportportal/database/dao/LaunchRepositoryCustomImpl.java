@@ -356,7 +356,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				unwind("$tags"),
 				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
 				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				sort(Sort.Direction.ASC, "_id"), limit(limit)
+				sort(Sort.Direction.DESC, "_id"), limit(limit)
 		);
 		//@formatter:on
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
