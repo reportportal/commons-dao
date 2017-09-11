@@ -24,7 +24,7 @@ import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Just a wrapper for User and his Project roles
@@ -34,7 +34,7 @@ import java.util.List;
 public class UserRoleDetails implements Serializable {
 
 	private User user;
-	private List<ProjectDetails> projects;
+	private Map<String, ProjectRole> projects;
 
 	public User getUser() {
 		return user;
@@ -44,11 +44,11 @@ public class UserRoleDetails implements Serializable {
 		this.user = user;
 	}
 
-	public List<ProjectDetails> getProjects() {
+	public Map<String, ProjectRole> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(List<ProjectDetails> projects) {
+	public void setProjects(Map<String, ProjectRole> projects) {
 		this.projects = projects;
 	}
 
@@ -57,40 +57,4 @@ public class UserRoleDetails implements Serializable {
 		return MoreObjects.toStringHelper(this).add("user", user).add("projects", projects).toString();
 	}
 
-
-	public static class ProjectDetails implements Serializable {
-		private String project;
-		private ProjectRole proposedRole;
-		private ProjectRole projectRole;
-
-		public String getProject() {
-			return project;
-		}
-
-		public void setProject(String project) {
-			this.project = project;
-		}
-
-		public ProjectRole getProposedRole() {
-			return proposedRole;
-		}
-
-		public void setProposedRole(ProjectRole proposedRole) {
-			this.proposedRole = proposedRole;
-		}
-
-		public ProjectRole getProjectRole() {
-			return projectRole;
-		}
-
-		public void setProjectRole(ProjectRole projectRole) {
-			this.projectRole = projectRole;
-		}
-
-		@Override
-		public String toString() {
-			return MoreObjects.toStringHelper(this).add("project", project).add("proposedRole", proposedRole)
-					.add("projectRole", projectRole).toString();
-		}
-	}
 }
