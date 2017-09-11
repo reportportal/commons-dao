@@ -341,7 +341,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 *        { $match : { "$and" : [ { <filter query> } ]}},
 	 *        { $unwind : "$tags"},
 	 *        { $match : {tags : {$regex : "job:.+"}}},
-	 *        { $group : { _id : "$tags", "original" : {$addToSet : "$$ROOT"} }},
+	 *        { $group : { _id : "$tags", "statistics$executionCounter$passed" : { "$sum" : "$statistics.executionCounter.passed"}},
 	 *        { $sort : { _id : 1 }},
 	 *        { $limit : limit }
 	 *     ])
@@ -374,7 +374,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	private GroupOperation groupByFieldWithStatisticsSumming(String field, List<String> contentFields) {
 		GroupOperation groupOperation = Aggregation.group(field);
 		for (String contentField : contentFields) {
-			groupOperation = groupOperation.sum(contentField).as(contentField.substring(contentField.lastIndexOf(".") + 1));
+			groupOperation = groupOperation.sum(contentField).as(contentField.replace('.', '$'));
 		}
 		return groupOperation;
 	}
