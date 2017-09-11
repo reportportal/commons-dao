@@ -194,10 +194,9 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 							match(where("users.login").is(login)),
 							group("users.login")
 									.push(new BasicDBObject
-                   						("id", "$_id").append
+                   						("project", "$_id").append
                    						("proposedRole", "$users.proposedRole")
-										.append("projectRole", "$users.projectRole")
-										.append("login", "$users.login"))
+										.append("projectRole", "$users.projectRole"))
 										.as("projects"),
 							lookup("user", "_id", "_id", "user")
 						);

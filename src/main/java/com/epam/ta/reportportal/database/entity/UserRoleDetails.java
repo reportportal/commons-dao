@@ -34,7 +34,7 @@ import java.util.List;
 public class UserRoleDetails implements Serializable {
 
 	private User user;
-	private List<Project.UserConfig> projects;
+	private List<ProjectDetails> projects;
 
 	public User getUser() {
 		return user;
@@ -44,16 +44,53 @@ public class UserRoleDetails implements Serializable {
 		this.user = user;
 	}
 
-	public List<Project.UserConfig> getProjects() {
+	public List<ProjectDetails> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(List<Project.UserConfig> projects) {
+	public void setProjects(List<ProjectDetails> projects) {
 		this.projects = projects;
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this).add("user", user).add("projects", projects).toString();
+	}
+
+
+	public static class ProjectDetails implements Serializable {
+		private String project;
+		private ProjectRole proposedRole;
+		private ProjectRole projectRole;
+
+		public String getProject() {
+			return project;
+		}
+
+		public void setProject(String project) {
+			this.project = project;
+		}
+
+		public ProjectRole getProposedRole() {
+			return proposedRole;
+		}
+
+		public void setProposedRole(ProjectRole proposedRole) {
+			this.proposedRole = proposedRole;
+		}
+
+		public ProjectRole getProjectRole() {
+			return projectRole;
+		}
+
+		public void setProjectRole(ProjectRole projectRole) {
+			this.projectRole = projectRole;
+		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this).add("project", project).add("proposedRole", proposedRole)
+					.add("projectRole", projectRole).toString();
+		}
 	}
 }
