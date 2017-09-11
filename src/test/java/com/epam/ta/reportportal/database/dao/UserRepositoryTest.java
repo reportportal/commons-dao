@@ -19,12 +19,17 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.BinaryData;
 import com.epam.ta.reportportal.database.DataStorage;
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.ProjectRole;
+import com.epam.ta.reportportal.database.entity.UserRoleDetails;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.entity.user.UserType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -33,16 +38,23 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
+import static java.util.Collections.singletonList;
 
 /**
  * @author Andrei Varabyeu
  */
 public class UserRepositoryTest extends BaseDaoTest {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryTest.class);
+
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Autowired
 	private DataStorage dataStorage;
@@ -95,5 +107,42 @@ public class UserRepositoryTest extends BaseDaoTest {
 		Assert.assertThat("Incorrect search user name query!", users.getTotalElements(), Matchers.equalTo(2L));
 
 	}
+
+
+	/* TEMPORALY DISABLE DUE TO FONGO DOES NOT SUPPORT AGGREGATIONS YET
+	@Test
+	public void testAggregateUserProjects() throws IOException {
+
+		String login = "usernameAggregateTest";
+
+		User user = new User();
+		user.setLogin(login);
+		user.setEmail(user.getLogin() + "@epam.com");
+		user.setType(UserType.INTERNAL);
+		userRepository.save(user);
+
+		Project.UserConfig userConfig = new Project.UserConfig();
+		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
+		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
+		userConfig.setLogin(login);
+
+
+
+		Project p1 = new Project();
+		p1.setName(login + "_project1");
+		p1.setUsers(singletonList(userConfig));
+		projectRepository.save(p1);
+
+		Project p2 = new Project();
+		p2.setName(login + "_project2");
+		p2.setUsers(singletonList(userConfig));
+		projectRepository.save(p2);
+
+		System.out.println(projectRepository.findAll());
+		UserRoleDetails userRoles = userRepository.aggregateUserProjects(login);
+		LOGGER.info(userRoles.toString());
+		//assert user roles
+
+	}*/
 
 }
