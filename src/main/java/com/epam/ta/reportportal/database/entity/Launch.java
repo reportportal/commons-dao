@@ -341,6 +341,13 @@ public class Launch implements Serializable, Interruptable {
 
 		private Long build;
 
+		public Metadata() {
+		}
+
+		public Metadata(Long build) {
+			this.build = build;
+		}
+
 		public Long getBuild() {
 			return build;
 		}
