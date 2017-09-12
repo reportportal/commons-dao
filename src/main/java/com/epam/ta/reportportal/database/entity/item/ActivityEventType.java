@@ -49,7 +49,9 @@ public enum ActivityEventType {
     POST_ISSUE("post_issue"),
     ATTACH_ISSUE("attach_issue"),
     UPDATE_ITEM("update_item"),
-    CREATE_USER("create_user");
+    CREATE_USER("create_user"),
+    START_IMPORT("start_import"),
+    FINISH_IMPORT("finish_import");
 
     private String value;
 
