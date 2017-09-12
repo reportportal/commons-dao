@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.BinaryData;
+import com.epam.ta.reportportal.database.entity.UserRoleDetails;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.entity.user.UserType;
 import org.springframework.data.domain.Page;
@@ -56,7 +57,8 @@ interface UserRepositoryCustom {
 	/**
 	 * Uploads photo for specified login. Doesn't check whether such user present in database.
 	 * Makes sure this is no duplicate photos with the same filename
-	 * @param login Login of user to generate filename
+	 *
+	 * @param login      Login of user to generate filename
 	 * @param binaryData Photo
 	 * @return ID of uploaded binary data
 	 */
@@ -75,7 +77,7 @@ interface UserRepositoryCustom {
 	/**
 	 * Saves provided binary data as user's photo
 	 *
-	 * @param user      User
+	 * @param user       User
 	 * @param binaryData Replacement
 	 * @return ID of new photo
 	 */
@@ -129,4 +131,13 @@ interface UserRepositoryCustom {
 	 * @param date Date
 	 */
 	void updateLastLoginDate(String user, Date date);
+
+	/**
+	 * Aggregates user and his project roles
+	 *
+	 * @param login User name
+	 * @return Object or null
+	 */
+	UserRoleDetails aggregateUserProjects(String login);
+
 }
