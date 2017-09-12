@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.database.entity.project.EntryType;
 import com.epam.ta.reportportal.database.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
+import com.google.common.base.MoreObjects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -383,20 +384,19 @@ public class Project implements Serializable {
             this.login = login;
             return this;
         }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this).add("login", login).add("proposedRole", proposedRole).add("projectRole", projectRole)
+                    .toString();
+        }
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Project{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", customer='").append(customer).append('\'');
-        sb.append(", addInfo='").append(addInfo).append('\'');
-        sb.append(", configuration=").append(configuration);
-        sb.append(", users=").append(users);
-        sb.append(", creationDate=").append(creationDate);
-        sb.append(", metadata=").append(metadata);
-        sb.append('}');
-        return sb.toString();
+        return MoreObjects.toStringHelper(this).add("name", name).add("customer", customer).add("addInfo", addInfo)
+                .add("configuration", configuration).add("users", users).add("creationDate", creationDate).add("metadata", metadata)
+                .toString();
     }
 
     public static class Metadata implements Serializable {

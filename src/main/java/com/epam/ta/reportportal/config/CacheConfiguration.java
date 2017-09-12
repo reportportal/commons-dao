@@ -17,28 +17,28 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.config;
 
-import static java.util.Arrays.asList;
-
-import java.util.HashMap;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Caching configuration
- * 
+ *
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
  */
@@ -48,6 +48,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 @EnableCaching(mode = AdviceMode.PROXY)
 @Profile("!unittest")
 public class CacheConfiguration {
+
+	public static final String USERS_CACHE = "usersCache";
+	public static final String EXTERNAL_SYSTEM_TICKET_CACHE = "extSystemTicketCache";
+	public static final String JIRA_PROJECT_CACHE = "jiraProjectCache";
+	public static final String PROJECT_INFO_CACHE = "projectInfoCache";
+
 
 	@Value("#{new Long(${rp.cache.project.size})}")
 	private long projectCacheSize;
@@ -70,42 +76,49 @@ public class CacheConfiguration {
 	@Value("#{new Long(${rp.cache.project.info})}")
 	private long projectInfoCacheExpiration;
 
-	@Autowired
-	private RedisTemplate redisTemplate;
-
-	public static final String USERS_CACHE = "usersCache";
-
-//	public static final String ASSIGNED_USERS_CACHE = "assignedUsersCache";
-
-	public static final String EXTERNAL_SYSTEM_TICKET_CACHE = "extSystemTicketCache";
-	public static final String EXTERNAL_SYSTEM_TICKET_CACHE_KEY = "#system.url + #system.project + #id";
-
-	public static final String EXTERNAL_SYSTEM_RELATED_TICKET_CACHE = "extSystemRelatedTicketCache";
-
-	public static final String JIRA_PROJECT_CACHE = "jiraProjectCache";
-
-	public static final String PROJECT_INFO_CACHE = "projectInfoCache";
-
 	/**
 	 * Global Cache Manager
 	 */
 	@Bean
 	public CacheManager getGlobalCacheManager() {
 
-		RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
-		redisCacheManager.setExpires(new HashMap<String, Long>() {
-			{
-				put(EXTERNAL_SYSTEM_TICKET_CACHE, ticketCacheSize * 60);
-				put(JIRA_PROJECT_CACHE, projectCacheExpiration * 60 * 60 * 24);
-				put(USERS_CACHE, userCacheExpiration * 60);
-				put(PROJECT_INFO_CACHE, projectCacheSize * 60);
-//				put(ASSIGNED_USERS_CACHE, userCacheExpiration * 60);
-			}
-		});
-		redisCacheManager.setDefaultExpiration(60 * 60);
-		redisCacheManager.setCacheNames(
-				asList(EXTERNAL_SYSTEM_TICKET_CACHE, JIRA_PROJECT_CACHE, USERS_CACHE, PROJECT_INFO_CACHE));
-		return redisCacheManager;
-	}
+		SimpleCacheManager cacheManager = new SimpleCacheManager();
 
+		//@formatter:off
+		CaffeineCache tickets = new CaffeineCache(EXTERNAL_SYSTEM_TICKET_CACHE, Caffeine
+				.newBuilder()
+					.maximumSize(ticketCacheSize)
+					.softValues()
+					.expireAfterAccess(ticketCacheExpiration, TimeUnit.MINUTES)
+				.build());
+		CaffeineCache projects = new CaffeineCache(JIRA_PROJECT_CACHE, Caffeine
+				.newBuilder()
+					.maximumSize(projectCacheSize)
+					.softValues()
+					.expireAfterAccess(projectCacheExpiration, TimeUnit.DAYS)
+				.build());
+		CaffeineCache users = new CaffeineCache(USERS_CACHE, Caffeine
+				.newBuilder()
+					.maximumSize(userCacheSize)
+					.expireAfterWrite(userCacheExpiration, TimeUnit.MINUTES)
+				.build());
+		CaffeineCache projectInfo = new CaffeineCache(PROJECT_INFO_CACHE, Caffeine
+				.newBuilder()
+					.maximumSize(projectCacheSize)
+					.softValues()
+					.expireAfterWrite(projectInfoCacheExpiration, TimeUnit.MINUTES)
+				.build());
+
+
+		cacheManager.setCaches(ImmutableList.<Cache> builder()
+				.add(tickets)
+				.add(projects)
+				.add(users)
+				.add(projectInfo)
+				.build());
+
+		//@formatter:on
+
+		return cacheManager;
+	}
 }

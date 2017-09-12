@@ -55,6 +55,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
@@ -189,15 +190,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<String> findDistinctValues(String projectName, String containsValue, String distinctBy) {
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), unwind(distinctBy),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy),
+		//@formatter:off
+		Aggregation aggregation = newAggregation(
+				match(where(PROJECT_ID_REFERENCE).is(projectName)),
+				unwind(distinctBy),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
+				group(distinctBy),
 				limit(AUTOCOMPLETE_LIMITATION));
+		//@formatter:on
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
-		List<String> tags = new ArrayList<>(result.getMappedResults().size());
-		for (Map<String, String> entry : result.getMappedResults()) {
-			tags.add(entry.get("_id"));
-		}
-		return tags;
+		return result.getMappedResults().stream().map(it -> (String) it.get("_id")).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings({ "rawtypes" })
