@@ -359,7 +359,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.andOperator(Criteria.where("metadata").exists(true))),
 				unwind("$tags"),
 				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
-				groupByFieldWithStatisticsSumming(TAGS, contentFields),
+				groupByFieldWithStatisticsSumming("$metadata.build", contentFields),
 				sort(Sort.Direction.DESC, "_id"),
 				limit(limit)
 		);
