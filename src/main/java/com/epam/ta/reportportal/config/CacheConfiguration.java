@@ -61,17 +61,11 @@ public class CacheConfiguration {
 	@Value("#{new Long(${rp.cache.ticket.size})}")
 	private long ticketCacheSize;
 
-	@Value("#{new Long(${rp.cache.user.size})}")
-	private long userCacheSize;
-
 	@Value("#{new Long(${rp.cache.project.expiration})}")
 	private long projectCacheExpiration;
 
 	@Value("#{new Long(${rp.cache.ticket.expiration})}")
 	private long ticketCacheExpiration;
-
-	@Value("#{new Long(${rp.cache.user.expiration})}")
-	private long userCacheExpiration;
 
 	@Value("#{new Long(${rp.cache.project.info})}")
 	private long projectInfoCacheExpiration;
@@ -97,11 +91,7 @@ public class CacheConfiguration {
 					.softValues()
 					.expireAfterAccess(projectCacheExpiration, TimeUnit.DAYS)
 				.build());
-		CaffeineCache users = new CaffeineCache(USERS_CACHE, Caffeine
-				.newBuilder()
-					.maximumSize(userCacheSize)
-					.expireAfterWrite(userCacheExpiration, TimeUnit.MINUTES)
-				.build());
+
 		CaffeineCache projectInfo = new CaffeineCache(PROJECT_INFO_CACHE, Caffeine
 				.newBuilder()
 					.maximumSize(projectCacheSize)
@@ -113,7 +103,6 @@ public class CacheConfiguration {
 		cacheManager.setCaches(ImmutableList.<Cache> builder()
 				.add(tickets)
 				.add(projects)
-				.add(users)
 				.add(projectInfo)
 				.build());
 
