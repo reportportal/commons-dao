@@ -22,7 +22,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.config.CacheConfiguration;
-import com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation;
+import com.epam.ta.reportportal.database.dao.aggregation.SortOperation;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -57,6 +57,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
@@ -243,8 +244,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<Launch> findLaunchesByProjectId(String projectId, Date from, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId))
-				.addCriteria(where(STATUS).ne(IN_PROGRESS.name()))
+		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS.name()))
 				.addCriteria(where(MODE).is(mode))
 				.addCriteria(where(START_TIME).gt(from))
 				.with(new Sort(Sort.Direction.ASC, START_TIME));
@@ -286,8 +286,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLastLaunch(String projectId, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId))
-				.addCriteria(where(STATUS).ne(IN_PROGRESS))
+		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(STATUS).ne(IN_PROGRESS))
 				.addCriteria(where(MODE).is(mode))
 				.limit(1)
 				.with(new Sort(DESC, START_TIME));
@@ -297,8 +296,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLatestLaunch(String projectName, String launchName, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectName))
-				.addCriteria(where(NAME).is(launchName))
+		Query query = query(where(PROJECT_ID_REFERENCE).is(projectName)).addCriteria(where(NAME).is(launchName))
 				.addCriteria(where(STATUS).ne(Status.IN_PROGRESS))
 				.addCriteria(where(MODE).is(mode))
 				.limit(1)
@@ -309,8 +307,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLastLaunch(String projectId, String launchName, String mode) {
-		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId))
-				.addCriteria(where(NAME).is(launchName))
+		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(NAME).is(launchName))
 				.addCriteria(where(MODE).is(mode))
 				.limit(1)
 				.with(new Sort(DESC, START_TIME));
@@ -381,8 +378,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				unwind("$tags"),
 				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
 				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				AddFieldsOperation.addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
-				sort(DESC, "len").and(DESC, "_id"),
+				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
+				SortOperation.sort("len", DESC),
+				SortOperation.sort("_id", DESC),
 				limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
