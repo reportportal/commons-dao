@@ -17,33 +17,29 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
-import org.springframework.data.mongodb.core.index.IndexDirection;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 
 /**
- * 
  * @author Henadzi_Vrubleuski
- * 
  */
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "projectRef_start_time", def = "{'projectRef': 1, 'start_time': -1}", background = true) })
@@ -64,7 +60,7 @@ public class Launch implements Serializable, Interruptable {
 	private String id;
 
 	@FilterCriteria(PROJECT)
-    @Indexed
+	@Indexed
 	private String projectRef;
 
 	@FilterCriteria(USER)
@@ -96,7 +92,7 @@ public class Launch implements Serializable, Interruptable {
 	private Statistics statistics;
 
 	@FilterCriteria("number")
-    @Indexed
+	@Indexed
 	private Long number;
 
 	@LastModifiedDate
@@ -107,7 +103,10 @@ public class Launch implements Serializable, Interruptable {
 	@FilterCriteria("mode")
 	private Mode mode = Mode.DEFAULT;
 
+	private Metadata metadata;
+
 	private double approximateDuration;
+
 
 	public Launch() {
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
@@ -204,6 +203,14 @@ public class Launch implements Serializable, Interruptable {
 
 	public void setNumber(Long number) {
 		this.number = number;
+	}
+
+	public Metadata getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
 	}
 
 	public Long getNumber() {
@@ -328,5 +335,42 @@ public class Launch implements Serializable, Interruptable {
 		} else if (!userRef.equals(other.userRef))
 			return false;
 		return true;
+	}
+
+	public static class Metadata implements Serializable {
+
+		private Long build;
+
+		public Metadata() {
+		}
+
+		public Metadata(Long build) {
+			this.build = build;
+		}
+
+		public Long getBuild() {
+			return build;
+		}
+
+		public void setBuild(Long build) {
+			this.build = build;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o)
+				return true;
+			if (o == null || getClass() != o.getClass())
+				return false;
+
+			Metadata metadata = (Metadata) o;
+
+			return build != null ? build.equals(metadata.build) : metadata.build == null;
+		}
+
+		@Override
+		public int hashCode() {
+			return build != null ? build.hashCode() : 0;
+		}
 	}
 }

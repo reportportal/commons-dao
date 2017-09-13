@@ -339,26 +339,29 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	/*
-	 *     db.launch.aggregate([
-	 *        { $match : { "$and" : [ { <filter query> } ]}},
-	 *        { $unwind : "$tags"},
-	 *        { $match : {tags : {$regex : "job:.+"}}},
-	 *        { $group : { _id : "$tags", "statistics$executionCounter$passed" : { "$sum" : "$statistics.executionCounter.passed"}},
-	 *        { $sort : { _id : 1 }},
-	 *        { $limit : limit }
-	 *     ])
-	*/
+		db.launch.aggregate([
+			{ $match : { "$and" : [ { projectRef : "default_personal" } ] } },
+			{ $match : { "$and" : [ { tags : { $regex : "run:.+" } },{ metadata : { $exists : true } } ] } },
+			{ $unwind : "$tags"},
+			{ $match : {tags : {$regex : "run:.+"}}},
+			{ $group : { _id : "$metadata.build", "statistics$executionCounter$passed" : { "$sum" : "$statistics.executionCounter.passed"}}},
+			{ $sort : {"_id" : -1 }},
+			{ $limit : 10 }
+		 ])
+      */
 	@Override
 	public void cumulativeStatisticsGroupedByTag(Queryable filter, List<String> contentFields, long limit, String tagPrefix,
 			DocumentCallbackHandler callbackHandler) {
 		//@formatter:off
 		Aggregation aggregation = newAggregation(
 				AggregationUtils.matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
+				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)
+						.andOperator(Criteria.where("metadata").exists(true))),
 				unwind("$tags"),
 				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
-				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				sort(Sort.Direction.DESC, "_id"), limit(limit)
+				groupByFieldWithStatisticsSumming("$metadata.build", contentFields),
+				sort(Sort.Direction.DESC, "_id"),
+				limit(limit)
 		);
 		//@formatter:on
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
