@@ -7,17 +7,17 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
 
 /**
- * Custom sort operations ignoring spring aggregation context
+ * Custom sorting operations ignoring spring aggregation context
  *
  * @author Pavel Bortnik
  */
-public class SortOperation implements AggregationOperation {
+public class SortingOperation implements AggregationOperation {
 
 	private final String field;
 
 	private final Sort.Direction direction;
 
-	private SortOperation(String field, Sort.Direction direction) {
+	private SortingOperation(String field, Sort.Direction direction) {
 		this.field = field;
 		this.direction = direction;
 	}
@@ -25,10 +25,10 @@ public class SortOperation implements AggregationOperation {
 	@Override
 	public DBObject toDBObject(AggregationOperationContext context) {
 		BasicDBObject object = new BasicDBObject(field, direction.isAscending() ? 1 : -1);
-		return new BasicDBObject("$sort", object);
+		return new BasicDBObject("$sorting", object);
 	}
 
-	public static SortOperation sort(String field, Sort.Direction direction) {
-		return new SortOperation(field, direction);
+	public static SortingOperation sorting(String field, Sort.Direction direction) {
+		return new SortingOperation(field, direction);
 	}
 }

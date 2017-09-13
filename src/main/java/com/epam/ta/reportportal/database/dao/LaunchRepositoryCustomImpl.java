@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.config.CacheConfiguration;
-import com.epam.ta.reportportal.database.dao.aggregation.SortOperation;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -59,6 +58,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
+import static com.epam.ta.reportportal.database.dao.aggregation.SortingOperation.sorting;
 import static com.epam.ta.reportportal.database.entity.Status.IN_PROGRESS;
 import static com.epam.ta.reportportal.database.search.ModifiableQueryBuilder.findModifiedLaterThanPeriod;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
@@ -379,8 +379,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
 				groupByFieldWithStatisticsSumming(TAGS, contentFields),
 				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
-				SortOperation.sort("len", DESC),
-				SortOperation.sort("_id", DESC),
+				sorting("len", DESC),
+				sorting("_id", DESC),
 				limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
