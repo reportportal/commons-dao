@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
-import static com.epam.ta.reportportal.config.CacheConfiguration.USERS_CACHE;
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
 import static com.epam.ta.reportportal.database.entity.user.User.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -91,7 +90,6 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return dataStorage.saveData(binaryData, photoFilename);
 	}
 
-	@CacheEvict(key = "#p0", value = USERS_CACHE, beforeInvocation = true)
 	@Override
 	public String replaceUserPhoto(String login, BinaryData binaryData) {
 		Query q = query(where(User.LOGIN).is(login));

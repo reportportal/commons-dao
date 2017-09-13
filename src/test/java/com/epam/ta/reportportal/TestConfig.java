@@ -62,9 +62,6 @@ public class TestConfig {
 	@Value("#{new Long(${rp.cache.ticket.expiration})}")
 	private long ticketCacheExpiration;
 
-	@Value("#{new Long(${rp.cache.user.expiration})}")
-	private long userCacheExpiration;
-
 	@Value("#{new Long(${rp.cache.project.info})}")
 	private long projectInfoCacheExpiration;
 
@@ -87,20 +84,14 @@ public class TestConfig {
 				.softValues().expireAfterAccess(ticketCacheExpiration, TimeUnit.MINUTES).build());
 		GuavaCache projects = new GuavaCache(JIRA_PROJECT_CACHE, CacheBuilder.newBuilder().maximumSize(projectCacheSize).softValues()
 				.expireAfterAccess(projectCacheExpiration, TimeUnit.DAYS).build());
-		GuavaCache users = new GuavaCache(USERS_CACHE,
-				CacheBuilder.newBuilder().maximumSize(userCacheSize).expireAfterWrite(userCacheExpiration, TimeUnit.MINUTES).build());
 		GuavaCache projectInfo = new GuavaCache(PROJECT_INFO_CACHE, CacheBuilder.newBuilder().maximumSize(projectCacheSize).softValues()
 				.expireAfterWrite(projectInfoCacheExpiration, TimeUnit.MINUTES).build());
-//		GuavaCache assignedUsers = new GuavaCache(ASSIGNED_USERS_CACHE, CacheBuilder.newBuilder().maximumSize(userCacheSize).weakKeys()
-//				.expireAfterWrite(userCacheExpiration, TimeUnit.MINUTES).build());
 
 		//@formatter:off
 		cacheManager.setCaches(ImmutableList.<GuavaCache> builder()
 				.add(tickets)
 				.add(projects)
-				.add(users)
 				.add(projectInfo)
-//				.add(assignedUsers)
 				.build());
 		//@formatter:on
 		return cacheManager;
