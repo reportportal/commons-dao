@@ -25,7 +25,7 @@ public class SortingOperation implements AggregationOperation {
 	@Override
 	public DBObject toDBObject(AggregationOperationContext context) {
 		BasicDBObject object = new BasicDBObject(field, direction.isAscending() ? 1 : -1);
-		return new BasicDBObject("$sorting", object);
+		return new BasicDBObject("$sort", object);
 	}
 
 	public static SortingOperation sorting(String field, Sort.Direction direction) {
