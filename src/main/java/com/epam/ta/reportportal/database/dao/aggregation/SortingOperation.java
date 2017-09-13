@@ -13,22 +13,28 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperationCon
  */
 public class SortingOperation implements AggregationOperation {
 
-	private final String field;
+	private final Sort sort;
 
-	private final Sort.Direction direction;
-
-	private SortingOperation(String field, Sort.Direction direction) {
-		this.field = field;
-		this.direction = direction;
+	SortingOperation(Sort sort) {
+		this.sort = sort;
 	}
 
 	@Override
 	public DBObject toDBObject(AggregationOperationContext context) {
-		BasicDBObject object = new BasicDBObject(field, direction.isAscending() ? 1 : -1);
+		BasicDBObject object = new BasicDBObject();
+		sort.forEach(it -> object.put(it.getProperty(), it.isAscending() ? 1 : -1));
 		return new BasicDBObject("$sort", object);
 	}
 
 	public static SortingOperation sorting(String field, Sort.Direction direction) {
-		return new SortingOperation(field, direction);
+		return new SortingOperation(new Sort(direction, field));
+	}
+
+	public SortingOperation and(Sort.Direction direction, String... fields) {
+		return and(new Sort(direction, fields));
+	}
+
+	public SortingOperation and(Sort sort) {
+		return new SortingOperation(this.sort.and(sort));
 	}
 }

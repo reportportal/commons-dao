@@ -378,9 +378,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				unwind("$tags"),
 				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
 				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
-				sorting("len", DESC),
-				sorting("_id", DESC),
+				addFields("len", Collections.singletonMap("$strLenCP", "$_id")), sorting("len", DESC).and(DESC, "_id"),
 				limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
