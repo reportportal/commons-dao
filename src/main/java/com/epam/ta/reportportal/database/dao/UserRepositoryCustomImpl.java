@@ -24,9 +24,12 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.Constants;
 import com.epam.ta.reportportal.database.BinaryData;
 import com.epam.ta.reportportal.database.DataStorage;
+import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.UserRoleDetails;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.epam.ta.reportportal.database.entity.user.UserType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.mongodb.BasicDBObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -34,6 +37,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -44,6 +48,7 @@ import java.util.regex.Pattern;
 import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
 import static com.epam.ta.reportportal.database.dao.UserUtils.photoFilename;
 import static com.epam.ta.reportportal.database.entity.user.User.*;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
@@ -162,6 +167,38 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	public void updateLastLoginDate(String user, Date date) {
 		mongoOperations.updateFirst(query(where("_id").is(user)), update("metaInfo.lastLogin", date), User.class);
 
+	}
+
+	public UserRoleDetails aggregateUserProjects(String login) {
+		//		db.project.aggregate( [
+		//
+		//				{ $unwind : "$users"},
+		//		{ $match: { "users.login": "default" } },
+		//		{ $group : { _id : "$users.login", projects: { $push: {"id" : "$_id", "proposedRole" : "$users.proposedRole", "projectRole" : "$users.projectRole" }} }},
+		//		{ $lookup:
+		//		{
+		//			from: "user",
+		//					localField: "_id",
+		//				foreignField: "_id",
+		//				as: "user"
+		//		}
+		//		},
+		//		{ $unwind : "$user"}
+		//
+		//		] )
+		//@formatter:off
+		Aggregation a = newAggregation(
+							unwind("$users"),
+							match(where("users.login").is(login)),
+							group("users.login")
+									.push(new BasicDBObject
+                   						("project", "$_id")
+										.append("projectRole", "$users.projectRole"))
+										.as("projects"),
+							lookup("user", "_id", "_id", "user")
+						);
+		//@formatter:on
+		return mongoOperations.aggregate(a, mongoOperations.getCollectionName(Project.class), UserRoleDetails.class).getUniqueMappedResult();
 	}
 
 	private Query buildSearchUserQuery(String term, Pageable pageable) {
