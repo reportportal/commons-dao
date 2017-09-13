@@ -21,14 +21,9 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import static com.epam.ta.reportportal.config.CacheConfiguration.USERS_CACHE;
-
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Query;
@@ -47,34 +42,6 @@ import com.epam.ta.reportportal.database.entity.user.UserRole;
  * @author Andrei Varabyeu
  */
 public interface UserRepository extends ReportPortalRepository<User, String>, UserRepositoryCustom {
-
-	@Cacheable(key = "#p0", value = USERS_CACHE, unless = "#result == null")
-	@Override
-	User findOne(String id);
-
-	@CacheEvict(key = "#p0", value = USERS_CACHE, beforeInvocation = true)
-	@Override
-	void delete(String id);
-
-	@CacheEvict(key = "#p0.login", value = USERS_CACHE, beforeInvocation = true)
-	@Override
-	void delete(User user);
-
-	@CacheEvict(allEntries = true, value = USERS_CACHE, beforeInvocation = true)
-	@Override
-	void deleteAll();
-
-	@CacheEvict(allEntries = true, value = USERS_CACHE, beforeInvocation = true)
-	@Override
-	void delete(java.lang.Iterable<? extends User> entities);
-
-	@CacheEvict(allEntries = true, value = USERS_CACHE, beforeInvocation = true)
-	@Override
-	<S extends User> List<S> save(Iterable<S> entities);
-
-	@CachePut(key = "#result.login", value = USERS_CACHE, unless = "#result == null")
-	@Override
-	<S extends User> S save(S entity);
 
 	List<User> findByRole(UserRole role);
 
