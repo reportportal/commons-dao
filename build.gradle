@@ -69,6 +69,7 @@ dependencies {
     testCompile 'org.mockito:mockito-all:2.0.2-beta'
     testCompile 'org.assertj:assertj-core:3.6.2'
 
+    testCompile 'org.springframework.boot:spring-boot-test'
     testCompile 'org.springframework:spring-test'
     testCompile 'org.springframework.security:spring-security-crypto'
     testCompile 'org.springframework.security:spring-security-core'

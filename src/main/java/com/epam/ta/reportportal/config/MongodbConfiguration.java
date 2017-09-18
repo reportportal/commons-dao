@@ -65,12 +65,12 @@ import java.util.Arrays;
 @EnableMongoRepositories(basePackageClasses = UserRepository.class, repositoryImplementationPostfix = "CustomImpl", repositoryFactoryBeanClass = ReportPortalRepositoryFactoryBean.class)
 @EnableMongoAuditing
 @Configuration
-@EnableConfigurationProperties(MongodbConfiguration.MongoProperies.class)
+@EnableConfigurationProperties(MongodbConfiguration.MongoProperties.class)
 @ComponentScan(basePackageClasses = { PersonalProjectService.class, CascadeDeleteDashboardTrigger.class })
 public class MongodbConfiguration {
 
 	@Autowired
-	private MongoProperies mongoProperties;
+	private MongoProperties mongoProperties;
 
 	@Autowired
 	private Environment environment;
@@ -150,7 +150,7 @@ public class MongodbConfiguration {
 	}
 
 	@ConfigurationProperties("rp.mongo")
-	public static class MongoProperies extends org.springframework.boot.autoconfigure.mongo.MongoProperties {
+	public static class MongoProperties extends org.springframework.boot.autoconfigure.mongo.MongoProperties {
 
 		private Integer connectionsPerHost;
 		private Integer threadsAllowedToBlockForConnectionMultiplier;
