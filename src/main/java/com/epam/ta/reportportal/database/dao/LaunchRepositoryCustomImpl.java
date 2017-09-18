@@ -95,7 +95,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	//useful constants for cumulative
 	private static final String TAGS = "tags";
-	private static final String REGEX = "^%s:.+";
+	private static final String REGEX = "^\\Q%s\\E:.+";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
