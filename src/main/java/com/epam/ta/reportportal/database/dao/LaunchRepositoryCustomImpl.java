@@ -373,10 +373,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void cumulativeStatisticsGroupedByTag(Queryable filter, List<String> contentFields, long limit, String tagPrefix,
 			DocumentCallbackHandler callbackHandler) {
+		String tag = String.format(REGEX, tagPrefix);
 		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				match(Criteria.where(TAGS).regex(String.format(REGEX, tagPrefix))),
+				match(Criteria.where(TAGS).regex(tag)),
 				unwind("$tags"),
-				match(Criteria.where(TAGS).regex(String.format(REGEX, tagPrefix))),
+				match(Criteria.where(TAGS).regex(tag)),
 				groupByFieldWithStatisticsSumming(TAGS, contentFields),
 				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
 				sorting("len", DESC).and(DESC, "_id"),
