@@ -95,7 +95,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	//useful constants for cumulative
 	private static final String TAGS = "tags";
-	private static final String REGEX_POSTFIX = ":.+";
+	private static final String REGEX = "^%s:.+";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -363,7 +363,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 *	db.launch.aggregate([
      *  		{ $match : { "$and" : [ { projectRef : "default_personal" } ]}},
      *  		{ $unwind : "$tags"},
-     *  		{ $match : {tags : {$regex : "build:.+"}}},
+     *  		{ $match : {tags : {$regex : "^build:.+"}}},
      *  		{ $group : { _id : "$tags", "statistics$executionCounter$passed" : { "$sum" : "$statistics.executionCounter.passed"}}},
      *  		{ $addFields : { "len" : { $strLenCP: "$_id" } }},
      *  		{ $sort : { len: -1, _id : -1 }},
@@ -374,11 +374,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public void cumulativeStatisticsGroupedByTag(Queryable filter, List<String> contentFields, long limit, String tagPrefix,
 			DocumentCallbackHandler callbackHandler) {
 		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
+				match(Criteria.where(TAGS).regex(String.format(REGEX, tagPrefix))),
 				unwind("$tags"),
-				match(Criteria.where(TAGS).regex(tagPrefix + REGEX_POSTFIX)),
+				match(Criteria.where(TAGS).regex(String.format(REGEX, tagPrefix))),
 				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				addFields("len", Collections.singletonMap("$strLenCP", "$_id")), sorting("len", DESC).and(DESC, "_id"),
+				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
+				sorting("len", DESC).and(DESC, "_id"),
 				limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
