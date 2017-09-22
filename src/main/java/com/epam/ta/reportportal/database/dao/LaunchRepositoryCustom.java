@@ -43,195 +43,224 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 
 	/**
 	 * Whether launch contains items
-	 * 
-	 * @param launch
-	 * @return
+	 *
+	 * @param launch Launch to be searched
+	 * @return TRUE of there is at least one item under this launch
 	 */
 	boolean hasItems(Launch launch);
 
 	/**
 	 * Whether launch contains items with provided state
-	 * 
-	 * @param launch
-	 * @return
+	 *
+	 * @param launch Launch to be searched
+	 * @return TRUE of there is at least one item under this launch with provided status
 	 */
 	boolean hasItems(Launch launch, Status itemStatus);
 
 	/**
 	 * Finds launches for specified project
-	 * 
-	 * @param project
-	 * @return
+	 *
+	 * @param project Project launch should be executed under
+	 * @return List of launches
 	 */
 	List<Launch> findLaunchIdsByProject(Project project);
 
 	/**
 	 * Finds launches modified later than period
-	 * 
-	 * @param period
-	 * @param status
-	 * @return
+	 *
+	 * @param period Time period
+	 * @param status Launch Status
+	 * @return List of launches
 	 */
 	List<Launch> findModifiedLaterAgo(Duration period, Status status);
 
 	/**
 	 * Finds launches modified later than period
-	 * 
-	 * @param period
-	 * @param status
-	 * @param project
-	 * @return
+	 *
+	 * @param period  Time period
+	 * @param status  Launch Status
+	 * @param project Project launch was be executed under
+	 * @return List of launches
 	 */
 	List<Launch> findModifiedLaterAgo(Duration period, Status status, String project);
 
 	/**
 	 * Find launches by filter load only id and number fields. Load specified
 	 * quantity of launches.
-	 * 
-	 * @param filter
-	 * @param sort
-	 * @param quantity
-	 * @return
+	 *
+	 * @param filter   Query filter
+	 * @param sort     Sorting details
+	 * @param quantity Results count
+	 * @return List of launches
 	 */
 	List<Launch> findIdsByFilter(Filter filter, Sort sort, int quantity);
 
 	/**
 	 * Find launches by filter load only id field.
-	 * 
-	 * @param filter
-	 * @return
+	 *
+	 * @param filter Query filter
+	 * @return List of launches
 	 */
 	List<Launch> findIdsByFilter(Filter filter);
 
 	/**
 	 * Find launches by filter only id field.
-	 * 
-	 * @param filter
-	 * @param limit
-	 * @return
+	 *
+	 * @param filter Query filter
+	 * @param limit  Results count
+	 * @return List of launches
 	 */
 	List<Launch> findIdsByFilter(Filter filter, int limit);
 
 	/**
 	 * Get list of distinct values from MongoDB collection
-	 * 
-	 * @param projectName
-	 * @param containsValue
-	 * @param distinctBy
-	 * @return
+	 *
+	 * @param projectName   Project launch was be executed under
+	 * @param containsValue Value to be searched
+	 * @param distinctBy    Search field name
+	 * @return List of launches
 	 */
 	List<String> findDistinctValues(String projectName, String containsValue, String distinctBy);
 
 	/**
 	 * Find launches by user ref
-	 * 
-	 * @param userRef
-	 * @return
+	 *
+	 * @param userRef User launch was executed under
+	 * @return List of launches
 	 */
 	List<Launch> findByUserRef(String userRef);
 
 	/**
 	 * Update user ref in launches
-	 * 
-	 * @param oldOwner
-	 * @param newOwner
+	 *
+	 * @param oldOwner Old owner
+	 * @param newOwner New owner
 	 */
 	void updateUserRef(String oldOwner, String newOwner);
 
 	/**
 	 * Get all unique fields for launches in specified mode
-	 * 
-	 * @param projectName
-	 * @param containsValue
-	 * @param distinctBy
-	 * @return
+	 *
+	 * @param projectName   Project launch was be executed under
+	 * @param containsValue Value to be searched
+	 * @param distinctBy    Search field name
+	 * @return unique fields for launches in specified mode
 	 */
 	List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode);
 
 	/**
 	 * Get grouped launches per owner. 'IN_PROGRESS' launches are excluded
 	 *
-	 * 
-	 * @param projectName
-	 * @param mode
-	 * @return
+	 * @param projectName Project launch was be executed under
+	 * @param mode        Launch {@link com.epam.ta.reportportal.ws.model.launch.Mode}
+	 * @return Map owner -> launches count
 	 */
 	Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from);
 
 	/**
 	 * Find launches by specified projectId, mode and from date. 'IN_PROGRESS'
 	 * launches are excluded
-	 * 
-	 * 
-	 * @param projectId
-	 * @param from
-	 * @param mode
-	 * @return
+	 *
+	 * @param projectId Project launch was be executed under
+	 * @param mode      Launch Mode
+	 * @param from      Start Date
+	 * @return List of launches
 	 */
 	List<Launch> findLaunchesByProjectId(String projectId, Date from, String mode);
 
 	/**
 	 * Find launches quantity. 'IN_PROGRESS' launches are excluded
-	 * 
-	 * @param projectId
-	 * @param mode
-	 * @param from
-	 * @return
+	 *
+	 * @param projectId Project launch was be executed under
+	 * @param mode      Launch Mode
+	 * @param from      Start Date
+	 * @return List of launches
 	 */
 	Long findLaunchesQuantity(String projectId, String mode, Date from);
 
-    /**
-     * Find latest unique launches by filter
-     *
-     * @param filter
-     * @param pageable
-     * @return
-     */
+	/**
+	 * Find latest unique launches by filter
+	 *
+	 * @param filter   Query filter
+	 * @param pageable Page Details
+	 * @return List of launches
+	 */
 
-    Page<Launch> findLatestLaunches(Queryable filter, Pageable pageable);
+	Page<Launch> findLatestLaunches(Queryable filter, Pageable pageable);
 
+	/**
+	 * Load chart data according specified input parameters grouped by containing
+	 * tag with regex. Result will be stored in {@link DocumentCallbackHandler} object
+	 *
+	 * @param filter          Filter
+	 * @param contentFields   Content fields for creating results
+	 * @param limit           Results limit
+	 * @param tagPrefix       Tag prefix for grouping by
+	 * @param callbackHandler Results handler
+	 */
+	void cumulativeStatisticsGroupedByTag(Queryable filter, List<String> contentFields, long limit, String tagPrefix,
+			DocumentCallbackHandler callbackHandler);
 
-    /**
-     * Load chart data according specified input parameters and only for latest launches.
-     * Result should be returned from {@link DocumentCallbackHandler} object
-     *
-     * @param filter
-     * @param sort
-     * @param contentFields
-     * @param limit
-     * @param callbackHandler
-     */
-    void findLatestWithCallback(Queryable filter, Sort sort,  List<String> contentFields,
-          long limit, DocumentCallbackHandler callbackHandler);
+	/**
+	 * Load chart data according specified input parameters and only for latest launches.
+	 * Result should be returned from {@link DocumentCallbackHandler} object
+	 *
+	 * @param filter          Query filter
+	 * @param sort            Sorting details
+	 * @param contentFields   Content Fields
+	 * @param limit           Results limit
+	 * @param callbackHandler Found results converter
+	 */
+	void findLatestWithCallback(Queryable filter, Sort sort, List<String> contentFields, long limit,
+			DocumentCallbackHandler callbackHandler);
 
-
-    /**
+	/**
 	 * Find last launch. 'IN_PROGRESS' launch is excluded
-	 * 
-	 * @param projectId
-	 * @return
+	 *
+	 * @param projectId Project launch was be executed under
+	 * @return Found launch or {@link Optional#empty()}
 	 */
 	Optional<Launch> findLastLaunch(String projectId, String mode);
 
-    /**
-     * Find latest launch. 'IN_PROGRESS' launch is excluded
-     * @param projectName name
-     * @param launchName launch
-     * @param mode mode
-     * @return launch with latest number
-     */
+	/**
+	 * Find latest launch. 'IN_PROGRESS' launch is excluded
+	 *
+	 * @param projectName name
+	 * @param launchName  launch
+	 * @param mode        mode
+	 * @return launch with latest number or {@link Optional#empty()}
+	 */
 	Optional<Launch> findLatestLaunch(String projectName, String launchName, String mode);
 
 	/**
 	 * Find last launch within specified project and mode
+	 *
+	 * @param launchName Name of launch
+	 * @param projectId  Project launch was be executed under
+	 * @return Found launch or {@link Optional#empty()}
 	 */
 	Optional<Launch> findLastLaunch(String projectId, String launchName, String mode);
 
 	List<Launch> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit);
 
+	/**
+	 * @param projectRef Project launch was be executed under
+	 * @param type       Statistics type
+	 * @return List of launches
+	 */
 	List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type);
 
+	/**
+	 * @param id   Launch ID
+	 * @param type Statistics type
+	 */
 	void dropIssueStatisticsType(String id, StatisticSubType type);
 
+	/**
+	 * Finds launches by project names/ids
+	 *
+	 * @param ids Project IDs
+	 * @return List of launch IDs
+	 */
 	List<String> findLaunchIdsByProjectIds(List<String> ids);
 }

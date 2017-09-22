@@ -62,8 +62,14 @@ public class CriteriaMap<T> {
 				boolean dynamicNestedFields = isDynamicInnerFields(f);
 				String searchCriteria;
 				String queryCriteria;
-				if (of(f.getType().getDeclaredFields()).anyMatch(df -> df.isAnnotationPresent(FilterCriteria.class)) || (
-						f.getType().isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class))) {
+				Class<?> fieldType = f.getType();
+
+				//grab generic type argument for collection types
+				if (Collection.class.isAssignableFrom(fieldType) && f.getGenericType() instanceof ParameterizedType) {
+					fieldType = (Class<?>) ((ParameterizedType) f.getGenericType()).getActualTypeArguments()[0];
+				}
+				if (of(fieldType.getDeclaredFields()).anyMatch(df -> df.isAnnotationPresent(FilterCriteria.class)) || (
+						fieldType.isAnnotationPresent(Document.class) && !f.isAnnotationPresent(DBRef.class))) {
 					List<Field> currentParents = new ArrayList<>(parents);
 					searchCriteria = parents.isEmpty() ? getSearchCriteria(f) : getSearchCriteria(f, currentParents);
 					queryCriteria = parents.isEmpty() ? getQueryCriteria(f) : getQueryCriteria(f, currentParents);
@@ -71,7 +77,7 @@ public class CriteriaMap<T> {
 							new CriteriaHolder(searchCriteria, queryCriteria, getDataType(f), f.isAnnotationPresent(DBRef.class),
 									dynamicNestedFields));
 					currentParents.add(f);
-					lookupClass(f.getType(), currentParents);
+					lookupClass(fieldType, currentParents);
 				} else {
 					searchCriteria = getSearchCriteria(f);
 					queryCriteria = getQueryCriteria(f);

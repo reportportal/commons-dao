@@ -21,20 +21,20 @@
 
 package com.epam.ta.reportportal.database.entity.item;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.epam.ta.reportportal.database.entity.Modifiable;
+import com.epam.ta.reportportal.database.search.FilterCriteria;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.epam.ta.reportportal.database.entity.Modifiable;
-import com.epam.ta.reportportal.database.search.FilterCriteria;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Dzmitry_Kavalets
@@ -65,16 +65,17 @@ public class Activity implements Serializable, Modifiable {
 	private Date lastModifiedDate;
 
 	@FilterCriteria(OBJECT_TYPE)
-	private String objectType;
+	private ActivityObjectType objectType;
 
 	@FilterCriteria(ACTION_TYPE)
-	private String actionType;
+	private ActivityEventType actionType;
 
+    @Indexed
 	@FilterCriteria(PROJECT_REF)
 	private String projectRef;
 
 	@FilterCriteria("history")
-	private Map<String, FieldValues> history;
+	private List<FieldValues> history;
 
 	@FilterCriteria("name")
 	private String name;
@@ -84,17 +85,32 @@ public class Activity implements Serializable, Modifiable {
 		 * Generated SVUID
 		 */
 		private static final long serialVersionUID = -5372980278266685691L;
+		public static final String FIELD = "field";
 		public static final String OLD_VALUE = "oldValue";
 		public static final String NEW_VALUE = "newValue";
 
+		@FilterCriteria("field")
+		private String field;
+
+		@FilterCriteria(OLD_VALUE)
 		private String oldValue;
+
+		@FilterCriteria(NEW_VALUE)
 		private String newValue;
 
 		public static FieldValues newOne() {
 			return new FieldValues();
 		}
 
-		public String getOldValue() {
+        public String getField() {
+            return field;
+        }
+
+        public void setField(String field) {
+            this.field = field;
+        }
+
+        public String getOldValue() {
 			return oldValue;
 		}
 
@@ -120,9 +136,15 @@ public class Activity implements Serializable, Modifiable {
 			return this;
 		}
 
+		public FieldValues withField(String field) {
+		    this.field = field;
+		    return this;
+        }
+
 		@Override
 		public String toString() {
 			final StringBuilder sb = new StringBuilder("ChangedValues{");
+			sb.append(", field='").append(field).append('\'');
 			sb.append(", oldValue='").append(oldValue).append('\'');
 			sb.append(", newValue='").append(newValue).append('\'');
 			sb.append('}');
@@ -138,19 +160,19 @@ public class Activity implements Serializable, Modifiable {
 		this.name = name;
 	}
 
-	public String getObjectType() {
+	public ActivityObjectType getObjectType() {
 		return objectType;
 	}
 
-	public void setObjectType(String objectType) {
+	public void setObjectType(ActivityObjectType objectType) {
 		this.objectType = objectType;
 	}
 
-	public String getActionType() {
+	public ActivityEventType getActionType() {
 		return actionType;
 	}
 
-	public void setActionType(String actionType) {
+	public void setActionType(ActivityEventType actionType) {
 		this.actionType = actionType;
 	}
 
@@ -199,11 +221,11 @@ public class Activity implements Serializable, Modifiable {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
-	public Map<String, FieldValues> getHistory() {
-		return null == history ? new HashMap<>() : history;
+	public List<FieldValues> getHistory() {
+		return null == history ? new ArrayList<>() : history;
 	}
 
-	public void setHistory(Map<String, FieldValues> history) {
+	public void setHistory(List<FieldValues> history) {
 		this.history = history;
 	}
 

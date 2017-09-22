@@ -17,9 +17,20 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.search;
+
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.apache.commons.lang3.BooleanUtils;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.query.Criteria;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static com.epam.ta.reportportal.commons.Predicates.equalTo;
 import static com.epam.ta.reportportal.commons.Predicates.or;
@@ -31,20 +42,10 @@ import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAM
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
 
-import java.time.*;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.query.Criteria;
-
-import com.epam.ta.reportportal.ws.model.ErrorType;
-
 /**
  * Types of supported filtering
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public enum Condition {
 
@@ -107,8 +108,9 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForString()).verify(errorType, formattedSupplier(
-					"Contains condition applyable only for strings. Type of field is '{}'", criteriaHolder.getDataType().getSimpleName()));
+			expect(criteriaHolder, filterForString()).verify(errorType,
+					formattedSupplier("Contains condition applyable only for strings. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()));
 		}
 
 		@Override
@@ -250,10 +252,9 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType,
-					formattedSupplier(
-							"'Greater than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
-							criteriaHolder.getDataType().getSimpleName()));
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+					"'Greater than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
+					criteriaHolder.getDataType().getSimpleName()));
 		}
 
 		@Override
@@ -271,8 +272,9 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			Object valueToFind = ObjectId.isValid(filter.getValue()) ? new ObjectId(filter.getValue())
-					: this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS);
+			Object valueToFind = ObjectId.isValid(filter.getValue()) ?
+					new ObjectId(filter.getValue()) :
+					this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS);
 			criteria.lt(valueToFind);
 		}
 
@@ -299,18 +301,18 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			Object valueToFind = ObjectId.isValid(filter.getValue()) ? new ObjectId(filter.getValue())
-					: this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS);
+			Object valueToFind = ObjectId.isValid(filter.getValue()) ?
+					new ObjectId(filter.getValue()) :
+					this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS);
 			criteria.lte(valueToFind);
 		}
 
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType,
-					formattedSupplier(
-							"'Lower than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
-							criteriaHolder.getDataType().getSimpleName()));
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+					"'Lower than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
+					criteriaHolder.getDataType().getSimpleName()));
 		}
 
 		@Override
@@ -326,8 +328,8 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType,
-					formattedSupplier("'Between' condition applyable only for positive Numbers, Dates or specific TimeStamp values. "
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+					"'Between' condition applyable only for positive Numbers, Dates or specific TimeStamp values. "
 							+ "Type of field is '{}'", criteriaHolder.getDataType().getSimpleName()));
 			if (value.contains(VALUES_SEPARATOR))
 				expect(value.split(VALUES_SEPARATOR), countOfValues(2)).verify(errorType,
@@ -338,10 +340,10 @@ public enum Condition {
 						"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'", value));
 				expect(values[2], zoneOffset()).verify(errorType,
 						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'", values[2]));
-				expect(values[0], timeStamp()).verify(errorType,
-						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[0]));
-				expect(values[1], timeStamp()).verify(errorType,
-						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[1]));
+				expect(values[0], timeStamp())
+						.verify(errorType, formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[0]));
+				expect(values[1], timeStamp())
+						.verify(errorType, formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[1]));
 			} else {
 				fail().withError(errorType, formattedSupplier(
 						"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'", value));
@@ -386,6 +388,7 @@ public enum Condition {
 
 	public static final String VALUES_SEPARATOR = ",";
 	public static final String TIMESTAMP_SEPARATOR = ";";
+	public static final String NEGATIVE_MARKER = "!";
 
 	private String marker;
 
@@ -398,19 +401,19 @@ public enum Condition {
 	/**
 	 * Validate condition value. This method should be overridden in all
 	 * conditions which contains validations
-	 * 
-	 * @param criteriaHolder
-	 * @param value
-	 * @param isNegative
+	 *
+	 * @param criteriaHolder Criteria description
+	 * @param value          Value to be casted
+	 * @param isNegative     Whether filter is negative
 	 */
 	abstract public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType);
 
 	/**
 	 * Cast filter values according condition.
-	 * 
-	 * @param criteriaHolder
-	 * @param values
-	 * @return
+	 *
+	 * @param criteriaHolder Criteria description
+	 * @param values         Value to be casted
+	 * @return Casted value
 	 */
 	abstract public Object castValue(CriteriaHolder criteriaHolder, String values, ErrorType errorType);
 
@@ -421,29 +424,54 @@ public enum Condition {
 	/**
 	 * Finds condition by marker. If there is no condition with specified marker
 	 * returns NULL
-	 * 
-	 * @param marker
-	 * @return
+	 *
+	 * @param marker Marker to be checked
+	 * @return Condition if found or NULL
 	 */
-	public static Condition findByMarker(String marker) {
+	public static Optional<Condition> findByMarker(String marker) {
 		// Negative condition excluder
-		if (marker.startsWith("!"))
+		if (isNegative(marker)) {
 			marker = marker.substring(1);
-		for (Condition condition : Condition.values()) {
-			if (condition.getMarker().equals(marker)) {
-				return condition;
-			}
 		}
-		return null;
+		String finalMarker = marker;
+		return Arrays.stream(values()).filter(it -> it.getMarker().equals(finalMarker)).findAny();
+	}
+
+	/**
+	 * Check whether condition is negative
+	 *
+	 * @param marker Marker to check
+	 * @return TRUE of negative
+	 */
+	public static boolean isNegative(String marker) {
+		return marker.startsWith(NEGATIVE_MARKER);
+	}
+
+	/**
+	 * Makes filter marker negative
+	 *
+	 * @param negative Whether condition is negative
+	 * @param marker   Marker to check
+	 * @return TRUE of negative
+	 */
+	public static String makeNegative(boolean negative, String marker) {
+		String result;
+		if (negative) {
+			result = marker.startsWith(NEGATIVE_MARKER) ? marker : NEGATIVE_MARKER.concat(marker);
+		} else {
+			result = marker.startsWith(NEGATIVE_MARKER) ? marker.substring(1, marker.length()) : marker;
+		}
+		return result;
+
 	}
 
 	/**
 	 * Cast values for filters which have many values(filters with
 	 * conditions:btw, in, etc)
-	 * 
-	 * @param criteriaHolder
-	 * @param value
-	 * @return
+	 *
+	 * @param criteriaHolder Criteria description
+	 * @param value          Value to be casted
+	 * @return Casted value
 	 */
 	public Object[] castArray(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
 		String[] values = value.split(VALUES_SEPARATOR);

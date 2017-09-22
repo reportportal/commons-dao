@@ -49,19 +49,18 @@ dependencies {
     }
 
 
-    compile 'net.coobird:thumbnailator:0.4.8'
-    compile 'commons-validator:commons-validator:1.5.1'
-
     compile 'org.springframework.data:spring-data-mongodb'
     compile 'org.springframework.boot:spring-boot'
     compile 'org.springframework:spring-context-support'
-    compile 'org.springframework.data:spring-data-redis'
+    compile 'com.github.ben-manes.caffeine:caffeine'
 
 
-    compile 'com.google.guava:guava:21.0'
-    compile 'com.google.code.findbugs:jsr305:3.0.1'
-    compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'org.reflections:reflections:0.9.10'
+    compile 'net.coobird:thumbnailator:0.4.8'
+    compile 'commons-validator:commons-validator:1.6'
+    compile 'com.google.guava:guava:23.0'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'org.apache.commons:commons-lang3:3.6'
+    compile 'org.reflections:reflections:0.9.11'
 
     /* just for password encoder. To make sure Guava and Spring's Crypto generate the same  hash functions */
     testCompile 'org.hamcrest:hamcrest-all:1.3'
@@ -84,6 +83,13 @@ task wrapper(type: Wrapper) {
 jacocoTestReport {
     reports {
         xml.enabled true
+    }
+}
+
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "short"
     }
 }
 
