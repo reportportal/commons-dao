@@ -185,7 +185,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch, boolean hasChilds) {
-		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
+		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status)
+				.addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where("has_childs").is(hasChilds));
 		return mongoTemplate.find(q, TestItem.class);
 	}
@@ -245,7 +246,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				operationTotal
 		);
 		AggregationResults<Map> resultTotal = mongoTemplate.aggregate(aggregationTotal, TestItem.class, Map.class);
-		Map<String, String> values = resultTotal.getMappedResults().stream()
+		Map<String, String> values = resultTotal.getMappedResults()
+				.stream()
 				.collect(toMap(key -> key.get("_id").toString(), value -> value.get("count").toString()));
 
 		GroupOperation operation = new GroupOperation(Fields.fields("$name")).count().as("count").last("$startTime").as("last");
@@ -315,6 +317,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			return Collections.emptyList();
 		}
 		Aggregation aggregation = newAggregation(match(where("uniqueId").in(uniqueIds)),
+				sort(Sort.Direction.ASC, "_id"),
+				limit(depth),
 				group("$uniqueId", "$name").addToSet(ROOT).as("history")
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), TestItem.class).getMappedResults();
@@ -327,8 +331,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				where(ISSUE_TYPE).exists(true)
 		);
 
-		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId), where(ISSUE_TYPE).exists(true),
-				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"), where(ISSUE_TICKET).exists(true)
+		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
+				where(ISSUE_TYPE).exists(true),
+				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
+				where(ISSUE_TICKET).exists(true)
 		);
 
 		Query query = query(new Criteria().orOperator(internalIssues, externalIssues)).limit(limit);
@@ -347,7 +353,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public boolean hasTestItemsAddedLately(Duration period, Launch launch, Status status) {
-		Query query = ModifiableQueryBuilder.findModifiedLately(period).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
+		Query query = ModifiableQueryBuilder.findModifiedLately(period)
+				.addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where(HasStatus.STATUS).is(status.name()));
 		return (mongoTemplate.count(query, TestItem.class) > 0);
 	}
