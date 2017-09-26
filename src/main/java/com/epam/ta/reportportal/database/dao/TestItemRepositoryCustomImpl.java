@@ -28,7 +28,6 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
-import com.google.common.base.Strings;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -312,7 +311,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> loadHistoryByUniqueIds(List<Strings> uniqueIds, int depth) {
+	public List<TestItem> loadHistoryByUniqueIds(List<String> uniqueIds, int depth) {
 		if (uniqueIds == null) {
 			return Collections.emptyList();
 		}

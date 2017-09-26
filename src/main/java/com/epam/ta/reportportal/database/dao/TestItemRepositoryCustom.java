@@ -27,7 +27,6 @@ import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.google.common.base.Strings;
 
 import java.time.Duration;
 import java.util.List;
@@ -131,7 +130,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	List<String> loadUniqueIds(List<String> itemsIds);
 
-	List<TestItem> loadHistoryByUniqueIds(List<Strings> startPoints, int depth);
+	List<TestItem> loadHistoryByUniqueIds(List<String> startPoints, int depth);
 
 	/**
 	 * Find test items of specified launch with investigated issues.
