@@ -130,7 +130,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	List<String> loadUniqueIds(List<String> itemsIds);
 
-	List<TestItem> loadHistoryByUniqueIds(List<String> startPoints, int depth);
+	Map<String, List<TestItem>> loadHistoryByUniqueIds(List<String> startPoints, int depth);
 
 	/**
 	 * Find test items of specified launch with investigated issues.
