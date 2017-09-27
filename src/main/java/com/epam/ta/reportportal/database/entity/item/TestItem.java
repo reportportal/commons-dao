@@ -127,7 +127,6 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	private Date lastModified;
 
 	@FilterCriteria("uniqueId")
-	//@Indexed(background = true)
 	private String uniqueId;
 
 	public TestItem() {
