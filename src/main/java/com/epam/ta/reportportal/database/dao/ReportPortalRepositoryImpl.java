@@ -296,7 +296,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
     }
 
     @Override
-    public List<T> findById(Collection<ID> ids, List<String> fieldsToLoad) {
+    public List<T> findByIds(Collection<ID> ids, List<String> fieldsToLoad) {
         Class<T> entityType = getEntityInformation().getJavaType();
         String idField = getEntityInformation().getIdAttribute();
         Query query = query(where(idField).in(ids));
