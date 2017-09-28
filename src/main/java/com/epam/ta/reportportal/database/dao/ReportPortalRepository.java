@@ -173,6 +173,6 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends Mong
 	 * @param fieldsToLoad Fields to load
 	 * @return Found entities
 	 */
-	List<T> findById(Collection<ID> ids, List<String> fieldsToLoad);
+	List<T> findByIds(Collection<ID> ids, List<String> fieldsToLoad);
 
 }
