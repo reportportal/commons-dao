@@ -73,6 +73,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String NAME = "name";
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
+	private static final String UNIQUE_ID = "uniqueId";
 	private static final String IGNORE_DEFECT_REGEX = "^(nd)";
 
 	public static final int HISTORY_LIMIT = 2000;
@@ -304,19 +305,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> loadItemsForHistory(List<String> itemsIds) {
-		Query query = query(where("_id").in(itemsIds));
-		query.fields().include(LAUNCH_REFERENCE);
-		query.fields().include("uniqueId");
-		return mongoTemplate.find(query, TestItem.class);
-	}
-
-	@Override
-	public List<TestItem> loadHistoryItems(List<String> uniqueIds, List<String> launchesIds) {
+	public List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds) {
 		if (CollectionUtils.isEmpty(uniqueIds) || CollectionUtils.isEmpty(launchesIds)) {
 			return Collections.emptyList();
 		}
-		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds).and("uniqueId").in(uniqueIds));
+		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds).and(UNIQUE_ID).in(uniqueIds));
 		query.limit(HISTORY_LIMIT);
 		return mongoTemplate.find(query, TestItem.class);
 	}
