@@ -128,7 +128,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentsIds);
 
-	List<String> loadItemsForHistory(List<String> itemsIds);
+	List<TestItem> loadItemsForHistory(List<String> itemsIds);
 
 	List<TestItem> loadHistoryItems(List<String> uniqueIds, List<String> launchesIds);
 

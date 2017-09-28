@@ -304,12 +304,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<String> loadItemsForHistory(List<String> itemsIds) {
+	public List<TestItem> loadItemsForHistory(List<String> itemsIds) {
 		Query query = query(where("_id").in(itemsIds));
 		query.fields().include(LAUNCH_REFERENCE);
 		query.fields().include("uniqueId");
-		List<TestItem> items = mongoTemplate.find(query, TestItem.class);
-		return items.stream().map(TestItem::getUniqueId).collect(toList());
+		return mongoTemplate.find(query, TestItem.class);
 	}
 
 	@Override
