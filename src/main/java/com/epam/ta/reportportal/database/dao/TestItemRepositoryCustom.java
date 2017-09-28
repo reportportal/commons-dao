@@ -128,9 +128,10 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentsIds);
 
-	List<String> loadUniqueIds(List<String> itemsIds);
+	List<String> loadItemsForHistory(List<String> itemsIds);
 
-	Map<String, List<TestItem>> loadHistoryByUniqueIds(List<String> startPoints, int depth);
+	List<TestItem> loadHistoryItems(List<String> uniqueIds, List<String> launchesIds);
+
 
 	/**
 	 * Find test items of specified launch with investigated issues.

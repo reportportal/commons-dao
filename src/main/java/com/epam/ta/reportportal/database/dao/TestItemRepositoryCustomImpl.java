@@ -28,7 +28,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
-import com.mongodb.DBObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -304,28 +304,22 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<String> loadUniqueIds(List<String> itemsIds) {
+	public List<String> loadItemsForHistory(List<String> itemsIds) {
 		Query query = query(where("_id").in(itemsIds));
+		query.fields().include(LAUNCH_REFERENCE);
 		query.fields().include("uniqueId");
 		List<TestItem> items = mongoTemplate.find(query, TestItem.class);
 		return items.stream().map(TestItem::getUniqueId).collect(toList());
 	}
 
 	@Override
-	public Map<String, List<TestItem>> loadHistoryByUniqueIds(List<String> uniqueIds, int depth) {
-		if (uniqueIds == null) {
-			return Collections.emptyMap();
+	public List<TestItem> loadHistoryItems(List<String> uniqueIds, List<String> launchesIds) {
+		if (CollectionUtils.isEmpty(uniqueIds) || CollectionUtils.isEmpty(launchesIds)) {
+			return Collections.emptyList();
 		}
-		Aggregation aggregation = newAggregation(match(where("uniqueId").in(uniqueIds)),
-				sort(Sort.Direction.ASC, "_id"),
-				limit(depth),
-				group("$uniqueId", "$name").addToSet(ROOT).as("history")
-		);
-		Map<String, List<TestItem>> items = new HashMap<>();
-		List<DBObject> results = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DBObject.class)
-				.getMappedResults();
-		results.stream().forEach(it -> items.put((String) it.get("name"), (List<TestItem>) it.get("history")));
-		return items;
+		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds).and("uniqueId").in(uniqueIds));
+		query.limit(HISTORY_LIMIT);
+		return mongoTemplate.find(query, TestItem.class);
 	}
 
 	@Override
