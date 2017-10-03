@@ -83,12 +83,9 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Get list of distinct values from TestItems collection
 	 *
-	 * @param launchId
-	 *            - parent launch id
-	 * @param containsValue
-	 *            - part of string of searching value
-	 * @param distinctBy
-	 *            - field which should contain value
+	 * @param launchId      - parent launch id
+	 * @param containsValue - part of string of searching value
+	 * @param distinctBy    - field which should contain value
 	 * @return
 	 */
 	List<String> findDistinctValues(String launchId, String containsValue, String distinctBy);
@@ -125,8 +122,19 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param launchesIds
 	 * @param parentsIds
 	 * @return
+	 * @deprecated use {{@link #loadItemsHistory(List, List)}}
 	 */
+	@Deprecated
 	List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentsIds);
+
+	/**
+	 * Load states of specified testItems in specified launches
+	 *
+	 * @param uniqueIds   Items unique ids
+	 * @param launchesIds Launches ids
+	 * @return Founded items
+	 */
+	List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds);
 
 	/**
 	 * Find test items of specified launch with investigated issues.
@@ -155,30 +163,31 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> findInIssueTypeItems(String issueType, String launchId);
 
-    /**
-     * Get test-items ids for specified launches.
-     *
-     * @param launchRefs
-     * @return
-     */
+	/**
+	 * Get test-items ids for specified launches.
+	 *
+	 * @param launchRefs
+	 * @return
+	 */
 	List<String> findItemIdsByLaunchRef(List<String> launchRefs);
 
-    /**
-     * Get test-items for specified launch with specified test item type.
-     *
-     * @param launchId
-     * @param type
-     * @return
-     */
-    List<TestItem> findItemsWithType(String launchId, TestItemType type);
+	/**
+	 * Get test-items for specified launch with specified test item type.
+	 *
+	 * @param launchId
+	 * @param type
+	 * @return
+	 */
+	List<TestItem> findItemsWithType(String launchId, TestItemType type);
 
-    /**
-     * Get ids of test-items with specified name for specified launches.
-     * @param name
-     * @param launchRefs
-     * @return
-     */
-    Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRefs);
+	/**
+	 * Get ids of test-items with specified name for specified launches.
+	 *
+	 * @param name
+	 * @param launchRefs
+	 * @return
+	 */
+	Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRefs);
 
 	/**
 	 * Get elements in launch branches specified by has_childs status.
@@ -215,15 +224,16 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Updates hasChilds value
 	 *
-	 * @param id TestItem ID
+	 * @param id        TestItem ID
 	 * @param hasChilds hasChilds field value
 	 */
 	void updateHasChilds(String id, boolean hasChilds);
 
-    /**
-     * Get test items without parent with specified launch.
-     * @param launchId launch reference
-     * @return list of test items
-     */
-    List<TestItem> findWithoutParentByLaunchRef(String launchId);
+	/**
+	 * Get test items without parent with specified launch.
+	 *
+	 * @param launchId launch reference
+	 * @return list of test items
+	 */
+	List<TestItem> findWithoutParentByLaunchRef(String launchId);
 }
