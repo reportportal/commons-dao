@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
@@ -45,6 +46,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
@@ -107,15 +109,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void updateItemsIssues(List<TestItem> forUpdate) {
-		List<String> ids = forUpdate.stream().map(TestItem::getId).collect(toList());
-		Query query = query(where(ID).in(ids));
+		Map<String, TestItemIssue> itemIssueMap = forUpdate.stream().collect(Collectors.toMap(TestItem::getId, TestItem::getIssue);
+		Query query = query(where(ID).in(itemIssueMap.keySet()));
+
 		Update update = new Update();
 		mongoTemplate.stream(query, TestItem.class).forEachRemaining(dbo -> {
-			update.set(ISSUE_TYPE, dbo.getIssue().getIssueType());
-			update.set(ISSUE_DESCRIPTION, dbo.getIssue().getIssueDescription());
-			update.set(ISSUE_TICKET, dbo.getIssue().getExternalSystemIssues());
-			mongoTemplate.updateFirst(
-					Query.query(Criteria.where(ID).is(dbo.getId())),
+			String currentId = dbo.getId();
+			TestItemIssue newValue = itemIssueMap.get(currentId);
+			update.set(ISSUE_TYPE, newValue.getIssueType());
+			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
+			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
+			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
 					update,
 					mongoTemplate.getCollectionName(TestItem.class)
 			);
