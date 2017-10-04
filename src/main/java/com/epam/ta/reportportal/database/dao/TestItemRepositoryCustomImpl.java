@@ -109,7 +109,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void updateItemsIssues(List<TestItem> forUpdate) {
-		Map<String, TestItemIssue> itemIssueMap = forUpdate.stream().collect(Collectors.toMap(TestItem::getId, TestItem::getIssue);
+		Map<String, TestItemIssue> itemIssueMap = forUpdate.stream().collect(Collectors.toMap(TestItem::getId, TestItem::getIssue));
 		Query query = query(where(ID).in(itemIssueMap.keySet()));
 
 		Update update = new Update();
