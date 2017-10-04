@@ -46,7 +46,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
@@ -108,14 +107,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public void updateItemsIssues(List<TestItem> forUpdate) {
-		Map<String, TestItemIssue> itemIssueMap = forUpdate.stream().collect(Collectors.toMap(TestItem::getId, TestItem::getIssue));
-		Query query = query(where(ID).in(itemIssueMap.keySet()));
-
+	public void updateItemsIssues(Map<String, TestItemIssue> forUpdate) {
+		Query query = query(where(ID).in(forUpdate.keySet()));
 		Update update = new Update();
 		mongoTemplate.stream(query, TestItem.class).forEachRemaining(dbo -> {
 			String currentId = dbo.getId();
-			TestItemIssue newValue = itemIssueMap.get(currentId);
+			TestItemIssue newValue = forUpdate.get(currentId);
 			update.set(ISSUE_TYPE, newValue.getIssueType());
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());

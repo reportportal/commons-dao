@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 
 import java.time.Duration;
@@ -215,7 +216,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 *
 	 * @param forUpdate items for update
 	 */
-	void updateItemsIssues(List<TestItem> forUpdate);
+	void updateItemsIssues(Map<String, TestItemIssue> forUpdate);
 
 	/**
 	 * Get test items without parent with specified launch.
