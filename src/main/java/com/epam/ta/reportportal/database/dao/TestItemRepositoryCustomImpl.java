@@ -62,6 +62,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	private static final String ID_REFERENCE = "id";
+	private static final String ID = "_id";
 	private static final String LAUNCH_REFERENCE = "launchRef";
 	private static final String ITEM_REFERENCE = "testItemRef";
 	private static final String ISSUE_TYPE = "issue.issueType";
@@ -75,7 +76,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
 	private static final String UNIQUE_ID = "uniqueId";
-	private static final String IGNORE_DEFECT_REGEX = "^(nd)";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -108,14 +108,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public void updateItemsIssues(List<TestItem> forUpdate) {
 		List<String> ids = forUpdate.stream().map(TestItem::getId).collect(toList());
-		Query query = query(where(ID_REFERENCE).in(ids));
+		Query query = query(where(ID).in(ids));
 		Update update = new Update();
 		mongoTemplate.stream(query, TestItem.class).forEachRemaining(dbo -> {
 			update.set(ISSUE_TYPE, dbo.getIssue().getIssueType());
 			update.set(ISSUE_DESCRIPTION, dbo.getIssue().getIssueDescription());
 			update.set(ISSUE_TICKET, dbo.getIssue().getExternalSystemIssues());
 			mongoTemplate.updateFirst(
-					Query.query(Criteria.where(ID_REFERENCE).is(dbo.getId())),
+					Query.query(Criteria.where(ID).is(dbo.getId())),
 					update,
 					mongoTemplate.getCollectionName(TestItem.class)
 			);
