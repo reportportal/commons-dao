@@ -210,6 +210,14 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	void updateHasChilds(String id, boolean hasChilds);
 
 	/**
+	 * Update only issue type for specified items without
+	 * updating its' statistics
+	 *
+	 * @param forUpdate items for update
+	 */
+	void updateItemsIssues(List<TestItem> forUpdate);
+
+	/**
 	 * Get test items without parent with specified launch.
 	 *
 	 * @param launchId launch reference

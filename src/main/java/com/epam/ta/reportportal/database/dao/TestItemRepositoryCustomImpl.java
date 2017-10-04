@@ -106,6 +106,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public void updateItemsIssues(List<TestItem> forUpdate) {
+		List<String> ids = forUpdate.stream().map(TestItem::getId).collect(toList());
+		Query query = query(where(ID_REFERENCE).in(ids));
+		Update update = new Update();
+		mongoTemplate.stream(query, TestItem.class).forEachRemaining(dbo -> {
+			update.set(ISSUE_TYPE, dbo.getIssue().getIssueType());
+			update.set(ISSUE_DESCRIPTION, dbo.getIssue().getIssueDescription());
+			update.set(ISSUE_TICKET, dbo.getIssue().getExternalSystemIssues());
+			mongoTemplate.updateFirst(
+					Query.query(Criteria.where(ID_REFERENCE).is(dbo.getId())),
+					update,
+					mongoTemplate.getCollectionName(TestItem.class)
+			);
+		});
+	}
+
+	@Override
 	public boolean hasDescendants(Object... id) {
 		return mongoTemplate.count(getItemDescendantsQuery(id), TestItem.class) > 0;
 	}
