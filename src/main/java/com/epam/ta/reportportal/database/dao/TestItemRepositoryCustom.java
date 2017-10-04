@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 
 import java.time.Duration;
@@ -118,31 +119,11 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Load states of specified testItems in specified launches
 	 *
-	 * @param items
-	 * @param launchesIds
-	 * @param parentsIds
-	 * @return
-	 * @deprecated use {{@link #loadItemsHistory(List, List)}}
-	 */
-	@Deprecated
-	List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentsIds);
-
-	/**
-	 * Load states of specified testItems in specified launches
-	 *
 	 * @param uniqueIds   Items unique ids
 	 * @param launchesIds Launches ids
 	 * @return Founded items
 	 */
 	List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds);
-
-	/**
-	 * Find test items of specified launch with investigated issues.
-	 *
-	 * @param launchId
-	 * @return
-	 */
-	List<TestItem> findTestItemWithInvestigated(String launchId, int limit);
 
 	/**
 	 * Whether launch contains any testItems added lately.
@@ -228,6 +209,14 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param hasChilds hasChilds field value
 	 */
 	void updateHasChilds(String id, boolean hasChilds);
+
+	/**
+	 * Update only issue type for specified items without
+	 * updating its' statistics
+	 *
+	 * @param forUpdate items for update
+	 */
+	void updateItemsIssues(Map<String, TestItemIssue> forUpdate);
 
 	/**
 	 * Get test items without parent with specified launch.
