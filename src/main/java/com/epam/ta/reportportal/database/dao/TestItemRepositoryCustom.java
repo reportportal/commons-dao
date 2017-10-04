@@ -118,31 +118,11 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Load states of specified testItems in specified launches
 	 *
-	 * @param items
-	 * @param launchesIds
-	 * @param parentsIds
-	 * @return
-	 * @deprecated use {{@link #loadItemsHistory(List, List)}}
-	 */
-	@Deprecated
-	List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentsIds);
-
-	/**
-	 * Load states of specified testItems in specified launches
-	 *
 	 * @param uniqueIds   Items unique ids
 	 * @param launchesIds Launches ids
 	 * @return Founded items
 	 */
 	List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds);
-
-	/**
-	 * Find test items of specified launch with investigated issues.
-	 *
-	 * @param launchId
-	 * @return
-	 */
-	List<TestItem> findTestItemWithInvestigated(String launchId, int limit);
 
 	/**
 	 * Whether launch contains any testItems added lately.

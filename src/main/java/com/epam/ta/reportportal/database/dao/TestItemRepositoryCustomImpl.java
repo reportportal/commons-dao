@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
+import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
@@ -165,11 +166,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		Query q = query(where("_id").in(toObjId(path)));
 		q.fields().include("name");
 		List<TestItem> testItems = mongoTemplate.find(q, TestItem.class);
-		LinkedHashMap<String, String> pathNames = new LinkedHashMap<>(testItems.size());
-		for (TestItem testItem : testItems) {
-			pathNames.put(testItem.getId(), testItem.getName());
-		}
-		return pathNames;
+		return testItems.stream().collect(MoreCollectors.toLinkedMap(TestItem::getId, TestItem::getName));
 	}
 
 	private Collection<ObjectId> toObjId(Iterable<String> path) {
@@ -278,66 +275,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentIds) {
-		if (items == null || launchesIds == null) {
-			return new ArrayList<>();
-		}
-		Query query = query(getHistoryLaunchPathCriteria(launchesIds, items.get(0))).addCriteria(getItemsHistoryCriteria(items));
-
-		if (parentIds != null) {
-			query.addCriteria(where("parent").in(parentIds));
-		}
-		query.limit(HISTORY_LIMIT);
-		query.fields().include("name");
-		query.fields().include("start_time");
-		query.fields().include("end_time");
-		/* For UI: links level detector */
-		query.fields().include("has_childs");
-		query.fields().include("launchRef");
-		query.fields().include("issue");
-		query.fields().include("status");
-		query.fields().include("tags");
-		query.fields().include("itemDescription");
-		query.fields().include("statistics");
-		query.fields().include("type");
-		query.fields().include(ID_REFERENCE);
-		return mongoTemplate.find(query, TestItem.class);
-	}
-
-	@Override
 	public List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds) {
 		if (CollectionUtils.isEmpty(uniqueIds) || CollectionUtils.isEmpty(launchesIds)) {
 			return Collections.emptyList();
 		}
 		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds).and(UNIQUE_ID).in(uniqueIds));
 		query.limit(HISTORY_LIMIT);
-		return mongoTemplate.find(query, TestItem.class);
-	}
-
-	@Override
-	public List<TestItem> findTestItemWithInvestigated(String launchId, int limit) {
-		Criteria internalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i").ne(TestItemIssueType.TO_INVESTIGATE.getLocator()),
-				where(ISSUE_TYPE).exists(true)
-		);
-
-		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE_TYPE).exists(true),
-				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
-				where(ISSUE_TICKET).exists(true)
-		);
-
-		Query query = query(new Criteria().orOperator(internalIssues, externalIssues)).limit(limit);
-
-		query.limit(HISTORY_LIMIT);
-		query.fields().include("name");
-		query.fields().include("launchRef");
-		query.fields().include("issue");
-		query.fields().include("status");
-		query.fields().include(ID_REFERENCE);
-
-		query.fields().include("start_time");
-
 		return mongoTemplate.find(query, TestItem.class);
 	}
 
@@ -373,45 +316,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		Query query = query(where(LAUNCH_REFERENCE).in(launchRef)).addCriteria(where(NAME).is(name));
 		query.fields().include("_id");
 		return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toSet());
-	}
-
-	/**
-	 * Create part of history criteria. Define launch id, and path size
-	 * conditions.
-	 *
-	 * @param launchesIds
-	 * @param item
-	 * @return
-	 */
-	private Criteria getHistoryLaunchPathCriteria(List<String> launchesIds, TestItem item) {
-		return where(LAUNCH_REFERENCE).in(launchesIds).and("path").size(item.getPath().size());
-	}
-
-	/**
-	 * Create {@link Criteria} object for items history selecting Define name
-	 * type conditions.
-	 *
-	 * @param testItems
-	 * @return
-	 */
-	private Criteria getItemsHistoryCriteria(List<TestItem> testItems) {
-		Criteria criteria = new Criteria();
-		Criteria[] itemCriteries = new Criteria[testItems.size()];
-
-		for (int i = 0; i < testItems.size(); i++) {
-			TestItem testItem = testItems.get(i);
-			Criteria one = where("name").is(testItem.getName()).and("type").is(testItem.getType().toString());
-			if (null != testItem.getItemDescription()) {
-				one.and("itemDescription").is(testItem.getItemDescription());
-			}
-			if (null != testItem.getTags()) {
-				one.and("tags").is(testItem.getTags());
-			}
-			itemCriteries[i] = one;
-		}
-
-		criteria.orOperator(itemCriteries);
-		return criteria;
 	}
 
 	@Override
