@@ -21,16 +21,13 @@
  
 package com.epam.ta.reportportal.database.entity.sharing;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.security.acl.NotOwnerException;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 
-import com.epam.ta.reportportal.database.entity.sharing.AclEntry;
-import com.epam.ta.reportportal.database.entity.sharing.Acl;
+import java.io.Serializable;
+import java.security.Principal;
+import java.security.acl.NotOwnerException;
 
 
 /**
@@ -44,6 +41,7 @@ public class Shareable implements Serializable {
 	public static final String ID = "_id";
 	public static final String ACL = "acl";
 	public static final String OWNER = "acl.ownerUserId";
+	public static final String ENTRIES = "acl.entries";
 	public static final String DESCRIPTION = "description";
 
 	public static final Sort NAME_OWNER_SORT = new Sort(new Order(Direction.ASC, "name"), new Order(Direction.ASC, Shareable.OWNER));
