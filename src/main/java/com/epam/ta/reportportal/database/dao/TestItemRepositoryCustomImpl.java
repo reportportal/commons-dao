@@ -308,9 +308,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				match(where(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				group(Fields.fields("$uniqueId")).count().as("total")
-						.push(new BasicDBObject("status", "$status").append("issue", "$issue.issueType")).as("statusHistory")
+						.push(new BasicDBObject("status", "$status")
+								.append("issue", "$issue.issueType")
+								.append("time", "$start_time"))
+						.as("statusHistory")
 						.first("$name").as("name")
-						.last("$start_time").as("lastTime")
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
 				.getMappedResults();

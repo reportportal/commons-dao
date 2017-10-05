@@ -22,8 +22,6 @@ public class ItemStatusHistory implements Serializable {
 
 	private String name;
 
-	private Date lastTime;
-
 	public String getId() {
 		return id;
 	}
@@ -56,18 +54,76 @@ public class ItemStatusHistory implements Serializable {
 		this.name = name;
 	}
 
-	public Date getLastTime() {
-		return lastTime;
-	}
+	public static class Entry implements Serializable {
 
-	public void setLastTime(Date lastTime) {
-		this.lastTime = lastTime;
+		private String status;
+
+		private String issue;
+
+		private Date time;
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getIssue() {
+			return issue;
+		}
+
+		public void setIssue(String issue) {
+			this.issue = issue;
+		}
+
+		public Date getTime() {
+			return time;
+		}
+
+		public void setTime(Date time) {
+			this.time = time;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+
+			Entry entry = (Entry) o;
+
+			if (status != null ? !status.equals(entry.status) : entry.status != null) {
+				return false;
+			}
+			if (issue != null ? !issue.equals(entry.issue) : entry.issue != null) {
+				return false;
+			}
+			return time != null ? time.equals(entry.time) : entry.time == null;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = status != null ? status.hashCode() : 0;
+			result = 31 * result + (issue != null ? issue.hashCode() : 0);
+			result = 31 * result + (time != null ? time.hashCode() : 0);
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "Entry{" + "status='" + status + '\'' + ", issue='" + issue + '\'' + ", time=" + time + '}';
+		}
 	}
 
 	@Override
 	public String toString() {
 		return "ItemStatusHistory{" + "id='" + id + '\'' + ", total=" + total + ", statusHistory=" + statusHistory + ", name='" + name
-				+ '\'' + ", lastTime=" + lastTime + '}';
+				+ '\'' + '}';
 	}
 
 	@Override
@@ -90,10 +146,7 @@ public class ItemStatusHistory implements Serializable {
 		if (statusHistory != null ? !statusHistory.equals(that.statusHistory) : that.statusHistory != null) {
 			return false;
 		}
-		if (name != null ? !name.equals(that.name) : that.name != null) {
-			return false;
-		}
-		return lastTime != null ? lastTime.equals(that.lastTime) : that.lastTime == null;
+		return name != null ? name.equals(that.name) : that.name == null;
 	}
 
 	@Override
@@ -102,60 +155,6 @@ public class ItemStatusHistory implements Serializable {
 		result = 31 * result + (total != null ? total.hashCode() : 0);
 		result = 31 * result + (statusHistory != null ? statusHistory.hashCode() : 0);
 		result = 31 * result + (name != null ? name.hashCode() : 0);
-		result = 31 * result + (lastTime != null ? lastTime.hashCode() : 0);
 		return result;
 	}
-
-	public static class Entry implements Serializable {
-
-		private String status;
-
-		private String issue;
-
-		public String getStatus() {
-			return status;
-		}
-
-		public void setStatus(String status) {
-			this.status = status;
-		}
-
-		public String getIssue() {
-			return issue;
-		}
-
-		public void setIssue(String issue) {
-			this.issue = issue;
-		}
-
-		@Override
-		public String toString() {
-			return "Entry{" + "status='" + status + '\'' + ", issue='" + issue + '\'' + '}';
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) {
-				return true;
-			}
-			if (o == null || getClass() != o.getClass()) {
-				return false;
-			}
-
-			Entry entry = (Entry) o;
-
-			if (status != null ? !status.equals(entry.status) : entry.status != null) {
-				return false;
-			}
-			return issue != null ? issue.equals(entry.issue) : entry.issue == null;
-		}
-
-		@Override
-		public int hashCode() {
-			int result = status != null ? status.hashCode() : 0;
-			result = 31 * result + (issue != null ? issue.hashCode() : 0);
-			return result;
-		}
-	}
-
 }
