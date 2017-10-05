@@ -50,6 +50,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
 import static java.util.stream.Collectors.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -286,38 +287,45 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	/*
-		db.testItem.aggregate([
-				{ "$match" : { "launchRef" : { "$in" : [ "launch1" , "launch2" , "launch3"]}}},
+			db.testItem.aggregate([
+				{ "$match" : { "launchRef" : { "$in" : [ "59d4d606eff46f0aa1ad7cdc" , "59d4d533eff46f0aa1ad7b08" , "59d4d4b7eff46f0aa1ad7934"]}}},
 				{ "$match" : { "has_childs" : false}} ,
-				{ "$match" : { "issue.issueType" : {$exists : false} }},
 				{ "$sort" : { "start_time" : 1}},
 				{ "$group" : {
-					"_id" : "$uniqueId" , "count" : { "$sum" : 1 },
-					"historyStatus" : { "$push" : {"status" : "$status", "issue" : "$issue.issueType"}},
+					"_id" : "$uniqueId" ,
+					"count" : { "$sum" : 1 },
+					"historyStatus" : { "$push" : {"status" : "$status", "time" : "$start_time"}},
+					"diff" : { "$addToSet" : "$status" },
 					"name" : {"$first" : "$name"},
-					"lastTime" : {"$last" : "$start_time"}
-				}
-			}
+				}},
+				{ "$addFields" : { "count" : {"$size" : "$diff" }}},
+				{ "$match" : { "count" : {"$gt" : 1}}}
 		])
-	*/
+	 */
+	//@formatter:off
 	@Override
-	public List<ItemStatusHistory> getItemStatusHistory(List<String> launchIds) {
-		//@formatter:off
+	public List<ItemStatusHistory> getFlakyItemStatusHistory(List<String> launchIds) {
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds)),
 				match(where(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
-				group(Fields.fields("$uniqueId")).count().as("total")
-						.push(new BasicDBObject("status", "$status")
-								.append("issue", "$issue.issueType")
-								.append("time", "$start_time"))
-						.as("statusHistory")
-						.first("$name").as("name")
+				flakyItemsGroupOperation(),
+				addFields("count", new BasicDBObject("$size", "$diff")),
+				match(where("count").gt(1))
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
 				.getMappedResults();
-		//@formatter:on
 	}
+
+	private GroupOperation flakyItemsGroupOperation() {
+		return group(Fields.fields("$uniqueId"))
+				.count().as("total")
+				.first("$name").as("name")
+				.push(new BasicDBObject("status", "$status")
+						.append("time", "$start_time")).as("statusHistory")
+				.addToSet("$status").as("diff");
+	}
+	//@formatter:on
 
 	@Override
 	public boolean hasLogs(Iterable<TestItem> items) {
