@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.item.ItemStatusHistory;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -105,8 +106,17 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param launchIds
 	 * @param criteria
 	 * @return
+	 * @deprecated
 	 */
 	Map<String, String> getMostFailedTestCases(List<Launch> launchIds, String criteria);
+
+	/**
+	 * Get status history of items in specified launches
+	 *
+	 * @param launchIds Launches to find
+	 * @return List of status history entities
+	 */
+	List<ItemStatusHistory> getItemStatusHistory (List<String> launchIds);
 
 	/**
 	 * Whether some of provided items has logs

@@ -24,12 +24,14 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
+import com.epam.ta.reportportal.database.entity.item.ItemStatusHistory;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,8 +118,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			update.set(ISSUE_TYPE, newValue.getIssueType());
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
-			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
-					update,
+			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)), update,
 					mongoTemplate.getCollectionName(TestItem.class)
 			);
 		});
@@ -230,10 +231,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<String> getUniqueTicketsCount(List<Launch> launches) {
 		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
-				match(where(ISSUE_TICKET).exists(true)),
-				unwind(ISSUE_TICKET),
-				group(ISSUE_TICKET)
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(ISSUE_TICKET).exists(true)),
+				unwind(ISSUE_TICKET), group(ISSUE_TICKET)
 		);
 		// Count be as
 		// Aggregation.group("issue.externalSystemIssues").count().as("count");
@@ -284,6 +283,38 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			output.put(itemName, count + "#" + date.getTime() + "#" + total);
 		}
 		return output;
+	}
+
+	/*
+		db.testItem.aggregate([
+				{ "$match" : { "launchRef" : { "$in" : [ "launch1" , "launch2" , "launch3"]}}},
+				{ "$match" : { "has_childs" : false}} ,
+				{ "$match" : { "issue.issueType" : {$exists : false} }},
+				{ "$sort" : { "start_time" : 1}},
+				{ "$group" : {
+					"_id" : "$uniqueId" , "count" : { "$sum" : 1 },
+					"historyStatus" : { "$push" : {"status" : "$status", "issue" : "$issue.issueType"}},
+					"name" : {"$first" : "$name"},
+					"lastTime" : {"$last" : "$start_time"}
+				}
+			}
+		])
+	*/
+	@Override
+	public List<ItemStatusHistory> getItemStatusHistory(List<String> launchIds) {
+		//@formatter:off
+		Aggregation aggregation = newAggregation(
+				match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(HAS_CHILD).is(false)),
+				sort(Sort.Direction.ASC, START_TIME),
+				group(Fields.fields("$uniqueId")).count().as("total")
+						.push(new BasicDBObject("status", "$status").append("issue", "$issue.issueType")).as("statusHistory")
+						.first("$name").as("name")
+						.last("$start_time").as("lastTime")
+		);
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
+				.getMappedResults();
+		//@formatter:on
 	}
 
 	@Override
