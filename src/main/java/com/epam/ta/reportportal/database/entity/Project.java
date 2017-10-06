@@ -184,6 +184,7 @@ public class Project implements Serializable {
         private String keepLogs;
         private String keepScreenshots;
         private Boolean isAutoAnalyzerEnabled;
+        private Boolean analyzeOnTheFly;
         private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
         // Project Email Settings
@@ -299,7 +300,15 @@ public class Project implements Serializable {
             return isAutoAnalyzerEnabled;
         }
 
-        public void setEmailConfig(ProjectEmailConfig config) {
+		public Boolean getAnalyzeOnTheFly() {
+			return analyzeOnTheFly;
+		}
+
+		public void setAnalyzeOnTheFly(Boolean analyzeOnTheFly) {
+			this.analyzeOnTheFly = analyzeOnTheFly;
+		}
+
+		public void setEmailConfig(ProjectEmailConfig config) {
             this.emailConfig = config;
         }
 

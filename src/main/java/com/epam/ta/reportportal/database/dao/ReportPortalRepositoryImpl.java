@@ -284,14 +284,8 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         return (long) Math.ceil ((((Long) aggregate.getUniqueMappedResult().get("ind")).doubleValue() + 1d) / (double) pageable.getPageSize());
     }
 
-    /**
-     * Find entry by id load specified fields
-     *
-     * @param id           Entity ID
-     * @param fieldsToLoad Fields to load
-     * @return Found entity
-     */
-    T findById(ID id, List<String> fieldsToLoad) {
+    @Override
+    public T findById(ID id, List<String> fieldsToLoad) {
         Class<T> entityType = getEntityInformation().getJavaType();
         String idField = getEntityInformation().getIdAttribute();
         Query q = query(where(idField).is(id));
@@ -299,5 +293,14 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
             q.fields().include(field);
         }
         return getMongoOperations().findOne(q, entityType);
+    }
+
+    @Override
+    public List<T> findByIds(Collection<ID> ids, List<String> fieldsToLoad) {
+        Class<T> entityType = getEntityInformation().getJavaType();
+        String idField = getEntityInformation().getIdAttribute();
+        Query query = query(where(idField).in(ids));
+        fieldsToLoad.forEach(field -> query.fields().include(field));
+        return getMongoOperations().find(query, entityType);
     }
 }

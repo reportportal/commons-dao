@@ -22,12 +22,15 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
+import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -56,11 +59,11 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  *
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
- *
  */
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	private static final String ID_REFERENCE = "id";
+	private static final String ID = "_id";
 	private static final String LAUNCH_REFERENCE = "launchRef";
 	private static final String ITEM_REFERENCE = "testItemRef";
 	private static final String ISSUE_TYPE = "issue.issueType";
@@ -73,7 +76,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String NAME = "name";
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
-	private static final String IGNORE_DEFECT_REGEX = "^(nd)";
+	private static final String UNIQUE_ID = "uniqueId";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -87,8 +90,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
-				TestItem.class);
+		mongoTemplate.updateMulti(getItemQuery(item),
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
+				TestItem.class
+		);
 	}
 
 	@Override
@@ -99,6 +104,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public void updateHasChilds(String id, boolean hasChildren) {
 		mongoTemplate.updateFirst(query(where(ID_REFERENCE).is(id)), Update.update("has_childs", hasChildren), TestItem.class);
+	}
+
+	@Override
+	public void updateItemsIssues(Map<String, TestItemIssue> forUpdate) {
+		Query query = query(where(ID).in(forUpdate.keySet()));
+		Update update = new Update();
+		mongoTemplate.stream(query, TestItem.class).forEachRemaining(dbo -> {
+			String currentId = dbo.getId();
+			TestItemIssue newValue = forUpdate.get(currentId);
+			update.set(ISSUE_TYPE, newValue.getIssueType());
+			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
+			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
+			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
+					update,
+					mongoTemplate.getCollectionName(TestItem.class)
+			);
+		});
 	}
 
 	@Override
@@ -113,8 +135,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
-				TestItem.class);
+		mongoTemplate.updateMulti(getItemQuery(item),
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
+				TestItem.class
+		);
 	}
 
 	@Override
@@ -160,11 +184,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		Query q = query(where("_id").in(toObjId(path)));
 		q.fields().include("name");
 		List<TestItem> testItems = mongoTemplate.find(q, TestItem.class);
-		LinkedHashMap<String, String> pathNames = new LinkedHashMap<>(testItems.size());
-		for (TestItem testItem : testItems) {
-			pathNames.put(testItem.getId(), testItem.getName());
-		}
-		return pathNames;
+		return testItems.stream().collect(MoreCollectors.toLinkedMap(TestItem::getId, TestItem::getName));
 	}
 
 	private Collection<ObjectId> toObjId(Iterable<String> path) {
@@ -176,14 +196,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	private Collection<String> obtainIds(Iterable<Launch> launches) {
-		return StreamSupport.stream(launches.spliterator(), false)
-				.map(Launch::getId)
-				.collect(toList());
+		return StreamSupport.stream(launches.spliterator(), false).map(Launch::getId).collect(toList());
 	}
 
 	@Override
 	public List<TestItem> findModifiedLaterAgo(Duration period, Status status, Launch launch, boolean hasChilds) {
-		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
+		Query q = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, status)
+				.addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where("has_childs").is(hasChilds));
 		return mongoTemplate.find(q, TestItem.class);
 	}
@@ -198,8 +217,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<String> findDistinctValues(String launchId, String containsValue, String distinctBy) {
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId)), unwind(distinctBy),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy));
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId)),
+				unwind(distinctBy),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
+				group(distinctBy)
+		);
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
 		return result.getMappedResults().stream().map(entry -> entry.get("_id").toString()).collect(toList());
 	}
@@ -208,8 +230,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<String> getUniqueTicketsCount(List<Launch> launches) {
 		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(ISSUE_TICKET).exists(true)),
-				unwind(ISSUE_TICKET), group(ISSUE_TICKET));
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(ISSUE_TICKET).exists(true)),
+				unwind(ISSUE_TICKET),
+				group(ISSUE_TICKET)
+		);
 		// Count be as
 		// Aggregation.group("issue.externalSystemIssues").count().as("count");
 		// but keep a whole
@@ -232,15 +257,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
 
 		GroupOperation operationTotal = new GroupOperation(Fields.fields("$name")).count().as("count");
-		Aggregation aggregationTotal = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(HAS_CHILD).is(false)),
-				operationTotal);
+		Aggregation aggregationTotal = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(HAS_CHILD).is(false)),
+				operationTotal
+		);
 		AggregationResults<Map> resultTotal = mongoTemplate.aggregate(aggregationTotal, TestItem.class, Map.class);
-		Map<String, String> values = resultTotal.getMappedResults().stream()
+		Map<String, String> values = resultTotal.getMappedResults()
+				.stream()
 				.collect(toMap(key -> key.get("_id").toString(), value -> value.get("count").toString()));
 
 		GroupOperation operation = new GroupOperation(Fields.fields("$name")).count().as("count").last("$startTime").as("last");
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(criteria).is(1)),
-				match(where(HAS_CHILD).is(false)), operation);
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(criteria).is(1)),
+				match(where(HAS_CHILD).is(false)),
+				operation
+		);
 
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
 		for (Map<String, ?> entry : result.getMappedResults()) {
@@ -262,59 +293,19 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentIds) {
-		if (items == null || launchesIds == null) {
-			return new ArrayList<>();
+	public List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds) {
+		if (CollectionUtils.isEmpty(uniqueIds) || CollectionUtils.isEmpty(launchesIds)) {
+			return Collections.emptyList();
 		}
-		Query query = query(getHistoryLaunchPathCriteria(launchesIds, items.get(0))).addCriteria(getItemsHistoryCriteria(items));
-
-		if (parentIds != null) {
-			query.addCriteria(where("parent").in(parentIds));
-		}
+		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds).and(UNIQUE_ID).in(uniqueIds));
 		query.limit(HISTORY_LIMIT);
-		query.fields().include("name");
-		query.fields().include("start_time");
-		query.fields().include("end_time");
-		/* For UI: links level detector */
-		query.fields().include("has_childs");
-		query.fields().include("launchRef");
-		query.fields().include("issue");
-		query.fields().include("status");
-		query.fields().include("tags");
-		query.fields().include("itemDescription");
-		query.fields().include("statistics");
-		query.fields().include("type");
-		query.fields().include(ID_REFERENCE);
-		return mongoTemplate.find(query, TestItem.class);
-	}
-
-	@Override
-	public List<TestItem> findTestItemWithInvestigated(String launchId, int limit) {
-		Criteria internalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i").ne(TestItemIssueType.TO_INVESTIGATE.getLocator()),
-				where(ISSUE_TYPE).exists(true));
-
-		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId), where(ISSUE_TYPE).exists(true),
-				where(ISSUE_TYPE).not().regex(IGNORE_DEFECT_REGEX, "i"),
-				where(ISSUE_TICKET).exists(true));
-
-		Query query = query(new Criteria().orOperator(internalIssues, externalIssues)).limit(limit);
-
-		query.limit(HISTORY_LIMIT);
-		query.fields().include("name");
-		query.fields().include("launchRef");
-		query.fields().include("issue");
-		query.fields().include("status");
-		query.fields().include(ID_REFERENCE);
-
-		query.fields().include("start_time");
-
 		return mongoTemplate.find(query, TestItem.class);
 	}
 
 	@Override
 	public boolean hasTestItemsAddedLately(Duration period, Launch launch, Status status) {
-		Query query = ModifiableQueryBuilder.findModifiedLately(period).addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
+		Query query = ModifiableQueryBuilder.findModifiedLately(period)
+				.addCriteria(where(LAUNCH_REFERENCE).is(launch.getId()))
 				.addCriteria(where(HasStatus.STATUS).is(status.name()));
 		return (mongoTemplate.count(query, TestItem.class) > 0);
 	}
@@ -342,44 +333,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRef) {
 		Query query = query(where(LAUNCH_REFERENCE).in(launchRef)).addCriteria(where(NAME).is(name));
 		query.fields().include("_id");
-        return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toSet());
-    }
-
-	/**
-	 * Create part of history criteria. Define launch id, and path size
-	 * conditions.
-	 *
-	 * @param launchesIds
-	 * @param item
-	 * @return
-	 */
-	private Criteria getHistoryLaunchPathCriteria(List<String> launchesIds, TestItem item) {
-		return where(LAUNCH_REFERENCE).in(launchesIds).and("path").size(item.getPath().size());
-	}
-
-	/**
-	 * Create {@link Criteria} object for items history selecting Define name
-	 * type conditions.
-	 *
-	 * @param testItems
-	 * @return
-	 */
-	private Criteria getItemsHistoryCriteria(List<TestItem> testItems) {
-		Criteria criteria = new Criteria();
-		Criteria[] itemCriteries = new Criteria[testItems.size()];
-
-		for (int i = 0; i < testItems.size(); i++) {
-			TestItem testItem = testItems.get(i);
-			Criteria one = where("name").is(testItem.getName()).and("type").is(testItem.getType().toString());
-			if (null != testItem.getItemDescription())
-				one.and("itemDescription").is(testItem.getItemDescription());
-			if (null != testItem.getTags())
-				one.and("tags").is(testItem.getTags());
-			itemCriteries[i] = one;
-		}
-
-		criteria.orOperator(itemCriteries);
-		return criteria;
+		return mongoTemplate.find(query, TestItem.class).stream().map(TestItem::getId).collect(toSet());
 	}
 
 	@Override
@@ -391,17 +345,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findForSpecifiedSubType(List<String> launchesIds, boolean hasChild, StatisticSubType type) {
-		String issueField = "statistics.issueCounter." + TestItemIssueType.valueOf(type.getTypeRef()).awareStatisticsField() + "."
-				+ type.getLocator();
+		String issueField =
+				"statistics.issueCounter." + TestItemIssueType.valueOf(type.getTypeRef()).awareStatisticsField() + "." + type.getLocator();
 		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds)).addCriteria(where(HAS_CHILD).is(hasChild))
-				.addCriteria(where(issueField).exists(true)).with(new Sort(Sort.Direction.ASC, START_TIME));
+				.addCriteria(where(issueField).exists(true))
+				.with(new Sort(Sort.Direction.ASC, START_TIME));
 		return mongoTemplate.find(query, TestItem.class);
 	}
 
 	@Override
 	public List<TestItem> findTestItemWithIssues(String launchId) {
-		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId),
-				where(ISSUE).exists(true));
+		Criteria externalIssues = new Criteria().andOperator(where(LAUNCH_REFERENCE).is(launchId), where(ISSUE).exists(true));
 		Query query = query(externalIssues);
 		return mongoTemplate.find(query, TestItem.class);
 	}
@@ -412,9 +366,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return mongoTemplate.count(query, TestItem.class) > 0;
 	}
 
-    @Override
-    public List<TestItem> findWithoutParentByLaunchRef(String launchId) {
-        Query query = query(where(PARENT).exists(false)).addCriteria(where(LAUNCH_REFERENCE).is(launchId));
-        return mongoTemplate.find(query, TestItem.class);
-    }
+	@Override
+	public List<TestItem> findWithoutParentByLaunchRef(String launchId) {
+		Query query = query(where(PARENT).exists(false)).addCriteria(where(LAUNCH_REFERENCE).is(launchId));
+		return mongoTemplate.find(query, TestItem.class);
+	}
 }
