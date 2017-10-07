@@ -308,7 +308,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 */
 	@Override
 	public List<ItemStatusHistory> getMostFailedItemHistory(List<String> launchIds, String criteria) {
-		final String CRITERIA = "criteria";
+		final String CRITERIA_COUNT = "count";
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
@@ -319,9 +319,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 								.append("issue", "$issue.issueType")
 								.append("time", "$start_time"))
 						.as("statusHistory")
-						.sum("$" + criteria).as(CRITERIA),
-				match(where(CRITERIA).gt(0)),
-				sort(Sort.Direction.DESC, CRITERIA),
+						.sum("$" + criteria).as(CRITERIA_COUNT),
+				match(where(CRITERIA_COUNT).gt(0)),
+				sort(Sort.Direction.DESC, CRITERIA_COUNT),
 				limit(20)
 		);
 
