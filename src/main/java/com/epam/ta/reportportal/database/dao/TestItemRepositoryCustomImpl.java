@@ -286,32 +286,72 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return output;
 	}
 
+	//@formatter:off
+
+
+
+/*	db.testItem.aggregate([
+    { "$match" : { "launchRef" : { "$in" : [""]}}},
+    { "$match" : { "has_childs" : false}} ,
+    { "$sort" : { "start_time" : 1}},
+    { "$group" : {
+            "_id" : "$uniqueId" ,
+            "total" : { "$sum" : 1 },
+            "name" : {"$first" : "$name"},
+            "statusHistory" : { "$push" : {"status" : "$status", "issue" : "$issue.issueType", "time" : "$start_time"}},
+            "criteria" : { "$sum" : "$statistics.executionCounter.failed"},
+    }},
+    { "$match" : { "criteria" : {"$gt" : 1}}},
+    { "$sort" : { "criteria" : -1}},
+    { "$limit" : 20}
+])
+*/
+	@Override
+	public List<ItemStatusHistory> getMostFailedItemHistory(List<String> launchIds, String criteria) {
+		final String CRITERIA = "criteria";
+		Aggregation aggregation = newAggregation(
+				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+				sort(Sort.Direction.ASC, START_TIME),
+				group(Fields.fields("$uniqueId"))
+						.count().as("total")
+						.first("$name").as("name")
+						.push(new BasicDBObject("status", "$status")
+								.append("issue", "$issue.issueType")
+								.append("time", "$start_time"))
+						.as("statusHistory")
+						.sum("$" + criteria).as(CRITERIA),
+				match(where(CRITERIA).gt(0)),
+				sort(Sort.Direction.DESC, CRITERIA),
+				limit(20)
+		);
+
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
+				.getMappedResults();
+	}
+
 	/*
 			db.testItem.aggregate([
-				{ "$match" : { "launchRef" : { "$in" : [ "59d4d606eff46f0aa1ad7cdc" , "59d4d533eff46f0aa1ad7b08" , "59d4d4b7eff46f0aa1ad7934"]}}},
-				{ "$match" : { "has_childs" : false}} ,
+				{ "$match" : { $and: [ "launchRef" : { "$in" : [""]}, has_childs : false ]}},
 				{ "$sort" : { "start_time" : 1}},
 				{ "$group" : {
 					"_id" : "$uniqueId" ,
-					"count" : { "$sum" : 1 },
-					"historyStatus" : { "$push" : {"status" : "$status", "time" : "$start_time"}},
-					"diff" : { "$addToSet" : "$status" },
+					"total" : { "$sum" : 1 },
+					"statusHistory" : { "$push" : {"status" : "$status", "time" : "$start_time"}},
+					"statusSet" : { "$addToSet" : "$status" },
 					"name" : {"$first" : "$name"},
 				}},
-				{ "$addFields" : { "count" : {"$size" : "$diff" }}},
+				{ "$addFields" : { "count" : {"$size" : "$statusSet" }}},
 				{ "$match" : { "count" : {"$gt" : 1}}}
 		])
 	 */
-	//@formatter:off
 	@Override
 	public List<ItemStatusHistory> getFlakyItemStatusHistory(List<String> launchIds) {
 		Aggregation aggregation = newAggregation(
-				match(where(LAUNCH_REFERENCE).in(launchIds)),
-				match(where(HAS_CHILD).is(false)),
+				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				flakyItemsGroupOperation(),
-				addFields("count", new BasicDBObject("$size", "$diff")),
-				match(where("count").gt(1))
+				addFields("size", new BasicDBObject("$size", "$statusSet")),
+				match(where("size").gt(0))
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
 				.getMappedResults();
@@ -323,7 +363,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.first("$name").as("name")
 				.push(new BasicDBObject("status", "$status")
 						.append("time", "$start_time")).as("statusHistory")
-				.addToSet("$status").as("diff");
+				.addToSet("$status").as("statusSet");
 	}
 	//@formatter:on
 

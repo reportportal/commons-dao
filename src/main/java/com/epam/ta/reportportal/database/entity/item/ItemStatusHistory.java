@@ -18,6 +18,8 @@ public class ItemStatusHistory implements Serializable {
 
 	private Long total;
 
+	private Long count;
+
 	private LinkedList<Entry> statusHistory;
 
 	private String name;
@@ -36,6 +38,14 @@ public class ItemStatusHistory implements Serializable {
 
 	public void setTotal(Long total) {
 		this.total = total;
+	}
+
+	public Long getCount() {
+		return count;
+	}
+
+	public void setCount(Long count) {
+		this.count = count;
 	}
 
 	public LinkedList<Entry> getStatusHistory() {

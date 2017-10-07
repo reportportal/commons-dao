@@ -110,6 +110,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	Map<String, String> getMostFailedTestCases(List<Launch> launchIds, String criteria);
 
+	List<ItemStatusHistory> getMostFailedItemHistory(List<String> launchIds, String criteria);
+
 	/**
 	 * Get status history of potential flaky items in specified launches
 	 *
