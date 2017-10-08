@@ -24,7 +24,9 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
-import com.epam.ta.reportportal.database.entity.item.ItemStatusHistory;
+import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
+import com.epam.ta.reportportal.database.entity.history.status.FlakyHistoryObject;
+import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistoryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -80,6 +82,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
 	private static final String UNIQUE_ID = "uniqueId";
+	private static final String CRITERIA_COUNT = "criteria_count";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -307,26 +310,30 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 ])
 */
 	@Override
-	public List<ItemStatusHistory> getMostFailedItemHistory(List<String> launchIds, String criteria) {
-		final String CRITERIA_COUNT = "count";
+	public List<? extends ItemHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria) {
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
-				group(Fields.fields("$uniqueId"))
-						.count().as("total")
-						.first("$name").as("name")
-						.push(new BasicDBObject("status", "$status")
-								.append("issue", "$issue.issueType")
-								.append("time", "$start_time"))
-						.as("statusHistory")
-						.sum("$" + criteria).as(CRITERIA_COUNT),
+				mostFailedGroup(criteria),
 				match(where(CRITERIA_COUNT).gt(0)),
 				sort(Sort.Direction.DESC, CRITERIA_COUNT),
 				limit(20)
 		);
-
-		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistoryObject.class)
 				.getMappedResults();
+	}
+
+	private GroupOperation mostFailedGroup(String criteria) {
+		final String CRITERIA = "$" + criteria;
+		return group(Fields.fields("$uniqueId"))
+						.count().as("total")
+						.first("$name").as("name")
+						.push(new BasicDBObject("status", "$status")
+								.append("issue", "$issue.issueType")
+								.append("time", "$start_time")
+								.append("criteria", CRITERIA))
+						.as("statusHistory")
+						.sum(CRITERIA).as(CRITERIA_COUNT);
 	}
 
 	/*
@@ -345,24 +352,25 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		])
 	 */
 	@Override
-	public List<ItemStatusHistory> getFlakyItemStatusHistory(List<String> launchIds) {
+	public List<? extends ItemHistoryObject> getFlakyItemStatusHistory(List<String> launchIds) {
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
-				flakyItemsGroupOperation(),
+				flakyItemsGroup(),
 				addFields("size", new BasicDBObject("$size", "$statusSet")),
 				match(where("size").gt(0))
 		);
-		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), ItemStatusHistory.class)
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistoryObject.class)
 				.getMappedResults();
 	}
 
-	private GroupOperation flakyItemsGroupOperation() {
+	private GroupOperation flakyItemsGroup() {
 		return group(Fields.fields("$uniqueId"))
 				.count().as("total")
 				.first("$name").as("name")
 				.push(new BasicDBObject("status", "$status")
-						.append("time", "$start_time")).as("statusHistory")
+						.append("time", "$start_time"))
+				.as("statusHistory")
 				.addToSet("$status").as("statusSet");
 	}
 	//@formatter:on

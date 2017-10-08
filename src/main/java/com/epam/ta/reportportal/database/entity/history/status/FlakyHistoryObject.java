@@ -18,31 +18,33 @@
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.epam.ta.reportportal.commons;
+package com.epam.ta.reportportal.database.entity.history.status;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
+
+import java.util.List;
 
 /**
- * Custom collectors for collections streaming.
+ * Do not db object representation. It is result of
+ * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#getFlakyItemStatusHistory(List)}
+ * aggregation query.
  *
  * @author Pavel Bortnik
  */
-public final class MoreCollectors {
+public class FlakyHistoryObject extends ItemHistoryObject {
 
-    private MoreCollectors() {
-        //static only
-    }
+	List<String> statuses;
 
-    public static <T, K, U> Collector<T, ?, Map<K, U>> toLinkedMap(Function<? super T, ? extends K> keyMapper,
-                                                                   Function<? super T, ? extends U> valueMapper) {
-        return Collectors.toMap(keyMapper, valueMapper,
-                (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u));
-                },
-                LinkedHashMap::new);
-    }
+	public List<String> getStatuses() {
+		return statuses;
+	}
+
+	public void setStatuses(List<String> statuses) {
+		this.statuses = statuses;
+	}
+
+	@Override
+	public String toString() {
+		return "FlakyHistoryObject{" + "statuses=" + statuses + '}';
+	}
 }

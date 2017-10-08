@@ -18,31 +18,50 @@
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.epam.ta.reportportal.commons;
+package com.epam.ta.reportportal.database.entity.history;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.io.Serializable;
 
 /**
- * Custom collectors for collections streaming.
+ * Does not db object representation. It is  basic result of
+ * aggregation query for history object.
  *
  * @author Pavel Bortnik
  */
-public final class MoreCollectors {
+public class ItemHistoryObject implements Serializable {
 
-    private MoreCollectors() {
-        //static only
-    }
+	private String id;
 
-    public static <T, K, U> Collector<T, ?, Map<K, U>> toLinkedMap(Function<? super T, ? extends K> keyMapper,
-                                                                   Function<? super T, ? extends U> valueMapper) {
-        return Collectors.toMap(keyMapper, valueMapper,
-                (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u));
-                },
-                LinkedHashMap::new);
-    }
+	private Long total;
+
+	private String name;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Long getTotal() {
+		return total;
+	}
+
+	public void setTotal(Long total) {
+		this.total = total;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "ItemHistoryObject{" + "id='" + id + '\'' + ", total=" + total + ", name='" + name + '\'' + '}';
+	}
 }
