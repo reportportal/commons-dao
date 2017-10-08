@@ -271,11 +271,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				{ "$limit" : 20 }
 			])
 		*/
+		final int MINIMUM_FOR_FAILED = 0;
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				mostFailedGroup(criteria),
-				match(where(FAILED).gt(0)),
+				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
 				sort(Sort.Direction.DESC, FAILED),
 				limit(limit)
 		);
@@ -318,13 +319,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				{ "$match" : { "size	" : {"$gt" : 1}}}
 			])
 	 	*/
-
+		final int MINIMUM_FOR_FLAKY = 1;
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				flakyItemsGroup(),
 				addFields("size", new BasicDBObject("$size", "$statusSet")),
-				match(where("size").gt(1))
+				match(where("size").gt(MINIMUM_FOR_FLAKY))
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistoryObject.class)
 				.getMappedResults();
