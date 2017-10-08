@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database.entity.history.status;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import java.util.List;
  *
  * @author Pavel Bortnik
  */
-public class MostFailedHistory {
+public class MostFailedHistory implements Serializable{
 
 	private int total;
 
@@ -59,7 +60,7 @@ public class MostFailedHistory {
 		this.statusHistory = statusHistory;
 	}
 
-	public static class HistoryEntry {
+	public static class HistoryEntry implements Serializable {
 
 		@Field("start_time")
 		private Date startTime;

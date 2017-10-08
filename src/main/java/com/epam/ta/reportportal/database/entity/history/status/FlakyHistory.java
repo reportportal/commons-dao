@@ -22,6 +22,7 @@ package com.epam.ta.reportportal.database.entity.history.status;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -32,15 +33,39 @@ import java.util.List;
  *
  * @author Pavel Bortnik
  */
-public class FlakyHistory {
+public class FlakyHistory implements Serializable{
 
 	private List<HistoryEntry> statusHistory;
 
-	public static class HistoryEntry {
+	public List<HistoryEntry> getStatusHistory() {
+		return statusHistory;
+	}
+
+	public void setStatusHistory(List<HistoryEntry> statusHistory) {
+		this.statusHistory = statusHistory;
+	}
+
+	public static class HistoryEntry implements Serializable{
 
 		private String status;
 
 		@Field("start_time")
 		private Date startTime;
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public Date getStartTime() {
+			return startTime;
+		}
+
+		public void setStartTime(Date startTime) {
+			this.startTime = startTime;
+		}
 	}
 }
