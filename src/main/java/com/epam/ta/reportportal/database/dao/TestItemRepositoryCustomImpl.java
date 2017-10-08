@@ -357,7 +357,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				sort(Sort.Direction.ASC, START_TIME),
 				flakyItemsGroup(),
 				addFields("size", new BasicDBObject("$size", "$statusSet")),
-				match(where("size").gt(0))
+				match(where("size").gt(1))
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistoryObject.class)
 				.getMappedResults();
