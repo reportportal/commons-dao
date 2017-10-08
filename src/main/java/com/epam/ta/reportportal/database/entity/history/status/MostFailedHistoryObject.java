@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.entity.history.status;
 
 import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -53,8 +54,11 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 	}
 
 	public static class Entry extends ItemHistoryObject.Entry {
+
 		private String issue;
-		private Integer criteria;
+
+		@Field("criteria_count")
+		private int criteriaCount;
 
 		public String getIssue() {
 			return issue;
@@ -64,12 +68,12 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 			this.issue = issue;
 		}
 
-		public Integer getCriteria() {
-			return criteria;
+		public int getCriteriaCount() {
+			return criteriaCount;
 		}
 
-		public void setCriteria(Integer criteria) {
-			this.criteria = criteria;
+		public void setCriteriaCount(int criteriaCount) {
+			this.criteriaCount = criteriaCount;
 		}
 	}
 }

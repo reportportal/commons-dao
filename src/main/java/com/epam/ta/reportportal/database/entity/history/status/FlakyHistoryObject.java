@@ -32,13 +32,14 @@ import java.util.List;
  * @author Pavel Bortnik
  */
 public class FlakyHistoryObject extends ItemHistoryObject {
-	List<ItemHistoryObject.Entry> statuses;
 
-	public List<Entry> getStatuses() {
-		return statuses;
+	private List<ItemHistoryObject.Entry> statusHistory;
+
+	public List<Entry> getStatusHistory() {
+		return statusHistory;
 	}
 
-	public void setStatuses(List<Entry> statuses) {
-		this.statuses = statuses;
+	public void setStatusHistory(List<Entry> statusHistory) {
+		this.statusHistory = statusHistory;
 	}
 }

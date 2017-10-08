@@ -31,7 +31,7 @@ import java.util.Date;
  */
 public abstract class ItemHistoryObject implements Serializable {
 	private String id;
-	private Long total;
+	private int total;
 	private String name;
 
 	public String getId() {
@@ -42,11 +42,11 @@ public abstract class ItemHistoryObject implements Serializable {
 		this.id = id;
 	}
 
-	public Long getTotal() {
+	public int getTotal() {
 		return total;
 	}
 
-	public void setTotal(Long total) {
+	public void setTotal(int total) {
 		this.total = total;
 	}
 
@@ -65,7 +65,7 @@ public abstract class ItemHistoryObject implements Serializable {
 
 	public static class Entry implements Serializable{
 		private String status;
-		private Date date;
+		private Date lastTime;
 
 		public String getStatus() {
 			return status;
@@ -75,12 +75,12 @@ public abstract class ItemHistoryObject implements Serializable {
 			this.status = status;
 		}
 
-		public Date getDate() {
-			return date;
+		public Date getLastTime() {
+			return lastTime;
 		}
 
-		public void setDate(Date date) {
-			this.date = date;
+		public void setLastTime(Date lastTime) {
+			this.lastTime = lastTime;
 		}
 	}
 }
