@@ -63,7 +63,7 @@ public abstract class ItemHistoryObject implements Serializable {
 		return "ItemHistoryObject{" + "id='" + id + '\'' + ", total=" + total + ", name='" + name + '\'' + '}';
 	}
 
-	protected static class Entry implements Serializable{
+	public static class Entry implements Serializable{
 		private String status;
 		private Date date;
 
