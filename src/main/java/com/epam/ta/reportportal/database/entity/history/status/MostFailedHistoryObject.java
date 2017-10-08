@@ -34,15 +34,15 @@ import java.util.List;
  * @author Pavel Bortnik
  */
 public class MostFailedHistoryObject extends ItemHistoryObject {
-	private int amount;
+	private int failed;
 	private List<Entry> statusHistory;
 
-	public int getAmount() {
-		return amount;
+	public int getFailed() {
+		return failed;
 	}
 
-	public void setAmount(int amount) {
-		this.amount = amount;
+	public void setFailed(int failed) {
+		this.failed = failed;
 	}
 
 	public List<Entry> getStatusHistory() {

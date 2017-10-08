@@ -82,7 +82,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
 	private static final String UNIQUE_ID = "uniqueId";
-	private static final String CRITERIA_COUNT = "criteria_count";
+	private static final String FAILED = "failed";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -275,8 +275,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				mostFailedGroup(criteria),
-				match(where(CRITERIA_COUNT).gt(0)),
-				sort(Sort.Direction.DESC, CRITERIA_COUNT),
+				match(where(FAILED).gt(0)),
+				sort(Sort.Direction.DESC, FAILED),
 				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistoryObject.class)
@@ -287,14 +287,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		final String CRITERIA = "$" + criteria;
 		return group(Fields.fields("$uniqueId"))
 						.count().as("total")
-						.first("$name").as("name")
+						.first("$name").as(NAME)
 						.push(new BasicDBObject(STATUS, "$status")
-								.append("issue", "$issue.issueType")
+								.append(ISSUE, "$issue.issueType")
 								.append("time", "$start_time")
 								.append("criteria", CRITERIA)
 						)
 						.as("statusHistory")
-						.sum(CRITERIA).as("amount");
+						.sum(CRITERIA).as(FAILED);
 	}
 
 	@Override
@@ -333,7 +333,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private GroupOperation flakyItemsGroup() {
 		return group(Fields.fields("$uniqueId"))
 				.count().as("total")
-				.first("$name").as("name")
+				.first("$name").as(NAME)
 				.push(new BasicDBObject(STATUS, "$status")
 						.append("time", "$start_time"))
 				.as("statusHistory")
