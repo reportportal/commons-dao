@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Do not db object representation. It is result of
- * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#getMostFailedItemHistory(List, String)}
+ * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#getMostFailedItemHistory(List, String, int)}
  * aggregation query.
  *
  * @author Pavel Bortnik
@@ -58,6 +58,7 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 		private String issue;
 
 		@Field("criteria_count")
+		//shows if history item statistics by widget criteria
 		private int criteriaCount;
 
 		public String getIssue() {

@@ -53,7 +53,8 @@ import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -244,53 +245,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return result.getMappedResults().stream().map(entry -> entry.get("ticketId").toString()).collect(toList());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#
-	 * getMostFailedTestCases(java.util.List, java.lang.String)
-	 *
-	 * Most Failed Test Cases widget related method
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public Map<String, String> getMostFailedTestCases(List<Launch> launches, String criteria) {
-		Map<String, String> output = new HashMap<>();
-		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-
-		GroupOperation operationTotal = new GroupOperation(Fields.fields("$name")).count().as("count");
-		Aggregation aggregationTotal = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
-				match(where(HAS_CHILD).is(false)),
-				operationTotal
-		);
-		AggregationResults<Map> resultTotal = mongoTemplate.aggregate(aggregationTotal, TestItem.class, Map.class);
-		Map<String, String> values = resultTotal.getMappedResults()
-				.stream()
-				.collect(toMap(key -> key.get("_id").toString(), value -> value.get("count").toString()));
-
-		GroupOperation operation = new GroupOperation(Fields.fields("$name")).count().as("count").last("$startTime").as("last");
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
-				match(where(criteria).is(1)),
-				match(where(HAS_CHILD).is(false)),
-				operation
-		);
-
-		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
-		for (Map<String, ?> entry : result.getMappedResults()) {
-			String itemName = String.valueOf(entry.get("_id"));
-			String count = String.valueOf(entry.get("count"));
-			Date date = (Date) entry.get("last");
-			String total = values.get(itemName);
-			// FIXME Update dirty # separator with common case
-			// And update after {@link MostFailedTestCasesFilterStrategy}
-			output.put(itemName, count + "#" + date.getTime() + "#" + total);
-		}
-		return output;
-	}
-
 //@formatter:off
 	@Override
-	public List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria) {
+	public List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria, int limit) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { "launchRef" : { "$in" : [""]}}},
@@ -320,7 +277,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				mostFailedGroup(criteria),
 				match(where(CRITERIA_COUNT).gt(0)),
 				sort(Sort.Direction.DESC, CRITERIA_COUNT),
-				limit(20)
+				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistoryObject.class)
 				.getMappedResults();
@@ -331,12 +288,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return group(Fields.fields("$uniqueId"))
 						.count().as("total")
 						.first("$name").as("name")
-						.push(new BasicDBObject("status", "$status")
+						.push(new BasicDBObject(STATUS, "$status")
 								.append("issue", "$issue.issueType")
 								.append("time", "$start_time")
-								.append("criteria", CRITERIA))
+								.append("criteria", CRITERIA)
+						)
 						.as("statusHistory")
-						.sum(CRITERIA).as(CRITERIA_COUNT);
+						.sum(CRITERIA).as("amount");
 	}
 
 	@Override
@@ -357,7 +315,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 					"name" : {"$first" : "$name"},
 				}},
 				{ "$addFields" : { "size" : {"$size" : "$statusSet" }}},
-				{ "$match" : { "size" : {"$gt" : 1}}}
+				{ "$match" : { "size	" : {"$gt" : 1}}}
 			])
 	 	*/
 
@@ -376,7 +334,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return group(Fields.fields("$uniqueId"))
 				.count().as("total")
 				.first("$name").as("name")
-				.push(new BasicDBObject("status", "$status")
+				.push(new BasicDBObject(STATUS, "$status")
 						.append("time", "$start_time"))
 				.as("statusHistory")
 				.addToSet("$status").as("statusSet");

@@ -24,8 +24,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Does not db object representation. It is  basic result of
- * aggregation query for history object.
+ * Does not db object representation. It is
+ * basic result of aggregation query for history object.
  *
  * @author Pavel Bortnik
  */
@@ -63,7 +63,11 @@ public abstract class ItemHistoryObject implements Serializable {
 		return "ItemHistoryObject{" + "id='" + id + '\'' + ", total=" + total + ", name='" + name + '\'' + '}';
 	}
 
-	public static class Entry implements Serializable{
+	/**
+	 * Basic class with results of aggregation query
+	 * Represents history item
+	 */
+	public abstract static class Entry implements Serializable {
 		private String status;
 		private Date time;
 

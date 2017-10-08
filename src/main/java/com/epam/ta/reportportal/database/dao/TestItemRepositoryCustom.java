@@ -102,29 +102,22 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	List<String> getUniqueTicketsCount(List<Launch> launchesId);
 
 	/**
-	 * Get content of Most Failed Test Cases widget
+	 * Get history of most failed test items limited by historyLimit
+	 * and sorted by failed count
 	 *
-	 * @param launchIds
-	 * @param criteria
-	 * @return
-	 * @deprecated
+	 * @param launchIds    Launches history
+	 * @param criteria     Criteria to find by
+	 * @param historyLimit History limit
+	 * @return List of history of most failed test items
 	 */
-	Map<String, String> getMostFailedTestCases(List<Launch> launchIds, String criteria);
+	List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria, int historyLimit);
 
 	/**
-	 * Get history of
-	 *
-	 * @param launchIds
-	 * @param criteria
-	 * @return
-	 */
-	List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria);
-
-	/**
-	 * Get status history of potential flaky items in specified launches
+	 * Get status history of potential flaky items in specified launches.
+	 * Results contain only items that have at least one status' switch
 	 *
 	 * @param launchIds Launches to find
-	 * @return List of status history entities
+	 * @return List of history of flaky test items
 	 */
 	List<FlakyHistoryObject> getFlakyItemStatusHistory(List<String> launchIds);
 
