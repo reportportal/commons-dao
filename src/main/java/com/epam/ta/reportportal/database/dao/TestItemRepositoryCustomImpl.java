@@ -24,7 +24,6 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
-import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistoryObject;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistoryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
@@ -310,7 +309,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 ])
 */
 	@Override
-	public List<? extends ItemHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria) {
+	public List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria) {
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
@@ -352,7 +351,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		])
 	 */
 	@Override
-	public List<? extends ItemHistoryObject> getFlakyItemStatusHistory(List<String> launchIds) {
+	public List<FlakyHistoryObject> getFlakyItemStatusHistory(List<String> launchIds) {
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),

@@ -24,7 +24,8 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
-import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
+import com.epam.ta.reportportal.database.entity.history.status.FlakyHistoryObject;
+import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistoryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -117,7 +118,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param criteria
 	 * @return
 	 */
-	List<? extends ItemHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria);
+	List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria);
 
 	/**
 	 * Get status history of potential flaky items in specified launches
@@ -125,7 +126,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param launchIds Launches to find
 	 * @return List of status history entities
 	 */
-	List<? extends ItemHistoryObject> getFlakyItemStatusHistory(List<String> launchIds);
+	List<FlakyHistoryObject> getFlakyItemStatusHistory(List<String> launchIds);
 
 	/**
 	 * Whether some of provided items has logs

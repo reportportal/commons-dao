@@ -28,7 +28,7 @@ import java.io.Serializable;
  *
  * @author Pavel Bortnik
  */
-public class ItemHistoryObject implements Serializable {
+public abstract class ItemHistoryObject implements Serializable {
 
 	private String id;
 
