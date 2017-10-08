@@ -288,28 +288,32 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return output;
 	}
 
-	//@formatter:off
-
-
-
-/*	db.testItem.aggregate([
-    { "$match" : { "launchRef" : { "$in" : [""]}}},
-    { "$match" : { "has_childs" : false}} ,
-    { "$sort" : { "start_time" : 1}},
-    { "$group" : {
-            "_id" : "$uniqueId" ,
-            "total" : { "$sum" : 1 },
-            "name" : {"$first" : "$name"},
-            "statusHistory" : { "$push" : {"status" : "$status", "issue" : "$issue.issueType", "time" : "$start_time"}},
-            "criteria" : { "$sum" : "$statistics.executionCounter.failed"},
-    }},
-    { "$match" : { "criteria" : {"$gt" : 1}}},
-    { "$sort" : { "criteria" : -1}},
-    { "$limit" : 20}
-])
-*/
+//@formatter:off
 	@Override
 	public List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria) {
+		/*
+			db.testItem.aggregate([
+				{ "$match" : { "launchRef" : { "$in" : [""]}}},
+				{ "$match" : { "has_childs" : false}} ,
+				{ "$sort" : { "start_time" : 1}},
+				{ "$group" : {
+						"_id" : "$uniqueId" ,
+						"total" : { "$sum" : 1 },
+						"name" : {"$first" : "$name"},
+						"statusHistory" : { "$push" : {
+												"status" : "$status",
+												"issue" : "$issue.issueType",
+												"time" : "$start_time"
+												"criteria" : "$statistics.executionCounter.failed"
+												}
+										  },
+						"amount" : { "$sum" : "$statistics.executionCounter.failed"},
+				}},
+				{ "$match" : { "amount" : {"$gt" : 1}}},
+				{ "$sort" : { "amount" : -1}},
+				{ "$limit" : 20 }
+			])
+		*/
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
@@ -335,23 +339,28 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.sum(CRITERIA).as(CRITERIA_COUNT);
 	}
 
-	/*
+	@Override
+	public List<FlakyHistoryObject> getFlakyItemStatusHistory(List<String> launchIds) {
+		/*
 			db.testItem.aggregate([
 				{ "$match" : { $and: [ "launchRef" : { "$in" : [""]}, has_childs : false ]}},
 				{ "$sort" : { "start_time" : 1}},
 				{ "$group" : {
 					"_id" : "$uniqueId" ,
 					"total" : { "$sum" : 1 },
-					"statusHistory" : { "$push" : {"status" : "$status", "time" : "$start_time"}},
+					"statusHistory" : { "$push" : {
+													"status" : "$status",
+													"time" : "$start_time"
+													}
+											},
 					"statusSet" : { "$addToSet" : "$status" },
 					"name" : {"$first" : "$name"},
 				}},
-				{ "$addFields" : { "count" : {"$size" : "$statusSet" }}},
-				{ "$match" : { "count" : {"$gt" : 1}}}
-		])
-	 */
-	@Override
-	public List<FlakyHistoryObject> getFlakyItemStatusHistory(List<String> launchIds) {
+				{ "$addFields" : { "size" : {"$size" : "$statusSet" }}},
+				{ "$match" : { "size" : {"$gt" : 1}}}
+			])
+	 	*/
+
 		Aggregation aggregation = newAggregation(
 				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
@@ -372,7 +381,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.as("statusHistory")
 				.addToSet("$status").as("statusSet");
 	}
-	//@formatter:on
+//@formatter:on
 
 	@Override
 	public boolean hasLogs(Iterable<TestItem> items) {
