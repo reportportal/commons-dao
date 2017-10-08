@@ -57,7 +57,7 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 
 		private String issue;
 
-		@Field("criteria_count")
+		@Field("criteria")
 		//shows if history item statistics by widget criteria
 		private int criteriaCount;
 
