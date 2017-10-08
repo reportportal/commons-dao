@@ -65,7 +65,7 @@ public abstract class ItemHistoryObject implements Serializable {
 
 	public static class Entry implements Serializable{
 		private String status;
-		private Date lastTime;
+		private Date time;
 
 		public String getStatus() {
 			return status;
@@ -75,12 +75,12 @@ public abstract class ItemHistoryObject implements Serializable {
 			this.status = status;
 		}
 
-		public Date getLastTime() {
-			return lastTime;
+		public Date getTime() {
+			return time;
 		}
 
-		public void setLastTime(Date lastTime) {
-			this.lastTime = lastTime;
+		public void setTime(Date time) {
+			this.time = time;
 		}
 	}
 }
