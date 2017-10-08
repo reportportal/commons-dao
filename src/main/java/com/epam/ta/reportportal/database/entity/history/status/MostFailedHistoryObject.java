@@ -23,8 +23,6 @@ package com.epam.ta.reportportal.database.entity.history.status;
 
 import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,9 +33,7 @@ import java.util.List;
  * @author Pavel Bortnik
  */
 public class MostFailedHistoryObject extends ItemHistoryObject {
-
 	private int amount;
-
 	private List<Entry> statusHistory;
 
 	public int getAmount() {
@@ -56,23 +52,9 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 		this.statusHistory = statusHistory;
 	}
 
-	public static class Entry implements Serializable {
-
-		private String status;
-
+	public static class Entry extends ItemHistoryObject.Entry {
 		private String issue;
-
-		private Date time;
-
 		private Integer criteria;
-
-		public String getStatus() {
-			return status;
-		}
-
-		public void setStatus(String status) {
-			this.status = status;
-		}
 
 		public String getIssue() {
 			return issue;
@@ -82,25 +64,12 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 			this.issue = issue;
 		}
 
-		public Date getTime() {
-			return time;
-		}
-
-		public void setTime(Date time) {
-			this.time = time;
-		}
-
 		public Integer getCriteria() {
 			return criteria;
 		}
 
 		public void setCriteria(Integer criteria) {
 			this.criteria = criteria;
-		}
-
-		@Override
-		public String toString() {
-			return "Entry{" + "status='" + status + '\'' + ", issue='" + issue + '\'' + ", time=" + time + ", criteria=" + criteria + '}';
 		}
 	}
 }

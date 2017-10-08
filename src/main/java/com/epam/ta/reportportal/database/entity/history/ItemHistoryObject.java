@@ -21,6 +21,7 @@
 package com.epam.ta.reportportal.database.entity.history;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Does not db object representation. It is  basic result of
@@ -29,11 +30,8 @@ import java.io.Serializable;
  * @author Pavel Bortnik
  */
 public abstract class ItemHistoryObject implements Serializable {
-
 	private String id;
-
 	private Long total;
-
 	private String name;
 
 	public String getId() {
@@ -63,5 +61,26 @@ public abstract class ItemHistoryObject implements Serializable {
 	@Override
 	public String toString() {
 		return "ItemHistoryObject{" + "id='" + id + '\'' + ", total=" + total + ", name='" + name + '\'' + '}';
+	}
+
+	protected static class Entry implements Serializable{
+		private String status;
+		private Date date;
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public Date getDate() {
+			return date;
+		}
+
+		public void setDate(Date date) {
+			this.date = date;
+		}
 	}
 }
