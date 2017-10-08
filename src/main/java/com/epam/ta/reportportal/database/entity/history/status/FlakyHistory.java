@@ -20,8 +20,9 @@
  */
 package com.epam.ta.reportportal.database.entity.history.status;
 
-import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
+import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,15 +32,15 @@ import java.util.List;
  *
  * @author Pavel Bortnik
  */
-public class FlakyHistoryObject extends ItemHistoryObject {
+public class FlakyHistory {
 
-	private List<ItemHistoryObject.Entry> statusHistory;
+	private List<HistoryEntry> statusHistory;
 
-	public List<Entry> getStatusHistory() {
-		return statusHistory;
-	}
+	public static class HistoryEntry {
 
-	public void setStatusHistory(List<Entry> statusHistory) {
-		this.statusHistory = statusHistory;
+		private String status;
+
+		@Field("start_time")
+		private Date startTime;
 	}
 }

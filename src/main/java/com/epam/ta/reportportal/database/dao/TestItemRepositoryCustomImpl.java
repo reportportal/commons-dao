@@ -24,8 +24,8 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
-import com.epam.ta.reportportal.database.entity.history.status.FlakyHistoryObject;
-import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistoryObject;
+import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
+import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -122,7 +122,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			update.set(ISSUE_TYPE, newValue.getIssueType());
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
-			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)), update,
+			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
+					update,
 					mongoTemplate.getCollectionName(TestItem.class)
 			);
 		});
@@ -235,8 +236,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<String> getUniqueTicketsCount(List<Launch> launches) {
 		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(ISSUE_TICKET).exists(true)),
-				unwind(ISSUE_TICKET), group(ISSUE_TICKET)
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(ISSUE_TICKET).exists(true)),
+				unwind(ISSUE_TICKET),
+				group(ISSUE_TICKET)
 		);
 		// Count be as
 		// Aggregation.group("issue.externalSystemIssues").count().as("count");
@@ -245,9 +248,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return result.getMappedResults().stream().map(entry -> entry.get("ticketId").toString()).collect(toList());
 	}
 
-//@formatter:off
 	@Override
-	public List<MostFailedHistoryObject> getMostFailedItemHistory(List<String> launchIds, String criteria, int limit) {
+	public List<MostFailedHistory> getMostFailedItemHistory(List<String> launchIds, String criteria, int limit) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { "launchRef" : { "$in" : [""]}}},
@@ -258,48 +260,43 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						"total" : { "$sum" : 1 },
 						"name" : {"$first" : "$name"},
 						"statusHistory" : { "$push" : {
-												"status" : "$status",
-												"issue" : "$issue.issueType",
-												"time" : "$start_time"
-												"criteria" : "$statistics.executionCounter.failed"
+												"time" : "$start_time",
+												"criteriaAmount" : "$statistics.executionCounter.failed"
 												}
 										  },
-						"amount" : { "$sum" : "$statistics.executionCounter.failed"},
+						"failed" : { "$sum" : "$statistics.executionCounter.failed"},
 				}},
-				{ "$match" : { "amount" : {"$gt" : 1}}},
-				{ "$sort" : { "amount" : -1}},
+				{ "$match" : { "failed" : {"$gt" : 1}}},
+				{ "$sort" : { "failed" : -1}},
 				{ "$limit" : 20 }
 			])
 		*/
 		final int MINIMUM_FOR_FAILED = 0;
-		Aggregation aggregation = newAggregation(
-				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				mostFailedGroup(criteria),
 				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
 				sort(Sort.Direction.DESC, FAILED),
 				limit(limit)
 		);
-		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistoryObject.class)
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistory.class)
 				.getMappedResults();
 	}
 
 	private GroupOperation mostFailedGroup(String criteria) {
 		final String CRITERIA = "$" + criteria;
-		return group(Fields.fields("$uniqueId"))
-						.count().as("total")
-						.first("$name").as(NAME)
-						.push(new BasicDBObject(STATUS, "$status")
-								.append(ISSUE, "$issue.issueType")
-								.append("time", "$start_time")
-								.append("criteria", CRITERIA)
-						)
-						.as("statusHistory")
-						.sum(CRITERIA).as(FAILED);
+		return group(Fields.fields("$uniqueId")).count()
+				.as("total")
+				.first("$name")
+				.as(NAME)
+				.push(new BasicDBObject(START_TIME, "$start_time").append("criteriaAmount", CRITERIA))
+				.as("statusHistory")
+				.sum(CRITERIA)
+				.as(FAILED);
 	}
 
 	@Override
-	public List<FlakyHistoryObject> getFlakyItemStatusHistory(List<String> launchIds) {
+	public List<FlakyHistory> getFlakyItemStatusHistory(List<String> launchIds) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { $and: [ "launchRef" : { "$in" : [""]}, has_childs : false ]}},
@@ -320,27 +317,25 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			])
 	 	*/
 		final int MINIMUM_FOR_FLAKY = 1;
-		Aggregation aggregation = newAggregation(
-				match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				flakyItemsGroup(),
 				addFields("size", new BasicDBObject("$size", "$statusSet")),
 				match(where("size").gt(MINIMUM_FOR_FLAKY))
 		);
-		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistoryObject.class)
-				.getMappedResults();
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistory.class).getMappedResults();
 	}
 
 	private GroupOperation flakyItemsGroup() {
-		return group(Fields.fields("$uniqueId"))
-				.count().as("total")
-				.first("$name").as(NAME)
-				.push(new BasicDBObject(STATUS, "$status")
-						.append("time", "$start_time"))
+		return group(Fields.fields("$uniqueId")).count()
+				.as("total")
+				.first("$name")
+				.as(NAME)
+				.push(new BasicDBObject(STATUS, "$status").append(START_TIME, "$start_time"))
 				.as("statusHistory")
-				.addToSet("$status").as("statusSet");
+				.addToSet("$status")
+				.as("statusSet");
 	}
-//@formatter:on
 
 	@Override
 	public boolean hasLogs(Iterable<TestItem> items) {

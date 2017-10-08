@@ -21,9 +21,9 @@
 
 package com.epam.ta.reportportal.database.entity.history.status;
 
-import com.epam.ta.reportportal.database.entity.history.ItemHistoryObject;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,9 +33,15 @@ import java.util.List;
  *
  * @author Pavel Bortnik
  */
-public class MostFailedHistoryObject extends ItemHistoryObject {
+public class MostFailedHistory {
+
+	private int total;
+
+	private String name;
+
 	private int failed;
-	private List<Entry> statusHistory;
+
+	private List<HistoryEntry> statusHistory;
 
 	public int getFailed() {
 		return failed;
@@ -45,36 +51,36 @@ public class MostFailedHistoryObject extends ItemHistoryObject {
 		this.failed = failed;
 	}
 
-	public List<Entry> getStatusHistory() {
+	public List<HistoryEntry> getStatusHistory() {
 		return statusHistory;
 	}
 
-	public void setStatusHistory(List<Entry> statusHistory) {
+	public void setStatusHistory(List<HistoryEntry> statusHistory) {
 		this.statusHistory = statusHistory;
 	}
 
-	public static class Entry extends ItemHistoryObject.Entry {
+	public static class HistoryEntry {
 
-		private String issue;
+		@Field("start_time")
+		private Date startTime;
 
-		@Field("criteria")
-		//shows if history item statistics by widget criteria
-		private int criteriaCount;
+		//shows amount of item statistics by widget criteria
+		private int criteriaAmount;
 
-		public String getIssue() {
-			return issue;
+		public Date getStartTime() {
+			return startTime;
 		}
 
-		public void setIssue(String issue) {
-			this.issue = issue;
+		public void setStartTime(Date startTime) {
+			this.startTime = startTime;
 		}
 
-		public int getCriteriaCount() {
-			return criteriaCount;
+		public int getCriteriaAmount() {
+			return criteriaAmount;
 		}
 
-		public void setCriteriaCount(int criteriaCount) {
-			this.criteriaCount = criteriaCount;
+		public void setCriteriaAmount(int criteriaAmount) {
+			this.criteriaAmount = criteriaAmount;
 		}
 	}
 }
