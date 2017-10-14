@@ -20,6 +20,10 @@
  */
 package com.epam.ta.reportportal.database.entity.history.status;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
@@ -33,7 +37,7 @@ import java.util.List;
  *
  * @author Pavel Bortnik
  */
-public class FlakyHistory implements Serializable{
+public class FlakyHistory implements Serializable {
 
 	private int total;
 
@@ -65,7 +69,32 @@ public class FlakyHistory implements Serializable{
 		this.statusHistory = statusHistory;
 	}
 
-	public static class HistoryEntry implements Serializable{
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("total", total).add("name", name).add("statusHistory", statusHistory).toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		FlakyHistory that = (FlakyHistory) o;
+
+		return new EqualsBuilder().append(total, that.total).append(name, that.name).append(statusHistory, that.statusHistory).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(total).append(name).append(statusHistory).toHashCode();
+	}
+
+	public static class HistoryEntry implements Serializable {
 
 		private String status;
 
@@ -86,6 +115,28 @@ public class FlakyHistory implements Serializable{
 
 		public void setStartTime(Date startTime) {
 			this.startTime = startTime;
+		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this).add("status", status).add("startTime", startTime).toString();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+			HistoryEntry that = (HistoryEntry) o;
+			return Objects.equal(status, that.status) && Objects.equal(startTime, that.startTime);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(status, startTime);
 		}
 	}
 }
