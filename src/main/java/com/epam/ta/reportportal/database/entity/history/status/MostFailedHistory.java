@@ -21,6 +21,8 @@
 
 package com.epam.ta.reportportal.database.entity.history.status;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
@@ -28,13 +30,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Do not db object representation. It is result of
+ * Does not a db object representation. It is the result of
  * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#getMostFailedItemHistory(List, String, int)}
  * aggregation query.
  *
  * @author Pavel Bortnik
  */
-public class MostFailedHistory implements Serializable{
+public class MostFailedHistory implements Serializable {
 
 	private int total;
 
@@ -76,6 +78,35 @@ public class MostFailedHistory implements Serializable{
 		this.statusHistory = statusHistory;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		MostFailedHistory that = (MostFailedHistory) o;
+		return total == that.total && failed == that.failed && Objects.equal(name, that.name) && Objects.equal(statusHistory,
+				that.statusHistory
+		);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(total, name, failed, statusHistory);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("total", total)
+				.add("name", name)
+				.add("failed", failed)
+				.add("statusHistory", statusHistory)
+				.toString();
+	}
+
 	public static class HistoryEntry implements Serializable {
 
 		@Field("start_time")
@@ -98,6 +129,28 @@ public class MostFailedHistory implements Serializable{
 
 		public void setCriteriaAmount(int criteriaAmount) {
 			this.criteriaAmount = criteriaAmount;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+			HistoryEntry that = (HistoryEntry) o;
+			return criteriaAmount == that.criteriaAmount && Objects.equal(startTime, that.startTime);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(startTime, criteriaAmount);
+		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this).add("startTime", startTime).add("criteriaAmount", criteriaAmount).toString();
 		}
 	}
 }

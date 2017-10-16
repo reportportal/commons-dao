@@ -55,6 +55,8 @@ import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperati
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -82,6 +84,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
 	private static final String UNIQUE_ID = "uniqueId";
+	private static final String TOTAL = "total";
 	private static final String FAILED = "failed";
 
 	public static final int HISTORY_LIMIT = 2000;
@@ -267,16 +270,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						"failed" : { "$sum" : "$statistics.executionCounter.failed"},
 				}},
 				{ "$match" : { "failed" : {"$gt" : 1}}},
-				{ "$sort" : { "failed" : -1}},
+				{ "$sort" : { "failed" : -1, "total" : 1}},
 				{ "$limit" : 20 }
 			])
 		*/
 		final int MINIMUM_FOR_FAILED = 0;
+		Sort orders = new Sort(new Sort.Order(DESC, FAILED), new Sort.Order(ASC, TOTAL));
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
 				sort(Sort.Direction.ASC, START_TIME),
 				mostFailedGroup(criteria),
 				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
-				sort(Sort.Direction.DESC, FAILED),
+				sort(orders),
 				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistory.class)
@@ -286,7 +290,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private GroupOperation mostFailedGroup(String criteria) {
 		final String CRITERIA = "$" + criteria;
 		return group(Fields.fields("$uniqueId")).count()
-				.as("total")
+				.as(TOTAL)
 				.first("$name")
 				.as(NAME)
 				.push(new BasicDBObject(START_TIME, "$start_time").append("criteriaAmount", CRITERIA))
