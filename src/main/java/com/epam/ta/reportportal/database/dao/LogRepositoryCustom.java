@@ -32,23 +32,22 @@ import java.util.List;
  * Custom repository implementation. Is not used for know to avoid
  * misunderstanding. Adds possibility to extend current implementation with
  * several new methods
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public interface LogRepositoryCustom {
 
-    /**
-     * Removes binary content field for specified fileId
-     *
-     * @param fileId
-     * @return true if successfully removed
-     */
-    void removeBinaryContent(String fileId);
+	/**
+	 * Removes binary content field for specified fileId
+	 *
+	 * @param fileId
+	 * @return true if successfully removed
+	 */
+	void removeBinaryContent(String fileId);
 
 	/**
 	 * Finds logs for specified test steps
-	 * 
+	 *
 	 * @param testStep
 	 * @return
 	 */
@@ -56,7 +55,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Finds entities modified later than provided time
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -64,7 +63,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Finds entities modified later than period
-	 * 
+	 *
 	 * @param time
 	 * @return
 	 */
@@ -72,7 +71,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Finds entities modified later than period
-	 * 
+	 *
 	 * @param time
 	 * @return
 	 */
@@ -80,7 +79,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Get number of logs which attached to the specified {@link TestItem}
-	 * 
+	 *
 	 * @param testStep
 	 * @return
 	 */
@@ -90,7 +89,7 @@ public interface LogRepositoryCustom {
 	 * Load specified number of last logs for specified test item. binaryData
 	 * field will be loaded if it specified in appropriate input parameter, all
 	 * other fields will be fully loaded.
-	 * 
+	 *
 	 * @param itemRef
 	 * @param limit
 	 * @param isLoadBinaryData
@@ -100,7 +99,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Whether test item contains any logs added lately
-	 * 
+	 *
 	 * @param period
 	 * @param testItem
 	 * @return
@@ -109,7 +108,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Get list of log items with specified file id
-	 * 
+	 *
 	 * @param fileId
 	 * @return
 	 */
@@ -118,9 +117,19 @@ public interface LogRepositoryCustom {
 	/**
 	 * Find all {@link Log} records with log_level<br>
 	 * more than 40000 (ERROR and FATAL)
-	 * 
-	 * @param testItemId
-	 * @return
+	 *
+	 * @param testItemId Test Item id
+	 * @return List of logs
+	 */
+	List<Log> findTestItemErrorLogs(String testItemId);
+
+	/**
+	 * Find all {@link Log} records with log_level<br>
+	 * more than 40000 (ERROR and FATAL)
+	 *
+	 * @param testItemId Test item id
+	 * @param limit      Logs limit
+	 * @return List of logs
 	 */
 	List<Log> findTestItemErrorLogs(String testItemId, int limit);
 
@@ -134,6 +143,7 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Remove all items' {@link Log} records that modified before the time
+	 *
 	 * @param time
 	 * @param itemRef
 	 */
