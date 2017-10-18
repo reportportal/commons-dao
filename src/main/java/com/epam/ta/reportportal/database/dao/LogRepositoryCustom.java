@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.entity.Log;
+import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 
 import java.time.Duration;
@@ -116,12 +117,13 @@ public interface LogRepositoryCustom {
 
 	/**
 	 * Find all {@link Log} records with log_level<br>
-	 * more than 40000 (ERROR and FATAL)
+	 * more than specified level
 	 *
 	 * @param testItemId Test Item id
+	 * @param level      Log level
 	 * @return List of logs
 	 */
-	List<Log> findTestItemErrorLogs(String testItemId);
+	List<Log> findLogsGreaterThanLevel(String testItemId, LogLevel level);
 
 	/**
 	 * Find all {@link Log} records with log_level<br>
