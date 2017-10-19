@@ -56,6 +56,12 @@ public class TestItemIssue implements Serializable {
 		this.issueDescription = issueDescription;
 	}
 
+	public TestItemIssue(String issueType, String issueDescription, boolean autoAnalyzed) {
+		this.issueType = issueType;
+		this.issueDescription = issueDescription;
+		this.autoAnalyzed = autoAnalyzed;
+	}
+
 	public TestItemIssue() {
 		this(TestItemIssueType.TO_INVESTIGATE.getLocator(), null);
 	}
