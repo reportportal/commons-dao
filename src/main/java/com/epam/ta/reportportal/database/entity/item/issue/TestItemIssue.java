@@ -21,13 +21,12 @@
 
 package com.epam.ta.reportportal.database.entity.item.issue;
 
-import java.io.Serializable;
-import java.util.Set;
-
-import com.google.common.base.Objects;
+import com.epam.ta.reportportal.database.search.FilterCriteria;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.epam.ta.reportportal.database.search.FilterCriteria;
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents test step issue type and description (comment) on it
@@ -48,6 +47,9 @@ public class TestItemIssue implements Serializable {
 
 	@FilterCriteria("externalSystemIssues")
 	private Set<ExternalSystemIssue> externalSystemIssues;
+
+	@FilterCriteria("auto_analyzed")
+	private boolean autoAnalyzed;
 
 	public TestItemIssue(String issueType, String issueDescription) {
 		this.issueType = issueType;
@@ -137,6 +139,14 @@ public class TestItemIssue implements Serializable {
 		}
 	}
 
+	public boolean isAutoAnalyzed() {
+		return autoAnalyzed;
+	}
+
+	public void setAutoAnalyzed(boolean autoAnalyzed) {
+		this.autoAnalyzed = autoAnalyzed;
+	}
+
 	public Set<ExternalSystemIssue> getExternalSystemIssues() {
 		return externalSystemIssues;
 	}
@@ -162,36 +172,26 @@ public class TestItemIssue implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((issueDescription == null) ? 0 : issueDescription.hashCode());
-		result = prime * result + ((issueType == null) ? 0 : issueType.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TestItemIssue that = (TestItemIssue) o;
+		return autoAnalyzed == that.autoAnalyzed && Objects.equals(issueType, that.issueType) && Objects.equals(
+				issueDescription, that.issueDescription) && Objects.equals(externalSystemIssues, that.externalSystemIssues);
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		TestItemIssue that = (TestItemIssue) o;
-		return Objects.equal(issueType, that.issueType) &&
-				Objects.equal(issueDescription, that.issueDescription) &&
-				Objects.equal(externalSystemIssues, that.externalSystemIssues);
+	public int hashCode() {
+		return Objects.hash(issueType, issueDescription, externalSystemIssues, autoAnalyzed);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("TestItemIssue [issueType=");
-		builder.append(issueType);
-		builder.append(", issueDescription=");
-		builder.append(issueDescription);
-		builder.append(", ticketId=");
-		builder.append(", ticketUrl=");
-		builder.append("]");
-		return builder.toString();
+		return "TestItemIssue{" + "issueType='" + issueType + '\'' + ", issueDescription='" + issueDescription + '\''
+				+ ", externalSystemIssues=" + externalSystemIssues + ", autoAnalyzed=" + autoAnalyzed + '}';
 	}
 }
