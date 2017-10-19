@@ -123,6 +123,12 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Log> findLogsGreaterThanLevel(String testItemId, LogLevel level) {
+		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(level.toInt()));
+		return mongoTemplate.find(query, Log.class);
+	}
+
+	@Override
 	public List<Log> findTestItemErrorLogs(String testItemId, int limit) {
 		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(LogLevel.ERROR_INT))
                 .limit(limit);
