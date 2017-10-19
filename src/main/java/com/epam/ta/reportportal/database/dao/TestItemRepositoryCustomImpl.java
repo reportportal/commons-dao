@@ -74,6 +74,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String LAUNCH_REFERENCE = "launchRef";
 	private static final String ITEM_REFERENCE = "testItemRef";
 	private static final String ISSUE_TYPE = "issue.issueType";
+	private static final String ISSUE_ANALYZED = "issue.autoAnalyzed";
 	private static final String ISSUE_TICKET = "issue.externalSystemIssues";
 	private static final String ISSUE_DESCRIPTION = "issue.issueDescription";
 	private static final String ISSUE = "issue";
@@ -125,6 +126,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			update.set(ISSUE_TYPE, newValue.getIssueType());
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
+			update.set(ISSUE_ANALYZED, newValue.isAutoAnalyzed());
 			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
 					update,
 					mongoTemplate.getCollectionName(TestItem.class)
