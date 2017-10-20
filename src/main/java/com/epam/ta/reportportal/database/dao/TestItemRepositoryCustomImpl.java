@@ -24,12 +24,15 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
+import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
+import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +51,12 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -67,6 +74,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String LAUNCH_REFERENCE = "launchRef";
 	private static final String ITEM_REFERENCE = "testItemRef";
 	private static final String ISSUE_TYPE = "issue.issueType";
+	private static final String ISSUE_ANALYZED = "issue.autoAnalyzed";
 	private static final String ISSUE_TICKET = "issue.externalSystemIssues";
 	private static final String ISSUE_DESCRIPTION = "issue.issueDescription";
 	private static final String ISSUE = "issue";
@@ -77,6 +85,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String STATUS = "status";
 	private static final String PARENT = "parent";
 	private static final String UNIQUE_ID = "uniqueId";
+	private static final String TOTAL = "total";
+	private static final String FAILED = "failed";
 
 	public static final int HISTORY_LIMIT = 2000;
 
@@ -116,6 +126,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			update.set(ISSUE_TYPE, newValue.getIssueType());
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
+			update.set(ISSUE_ANALYZED, newValue.isAutoAnalyzed());
 			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
 					update,
 					mongoTemplate.getCollectionName(TestItem.class)
@@ -242,48 +253,94 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return result.getMappedResults().stream().map(entry -> entry.get("ticketId").toString()).collect(toList());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#
-	 * getMostFailedTestCases(java.util.List, java.lang.String)
-	 *
-	 * Most Failed Test Cases widget related method
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Map<String, String> getMostFailedTestCases(List<Launch> launches, String criteria) {
-		Map<String, String> output = new HashMap<>();
-		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-
-		GroupOperation operationTotal = new GroupOperation(Fields.fields("$name")).count().as("count");
-		Aggregation aggregationTotal = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
-				match(where(HAS_CHILD).is(false)),
-				operationTotal
+	public List<MostFailedHistory> getMostFailedItemHistory(List<String> launchIds, String criteria, int limit) {
+		/*
+			db.testItem.aggregate([
+				{ "$match" : { "launchRef" : { "$in" : [""]}}},
+				{ "$match" : { "has_childs" : false}} ,
+				{ "$sort" : { "start_time" : 1}},
+				{ "$group" : {
+						"_id" : "$uniqueId" ,
+						"total" : { "$sum" : 1 },
+						"name" : {"$first" : "$name"},
+						"statusHistory" : { "$push" : {
+												"time" : "$start_time",
+												"criteriaAmount" : "$statistics.executionCounter.failed"
+												}
+										  },
+						"failed" : { "$sum" : "$statistics.executionCounter.failed"},
+				}},
+				{ "$match" : { "failed" : {"$gt" : 1}}},
+				{ "$sort" : { "failed" : -1, "total" : 1}},
+				{ "$limit" : 20 }
+			])
+		*/
+		final int MINIMUM_FOR_FAILED = 0;
+		Sort orders = new Sort(new Sort.Order(DESC, FAILED), new Sort.Order(ASC, TOTAL));
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+				sort(Sort.Direction.ASC, START_TIME),
+				mostFailedGroup(criteria),
+				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
+				sort(orders),
+				limit(limit)
 		);
-		AggregationResults<Map> resultTotal = mongoTemplate.aggregate(aggregationTotal, TestItem.class, Map.class);
-		Map<String, String> values = resultTotal.getMappedResults()
-				.stream()
-				.collect(toMap(key -> key.get("_id").toString(), value -> value.get("count").toString()));
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistory.class)
+				.getMappedResults();
+	}
 
-		GroupOperation operation = new GroupOperation(Fields.fields("$name")).count().as("count").last("$startTime").as("last");
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
-				match(where(criteria).is(1)),
-				match(where(HAS_CHILD).is(false)),
-				operation
+	private GroupOperation mostFailedGroup(String criteria) {
+		final String CRITERIA = "$" + criteria;
+		return group(Fields.fields("$uniqueId")).count()
+				.as(TOTAL)
+				.first("$name")
+				.as(NAME)
+				.push(new BasicDBObject(START_TIME, "$start_time").append("criteriaAmount", CRITERIA))
+				.as("statusHistory")
+				.sum(CRITERIA)
+				.as(FAILED);
+	}
+
+	@Override
+	public List<FlakyHistory> getFlakyItemStatusHistory(List<String> launchIds) {
+		/*
+			db.testItem.aggregate([
+				{ "$match" : { $and: [ "launchRef" : { "$in" : [""]}, has_childs : false ]}},
+				{ "$sort" : { "start_time" : 1}},
+				{ "$group" : {
+					"_id" : "$uniqueId" ,
+					"total" : { "$sum" : 1 },
+					"statusHistory" : { "$push" : {
+													"status" : "$status",
+													"time" : "$start_time"
+													}
+											},
+					"statusSet" : { "$addToSet" : "$status" },
+					"name" : {"$first" : "$name"},
+				}},
+				{ "$addFields" : { "size" : {"$size" : "$statusSet" }}},
+				{ "$match" : { "size	" : {"$gt" : 1}}}
+			])
+	 	*/
+		final int MINIMUM_FOR_FLAKY = 1;
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+				sort(Sort.Direction.ASC, START_TIME),
+				flakyItemsGroup(),
+				addFields("size", new BasicDBObject("$size", "$statusSet")),
+				match(where("size").gt(MINIMUM_FOR_FLAKY))
 		);
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistory.class).getMappedResults();
+	}
 
-		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
-		for (Map<String, ?> entry : result.getMappedResults()) {
-			String itemName = String.valueOf(entry.get("_id"));
-			String count = String.valueOf(entry.get("count"));
-			Date date = (Date) entry.get("last");
-			String total = values.get(itemName);
-			// FIXME Update dirty # separator with common case
-			// And update after {@link MostFailedTestCasesFilterStrategy}
-			output.put(itemName, count + "#" + date.getTime() + "#" + total);
-		}
-		return output;
+	private GroupOperation flakyItemsGroup() {
+		return group(Fields.fields("$uniqueId")).count()
+				.as("total")
+				.first("$name")
+				.as(NAME)
+				.push(new BasicDBObject(STATUS, "$status").append(START_TIME, "$start_time"))
+				.as("statusHistory")
+				.addToSet("$status")
+				.as("statusSet");
 	}
 
 	@Override

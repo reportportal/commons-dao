@@ -176,6 +176,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public List<Launch> findIdsByFilter(Filter filter, Sort sort, int quantity) {
 		Query query = QueryBuilder.newBuilder().with(filter).with(sort).with(quantity).build();
+		query.fields().include(NAME);
 		query.fields().include(ID_REFERENCE);
 		query.fields().include(NUMBER);
 		query.fields().include(START_TIME);

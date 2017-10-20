@@ -3,7 +3,7 @@
  *
  *
  * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/service-api
+ * https://github.com/reportportal/commons-dao
  *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 package com.epam.ta.reportportal.commons;
 
 import com.epam.ta.reportportal.database.entity.item.TestItem;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -38,10 +39,17 @@ public class MoreCollectorsTest {
 
 	@Test
 	public void toLinkedMap() {
-		List<TestItem> testData = getTestData(5);
+		final int count = 5;
+		List<TestItem> testData = getTestData(count);
 		Map<String, String> collect = testData.stream().collect(MoreCollectors.toLinkedMap(TestItem::getId, TestItem::getUniqueId));
 		assertTrue(collect instanceof LinkedHashMap);
 		assertEquals(collect.size(), testData.size());
+		int i = 0;
+		for (Map.Entry<String, String> entry : collect.entrySet()) {
+			Assert.assertEquals(entry.getKey(), String.valueOf(i));
+			Assert.assertEquals(entry.getValue(), "unique" + i);
+			i++;
+		}
 	}
 
 	private List<TestItem> getTestData(final int count) {
