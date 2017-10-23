@@ -21,13 +21,13 @@
 
 package com.epam.ta.reportportal.database.entity.history.status;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Does not a db object representation. It is the result of
@@ -38,6 +38,9 @@ import java.util.List;
  */
 public class MostFailedHistory implements Serializable {
 
+	@Id
+	private String id;
+
 	private int total;
 
 	private String name;
@@ -45,6 +48,14 @@ public class MostFailedHistory implements Serializable {
 	private int failed;
 
 	private List<HistoryEntry> statusHistory;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public int getTotal() {
 		return total;
@@ -76,35 +87,6 @@ public class MostFailedHistory implements Serializable {
 
 	public void setStatusHistory(List<HistoryEntry> statusHistory) {
 		this.statusHistory = statusHistory;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		MostFailedHistory that = (MostFailedHistory) o;
-		return total == that.total && failed == that.failed && Objects.equal(name, that.name) && Objects.equal(statusHistory,
-				that.statusHistory
-		);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(total, name, failed, statusHistory);
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("total", total)
-				.add("name", name)
-				.add("failed", failed)
-				.add("statusHistory", statusHistory)
-				.toString();
 	}
 
 	public static class HistoryEntry implements Serializable {
@@ -140,17 +122,30 @@ public class MostFailedHistory implements Serializable {
 				return false;
 			}
 			HistoryEntry that = (HistoryEntry) o;
-			return criteriaAmount == that.criteriaAmount && Objects.equal(startTime, that.startTime);
+			return criteriaAmount == that.criteriaAmount && Objects.equals(startTime, that.startTime);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hashCode(startTime, criteriaAmount);
+			return Objects.hash(startTime, criteriaAmount);
 		}
+	}
 
-		@Override
-		public String toString() {
-			return MoreObjects.toStringHelper(this).add("startTime", startTime).add("criteriaAmount", criteriaAmount).toString();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
 		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		MostFailedHistory that = (MostFailedHistory) o;
+		return total == that.total && failed == that.failed && Objects.equals(id, that.id) && Objects.equals(name, that.name)
+				&& Objects.equals(statusHistory, that.statusHistory);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, total, name, failed, statusHistory);
 	}
 }
