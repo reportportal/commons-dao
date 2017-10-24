@@ -21,7 +21,6 @@
 
 package com.epam.ta.reportportal.database.entity.history.status;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
@@ -38,8 +37,8 @@ import java.util.Objects;
  */
 public class MostFailedHistory implements Serializable {
 
-	@Id
-	private String id;
+	@Field(value = "_id")
+	private String uniqueId;
 
 	private int total;
 
@@ -49,12 +48,12 @@ public class MostFailedHistory implements Serializable {
 
 	private List<HistoryEntry> statusHistory;
 
-	public String getId() {
-		return id;
+	public String getUniqueId() {
+		return uniqueId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 
 	public int getTotal() {
@@ -140,12 +139,12 @@ public class MostFailedHistory implements Serializable {
 			return false;
 		}
 		MostFailedHistory that = (MostFailedHistory) o;
-		return total == that.total && failed == that.failed && Objects.equals(id, that.id) && Objects.equals(name, that.name)
+		return total == that.total && failed == that.failed && Objects.equals(uniqueId, that.uniqueId) && Objects.equals(name, that.name)
 				&& Objects.equals(statusHistory, that.statusHistory);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, total, name, failed, statusHistory);
+		return Objects.hash(uniqueId, total, name, failed, statusHistory);
 	}
 }
