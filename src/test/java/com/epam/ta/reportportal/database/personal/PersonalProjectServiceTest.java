@@ -89,6 +89,11 @@ public class PersonalProjectServiceTest {
 
 	}
 
+	@Test
+	public void testPersonalProjectPrefix(){
+		new PersonalProjectService(mockProjectRepo()).
+	}
+
 	private ProjectRepository mockProjectRepo(){
 		ProjectRepository repo = Mockito.mock(ProjectRepository.class);
 		when(repo.exists(Mockito.anyString())).thenReturn(false);
