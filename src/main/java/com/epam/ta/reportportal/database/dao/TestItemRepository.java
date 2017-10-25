@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -29,25 +29,30 @@ import java.util.stream.Stream;
 
 /**
  * Repository interface for test items
- * 
+ *
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
- * 
  */
 public interface TestItemRepository extends TestItemRepositoryCustom, ReportPortalRepository<TestItem, String> {
 
-	String FIND_SUITE_ID_BY_ITEM_ID = "{ 'launchRef' : ?0 }";
+    String FIND_SUITE_ID_BY_ITEM_ID = "{ 'launchRef' : ?0 }";
 
-	@Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
-	Stream<TestItem> streamIdsByLaunch(String id);
+    @Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
+    Stream<TestItem> streamIdsByLaunch(String id);
 
-	@Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
-	List<TestItem> findIdsByLaunch(String launch);
+    @Query(value = FIND_SUITE_ID_BY_ITEM_ID, fields = "{'id' : 1}")
+    List<TestItem> findIdsByLaunch(String launch);
 
-	@Query(value = " { 'parent': ?0 } ")
-	List<TestItem> findAllDescendants(String parentId);
+    @Query(value = " { 'parent': ?0 } ")
+    List<TestItem> findAllDescendants(String parentId);
 
-	@Query(value = " { 'status': ?0 , 'launchRef': ?1  } ")
-	List<TestItem> findInStatusItems(String status, String launch);
+    @Query(value = " { 'status': ?0 , 'launchRef': ?1  } ")
+    List<TestItem> findInStatusItems(String status, String launch);
+
+    @Query(value = " { 'uniqueId': ?0 , 'parent': ?1  } ")
+    List<TestItem> findByUniqueId(String uniqueId, String parent);
+
+    @Query(value = " { 'uniqueId': ?0  } ")
+    List<TestItem> findByUniqueId(String uniqueId);
 
 }

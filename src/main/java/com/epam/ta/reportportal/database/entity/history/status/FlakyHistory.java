@@ -20,15 +20,13 @@
  */
 package com.epam.ta.reportportal.database.entity.history.status;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Do not db object representation. It is result of
@@ -39,11 +37,22 @@ import java.util.List;
  */
 public class FlakyHistory implements Serializable {
 
+	@Field(value = "_id")
+	private String uniqueId;
+
 	private int total;
 
 	private String name;
 
 	private List<HistoryEntry> statusHistory;
+
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
 
 	public int getTotal() {
 		return total;
@@ -67,31 +76,6 @@ public class FlakyHistory implements Serializable {
 
 	public void setStatusHistory(List<HistoryEntry> statusHistory) {
 		this.statusHistory = statusHistory;
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("total", total).add("name", name).add("statusHistory", statusHistory).toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		FlakyHistory that = (FlakyHistory) o;
-
-		return new EqualsBuilder().append(total, that.total).append(name, that.name).append(statusHistory, that.statusHistory).isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(total).append(name).append(statusHistory).toHashCode();
 	}
 
 	public static class HistoryEntry implements Serializable {
@@ -118,11 +102,6 @@ public class FlakyHistory implements Serializable {
 		}
 
 		@Override
-		public String toString() {
-			return MoreObjects.toStringHelper(this).add("status", status).add("startTime", startTime).toString();
-		}
-
-		@Override
 		public boolean equals(Object o) {
 			if (this == o) {
 				return true;
@@ -131,12 +110,31 @@ public class FlakyHistory implements Serializable {
 				return false;
 			}
 			HistoryEntry that = (HistoryEntry) o;
-			return Objects.equal(status, that.status) && Objects.equal(startTime, that.startTime);
+			return Objects.equals(status, that.status) && Objects.equals(startTime, that.startTime);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hashCode(status, startTime);
+			return Objects.hash(status, startTime);
 		}
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		FlakyHistory that = (FlakyHistory) o;
+		return total == that.total && Objects.equals(uniqueId, that.uniqueId) && Objects.equals(name, that.name) && Objects.equals(
+				statusHistory, that.statusHistory);
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(total).append(name).append(statusHistory).toHashCode();
+	}
+
 }

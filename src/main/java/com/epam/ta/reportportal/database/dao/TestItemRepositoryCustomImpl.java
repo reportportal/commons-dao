@@ -355,6 +355,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			return Collections.emptyList();
 		}
 		Query query = query(where(LAUNCH_REFERENCE).in(launchesIds).and(UNIQUE_ID).in(uniqueIds));
+		query.with(new Sort(ASC, ID));
 		query.limit(HISTORY_LIMIT);
 		return mongoTemplate.find(query, TestItem.class);
 	}
