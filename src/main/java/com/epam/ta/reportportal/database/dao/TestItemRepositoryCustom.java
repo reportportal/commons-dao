@@ -224,6 +224,14 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	void updateHasChilds(String id, boolean hasChilds);
 
 	/**
+	 * Adds retry to test item
+	 *
+	 * @param id    ID of root item
+	 * @param retry Retry to be added
+	 */
+	void addRetry(String id, TestItem retry);
+
+	/**
 	 * Update only issue type for specified items without
 	 * updating its' statistics
 	 *

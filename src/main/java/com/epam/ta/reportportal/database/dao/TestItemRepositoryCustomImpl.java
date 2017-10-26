@@ -117,6 +117,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public void addRetry(String id, TestItem retry) {
+		mongoTemplate.updateFirst(query(where(ID_REFERENCE).is(id)), new Update().push("retries", retry), TestItem.class);
+	}
+
+	@Override
 	public void updateItemsIssues(Map<String, TestItemIssue> forUpdate) {
 		Query query = query(where(ID).in(forUpdate.keySet()));
 		Update update = new Update();
