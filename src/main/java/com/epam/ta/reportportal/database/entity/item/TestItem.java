@@ -38,10 +38,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Document
 
@@ -288,140 +285,49 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
         this.retries = retries;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TestItem testItem = (TestItem) o;
+        return hasChilds == testItem.hasChilds && Objects.equals(id, testItem.id) && Objects.equals(name, testItem.name)
+                && type == testItem.type && Objects.equals(startTime, testItem.startTime) && Objects.equals(endTime, testItem.endTime)
+                && status == testItem.status && Objects.equals(tags, testItem.tags) && Objects.equals(statistics, testItem.statistics)
+                && Objects.equals(issue, testItem.issue) && Objects.equals(path, testItem.path) && Objects.equals(parent, testItem.parent)
+                && Objects.equals(launchRef, testItem.launchRef) && Objects.equals(
+                itemDescription,
+                testItem.itemDescription
+        ) && Objects.equals(parameters, testItem.parameters) && Objects.equals(lastModified, testItem.lastModified) && Objects.equals(
+                uniqueId,
+                testItem.uniqueId
+        ) && Objects.equals(retries, testItem.retries);
+    }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-        result = prime * result + (hasChilds ? 1231 : 1237);
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((issue == null) ? 0 : issue.hashCode());
-        result = prime * result + ((itemDescription == null) ? 0 : itemDescription.hashCode());
-        result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-        result = prime * result + ((launchRef == null) ? 0 : launchRef.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-        result = prime * result + ((statistics == null) ? 0 : statistics.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
-        return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TestItem other = (TestItem) obj;
-        if (endTime == null) {
-            if (other.endTime != null) {
-                return false;
-            }
-        } else if (!endTime.equals(other.endTime)) {
-            return false;
-        }
-        if (hasChilds != other.hasChilds) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (issue == null) {
-            if (other.issue != null) {
-                return false;
-            }
-        } else if (!issue.equals(other.issue)) {
-            return false;
-        }
-        if (itemDescription == null) {
-            if (other.itemDescription != null) {
-                return false;
-            }
-        } else if (!itemDescription.equals(other.itemDescription)) {
-            return false;
-        }
-        if (lastModified == null) {
-            if (other.lastModified != null) {
-                return false;
-            }
-        } else if (!lastModified.equals(other.lastModified)) {
-            return false;
-        }
-        if (launchRef == null) {
-            if (other.launchRef != null) {
-                return false;
-            }
-        } else if (!launchRef.equals(other.launchRef)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (parent == null) {
-            if (other.parent != null) {
-                return false;
-            }
-        } else if (!parent.equals(other.parent)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        if (statistics == null) {
-            if (other.statistics != null) {
-                return false;
-            }
-        } else if (!statistics.equals(other.statistics)) {
-            return false;
-        }
-        if (status != other.status) {
-            return false;
-        }
-        if (type != other.type) {
-            return false;
-        }
-        if (parameters == null) {
-            if (other.parameters != null) {
-                return false;
-            }
-        } else if (!parameters.equals(other.parameters)) {
-            return false;
-        }
-        return true;
+        return Objects.hash(id,
+                name,
+                type,
+                startTime,
+                endTime,
+                status,
+                tags,
+                statistics,
+                issue,
+                path,
+                parent,
+                launchRef,
+                hasChilds,
+                itemDescription,
+                parameters,
+                lastModified,
+                uniqueId,
+                retries
+        );
     }
 
     @Override
@@ -429,6 +335,7 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
         return "TestItem{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", type=" + type + ", startTime=" + startTime + ", endTime="
                 + endTime + ", status=" + status + ", tags=" + tags + ", statistics=" + statistics + ", issue=" + issue + ", path=" + path
                 + ", parent='" + parent + '\'' + ", launchRef='" + launchRef + '\'' + ", hasChilds=" + hasChilds + ", itemDescription='"
-                + itemDescription + '\'' + ", lastModified=" + lastModified + ", parameters=" + parameters + '}';
+                + itemDescription + '\'' + ", parameters=" + parameters + ", lastModified=" + lastModified + ", uniqueId='" + uniqueId
+                + '\'' + ", retries=" + retries + '}';
     }
 }
