@@ -165,7 +165,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param launchId  Launch id
 	 * @return List of items' ids without provided issue
 	 */
-	List<String> findIdsNotInIssueType(String issueType, String launchId);
+	List<TestItem> findIdsNotInIssueType(String issueType, String launchId);
 
 	/**
 	 * Get test-items ids for specified launches.
