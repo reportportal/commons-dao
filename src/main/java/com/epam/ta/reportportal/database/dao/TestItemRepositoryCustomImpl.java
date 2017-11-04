@@ -380,14 +380,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findInIssueTypeItems(String issueType, String launchId) {
-		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(ISSUE_TYPE).exists(true))
+		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(ISSUE).exists(true))
 				.addCriteria(where(ISSUE_TYPE).regex(Pattern.quote(issueType)));
 		return mongoTemplate.find(query, TestItem.class);
 	}
 
 	@Override
 	public List<TestItem> findItemsNotInIssueType(String issueType, String launchId) {
-		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(ISSUE_TYPE).exists(true))
+		Query query = query(where(LAUNCH_REFERENCE).is(launchId)).addCriteria(where(ISSUE).exists(true))
 				.addCriteria(where(ISSUE_TYPE).ne(issueType));
 		return mongoTemplate.find(query, TestItem.class);
 	}
