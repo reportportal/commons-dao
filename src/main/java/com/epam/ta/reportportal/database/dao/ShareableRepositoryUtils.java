@@ -17,45 +17,42 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
+import com.epam.ta.reportportal.database.entity.sharing.AclPermissions;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.epam.ta.reportportal.database.entity.sharing.AclPermissions;
-
 /**
  * Provide utilities for working with sharable repositories
- * 
- * @author Aliaksei_Makayed
  *
+ * @author Aliaksei_Makayed
  */
 class ShareableRepositoryUtils {
 
-	private ShareableRepositoryUtils() {}
+	private ShareableRepositoryUtils() {
+	}
 
 	/**
 	 * Create {@link Query} for loading shared to specified project and not owned by specified user
 	 * entities.
-	 * 
-	 * @param projectName
-	 * @param owner
-	 * @return
+	 *
+	 * @param projectName Project name
+	 * @param owner       Widget owner
+	 * @return Query
 	 */
 	public static Query createSharedEntityQuery(String owner, String projectName) {
 		return Query.query(Criteria.where("acl.entries.projectId").is(projectName))
-				.addCriteria(Criteria.where("acl.entries.permissions").is(AclPermissions.READ.name()))
-				.addCriteria(Criteria.where("acl.ownerUserId").ne(owner));
+				.addCriteria(Criteria.where("acl.entries.permissions").is(AclPermissions.READ.name()));
 	}
 
 	/**
 	 * Create {@link Query} for loading entities owned by specified user.
-	 * 
-	 * @param owner
-	 * @param projectName
-	 * @return
+	 *
+	 * @param owner Widget owner
+	 * @return Query
 	 */
 	public static Query createOwnedEntityQuery(String owner) {
 		return Query.query(Criteria.where("acl.ownerUserId").is(owner));
@@ -64,9 +61,9 @@ class ShareableRepositoryUtils {
 	/**
 	 * Create {@link org.springframework.data.mongodb.core.query.Query} for loading non shared
 	 * entities owned by specified user
-	 * 
-	 * @param owner
-	 * @return
+	 *
+	 * @param owner Widget owner
+	 * @return Query
 	 */
 	public static Query createUnsharedEntityQuery(String owner) {
 		return Query.query(Criteria.where("acl.ownerUserId").is(owner)).addCriteria(Criteria.where("acl.entries").size(0));
