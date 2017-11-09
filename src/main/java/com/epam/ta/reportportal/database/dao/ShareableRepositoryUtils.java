@@ -40,10 +40,9 @@ class ShareableRepositoryUtils {
 	 * entities.
 	 *
 	 * @param projectName Project name
-	 * @param owner       Widget owner
 	 * @return Query
 	 */
-	public static Query createSharedEntityQuery(String owner, String projectName) {
+	public static Query createSharedEntityQuery(String projectName) {
 		return Query.query(Criteria.where("acl.entries.projectId").is(projectName))
 				.addCriteria(Criteria.where("acl.entries.permissions").is(AclPermissions.READ.name()));
 	}
