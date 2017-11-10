@@ -37,6 +37,7 @@ public enum ActivityEventType {
     CREATE_FILTER("create_filter"),
     UPDATE_FILTER("update_filter"),
     DELETE_FILTER("delete_filter"),
+    ANALYZE_ITEM("analyze_item"),
     UPDATE_DEFECT("update_defect"),
     DELETE_DEFECT("delete_defect"),
     CREATE_BTS("create_bts"),
