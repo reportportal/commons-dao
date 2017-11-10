@@ -49,9 +49,6 @@ public interface TestItemRepository extends TestItemRepositoryCustom, ReportPort
     @Query(value = " { 'status': ?0 , 'launchRef': ?1  } ")
     List<TestItem> findInStatusItems(String status, String launch);
 
-    @Query(value = " { 'uniqueId': ?0 , 'parent': ?1  } ")
-    List<TestItem> findByUniqueId(String uniqueId, String parent);
-
     @Query(value = " { 'uniqueId': ?0  } ")
     List<TestItem> findByUniqueId(String uniqueId);
 

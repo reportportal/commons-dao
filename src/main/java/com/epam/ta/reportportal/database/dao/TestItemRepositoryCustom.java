@@ -254,4 +254,14 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @return list of test items
 	 */
 	List<TestItem> findWithoutParentByLaunchRef(String launchId);
+
+	/**
+	 * Finds initial item of the retry
+	 *
+	 * @param uniqueId UniqueID of item
+	 * @param parent   ID of retry's parent
+	 * @return Root of retry (first retry item)
+	 */
+	TestItem findRetryRoot(String uniqueId, String parent);
+
 }
