@@ -263,4 +263,12 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @return List of launch IDs
 	 */
 	List<String> findLaunchIdsByProjectIds(List<String> ids);
+
+	/**
+	 * Updates hasRetry field
+	 *
+	 * @param id         Launch ID
+	 * @param hasRetries hasRetries field value
+	 */
+	void updateHasRetries(String id, boolean hasRetries);
 }
