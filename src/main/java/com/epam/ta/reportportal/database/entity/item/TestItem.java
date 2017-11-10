@@ -42,300 +42,292 @@ import java.util.*;
 
 @Document
 
-@CompoundIndexes({@CompoundIndex(name = "parent_start_time", def = "{'parent': 1, 'start_time': 1}", background = true),})
+@CompoundIndexes({ @CompoundIndex(name = "parent_start_time", def = "{'parent': 1, 'start_time': 1}", background = true), })
 public class TestItem implements Serializable, BidirectionalTree, Interruptable {
 
-    public static final String START_TIME_CRITERIA = "start_time";
-    public static final String LAUNCH_CRITERIA = "launch";
-    public static final String TAGS = "tags";
-    public static final String TEST_ITEM = "testItem";
-    public static final String ISSUE = "issue";
-    public static final String EXTERNAL_SYSTEM_ISSUES = "issue$externalSystemIssues";
+	public static final String START_TIME_CRITERIA = "start_time";
+	public static final String LAUNCH_CRITERIA = "launch";
+	public static final String TAGS = "tags";
+	public static final String TEST_ITEM = "testItem";
+	public static final String ISSUE = "issue";
+	public static final String EXTERNAL_SYSTEM_ISSUES = "issue$externalSystemIssues";
 
-    private static final long serialVersionUID = -2400786349507451080L;
+	private static final long serialVersionUID = -2400786349507451080L;
 
-    @Id
-    @FilterCriteria("id")
-    private String id;
+	@Id
+	@FilterCriteria("id")
+	private String id;
 
-    @FilterCriteria("name")
-    private String name;
+	@FilterCriteria("name")
+	private String name;
 
-    @FilterCriteria("type")
-    private TestItemType type;
+	@FilterCriteria("type")
+	private TestItemType type;
 
-    // index on start time is redundant because almost all queries
-    // use indexes on launchRef and, parent fields
-    @FilterCriteria(START_TIME_CRITERIA)
-    @Field(START_TIME_CRITERIA)
-    private Date startTime;
+	// index on start time is redundant because almost all queries
+	// use indexes on launchRef and, parent fields
+	@FilterCriteria(START_TIME_CRITERIA)
+	@Field(START_TIME_CRITERIA)
+	private Date startTime;
 
-    @Field("end_time")
-    @FilterCriteria("end_time")
-    private Date endTime;
+	@Field("end_time")
+	@FilterCriteria("end_time")
+	private Date endTime;
 
-    @FilterCriteria("status")
-    private Status status;
+	@FilterCriteria("status")
+	private Status status;
 
-    @FilterCriteria(TAGS)
-    @Indexed
-    private Set<String> tags;
+	@FilterCriteria(TAGS)
+	@Indexed
+	private Set<String> tags;
 
-    /**
-     * Test item statistics representation, {@link Statistics}
-     */
-    @FilterCriteria("statistics")
-    private Statistics statistics;
+	/**
+	 * Test item statistics representation, {@link Statistics}
+	 */
+	@FilterCriteria("statistics")
+	private Statistics statistics;
 
-    /**
-     * Test item issue marker, {@link TestItemIssue}
-     */
-    @FilterCriteria(ISSUE)
-    private TestItemIssue issue;
+	/**
+	 * Test item issue marker, {@link TestItemIssue}
+	 */
+	@FilterCriteria(ISSUE)
+	private TestItemIssue issue;
 
-    @FilterCriteria("path")
-    @Indexed
-    private List<String> path;
+	@FilterCriteria("path")
+	@Indexed
+	private List<String> path;
 
-    @FilterCriteria("parent")
-    private String parent;
+	@FilterCriteria("parent")
+	private String parent;
 
-    @FilterCriteria(LAUNCH_CRITERIA)
-    // added for improving finish launch
-    @Indexed(background = true)
-    private String launchRef;
+	@FilterCriteria(LAUNCH_CRITERIA)
+	// added for improving finish launch
+	@Indexed(background = true)
+	private String launchRef;
 
-    @FilterCriteria("has_childs")
-    @Field("has_childs")
-    private boolean hasChilds;
+	@FilterCriteria("has_childs")
+	@Field("has_childs")
+	private boolean hasChilds;
 
-    /**
-     * Test step item description.
-     */
-    @FilterCriteria("description")
-    private String itemDescription;
+	/**
+	 * Test step item description.
+	 */
+	@FilterCriteria("description")
+	private String itemDescription;
 
-    @FilterCriteria("parameters")
-    private List<Parameter> parameters;
+	@FilterCriteria("parameters")
+	private List<Parameter> parameters;
 
-    @LastModifiedDate
-    @FilterCriteria(LAST_MODIFIED)
-    @Field(LAST_MODIFIED)
-    private Date lastModified;
+	@LastModifiedDate
+	@FilterCriteria(LAST_MODIFIED)
+	@Field(LAST_MODIFIED)
+	private Date lastModified;
 
-    @FilterCriteria("uniqueId")
-    private String uniqueId;
+	@FilterCriteria("uniqueId")
+	private String uniqueId;
 
-    private List<TestItem> retries;
+	private List<TestItem> retries;
 
-    public TestItem() {
-        path = new ArrayList<>();
-        statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
-    }
+	@FilterCriteria("ignoreAnalyzer")
+	private boolean ignoreAnalyzer;
 
-    public String getId() {
-        return this.id;
-    }
+	public TestItem() {
+		path = new ArrayList<>();
+		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getItemDescription() {
-        return itemDescription;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setItemDescription(String description) {
-        this.itemDescription = description;
-    }
+	public String getItemDescription() {
+		return itemDescription;
+	}
 
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
+	public void setItemDescription(String description) {
+		this.itemDescription = description;
+	}
 
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
-    }
+	public List<Parameter> getParameters() {
+		return parameters;
+	}
 
-    public TestItemType getType() {
-        return type;
-    }
+	public void setParameters(List<Parameter> parameters) {
+		this.parameters = parameters;
+	}
 
-    public void setType(TestItemType type) {
-        this.type = type;
-    }
+	public TestItemType getType() {
+		return type;
+	}
 
-    public Date getStartTime() {
-        return startTime;
-    }
+	public void setType(TestItemType type) {
+		this.type = type;
+	}
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+	public Date getStartTime() {
+		return startTime;
+	}
 
-    public Date getEndTime() {
-        return endTime;
-    }
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+	public Date getEndTime() {
+		return endTime;
+	}
 
-    @Override
-    public Status getStatus() {
-        return status;
-    }
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+	@Override
+	public Status getStatus() {
+		return status;
+	}
 
-    public Set<String> getTags() {
-        return tags;
-    }
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 
-    public void setTags(Set<String> value) {
-        this.tags = value;
-    }
+	public Set<String> getTags() {
+		return tags;
+	}
 
-    public List<String> getPath() {
-        // null-safe getter
-        if (path == null) {
-            path = new ArrayList<>();
-        }
-        return path;
-    }
+	public void setTags(Set<String> value) {
+		this.tags = value;
+	}
 
-    public void setPath(List<String> path) {
-        this.path = path;
-    }
+	public List<String> getPath() {
+		// null-safe getter
+		if (path == null) {
+			path = new ArrayList<>();
+		}
+		return path;
+	}
 
-    public void setLaunchRef(String launchRef) {
-        this.launchRef = launchRef;
-    }
+	public void setPath(List<String> path) {
+		this.path = path;
+	}
 
-    public String getLaunchRef() {
-        return launchRef;
-    }
+	public void setLaunchRef(String launchRef) {
+		this.launchRef = launchRef;
+	}
 
-    public Statistics getStatistics() {
-        return statistics;
-    }
+	public String getLaunchRef() {
+		return launchRef;
+	}
 
-    public void setStatistics(Statistics statistics) {
-        this.statistics = statistics;
-    }
+	public Statistics getStatistics() {
+		return statistics;
+	}
 
-    public TestItemIssue getIssue() {
-        return issue;
-    }
+	public void setStatistics(Statistics statistics) {
+		this.statistics = statistics;
+	}
 
-    public void setIssue(TestItemIssue issue) {
-        this.issue = issue;
-    }
+	public TestItemIssue getIssue() {
+		return issue;
+	}
 
-    @Override
-    public String getParent() {
-        return this.parent;
-    }
+	public void setIssue(TestItemIssue issue) {
+		this.issue = issue;
+	}
 
-    public void setParent(String parent) {
-        this.parent = parent;
-    }
+	@Override
+	public String getParent() {
+		return this.parent;
+	}
 
-    @Override
-    public boolean hasChilds() {
-        return this.hasChilds;
-    }
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
 
-    public void setHasChilds(boolean hasChilds) {
-        this.hasChilds = hasChilds;
-    }
+	@Override
+	public boolean hasChilds() {
+		return this.hasChilds;
+	}
 
-    @Override
-    public Date getLastModified() {
-        return lastModified;
-    }
+	public void setHasChilds(boolean hasChilds) {
+		this.hasChilds = hasChilds;
+	}
 
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
+	@Override
+	public Date getLastModified() {
+		return lastModified;
+	}
 
-    public String getUniqueId() {
-        return uniqueId;
-    }
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
 
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
+	public String getUniqueId() {
+		return uniqueId;
+	}
 
-    public List<TestItem> getRetries() {
-        return retries;
-    }
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
 
-    public void setRetries(List<TestItem> retries) {
-        this.retries = retries;
-    }
+	public List<TestItem> getRetries() {
+		return retries;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        TestItem testItem = (TestItem) o;
-        return hasChilds == testItem.hasChilds && Objects.equals(id, testItem.id) && Objects.equals(name, testItem.name)
-                && type == testItem.type && Objects.equals(startTime, testItem.startTime) && Objects.equals(endTime, testItem.endTime)
-                && status == testItem.status && Objects.equals(tags, testItem.tags) && Objects.equals(statistics, testItem.statistics)
-                && Objects.equals(issue, testItem.issue) && Objects.equals(path, testItem.path) && Objects.equals(parent, testItem.parent)
-                && Objects.equals(launchRef, testItem.launchRef) && Objects.equals(
-                itemDescription,
-                testItem.itemDescription
-        ) && Objects.equals(parameters, testItem.parameters) && Objects.equals(lastModified, testItem.lastModified) && Objects.equals(
-                uniqueId,
-                testItem.uniqueId
-        ) && Objects.equals(retries, testItem.retries);
-    }
+	public void setRetries(List<TestItem> retries) {
+		this.retries = retries;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id,
-                name,
-                type,
-                startTime,
-                endTime,
-                status,
-                tags,
-                statistics,
-                issue,
-                path,
-                parent,
-                launchRef,
-                hasChilds,
-                itemDescription,
-                parameters,
-                lastModified,
-                uniqueId,
-                retries
-        );
-    }
+	public boolean isIgnoreAnalyzer() {
+		return ignoreAnalyzer;
+	}
 
-    @Override
-    public String toString() {
-        return "TestItem{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", type=" + type + ", startTime=" + startTime + ", endTime="
-                + endTime + ", status=" + status + ", tags=" + tags + ", statistics=" + statistics + ", issue=" + issue + ", path=" + path
-                + ", parent='" + parent + '\'' + ", launchRef='" + launchRef + '\'' + ", hasChilds=" + hasChilds + ", itemDescription='"
-                + itemDescription + '\'' + ", parameters=" + parameters + ", lastModified=" + lastModified + ", uniqueId='" + uniqueId
-                + '\'' + ", retries=" + retries + '}';
-    }
+	public void setIgnoreAnalyzer(boolean ignoreAnalyzer) {
+		this.ignoreAnalyzer = ignoreAnalyzer;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TestItem testItem = (TestItem) o;
+		return hasChilds == testItem.hasChilds && Objects.equals(id, testItem.id) && Objects.equals(name, testItem.name)
+				&& type == testItem.type && Objects.equals(startTime, testItem.startTime) && Objects.equals(endTime, testItem.endTime)
+				&& status == testItem.status && Objects.equals(tags, testItem.tags) && Objects.equals(statistics, testItem.statistics)
+				&& Objects.equals(issue, testItem.issue) && Objects.equals(path, testItem.path) && Objects.equals(parent, testItem.parent)
+				&& Objects.equals(launchRef, testItem.launchRef) && Objects.equals(itemDescription, testItem.itemDescription)
+				&& Objects.equals(parameters, testItem.parameters) && Objects.equals(lastModified, testItem.lastModified) && Objects.equals(
+				uniqueId, testItem.uniqueId) && Objects.equals(retries, testItem.retries) && Objects.equals(
+				ignoreAnalyzer, testItem.ignoreAnalyzer);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, type, startTime, endTime, status, tags, statistics, issue, path, parent, launchRef, hasChilds,
+				itemDescription, parameters, lastModified, uniqueId, retries, ignoreAnalyzer
+		);
+	}
+
+	@Override
+	public String toString() {
+		return "TestItem{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", type=" + type + ", startTime=" + startTime + ", endTime="
+				+ endTime + ", status=" + status + ", tags=" + tags + ", statistics=" + statistics + ", issue=" + issue + ", path=" + path
+				+ ", parent='" + parent + '\'' + ", launchRef='" + launchRef + '\'' + ", hasChilds=" + hasChilds + ", itemDescription='"
+				+ itemDescription + '\'' + ", parameters=" + parameters + ", lastModified=" + lastModified + ", uniqueId='" + uniqueId
+				+ '\'' + ", retries=" + retries + ", ignoreAnalyzer=" + ignoreAnalyzer + '}';
+	}
 }
