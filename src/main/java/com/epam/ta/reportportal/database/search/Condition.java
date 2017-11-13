@@ -252,7 +252,7 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
 					"'Greater than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()));
 		}
