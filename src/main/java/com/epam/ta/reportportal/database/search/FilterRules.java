@@ -21,12 +21,13 @@
 
 package com.epam.ta.reportportal.database.search;
 
+import com.epam.ta.reportportal.database.entity.LogLevel;
+import org.apache.commons.lang3.math.NumberUtils;
+
 import java.time.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.function.Predicate;
-
-import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Set of predicates which may be applied to the query builder and filter
@@ -60,6 +61,10 @@ public class FilterRules {
 	 */
 	public static Predicate<CriteriaHolder> filterForBoolean() {
 		return filter -> boolean.class.equals(filter.getDataType()) || Boolean.class.isAssignableFrom(filter.getDataType());
+	}
+
+	public static Predicate<CriteriaHolder> filterForLogLevel() {
+		return filter -> LogLevel.class.isAssignableFrom(filter.getDataType());
 	}
 
 	/**
