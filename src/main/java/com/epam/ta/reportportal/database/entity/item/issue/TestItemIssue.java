@@ -51,6 +51,9 @@ public class TestItemIssue implements Serializable {
 	@FilterCriteria("auto_analyzed")
 	private boolean autoAnalyzed;
 
+	@FilterCriteria("ignore_analyzer")
+	private boolean ignoreAnalyzer;
+
 	public TestItemIssue(String issueType, String issueDescription) {
 		this.issueType = issueType;
 		this.issueDescription = issueDescription;
@@ -153,6 +156,14 @@ public class TestItemIssue implements Serializable {
 		this.autoAnalyzed = autoAnalyzed;
 	}
 
+	public boolean isIgnoreAnalyzer() {
+		return ignoreAnalyzer;
+	}
+
+	public void setIgnoreAnalyzer(boolean ignoreAnalyzer) {
+		this.ignoreAnalyzer = ignoreAnalyzer;
+	}
+
 	public Set<ExternalSystemIssue> getExternalSystemIssues() {
 		return externalSystemIssues;
 	}
@@ -186,18 +197,20 @@ public class TestItemIssue implements Serializable {
 			return false;
 		}
 		TestItemIssue that = (TestItemIssue) o;
-		return autoAnalyzed == that.autoAnalyzed && Objects.equals(issueType, that.issueType) && Objects.equals(
-				issueDescription, that.issueDescription) && Objects.equals(externalSystemIssues, that.externalSystemIssues);
+		return autoAnalyzed == that.autoAnalyzed && ignoreAnalyzer == that.ignoreAnalyzer && Objects.equals(issueType, that.issueType)
+				&& Objects.equals(issueDescription, that.issueDescription) && Objects.equals(
+				externalSystemIssues, that.externalSystemIssues);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(issueType, issueDescription, externalSystemIssues, autoAnalyzed);
+		return Objects.hash(issueType, issueDescription, externalSystemIssues, autoAnalyzed, ignoreAnalyzer);
 	}
 
 	@Override
 	public String toString() {
 		return "TestItemIssue{" + "issueType='" + issueType + '\'' + ", issueDescription='" + issueDescription + '\''
-				+ ", externalSystemIssues=" + externalSystemIssues + ", autoAnalyzed=" + autoAnalyzed + '}';
+				+ ", externalSystemIssues=" + externalSystemIssues + ", autoAnalyzed=" + autoAnalyzed + ", ignoreAnalyzer=" + ignoreAnalyzer
+				+ '}';
 	}
 }
