@@ -32,6 +32,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.createOwnedEntityQuery;
+import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.createSharedEntityQuery;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCustom {
@@ -52,7 +54,7 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 
 	@Override
 	public UserFilter findOneByName(String userName, String name, String projectName) {
-		Query query = ShareableRepositoryUtils.createOwnedEntityQuery(userName).addCriteria(where(NAME).is(name))
+		Query query = createOwnedEntityQuery(userName).addCriteria(where(NAME).is(name))
 				.addCriteria(where(UserFilter.PROJECT_NAME).is(projectName));
 		query.fields().include(ID);
 		return mongoTemplate.findOne(query, UserFilter.class);
@@ -62,9 +64,9 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 	public List<UserFilter> findFilters(String userName, String projectName, Sort sort, boolean isShared) {
 		Query query;
 		if (isShared) {
-			query = ShareableRepositoryUtils.createSharedEntityQuery(userName, projectName);
+			query = createSharedEntityQuery(projectName);
 		} else {
-			query = ShareableRepositoryUtils.createOwnedEntityQuery(userName);
+			query = createOwnedEntityQuery(userName);
 		}
 		query.addCriteria(where("isLink").is(false))
 				.addCriteria(where(UserFilter.PROJECT_NAME).is(projectName)).with(sort);

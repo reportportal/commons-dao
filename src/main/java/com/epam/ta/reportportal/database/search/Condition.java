@@ -227,7 +227,7 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType,
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
 					formattedSupplier("'Greater than' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
 							criteriaHolder.getDataType().getSimpleName()));
 		}
@@ -252,7 +252,7 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
 					"'Greater than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()));
 		}
@@ -281,7 +281,7 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType,
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
 					formattedSupplier("'Lower than' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
 							criteriaHolder.getDataType().getSimpleName()));
 		}
@@ -310,7 +310,7 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
 					"'Lower than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()));
 		}
@@ -328,7 +328,7 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates())).verify(errorType, formattedSupplier(
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
 					"'Between' condition applyable only for positive Numbers, Dates or specific TimeStamp values. "
 							+ "Type of field is '{}'", criteriaHolder.getDataType().getSimpleName()));
 			if (value.contains(VALUES_SEPARATOR))

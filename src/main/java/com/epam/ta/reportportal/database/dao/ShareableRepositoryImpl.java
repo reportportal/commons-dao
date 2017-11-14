@@ -21,11 +21,13 @@
 
 package com.epam.ta.reportportal.database.dao;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import com.epam.ta.reportportal.commons.Preconditions;
+import com.epam.ta.reportportal.database.entity.Dashboard;
+import com.epam.ta.reportportal.database.entity.sharing.AclPermissions;
+import com.epam.ta.reportportal.database.entity.sharing.Shareable;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.QueryBuilder;
+import com.google.common.collect.Lists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,13 +37,13 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 
-import com.epam.ta.reportportal.commons.Preconditions;
-import com.epam.ta.reportportal.database.entity.Dashboard;
-import com.epam.ta.reportportal.database.entity.sharing.AclPermissions;
-import com.epam.ta.reportportal.database.entity.sharing.Shareable;
-import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.QueryBuilder;
-import com.google.common.collect.Lists;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.createOwnedEntityQuery;
+import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.createSharedEntityQuery;
 
 /**
  * Default implementation of {@link ShareableRepository} added possibility to work with shareable
@@ -65,7 +67,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 		if (owner == null || projectName == null || fields == null || sort == null) {
 			return new ArrayList<>();
 		}
-		Query query = ShareableRepositoryUtils.createSharedEntityQuery(owner, projectName).with(sort);
+		Query query = createSharedEntityQuery(projectName).with(sort);
 		if (Preconditions.NOT_EMPTY_COLLECTION.test(fields)) {
 			for (String field : fields) {
 				query.fields().include(field);
@@ -81,7 +83,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 		if (owner == null) {
 			return new ArrayList<>();
 		}
-		Query query = ShareableRepositoryUtils.createOwnedEntityQuery(owner);
+		Query query = createOwnedEntityQuery(owner);
 		if (Preconditions.NOT_EMPTY_COLLECTION.test(ids)) {
 			query.addCriteria(Criteria.where(Shareable.ID).in(ids));
 		}
