@@ -135,7 +135,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void updateHasRetries(String id, boolean hasRetries) {
 		mongoTemplate.updateFirst(
-				new Query().addCriteria(where(LAUNCH_ID_REFERENCE).is(id)),
+				new Query().addCriteria(where(ID_REFERENCE).is(id)),
 				Update.update("hasRetries", hasRetries),
 				Launch.class
 		);
