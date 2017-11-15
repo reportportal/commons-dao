@@ -128,9 +128,6 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	private List<TestItem> retries;
 
-	@FilterCriteria("ignoreAnalyzer")
-	private boolean ignoreAnalyzer;
-
 	public TestItem() {
 		path = new ArrayList<>();
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
@@ -288,14 +285,6 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 		this.retries = retries;
 	}
 
-	public boolean isIgnoreAnalyzer() {
-		return ignoreAnalyzer;
-	}
-
-	public void setIgnoreAnalyzer(boolean ignoreAnalyzer) {
-		this.ignoreAnalyzer = ignoreAnalyzer;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -311,14 +300,13 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 				&& Objects.equals(issue, testItem.issue) && Objects.equals(path, testItem.path) && Objects.equals(parent, testItem.parent)
 				&& Objects.equals(launchRef, testItem.launchRef) && Objects.equals(itemDescription, testItem.itemDescription)
 				&& Objects.equals(parameters, testItem.parameters) && Objects.equals(lastModified, testItem.lastModified) && Objects.equals(
-				uniqueId, testItem.uniqueId) && Objects.equals(retries, testItem.retries) && Objects.equals(
-				ignoreAnalyzer, testItem.ignoreAnalyzer);
+				uniqueId, testItem.uniqueId) && Objects.equals(retries, testItem.retries);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, name, type, startTime, endTime, status, tags, statistics, issue, path, parent, launchRef, hasChilds,
-				itemDescription, parameters, lastModified, uniqueId, retries, ignoreAnalyzer
+				itemDescription, parameters, lastModified, uniqueId, retries
 		);
 	}
 
@@ -328,6 +316,6 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 				+ endTime + ", status=" + status + ", tags=" + tags + ", statistics=" + statistics + ", issue=" + issue + ", path=" + path
 				+ ", parent='" + parent + '\'' + ", launchRef='" + launchRef + '\'' + ", hasChilds=" + hasChilds + ", itemDescription='"
 				+ itemDescription + '\'' + ", parameters=" + parameters + ", lastModified=" + lastModified + ", uniqueId='" + uniqueId
-				+ '\'' + ", retries=" + retries + ", ignoreAnalyzer=" + ignoreAnalyzer + '}';
+				+ '\'' + ", retries=" + retries + '}';
 	}
 }
