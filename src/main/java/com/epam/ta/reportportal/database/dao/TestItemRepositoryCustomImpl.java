@@ -451,4 +451,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.limit(1);
 		return mongoTemplate.findOne(query, TestItem.class);
 	}
+
+	@Override
+	public Optional<TestItem> findRetry(String retryId) {
+		Query q = query(where("retries._id").is(retryId));
+		q.fields().include("retries");
+		return Optional.ofNullable(mongoTemplate.findOne(q, TestItem.class))
+				.flatMap(it -> Optional.ofNullable(it.getRetries()))
+				.flatMap(it -> it.stream().filter(r -> retryId.equals(r.getId())).findAny());
+	}
 }

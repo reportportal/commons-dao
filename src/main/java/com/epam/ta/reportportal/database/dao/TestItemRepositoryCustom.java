@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
@@ -283,5 +284,13 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @return Root of retry (first retry item)
 	 */
 	TestItem findRetryRoot(String uniqueId, String parent);
+
+	/**
+	 * Finds retry
+	 *
+	 * @param retryId ID of retry
+	 * @return Retry Item
+	 */
+	Optional<TestItem> findRetry(String retryId);
 
 }
