@@ -105,8 +105,7 @@ public class EntityUtils {
 	public static Iterable<String> update(Iterable<String> input) {
 		final String oldSeparator = ",";
 		final String newSeparator = "_";
-		final String backSlashSymbol = "\\";
 		return stream(input.spliterator(), false).map(
-				string -> string.replace(oldSeparator, newSeparator).replace(backSlashSymbol, "\\\\")).collect(toList());
+				string -> string.replace(oldSeparator, newSeparator)).collect(toList());
 	}
 }
