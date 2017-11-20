@@ -93,10 +93,7 @@ public class EntityUtils {
 	 */
 	public static Iterable<String> trimStrings(Iterable<String> strings) {
 		Preconditions.checkNotNull(strings, "List of strings shouldn't be null");
-		return stream(strings.spliterator(), false)
-				.filter(string -> !isNullOrEmpty(string))
-				.map(String::trim)
-				.collect(toList());
+		return stream(strings.spliterator(), false).filter(string -> !isNullOrEmpty(string)).map(String::trim).collect(toList());
 	}
 
 	/**
@@ -108,14 +105,8 @@ public class EntityUtils {
 	public static Iterable<String> update(Iterable<String> input) {
 		final String oldSeparator = ",";
 		final String newSeparator = "_";
-		final String emptyString = "";
-		final String percentSymbol = "%";
-		final String andSymbol = "&";
-		final String slashSymbol = "/";
 		final String backSlashSymbol = "\\";
-		return stream(input.spliterator(), false)
-				.map(string -> string.replace(oldSeparator, newSeparator).replace(percentSymbol, emptyString)
-						.replace(andSymbol, emptyString).replace(slashSymbol, emptyString).replace(backSlashSymbol, emptyString))
-				.collect(toList());
+		return stream(input.spliterator(), false).map(
+				string -> string.replace(oldSeparator, newSeparator).replace(backSlashSymbol, "\\\\")).collect(toList());
 	}
 }
