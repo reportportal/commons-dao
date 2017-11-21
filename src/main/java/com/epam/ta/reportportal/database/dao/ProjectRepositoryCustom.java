@@ -43,7 +43,7 @@ public interface ProjectRepositoryCustom {
 	 * @param login   User name
 	 * @return {@link Boolean#TRUE} if user is assigned to provided project
 	 */
-	//	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
+//	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
 	boolean isAssignedToProject(String project, String login);
 
 	/**
@@ -111,13 +111,6 @@ public interface ProjectRepositoryCustom {
 	 * @param postfix Postfix to add
 	 */
 	void addDemoDataPostfix(String project, String postfix);
-
-	/**
-	 * Removes personal project for user with specified userName
-	 *
-	 * @param userName User name
-	 */
-	void removePersonalProject(String userName);
 
 	Optional<String> findPersonalProjectName(String user);
 
