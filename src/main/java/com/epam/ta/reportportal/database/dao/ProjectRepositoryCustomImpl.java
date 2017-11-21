@@ -134,6 +134,12 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         return Optional.ofNullable(mongoTemplate.findOne(query, Project.class)).map(Project::getName);
 	}
 
+	@Override
+	public void removePersonalProject(String userName) {
+		Query query = Query.query(Criteria.where(PROJECT_ID).regex("^" + userName + PERSONAL_PROJECT_POSTFIX));
+		mongoTemplate.remove(query, Project.class);
+	}
+
 	private Criteria userExists(String login) {
 		return Criteria.where(USER_LOGIN).is(login);
 	}
