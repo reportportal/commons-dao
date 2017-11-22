@@ -38,12 +38,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.createOwnedEntityQuery;
 import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.createSharedEntityQuery;
+import static java.util.Collections.emptyList;
 
 /**
  * Default implementation of {@link ShareableRepository} added possibility to work with shareable
@@ -57,15 +58,17 @@ import static com.epam.ta.reportportal.database.dao.ShareableRepositoryUtils.cre
 public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportPortalRepositoryImpl<T, ID>
 		implements ShareableRepository<T, ID> {
 
+	private static final String ENTITY_NAME_FIELD = "name";
+
 	public ShareableRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
 		super(metadata, mongoOperations);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> findSharedEntities(String owner, String projectName, List<String> fields, Sort sort) {
-		if (owner == null || projectName == null || fields == null || sort == null) {
-			return new ArrayList<>();
+	public List<T> findSharedEntities(String projectName, List<String> fields, Sort sort) {
+		if (projectName == null || fields == null || sort == null) {
+			return emptyList();
 		}
 		Query query = createSharedEntityQuery(projectName).with(sort);
 		if (Preconditions.NOT_EMPTY_COLLECTION.test(fields)) {
@@ -77,11 +80,22 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 		return getMongoOperations().find(query, entityType);
 	}
 
+	@Override
+	public List<T> searchSharedEntities(String projectName, String term) {
+		if (projectName == null || term == null) {
+			return emptyList();
+		}
+		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
+		Query query = createSharedEntityQuery(projectName).addCriteria(Criteria.where(ENTITY_NAME_FIELD).regex(regex));
+		Class<T> entityType = getEntityInformation().getJavaType();
+		return getMongoOperations().find(query, entityType);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> findOnlyOwnedEntities(Set<String> ids, String owner) {
 		if (owner == null) {
-			return new ArrayList<>();
+			return emptyList();
 		}
 		Query query = createOwnedEntityQuery(owner);
 		if (Preconditions.NOT_EMPTY_COLLECTION.test(ids)) {
@@ -94,7 +108,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	@Override
 	public Page<T> findAllByFilter(Filter filter, Pageable pageable, String projectName, String owner) {
 		if (filter == null || pageable == null || projectName == null || owner == null) {
-			return new PageImpl<>(new ArrayList<>());
+			return new PageImpl<>(emptyList());
 		}
 		Query query = QueryBuilder.newBuilder().with(filter).with(pageable).build();
 		query.addCriteria(getAllEntitiesCriteria(projectName, owner));
@@ -105,7 +119,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	@Override
 	public List<T> findByProject(String projectName) {
 		if (null == projectName) {
-			return new ArrayList<>();
+			return emptyList();
 		}
 		Query query = Query.query(Criteria.where("projectName").is(projectName));
 		Class<T> entityType = getEntityInformation().getJavaType();
@@ -122,7 +136,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	@Override
 	public List<T> findNonSharedEntities(String owner) {
 		if (null == owner || owner.isEmpty()) {
-			return new ArrayList<>();
+			return emptyList();
 		}
 		Query query = ShareableRepositoryUtils.createUnsharedEntityQuery(owner);
 		Class<T> entityType = getEntityInformation().getJavaType();

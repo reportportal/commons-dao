@@ -43,16 +43,23 @@ import java.util.Set;
 public interface ShareableRepository<T, ID extends Serializable> extends ReportPortalRepository<T, ID> {
 
 	/**
-	 * Find shared entities for specified project which is not owned by specified user, load
+	 * Find shared entities for specified project, load
 	 * specified fields if no one field specified all fields will be loaded.
 	 *
-	 * @param owner       Item owner
 	 * @param projectName Project Name
 	 * @param fields      Fields to load
 	 * @param sort        Sorting details
 	 * @return Found entities
 	 */
-	List<T> findSharedEntities(String owner, String projectName, List<String> fields, Sort sort);
+	List<T> findSharedEntities(String projectName, List<String> fields, Sort sort);
+
+	/**
+	 * Find shared entities for specified project with names that contain search criteria
+	 *
+	 * @param projectName Project Name
+	 * @return Found entities
+	 */
+	List<T> searchSharedEntities(String projectName, String term);
 
 	/**
 	 * Find all entities(shared to project and owned by user) by filter and pageable
