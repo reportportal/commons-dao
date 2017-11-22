@@ -36,7 +36,8 @@ public enum KeepScreenshotsDelay {
 	TWO_WEEKS("2 weeks", 14L),
 	THREE_WEEKS("3 weeks", 21L),
 	ONE_MONTH("1 month", 30L),
-	THREE_MONTHS("3 months", 91L);
+	THREE_MONTHS("3 months", 91L),
+	FOREVER("forever", 0);
 	//@formatter:on
 	
 	private String value;

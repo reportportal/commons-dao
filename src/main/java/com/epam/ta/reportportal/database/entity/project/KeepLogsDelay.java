@@ -35,7 +35,8 @@ public enum KeepLogsDelay {
 	TWO_WEEKS("2 weeks", 14L),
 	ONE_MONTH("1 month", 30L),
 	THREE_MONTHS("3 months", 91L),
-	SIX_MONTHS("6 months", 183L);
+	SIX_MONTHS("6 months", 183L),
+	FOREVER("forever", 0);
 	//@formatter:on
 	
 	private String value;
