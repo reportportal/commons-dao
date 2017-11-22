@@ -59,7 +59,7 @@ public interface ShareableRepository<T, ID extends Serializable> extends ReportP
 	 * @param projectName Project Name
 	 * @return Found entities
 	 */
-	List<T> searchSharedEntities(String projectName, String term);
+	List<T> findSharedEntitiesByName(String projectName, String term);
 
 	/**
 	 * Find all entities(shared to project and owned by user) by filter and pageable

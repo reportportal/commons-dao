@@ -81,7 +81,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	}
 
 	@Override
-	public List<T> searchSharedEntities(String projectName, String term) {
+	public List<T> findSharedEntitiesByName(String projectName, String term) {
 		if (projectName == null || term == null) {
 			return emptyList();
 		}
