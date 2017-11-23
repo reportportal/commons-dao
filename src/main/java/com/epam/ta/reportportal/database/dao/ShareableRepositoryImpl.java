@@ -59,7 +59,7 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 
 	private static final String ENTITY_NAME_FIELD = "name";
 	private static final String ENTITY_DESCRIPTION_FIELD = "description";
-	private static final String ENTITY_USER_FIELD = "acl.ownerUserId";
+	private static final String ENTITY_OWNER_FIELD = "acl.ownerUserId";
 
 	public ShareableRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
 		super(metadata, mongoOperations);
@@ -82,17 +82,18 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	}
 
 	@Override
-	public List<T> findSharedEntitiesByName(String projectName, String term) {
-		if (projectName == null || term == null) {
-			return emptyList();
-		}
+	public Page<T> findSharedEntitiesByName(String projectName, String term, Pageable pageable) {
 		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
-		Query query = createSharedEntityQuery(projectName);
-		query.addCriteria(Criteria.where(ENTITY_NAME_FIELD).regex(regex));
-		query.addCriteria(Criteria.where(ENTITY_USER_FIELD).regex(regex));
-		query.addCriteria(Criteria.where(ENTITY_DESCRIPTION_FIELD).regex(regex));
+
+		Query query = createSharedEntityQuery(projectName).with(pageable);
+		Criteria name = Criteria.where(ENTITY_NAME_FIELD).regex(regex);
+		Criteria owner = Criteria.where(ENTITY_OWNER_FIELD).regex(regex);
+		Criteria description = Criteria.where(ENTITY_DESCRIPTION_FIELD).regex(regex);
+		query.addCriteria(new Criteria().orOperator(name, owner, description));
+
 		Class<T> entityType = getEntityInformation().getJavaType();
-		return getMongoOperations().find(query, entityType);
+		List<T> searchResults = getMongoOperations().find(query, entityType);
+		return new PageImpl<>(searchResults, pageable, getMongoOperations().count(query, entityType));
 	}
 
 	@SuppressWarnings("unchecked")
