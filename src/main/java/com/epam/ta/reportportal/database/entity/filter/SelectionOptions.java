@@ -33,7 +33,7 @@ public class SelectionOptions implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	List<Order> orders;
+	List<SelectionOrder> orders;
 
 	private int pageNumber;
 
@@ -45,11 +45,11 @@ public class SelectionOptions implements Serializable {
 		this.pageNumber = pageNumber;
 	}
 
-	public List<Order> getOrders() {
+	public List<SelectionOrder> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(List<Order> orders) {
+	public void setOrders(List<SelectionOrder> orders) {
 		this.orders = orders;
 	}
 

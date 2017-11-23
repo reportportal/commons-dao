@@ -3,7 +3,7 @@ package com.epam.ta.reportportal.database.entity.filter;
 /**
  * @author Pavel Bortnik
  */
-public class Order {
+public class SelectionOrder {
 
 	private String sortingColumnName;
 
@@ -34,7 +34,7 @@ public class Order {
 			return false;
 		}
 
-		Order order = (Order) o;
+		SelectionOrder order = (SelectionOrder) o;
 
 		if (isAsc != order.isAsc) {
 			return false;
