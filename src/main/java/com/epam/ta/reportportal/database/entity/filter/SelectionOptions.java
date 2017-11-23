@@ -21,9 +21,8 @@
 
 package com.epam.ta.reportportal.database.entity.filter;
 
-import com.sun.tools.javac.util.List;
-
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * DAO layer holder for table options in widget
