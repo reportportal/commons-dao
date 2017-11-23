@@ -17,7 +17,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.dao;
 
@@ -49,16 +49,17 @@ import static java.util.Collections.emptyList;
 /**
  * Default implementation of {@link ShareableRepository} added possibility to work with shareable
  * objects.
- * 
- * @author Aliaksei_Makayed
  *
  * @param <T>
  * @param <ID>
+ * @author Aliaksei_Makayed
  */
 public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportPortalRepositoryImpl<T, ID>
 		implements ShareableRepository<T, ID> {
 
 	private static final String ENTITY_NAME_FIELD = "name";
+	private static final String ENTITY_DESCRIPTION_FIELD = "description";
+	private static final String ENTITY_OWNER_FIELD = "acl.ownerUserId";
 
 	public ShareableRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
 		super(metadata, mongoOperations);
@@ -81,14 +82,18 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	}
 
 	@Override
-	public List<T> findSharedEntitiesByName(String projectName, String term) {
-		if (projectName == null || term == null) {
-			return emptyList();
-		}
+	public Page<T> findSharedEntitiesByName(String projectName, String term, Pageable pageable) {
 		final String regex = "(?i).*" + Pattern.quote(term.toLowerCase()) + ".*";
-		Query query = createSharedEntityQuery(projectName).addCriteria(Criteria.where(ENTITY_NAME_FIELD).regex(regex));
+
+		Query query = createSharedEntityQuery(projectName).with(pageable);
+		Criteria name = Criteria.where(ENTITY_NAME_FIELD).regex(regex);
+		Criteria owner = Criteria.where(ENTITY_OWNER_FIELD).regex(regex);
+		Criteria description = Criteria.where(ENTITY_DESCRIPTION_FIELD).regex(regex);
+		query.addCriteria(new Criteria().orOperator(name, owner, description));
+
 		Class<T> entityType = getEntityInformation().getJavaType();
-		return getMongoOperations().find(query, entityType);
+		List<T> searchResults = getMongoOperations().find(query, entityType);
+		return new PageImpl<>(searchResults, pageable, getMongoOperations().count(query, entityType));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -129,7 +134,8 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 	@Override
 	public T findOneLoadACL(ID id) {
 		return super.findById(id,
-				Lists.newArrayList(Dashboard.NAME, Dashboard.PROJECT_NAME, Shareable.ACL, getEntityInformation().getIdAttribute()));
+				Lists.newArrayList(Dashboard.NAME, Dashboard.PROJECT_NAME, Shareable.ACL, getEntityInformation().getIdAttribute())
+		);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -145,15 +151,14 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 
 	/**
 	 * Create criteria for loading owned entities and shared to specified project entities
-	 * 
+	 *
 	 * @param projectName
 	 * @param userName
 	 * @return
 	 */
 	private Criteria getAllEntitiesCriteria(String projectName, String userName) {
-		return new Criteria().orOperator(
-				new Criteria().andOperator(Criteria.where("acl.entries.projectId").is(projectName),
-						Criteria.where("acl.entries.permissions").is(AclPermissions.READ.name())),
-				new Criteria().andOperator(Criteria.where("acl.ownerUserId").is(userName), Criteria.where("projectName").is(projectName)));
+		return new Criteria().orOperator(new Criteria().andOperator(Criteria.where("acl.entries.projectId").is(projectName),
+				Criteria.where("acl.entries.permissions").is(AclPermissions.READ.name())
+		), new Criteria().andOperator(Criteria.where("acl.ownerUserId").is(userName), Criteria.where("projectName").is(projectName)));
 	}
 }
