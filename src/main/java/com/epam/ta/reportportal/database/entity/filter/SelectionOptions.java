@@ -33,7 +33,7 @@ public class SelectionOptions implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	List<SelectionOrder> orders;
+	private List<SelectionOrder> orders;
 
 	private int pageNumber;
 
