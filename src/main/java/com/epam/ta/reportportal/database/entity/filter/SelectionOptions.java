@@ -21,39 +21,22 @@
 
 package com.epam.ta.reportportal.database.entity.filter;
 
+import com.sun.tools.javac.util.List;
+
 import java.io.Serializable;
 
 /**
  * DAO layer holder for table options in widget
- * 
+ *
  * @author Aliaksei_Makayed
- * 
  */
 public class SelectionOptions implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String sortingColumnName;
-
-	private boolean isAsc;
+	List<Order> orders;
 
 	private int pageNumber;
-
-	public String getSortingColumnName() {
-		return sortingColumnName;
-	}
-
-	public void setSortingColumnName(String sortingColumnName) {
-		this.sortingColumnName = sortingColumnName;
-	}
-
-	public boolean isAsc() {
-		return isAsc;
-	}
-
-	public void setIsAsc(boolean isAsc) {
-		this.isAsc = isAsc;
-	}
 
 	public int getPageNumber() {
 		return pageNumber;
@@ -63,34 +46,40 @@ public class SelectionOptions implements Serializable {
 		this.pageNumber = pageNumber;
 	}
 
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		SelectionOptions that = (SelectionOptions) o;
+
+		if (pageNumber != that.pageNumber) {
+			return false;
+		}
+		return orders != null ? orders.equals(that.orders) : that.orders == null;
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (isAsc ? 1231 : 1237);
-		result = prime * result + pageNumber;
-		result = prime * result + ((sortingColumnName == null) ? 0 : sortingColumnName.hashCode());
+		int result = orders != null ? orders.hashCode() : 0;
+		result = 31 * result + pageNumber;
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SelectionOptions other = (SelectionOptions) obj;
-		if (isAsc != other.isAsc)
-			return false;
-		if (pageNumber != other.pageNumber)
-			return false;
-		if (sortingColumnName == null) {
-			if (other.sortingColumnName != null)
-				return false;
-		} else if (!sortingColumnName.equals(other.sortingColumnName))
-			return false;
-		return true;
+	public String toString() {
+		return "SelectionOptions{" + "orders=" + orders + ", pageNumber=" + pageNumber + '}';
 	}
 }
