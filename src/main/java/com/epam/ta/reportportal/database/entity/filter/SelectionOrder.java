@@ -1,9 +1,11 @@
 package com.epam.ta.reportportal.database.entity.filter;
 
+import java.io.Serializable;
+
 /**
  * @author Pavel Bortnik
  */
-public class SelectionOrder {
+public class SelectionOrder implements Serializable {
 
 	private String sortingColumnName;
 
