@@ -21,8 +21,8 @@ public class SelectionOrder {
 		return isAsc;
 	}
 
-	public void setAsc(boolean asc) {
-		isAsc = asc;
+	public void setIsAsc(boolean isAsc) {
+		this.isAsc = isAsc;
 	}
 
 	@Override
