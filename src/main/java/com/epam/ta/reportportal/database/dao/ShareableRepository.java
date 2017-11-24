@@ -57,9 +57,9 @@ public interface ShareableRepository<T, ID extends Serializable> extends ReportP
 	 * Find shared entities for specified project with names that contain search criteria
 	 *
 	 * @param projectName Project Name
-	 * @return Found entities
+	 * @return Found entities with paging
 	 */
-	List<T> findSharedEntitiesByName(String projectName, String term);
+	Page<T> findSharedEntitiesByName(String projectName, String term, Pageable pageable);
 
 	/**
 	 * Find all entities(shared to project and owned by user) by filter and pageable
