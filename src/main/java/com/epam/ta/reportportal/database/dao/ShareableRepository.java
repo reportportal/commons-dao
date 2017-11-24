@@ -51,7 +51,7 @@ public interface ShareableRepository<T, ID extends Serializable> extends ReportP
 	 * @param sort        Sorting details
 	 * @return Found entities
 	 */
-	List<T> findSharedEntities(String projectName, List<String> fields, Sort sort);
+	Page<T> findSharedEntities(String projectName, List<String> fields, Sort sort, Pageable pageable);
 
 	/**
 	 * Find shared entities for specified project with names that contain search criteria

@@ -66,18 +66,18 @@ public class ShareableRepositoryImpl<T, ID extends Serializable> extends ReportP
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> findSharedEntities(String projectName, List<String> fields, Sort sort) {
+	public Page<T> findSharedEntities(String projectName, List<String> fields, Sort sort, Pageable pageable) {
 		if (projectName == null || fields == null || sort == null) {
-			return emptyList();
+			return new PageImpl<>(emptyList(), pageable, 0);
 		}
-		Query query = createSharedEntityQuery(projectName).with(sort);
+		Query query = createSharedEntityQuery(projectName).with(sort).with(pageable);
 		if (Preconditions.NOT_EMPTY_COLLECTION.test(fields)) {
 			for (String field : fields) {
 				query.fields().include(field);
 			}
 		}
 		Class<T> entityType = getEntityInformation().getJavaType();
-		return getMongoOperations().find(query, entityType);
+		return new PageImpl<>(getMongoOperations().find(query, entityType), pageable, getMongoOperations().count(query, entityType));
 	}
 
 	@Override
