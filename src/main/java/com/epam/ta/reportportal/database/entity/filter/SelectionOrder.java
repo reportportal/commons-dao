@@ -11,6 +11,11 @@ public class SelectionOrder implements Serializable {
 
 	private boolean isAsc;
 
+	public SelectionOrder(String sortingColumnName, boolean isAsc) {
+		this.sortingColumnName = sortingColumnName;
+		this.isAsc = isAsc;
+	}
+
 	public String getSortingColumnName() {
 		return sortingColumnName;
 	}
