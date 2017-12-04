@@ -49,6 +49,7 @@ public enum ActivityEventType {
     UPDATE_PROJECT("update_project"),
     POST_ISSUE("post_issue"),
     ATTACH_ISSUE("attach_issue"),
+    ATTACH_ISSUE_AA("attach_issue_aa"),
     UPDATE_ITEM("update_item"),
     CREATE_USER("create_user"),
     START_IMPORT("start_import"),

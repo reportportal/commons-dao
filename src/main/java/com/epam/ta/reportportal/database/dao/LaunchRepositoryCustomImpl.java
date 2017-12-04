@@ -115,8 +115,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
-				Launch.class
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1), Launch.class
 		);
 	}
 
@@ -134,9 +133,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public void updateHasRetries(String id, boolean hasRetries) {
-		mongoTemplate.updateFirst(
-				new Query().addCriteria(where(ID_REFERENCE).is(id)),
-				Update.update("hasRetries", hasRetries),
+		mongoTemplate.updateFirst(new Query().addCriteria(where(ID_REFERENCE).is(id)), Update.update("hasRetries", hasRetries),
 				Launch.class
 		);
 
@@ -145,8 +142,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
-				Launch.class
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1), Launch.class
 		);
 	}
 
@@ -222,10 +218,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode) {
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)),
-				match(where(MODE).is(mode)),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
-				group(distinctBy),
+		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy),
 				limit(AUTOCOMPLETE_LIMITATION)
 		);
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
@@ -237,11 +231,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from) {
 		Map<String, Integer> output = new HashMap<>();
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)),
-				match(where(MODE).is(mode)),
-				match(where(STATUS).ne(IN_PROGRESS.name())),
-				match(where(START_TIME).gt(from)),
-				group("$userRef").count().as("count")
+		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
+				match(where(STATUS).ne(IN_PROGRESS.name())), match(where(START_TIME).gt(from)), group("$userRef").count().as("count")
 		);
 
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
@@ -321,7 +312,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		Query query = query(where(PROJECT_ID_REFERENCE).is(projectId)).addCriteria(where(NAME).is(launchName))
 				.addCriteria(where(MODE).is(mode))
 				.limit(1)
-				.with(new Sort(DESC, START_TIME));
+				.with(new Sort(Lists.newArrayList(new Sort.Order(DESC, START_TIME), new Sort.Order(DESC, NUMBER))));
 		List<Launch> launches = mongoTemplate.find(query, Launch.class);
 		return !launches.isEmpty() ? Optional.of(launches.get(0)) : Optional.empty();
 	}
@@ -386,13 +377,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 			DocumentCallbackHandler callbackHandler) {
 		String tag = String.format(REGEX, tagPrefix);
 		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				match(Criteria.where(TAGS).regex(tag)),
-				unwind("$tags"),
-				match(Criteria.where(TAGS).regex(tag)),
-				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
-				sorting("len", DESC).and(DESC, "_id"),
-				limit(limit)
+				match(Criteria.where(TAGS).regex(tag)), unwind("$tags"), match(Criteria.where(TAGS).regex(tag)),
+				groupByFieldWithStatisticsSumming(TAGS, contentFields), addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
+				sorting("len", DESC).and(DESC, "_id"), limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
 				.getMappedResults();
@@ -459,10 +446,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 *     ])
 	*/
 	private List<AggregationOperation> latestLaunchesAggregationOperationsList(Queryable filter) {
-		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				sort(DESC, NUMBER),
-				group("$name").first(ROOT).as(ORIGINAL),
-				replaceRoot(ORIGINAL)
+		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class), sort(DESC, NUMBER),
+				group("$name").first(ROOT).as(ORIGINAL), replaceRoot(ORIGINAL)
 		);
 	}
 
