@@ -465,7 +465,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<RetryObject> findRetries(String launchId) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("isRetry").is(true)),
-				group(Fields.fields("$uniqueId")).addToSet(ROOT).as("retries")
+				sort(new Sort(Sort.Direction.ASC, "_id", "start_time")),
+				group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
 		);
 
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class)
