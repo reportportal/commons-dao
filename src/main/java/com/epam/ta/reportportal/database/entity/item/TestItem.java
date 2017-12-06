@@ -128,9 +128,19 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	private List<TestItem> retries;
 
+	private Boolean isRetry;
+
 	public TestItem() {
 		path = new ArrayList<>();
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
+	}
+
+	public Boolean getRetry() {
+		return isRetry;
+	}
+
+	public void setRetry(Boolean retry) {
+		isRetry = retry;
 	}
 
 	public String getId() {
