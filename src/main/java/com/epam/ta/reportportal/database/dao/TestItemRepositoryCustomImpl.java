@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
+import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -33,7 +34,6 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -463,15 +463,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<String, List<TestItem>> findRetries(String launchId) {
+	public List<RetryObject> findRetries(String launchId) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("isRetry").is(true)),
 				group(Fields.fields("$uniqueId")).addToSet(ROOT).as("retries")
 		);
 
-		List<DBObject> objects = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DBObject.class)
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class)
 				.getMappedResults();
-		Map<String, List<TestItem>> results = new HashMap<>();
-		objects.forEach(it -> results.put((String) it.get("_id"), (List<TestItem>) it.get("retries")));
-		return results;
 	}
 }
