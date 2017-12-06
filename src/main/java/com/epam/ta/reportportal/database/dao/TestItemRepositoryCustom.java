@@ -293,4 +293,11 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	Optional<TestItem> findRetry(String retryId);
 
+	/**
+	 * Find retries in launch
+	 * @param launchId
+	 * @return
+	 */
+	Map<String, List<TestItem>> findRetries(String launchId);
+
 }

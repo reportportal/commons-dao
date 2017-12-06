@@ -33,6 +33,7 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -459,5 +460,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return Optional.ofNullable(mongoTemplate.findOne(q, TestItem.class))
 				.flatMap(it -> Optional.ofNullable(it.getRetries()))
 				.flatMap(it -> it.stream().filter(r -> retryId.equals(r.getId())).findAny());
+	}
+
+	@Override
+	public Map<String, List<TestItem>> findRetries(String launchId) {
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("isRetry").is(true)),
+				group(Fields.fields("$uniqueId")).addToSet(ROOT).as("retries")
+		);
+
+		List<DBObject> objects = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DBObject.class)
+				.getMappedResults();
+		Map<String, List<TestItem>> results = new HashMap<>();
+		objects.forEach(it -> results.put((String) it.get("_id"), (List<TestItem>) it.get("retries")));
+		return results;
 	}
 }
