@@ -448,7 +448,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public TestItem findRetryRoot(String uniqueId, String parent) {
 		Query query = query(where(PARENT).is(parent)).addCriteria(where(UNIQUE_ID).is(uniqueId))
-				.with(new Sort(Sort.Direction.ASC, "_id", "start_time"))
+				.with(new Sort(Sort.Direction.ASC,  "start_time"))
 				.limit(1);
 		return mongoTemplate.findOne(query, TestItem.class);
 	}
