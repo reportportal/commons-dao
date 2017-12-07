@@ -23,4 +23,7 @@ public enum RetryType {
 						.filter(it -> it.value.equals(str)).findAny());
 	}
 
+	public String getValue() {
+		return value;
+	}
 }
