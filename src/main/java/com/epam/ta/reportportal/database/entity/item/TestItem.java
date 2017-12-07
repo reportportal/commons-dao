@@ -126,31 +126,13 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	@FilterCriteria("uniqueId")
 	private String uniqueId;
 
-	private String retryRoot;
-
 	private List<TestItem> retries;
 
-	private Boolean isRetry;
+	private RetryType retryType;
 
 	public TestItem() {
 		path = new ArrayList<>();
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
-	}
-
-	public Boolean getRetry() {
-		return isRetry;
-	}
-
-	public void setRetry(Boolean retry) {
-		isRetry = retry;
-	}
-
-	public String getRetryRoot() {
-		return retryRoot;
-	}
-
-	public void setRetryRoot(String retryRoot) {
-		this.retryRoot = retryRoot;
 	}
 
 	public String getId() {
@@ -159,6 +141,14 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public RetryType getRetryType() {
+		return retryType;
+	}
+
+	public void setRetryType(RetryType retryType) {
+		this.retryType = retryType;
 	}
 
 	public String getName() {
