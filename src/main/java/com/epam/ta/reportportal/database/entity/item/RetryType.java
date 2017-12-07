@@ -7,9 +7,9 @@ import java.util.Optional;
  * @author Pavel Bortnik
  */
 public enum RetryType {
-	ROOT("root"),
-	RETRY("retry"),
-	LAST("last");
+	ROOT("ROOT"),
+	RETRY("RETRY"),
+	LAST("LAST");
 
 	RetryType(String value) {
 		this.value = value;

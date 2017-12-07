@@ -24,7 +24,6 @@ package com.epam.ta.reportportal.database;
 import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.database.entity.item.ActivityEventType;
 import com.epam.ta.reportportal.database.entity.item.ActivityObjectType;
-import com.epam.ta.reportportal.database.entity.item.RetryType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.mongodb.BasicDBObject;
@@ -122,26 +121,6 @@ public class CustomMongoConverters {
 		@Override
 		public ActivityObjectType convert(String source) {
 			return null == source ? null : ActivityObjectType.fromString(source)
-					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
-		}
-	}
-
-	public enum RetryTypeToStringConverter implements Converter<RetryType, String> {
-		INSTANCE;
-
-		@Override
-		public String convert(RetryType source) {
-			return null == source ? null : source.getValue();
-		}
-	}
-
-	@ReadingConverter
-	public enum StringToRetryTypeConverter implements Converter<String, RetryType> {
-		INSTANCE;
-
-		@Override
-		public RetryType convert(String source) {
-			return null == source ? null : RetryType.fromString(source)
 					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
 		}
 	}
