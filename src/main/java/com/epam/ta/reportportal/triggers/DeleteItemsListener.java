@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.triggers;
 import com.epam.ta.reportportal.database.dao.LogRepository;
 import com.epam.ta.reportportal.database.entity.item.RetryType;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,15 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 			final String id = dbObject.get("_id").toString();
 			String retryType = (String) dbObject.get("retryType");
 			if (retryType == null || RetryType.LAST.getValue().equals(retryType)) {
-				final BasicDBObject itemDescendantsQuery = new BasicDBObject("path", new BasicDBObject("$in", singletonList(id))).append("retries.path", singletonList(id));
-				final List<String> itemIds = stream(mongoTemplate.getCollection(event.getCollectionName()).find(itemDescendantsQuery).spliterator(), false).map(
+
+				final BasicDBObject itemDescendantsQuery = new BasicDBObject("path", new BasicDBObject("$in", singletonList(id)));
+				final BasicDBObject retriesItemDescendantsQuery = new BasicDBObject("retries.path", new BasicDBObject("$in", singletonList(id)));
+				BasicDBList or = new BasicDBList();
+				or.add(itemDescendantsQuery);
+				or.add(retriesItemDescendantsQuery);
+				BasicDBObject query = new BasicDBObject("$or", or);
+
+				final List<String> itemIds = stream(mongoTemplate.getCollection(event.getCollectionName()).find(query).spliterator(), false).map(
 						it -> it.get("_id").toString()).collect(toList());
 				mongoTemplate.getCollection(event.getCollectionName()).remove(itemDescendantsQuery);
 				itemIds.add(id);
