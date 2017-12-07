@@ -21,6 +21,7 @@
 package com.epam.ta.reportportal.triggers;
 
 import com.epam.ta.reportportal.database.dao.LogRepository;
+import com.epam.ta.reportportal.database.entity.item.RetryType;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -33,6 +34,7 @@ import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -61,15 +63,18 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 	public void onBeforeDelete(BeforeDeleteEvent<TestItem> event) {
 		DBObject dbqo = queryMapper.getMappedObject(event.getDBObject(), mappingContext.getPersistentEntity(TestItem.class));
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
-			final String id = dbObject.get("_id").toString();
-			final BasicDBObject itemDescendantsQuery = new BasicDBObject("path", new BasicDBObject("$in", singletonList(id))).append(
-					"retries.path", new BasicDBObject("$in", singletonList(id)));
-			final List<String> itemIds = stream(
-					mongoTemplate.getCollection(event.getCollectionName()).find(itemDescendantsQuery).spliterator(), false).map(
-					it -> it.get("_id").toString()).collect(toList());
-			mongoTemplate.getCollection(event.getCollectionName()).remove(itemDescendantsQuery);
-			itemIds.add(id);
-			logRepository.deleteByItemRef(itemIds);
+			Optional<RetryType> retryType = RetryType.fromString((String) dbObject.get("retryType"));
+			if (!retryType.isPresent()) {
+				final String id = dbObject.get("_id").toString();
+				final BasicDBObject itemDescendantsQuery = new BasicDBObject("path", new BasicDBObject("$in", singletonList(id))).append(
+						"retries.path", new BasicDBObject("$in", singletonList(id)));
+				final List<String> itemIds = stream(
+						mongoTemplate.getCollection(event.getCollectionName()).find(itemDescendantsQuery).spliterator(), false).map(
+						it -> it.get("_id").toString()).collect(toList());
+				mongoTemplate.getCollection(event.getCollectionName()).remove(itemDescendantsQuery);
+				itemIds.add(id);
+				logRepository.deleteByItemRef(itemIds);
+			}
 		}
 	}
 }
