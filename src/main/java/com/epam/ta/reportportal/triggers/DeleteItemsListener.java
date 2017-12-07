@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.database.entity.item.RetryType;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.QueryMapper;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Dzmitry Kavalets
@@ -67,21 +69,26 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
 			String retryType = (String) dbObject.get("retryType");
 			if (retryType == null || RetryType.LAST.getValue().equals(retryType)) {
-				final String id = dbObject.get("_id").toString();
-				Query itemDescendantsQuery = Query.query(Criteria.where("path").in(singletonList(id)));
-				List<TestItem> itemsForDelete = mongoTemplate.find(itemDescendantsQuery, TestItem.class);
-				List<String> ids = getDeletingItemsIds(itemsForDelete);
-				ids.add(id);
+				final String deletingItemId = dbObject.get("_id").toString();
 
-				BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$in", ids));
+				Query itemDescendantsQuery = Query.query(Criteria.where("path").in(singletonList(deletingItemId)));
+				List<TestItem> itemsForDelete = mongoTemplate.find(itemDescendantsQuery, TestItem.class);
+
+				List<ObjectId> objectIds = itemsForDelete.stream().map(it -> new ObjectId(it.getId())).collect(toList());
+				objectIds.add(new ObjectId(deletingItemId));
+
+				BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$in", objectIds));
 				mongoTemplate.getCollection(event.getCollectionName()).remove(query);
-				logRepository.deleteByItemRef(ids);
+
+				List<String> itemRefs = getLogItemReferences(itemsForDelete, deletingItemId);
+				logRepository.deleteByItemRef(itemRefs);
 			}
 		}
 	}
 
-	private List<String> getDeletingItemsIds(List<TestItem> itemsForDelete) {
+	private List<String> getLogItemReferences(List<TestItem> itemsForDelete, String id) {
 		List<String> ids = new ArrayList<>();
+		ids.add(id);
 		itemsForDelete.forEach(item -> {
 			ids.add(item.getId());
 			if (null != item.getRetries()) {
