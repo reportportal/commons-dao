@@ -66,7 +66,7 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 			Optional<RetryType> retryType = RetryType.fromString((String) dbObject.get("retryType"));
 			if (retryType.isPresent() && retryType.get().equals(RetryType.LAST)) {
 				List<TestItem> retries = (List<TestItem>) dbObject.get("retries");
-				retries.stream().forEach(it -> clearItemData(event.getCollectionName(), it.getId()));
+				retries.forEach(it -> clearItemData(event.getCollectionName(), it.getId()));
 			}
 			if (!retryType.isPresent()) {
 				final String id = dbObject.get("_id").toString();
