@@ -18,9 +18,7 @@ public enum RetryType {
 	private String value;
 
 	public static Optional<RetryType> fromString(String string) {
-		return Optional.ofNullable(string)
-				.flatMap(str -> Arrays.stream(values())
-						.filter(it -> it.value.equals(str)).findAny());
+		return Arrays.stream(values()).filter(it -> it.getValue().equals(string)).findAny();
 	}
 
 	public String getValue() {
