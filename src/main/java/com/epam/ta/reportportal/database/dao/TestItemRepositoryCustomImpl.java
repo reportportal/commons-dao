@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
+import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -447,7 +448,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public TestItem findRetryRoot(String uniqueId, String parent) {
 		Query query = query(where(PARENT).is(parent)).addCriteria(where(UNIQUE_ID).is(uniqueId))
-				.with(new Sort(Sort.Direction.ASC, "_id", "start_time"))
+				.with(new Sort(Sort.Direction.ASC,  "start_time"))
 				.limit(1);
 		return mongoTemplate.findOne(query, TestItem.class);
 	}
@@ -459,5 +460,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return Optional.ofNullable(mongoTemplate.findOne(q, TestItem.class))
 				.flatMap(it -> Optional.ofNullable(it.getRetries()))
 				.flatMap(it -> it.stream().filter(r -> retryId.equals(r.getId())).findAny());
+	}
+
+	@Override
+	public List<RetryObject> findRetries(String launchId) {
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("retryType").exists(true)),
+				sort(new Sort(Sort.Direction.ASC,  "start_time")),
+				group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
+		);
+
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class)
+				.getMappedResults();
 	}
 }

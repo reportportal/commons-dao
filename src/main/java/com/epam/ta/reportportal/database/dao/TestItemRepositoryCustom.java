@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
+import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -292,5 +293,12 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @return Retry Item
 	 */
 	Optional<TestItem> findRetry(String retryId);
+
+	/**
+	 * Find retries in launch
+	 * @param launchId
+	 * @return
+	 */
+	List<RetryObject> findRetries(String launchId);
 
 }
