@@ -64,7 +64,7 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		DBObject dbqo = queryMapper.getMappedObject(event.getDBObject(), mappingContext.getPersistentEntity(TestItem.class));
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
 
-			Optional<RetryType> retryType = RetryType.fromString(dbObject.get("retryType").toString());
+			Optional<RetryType> retryType = RetryType.fromString((String) dbObject.get("retryType"));
 			final String id = dbObject.get("_id").toString();
 			final BasicDBObject itemDescendantsQuery = new BasicDBObject("path", new BasicDBObject("$in", singletonList(id)));
 
