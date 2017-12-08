@@ -6,6 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.List;
 
 /**
+ *
+ * Does not a db object representation. Result of
+ * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustomImpl#findRetries(String)}
+ * query
+ *
  * @author Pavel Bortnik
  */
 public class RetryObject {

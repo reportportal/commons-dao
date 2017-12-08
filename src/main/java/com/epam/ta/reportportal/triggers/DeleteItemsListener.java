@@ -82,12 +82,24 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		}
 	}
 
+	/**
+	 * Query of getting item child and item itself
+	 *
+	 * @param objectId Parent item
+	 * @return Query
+	 */
 	private Query queryItems(String objectId) {
 		Criteria criteria = new Criteria();
 		criteria.orOperator(Criteria.where("path").in(singletonList(objectId)), Criteria.where("_id").is(objectId));
 		return Query.query(criteria);
 	}
 
+	/**
+	 * Collects all item ids reference including retries
+	 *
+	 * @param itemsForDelete Items to collect
+	 * @return List of ids
+	 */
 	private List<String> getLogItemReferences(List<TestItem> itemsForDelete) {
 		List<String> ids = new ArrayList<>();
 		itemsForDelete.forEach(item -> {
