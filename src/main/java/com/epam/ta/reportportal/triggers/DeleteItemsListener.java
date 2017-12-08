@@ -68,7 +68,7 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
 			String retryType = (String) dbObject.get("retryType");
 			if (retryType == null || RetryType.LAST.getValue().equals(retryType)) {
-				ObjectId objectId = (ObjectId) dbObject.get("_id");
+				String objectId = dbObject.get("_id").toString();
 
 				List<TestItem> itemsForDelete = mongoTemplate.find(queryItems(objectId), TestItem.class);
 
@@ -82,9 +82,9 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		}
 	}
 
-	private Query queryItems(ObjectId objectId) {
+	private Query queryItems(String objectId) {
 		Criteria criteria = new Criteria();
-		criteria.orOperator(Criteria.where("path").in(singletonList(objectId.toString())), Criteria.where("_id").is(objectId));
+		criteria.orOperator(Criteria.where("path").in(singletonList(objectId)), Criteria.where("_id").is(objectId));
 		return Query.query(criteria);
 	}
 
