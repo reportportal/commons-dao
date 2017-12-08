@@ -4,6 +4,7 @@ package com.epam.ta.reportportal.database.entity.item;
  * @author Pavel Bortnik
  */
 public enum RetryType {
+	ROOT("ROOT"),
 	RETRY("RETRY"),
 	LAST("LAST");
 
