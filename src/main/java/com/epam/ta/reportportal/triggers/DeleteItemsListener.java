@@ -63,32 +63,30 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<TestItem> event) {
-
 		DBObject dbqo = queryMapper.getMappedObject(event.getDBObject(), mappingContext.getPersistentEntity(TestItem.class));
 
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
+			System.out.println("deleting");
 			String retryType = (String) dbObject.get("retryType");
 			if (retryType == null || RetryType.LAST.getValue().equals(retryType)) {
 				final String deletingItemId = dbObject.get("_id").toString();
 
-				Query itemDescendantsQuery = Query.query(Criteria.where("path").in(singletonList(deletingItemId)));
+				Query itemDescendantsQuery = Query.query(
+						Criteria.where("path").in(singletonList(deletingItemId)).orOperator(Criteria.where("_id").is(deletingItemId)));
 				List<TestItem> itemsForDelete = mongoTemplate.find(itemDescendantsQuery, TestItem.class);
 
 				List<ObjectId> objectIds = itemsForDelete.stream().map(it -> new ObjectId(it.getId())).collect(toList());
-				objectIds.add(new ObjectId(deletingItemId));
-
 				BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$in", objectIds));
 				mongoTemplate.getCollection(event.getCollectionName()).remove(query);
 
-				List<String> itemRefs = getLogItemReferences(itemsForDelete, deletingItemId);
+				List<String> itemRefs = getLogItemReferences(itemsForDelete);
 				logRepository.deleteByItemRef(itemRefs);
 			}
 		}
 	}
 
-	private List<String> getLogItemReferences(List<TestItem> itemsForDelete, String id) {
+	private List<String> getLogItemReferences(List<TestItem> itemsForDelete) {
 		List<String> ids = new ArrayList<>();
-		ids.add(id);
 		itemsForDelete.forEach(item -> {
 			ids.add(item.getId());
 			if (null != item.getRetries()) {
