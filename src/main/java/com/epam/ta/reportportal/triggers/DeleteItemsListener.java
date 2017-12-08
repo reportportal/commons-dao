@@ -73,7 +73,7 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 
 				Query itemDescendantsQuery = Query.query(Criteria.where("path")
 						.in(singletonList(deletingItemId))
-						.orOperator(Criteria.where("_id").is(new ObjectId(deletingItemId)));
+						.orOperator(Criteria.where("_id").is(new ObjectId(deletingItemId))));
 				List<TestItem> itemsForDelete = mongoTemplate.find(itemDescendantsQuery, TestItem.class);
 
 				List<ObjectId> objectIds = itemsForDelete.stream().map(it -> new ObjectId(it.getId())).collect(toList());
