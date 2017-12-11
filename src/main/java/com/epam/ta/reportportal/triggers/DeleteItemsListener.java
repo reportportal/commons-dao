@@ -65,7 +65,7 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		DBObject dbqo = queryMapper.getMappedObject(event.getDBObject(), mappingContext.getPersistentEntity(TestItem.class));
 
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
-			Boolean isRetryProcessed = (Boolean) dbObject.get("isRetryProcessed");
+			Boolean isRetryProcessed = (Boolean) dbObject.get("retryProcessed");
 			if (isRetryProcessed == null || isRetryProcessed) {
 				String objectId = dbObject.get("_id").toString();
 

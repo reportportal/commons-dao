@@ -128,7 +128,7 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	private List<TestItem> retries;
 
-	private Boolean isRetryProcessed;
+	private Boolean retryProcessed;
 
 	public TestItem() {
 		path = new ArrayList<>();
@@ -144,11 +144,11 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 	}
 
 	public Boolean getRetryProcessed() {
-		return isRetryProcessed;
+		return retryProcessed;
 	}
 
 	public void setRetryProcessed(Boolean retryProcessed) {
-		isRetryProcessed = retryProcessed;
+		this.retryProcessed = retryProcessed;
 	}
 
 	public String getName() {

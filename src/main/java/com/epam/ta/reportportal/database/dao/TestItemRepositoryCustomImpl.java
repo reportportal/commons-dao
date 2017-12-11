@@ -464,7 +464,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<RetryObject> findRetries(String launchId) {
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("isRetryProcessed").exists(true)),
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("retryProcessed").exists(true)),
 				sort(new Sort(Sort.Direction.ASC,  "start_time")),
 				group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
 		);
