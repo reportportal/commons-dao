@@ -21,7 +21,6 @@
 package com.epam.ta.reportportal.triggers;
 
 import com.epam.ta.reportportal.database.dao.LogRepository;
-import com.epam.ta.reportportal.database.entity.item.RetryType;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -66,8 +65,8 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 		DBObject dbqo = queryMapper.getMappedObject(event.getDBObject(), mappingContext.getPersistentEntity(TestItem.class));
 
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
-			String retryType = (String) dbObject.get("retryType");
-			if (retryType == null || RetryType.LAST.getValue().equals(retryType)) {
+			Boolean isRetryProcessed = (Boolean) dbObject.get("isRetryProcessed");
+			if (isRetryProcessed == null || isRetryProcessed) {
 				String objectId = dbObject.get("_id").toString();
 
 				List<TestItem> itemsForDelete = mongoTemplate.find(queryItems(objectId), TestItem.class);
