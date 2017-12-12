@@ -128,6 +128,8 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	private List<TestItem> retries;
 
+	private Boolean retryProcessed;
+
 	public TestItem() {
 		path = new ArrayList<>();
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
@@ -139,6 +141,14 @@ public class TestItem implements Serializable, BidirectionalTree, Interruptable 
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Boolean getRetryProcessed() {
+		return retryProcessed;
+	}
+
+	public void setRetryProcessed(Boolean retryProcessed) {
+		this.retryProcessed = retryProcessed;
 	}
 
 	public String getName() {
