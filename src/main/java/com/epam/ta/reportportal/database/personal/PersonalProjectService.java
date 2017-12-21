@@ -46,75 +46,86 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Service
 public final class PersonalProjectService {
 
-	public static final String PERSONAL_PROJECT_POSTFIX = "_personal";
-	private ProjectRepository projectRepository;
+    public static final String PERSONAL_PROJECT_POSTFIX = "_personal";
+    private ProjectRepository projectRepository;
 
-	@Autowired
-	public PersonalProjectService(ProjectRepository projectRepository) {
-		this.projectRepository = projectRepository;
-	}
+    @Autowired
+    public PersonalProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
-	/**
+    /**
      * Prefix from username with replaced dots as underscores
      *
-	 * @param username Name of user
-	 * @return Corresponding personal project name
-	 */
-	@VisibleForTesting
-	String generatePersonalProjectName(String username) {
-        String projectName = username.replaceAll("\\.", "_");
-        String initialName = (projectName + PERSONAL_PROJECT_POSTFIX).toLowerCase();
+     * @param username Name of user
+     * @return Corresponding personal project name
+     */
+    @VisibleForTesting
+    String generatePersonalProjectName(String username) {
+        String initialName = getProjectPrefix(username);
 
-		String name = initialName;
-		//iterate until we find free project name
-		for (int i = 1; projectRepository.exists(name); i++) {
-			name = initialName + "_" + i;
-		}
+        String name = initialName;
+        //iterate until we find free project name
+        for (int i = 1; projectRepository.exists(name); i++) {
+            name = initialName + "_" + i;
+        }
 
-		return name;
-	}
+        return name;
+    }
 
-	/**
-	 * Generates personal project for provided user
-	 *
-	 * @param user User project should be created for
-	 * @return Built Project object
-	 */
-	public Project generatePersonalProject(User user) {
-		Project project = new Project();
-		project.setName(generatePersonalProjectName(user.getLogin()));
-		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
+    /**
+     * Generates personal project for provided user
+     *
+     * @param user User project should be created for
+     * @return Built Project object
+     */
+    public Project generatePersonalProject(User user) {
+        Project project = new Project();
+        project.setName(generatePersonalProjectName(user.getLogin()));
+        project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
-		Project.UserConfig userConfig = new Project.UserConfig();
-		userConfig.setLogin(user.getId());
-		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
-		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
-		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
+        Project.UserConfig userConfig = new Project.UserConfig();
+        userConfig.setLogin(user.getId());
+        userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
+        userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
+        project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
 
-		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
-		project.setConfiguration(defaultConfiguration());
+        project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
+        project.setConfiguration(defaultConfiguration());
 
 		/* Default email configuration */
-		ProjectUtils.setDefaultEmailCofiguration(project);
+        ProjectUtils.setDefaultEmailCofiguration(project);
 
-		return project;
-	}
+        return project;
+    }
 
-	/**
-	 * @return Generated default project configuration
-	 */
-	public static Project.Configuration defaultConfiguration() {
-		Project.Configuration defaultConfig = new Project.Configuration();
-		defaultConfig.setEntryType(EntryType.PERSONAL);
-		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
-		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
-		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
-		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
-		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
-		defaultConfig.setExternalSystem(Collections.emptyList());
-		defaultConfig.setIsAutoAnalyzerEnabled(false);
+    /**
+     * Generates prefix for personal project
+     *
+     * @param username Name of user
+     * @return Prefix
+     */
+    public String getProjectPrefix(String username) {
+        String projectName = username.replaceAll("\\.", "_");
+        return (projectName + PERSONAL_PROJECT_POSTFIX).toLowerCase();
+    }
 
-		return defaultConfig;
 
-	}
+    /**
+     * @return Generated default project configuration
+     */
+    public static Project.Configuration defaultConfiguration() {
+        Project.Configuration defaultConfig = new Project.Configuration();
+        defaultConfig.setEntryType(EntryType.PERSONAL);
+        defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
+        defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
+        defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
+        defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
+        defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
+        defaultConfig.setExternalSystem(Collections.emptyList());
+        defaultConfig.setIsAutoAnalyzerEnabled(false);
+
+        return defaultConfig;
+
+    }
 }

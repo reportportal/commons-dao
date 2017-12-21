@@ -31,11 +31,8 @@ import com.epam.ta.reportportal.database.support.RepositoriesFactoryBean;
 import com.epam.ta.reportportal.database.support.RepositoryProvider;
 import com.epam.ta.reportportal.database.support.impl.DefaultRepositoryProviderImpl;
 import com.epam.ta.reportportal.triggers.CascadeDeleteDashboardTrigger;
-import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -44,6 +41,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,10 +56,6 @@ import org.springframework.data.repository.support.Repositories;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * MongoDB configuration
@@ -71,216 +65,170 @@ import static java.util.Optional.ofNullable;
 @EnableMongoRepositories(basePackageClasses = UserRepository.class, repositoryImplementationPostfix = "CustomImpl", repositoryFactoryBeanClass = ReportPortalRepositoryFactoryBean.class)
 @EnableMongoAuditing
 @Configuration
-@EnableConfigurationProperties(MongodbConfiguration.MongoProperies.class)
+@EnableConfigurationProperties(MongodbConfiguration.MongoProperties.class)
 @ComponentScan(basePackageClasses = { PersonalProjectService.class, CascadeDeleteDashboardTrigger.class })
 public class MongodbConfiguration {
 
-    @Autowired
-    private MongoProperies mongoProperties;
+	@Autowired
+	private MongoProperties mongoProperties;
 
-    @Bean
-    @Profile("!unittest")
-    MongoDbFactory mongoDbFactory() throws UnknownHostException {
+	@Autowired
+	private Environment environment;
 
-        SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongo(), mongoProperties.getDbName());
+	@Bean
+	@Profile("!unittest")
+	MongoDbFactory mongoDbFactory() throws UnknownHostException {
 
-        mongoDbFactory.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+		SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongo(), mongoProperties.getDatabase());
+		mongoDbFactory.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 
-        return mongoDbFactory;
-    }
+		return mongoDbFactory;
+	}
 
-    @Bean
-    @Profile("!unittest")
-    MongoClient mongo() throws UnknownHostException {
-        MongoClientOptions.Builder mongoClientBuilder = MongoClientOptions.builder();
-        mongoClientBuilder.connectionsPerHost(mongoProperties.getConnectionsPerHost())
-                .threadsAllowedToBlockForConnectionMultiplier(
-                        mongoProperties.getThreadsAllowedToBlockForConnectionMultiplier())
-                .connectTimeout(mongoProperties.getConnectTimeout()).socketTimeout(mongoProperties.getSocketTimeout())
-                .maxWaitTime(mongoProperties.getMaxWaitTime()).socketKeepAlive(mongoProperties.getSocketKeepAlive());
+	@Bean
+	@Profile("!unittest")
+	MongoClient mongo() throws UnknownHostException {
+		return mongoProperties.createMongoClient(mongoProperties.createMongoClientOptions(), environment);
+	}
 
-        List<MongoCredential> credentials = Collections.emptyList();
-        if (!Strings.isNullOrEmpty(mongoProperties.getUser()) && !Strings
-                .isNullOrEmpty(mongoProperties.getPassword())) {
-            credentials = Collections.singletonList(MongoCredential.createCredential(mongoProperties.getUser(),
-                    ofNullable(mongoProperties.getAuthDbName()).orElse(mongoProperties.getDbName()),
-                    mongoProperties.getPassword().toCharArray()));
-        }
+	@Bean
+	public MappingMongoConverter mappingMongoConverter() throws UnknownHostException {
+		MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory()), mongoMappingContext());
+		converter.setCustomConversions(customConversions());
+		return converter;
+	}
 
-        return new MongoClient(new ServerAddress(mongoProperties.getHost(), mongoProperties.getPort()), credentials,
-                mongoClientBuilder.build());
-    }
+	@Bean
+	MongoTemplate mongoTemplate() throws UnknownHostException {
+		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
+		mongoTemplate.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 
-    @Bean
-    public MappingMongoConverter mappingMongoConverter() throws UnknownHostException {
-        MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory()),
-                mongoMappingContext());
-        converter.setCustomConversions(customConversions());
-        return converter;
-    }
+		return mongoTemplate;
+	}
 
-    @Bean
-    MongoTemplate mongoTemplate() throws UnknownHostException {
-        MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
-        mongoTemplate.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+	@Bean
+	GridFsTemplate gridFsTemplate() throws UnknownHostException {
+		return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
+	}
 
-        return mongoTemplate;
-    }
+	@Bean
+	DataStorage dataStorage() throws UnknownHostException {
+		return new GridFSDataStorage(gridFsTemplate());
+	}
 
-    @Bean
-    GridFsTemplate gridFsTemplate() throws UnknownHostException {
-        return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
-    }
+	@Bean
+	CustomConversions customConversions() {
+		return new CustomConversions(Arrays.asList(CustomMongoConverters.LogLevelToIntConverter.INSTANCE,
+				CustomMongoConverters.IntToLogLevelConverter.INSTANCE,
+				CustomMongoConverters.ClassToWrapperConverter.INSTANCE,
+				CustomMongoConverters.WrapperToClassConverter.INSTANCE,
+				CustomMongoConverters.ActivityEventTypeToStringConverter.INSTANCE,
+				CustomMongoConverters.StringToActivityEventTypeConverter.INSTANCE,
+				CustomMongoConverters.ActivityObjectTypeToStringConverter.INSTANCE,
+				CustomMongoConverters.StringToActivityObjectTypeConverter.INSTANCE
+		));
+	}
 
-    @Bean
-    DataStorage dataStorage() throws UnknownHostException {
-        return new GridFSDataStorage(gridFsTemplate());
-    }
+	@Bean
+	MongoMappingContext mongoMappingContext() {
+		return new MongoMappingContext();
+	}
 
-    @Bean
-    CustomConversions customConversions() {
-        return new CustomConversions(
-                Arrays.asList(CustomMongoConverters.LogLevelToIntConverter.INSTANCE,
-                        CustomMongoConverters.IntToLogLevelConverter.INSTANCE,
-                        CustomMongoConverters.ClassToWrapperConverter.INSTANCE,
-                        CustomMongoConverters.WrapperToClassConverter.INSTANCE,
-                        CustomMongoConverters.ActivityEventTypeToStringConverter.INSTANCE,
-                        CustomMongoConverters.StringToActivityEventTypeConverter.INSTANCE,
-                        CustomMongoConverters.ActivityObjectTypeToStringConverter.INSTANCE,
-                        CustomMongoConverters.StringToActivityObjectTypeConverter.INSTANCE));
-    }
+	@Bean
+	public RepositoriesFactoryBean repositoriesFactoryBean() {
+		return new RepositoriesFactoryBean();
+	}
 
-    @Bean
-    MongoMappingContext mongoMappingContext() {
-        return new MongoMappingContext();
-    }
+	@Bean
+	public RepositoryProvider repositoryProvider(Repositories repositories) {
+		return new DefaultRepositoryProviderImpl(repositories);
+	}
 
-    @Bean
-    public RepositoriesFactoryBean repositoriesFactoryBean() {
-        return new RepositoriesFactoryBean();
-    }
+	@Bean
+	public LaunchMetaInfoRepository launchMetaInfoRepository() {
+		return new LaunchMetaInfoRepository.LaunchMetaInfoRepositoryImpl();
+	}
 
-    @Bean
-    public RepositoryProvider repositoryProvider(Repositories repositories) {
-        return new DefaultRepositoryProviderImpl(repositories);
-    }
+	@ConfigurationProperties("rp.mongo")
+	public static class MongoProperties extends org.springframework.boot.autoconfigure.mongo.MongoProperties {
 
-    @Bean
-    public LaunchMetaInfoRepository launchMetaInfoRepository() {
-        return new LaunchMetaInfoRepository.LaunchMetaInfoRepositoryImpl();
-    }
+		private Integer connectionsPerHost;
+		private Integer threadsAllowedToBlockForConnectionMultiplier;
+		private Integer connectTimeout;
+		private Integer socketTimeout;
+		private Integer maxWaitTime;
+		private Boolean socketKeepAlive;
 
+		public void setUser(String user) {
+			setUsername(user);
+		}
 
-    @ConfigurationProperties("rp.mongo")
-    public static class MongoProperies {
-        private String dbName;
-        private String authDbName;
-        private String host;
-        private Integer port;
-        private String user;
-        private String password;
-        private Integer connectionsPerHost;
-        private Integer threadsAllowedToBlockForConnectionMultiplier;
-        private Integer connectTimeout;
-        private Integer socketTimeout;
-        private Integer maxWaitTime;
-        private Boolean socketKeepAlive;
+		public void setDbName(String dbName) {
+			setDatabase(dbName);
+		}
 
-        public String getUser() {
-            return user;
-        }
+		public void setAuthDbName(String authDbName) {
+			setAuthenticationDatabase(authDbName);
+		}
 
-        public void setUser(String user) {
-            this.user = user;
-        }
+		public Integer getConnectionsPerHost() {
+			return connectionsPerHost;
+		}
 
-        public String getPassword() {
-            return password;
-        }
+		public void setConnectionsPerHost(Integer connectionsPerHost) {
+			this.connectionsPerHost = connectionsPerHost;
+		}
 
-        public void setPassword(String password) {
-            this.password = password;
-        }
+		public Integer getThreadsAllowedToBlockForConnectionMultiplier() {
+			return threadsAllowedToBlockForConnectionMultiplier;
+		}
 
-        public String getDbName() {
-            return dbName;
-        }
+		public void setThreadsAllowedToBlockForConnectionMultiplier(Integer threadsAllowedToBlockForConnectionMultiplier) {
+			this.threadsAllowedToBlockForConnectionMultiplier = threadsAllowedToBlockForConnectionMultiplier;
+		}
 
-        public void setDbName(String dbName) {
-            this.dbName = dbName;
-        }
+		public Integer getConnectTimeout() {
+			return connectTimeout;
+		}
 
-        public String getHost() {
-            return host;
-        }
+		public void setConnectTimeout(Integer connectTimeout) {
+			this.connectTimeout = connectTimeout;
+		}
 
-        public void setHost(String host) {
-            this.host = host;
-        }
+		public Integer getSocketTimeout() {
+			return socketTimeout;
+		}
 
-        public Integer getPort() {
-            return port;
-        }
+		public void setSocketTimeout(Integer socketTimeout) {
+			this.socketTimeout = socketTimeout;
+		}
 
-        public void setPort(Integer port) {
-            this.port = port;
-        }
+		public Integer getMaxWaitTime() {
+			return maxWaitTime;
+		}
 
-        public Integer getConnectionsPerHost() {
-            return connectionsPerHost;
-        }
+		public void setMaxWaitTime(Integer maxWaitTime) {
+			this.maxWaitTime = maxWaitTime;
+		}
 
-        public void setConnectionsPerHost(Integer connectionsPerHost) {
-            this.connectionsPerHost = connectionsPerHost;
-        }
+		public Boolean getSocketKeepAlive() {
+			return socketKeepAlive;
+		}
 
-        public Integer getThreadsAllowedToBlockForConnectionMultiplier() {
-            return threadsAllowedToBlockForConnectionMultiplier;
-        }
+		public void setSocketKeepAlive(Boolean socketKeepAlive) {
+			this.socketKeepAlive = socketKeepAlive;
+		}
 
-        public void setThreadsAllowedToBlockForConnectionMultiplier(
-                Integer threadsAllowedToBlockForConnectionMultiplier) {
-            this.threadsAllowedToBlockForConnectionMultiplier = threadsAllowedToBlockForConnectionMultiplier;
-        }
+		MongoClientOptions createMongoClientOptions() {
+			return MongoClientOptions.builder()
+					.connectionsPerHost(this.connectionsPerHost)
+					.connectTimeout(this.connectTimeout)
+					.socketTimeout(this.socketTimeout)
+					.threadsAllowedToBlockForConnectionMultiplier(this.threadsAllowedToBlockForConnectionMultiplier)
+					.socketKeepAlive(this.socketKeepAlive)
+					.maxWaitTime(this.maxWaitTime)
+					.build();
+		}
 
-        public Integer getConnectTimeout() {
-            return connectTimeout;
-        }
-
-        public void setConnectTimeout(Integer connectTimeout) {
-            this.connectTimeout = connectTimeout;
-        }
-
-        public Integer getSocketTimeout() {
-            return socketTimeout;
-        }
-
-        public void setSocketTimeout(Integer socketTimeout) {
-            this.socketTimeout = socketTimeout;
-        }
-
-        public Integer getMaxWaitTime() {
-            return maxWaitTime;
-        }
-
-        public void setMaxWaitTime(Integer maxWaitTime) {
-            this.maxWaitTime = maxWaitTime;
-        }
-
-        public Boolean getSocketKeepAlive() {
-            return socketKeepAlive;
-        }
-
-        public void setSocketKeepAlive(Boolean socketKeepAlive) {
-            this.socketKeepAlive = socketKeepAlive;
-        }
-
-        public String getAuthDbName() {
-            return authDbName;
-        }
-
-        public void setAuthDbName(String authDbName) {
-            this.authDbName = authDbName;
-        }
-    }
+	}
 }

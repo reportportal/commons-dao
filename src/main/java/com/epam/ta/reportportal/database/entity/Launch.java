@@ -17,33 +17,30 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
-import org.springframework.data.mongodb.core.index.IndexDirection;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.epam.ta.reportportal.database.entity.statistics.ExecutionCounter;
 import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.database.entity.statistics.Statistics;
 import com.epam.ta.reportportal.database.search.FilterCriteria;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * 
  * @author Henadzi_Vrubleuski
- * 
  */
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "projectRef_start_time", def = "{'projectRef': 1, 'start_time': -1}", background = true) })
@@ -64,7 +61,7 @@ public class Launch implements Serializable, Interruptable {
 	private String id;
 
 	@FilterCriteria(PROJECT)
-    @Indexed
+	@Indexed
 	private String projectRef;
 
 	@FilterCriteria(USER)
@@ -96,7 +93,7 @@ public class Launch implements Serializable, Interruptable {
 	private Statistics statistics;
 
 	@FilterCriteria("number")
-    @Indexed
+	@Indexed
 	private Long number;
 
 	@LastModifiedDate
@@ -108,6 +105,8 @@ public class Launch implements Serializable, Interruptable {
 	private Mode mode = Mode.DEFAULT;
 
 	private double approximateDuration;
+
+	private Boolean hasRetries;
 
 	public Launch() {
 		statistics = new Statistics(new ExecutionCounter(), new IssueCounter());
@@ -227,106 +226,62 @@ public class Launch implements Serializable, Interruptable {
 		this.mode = mode;
 	}
 
+	public Boolean getHasRetries() {
+		return hasRetries;
+	}
+
+	public void setHasRetries(Boolean hasRetries) {
+		this.hasRetries = hasRetries;
+	}
+
 	@Override
 	public String toString() {
-		return "Launch [id=" + id + ", projectRef=" + projectRef + ", userRef=" + userRef + ", name=" + name + ", description="
-				+ description + ", startTime=" + startTime + ", endTime=" + endTime + ", status=" + status + ", tags=" + tags
-				+ ", statistics=" + statistics + ", number=" + number + ", lastModified=" + lastModified + ", mode=" + mode + "]";
+		return "Launch{" + "id='" + id + '\'' + ", projectRef='" + projectRef + '\'' + ", userRef='" + userRef + '\'' + ", name='" + name
+				+ '\'' + ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", status=" + status
+				+ ", tags=" + tags + ", statistics=" + statistics + ", number=" + number + ", lastModified=" + lastModified + ", mode="
+				+ mode + ", approximateDuration=" + approximateDuration + ", hasRetries=" + hasRetries + '}';
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Launch launch = (Launch) o;
+		return Double.compare(launch.approximateDuration, approximateDuration) == 0 && Objects.equals(id, launch.id) && Objects.equals(projectRef,
+				launch.projectRef
+		) && Objects.equals(userRef, launch.userRef) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
+				&& Objects.equals(startTime, launch.startTime) && Objects.equals(
+				endTime,
+				launch.endTime
+		) && status == launch.status && Objects.equals(tags, launch.tags) && Objects.equals(statistics, launch.statistics)
+				&& Objects.equals(number, launch.number) && Objects.equals(lastModified, launch.lastModified) && mode == launch.mode
+				&& Objects.equals(
+				hasRetries,
+				launch.hasRetries
+		);
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((number == null) ? 0 : number.hashCode());
-		result = prime * result + ((projectRef == null) ? 0 : projectRef.hashCode());
-		result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-		result = prime * result + ((statistics == null) ? 0 : statistics.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-		result = prime * result + ((userRef == null) ? 0 : userRef.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Launch other = (Launch) obj;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (endTime == null) {
-			if (other.endTime != null)
-				return false;
-		} else if (!endTime.equals(other.endTime))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (lastModified == null) {
-			if (other.lastModified != null)
-				return false;
-		} else if (!lastModified.equals(other.lastModified))
-			return false;
-		if (mode != other.mode)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (number == null) {
-			if (other.number != null)
-				return false;
-		} else if (!number.equals(other.number))
-			return false;
-		if (projectRef == null) {
-			if (other.projectRef != null)
-				return false;
-		} else if (!projectRef.equals(other.projectRef))
-			return false;
-		if (startTime == null) {
-			if (other.startTime != null)
-				return false;
-		} else if (!startTime.equals(other.startTime))
-			return false;
-		if (statistics == null) {
-			if (other.statistics != null)
-				return false;
-		} else if (!statistics.equals(other.statistics))
-			return false;
-		if (status != other.status)
-			return false;
-		if (tags == null) {
-			if (other.tags != null)
-				return false;
-		} else if (!tags.equals(other.tags))
-			return false;
-		if (userRef == null) {
-			if (other.userRef != null)
-				return false;
-		} else if (!userRef.equals(other.userRef))
-			return false;
-		return true;
+		return Objects.hash(id,
+				projectRef,
+				userRef,
+				name,
+				description,
+				startTime,
+				endTime,
+				status,
+				tags,
+				statistics,
+				number,
+				lastModified,
+				mode,
+				approximateDuration,
+				hasRetries
+		);
 	}
 }

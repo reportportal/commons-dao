@@ -24,13 +24,18 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
+import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
+import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
@@ -83,12 +88,9 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Get list of distinct values from TestItems collection
 	 *
-	 * @param launchId
-	 *            - parent launch id
-	 * @param containsValue
-	 *            - part of string of searching value
-	 * @param distinctBy
-	 *            - field which should contain value
+	 * @param launchId      - parent launch id
+	 * @param containsValue - part of string of searching value
+	 * @param distinctBy    - field which should contain value
 	 * @return
 	 */
 	List<String> findDistinctValues(String launchId, String containsValue, String distinctBy);
@@ -102,13 +104,24 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	List<String> getUniqueTicketsCount(List<Launch> launchesId);
 
 	/**
-	 * Get content of Most Failed Test Cases widget
+	 * Get history of most failed test items limited by historyLimit
+	 * and sorted by failed count
 	 *
-	 * @param launchIds
-	 * @param criteria
-	 * @return
+	 * @param launchIds    Launches history
+	 * @param criteria     Criteria to find by
+	 * @param historyLimit History limit
+	 * @return List of history of most failed test items
 	 */
-	Map<String, String> getMostFailedTestCases(List<Launch> launchIds, String criteria);
+	List<MostFailedHistory> getMostFailedItemHistory(List<String> launchIds, String criteria, int historyLimit);
+
+	/**
+	 * Get status history of potential flaky items in specified launches.
+	 * Results contain only items that have at least one status' switch
+	 *
+	 * @param launchIds Launches to find
+	 * @return List of history of flaky test items
+	 */
+	List<FlakyHistory> getFlakyItemStatusHistory(List<String> launchIds);
 
 	/**
 	 * Whether some of provided items has logs
@@ -121,20 +134,11 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Load states of specified testItems in specified launches
 	 *
-	 * @param items
-	 * @param launchesIds
-	 * @param parentsIds
-	 * @return
+	 * @param uniqueIds   Items unique ids
+	 * @param launchesIds Launches ids
+	 * @return Founded items
 	 */
-	List<TestItem> loadItemsHistory(List<TestItem> items, List<String> launchesIds, List<String> parentsIds);
-
-	/**
-	 * Find test items of specified launch with investigated issues.
-	 *
-	 * @param launchId
-	 * @return
-	 */
-	List<TestItem> findTestItemWithInvestigated(String launchId, int limit);
+	List<TestItem> loadItemsHistory(List<String> uniqueIds, List<String> launchesIds);
 
 	/**
 	 * Whether launch contains any testItems added lately.
@@ -155,30 +159,51 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<TestItem> findInIssueTypeItems(String issueType, String launchId);
 
-    /**
-     * Get test-items ids for specified launches.
-     *
-     * @param launchRefs
-     * @return
-     */
+	/**
+	 * Get test items for specified launch with issue type that is not
+	 * the provided issue type
+	 *
+	 * @param issueType Not in issue type
+	 * @param launchId  Launch id
+	 * @return List of items' ids without provided issue
+	 */
+	List<TestItem> findItemsNotInIssueType(String issueType, String launchId);
+
+	/**
+	 * Get test items ids for specified launch with issue type that is not
+	 * the provided issue type
+	 *
+	 * @param issueType Not in issue type
+	 * @param launchId  Launch id
+	 * @return List of items' ids without provided issue
+	 */
+	List<String> findIdsNotInIssueType(String issueType, String launchId);
+
+	/**
+	 * Get test-items ids for specified launches.
+	 *
+	 * @param launchRefs
+	 * @return
+	 */
 	List<String> findItemIdsByLaunchRef(List<String> launchRefs);
 
-    /**
-     * Get test-items for specified launch with specified test item type.
-     *
-     * @param launchId
-     * @param type
-     * @return
-     */
-    List<TestItem> findItemsWithType(String launchId, TestItemType type);
+	/**
+	 * Get test-items for specified launch with specified test item type.
+	 *
+	 * @param launchId
+	 * @param type
+	 * @return
+	 */
+	List<TestItem> findItemsWithType(String launchId, TestItemType type);
 
-    /**
-     * Get ids of test-items with specified name for specified launches.
-     * @param name
-     * @param launchRefs
-     * @return
-     */
-    Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRefs);
+	/**
+	 * Get ids of test-items with specified name for specified launches.
+	 *
+	 * @param name
+	 * @param launchRefs
+	 * @return
+	 */
+	Set<String> findIdsWithNameByLaunchesRef(String name, Set<String> launchRefs);
 
 	/**
 	 * Get elements in launch branches specified by has_childs status.
@@ -215,15 +240,65 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Updates hasChilds value
 	 *
-	 * @param id TestItem ID
+	 * @param id        TestItem ID
 	 * @param hasChilds hasChilds field value
 	 */
 	void updateHasChilds(String id, boolean hasChilds);
 
-    /**
-     * Get test items without parent with specified launch.
-     * @param launchId launch reference
-     * @return list of test items
-     */
-    List<TestItem> findWithoutParentByLaunchRef(String launchId);
+	/**
+	 * Adds retry to test item
+	 *
+	 * @param id    ID of root item
+	 * @param retry Retry to be added
+	 */
+	void addRetry(String id, TestItem retry);
+
+	/**
+	 * Updates retry
+	 *
+	 * @param id    ID of retry item
+	 * @param retry Retry to be updated
+	 */
+	void updateRetry(String id, TestItem retry);
+
+	/**
+	 * Update only issue type for specified items without
+	 * updating its' statistics
+	 *
+	 * @param forUpdate items for update
+	 */
+	void updateItemsIssues(Map<String, TestItemIssue> forUpdate);
+
+	/**
+	 * Get test items without parent with specified launch.
+	 *
+	 * @param launchId launch reference
+	 * @return list of test items
+	 */
+	List<TestItem> findWithoutParentByLaunchRef(String launchId);
+
+	/**
+	 * Finds initial item of the retry
+	 *
+	 * @param uniqueId UniqueID of item
+	 * @param parent   ID of retry's parent
+	 * @return Root of retry (first retry item)
+	 */
+	TestItem findRetryRoot(String uniqueId, String parent);
+
+	/**
+	 * Finds retry
+	 *
+	 * @param retryId ID of retry
+	 * @return Retry Item
+	 */
+	Optional<TestItem> findRetry(String retryId);
+
+	/**
+	 * Find retries in launch
+	 * @param launchId
+	 * @return
+	 */
+	List<RetryObject> findRetries(String launchId);
+
 }

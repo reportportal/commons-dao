@@ -20,24 +20,26 @@
  */
 package com.epam.ta.reportportal.triggers;
 
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
-
-import java.util.List;
-
+import com.epam.ta.reportportal.database.dao.LogRepository;
+import com.epam.ta.reportportal.database.entity.item.TestItem;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.epam.ta.reportportal.database.dao.LogRepository;
-import com.epam.ta.reportportal.database.entity.item.TestItem;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Dzmitry Kavalets
@@ -61,15 +63,50 @@ public class DeleteItemsListener extends AbstractMongoEventListener<TestItem> {
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<TestItem> event) {
 		DBObject dbqo = queryMapper.getMappedObject(event.getDBObject(), mappingContext.getPersistentEntity(TestItem.class));
+
 		for (DBObject dbObject : mongoTemplate.getCollection(event.getCollectionName()).find(dbqo)) {
-			final String id = dbObject.get("_id").toString();
-			final BasicDBObject itemDescendantsQuery = new BasicDBObject("path", new BasicDBObject("$in", singletonList(id)));
-			final List<String> itemIds = stream(
-					mongoTemplate.getCollection(event.getCollectionName()).find(itemDescendantsQuery).spliterator(), false)
-							.map(it -> it.get("_id").toString()).collect(toList());
-			mongoTemplate.getCollection(event.getCollectionName()).remove(itemDescendantsQuery);
-			itemIds.add(id);
-			logRepository.deleteByItemRef(itemIds);
+			Boolean isRetryProcessed = (Boolean) dbObject.get("retryProcessed");
+			if (isRetryProcessed == null || isRetryProcessed) {
+				String objectId = dbObject.get("_id").toString();
+
+				List<TestItem> itemsForDelete = mongoTemplate.find(queryItems(objectId), TestItem.class);
+
+				List<ObjectId> objectIds = itemsForDelete.stream().map(it -> new ObjectId(it.getId())).collect(toList());
+				BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$in", objectIds));
+				mongoTemplate.getCollection(event.getCollectionName()).remove(query);
+
+				List<String> itemRefs = getLogItemReferences(itemsForDelete);
+				logRepository.deleteByItemRef(itemRefs);
+			}
 		}
+	}
+
+	/**
+	 * Query of getting item child and item itself
+	 *
+	 * @param objectId Parent item
+	 * @return Query
+	 */
+	private Query queryItems(String objectId) {
+		Criteria criteria = new Criteria();
+		criteria.orOperator(Criteria.where("path").in(singletonList(objectId)), Criteria.where("_id").is(objectId));
+		return Query.query(criteria);
+	}
+
+	/**
+	 * Collects all item ids reference including retries
+	 *
+	 * @param itemsForDelete Items to collect
+	 * @return List of ids
+	 */
+	private List<String> getLogItemReferences(List<TestItem> itemsForDelete) {
+		List<String> ids = new ArrayList<>();
+		itemsForDelete.forEach(item -> {
+			ids.add(item.getId());
+			if (null != item.getRetries()) {
+				item.getRetries().forEach(it -> ids.add(it.getId()));
+			}
+		});
+		return ids;
 	}
 }

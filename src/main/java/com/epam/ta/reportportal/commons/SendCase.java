@@ -55,7 +55,7 @@ public enum SendCase {
 	}
 
 	public static boolean isPresent(String name) {
-		return null != findByName(name);
+		return findByName(name).isPresent();
 	}
 
 	public String getCaseString() {
