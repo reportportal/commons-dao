@@ -79,8 +79,9 @@ public class ModifiableQueryBuilder {
 	}
 
 	public static Query findModifiedInPeriod(final Duration from, final Duration to) {
-		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gte(Date.from(Instant.now().minusSeconds(from.getSeconds()))))
-				.addCriteria(Criteria.where(Modifiable.LAST_MODIFIED).lte(Date.from(Instant.now().minusSeconds(to.getSeconds()))));
+		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED)
+				.gte(Date.from(Instant.now().minusSeconds(from.getSeconds())))
+				.lte((Date.from(Instant.now().minusSeconds(to.getSeconds())))));
 	}
 
 	/**
