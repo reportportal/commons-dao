@@ -23,14 +23,13 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.config.CacheConfiguration;
 import com.epam.ta.reportportal.database.entity.Launch;
+import com.epam.ta.reportportal.database.entity.Modifiable;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
-import com.epam.ta.reportportal.database.entity.project.KeepLogsDelay;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
-import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
@@ -391,11 +390,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Stream<Launch> streamLaunchesForJob(String project) {
-		final Duration from = Duration.ofDays(KeepLogsDelay.SIX_MONTHS.getDays());
-		final Duration to = Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays());
-
-		Query query = ModifiableQueryBuilder.findModifiedInPeriod(from, to).addCriteria(where(PROJECT_ID_REFERENCE).is(project));
+	public Stream<Launch> streamModifiedInRange(String project, Date from, Date to) {
+		Query query = Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gte(from).lte((to)))
+				.addCriteria(Criteria.where(PROJECT_ID_REFERENCE).is(project));
 		return Streams.stream(mongoTemplate.stream(query, Launch.class));
 	}
 

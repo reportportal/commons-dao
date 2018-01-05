@@ -273,5 +273,13 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 */
 	void updateHasRetries(String id, boolean hasRetries);
 
-	public Stream<Launch> streamLaunchesForJob(String project);
+	/**
+	 * Stream launch ids of launches that were last modified in range.
+	 *
+	 * @param project Project
+	 * @param from    Later than date
+	 * @param to      Before than date
+	 * @return
+	 */
+	Stream<Launch> streamModifiedInRange(String project, Date from, Date to);
 }
