@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Project.UserConfig;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
+import com.google.common.collect.Streams;
 import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.database.personal.PersonalProjectService.PERSONAL_PROJECT_POSTFIX;
 
@@ -123,6 +125,14 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	public void addDemoDataPostfix(String project, String postfix) {
 		mongoTemplate.updateFirst(projectById(project), new Update()
 				.push("metadata.demoDataPostfix", postfix), Project.class);
+	}
+
+	@Override
+	public Stream<Project> streamWithConfiguration(String configurationField) {
+		String field = "configuration." + configurationField;
+		Query query = Query.query(Criteria.where(field).ne("forever"));
+		query.fields().include("id").include(field);
+		return Streams.stream(mongoTemplate.stream(query, Project.class));
 	}
 
 	@Override

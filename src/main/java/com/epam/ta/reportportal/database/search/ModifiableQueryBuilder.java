@@ -78,12 +78,6 @@ public class ModifiableQueryBuilder {
 		return findModifiedLaterThanPeriod(period).addCriteria(Criteria.where(HasStatus.STATUS).is(status.name()));
 	}
 
-	public static Query findModifiedInPeriod(final Duration from, final Duration to) {
-		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED)
-				.gte(Date.from(Instant.now().minusSeconds(from.getSeconds())))
-				.lte((Date.from(Instant.now().minusSeconds(to.getSeconds())))));
-	}
-
 	/**
 	 * Finds files with provided project and uploaded later than provided time period
 	 *

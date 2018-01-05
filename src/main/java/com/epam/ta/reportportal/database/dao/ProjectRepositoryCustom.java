@@ -28,6 +28,7 @@ import com.epam.ta.reportportal.database.entity.ProjectRole;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Some custom queries defined for project repository
@@ -111,6 +112,14 @@ public interface ProjectRepositoryCustom {
 	 * @param postfix Postfix to add
 	 */
 	void addDemoDataPostfix(String project, String postfix);
+
+	/**
+	 * Streams projects' with loaded configuration and id
+	 *
+	 * @param configurationField Field to be loaded
+	 * @return Stream of projects
+	 */
+	Stream<Project> streamWithConfiguration(String configurationField);
 
 	Optional<String> findPersonalProjectName(String user);
 
