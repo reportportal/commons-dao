@@ -27,11 +27,14 @@ import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
+import com.epam.ta.reportportal.database.entity.project.KeepLogsDelay;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.epam.ta.reportportal.database.search.QueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
@@ -55,6 +58,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
 import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
@@ -384,6 +388,15 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
 				.getMappedResults();
 		mappedResults.forEach(callbackHandler::processDocument);
+	}
+
+	@Override
+	public Stream<Launch> streamLaunchesForJob(String project) {
+		final Duration from = Duration.ofDays(KeepLogsDelay.SIX_MONTHS.getDays());
+		final Duration to = Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays());
+
+		Query query = ModifiableQueryBuilder.findModifiedInPeriod(from, to).addCriteria(where(PROJECT_ID_REFERENCE).is(project));
+		return Streams.stream(mongoTemplate.stream(query, Launch.class));
 	}
 
 	/**

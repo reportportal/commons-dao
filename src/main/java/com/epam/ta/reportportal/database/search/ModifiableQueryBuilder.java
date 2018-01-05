@@ -36,7 +36,6 @@ import java.util.Date;
  * Modifiable query builder
  *
  * @author Andrei Varabyeu
- *
  */
 public class ModifiableQueryBuilder {
 
@@ -79,6 +78,11 @@ public class ModifiableQueryBuilder {
 		return findModifiedLaterThanPeriod(period).addCriteria(Criteria.where(HasStatus.STATUS).is(status.name()));
 	}
 
+	public static Query findModifiedInPeriod(final Duration from, final Duration to) {
+		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gte(Date.from(Instant.now().minusSeconds(from.getSeconds()))))
+				.addCriteria(Criteria.where(Modifiable.LAST_MODIFIED).lte(Date.from(Instant.now().minusSeconds(to.getSeconds()))));
+	}
+
 	/**
 	 * Finds files with provided project and uploaded later than provided time period
 	 *
@@ -87,8 +91,7 @@ public class ModifiableQueryBuilder {
 	 * @return
 	 */
 	public static Query findModifiedLaterThanPeriod(final Duration period, final String project) {
-		Query query = Query.query(Criteria.where(Modifiable.UPLOADED)
-				.lt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
+		Query query = Query.query(Criteria.where(Modifiable.UPLOADED).lt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
 		return query.addCriteria(Criteria.where(METADATA).is(project));
 	}
 
@@ -110,7 +113,6 @@ public class ModifiableQueryBuilder {
 	 * @return
 	 */
 	public static Query findModifiedLately(final Duration period) {
-		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED)
-				.gt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
+		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
 	}
 }

@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
@@ -271,4 +272,6 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @param hasRetries hasRetries field value
 	 */
 	void updateHasRetries(String id, boolean hasRetries);
+
+	public Stream<Launch> streamLaunchesForJob(String project);
 }
