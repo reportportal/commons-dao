@@ -393,6 +393,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public Stream<Launch> streamModifiedInRange(String project, Date from, Date to) {
 		Query query = Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gte(from).lte((to)))
 				.addCriteria(Criteria.where(PROJECT_ID_REFERENCE).is(project));
+		query.fields().include(ID_REFERENCE);
 		return Streams.stream(mongoTemplate.stream(query, Launch.class));
 	}
 
