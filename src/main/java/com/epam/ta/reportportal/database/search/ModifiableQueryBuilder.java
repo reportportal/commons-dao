@@ -36,7 +36,6 @@ import java.util.Date;
  * Modifiable query builder
  *
  * @author Andrei Varabyeu
- *
  */
 public class ModifiableQueryBuilder {
 
@@ -87,8 +86,7 @@ public class ModifiableQueryBuilder {
 	 * @return
 	 */
 	public static Query findModifiedLaterThanPeriod(final Duration period, final String project) {
-		Query query = Query.query(Criteria.where(Modifiable.UPLOADED)
-				.lt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
+		Query query = Query.query(Criteria.where(Modifiable.UPLOADED).lt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
 		return query.addCriteria(Criteria.where(METADATA).is(project));
 	}
 
@@ -110,7 +108,6 @@ public class ModifiableQueryBuilder {
 	 * @return
 	 */
 	public static Query findModifiedLately(final Duration period) {
-		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED)
-				.gt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
+		return Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gt(Date.from(Instant.now().minusSeconds(period.getSeconds()))));
 	}
 }

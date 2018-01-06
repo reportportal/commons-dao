@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem, Project.Configuration> {
 
@@ -271,4 +272,14 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @param hasRetries hasRetries field value
 	 */
 	void updateHasRetries(String id, boolean hasRetries);
+
+	/**
+	 * Stream launch ids of launches that were last modified in range.
+	 *
+	 * @param project Project
+	 * @param from    Later than date
+	 * @param to      Before than date
+	 * @return
+	 */
+	Stream<Launch> streamModifiedInRange(String project, Date from, Date to);
 }
