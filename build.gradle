@@ -1,8 +1,13 @@
 buildscript {
+    ext {
+        springBootVersion = '2.0.0.RC1'
+    }
     repositories {
         mavenCentral()
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
     }
 }
 
@@ -40,6 +45,10 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode")
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0.2'
+}
+
 dependencies {
 
     if (releaseMode) {
@@ -49,11 +58,14 @@ dependencies {
     }
 
 
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile group: 'org.jooq', name: 'jooq', version: '3.10.4'
+    runtime('org.postgresql:postgresql')
+
     compile 'org.springframework.boot:spring-boot'
     compile 'org.springframework.boot:spring-boot-autoconfigure'
     compile 'org.springframework:spring-context-support'
     compile 'com.github.ben-manes.caffeine:caffeine'
-
 
     compile 'net.coobird:thumbnailator:0.4.8'
     compile 'commons-validator:commons-validator:1.6'
@@ -74,10 +86,6 @@ dependencies {
     testCompile 'org.springframework.security:spring-security-core'
     testCompile 'org.hibernate:hibernate-validator'
 
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
 }
 
 jacocoTestReport {
