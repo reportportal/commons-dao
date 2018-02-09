@@ -21,7 +21,6 @@
  
 package com.epam.ta.reportportal.commons;
 
-import com.epam.ta.reportportal.database.entity.HasStatus;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
@@ -50,8 +49,6 @@ public class Preconditions {
 	public static final Predicate<Collection<?>> NOT_EMPTY_COLLECTION = t -> null != t && !t.isEmpty();
 
 	public static final Predicate<Optional<?>> IS_PRESENT = Optional::isPresent;
-
-	public static final Predicate<HasStatus> IN_PROGRESS = hasStatus -> Status.IN_PROGRESS.equals(hasStatus.getStatus());
 
 	public static Predicate<FinishExecutionRQ> finishSameTimeOrLater(final Date startTime) {
 		return input -> input.getEndTime().getTime() >= startTime.getTime();
