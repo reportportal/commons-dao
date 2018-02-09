@@ -49,7 +49,6 @@ dependencies {
     }
 
 
-    compile 'org.springframework.data:spring-data-mongodb'
     compile 'org.springframework.boot:spring-boot'
     compile 'org.springframework.boot:spring-boot-autoconfigure'
     compile 'org.springframework:spring-context-support'
@@ -73,7 +72,6 @@ dependencies {
     testCompile 'org.springframework:spring-test'
     testCompile 'org.springframework.security:spring-security-crypto'
     testCompile 'org.springframework.security:spring-security-core'
-    testCompile 'com.github.fakemongo:fongo:2.1.0'
     testCompile 'org.hibernate:hibernate-validator'
 
 }

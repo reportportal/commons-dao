@@ -21,16 +21,16 @@
 
 package com.epam.ta.reportportal.database;
 
-import com.epam.ta.reportportal.database.entity.Modifiable;
 import com.epam.ta.reportportal.ws.model.widget.ChartObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
-import java.util.*;
-
-import static com.epam.ta.reportportal.database.entity.item.Activity.FieldValues.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dzmitry_Kavalets
@@ -47,28 +47,29 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
 
 	@Override
 	public void processDocument(DBObject dbObject) throws MongoException, DataAccessException {
-		Set<String> keySet = dbObject.keySet();
-		ChartObject activity = new ChartObject();
-		Map<String, String> objectValues = new HashMap<>();
-		for (String key : keySet) {
-			switch (key) {
-			case HISTORY:
-				Map<String, String> historyProps = transformHistory(dbObject, "history");
-				objectValues.putAll(historyProps);
-				break;
-			case Modifiable.LAST_MODIFIED:
-				objectValues.put(key, String.valueOf(((Date) dbObject.get(key)).getTime()));
-				break;
-			case ID:
-				activity.setId(dbObject.get(ID).toString());
-				break;
-			default:
-				objectValues.put(key, dbObject.get(key).toString());
-				break;
-			}
-		}
-		activity.setValues(objectValues);
-		result.add(activity);
+		throw new UnsupportedOperationException();
+//		Set<String> keySet = dbObject.keySet();
+//		ChartObject activity = new ChartObject();
+//		Map<String, String> objectValues = new HashMap<>();
+//		for (String key : keySet) {
+//			switch (key) {
+//			case HISTORY:
+//				Map<String, String> historyProps = transformHistory(dbObject, "history");
+//				objectValues.putAll(historyProps);
+//				break;
+//			case Modifiable.LAST_MODIFIED:
+//				objectValues.put(key, String.valueOf(((Date) dbObject.get(key)).getTime()));
+//				break;
+//			case ID:
+//				activity.setId(dbObject.get(ID).toString());
+//				break;
+//			default:
+//				objectValues.put(key, dbObject.get(key).toString());
+//				break;
+//			}
+//		}
+//		activity.setValues(objectValues);
+//		result.add(activity);
 	}
 
 	public List<ChartObject> getResult() {
@@ -82,11 +83,11 @@ public class ActivityDocumentHandler implements DocumentCallbackHandler {
             return null;
         }
 		Map<String, String> chartObjectValues = new HashMap<>();
-        tempHistory.forEach(historyObject -> {
-            String key = historyObject.get(FIELD);
-            chartObjectValues.put(key + "$" + OLD_VALUE, historyObject.get(OLD_VALUE));
-            chartObjectValues.put(key + "$" + NEW_VALUE, historyObject.get(NEW_VALUE));
-        });
+//        tempHistory.forEach(historyObject -> {
+//            String key = historyObject.get(FIELD);
+//            chartObjectValues.put(key + "$" + OLD_VALUE, historyObject.get(OLD_VALUE));
+//            chartObjectValues.put(key + "$" + NEW_VALUE, historyObject.get(NEW_VALUE));
+//        });
 		return chartObjectValues;
 	}
 }

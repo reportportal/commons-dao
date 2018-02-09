@@ -20,7 +20,6 @@ package com.epam.ta.reportportal.database.entity;
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -33,16 +32,16 @@ import java.util.List;
  */
 public class UserRoleDetails implements Serializable {
 
-	private User user;
+	//private User user;
 	private List<ProjectDetails> projects;
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
+//	public User getUser() {
+//		return user;
+//	}
+//
+//	public void setUser(User user) {
+//		this.user = user;
+//	}
 
 	public List<ProjectDetails> getProjects() {
 		return projects;
@@ -54,7 +53,7 @@ public class UserRoleDetails implements Serializable {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("user", user).add("projects", projects).toString();
+		return MoreObjects.toStringHelper(this).add("user", 's').add("projects", projects).toString();
 	}
 
 

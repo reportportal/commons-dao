@@ -21,16 +21,10 @@
 
 package com.epam.ta.reportportal.database;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.mongodb.DBObject;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
-import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
-import com.mongodb.DBObject;
+import java.util.*;
 
 /**
  * Implementation of
@@ -55,11 +49,12 @@ public class OverallStatisticsDocumentHandler implements DocumentCallbackHandler
 
 	@Override
 	public void processDocument(DBObject dbObject) {
-		for (String fieldName : contentFields) {
-			Integer value = temporaryData.get(fieldName);
-			Integer previousValue = null == value ? INITIAL_VALUE : value;
-			temporaryData.put(fieldName, previousValue + Integer.parseInt(getValue(dbObject, fieldName)));
-		}
+		throw new UnsupportedOperationException();
+//		for (String fieldName : contentFields) {
+//			Integer value = temporaryData.get(fieldName);
+//			Integer previousValue = null == value ? INITIAL_VALUE : value;
+//			temporaryData.put(fieldName, previousValue + Integer.parseInt(getValue(dbObject, fieldName)));
+//		}
 	}
 
 	public Map<String, Integer> getResult() {
@@ -86,16 +81,17 @@ public class OverallStatisticsDocumentHandler implements DocumentCallbackHandler
 
 		// TODO Should be refactored after new UI implementation for issue
 		// statistics!
-		if (innerObject == null)
-			return null;
-		else {
-			if (innerObject.get(innerKeys[currentIndex]) instanceof Integer) {
-				return String.valueOf(innerObject.get(innerKeys[currentIndex]));
-			} else {
-				Map<String, Integer> seria = (Map<String, Integer>) innerObject.get(innerKeys[currentIndex]);
-				String key = innerKeys.length == 4 ? innerKeys[3] : IssueCounter.GROUP_TOTAL;
-				return seria != null && seria.keySet().size() > 0 ? String.valueOf(seria.get(key)) : "0";
-			}
-		}
+//		if (innerObject == null)
+//			return null;
+//		else {
+//			if (innerObject.get(innerKeys[currentIndex]) instanceof Integer) {
+//				return String.valueOf(innerObject.get(innerKeys[currentIndex]));
+//			} else {
+//				Map<String, Integer> seria = (Map<String, Integer>) innerObject.get(innerKeys[currentIndex]);
+//				String key = innerKeys.length == 4 ? innerKeys[3] : IssueCounter.GROUP_TOTAL;
+//				return seria != null && seria.keySet().size() > 0 ? String.valueOf(seria.get(key)) : "0";
+//			}
+//		}
+		return null;
 	}
 }

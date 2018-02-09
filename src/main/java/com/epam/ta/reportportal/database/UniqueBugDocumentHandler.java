@@ -21,20 +21,16 @@
 
 package com.epam.ta.reportportal.database;
 
-import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.epam.ta.reportportal.ws.model.widget.ChartObject;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 
-import com.epam.ta.reportportal.ws.model.widget.ChartObject;
-import com.google.common.collect.Lists;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of
@@ -62,36 +58,37 @@ public class UniqueBugDocumentHandler implements DocumentCallbackHandler {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void processDocument(DBObject dbObject) throws MongoException, DataAccessException {
-		if (dbObject.containsField(ISSUE) && ((DBObject) dbObject.get(ISSUE)).containsField(EXTERNAL_SYSTEM_ISSUES)) {
-			List<DBObject> innerDbObjects = (List<DBObject>) ((DBObject) dbObject.get(ISSUE)).get(EXTERNAL_SYSTEM_ISSUES);
-			for (DBObject innerDbObject : innerDbObjects) {
-				ChartObject axisObject = new ChartObject();
-				Map<String, String> objectValues = new HashMap<>();
-				String ticketId;
-				if (dbObject.containsField(LAUNCH_REF)) {
-					objectValues.put(LAUNCH_REF, dbObject.get(LAUNCH_REF).toString());
-					axisObject.setValues(objectValues);
-				}
-				if (dbObject.containsField(ID)) {
-					/* ID of test-item containing external system issue */
-					axisObject.setId(dbObject.get(ID).toString());
-				}
-				if (innerDbObject.containsField(SUBMIT_DATE)) {
-					axisObject.setStartTime(innerDbObject.get(SUBMIT_DATE).toString());
-				}
-				if (innerDbObject.containsField(SUBMITTER)) {
-					axisObject.setName(innerDbObject.get(SUBMITTER).toString());
-				}
-				if (innerDbObject.containsField(TICKET_ID)) {
-					ticketId = innerDbObject.get(TICKET_ID).toString();
-					if (result.containsKey(ticketId)) {
-						List<ChartObject> items = result.get(ticketId);
-						items.add(axisObject);
-					} else
-						result.put(ticketId, Lists.newArrayList(axisObject));
-				}
-			}
-		}
+		throw new UnsupportedOperationException();
+//		if (dbObject.containsField(ISSUE) && ((DBObject) dbObject.get(ISSUE)).containsField(EXTERNAL_SYSTEM_ISSUES)) {
+//			List<DBObject> innerDbObjects = (List<DBObject>) ((DBObject) dbObject.get(ISSUE)).get(EXTERNAL_SYSTEM_ISSUES);
+//			for (DBObject innerDbObject : innerDbObjects) {
+//				ChartObject axisObject = new ChartObject();
+//				Map<String, String> objectValues = new HashMap<>();
+//				String ticketId;
+//				if (dbObject.containsField(LAUNCH_REF)) {
+//					objectValues.put(LAUNCH_REF, dbObject.get(LAUNCH_REF).toString());
+//					axisObject.setValues(objectValues);
+//				}
+//				if (dbObject.containsField(ID)) {
+//					/* ID of test-item containing external system issue */
+//					axisObject.setId(dbObject.get(ID).toString());
+//				}
+//				if (innerDbObject.containsField(SUBMIT_DATE)) {
+//					axisObject.setStartTime(innerDbObject.get(SUBMIT_DATE).toString());
+//				}
+//				if (innerDbObject.containsField(SUBMITTER)) {
+//					axisObject.setName(innerDbObject.get(SUBMITTER).toString());
+//				}
+//				if (innerDbObject.containsField(TICKET_ID)) {
+//					ticketId = innerDbObject.get(TICKET_ID).toString();
+//					if (result.containsKey(ticketId)) {
+//						List<ChartObject> items = result.get(ticketId);
+//						items.add(axisObject);
+//					} else
+//						result.put(ticketId, Lists.newArrayList(axisObject));
+//				}
+//			}
+//		}
 	}
 
 	public Map<String, List<ChartObject>> getResult() {

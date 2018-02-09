@@ -21,15 +21,15 @@
 
 package com.epam.ta.reportportal.database;
 
-import java.util.*;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.mongodb.core.DocumentCallbackHandler;
-
-import com.epam.ta.reportportal.database.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.ws.model.widget.ChartObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.mongodb.core.DocumentCallbackHandler;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementation of {@link DocumentCallbackHandler} which should be used during
@@ -63,23 +63,24 @@ public class StatisticsDocumentHandler implements DocumentCallbackHandler {
 
 	@Override
 	public void processDocument(DBObject dbObject) throws MongoException, DataAccessException {
-		if (fieldsForChart == null) {
-			return;
-		}
-
-		ChartObject chartObject = new ChartObject();
-		if (fieldXAxis.contains(NAME))
-			chartObject.setName(getValue(dbObject, fieldXAxis.get(fieldXAxis.indexOf(NAME))));
-		if (fieldXAxis.contains(NUMBER))
-			chartObject.setNumber(getValue(dbObject, fieldXAxis.get(fieldXAxis.indexOf(NUMBER))));
-		if (fieldXAxis.contains(START_TIME))
-			chartObject.setStartTime(getValue(dbObject, fieldXAxis.get(fieldXAxis.indexOf(START_TIME))));
-		chartObject.setId(dbObject.get("_id").toString());
-
-		Map<String, String> values = new HashMap<>();
-		fieldsForChart.stream().forEach(field -> values.put(field, getValue(dbObject, field)));
-		chartObject.setValues(values);
-		result.add(chartObject);
+		throw new  UnsupportedOperationException();
+//		if (fieldsForChart == null) {
+//			return;
+//		}
+//
+//		ChartObject chartObject = new ChartObject();
+//		if (fieldXAxis.contains(NAME))
+//			chartObject.setName(getValue(dbObject, fieldXAxis.get(fieldXAxis.indexOf(NAME))));
+//		if (fieldXAxis.contains(NUMBER))
+//			chartObject.setNumber(getValue(dbObject, fieldXAxis.get(fieldXAxis.indexOf(NUMBER))));
+//		if (fieldXAxis.contains(START_TIME))
+//			chartObject.setStartTime(getValue(dbObject, fieldXAxis.get(fieldXAxis.indexOf(START_TIME))));
+//		chartObject.setId(dbObject.get("_id").toString());
+//
+//		Map<String, String> values = new HashMap<>();
+//		fieldsForChart.stream().forEach(field -> values.put(field, getValue(dbObject, field)));
+//		chartObject.setValues(values);
+//		result.add(chartObject);
 	}
 
 	public List<ChartObject> getResult() {
@@ -113,18 +114,19 @@ public class StatisticsDocumentHandler implements DocumentCallbackHandler {
 
 		// TODO Should be refactored after new UI implementation for issue
 		// statistics!
-		if (innerObject == null)
-			return null;
-		else {
-			if ((innerObject.get(innerKeys[currentIndex]) instanceof Integer)
-					|| (innerObject.get(innerKeys[currentIndex]) instanceof String)
-					|| (innerObject.get(innerKeys[currentIndex]) instanceof Long)) {
-				return String.valueOf(innerObject.get(innerKeys[currentIndex]));
-			} else {
-				Map<String, Integer> seria = (Map<String, Integer>) innerObject.get(innerKeys[currentIndex]);
-				String key = innerKeys.length == 4 ? innerKeys[3] : IssueCounter.GROUP_TOTAL;
-				return seria != null && seria.keySet().size() > 0 ? String.valueOf(seria.get(key)) : "0";
-			}
-		}
+//		if (innerObject == null)
+//			return null;
+//		else {
+//			if ((innerObject.get(innerKeys[currentIndex]) instanceof Integer)
+//					|| (innerObject.get(innerKeys[currentIndex]) instanceof String)
+//					|| (innerObject.get(innerKeys[currentIndex]) instanceof Long)) {
+//				return String.valueOf(innerObject.get(innerKeys[currentIndex]));
+//			} else {
+//				Map<String, Integer> seria = (Map<String, Integer>) innerObject.get(innerKeys[currentIndex]);
+//				String key = innerKeys.length == 4 ? innerKeys[3] : IssueCounter.GROUP_TOTAL;
+//				return seria != null && seria.keySet().size() > 0 ? String.valueOf(seria.get(key)) : "0";
+//			}
+//		}
+		return null;
 	}
 }
