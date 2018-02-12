@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.InputSource;
 
 import javax.sql.DataSource;
@@ -26,16 +26,16 @@ import java.sql.Types;
 /**
  * @author Pavel Bortnik
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = TestConfig.class)
 public class BaseTest {
 
 	@Autowired
-	private DataSource dataSource;
+	protected DataSource dataSource;
 
 	@Autowired
 	@Value("classpath:dataset.xml")
-	private Resource dataset;
+	protected Resource dataset;
 
 	@Before
 	public void contextLoads() throws SQLException, DatabaseUnitException, IOException {
@@ -58,9 +58,4 @@ public class BaseTest {
 		FlatXmlDataSet dataSet = new FlatXmlDataSet(new FlatXmlProducer(new InputSource(dataset.getInputStream())));
 		DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
 	}
-
-
-
-
-
 }

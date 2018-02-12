@@ -17,6 +17,7 @@ import static com.epam.ta.reportportal.jooq.tables.UsersProject.USERS_PROJECT;
 /**
  * @author Pavel Bortnik
  */
+
 public class ExampleTest extends BaseTest {
 
 	@Autowired

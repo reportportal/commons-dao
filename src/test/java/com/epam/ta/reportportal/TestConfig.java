@@ -1,4 +1,4 @@
-package com.epam.ta.reportportal.config;
+package com.epam.ta.reportportal;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.jooq.SQLDialect;
@@ -7,19 +7,19 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.springframework.test.context.ContextConfiguration;
 
 import javax.sql.DataSource;
 
 /**
  * @author Pavel Bortnik
  */
-@Configuration
+@ContextConfiguration
 @PropertySource("classpath:test-application.properties")
 public class TestConfig {
 
@@ -60,6 +60,7 @@ public class TestConfig {
 	@Bean
 	public DefaultConfiguration configuration() {
 		DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
+		jooqConfiguration.set(connectionProvider());
 		jooqConfiguration.set(SQLDialect.POSTGRES);
 		return jooqConfiguration;
 	}
