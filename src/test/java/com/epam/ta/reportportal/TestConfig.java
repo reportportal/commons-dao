@@ -1,11 +1,9 @@
 package com.epam.ta.reportportal;
 
-import com.epam.ta.reportportal.config.DatabaseConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import javax.sql.DataSource;
@@ -16,7 +14,6 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.
  * @author Pavel Bortnik
  */
 @Configuration
-@Import(DatabaseConfiguration.class)
 @EnableConfigurationProperties
 @EnableAutoConfiguration
 public class TestConfig {
