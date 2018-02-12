@@ -37,7 +37,8 @@
 
         <generate>
             <pojos>true</pojos>
-            <jpaAnnotations>true</jpaAnnotations>
+            <jpaAnnotations>false</jpaAnnotations>
+            <dateAsTimestamp>false</dateAsTimestamp>
         </generate>
 
         <target>
