@@ -1,55 +1,60 @@
 package com.epam.ta.reportportal.config;
 
-import com.zaxxer.hikari.HikariDataSource;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
  * @author Pavel Bortnik
  */
 @Configuration
-@PropertySource("classpath:test-application.properties")
-public class TestConfig {
+@EnableConfigurationProperties
+public class DatabaseConfiguration {
 
 	@Autowired
-	private Environment env;
+	private DataSourceProperties properties;
 
 	@Bean
 	public DataSource dataSource() {
-		HikariDataSource dataSource = new HikariDataSource();
-		dataSource.setDriverClassName(env.getRequiredProperty("spring.datasource.driver-class-name"));
-		dataSource.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
-		dataSource.setUsername(env.getRequiredProperty("spring.datasource.username"));
-		dataSource.setPassword(env.getRequiredProperty("spring.datasource.password"));
-
-		return dataSource;
+		return properties.initializeDataSourceBuilder().build();
 	}
 
 	@Bean
-	public LazyConnectionDataSourceProxy lazyConnectionDataSource() {
-		return new LazyConnectionDataSourceProxy(dataSource());
+	public EntityManagerFactory entityManagerFactory() {
+
+		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		vendorAdapter.setGenerateDdl(true);
+
+		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+		factory.setJpaVendorAdapter(vendorAdapter);
+		factory.setPackagesToScan("com.epam.ta.reportportal.jooq.pojos");
+		factory.setDataSource(dataSource());
+		factory.afterPropertiesSet();
+
+		return factory.getObject();
 	}
 
 	@Bean
 	public TransactionAwareDataSourceProxy transactionAwareDataSource() {
-		return new TransactionAwareDataSourceProxy(lazyConnectionDataSource());
+		return new TransactionAwareDataSourceProxy(dataSource());
 	}
 
 	@Bean
 	public DataSourceTransactionManager transactionManager() {
-		return new DataSourceTransactionManager(lazyConnectionDataSource());
+		return new DataSourceTransactionManager(dataSource());
 	}
 
 	@Bean
