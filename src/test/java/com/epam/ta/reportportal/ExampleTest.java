@@ -4,6 +4,7 @@ import com.epam.ta.reportportal.jooq.tables.pojos.Project;
 import com.epam.ta.reportportal.jooq.tables.pojos.Users;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.jooq.impl.DefaultDSLContext;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,6 +18,7 @@ import static com.epam.ta.reportportal.jooq.tables.UsersProject.USERS_PROJECT;
 /**
  * @author Pavel Bortnik
  */
+@Ignore
 public class ExampleTest extends BaseTest {
 
 	@Autowired
