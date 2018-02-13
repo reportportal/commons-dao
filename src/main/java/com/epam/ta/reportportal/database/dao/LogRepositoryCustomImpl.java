@@ -123,8 +123,8 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findGreaterOrEqualLevel(String testItemId, LogLevel level) {
-		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(level.toInt()));
+	public List<Log> findGreaterOrEqualLevel(List<String> testItemIds, LogLevel level) {
+		Query query = query(where(ITEM_REFERENCE).in(testItemIds)).addCriteria(where(LOG_LEVEL).gte(level.toInt()));
 		return mongoTemplate.find(query, Log.class);
 	}
 
