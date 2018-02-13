@@ -17,42 +17,44 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */
+ */ 
 
-package com.epam.ta.reportportal.database.entity;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
- * Authentication mechanics enum for external system
- *
- * @author Andrei_Ramanchuk
+ * Project Role Representation
+ * 
+ * @author Andrei Varabyeu
+ * 
  */
-public enum AuthType {
+public enum ProjectRole implements Comparable<ProjectRole> {
 
-	//@formatter:off
-	OAUTH(false),
-	NTLM(true),
-	APIKEY(true),
-	BASIC(true);
-	//@formatter:on
+	OPERATOR(0), CUSTOMER(1), MEMBER(2), PROJECT_MANAGER(3);
 
-	final boolean requiresPassword;
+	private int roleLevel;
 
-	AuthType(boolean requiresPassword) {
-		this.requiresPassword = requiresPassword;
+	ProjectRole(int level) {
+		this.roleLevel = level;
 	}
 
-	public boolean requiresPassword() {
-		return requiresPassword;
+	public boolean higherThan(ProjectRole other) {
+		return this.roleLevel > other.roleLevel;
 	}
 
-	public static AuthType findByName(String name) {
-		return Arrays.stream(AuthType.values()).filter(type -> type.name()
-                .equalsIgnoreCase(name)).findAny().orElse(null);
+	public boolean lowerThan(ProjectRole other) {
+		return this.roleLevel < other.roleLevel;
 	}
 
-	public static boolean isPresent(String name) {
-		return null != findByName(name);
+	public boolean sameOrHigherThan(ProjectRole other) {
+		return this.roleLevel >= other.roleLevel;
 	}
+
+	public static Optional<ProjectRole> forName(final String name) {
+		return Arrays.stream(ProjectRole.values()).filter(role -> role.name()
+				.equalsIgnoreCase(name)).findAny();
+	}
+
 }

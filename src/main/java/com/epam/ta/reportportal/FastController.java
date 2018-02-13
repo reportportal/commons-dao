@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal;
 
 import com.epam.ta.reportportal.database.dao.LaunchRepository;
+import com.epam.ta.reportportal.database.dao.TestItemRepository;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.epam.ta.reportportal.jooq.tables.Launch.LAUNCH;
@@ -23,16 +25,24 @@ public class FastController {
 	private LaunchRepository launchRepository;
 
 	@Autowired
+	private TestItemRepository itemRepository;
+
+	@Autowired
 	private DSLContext dslContext;
 
 	@GetMapping("/launches")
-	public List<Launch> getLaunches() {
-		return launchRepository.findAll();
+	public Launch getLaunches() {
+		return launchRepository.findById(1L).orElse(null);
 	}
-	
+
 	@GetMapping("/jooq")
 	public List<Launch> getLaunches2() {
 		return dslContext.select().from(LAUNCH).fetchInto(Launch.class);
+	}
+
+	@GetMapping("/projects")
+	public List<String> bal() {
+		return Collections.emptyList();
 	}
 
 }

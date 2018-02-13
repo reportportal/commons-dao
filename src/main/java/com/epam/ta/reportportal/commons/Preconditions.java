@@ -21,8 +21,8 @@
  
 package com.epam.ta.reportportal.commons;
 
-import com.epam.ta.reportportal.database.entity.ProjectRole;
-import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.enums.ProjectRole;
+import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import org.apache.commons.lang3.ArrayUtils;
@@ -64,7 +64,7 @@ public class Preconditions {
 		return input -> input.getStartTime() != null && input.getStartTime().getTime() >= startTime.getTime();
 	}
 
-	public static Predicate<Status> statusIn(final Status... statuses) {
+	public static Predicate<StatusEnum> statusIn(final StatusEnum... statuses) {
 		return input -> ArrayUtils.contains(statuses, input);
 	}
 

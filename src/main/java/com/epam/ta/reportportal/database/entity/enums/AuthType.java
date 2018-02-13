@@ -17,27 +17,42 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
-package com.epam.ta.reportportal.database.entity.item;
+ */
+
+package com.epam.ta.reportportal.database.entity.enums;
+
+import java.util.Arrays;
 
 /**
- * Properties which should be tracked
- * 
- * @author Dzmitry_Kavalets
+ * Authentication mechanics enum for external system
+ *
+ * @author Andrei_Ramanchuk
  */
-public enum FieldType {
+public enum AuthType {
 
-	ISSUE_TYPE,
-	PROJECT_ROLE,
-	LINK_TO_EXTERNAL_SYSTEM,
-	INTERRUPT_JOB_TIME,
-	KEEP_SCREENSHOTS,
-	ACCESS_KEY,
-	PRIORITY,
-	PROJECT_NAME,
-	KEEP_LOGS,
-	EXTERNAL_SYSTEM,
-	TICKET_TYPE,
-	COMMENT
+	//@formatter:off
+	OAUTH(false),
+	NTLM(true),
+	APIKEY(true),
+	BASIC(true);
+	//@formatter:on
+
+	final boolean requiresPassword;
+
+	AuthType(boolean requiresPassword) {
+		this.requiresPassword = requiresPassword;
+	}
+
+	public boolean requiresPassword() {
+		return requiresPassword;
+	}
+
+	public static AuthType findByName(String name) {
+		return Arrays.stream(AuthType.values()).filter(type -> type.name()
+                .equalsIgnoreCase(name)).findAny().orElse(null);
+	}
+
+	public static boolean isPresent(String name) {
+		return null != findByName(name);
+	}
 }

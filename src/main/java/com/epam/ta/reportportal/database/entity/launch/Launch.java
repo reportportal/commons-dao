@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.database.entity.launch;
 
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -42,6 +43,7 @@ public class Launch {
 	private Integer number;
 
 	@Column(name = "last_modified", nullable = false)
+	@LastModifiedDate
 	private Timestamp lastModified;
 
 	@Column(name = "mode", nullable = false)

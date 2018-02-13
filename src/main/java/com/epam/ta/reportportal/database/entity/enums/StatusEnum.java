@@ -19,12 +19,14 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package com.epam.ta.reportportal.database.entity;
+package com.epam.ta.reportportal.database.entity.enums;
+
+import com.epam.ta.reportportal.database.entity.StatisticsAwareness;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-public enum Status implements StatisticsAwareness {
+public enum StatusEnum implements StatisticsAwareness {
 
 	//@formatter:off
 	IN_PROGRESS(""),
@@ -39,12 +41,12 @@ public enum Status implements StatisticsAwareness {
 
 	private final String executionCounterField;
 
-	Status(String executionCounterField) {
+	StatusEnum(String executionCounterField) {
 		this.executionCounterField = executionCounterField;
 	}
 
-	public static Optional<Status> fromValue(String value) {
-		return Arrays.stream(Status.values()).filter(status -> status.name()
+	public static Optional<StatusEnum> fromValue(String value) {
+		return Arrays.stream(StatusEnum.values()).filter(status -> status.name()
 				.equalsIgnoreCase(value)).findAny();
 	}
 

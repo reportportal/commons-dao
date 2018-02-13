@@ -19,12 +19,12 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.epam.ta.reportportal.database.entity.item;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public enum TestItemType implements Comparable<TestItemType> {
+public enum TestItemTypeEnum implements Comparable<TestItemTypeEnum> {
 
 	//@formatter:off
 SUITE(Constants.SUITE_LEVEL, true),
@@ -47,17 +47,17 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	private int level;
 	private boolean awareStatistics;
 
-	TestItemType(int level, boolean awareStatistics) {
+	TestItemTypeEnum(int level, boolean awareStatistics) {
 		this.level = level;
 		this.awareStatistics = awareStatistics;
 	}
 
-	public static TestItemType fromValue(String value) {
-		return Arrays.stream(TestItemType.values()).filter(type -> type.name().equalsIgnoreCase(value))
+	public static TestItemTypeEnum fromValue(String value) {
+		return Arrays.stream(TestItemTypeEnum.values()).filter(type -> type.name().equalsIgnoreCase(value))
 				.findAny().orElse(null);
 	}
 
-	public boolean sameLevel(TestItemType other) {
+	public boolean sameLevel(TestItemTypeEnum other) {
 		return 0 == LEVEL_COMPARATOR.compare(this, other);
 	}
 
@@ -67,7 +67,7 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	 * @param type Item to compare
 	 * @return
 	 */
-	public boolean higherThan(TestItemType type) {
+	public boolean higherThan(TestItemTypeEnum type) {
 		return LEVEL_COMPARATOR.compare(this, type) > 0;
 	}
 
@@ -77,7 +77,7 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	 * @param type Item to compare
 	 * @return
 	 */
-	public boolean lowerThan(TestItemType type) {
+	public boolean lowerThan(TestItemTypeEnum type) {
 		return LEVEL_COMPARATOR.compare(this, type) < 0;
 	}
 
@@ -91,8 +91,8 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	 *
 	 * @author Andrei Varabyeu
 	 */
-	private static final Comparator<TestItemType> LEVEL_COMPARATOR =
-			(TestItemType o1, TestItemType o2) -> (o1.level == o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
+	private static final Comparator<TestItemTypeEnum> LEVEL_COMPARATOR =
+			(TestItemTypeEnum o1, TestItemTypeEnum o2) -> (o1.level == o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
 
 	public static class Constants {
 		public static final int SUITE_LEVEL = 0;

@@ -19,7 +19,7 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package com.epam.ta.reportportal.database.entity;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 
