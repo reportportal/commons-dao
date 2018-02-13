@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -1034561924;
+    private static final long serialVersionUID = 332850868;
 
     /**
      * The reference instance of <code>public</code>
@@ -123,6 +123,11 @@ public class Public extends SchemaImpl {
     public final ProjectEmailConfiguration PROJECT_EMAIL_CONFIGURATION = com.epam.ta.reportportal.jooq.tables.ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION;
 
     /**
+     * The table <code>public.project_user</code>.
+     */
+    public final ProjectUser PROJECT_USER = com.epam.ta.reportportal.jooq.tables.ProjectUser.PROJECT_USER;
+
+    /**
      * The table <code>public.server_settings</code>.
      */
     public final ServerSettings SERVER_SETTINGS = com.epam.ta.reportportal.jooq.tables.ServerSettings.SERVER_SETTINGS;
@@ -151,11 +156,6 @@ public class Public extends SchemaImpl {
      * The table <code>public.users</code>.
      */
     public final Users USERS = com.epam.ta.reportportal.jooq.tables.Users.USERS;
-
-    /**
-     * The table <code>public.users_project</code>.
-     */
-    public final UsersProject USERS_PROJECT = com.epam.ta.reportportal.jooq.tables.UsersProject.USERS_PROJECT;
 
     /**
      * The table <code>public.widget</code>.
@@ -235,13 +235,13 @@ public class Public extends SchemaImpl {
             Project.PROJECT,
             ProjectConfiguration.PROJECT_CONFIGURATION,
             ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION,
+            ProjectUser.PROJECT_USER,
             ServerSettings.SERVER_SETTINGS,
             TestItem.TEST_ITEM,
             TestItemResults.TEST_ITEM_RESULTS,
             TestItemStructure.TEST_ITEM_STRUCTURE,
             Ticket.TICKET,
             Users.USERS,
-            UsersProject.USERS_PROJECT,
             Widget.WIDGET);
     }
 

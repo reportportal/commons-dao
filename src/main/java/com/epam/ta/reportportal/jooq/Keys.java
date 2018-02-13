@@ -79,17 +79,20 @@ public class Keys {
     public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_PK = UniqueKeys0.PROJECT_CONFIGURATION_PK;
     public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_KEY = UniqueKeys0.PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_KEY;
     public static final UniqueKey<ProjectEmailConfigurationRecord> PROJECT_EMAIL_CONFIGURATION_PK = UniqueKeys0.PROJECT_EMAIL_CONFIGURATION_PK;
+    public static final UniqueKey<ProjectUserRecord> USERS_PROJECT_PK = UniqueKeys0.USERS_PROJECT_PK;
     public static final UniqueKey<ServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<TestItemRecord> TEST_ITEM_PK = UniqueKeys0.TEST_ITEM_PK;
     public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_PK = UniqueKeys0.TEST_ITEM_RESULTS_PK;
     public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_ITEM_ID_KEY = UniqueKeys0.TEST_ITEM_RESULTS_ITEM_ID_KEY;
     public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = UniqueKeys0.TEST_ITEM_STRUCTURE_PK;
     public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_ITEM_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_ITEM_ID_KEY;
+    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY;
+    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PARENT_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_PARENT_ID_KEY;
+    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_RETRY_OF_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_RETRY_OF_KEY;
     public static final UniqueKey<TicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
     public static final UniqueKey<TicketRecord> TICKET_TICKET_ID_KEY = UniqueKeys0.TICKET_TICKET_ID_KEY;
     public static final UniqueKey<UsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
     public static final UniqueKey<UsersRecord> USERS_LOGIN_KEY = UniqueKeys0.USERS_LOGIN_KEY;
-    public static final UniqueKey<UsersProjectRecord> USERS_PROJECT_PK = UniqueKeys0.USERS_PROJECT_PK;
     public static final UniqueKey<WidgetRecord> WIDGET_ID = UniqueKeys0.WIDGET_ID;
 
     // -------------------------------------------------------------------------
@@ -115,7 +118,9 @@ public class Keys {
     public static final ForeignKey<OauthAccessTokenRecord, UsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = ForeignKeys0.OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY;
     public static final ForeignKey<ProjectRecord, ProjectConfigurationRecord> PROJECT__PROJECT_PROJECT_CONFIGURATION_ID_FKEY = ForeignKeys0.PROJECT__PROJECT_PROJECT_CONFIGURATION_ID_FKEY;
     public static final ForeignKey<ProjectConfigurationRecord, ProjectEmailConfigurationRecord> PROJECT_CONFIGURATION__PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_FKEY = ForeignKeys0.PROJECT_CONFIGURATION__PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_FKEY;
-    public static final ForeignKey<TestItemResultsRecord, TestItemStructureRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_ITEM_ID_FKEY = ForeignKeys0.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_ITEM_ID_FKEY;
+    public static final ForeignKey<ProjectUserRecord, UsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_USER_ID_FKEY;
+    public static final ForeignKey<ProjectUserRecord, ProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY;
+    public static final ForeignKey<TestItemResultsRecord, TestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_ITEM_ID_FKEY = ForeignKeys0.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_ITEM_ID_FKEY;
     public static final ForeignKey<TestItemStructureRecord, TestItemRecord> TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_ITEM_ID_FKEY = ForeignKeys0.TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_ITEM_ID_FKEY;
     public static final ForeignKey<TestItemStructureRecord, LaunchRecord> TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_LAUNCH_ID_FKEY = ForeignKeys0.TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_LAUNCH_ID_FKEY;
     public static final ForeignKey<TestItemStructureRecord, TestItemStructureRecord> TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_PARENT_ID_FKEY = ForeignKeys0.TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_PARENT_ID_FKEY;
@@ -123,8 +128,6 @@ public class Keys {
     public static final ForeignKey<TicketRecord, UsersRecord> TICKET__TICKET_SUBMITTER_ID_FKEY = ForeignKeys0.TICKET__TICKET_SUBMITTER_ID_FKEY;
     public static final ForeignKey<TicketRecord, BugTrackingSystemRecord> TICKET__TICKET_BTS_ID_FKEY = ForeignKeys0.TICKET__TICKET_BTS_ID_FKEY;
     public static final ForeignKey<UsersRecord, ProjectRecord> USERS__USERS_DEFAULT_PROJECT_ID_FKEY = ForeignKeys0.USERS__USERS_DEFAULT_PROJECT_ID_FKEY;
-    public static final ForeignKey<UsersProjectRecord, UsersRecord> USERS_PROJECT__USERS_PROJECT_USER_ID_FKEY = ForeignKeys0.USERS_PROJECT__USERS_PROJECT_USER_ID_FKEY;
-    public static final ForeignKey<UsersProjectRecord, ProjectRecord> USERS_PROJECT__USERS_PROJECT_PROJECT_ID_FKEY = ForeignKeys0.USERS_PROJECT__USERS_PROJECT_PROJECT_ID_FKEY;
     public static final ForeignKey<WidgetRecord, ProjectRecord> WIDGET__WIDGET_PROJECT_ID_FKEY = ForeignKeys0.WIDGET__WIDGET_PROJECT_ID_FKEY;
 
     // -------------------------------------------------------------------------
@@ -178,17 +181,20 @@ public class Keys {
         public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_PK = createUniqueKey(ProjectConfiguration.PROJECT_CONFIGURATION, "project_configuration_pk", ProjectConfiguration.PROJECT_CONFIGURATION.ID);
         public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_KEY = createUniqueKey(ProjectConfiguration.PROJECT_CONFIGURATION, "project_configuration_email_configuration_id_key", ProjectConfiguration.PROJECT_CONFIGURATION.EMAIL_CONFIGURATION_ID);
         public static final UniqueKey<ProjectEmailConfigurationRecord> PROJECT_EMAIL_CONFIGURATION_PK = createUniqueKey(ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, "project_email_configuration_pk", ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION.ID);
+        public static final UniqueKey<ProjectUserRecord> USERS_PROJECT_PK = createUniqueKey(ProjectUser.PROJECT_USER, "users_project_pk", ProjectUser.PROJECT_USER.USER_ID, ProjectUser.PROJECT_USER.PROJECT_ID);
         public static final UniqueKey<ServerSettingsRecord> SERVER_SETTINGS_ID = createUniqueKey(ServerSettings.SERVER_SETTINGS, "server_settings_id", ServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<TestItemRecord> TEST_ITEM_PK = createUniqueKey(TestItem.TEST_ITEM, "test_item_pk", TestItem.TEST_ITEM.ID);
         public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_PK = createUniqueKey(TestItemResults.TEST_ITEM_RESULTS, "test_item_results_pk", TestItemResults.TEST_ITEM_RESULTS.ID);
         public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_ITEM_ID_KEY = createUniqueKey(TestItemResults.TEST_ITEM_RESULTS, "test_item_results_item_id_key", TestItemResults.TEST_ITEM_RESULTS.ITEM_ID);
         public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE.ID);
         public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_ITEM_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_item_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID);
+        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_launch_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.LAUNCH_ID);
+        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PARENT_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_parent_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.PARENT_ID);
+        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_RETRY_OF_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_retry_of_key", TestItemStructure.TEST_ITEM_STRUCTURE.RETRY_OF);
         public static final UniqueKey<TicketRecord> TICKET_PK = createUniqueKey(Ticket.TICKET, "ticket_pk", Ticket.TICKET.ID);
         public static final UniqueKey<TicketRecord> TICKET_TICKET_ID_KEY = createUniqueKey(Ticket.TICKET, "ticket_ticket_id_key", Ticket.TICKET.TICKET_ID);
         public static final UniqueKey<UsersRecord> USERS_PK = createUniqueKey(Users.USERS, "users_pk", Users.USERS.ID);
         public static final UniqueKey<UsersRecord> USERS_LOGIN_KEY = createUniqueKey(Users.USERS, "users_login_key", Users.USERS.LOGIN);
-        public static final UniqueKey<UsersProjectRecord> USERS_PROJECT_PK = createUniqueKey(UsersProject.USERS_PROJECT, "users_project_pk", UsersProject.USERS_PROJECT.USER_ID, UsersProject.USERS_PROJECT.PROJECT_ID);
         public static final UniqueKey<WidgetRecord> WIDGET_ID = createUniqueKey(Widget.WIDGET, "widget_id", Widget.WIDGET.ID);
     }
 
@@ -212,7 +218,9 @@ public class Keys {
         public static final ForeignKey<OauthAccessTokenRecord, UsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, OauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token__oauth_access_token_user_id_fkey", OauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
         public static final ForeignKey<ProjectRecord, ProjectConfigurationRecord> PROJECT__PROJECT_PROJECT_CONFIGURATION_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_CONFIGURATION_PK, Project.PROJECT, "project__project_project_configuration_id_fkey", Project.PROJECT.PROJECT_CONFIGURATION_ID);
         public static final ForeignKey<ProjectConfigurationRecord, ProjectEmailConfigurationRecord> PROJECT_CONFIGURATION__PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_EMAIL_CONFIGURATION_PK, ProjectConfiguration.PROJECT_CONFIGURATION, "project_configuration__project_configuration_email_configuration_id_fkey", ProjectConfiguration.PROJECT_CONFIGURATION.EMAIL_CONFIGURATION_ID);
-        public static final ForeignKey<TestItemResultsRecord, TestItemStructureRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_ITEM_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_STRUCTURE_PK, TestItemResults.TEST_ITEM_RESULTS, "test_item_results__test_item_results_item_id_fkey", TestItemResults.TEST_ITEM_RESULTS.ITEM_ID);
+        public static final ForeignKey<ProjectUserRecord, UsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, ProjectUser.PROJECT_USER, "project_user__project_user_user_id_fkey", ProjectUser.PROJECT_USER.USER_ID);
+        public static final ForeignKey<ProjectUserRecord, ProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, ProjectUser.PROJECT_USER, "project_user__project_user_project_id_fkey", ProjectUser.PROJECT_USER.PROJECT_ID);
+        public static final ForeignKey<TestItemResultsRecord, TestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_ITEM_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, TestItemResults.TEST_ITEM_RESULTS, "test_item_results__test_item_results_item_id_fkey", TestItemResults.TEST_ITEM_RESULTS.ITEM_ID);
         public static final ForeignKey<TestItemStructureRecord, TestItemRecord> TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_ITEM_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure__test_item_structure_item_id_fkey", TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID);
         public static final ForeignKey<TestItemStructureRecord, LaunchRecord> TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_LAUNCH_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure__test_item_structure_launch_id_fkey", TestItemStructure.TEST_ITEM_STRUCTURE.LAUNCH_ID);
         public static final ForeignKey<TestItemStructureRecord, TestItemStructureRecord> TEST_ITEM_STRUCTURE__TEST_ITEM_STRUCTURE_PARENT_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_STRUCTURE_PK, TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure__test_item_structure_parent_id_fkey", TestItemStructure.TEST_ITEM_STRUCTURE.PARENT_ID);
@@ -220,8 +228,6 @@ public class Keys {
         public static final ForeignKey<TicketRecord, UsersRecord> TICKET__TICKET_SUBMITTER_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, Ticket.TICKET, "ticket__ticket_submitter_id_fkey", Ticket.TICKET.SUBMITTER_ID);
         public static final ForeignKey<TicketRecord, BugTrackingSystemRecord> TICKET__TICKET_BTS_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, Ticket.TICKET, "ticket__ticket_bts_id_fkey", Ticket.TICKET.BTS_ID);
         public static final ForeignKey<UsersRecord, ProjectRecord> USERS__USERS_DEFAULT_PROJECT_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, Users.USERS, "users__users_default_project_id_fkey", Users.USERS.DEFAULT_PROJECT_ID);
-        public static final ForeignKey<UsersProjectRecord, UsersRecord> USERS_PROJECT__USERS_PROJECT_USER_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, UsersProject.USERS_PROJECT, "users_project__users_project_user_id_fkey", UsersProject.USERS_PROJECT.USER_ID);
-        public static final ForeignKey<UsersProjectRecord, ProjectRecord> USERS_PROJECT__USERS_PROJECT_PROJECT_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, UsersProject.USERS_PROJECT, "users_project__users_project_project_id_fkey", UsersProject.USERS_PROJECT.PROJECT_ID);
         public static final ForeignKey<WidgetRecord, ProjectRecord> WIDGET__WIDGET_PROJECT_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, Widget.WIDGET, "widget__widget_project_id_fkey", Widget.WIDGET.PROJECT_ID);
     }
 }

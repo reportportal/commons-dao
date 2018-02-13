@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
 
-    private static final long serialVersionUID = -1108324707;
+    private static final long serialVersionUID = 1426382894;
 
     /**
      * The reference instance of <code>public.test_item_structure</code>
@@ -52,12 +52,12 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
     /**
      * The column <code>public.test_item_structure.item_id</code>.
      */
-    public final TableField<TestItemStructureRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<TestItemStructureRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.test_item_structure.launch_id</code>.
      */
-    public final TableField<TestItemStructureRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<TestItemStructureRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.test_item_structure.parent_id</code>.
@@ -68,11 +68,6 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      * The column <code>public.test_item_structure.retry_of</code>.
      */
     public final TableField<TestItemStructureRecord, Long> RETRY_OF = createField("retry_of", org.jooq.impl.SQLDataType.BIGINT, this, "");
-
-    /**
-     * The column <code>public.test_item_structure.has_children</code>.
-     */
-    public final TableField<TestItemStructureRecord, Boolean> HAS_CHILDREN = createField("has_children", org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
      * Create a <code>public.test_item_structure</code> table reference
@@ -116,7 +111,7 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PK);
+        return Arrays.<Index>asList(Indexes.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PARENT_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PK, Indexes.TEST_ITEM_STRUCTURE_RETRY_OF_KEY);
     }
 
     /**
@@ -140,7 +135,7 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      */
     @Override
     public List<UniqueKey<TestItemStructureRecord>> getKeys() {
-        return Arrays.<UniqueKey<TestItemStructureRecord>>asList(Keys.TEST_ITEM_STRUCTURE_PK, Keys.TEST_ITEM_STRUCTURE_ITEM_ID_KEY);
+        return Arrays.<UniqueKey<TestItemStructureRecord>>asList(Keys.TEST_ITEM_STRUCTURE_PK, Keys.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Keys.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY, Keys.TEST_ITEM_STRUCTURE_PARENT_ID_KEY, Keys.TEST_ITEM_STRUCTURE_RETRY_OF_KEY);
     }
 
     /**

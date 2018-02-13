@@ -3,6 +3,7 @@
 */
 package com.epam.ta.reportportal.jooq.tables.pojos;
 
+
 import com.epam.ta.reportportal.jooq.enums.StatusEnum;
 
 import javax.annotation.Generated;

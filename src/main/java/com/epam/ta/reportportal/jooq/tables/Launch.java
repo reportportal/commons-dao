@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Launch extends TableImpl<LaunchRecord> {
 
-    private static final long serialVersionUID = 335675759;
+    private static final long serialVersionUID = -1685799472;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -59,7 +59,7 @@ public class Launch extends TableImpl<LaunchRecord> {
     /**
      * The column <code>public.launch.user_id</code>.
      */
-    public final TableField<LaunchRecord, Integer> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<LaunchRecord, Integer> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>public.launch.name</code>.

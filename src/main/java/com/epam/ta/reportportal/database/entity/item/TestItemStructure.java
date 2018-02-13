@@ -30,9 +30,6 @@ public class TestItemStructure implements Serializable {
 	@Column(name = "retry_of", precision = 64)
 	private Long retryOf;
 
-	@Column(name = "has_children")
-	private Boolean hasChildren;
-
 	public Long getId() {
 		return id;
 	}
@@ -73,14 +70,6 @@ public class TestItemStructure implements Serializable {
 		this.retryOf = retryOf;
 	}
 
-	public Boolean getHasChildren() {
-		return hasChildren;
-	}
-
-	public void setHasChildren(Boolean hasChildren) {
-		this.hasChildren = hasChildren;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -91,18 +80,17 @@ public class TestItemStructure implements Serializable {
 		}
 		TestItemStructure that = (TestItemStructure) o;
 		return Objects.equals(id, that.id) && Objects.equals(itemId, that.itemId) && Objects.equals(launchId, that.launchId)
-				&& Objects.equals(parentId, that.parentId) && Objects.equals(retryOf, that.retryOf) && Objects.equals(
-				hasChildren, that.hasChildren);
+				&& Objects.equals(parentId, that.parentId) && Objects.equals(retryOf, that.retryOf);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, itemId, launchId, parentId, retryOf, hasChildren);
+		return Objects.hash(id, itemId, launchId, parentId, retryOf);
 	}
 
 	@Override
 	public String toString() {
 		return "TestItemStructure{" + "id=" + id + ", itemId=" + itemId + ", launchId=" + launchId + ", parentId=" + parentId + ", retryOf="
-				+ retryOf + ", hasChildren=" + hasChildren + '}';
+				+ retryOf + '}';
 	}
 }

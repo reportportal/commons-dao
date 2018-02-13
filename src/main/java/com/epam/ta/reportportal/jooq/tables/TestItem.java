@@ -3,6 +3,7 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.Public;
@@ -32,7 +33,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItem extends TableImpl<TestItemRecord> {
 
-    private static final long serialVersionUID = -1718462229;
+    private static final long serialVersionUID = 1403360555;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -73,14 +74,14 @@ public class TestItem extends TableImpl<TestItemRecord> {
     public final TableField<TestItemRecord, String> DESCRIPTION = createField("description", org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>public.test_item.last_modified</code>.
-     */
-    public final TableField<TestItemRecord, Timestamp> LAST_MODIFIED = createField("last_modified", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
-
-    /**
      * The column <code>public.test_item.parameters</code>.
      */
     public final TableField<TestItemRecord, ParameterRecord[]> PARAMETERS = createField("parameters", com.epam.ta.reportportal.jooq.udt.Parameter.PARAMETER.getDataType().getArrayDataType(), this, "");
+
+    /**
+     * The column <code>public.test_item.last_modified</code>.
+     */
+    public final TableField<TestItemRecord, Timestamp> LAST_MODIFIED = createField("last_modified", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
 
     /**
      * The column <code>public.test_item.unique_id</code>.

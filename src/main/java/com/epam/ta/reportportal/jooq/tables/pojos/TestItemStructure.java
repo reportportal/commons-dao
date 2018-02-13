@@ -3,6 +3,7 @@
 */
 package com.epam.ta.reportportal.jooq.tables.pojos;
 
+
 import javax.annotation.Generated;
 import java.io.Serializable;
 
@@ -20,14 +21,13 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemStructure implements Serializable {
 
-    private static final long serialVersionUID = -138956201;
+    private static final long serialVersionUID = -484488330;
 
-    private Long    id;
-    private Long    itemId;
-    private Long    launchId;
-    private Long    parentId;
-    private Long    retryOf;
-    private Boolean hasChildren;
+    private Long id;
+    private Long itemId;
+    private Long launchId;
+    private Long parentId;
+    private Long retryOf;
 
     public TestItemStructure() {}
 
@@ -37,23 +37,20 @@ public class TestItemStructure implements Serializable {
         this.launchId = value.launchId;
         this.parentId = value.parentId;
         this.retryOf = value.retryOf;
-        this.hasChildren = value.hasChildren;
     }
 
     public TestItemStructure(
-        Long    id,
-        Long    itemId,
-        Long    launchId,
-        Long    parentId,
-        Long    retryOf,
-        Boolean hasChildren
+        Long id,
+        Long itemId,
+        Long launchId,
+        Long parentId,
+        Long retryOf
     ) {
         this.id = id;
         this.itemId = itemId;
         this.launchId = launchId;
         this.parentId = parentId;
         this.retryOf = retryOf;
-        this.hasChildren = hasChildren;
     }
 
     public Long getId() {
@@ -96,14 +93,6 @@ public class TestItemStructure implements Serializable {
         this.retryOf = retryOf;
     }
 
-    public Boolean getHasChildren() {
-        return this.hasChildren;
-    }
-
-    public void setHasChildren(Boolean hasChildren) {
-        this.hasChildren = hasChildren;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("TestItemStructure (");
@@ -113,7 +102,6 @@ public class TestItemStructure implements Serializable {
         sb.append(", ").append(launchId);
         sb.append(", ").append(parentId);
         sb.append(", ").append(retryOf);
-        sb.append(", ").append(hasChildren);
 
         sb.append(")");
         return sb.toString();

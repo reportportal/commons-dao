@@ -107,6 +107,11 @@ public class Tables {
     public static final ProjectEmailConfiguration PROJECT_EMAIL_CONFIGURATION = com.epam.ta.reportportal.jooq.tables.ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION;
 
     /**
+     * The table <code>public.project_user</code>.
+     */
+    public static final ProjectUser PROJECT_USER = com.epam.ta.reportportal.jooq.tables.ProjectUser.PROJECT_USER;
+
+    /**
      * The table <code>public.server_settings</code>.
      */
     public static final ServerSettings SERVER_SETTINGS = com.epam.ta.reportportal.jooq.tables.ServerSettings.SERVER_SETTINGS;
@@ -135,11 +140,6 @@ public class Tables {
      * The table <code>public.users</code>.
      */
     public static final Users USERS = com.epam.ta.reportportal.jooq.tables.Users.USERS;
-
-    /**
-     * The table <code>public.users_project</code>.
-     */
-    public static final UsersProject USERS_PROJECT = com.epam.ta.reportportal.jooq.tables.UsersProject.USERS_PROJECT;
 
     /**
      * The table <code>public.widget</code>.

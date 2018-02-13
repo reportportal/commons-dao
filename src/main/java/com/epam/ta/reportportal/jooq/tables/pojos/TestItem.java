@@ -3,6 +3,7 @@
 */
 package com.epam.ta.reportportal.jooq.tables.pojos;
 
+
 import com.epam.ta.reportportal.jooq.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.udt.pojos.Parameter;
 
@@ -25,15 +26,15 @@ import java.util.Arrays;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItem implements Serializable {
 
-    private static final long serialVersionUID = 657975789;
+    private static final long serialVersionUID = 1373558017;
 
     private Long             id;
     private String           name;
     private TestItemTypeEnum type;
     private Timestamp        startTime;
     private String           description;
-    private Timestamp        lastModified;
     private Parameter[]      parameters;
+    private Timestamp        lastModified;
     private String           uniqueId;
 
     public TestItem() {}
@@ -44,8 +45,8 @@ public class TestItem implements Serializable {
         this.type = value.type;
         this.startTime = value.startTime;
         this.description = value.description;
-        this.lastModified = value.lastModified;
         this.parameters = value.parameters;
+        this.lastModified = value.lastModified;
         this.uniqueId = value.uniqueId;
     }
 
@@ -55,8 +56,8 @@ public class TestItem implements Serializable {
         TestItemTypeEnum type,
         Timestamp        startTime,
         String           description,
-        Timestamp        lastModified,
         Parameter[]      parameters,
+        Timestamp        lastModified,
         String           uniqueId
     ) {
         this.id = id;
@@ -64,8 +65,8 @@ public class TestItem implements Serializable {
         this.type = type;
         this.startTime = startTime;
         this.description = description;
-        this.lastModified = lastModified;
         this.parameters = parameters;
+        this.lastModified = lastModified;
         this.uniqueId = uniqueId;
     }
 
@@ -109,20 +110,20 @@ public class TestItem implements Serializable {
         this.description = description;
     }
 
-    public Timestamp getLastModified() {
-        return this.lastModified;
-    }
-
-    public void setLastModified(Timestamp lastModified) {
-        this.lastModified = lastModified;
-    }
-
     public Parameter[] getParameters() {
         return this.parameters;
     }
 
     public void setParameters(Parameter... parameters) {
         this.parameters = parameters;
+    }
+
+    public Timestamp getLastModified() {
+        return this.lastModified;
+    }
+
+    public void setLastModified(Timestamp lastModified) {
+        this.lastModified = lastModified;
     }
 
     public String getUniqueId() {
@@ -142,8 +143,8 @@ public class TestItem implements Serializable {
         sb.append(", ").append(type);
         sb.append(", ").append(startTime);
         sb.append(", ").append(description);
-        sb.append(", ").append(lastModified);
         sb.append(", ").append(Arrays.toString(parameters));
+        sb.append(", ").append(lastModified);
         sb.append(", ").append(uniqueId);
 
         sb.append(")");
