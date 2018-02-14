@@ -19,7 +19,7 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package com.epam.ta.reportportal.database.entity.item.issue;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,17 +44,13 @@ public enum ExternalSystemType {
 	JIRA {
 		@Override
 		public String makeUrl(String base, String id) {
-			StringBuilder builder = new StringBuilder();
-			builder.append(StringUtils.stripEnd(base, "/"));
-			builder.append("/browse/");
-			builder.append(id);
-			return builder.toString();
+			return StringUtils.stripEnd(base, "/") + "/browse/" + id;
 		}
 	},
 	TFS {
 		@Override
 		public String makeUrl(String base, String id) {
-			return new StringBuilder().append(StringUtils.stripEnd(base, "/")).append("/browse/").append(id).toString();
+			return StringUtils.stripEnd(base, "/") + "/browse/" + id;
 		}
 	},
 	RALLY {

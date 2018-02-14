@@ -21,7 +21,7 @@
  
 package com.epam.ta.reportportal.commons;
 
-import com.epam.ta.reportportal.database.entity.enums.ProjectRole;
+import com.epam.ta.reportportal.database.entity.enums.ProjectRoleEnum;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
@@ -95,7 +95,7 @@ public class Preconditions {
 	 * @param principalRole
 	 * @return
 	 */
-	public static Predicate<ProjectRole> isLevelEnough(final ProjectRole principalRole) {
+	public static Predicate<ProjectRoleEnum> isLevelEnough(final ProjectRoleEnum principalRole) {
 		return principalRole::sameOrHigherThan;
 	}
 }

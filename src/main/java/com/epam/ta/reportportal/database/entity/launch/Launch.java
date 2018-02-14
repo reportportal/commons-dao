@@ -1,5 +1,7 @@
 package com.epam.ta.reportportal.database.entity.launch;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -11,6 +13,7 @@ import java.util.Objects;
  * @author Pavel Bortnik
  */
 
+@TypeDef(name = "launchMode", typeClass = LaunchModeEnum.class)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
@@ -28,7 +31,7 @@ public class Launch {
 	private Integer projectId;
 
 	@Column(name = "user_id", nullable = false, precision = 32)
-	private Integer userId;
+	private Long userId;
 
 	@Column(name = "name", nullable = false, length = 256)
 	private String name;
@@ -47,7 +50,7 @@ public class Launch {
 	private Timestamp lastModified;
 
 	@Column(name = "mode", nullable = false)
-	@Enumerated(EnumType.STRING)
+	@Type(type = "launchMode")
 	private LaunchModeEnum mode;
 
 	public Long getId() {
@@ -66,11 +69,11 @@ public class Launch {
 		this.projectId = projectId;
 	}
 
-	public Integer getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 

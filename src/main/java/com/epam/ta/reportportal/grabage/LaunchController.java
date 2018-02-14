@@ -110,7 +110,7 @@ public class LaunchController implements ILaunchController {
 			@ApiParam(value = "Name of project launch starts under", required = true) @PathVariable String projectName,
 			@ApiParam(value = "Start launch request body", required = true) @RequestBody @Validated StartLaunchRQ startLaunchRQ,
 			Principal principal) {
-		return createLaunchMessageHandler.startLaunch(principal.getName(), normalizeId(projectName), startLaunchRQ);
+		return createLaunchMessageHandler.startLaunch("default", normalizeId(projectName), startLaunchRQ);
 	}
 
 	@Override

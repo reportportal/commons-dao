@@ -17,9 +17,9 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
-package com.epam.ta.reportportal.database.entity.item.issue;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import com.epam.ta.reportportal.database.entity.StatisticsAwareness;
 
@@ -31,18 +31,17 @@ import java.util.stream.Collectors;
  * Vocabulary for supported test item issues types. They are applied as markers
  * for test steps. User marks test step according to the type of the issue,
  * caused it's failure.<br>
- * 
+ * <p>
  * Enum contains following fields:<br>
  * value - value of specified enum field;<br>
  * issueCounterField - field name in IssueCounter object for MongoDB<br>
  * locator - predefined ID for immutable issue type<br>
- * 
+ *
  * @author Dzianis Shlychkou
  * @author Andrei_Ramanchuk
  */
 public enum TestItemIssueType implements StatisticsAwareness {
 
-	//@formatter:off
 	NOT_ISSUE_FLAG("NOT_ISSUE", "notIssue", ""),
 
 	PRODUCT_BUG("PRODUCT_BUG", "productBug", "PB001"),
@@ -50,7 +49,6 @@ public enum TestItemIssueType implements StatisticsAwareness {
 	SYSTEM_ISSUE("SYSTEM_ISSUE", "systemIssue", "SI001"),
 	TO_INVESTIGATE("TO_INVESTIGATE", "toInvestigate", "TI001"),
 	NO_DEFECT("NO_DEFECT", "noDefect", "ND001");
-	//@formatter:on
 
 	private final String value;
 
@@ -73,26 +71,27 @@ public enum TestItemIssueType implements StatisticsAwareness {
 	}
 
 	/**
-	 * 
 	 * Retrieves TestItemIssueType value by it's string value
-	 * 
-	 * @param value
-	 *            - string representation of desired TestItemIssueType value
+	 *
+	 * @param value - string representation of desired TestItemIssueType value
 	 * @return TestItemIssueType value
 	 */
 	public static TestItemIssueType fromValue(String value) {
-		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.getValue()
-				.equalsIgnoreCase(value)).findAny().orElse(null);
+		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.getValue().equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 
 	public static TestItemIssueType validate(String value) {
-		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.getValue().replace(" ", "_")
-				.equalsIgnoreCase(value)).findAny().orElse(null);
+		return Arrays.stream(TestItemIssueType.values())
+				.filter(type -> type.getValue().replace(" ", "_").equalsIgnoreCase(value))
+				.findAny()
+				.orElse(null);
 	}
 
 	public static TestItemIssueType fromCounterField(String value) {
-		return Arrays.stream(TestItemIssueType.values()).filter(type -> type.awareStatisticsField()
-				.equalsIgnoreCase(value)).findAny().orElse(null);
+		return Arrays.stream(TestItemIssueType.values())
+				.filter(type -> type.awareStatisticsField().equalsIgnoreCase(value))
+				.findAny()
+				.orElse(null);
 	}
 
 	@Override
@@ -101,8 +100,6 @@ public enum TestItemIssueType implements StatisticsAwareness {
 	}
 
 	public static List<String> validValues() {
-		return Arrays.stream(TestItemIssueType.values())
-				.map(TestItemIssueType::getValue)
-				.collect(Collectors.toList());
+		return Arrays.stream(TestItemIssueType.values()).map(TestItemIssueType::getValue).collect(Collectors.toList());
 	}
 }

@@ -19,7 +19,7 @@ public class Users {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false, precision = 32)
-	private Integer id;
+	private Long id;
 
 	@Column(name = "login", unique = true, nullable = false)
 	private String login;
@@ -45,11 +45,11 @@ public class Users {
 	@Column(name = "metadata")
 	private JSONObject metadata;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

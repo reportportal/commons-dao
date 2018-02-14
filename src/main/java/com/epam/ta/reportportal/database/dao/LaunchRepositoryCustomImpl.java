@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.TestItemStructure.TEST_ITEM_STRUCTURE;
 import static org.jooq.impl.DSL.*;
 
@@ -30,8 +33,21 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasItems(Long launchId) {
+	public Boolean hasItems(Long launchId) {
 		return dsl.fetchExists(dsl.selectOne().from(TEST_ITEM_STRUCTURE).where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId)));
+	}
+
+	@Override
+	public Optional<com.epam.ta.reportportal.database.entity.launch.Launch> getLastLaunch(String launchName, String projectName) {
+		return Optional.ofNullable(dsl.select()
+				.from(LAUNCH)
+				.join(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.where(LAUNCH.NAME.eq(launchName))
+				.and(PROJECT.NAME.eq(projectName))
+				.orderBy(LAUNCH.NUMBER.desc())
+				.limit(1)
+				.fetchOneInto(com.epam.ta.reportportal.database.entity.launch.Launch.class));
 	}
 
 	@Override

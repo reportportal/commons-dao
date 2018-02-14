@@ -30,30 +30,30 @@ import java.util.Optional;
  * @author Andrei Varabyeu
  * 
  */
-public enum ProjectRole implements Comparable<ProjectRole> {
+public enum ProjectRoleEnum implements Comparable<ProjectRoleEnum> {
 
 	OPERATOR(0), CUSTOMER(1), MEMBER(2), PROJECT_MANAGER(3);
 
 	private int roleLevel;
 
-	ProjectRole(int level) {
+	ProjectRoleEnum(int level) {
 		this.roleLevel = level;
 	}
 
-	public boolean higherThan(ProjectRole other) {
+	public boolean higherThan(ProjectRoleEnum other) {
 		return this.roleLevel > other.roleLevel;
 	}
 
-	public boolean lowerThan(ProjectRole other) {
+	public boolean lowerThan(ProjectRoleEnum other) {
 		return this.roleLevel < other.roleLevel;
 	}
 
-	public boolean sameOrHigherThan(ProjectRole other) {
+	public boolean sameOrHigherThan(ProjectRoleEnum other) {
 		return this.roleLevel >= other.roleLevel;
 	}
 
-	public static Optional<ProjectRole> forName(final String name) {
-		return Arrays.stream(ProjectRole.values()).filter(role -> role.name()
+	public static Optional<ProjectRoleEnum> forName(final String name) {
+		return Arrays.stream(ProjectRoleEnum.values()).filter(role -> role.name()
 				.equalsIgnoreCase(name)).findAny();
 	}
 

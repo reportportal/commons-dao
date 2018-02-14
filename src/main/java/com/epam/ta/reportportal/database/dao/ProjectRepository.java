@@ -7,4 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Pavel Bortnik
  */
 public interface ProjectRepository extends JpaRepository<Project, Integer>, ProjectRepositoryCustom {
+
+	Project findByName(String name);
+
 }
