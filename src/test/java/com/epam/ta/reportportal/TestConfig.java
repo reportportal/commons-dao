@@ -19,8 +19,11 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.
 public class TestConfig {
 	@Bean
 	public DataSource dataSource() {
-		return new EmbeddedDatabaseBuilder().generateUniqueName(true).setType(H2).setScriptEncoding("UTF-8").ignoreFailedDrops(true)
-				//				.addScript("schema.sql")
+		return new EmbeddedDatabaseBuilder().generateUniqueName(true)
+				.setType(H2)
+				.setScriptEncoding("UTF-8")
+				.ignoreFailedDrops(true)
+				.addScript("schema.sql")
 				//				.addScripts("user_data.sql", "country_data.sql")
 				.build();
 	}

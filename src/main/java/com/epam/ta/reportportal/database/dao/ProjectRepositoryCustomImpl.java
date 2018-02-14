@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * @author Pavel Bortnik
  */
 @Repository
-public class LogRepositoryCustomImpl implements LogRepositoryCustom {
+public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	private DSLContext dsl;
 

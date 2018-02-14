@@ -19,7 +19,7 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package com.epam.ta.reportportal.database.entity.user;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
@@ -34,18 +34,18 @@ import java.util.Optional;
  *
  * @author Andrei Varabyeu
  */
-public enum UserRole {
+public enum UserRoleEnum {
 
 	USER,
 	ADMINISTRATOR;
 
 	public static final String ROLE_PREFIX = "ROLE_";
 
-	public static Optional<UserRole> findByName(String name) {
-		return Arrays.stream(UserRole.values()).filter(role -> role.name().equals(name)).findAny();
+	public static Optional<UserRoleEnum> findByName(String name) {
+		return Arrays.stream(UserRoleEnum.values()).filter(role -> role.name().equals(name)).findAny();
 	}
 
-	public static Optional<UserRole> findByAuthority(String name) {
+	public static Optional<UserRoleEnum> findByAuthority(String name) {
 		if (Strings.isNullOrEmpty(name)) {
 			return Optional.empty();
 		}

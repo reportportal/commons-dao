@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * @author Pavel Bortnik
  */
 @Repository
-public class LogRepositoryCustomImpl implements LogRepositoryCustom {
+public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	private DSLContext dsl;
 
@@ -16,5 +16,4 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public void setDsl(DSLContext dsl) {
 		this.dsl = dsl;
 	}
-
 }

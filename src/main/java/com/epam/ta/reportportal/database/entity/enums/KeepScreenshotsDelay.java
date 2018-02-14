@@ -19,50 +19,49 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
  
-package com.epam.ta.reportportal.database.entity.project;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 
 /**
- * Interruption job delay parameters enumerator<br>
- * User for supporting UI types of project parameter
+ * Keep Screenshots Delay values enumerator
+ * Describe possible values of 'Keep screenshots' parameter on UI project page
  * 
  * @author Andrei_Ramanchuk
  */
-public enum InterruptionJobDelay {
+public enum KeepScreenshotsDelay {
 
 	//@formatter:off
-	ONE_HOUR("1 hour", 1L),
-	THREE_HOURS("3 hours", 3L),
-	SIX_HOURS("6 hours", 6L),
-	TWELVE_HOURS("12 hours", 12L),
-	ONE_DAY("1 day", 24L),
-	ONE_WEEK("1 week", 168L);
+	ONE_WEEK("1 week", 7L),
+	TWO_WEEKS("2 weeks", 14L),
+	THREE_WEEKS("3 weeks", 21L),
+	ONE_MONTH("1 month", 30L),
+	THREE_MONTHS("3 months", 91L),
+	FOREVER("forever", 0);
 	//@formatter:on
 	
 	private String value;
-	
-	private long period;
+	private long days;
 	
 	public String getValue() {
 		return value;
 	}
 	
-	public long getPeriod() {
-		return period;
+	public long getDays() {
+		return days;
 	}
 	
-	InterruptionJobDelay(String delay, long time) {
+	KeepScreenshotsDelay(String delay, long days) {
 		this.value = delay;
-		this.period = time;
+		this.days = days;
 	}
 	
-	public static InterruptionJobDelay getByName(String type) {
-		return InterruptionJobDelay.valueOf(type);
+	public static KeepScreenshotsDelay getByName(String type) {
+		return KeepScreenshotsDelay.valueOf(type);
 	}
 
-	public static InterruptionJobDelay findByName(String name) {
-		return Arrays.stream(InterruptionJobDelay.values()).filter(delay -> delay.getValue()
+	public static KeepScreenshotsDelay findByName(String name) {
+		return Arrays.stream(KeepScreenshotsDelay.values()).filter(delay -> delay.getValue()
 				.equalsIgnoreCase(name)).findAny().orElse(null);
 	}
 

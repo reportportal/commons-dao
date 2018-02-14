@@ -19,30 +19,30 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
  
-package com.epam.ta.reportportal.database.entity.project;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 
 /**
- * Keep Screenshots Delay values enumerator
- * Describe possible values of 'Keep screenshots' parameter on UI project page
+ * Keep Launches Delay project parameter enumerator<br>
+ * Describe possible values for 'Keep launches' parameter on UI project page
  * 
  * @author Andrei_Ramanchuk
  */
-public enum KeepScreenshotsDelay {
-
+public enum KeepLogsDelay {
+	
 	//@formatter:off
-	ONE_WEEK("1 week", 7L),
 	TWO_WEEKS("2 weeks", 14L),
-	THREE_WEEKS("3 weeks", 21L),
 	ONE_MONTH("1 month", 30L),
 	THREE_MONTHS("3 months", 91L),
+	SIX_MONTHS("6 months", 183L),
 	FOREVER("forever", 0);
 	//@formatter:on
 	
 	private String value;
-	private long days;
 	
+	private long days;
+
 	public String getValue() {
 		return value;
 	}
@@ -51,17 +51,17 @@ public enum KeepScreenshotsDelay {
 		return days;
 	}
 	
-	KeepScreenshotsDelay(String delay, long days) {
+	KeepLogsDelay(String delay, long period) {
 		this.value = delay;
-		this.days = days;
+		this.days = period;
 	}
 	
-	public static KeepScreenshotsDelay getByName(String type) {
-		return KeepScreenshotsDelay.valueOf(type);
+	public static KeepLogsDelay getByName(String type) {
+		return KeepLogsDelay.valueOf(type);
 	}
 
-	public static KeepScreenshotsDelay findByName(String name) {
-		return Arrays.stream(KeepScreenshotsDelay.values()).filter(delay -> delay.getValue()
+	public static KeepLogsDelay findByName(String name) {
+		return Arrays.stream(KeepLogsDelay.values()).filter(delay -> delay.getValue()
 				.equalsIgnoreCase(name)).findAny().orElse(null);
 	}
 

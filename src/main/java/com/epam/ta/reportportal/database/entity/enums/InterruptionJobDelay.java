@@ -18,52 +18,55 @@
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */ 
-
-package com.epam.ta.reportportal.database.entity.project.info;
+ 
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 
 /**
- * Get project information intervals<br>
- * <ul>
- * Available values:
- * <li>1 week</li>
- * <li>3 months (by default)</li>
- * <li>6 months</li>
- * </ul>
+ * Interruption job delay parameters enumerator<br>
+ * User for supporting UI types of project parameter
  * 
  * @author Andrei_Ramanchuk
  */
-public enum InfoInterval {
+public enum InterruptionJobDelay {
 
 	//@formatter:off
-	ONE_MONTH("1M", 1),
-	THREE_MONTHS("3M", 3),
-	SIX_MONTHS("6M", 6);
+	ONE_HOUR("1 hour", 1L),
+	THREE_HOURS("3 hours", 3L),
+	SIX_HOURS("6 hours", 6L),
+	TWELVE_HOURS("12 hours", 12L),
+	ONE_DAY("1 day", 24L),
+	ONE_WEEK("1 week", 168L);
 	//@formatter:on
-
-	private String interval;
-	private Integer counter;
-
-	public String getInterval() {
-		return interval;
+	
+	private String value;
+	
+	private long period;
+	
+	public String getValue() {
+		return value;
+	}
+	
+	public long getPeriod() {
+		return period;
+	}
+	
+	InterruptionJobDelay(String delay, long time) {
+		this.value = delay;
+		this.period = time;
+	}
+	
+	public static InterruptionJobDelay getByName(String type) {
+		return InterruptionJobDelay.valueOf(type);
 	}
 
-	public Integer getCount() {
-		return counter;
-	}
-
-	InfoInterval(String value, Integer count) {
-		this.interval = value;
-		this.counter = count;
-	}
-
-	public static InfoInterval getByName(String name) {
-		return InfoInterval.valueOf(name);
-	}
-
-	public static InfoInterval findByName(String name) {
-		return Arrays.stream(InfoInterval.values()).filter(interval -> interval.getInterval()
+	public static InterruptionJobDelay findByName(String name) {
+		return Arrays.stream(InterruptionJobDelay.values()).filter(delay -> delay.getValue()
 				.equalsIgnoreCase(name)).findAny().orElse(null);
+	}
+
+	public static boolean isPresent(String name) {
+		return null != findByName(name);
 	}
 }

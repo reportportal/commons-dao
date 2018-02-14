@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface TestItemRepository extends JpaRepository<TestItem, Long>, TestItemRepositoryCustom {
 
-	List<TestItem> findTestItemsByUniqueId();
+	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
 }

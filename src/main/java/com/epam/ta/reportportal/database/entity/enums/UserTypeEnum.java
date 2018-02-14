@@ -19,7 +19,7 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.epam.ta.reportportal.database.entity.user;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -30,7 +30,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-public enum UserType {
+public enum UserTypeEnum {
 
     //@formatter:off
     INTERNAL,
@@ -39,12 +39,12 @@ public enum UserType {
     LDAP;
     //@formatter:on
 
-    public static UserType getByName(String type) {
-        return UserType.valueOf(type);
+    public static UserTypeEnum getByName(String type) {
+        return UserTypeEnum.valueOf(type);
     }
 
-    public static Optional<UserType> findByName(String name) {
-        return Arrays.stream(UserType.values()).filter(type -> type.name().equals(name)).findAny();
+    public static Optional<UserTypeEnum> findByName(String name) {
+        return Arrays.stream(UserTypeEnum.values()).filter(type -> type.name().equals(name)).findAny();
     }
 
     public static boolean isPresent(String name) {

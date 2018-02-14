@@ -34,7 +34,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.epam.ta.reportportal.database.entity.user;
+package com.epam.ta.reportportal.database.entity.enums;
 
 import java.util.Arrays;
 import java.util.List;
