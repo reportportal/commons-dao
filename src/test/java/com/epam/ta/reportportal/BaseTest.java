@@ -8,7 +8,6 @@ import org.dbunit.dataset.datatype.DataTypeException;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
-import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +56,7 @@ public class BaseTest {
 		});
 
 		FlatXmlDataSet dataSet = new FlatXmlDataSet(new FlatXmlProducer(new InputSource(dataset.getInputStream())));
-		DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
+		//DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
 	}
 
 	@Test

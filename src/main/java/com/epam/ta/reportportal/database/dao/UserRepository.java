@@ -3,13 +3,11 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.user.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 /**
  * @author Pavel Bortnik
  */
-public interface UserRepository extends JpaRepository<Users, Integer>, UserRepositoryCustom {
+public interface UserRepository extends JpaRepository<Users, Long>, UserRepositoryCustom {
 
-	Optional<Users> findByLogin();
+	Users findByLogin(String login);
 
 }
