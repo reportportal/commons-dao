@@ -11,7 +11,7 @@ import java.util.Objects;
 public class LaunchTag {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false, precision = 32)
 	private Long id;
 

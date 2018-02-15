@@ -86,12 +86,11 @@ class StartLaunchHandler implements IStartLaunchHandler {
 				.addProject(projectUser.getProject().getId())
 				.addUser(projectUser.getUser().getId())
 				.get();
-		/*
-		 * Retrieve and set number of launch with provided name
-		 */
 
 		Optional<Launch> lastLaunch = launchRepository.getLastLaunch(launch.getName(), projectName);
-		lastLaunch.ifPresent(it -> launch.setNumber(it.getNumber() + 1));
+
+		int nextLaunchNumber = lastLaunch.map(Launch::getNumber).orElse(0) + 1;
+		launch.setNumber(nextLaunchNumber);
 
 		//launch.setApproximateDuration(calculateApproximateDuration(projectName, startLaunchRQ.getName(), 5));
 

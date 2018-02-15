@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.database.entity.launch;
 
+import com.epam.ta.reportportal.database.entity.enums.PostgreSQLEnumType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,9 +14,9 @@ import java.util.Objects;
  * @author Pavel Bortnik
  */
 
-@TypeDef(name = "launchMode", typeClass = LaunchModeEnum.class)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
 		@Index(name = "launch_pk", unique = true, columnList = "id ASC"),
@@ -50,7 +51,7 @@ public class Launch {
 	private Timestamp lastModified;
 
 	@Column(name = "mode", nullable = false)
-	@Type(type = "launchMode")
+	@Type(type = "pqsql_enum")
 	private LaunchModeEnum mode;
 
 	public Long getId() {
