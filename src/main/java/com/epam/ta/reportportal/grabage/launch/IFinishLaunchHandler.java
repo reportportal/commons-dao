@@ -44,7 +44,7 @@ public interface IFinishLaunchHandler {
 	 * @param username       Username
 	 * @return OperationCompletionRS
 	 */
-	OperationCompletionRS finishLaunch(String launchId, FinishExecutionRQ finishLaunchRQ, String projectName, String username);
+	OperationCompletionRS finishLaunch(Long launchId, FinishExecutionRQ finishLaunchRQ, String projectName, String username);
 
 	/**
 	 * Stop Launch instance by user

@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class LaunchTag extends TableImpl<LaunchTagRecord> {
 
-    private static final long serialVersionUID = 1900028385;
+    private static final long serialVersionUID = 1400835985;
 
     /**
      * The reference instance of <code>public.launch_tag</code>
@@ -47,7 +47,7 @@ public class LaunchTag extends TableImpl<LaunchTagRecord> {
     /**
      * The column <code>public.launch_tag.id</code>.
      */
-    public final TableField<LaunchTagRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('launch_tag_id_seq'::regclass)", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+    public final TableField<LaunchTagRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('launch_tag_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * The column <code>public.launch_tag.value</code>.
@@ -108,7 +108,7 @@ public class LaunchTag extends TableImpl<LaunchTagRecord> {
      * {@inheritDoc}
      */
     @Override
-    public Identity<LaunchTagRecord, Integer> getIdentity() {
+    public Identity<LaunchTagRecord, Long> getIdentity() {
         return Keys.IDENTITY_LAUNCH_TAG;
     }
 

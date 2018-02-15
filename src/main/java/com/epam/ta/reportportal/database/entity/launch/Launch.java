@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.database.entity.launch;
 
 import com.epam.ta.reportportal.database.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -53,6 +54,10 @@ public class Launch {
 	@Column(name = "mode", nullable = false)
 	@Type(type = "pqsql_enum")
 	private LaunchModeEnum mode;
+
+	@Column(name = "status", nullable = false)
+	@Type(type = "pqsql_enum")
+	private StatusEnum status;
 
 	public Long getId() {
 		return id;
@@ -126,6 +131,21 @@ public class Launch {
 		this.mode = mode;
 	}
 
+	public StatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusEnum status) {
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "Launch{" + "id=" + id + ", projectId=" + projectId + ", userId=" + userId + ", name='" + name + '\'' + ", description='"
+				+ description + '\'' + ", startTime=" + startTime + ", number=" + number + ", lastModified=" + lastModified + ", mode="
+				+ mode + ", status=" + status + '}';
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -138,18 +158,11 @@ public class Launch {
 		return Objects.equals(id, launch.id) && Objects.equals(projectId, launch.projectId) && Objects.equals(userId, launch.userId)
 				&& Objects.equals(name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(
 				startTime, launch.startTime) && Objects.equals(number, launch.number) && Objects.equals(lastModified, launch.lastModified)
-				&& mode == launch.mode;
+				&& mode == launch.mode && status == launch.status;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, projectId, userId, name, description, startTime, number, lastModified, mode);
-	}
-
-	@Override
-	public String toString() {
-		return "Launch{" + "id=" + id + ", projectId=" + projectId + ", userId=" + userId + ", name='" + name + '\'' + ", description='"
-				+ description + '\'' + ", startTime=" + startTime + ", number=" + number + ", lastModified=" + lastModified + ", mode="
-				+ mode + '}';
+		return Objects.hash(id, projectId, userId, name, description, startTime, number, lastModified, mode, status);
 	}
 }

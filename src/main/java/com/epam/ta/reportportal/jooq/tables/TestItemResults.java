@@ -3,6 +3,7 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.Public;

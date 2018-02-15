@@ -12,7 +12,6 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
 import javax.annotation.Generated;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Project extends TableImpl<ProjectRecord> {
 
-    private static final long serialVersionUID = 126386158;
+    private static final long serialVersionUID = -1411708526;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -60,11 +59,6 @@ public class Project extends TableImpl<ProjectRecord> {
      */
     @java.lang.Deprecated
     public final TableField<ProjectRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
-
-    /**
-     * The column <code>public.project.created_on</code>.
-     */
-    public final TableField<ProjectRecord, Timestamp> CREATED_ON = createField("created_on", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * The column <code>public.project.project_configuration_id</code>.

@@ -20,11 +20,11 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class LaunchTag implements Serializable {
 
-    private static final long serialVersionUID = 999183799;
+    private static final long serialVersionUID = -1570951215;
 
-    private Integer id;
-    private String  value;
-    private Long    launchId;
+    private Long   id;
+    private String value;
+    private Long   launchId;
 
     public LaunchTag() {}
 
@@ -35,20 +35,20 @@ public class LaunchTag implements Serializable {
     }
 
     public LaunchTag(
-        Integer id,
-        String  value,
-        Long    launchId
+        Long   id,
+        String value,
+        Long   launchId
     ) {
         this.id = id;
         this.value = value;
         this.launchId = launchId;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
 
-    private static final long serialVersionUID = 1426382894;
+    private static final long serialVersionUID = -283197522;
 
     /**
      * The reference instance of <code>public.test_item_structure</code>
@@ -111,7 +111,7 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PARENT_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PK, Indexes.TEST_ITEM_STRUCTURE_RETRY_OF_KEY);
+        return Arrays.<Index>asList(Indexes.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PK);
     }
 
     /**
@@ -135,7 +135,7 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      */
     @Override
     public List<UniqueKey<TestItemStructureRecord>> getKeys() {
-        return Arrays.<UniqueKey<TestItemStructureRecord>>asList(Keys.TEST_ITEM_STRUCTURE_PK, Keys.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Keys.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY, Keys.TEST_ITEM_STRUCTURE_PARENT_ID_KEY, Keys.TEST_ITEM_STRUCTURE_RETRY_OF_KEY);
+        return Arrays.<UniqueKey<TestItemStructureRecord>>asList(Keys.TEST_ITEM_STRUCTURE_PK, Keys.TEST_ITEM_STRUCTURE_ITEM_ID_KEY);
     }
 
     /**

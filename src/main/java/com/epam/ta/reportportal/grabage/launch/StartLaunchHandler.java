@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.database.dao.LaunchRepository;
 import com.epam.ta.reportportal.database.dao.LaunchTagRepository;
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
 import com.epam.ta.reportportal.database.entity.enums.ProjectRoleEnum;
+import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
 import com.epam.ta.reportportal.database.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.database.entity.project.ProjectUser;
@@ -91,6 +92,7 @@ class StartLaunchHandler implements IStartLaunchHandler {
 
 		int nextLaunchNumber = lastLaunch.map(Launch::getNumber).orElse(0) + 1;
 		launch.setNumber(nextLaunchNumber);
+		launch.setStatus(StatusEnum.IN_PROGRESS);
 
 		//launch.setApproximateDuration(calculateApproximateDuration(projectName, startLaunchRQ.getName(), 5));
 

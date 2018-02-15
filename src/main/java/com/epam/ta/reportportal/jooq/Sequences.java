@@ -65,7 +65,7 @@ public class Sequences {
     /**
      * The sequence <code>public.launch_tag_id_seq</code>
      */
-    public static final Sequence<Integer> LAUNCH_TAG_ID_SEQ = new SequenceImpl<Integer>("launch_tag_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
+    public static final Sequence<Long> LAUNCH_TAG_ID_SEQ = new SequenceImpl<Long>("launch_tag_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.log_id_seq</code>

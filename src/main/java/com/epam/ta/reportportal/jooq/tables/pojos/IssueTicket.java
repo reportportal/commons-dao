@@ -3,7 +3,6 @@
 */
 package com.epam.ta.reportportal.jooq.tables.pojos;
 
-
 import javax.annotation.Generated;
 import java.io.Serializable;
 

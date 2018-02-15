@@ -57,10 +57,7 @@ public class Indexes {
     public static final Index TEST_ITEM_RESULTS_ITEM_ID_KEY = Indexes0.TEST_ITEM_RESULTS_ITEM_ID_KEY;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
     public static final Index TEST_ITEM_STRUCTURE_ITEM_ID_KEY = Indexes0.TEST_ITEM_STRUCTURE_ITEM_ID_KEY;
-    public static final Index TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY = Indexes0.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY;
-    public static final Index TEST_ITEM_STRUCTURE_PARENT_ID_KEY = Indexes0.TEST_ITEM_STRUCTURE_PARENT_ID_KEY;
     public static final Index TEST_ITEM_STRUCTURE_PK = Indexes0.TEST_ITEM_STRUCTURE_PK;
-    public static final Index TEST_ITEM_STRUCTURE_RETRY_OF_KEY = Indexes0.TEST_ITEM_STRUCTURE_RETRY_OF_KEY;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
@@ -101,10 +98,7 @@ public class Indexes {
         public static Index TEST_ITEM_RESULTS_ITEM_ID_KEY = createIndex("test_item_results_item_id_key", TestItemResults.TEST_ITEM_RESULTS, new OrderField[] { TestItemResults.TEST_ITEM_RESULTS.ITEM_ID }, true);
         public static Index TEST_ITEM_RESULTS_PK = createIndex("test_item_results_pk", TestItemResults.TEST_ITEM_RESULTS, new OrderField[] { TestItemResults.TEST_ITEM_RESULTS.ID }, true);
         public static Index TEST_ITEM_STRUCTURE_ITEM_ID_KEY = createIndex("test_item_structure_item_id_key", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID }, true);
-        public static Index TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY = createIndex("test_item_structure_launch_id_key", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.LAUNCH_ID }, true);
-        public static Index TEST_ITEM_STRUCTURE_PARENT_ID_KEY = createIndex("test_item_structure_parent_id_key", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.PARENT_ID }, true);
         public static Index TEST_ITEM_STRUCTURE_PK = createIndex("test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.ID }, true);
-        public static Index TEST_ITEM_STRUCTURE_RETRY_OF_KEY = createIndex("test_item_structure_retry_of_key", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.RETRY_OF }, true);
         public static Index TICKET_PK = createIndex("ticket_pk", Ticket.TICKET, new OrderField[] { Ticket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = createIndex("ticket_ticket_id_key", Ticket.TICKET, new OrderField[] { Ticket.TICKET.TICKET_ID }, true);
         public static Index USERS_LOGIN_KEY = createIndex("users_login_key", Users.USERS, new OrderField[] { Users.USERS.LOGIN }, true);

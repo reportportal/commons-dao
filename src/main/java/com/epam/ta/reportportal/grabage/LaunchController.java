@@ -118,7 +118,7 @@ public class LaunchController implements ILaunchController {
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Finish launch for specified project")
-	public OperationCompletionRS finishLaunch(@PathVariable String projectName, @PathVariable String launchId,
+	public OperationCompletionRS finishLaunch(@PathVariable String projectName, @PathVariable Long launchId,
 			@RequestBody @Validated FinishExecutionRQ finishLaunchRQ, Principal principal, HttpServletRequest request) {
 		return finishLaunchMessageHandler.finishLaunch(launchId, finishLaunchRQ, normalizeId(projectName), principal.getName());
 	}

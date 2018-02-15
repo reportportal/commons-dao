@@ -39,7 +39,7 @@ public class Keys {
     public static final Identity<IssueTypeRecord, Integer> IDENTITY_ISSUE_TYPE = Identities0.IDENTITY_ISSUE_TYPE;
     public static final Identity<ItemTagRecord, Integer> IDENTITY_ITEM_TAG = Identities0.IDENTITY_ITEM_TAG;
     public static final Identity<LaunchRecord, Long> IDENTITY_LAUNCH = Identities0.IDENTITY_LAUNCH;
-    public static final Identity<LaunchTagRecord, Integer> IDENTITY_LAUNCH_TAG = Identities0.IDENTITY_LAUNCH_TAG;
+    public static final Identity<LaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = Identities0.IDENTITY_LAUNCH_TAG;
     public static final Identity<LogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
     public static final Identity<ProjectRecord, Integer> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<ProjectConfigurationRecord, Integer> IDENTITY_PROJECT_CONFIGURATION = Identities0.IDENTITY_PROJECT_CONFIGURATION;
@@ -86,9 +86,6 @@ public class Keys {
     public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_ITEM_ID_KEY = UniqueKeys0.TEST_ITEM_RESULTS_ITEM_ID_KEY;
     public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = UniqueKeys0.TEST_ITEM_STRUCTURE_PK;
     public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_ITEM_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_ITEM_ID_KEY;
-    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY;
-    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PARENT_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_PARENT_ID_KEY;
-    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_RETRY_OF_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_RETRY_OF_KEY;
     public static final UniqueKey<TicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
     public static final UniqueKey<TicketRecord> TICKET_TICKET_ID_KEY = UniqueKeys0.TICKET_TICKET_ID_KEY;
     public static final UniqueKey<UsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
@@ -143,7 +140,7 @@ public class Keys {
         public static Identity<IssueTypeRecord, Integer> IDENTITY_ISSUE_TYPE = createIdentity(IssueType.ISSUE_TYPE, IssueType.ISSUE_TYPE.ID);
         public static Identity<ItemTagRecord, Integer> IDENTITY_ITEM_TAG = createIdentity(ItemTag.ITEM_TAG, ItemTag.ITEM_TAG.ID);
         public static Identity<LaunchRecord, Long> IDENTITY_LAUNCH = createIdentity(Launch.LAUNCH, Launch.LAUNCH.ID);
-        public static Identity<LaunchTagRecord, Integer> IDENTITY_LAUNCH_TAG = createIdentity(LaunchTag.LAUNCH_TAG, LaunchTag.LAUNCH_TAG.ID);
+        public static Identity<LaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = createIdentity(LaunchTag.LAUNCH_TAG, LaunchTag.LAUNCH_TAG.ID);
         public static Identity<LogRecord, Long> IDENTITY_LOG = createIdentity(Log.LOG, Log.LOG.ID);
         public static Identity<ProjectRecord, Integer> IDENTITY_PROJECT = createIdentity(Project.PROJECT, Project.PROJECT.ID);
         public static Identity<ProjectConfigurationRecord, Integer> IDENTITY_PROJECT_CONFIGURATION = createIdentity(ProjectConfiguration.PROJECT_CONFIGURATION, ProjectConfiguration.PROJECT_CONFIGURATION.ID);
@@ -188,9 +185,6 @@ public class Keys {
         public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_ITEM_ID_KEY = createUniqueKey(TestItemResults.TEST_ITEM_RESULTS, "test_item_results_item_id_key", TestItemResults.TEST_ITEM_RESULTS.ITEM_ID);
         public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE.ID);
         public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_ITEM_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_item_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID);
-        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_LAUNCH_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_launch_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.LAUNCH_ID);
-        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PARENT_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_parent_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.PARENT_ID);
-        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_RETRY_OF_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_retry_of_key", TestItemStructure.TEST_ITEM_STRUCTURE.RETRY_OF);
         public static final UniqueKey<TicketRecord> TICKET_PK = createUniqueKey(Ticket.TICKET, "ticket_pk", Ticket.TICKET.ID);
         public static final UniqueKey<TicketRecord> TICKET_TICKET_ID_KEY = createUniqueKey(Ticket.TICKET, "ticket_ticket_id_key", Ticket.TICKET.TICKET_ID);
         public static final UniqueKey<UsersRecord> USERS_PK = createUniqueKey(Users.USERS, "users_pk", Users.USERS.ID);

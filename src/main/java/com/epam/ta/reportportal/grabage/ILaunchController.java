@@ -96,7 +96,7 @@ public interface ILaunchController {
 	 * @param principal
 	 * @return
 	 */
-	OperationCompletionRS finishLaunch(String projectName, String launchId, FinishExecutionRQ finsihLaunchRQ, Principal principal,
+	OperationCompletionRS finishLaunch(String projectName, Long launchId, FinishExecutionRQ finsihLaunchRQ, Principal principal,
 			HttpServletRequest request);
 
 	/**

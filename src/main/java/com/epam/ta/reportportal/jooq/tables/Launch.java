@@ -7,6 +7,7 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.Public;
 import com.epam.ta.reportportal.jooq.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.StatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.LaunchRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -31,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Launch extends TableImpl<LaunchRecord> {
 
-    private static final long serialVersionUID = -1685799472;
+    private static final long serialVersionUID = 625539271;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -90,6 +91,11 @@ public class Launch extends TableImpl<LaunchRecord> {
      * The column <code>public.launch.mode</code>.
      */
     public final TableField<LaunchRecord, LaunchModeEnum> MODE = createField("mode", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.LaunchModeEnum.class), this, "");
+
+    /**
+     * The column <code>public.launch.status</code>.
+     */
+    public final TableField<LaunchRecord, StatusEnum> STATUS = createField("status", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.StatusEnum.class), this, "");
 
     /**
      * Create a <code>public.launch</code> table reference
