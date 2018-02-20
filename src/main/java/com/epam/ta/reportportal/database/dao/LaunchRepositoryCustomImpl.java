@@ -12,18 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
-import static com.epam.ta.reportportal.jooq.tables.TestItemStructure.TEST_ITEM_STRUCTURE;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.*;
 
 /**
  * @author Pavel Bortnik
  */
 @Repository
-public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
+public class LaunchRepositoryCustomImpl  implements LaunchRepositoryCustom {
 
 	private DSLContext dsl;
 
@@ -38,23 +35,22 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Optional<com.epam.ta.reportportal.database.entity.launch.Launch> getLastLaunch(String launchName, String projectName) {
-		return Optional.ofNullable(dsl.select()
-				.from(LAUNCH)
-				.join(PROJECT)
-				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
-				.where(LAUNCH.NAME.eq(launchName))
-				.and(PROJECT.NAME.eq(projectName))
-				.orderBy(LAUNCH.NUMBER.desc())
-				.limit(1)
-				.fetchOneInto(com.epam.ta.reportportal.database.entity.launch.Launch.class));
+	public Boolean checkStatus(Long launchId) {
+		return dsl.fetchExists(dsl.selectOne()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_STRUCTURE)
+				.on(TEST_ITEM.ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
+				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId)
+						.and(TEST_ITEM_RESULTS.STATUS.eq(StatusEnum.FAILED).or(TEST_ITEM_RESULTS.STATUS.eq(StatusEnum.SKIPPED)))));
 	}
 
 	@Override
 	public List<LaunchFull> fullLaunchWithStatistics() {
 		Launch l = Launch.LAUNCH.as("l");
-		TestItem ti = TestItem.TEST_ITEM.as("ti");
-		TestItemResults tr = TestItemResults.TEST_ITEM_RESULTS.as("tr");
+		TestItem ti = TEST_ITEM.as("ti");
+		TestItemResults tr = TEST_ITEM_RESULTS.as("tr");
 		TestItemStructure tis = TEST_ITEM_STRUCTURE.as("tis");
 		return dsl.select(l.ID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.NUMBER, l.LAST_MODIFIED, l.MODE,
 				sum(when(tr.STATUS.eq(StatusEnum.PASSED), 1).otherwise(0)).as("passed"),

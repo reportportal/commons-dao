@@ -150,7 +150,7 @@ public class LaunchController implements ILaunchController {
 	@ApiOperation("Updates launch for specified project")
 	public OperationCompletionRS updateLaunch(@PathVariable String projectName, @PathVariable String launchId,
 			@RequestBody @Validated UpdateLaunchRQ updateLaunchRQ, Principal principal) {
-		return updateLaunchHandler.updateLaunch(launchId, normalizeId(projectName), principal.getName(), updateLaunchRQ);
+		return updateLaunchHandler.updateLaunch(Long.valueOf(launchId), normalizeId(projectName), principal.getName(), updateLaunchRQ);
 	}
 
 	@Override

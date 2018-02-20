@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.database.entity.launch;
 
+import com.epam.ta.reportportal.database.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.database.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import org.hibernate.annotations.Type;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -58,6 +60,18 @@ public class Launch {
 	@Column(name = "status", nullable = false)
 	@Type(type = "pqsql_enum")
 	private StatusEnum status;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "launch_id")
+	private Set<LaunchTag> tags;
+
+	public Set<LaunchTag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<LaunchTag> tags) {
+		this.tags = tags;
+	}
 
 	public Long getId() {
 		return id;

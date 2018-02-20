@@ -1,4 +1,4 @@
-package com.epam.ta.reportportal.database.entity.launch;
+package com.epam.ta.reportportal.database.entity.enums;
 
 /**
  * @author Pavel Bortnik

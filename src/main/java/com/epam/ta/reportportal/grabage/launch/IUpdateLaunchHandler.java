@@ -44,7 +44,7 @@ public interface IUpdateLaunchHandler {
 	 * @param rq          Request Data
 	 * @return OperationCompletionRS - Response Data
 	 */
-	OperationCompletionRS updateLaunch(String launchId, String projectName, String userName, UpdateLaunchRQ rq);
+	OperationCompletionRS updateLaunch(Long launchId, String projectName, String userName, UpdateLaunchRQ rq);
 
 	/**
 	 * Start launch analyzer on demand

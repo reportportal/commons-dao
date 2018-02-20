@@ -22,12 +22,10 @@
 package com.epam.ta.reportportal.grabage.launch;
 
 import com.epam.ta.reportportal.database.dao.LaunchRepository;
-import com.epam.ta.reportportal.database.dao.LaunchTagRepository;
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
 import com.epam.ta.reportportal.database.entity.enums.ProjectRoleEnum;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
-import com.epam.ta.reportportal.database.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.database.entity.project.ProjectUser;
 import com.epam.ta.reportportal.grabage.LaunchBuilder;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
@@ -36,11 +34,6 @@ import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Default implementation of {@link IStartLaunchHandler}
@@ -51,59 +44,39 @@ import static java.util.stream.Collectors.toList;
 class StartLaunchHandler implements IStartLaunchHandler {
 
 	private final LaunchRepository launchRepository;
-	private final LaunchTagRepository tagRepository;
 	private final ProjectRepository projectRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Autowired
-	public StartLaunchHandler(LaunchRepository launchRepository, LaunchTagRepository tagRepository, ProjectRepository projectRepository,
+	public StartLaunchHandler(LaunchRepository launchRepository, ProjectRepository projectRepository,
 			ApplicationEventPublisher eventPublisher) {
 		this.launchRepository = launchRepository;
-		this.tagRepository = tagRepository;
 		this.projectRepository = projectRepository;
 		this.eventPublisher = eventPublisher;
 	}
 
 	/*
 		 * (non-Javadoc)
-		 *
+		 *k
 		 * @see
 		 * com.epam.ta.reportportal.ws.IStartLaunchHandler#startLaunch(java.lang
 		 * .String, com.epam.ta.reportportal.ws.model.StartLaunchRQ)
 		 */
 	@Override
 	public StartLaunchRS startLaunch(String username, String projectName, StartLaunchRQ startLaunchRQ) {
-
+		//TODO replace with new uat
 		ProjectUser projectUser = projectRepository.selectProjectUser(projectName, username);
 		if (startLaunchRQ.getMode() == Mode.DEBUG) {
 			if (projectUser.getProjectRole() == ProjectRoleEnum.CUSTOMER) {
 				startLaunchRQ.setMode(Mode.DEFAULT);
 			}
 		}
-
-		// userName and projectName validations here is redundant, user name and
-		// projectName have already validated by spring security in controller
-		Launch launch = new LaunchBuilder().addStartRQ(startLaunchRQ)
-				.addProject(projectUser.getProject().getId())
-				.addUser(projectUser.getUser().getId())
-				.get();
-
-		Optional<Launch> lastLaunch = launchRepository.getLastLaunch(launch.getName(), projectName);
-
-		int nextLaunchNumber = lastLaunch.map(Launch::getNumber).orElse(0) + 1;
-		launch.setNumber(nextLaunchNumber);
+		Launch launch = new LaunchBuilder().addStartRQ(startLaunchRQ).addProject(1).addUser(1L).addTags(startLaunchRQ.getTags()).get();
 		launch.setStatus(StatusEnum.IN_PROGRESS);
 
 		//launch.setApproximateDuration(calculateApproximateDuration(projectName, startLaunchRQ.getName(), 5));
 
-		Launch save = launchRepository.save(launch);
-		List<LaunchTag> launchTags = startLaunchRQ.getTags().stream().map(it -> {
-			LaunchTag launchTag = new LaunchTag();
-			launchTag.setLaunchId(save.getId());
-			launchTag.setValue(it);
-			return launchTag;
-		}).collect(toList());
-		tagRepository.saveAll(launchTags);
+		launchRepository.save(launch);
 		//eventPublisher.publishEvent(new LaunchStartedEvent(launch));
 		return new StartLaunchRS(launch.getId().toString(), launch.getNumber().longValue());
 	}

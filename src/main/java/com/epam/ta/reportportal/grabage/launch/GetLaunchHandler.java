@@ -22,8 +22,8 @@
 package com.epam.ta.reportportal.grabage.launch;
 
 import com.epam.ta.reportportal.database.dao.LaunchRepository;
+import com.epam.ta.reportportal.database.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
-import com.epam.ta.reportportal.database.entity.launch.LaunchModeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.LaunchResource;
 import com.epam.ta.reportportal.ws.model.widget.ChartObject;

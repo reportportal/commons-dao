@@ -21,13 +21,16 @@
 
 package com.epam.ta.reportportal.grabage;
 
+import com.epam.ta.reportportal.database.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
-import com.epam.ta.reportportal.database.entity.launch.LaunchModeEnum;
+import com.epam.ta.reportportal.database.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.google.common.base.Strings;
 
 import java.sql.Timestamp;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class LaunchBuilder implements Supplier<Launch> {
 
@@ -63,6 +66,11 @@ public class LaunchBuilder implements Supplier<Launch> {
 
 	public LaunchBuilder addProject(Integer projectId) {
 		launch.setProjectId(projectId);
+		return this;
+	}
+
+	public LaunchBuilder addTags(Set<String> tags) {
+		launch.setTags(tags.stream().map(LaunchTag::new).collect(Collectors.toSet()));
 		return this;
 	}
 

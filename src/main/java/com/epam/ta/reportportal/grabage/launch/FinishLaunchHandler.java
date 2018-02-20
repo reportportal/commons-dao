@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.grabage.launch;
 
 import com.epam.ta.reportportal.commons.Preconditions;
-import com.epam.ta.reportportal.commons.Predicates;
 import com.epam.ta.reportportal.database.dao.LaunchRepository;
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
 import com.epam.ta.reportportal.database.dao.TestItemRepository;
@@ -30,9 +29,13 @@ import com.epam.ta.reportportal.database.dao.UserRepository;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.database.entity.item.TestItemCommon;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
+import com.epam.ta.reportportal.database.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.ws.model.BulkRQ;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.OperationCompletionRS;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,12 +43,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.trimStrings;
+import static com.epam.ta.reportportal.commons.EntityUtils.update;
 import static com.epam.ta.reportportal.commons.Predicates.isPresent;
+import static com.epam.ta.reportportal.commons.Predicates.not;
 import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
+import static com.epam.ta.reportportal.database.entity.enums.StatusEnum.*;
 import static com.epam.ta.reportportal.ws.model.ErrorType.*;
 import static java.util.stream.Collectors.toList;
 
@@ -79,53 +87,50 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 
 	@Override
 	public OperationCompletionRS finishLaunch(Long launchId, FinishExecutionRQ finishLaunchRQ, String projectName, String username) {
-		Optional<Launch> launch = launchRepository.findById(launchId);
-		expect(launch, isPresent()).verify(LAUNCH_NOT_FOUND, launchId.toString());
-		validate(launchId, launch.get(), finishLaunchRQ);
+		//TODO validate roles
+		Optional<Launch> optional = launchRepository.findById(launchId);
+		expect(optional, isPresent()).verify(LAUNCH_NOT_FOUND, launchId.toString());
+		Launch launch = optional.get();
+		validate(launch, finishLaunchRQ);
 
-		//		Launch launch = launchRepository.findOne(launchId);
-		//		validate(launchId, launch, finishLaunchRQ);
-		//		Project project = validateRoles(launch, username, projectName);
-		//
-		//		launch.setEndTime(finishLaunchRQ.getEndTime());
-		//		if (!Strings.isNullOrEmpty(finishLaunchRQ.getDescription())) {
-		//			launch.setDescription(finishLaunchRQ.getDescription());
-		//		}
-		//		if (!CollectionUtils.isEmpty(finishLaunchRQ.getTags())) {
-		//			launch.setTags(Sets.newHashSet(trimStrings(update(finishLaunchRQ.getTags()))));
-		//		}
-		//
-		//		Optional<Status> status = fromValue(finishLaunchRQ.getStatus());
-		//		status.ifPresent(providedStatus -> {
-		//			/* Validate provided status */
-		//			expect(providedStatus, not(Preconditions.statusIn(IN_PROGRESS, SKIPPED))).verify(INCORRECT_FINISH_STATUS,
-		//					formattedSupplier("Cannot finish launch '{}' with status '{}'", launchId, providedStatus)
-		//			);
-		//			/* Validate actual launch status */
-		//			if (PASSED.equals(providedStatus)) {
-		//				/* Validate actual launch status */
-		//				expect(launch.getStatus(), Preconditions.statusIn(IN_PROGRESS, PASSED)).verify(INCORRECT_FINISH_STATUS,
-		//						formattedSupplier("Cannot finish launch '{}' with current status '{}' as 'PASSED'", launchId, launch.getStatus())
-		//				);
-		//				/*
-		//				 * Calculate status from launch statistics and validate it
-		//				 */
-		//				Status fromStatistics = StatisticsHelper.getStatusFromStatistics(launch.getStatistics());
-		//				expect(fromStatistics, Preconditions.statusIn(IN_PROGRESS, PASSED)).verify(INCORRECT_FINISH_STATUS,
-		//						formattedSupplier("Cannot finish launch '{}' with calculated automatically status '{}' as 'PASSED'", launchId,
-		//								fromStatistics
-		//						)
-		//				);
-		//			}
-		//		});
-		//		launch.setStatus(status.orElse(StatisticsHelper.getStatusFromStatistics(launch.getStatistics())));
-		//		try {
-		//			launchRepository.save(launch);
-		//		} catch (Exception exp) {
-		//			throw new ReportPortalException("Error while Launch updating.", exp);
-		//		}
-		//		eventPublisher.publishEvent(new LaunchFinishedEvent(launch, project));
+		if (!Strings.isNullOrEmpty(finishLaunchRQ.getDescription())) {
+			launch.setDescription(finishLaunchRQ.getDescription());
+		}
+		if (!CollectionUtils.isEmpty(finishLaunchRQ.getTags())) {
+			Set<String> tags = Sets.newHashSet(trimStrings(update(finishLaunchRQ.getTags())));
+			launch.setTags(tags.stream().map(LaunchTag::new).collect(Collectors.toSet()));
+		}
+		Optional<StatusEnum> statusEnum = fromValue(finishLaunchRQ.getStatus());
+		StatusEnum fromStatistics = StatusEnum.PASSED;
+		if (launchRepository.checkStatus(launchId)) {
+			fromStatistics = StatusEnum.FAILED;
+		}
+		StatusEnum fromStatisticsStatus = fromStatistics;
+		statusEnum.ifPresent(providedStatus -> validateProvidedStatus(launch, providedStatus, fromStatisticsStatus));
+		launch.setStatus(statusEnum.orElse(fromStatistics));
+		launchRepository.save(launch);
 		return new OperationCompletionRS("Launch with ID = '" + launchId + "' successfully finished.");
+	}
+
+	private void validateProvidedStatus(Launch launch, StatusEnum providedStatus, StatusEnum calculatedStatus) {
+		/* Validate provided status */
+		expect(providedStatus, not(Preconditions.statusIn(IN_PROGRESS, SKIPPED))).verify(INCORRECT_FINISH_STATUS,
+				formattedSupplier("Cannot finish launch '{}' with status '{}'", launch.getId(), providedStatus)
+		);
+		if (PASSED.equals(providedStatus)) {
+				/* Validate actual launch status */
+			expect(launch.getStatus(), Preconditions.statusIn(IN_PROGRESS, PASSED)).verify(INCORRECT_FINISH_STATUS,
+					formattedSupplier("Cannot finish launch '{}' with current status '{}' as 'PASSED'", launch.getId(), launch.getStatus())
+			);
+				/*
+				 * Calculate status from launch statistics and validate it
+				 */
+			expect(calculatedStatus, Preconditions.statusIn(IN_PROGRESS, PASSED)).verify(INCORRECT_FINISH_STATUS,
+					formattedSupplier("Cannot finish launch '{}' with calculated automatically status '{}' as 'PASSED'", launch.getId(),
+							calculatedStatus
+					)
+			);
+		}
 	}
 
 	@Override
@@ -176,8 +181,8 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 				.collect(toList());
 	}
 
-	private void validate(Long launchId, Launch launch, FinishExecutionRQ finishExecutionRQ) {
-		expect(launch.getStatus(), Predicates.not(it -> it.equals(StatusEnum.IN_PROGRESS))).verify(FINISH_LAUNCH_NOT_ALLOWED,
+	private void validate(Launch launch, FinishExecutionRQ finishExecutionRQ) {
+		expect(launch.getStatus(), not(it -> it.equals(IN_PROGRESS))).verify(FINISH_LAUNCH_NOT_ALLOWED,
 				formattedSupplier("Launch '{}' already finished with status '{}'", launch.getId(), launch.getStatus())
 		);
 
@@ -185,13 +190,14 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 				finishExecutionRQ.getEndTime(), launch.getStartTime(), launch.getId()
 		);
 
-		List<TestItemCommon> items = testItemRepository.selectItemsInStatusByLaunch(launch.getId(), StatusEnum.IN_PROGRESS);
+		List<TestItemCommon> items = testItemRepository.selectItemsInStatusByLaunch(launch.getId(), IN_PROGRESS);
+
 		expect(items, Preconditions.NOT_EMPTY_COLLECTION).verify(FINISH_LAUNCH_NOT_ALLOWED, new Supplier<String>() {
 			@Override
 			public String get() {
 				String[] values = { launch.getId().toString(),
 						items.stream().map(it -> it.getTestItem().getId().toString()).collect(Collectors.joining(",")),
-						StatusEnum.IN_PROGRESS.name() };
+						IN_PROGRESS.name() };
 				return MessageFormatter.arrayFormat("Launch '{}' has items '[{}]' with '{}' status", values).getMessage();
 			}
 
@@ -202,21 +208,21 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 		});
 	}
 
-//	private Project validateRoles(Launch launch, String userName, String projectName) {
-//		ProjectUser projectUser = projectRepository.selectProjectUser(projectName, userName);
-//		expect(projectUser, notNull()).verify(PROJECT_NOT_FOUND, projectName);
-//
-//		if (projectUser.getUser().getRole() != ADMINISTRATOR && !Objects.equals(launch.getUserId(), projectUser.getUser().getId())) {
-//			expect(launch.getProjectId(), equalTo(projectUser.getProject().getId())).verify(ACCESS_DENIED);
-//				/*
-//				 * Only PROJECT_MANAGER roles could delete launches
-//				 */
-//
-//			UserConfig userConfig = ProjectUtils.findUserConfigByLogin(project, user.getId());
-//			expect(userConfig, hasProjectRoles(Collections.singletonList(PROJECT_MANAGER))).verify(ACCESS_DENIED);
-//		}
-//		return project;
-//	}
+	//	private Project validateRoles(Launch launch, String userName, String projectName) {
+	//		ProjectUser projectUser = projectRepository.selectProjectUser(projectName, userName);
+	//		expect(projectUser, notNull()).verify(PROJECT_NOT_FOUND, projectName);
+	//
+	//		if (projectUser.getUser().getRole() != ADMINISTRATOR && !Objects.equals(launch.getUserId(), projectUser.getUser().getId())) {
+	//			expect(launch.getProjectId(), equalTo(projectUser.getProject().getId())).verify(ACCESS_DENIED);
+	//				/*
+	//				 * Only PROJECT_MANAGER roles could delete launches
+	//				 */
+	//
+	//			UserConfig userConfig = ProjectUtils.findUserConfigByLogin(project, user.getId());
+	//			expect(userConfig, hasProjectRoles(Collections.singletonList(PROJECT_MANAGER))).verify(ACCESS_DENIED);
+	//		}
+	//		return project;
+	//	}
 
 	//	private void interruptItems(List<TestItem> testItems) {
 	//		testItems.forEach(this::interruptItem);
