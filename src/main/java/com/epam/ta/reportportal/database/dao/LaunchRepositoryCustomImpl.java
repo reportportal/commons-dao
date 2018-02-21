@@ -20,7 +20,7 @@ import static org.jooq.impl.DSL.*;
  * @author Pavel Bortnik
  */
 @Repository
-public class LaunchRepositoryCustomImpl  implements LaunchRepositoryCustom {
+public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	private DSLContext dsl;
 

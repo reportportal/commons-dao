@@ -21,6 +21,9 @@ public class LaunchTag {
 	@Column(name = "launch_id", precision = 64)
 	private Long launchId;
 
+	public LaunchTag() {
+	}
+
 	public LaunchTag(String value) {
 		this.value = value;
 	}

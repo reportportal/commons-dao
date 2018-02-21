@@ -45,7 +45,6 @@ import com.epam.ta.reportportal.ws.model.launch.LaunchResource;
 import com.epam.ta.reportportal.ws.model.launch.MergeLaunchesRQ;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.epam.ta.reportportal.ws.model.launch.UpdateLaunchRQ;
-import com.epam.ta.reportportal.ws.model.widget.ChartObject;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +58,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.normalizeId;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -80,28 +78,26 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  */
 @Controller
 @RequestMapping("/{projectName}/launch")
-public class LaunchController implements ILaunchController {
+public class LaunchController {
 
 	@Autowired
-	private IStartLaunchHandler createLaunchMessageHandler;
+	private StartLaunchHandler createLaunchMessageHandler;
 
 	@Autowired
-	private IFinishLaunchHandler finishLaunchMessageHandler;
+	private FinishLaunchHandler finishLaunchMessageHandler;
 
 	@Autowired
-	private IDeleteLaunchHandler deleteLaunchMessageHandler;
+	private DeleteLaunchHandler deleteLaunchMessageHandler;
+
+	//	@Autowired
+	//	private GetLaunchHandler getLaunchMessageHandler;
 
 	@Autowired
-	private IGetLaunchHandler getLaunchMessageHandler;
+	private UpdateLaunchHandler updateLaunchHandler;
 
 	@Autowired
-	private IUpdateLaunchHandler updateLaunchHandler;
+	private MergeLaunchHandler mergeLaunchesHandler;
 
-	@Autowired
-	private IMergeLaunchHandler mergeLaunchesHandler;
-
-
-	@Override
 	@PostMapping
 	@ResponseBody
 	@ResponseStatus(CREATED)
@@ -113,151 +109,134 @@ public class LaunchController implements ILaunchController {
 		return createLaunchMessageHandler.startLaunch("default", normalizeId(projectName), startLaunchRQ);
 	}
 
-	@Override
 	@RequestMapping(value = "/{launchId}/finish", method = PUT)
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Finish launch for specified project")
 	public OperationCompletionRS finishLaunch(@PathVariable String projectName, @PathVariable Long launchId,
 			@RequestBody @Validated FinishExecutionRQ finishLaunchRQ, Principal principal, HttpServletRequest request) {
-		return finishLaunchMessageHandler.finishLaunch(launchId, finishLaunchRQ, normalizeId(projectName), principal.getName());
+		return finishLaunchMessageHandler.finishLaunch(launchId, finishLaunchRQ, normalizeId(projectName), "default");
 	}
 
-	@Override
 	@PutMapping("/{launchId}/stop")
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Force finish launch for specified project")
 	public OperationCompletionRS forceFinishLaunch(@PathVariable String projectName, @PathVariable String launchId,
 			@RequestBody @Validated FinishExecutionRQ finishExecutionRQ, Principal principal) {
-		return finishLaunchMessageHandler.stopLaunch(launchId, finishExecutionRQ, normalizeId(projectName), principal.getName());
+		return finishLaunchMessageHandler.stopLaunch(launchId, finishExecutionRQ, normalizeId(projectName), "default");
 	}
 
-	@Override
 	@PutMapping("/stop")
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Force finish launch")
 	public List<OperationCompletionRS> bulkForceFinish(@PathVariable String projectName,
 			@RequestBody @Validated BulkRQ<FinishExecutionRQ> rq, Principal principal) {
-		return finishLaunchMessageHandler.stopLaunch(rq, normalizeId(projectName), principal.getName());
+		return finishLaunchMessageHandler.stopLaunch(rq, normalizeId(projectName), "default");
 	}
 
-	@Override
 	@PutMapping("/{launchId}/update")
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Updates launch for specified project")
 	public OperationCompletionRS updateLaunch(@PathVariable String projectName, @PathVariable String launchId,
 			@RequestBody @Validated UpdateLaunchRQ updateLaunchRQ, Principal principal) {
-		return updateLaunchHandler.updateLaunch(Long.valueOf(launchId), normalizeId(projectName), principal.getName(), updateLaunchRQ);
+		return updateLaunchHandler.updateLaunch(Long.valueOf(launchId), normalizeId(projectName), "default", updateLaunchRQ);
 	}
 
-	@Override
 	@ResponseBody
 	@PutMapping("/update")
 	@ResponseStatus(OK)
 	@ApiOperation("Updates launches for specified project")
 	public List<OperationCompletionRS> updateLaunches(@PathVariable String projectName, @RequestBody @Validated BulkRQ<UpdateLaunchRQ> rq,
 			Principal principal) {
-		return updateLaunchHandler.updateLaunch(rq, normalizeId(projectName), principal.getName());
+		return updateLaunchHandler.updateLaunch(rq, normalizeId(projectName), "default");
 	}
 
-	@Override
 	@DeleteMapping("/{launchId}")
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Delete specified launch by ID")
-	public OperationCompletionRS deleteLaunch(@PathVariable String projectName, @PathVariable String launchId, Principal principal) {
-		return deleteLaunchMessageHandler.deleteLaunch(launchId, normalizeId(projectName), principal.getName());
+	public OperationCompletionRS deleteLaunch(@PathVariable String projectName, @PathVariable Long launchId, Principal principal) {
+		return deleteLaunchMessageHandler.deleteLaunch(launchId, normalizeId(projectName), "default");
 	}
 
-	@Override
-	@GetMapping("/{launchId}")
-	@ResponseBody
-	@ResponseStatus(OK)
-	@ApiOperation("Get specified launch")
-	public LaunchResource getLaunch(@PathVariable String projectName, @PathVariable Long launchId, Principal principal) {
-		return getLaunchMessageHandler.getLaunch(launchId, "default", normalizeId(projectName));
-	}
+	//	@GetMapping("/{launchId}")
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@ApiOperation("Get specified launch")
+	//	public LaunchResource getLaunch(@PathVariable String projectName, @PathVariable Long launchId, Principal principal) {
+	//		return getLaunchMessageHandler.getLaunch(launchId, "default", normalizeId(projectName));
+	//	}
 
-//	@Override
-//	@GetMapping
-//	@ResponseBody
-//	@ResponseStatus(OK)
-//	@ApiOperation("Get list of project launches by filter")
-//	public Iterable<LaunchResource> getProjectLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
-//			@SortFor(Launch.class) Pageable pageable, Principal principal) {
-//		return getLaunchMessageHandler.getProjectLaunches(normalizeId(projectName), filter, pageable, principal.getName());
-//	}
+	//
+	//	@GetMapping
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@ApiOperation("Get list of project launches by filter")
+	//	public Iterable<LaunchResource> getProjectLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
+	//			@SortFor(Launch.class) Pageable pageable, Principal principal) {
+	//		return getLaunchMessageHandler.getProjectLaunches(normalizeId(projectName), filter, pageable, "default"());
+	//	}
 
-//	@Override
-//	@RequestMapping(value = "/latest", method = GET)
-//	@ResponseBody
-//	@ResponseStatus(OK)
-//	@ApiOperation("Get list of latest project launches by filter")
-//	public Page<LaunchResource> getLatestLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
-//			@SortFor(Launch.class) Pageable pageable) {
-//		return getLaunchMessageHandler.getLatestLaunches(normalizeId(projectName), filter, pageable);
-//	}
+	//
+	//	@RequestMapping(value = "/latest", method = GET)
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@ApiOperation("Get list of latest project launches by filter")
+	//	public Page<LaunchResource> getLatestLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
+	//			@SortFor(Launch.class) Pageable pageable) {
+	//		return getLaunchMessageHandler.getLatestLaunches(normalizeId(projectName), filter, pageable);
+	//	}
 
-//	@Override
-//	@RequestMapping(value = "/mode", method = GET)
-//	@ResponseBody
-//	@ResponseStatus(OK)
-//	@PreAuthorize(NOT_CUSTOMER)
-//	@ApiOperation("Get launches of specified project from DEBUG mode")
-//	public Iterable<LaunchResource> getDebugLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
-//			@SortFor(Launch.class) Pageable pageable, Principal principal) {
-//		return getLaunchMessageHandler.getDebugLaunches(normalizeId(projectName), principal.getName(), filter, pageable);
-//	}
+	//
+	//	@RequestMapping(value = "/mode", method = GET)
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@PreAuthorize(NOT_CUSTOMER)
+	//	@ApiOperation("Get launches of specified project from DEBUG mode")
+	//	public Iterable<LaunchResource> getDebugLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
+	//			@SortFor(Launch.class) Pageable pageable, Principal principal) {
+	//		return getLaunchMessageHandler.getDebugLaunches(normalizeId(projectName), "default"(), filter, pageable);
+	//	}
 
-	@Override
 	@RequestMapping(value = "/tags", method = GET)
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Get all unique tags of project launches")
-	public List<String> getAllTags(@PathVariable String projectName,
-			@RequestParam() String value,
-			Principal principal) {
+	public List<String> getAllTags(@PathVariable String projectName, @RequestParam() String value, Principal principal) {
 		//return getLaunchMessageHandler.getTags(normalizeId(projectName), value);
 		return null;
 	}
 
-	@Override
-	@RequestMapping(value = "/owners", method = GET)
-	@ResponseBody
-	@ResponseStatus(OK)
-	@ApiOperation("Get all unique owners of project launches")
-	public List<String> getAllOwners(@PathVariable String projectName,
-			@RequestParam() String value,
-			@RequestParam(value = "mode", required = false, defaultValue = "DEFAULT") String mode, Principal principal) {
-		return getLaunchMessageHandler.getOwners(normalizeId(projectName), value, "userRef", mode);
-	}
+	//	@RequestMapping(value = "/owners", method = GET)
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@ApiOperation("Get all unique owners of project launches")
+	//	public List<String> getAllOwners(@PathVariable String projectName, @RequestParam() String value,
+	//			@RequestParam(value = "mode", required = false, defaultValue = "DEFAULT") String mode, Principal principal) {
+	//		return getLaunchMessageHandler.getOwners(normalizeId(projectName), value, "userRef", mode);
+	//	}
+	//
+	//	@RequestMapping(value = "/names", method = GET)
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@ApiOperation("Get launch names of project")
+	//	public List<String> getAllLaunchNames(@PathVariable String projectName, @RequestParam() String value, Principal principal) {
+	//		return getLaunchMessageHandler.getLaunchNames(normalizeId(projectName), value);
+	//
+	//	}
+	//
+	//	@RequestMapping(value = "/compare", method = GET)
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	@ApiOperation("Compare launches")
+	//	public Map<String, List<ChartObject>> compareLaunches(@PathVariable String projectName, @RequestParam(value = "ids") String[] ids,
+	//			Principal principal) {
+	//		return getLaunchMessageHandler.getLaunchesComparisonInfo(normalizeId(projectName), ids);
+	//	}
 
-	@Override
-	@RequestMapping(value = "/names", method = GET)
-	@ResponseBody
-	@ResponseStatus(OK)
-	@ApiOperation("Get launch names of project")
-	public List<String> getAllLaunchNames(@PathVariable String projectName,
-			@RequestParam() String value,
-			Principal principal) {
-		return getLaunchMessageHandler.getLaunchNames(normalizeId(projectName), value);
-
-	}
-
-	@Override
-	@RequestMapping(value = "/compare", method = GET)
-	@ResponseBody
-	@ResponseStatus(OK)
-	@ApiOperation("Compare launches")
-	public Map<String, List<ChartObject>> compareLaunches(@PathVariable String projectName, @RequestParam(value = "ids") String[] ids,
-			Principal principal) {
-		return getLaunchMessageHandler.getLaunchesComparisonInfo(normalizeId(projectName), ids);
-	}
-
-	@Override
 	@PostMapping("/merge")
 	@ResponseBody
 	@ResponseStatus(OK)
@@ -266,28 +245,25 @@ public class LaunchController implements ILaunchController {
 			@ApiParam(value = "Name of project contains merging launches under", required = true) @PathVariable String projectName,
 			@ApiParam(value = "Merge launches request body", required = true) @RequestBody @Validated MergeLaunchesRQ mergeLaunchesRQ,
 			Principal principal) {
-		return mergeLaunchesHandler.mergeLaunches(normalizeId(projectName), principal.getName(), mergeLaunchesRQ);
+		return mergeLaunchesHandler.mergeLaunches(normalizeId(projectName), "default", mergeLaunchesRQ);
 	}
 
-	@Override
 	@RequestMapping(value = "/{launchId}/analyze", method = POST)
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Start launch auto-analyzer on demand")
-	public OperationCompletionRS startLaunchAnalyzer(@PathVariable String projectName, @PathVariable String launchId, Principal principal) {
+	public OperationCompletionRS startLaunchAnalyzer(@PathVariable String projectName, @PathVariable Long launchId, Principal principal) {
 		return updateLaunchHandler.startLaunchAnalyzer(normalizeId(projectName), launchId);
 	}
 
-	@Override
-	@RequestMapping(value = "/status", method = GET)
-	@ResponseBody
-	@ResponseStatus(OK)
-	public Map<String, String> getStatuses(@PathVariable String projectName, @RequestParam(value = "ids") String[] ids,
-			Principal principal) {
-		return getLaunchMessageHandler.getStatuses(normalizeId(projectName), ids);
-	}
+	//	@RequestMapping(value = "/status", method = GET)
+	//	@ResponseBody
+	//	@ResponseStatus(OK)
+	//	public Map<String, String> getStatuses(@PathVariable String projectName, @RequestParam(value = "ids") String[] ids,
+	//			Principal principal) {
+	//		return getLaunchMessageHandler.getStatuses(normalizeId(projectName), ids);
+	//	}
 
-	@Override
 	@RequestMapping(value = "/{launchId}/report", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(OK)
@@ -296,37 +272,35 @@ public class LaunchController implements ILaunchController {
 			@ApiParam(allowableValues = "pdf, xls, html") @RequestParam(value = "view", required = false, defaultValue = "pdf") String view,
 			Principal principal, HttpServletResponse response) throws IOException {
 
-//		JasperPrint jasperPrint = getJasperHandler.getLaunchDetails(launchId, principal.getName());
-//
-//		ReportFormat format = getJasperHandler.getReportFormat(view);
-//		response.setContentType(format.getContentType());
-//		response.setHeader(
-//				HttpHeaders.CONTENT_DISPOSITION,
-//				String.format("attachment; filename=RP_%s_Report.%s", format.name(), format.getValue())
-//		);
-//
-//		getJasperHandler.writeReport(format, response.getOutputStream(), jasperPrint);
+		//		JasperPrint jasperPrint = getJasperHandler.getLaunchDetails(launchId, "default"());
+		//
+		//		ReportFormat format = getJasperHandler.getReportFormat(view);
+		//		response.setContentType(format.getContentType());
+		//		response.setHeader(
+		//				HttpHeaders.CONTENT_DISPOSITION,
+		//				String.format("attachment; filename=RP_%s_Report.%s", format.name(), format.getValue())
+		//		);
+		//
+		//		getJasperHandler.writeReport(format, response.getOutputStream(), jasperPrint);
 
 	}
 
-	@Override
 	@DeleteMapping
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation("Delete specified launches by ids")
-	public OperationCompletionRS deleteLaunches(@PathVariable String projectName, @RequestParam(value = "ids") String[] ids,
+	public OperationCompletionRS deleteLaunches(@PathVariable String projectName, @RequestParam(value = "ids") Long[] ids,
 			Principal principal) {
-		return deleteLaunchMessageHandler.deleteLaunches(ids, projectName, principal.getName());
+		return deleteLaunchMessageHandler.deleteLaunches(ids, projectName, "default");
 	}
 
-	@Override
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
 	@ResponseBody
 	@ResponseStatus(OK)
 	@ApiOperation(value = "Import junit xml report", notes = "Only following formats are supported: zip.")
 	public OperationCompletionRS importLaunch(@PathVariable String projectName, @RequestParam("file") MultipartFile file,
 			Principal principal) {
-//		return importLaunchHandler.importLaunch(normalizeId(projectName), principal.getName(), "XUNIT", file);
+		//		return importLaunchHandler.importLaunch(normalizeId(projectName), "default"(), "XUNIT", file);
 		return null;
 	}
 }

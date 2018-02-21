@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.database.entity.item.TestItemCommon;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
 import com.epam.ta.reportportal.database.entity.launch.LaunchTag;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.BulkRQ;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.OperationCompletionRS;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.trimStrings;
 import static com.epam.ta.reportportal.commons.EntityUtils.update;
-import static com.epam.ta.reportportal.commons.Predicates.isPresent;
+import static com.epam.ta.reportportal.commons.Predicates.equalTo;
 import static com.epam.ta.reportportal.commons.Predicates.not;
 import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
@@ -63,7 +64,7 @@ import static java.util.stream.Collectors.toList;
  * @author Andrei_Ramanchuk
  */
 @Service
-public class FinishLaunchHandler implements IFinishLaunchHandler {
+public class FinishLaunchHandler {
 	private static final String LAUNCH_STOP_DESCRIPTION = " stopped";
 	private static final String LAUNCH_STOP_TAG = "stopped";
 
@@ -85,14 +86,12 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 
-	@Override
 	public OperationCompletionRS finishLaunch(Long launchId, FinishExecutionRQ finishLaunchRQ, String projectName, String username) {
 		//TODO validate roles
-		Optional<Launch> optional = launchRepository.findById(launchId);
-		expect(optional, isPresent()).verify(LAUNCH_NOT_FOUND, launchId.toString());
-		Launch launch = optional.get();
-		validate(launch, finishLaunchRQ);
 
+		Launch launch = launchRepository.findById(launchId)
+				.orElseThrow(() -> new ReportPortalException(LAUNCH_NOT_FOUND, launchId.toString()));
+		validate(launch, finishLaunchRQ);
 		if (!Strings.isNullOrEmpty(finishLaunchRQ.getDescription())) {
 			launch.setDescription(finishLaunchRQ.getDescription());
 		}
@@ -133,7 +132,6 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 		}
 	}
 
-	@Override
 	public OperationCompletionRS stopLaunch(String launchId, FinishExecutionRQ finishLaunchRQ, String projectName, String userName) {
 		//		Launch launch = launchRepository.findOne(launchId);
 		//		expect(launch, notNull()).verify(LAUNCH_NOT_FOUND, launchId);
@@ -172,7 +170,6 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 		return new OperationCompletionRS("Launch with ID = '" + launchId + "' successfully stopped.");
 	}
 
-	@Override
 	public List<OperationCompletionRS> stopLaunch(BulkRQ<FinishExecutionRQ> bulkRQ, String projectName, String userName) {
 		return bulkRQ.getEntities()
 				.entrySet()
@@ -182,7 +179,7 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 	}
 
 	private void validate(Launch launch, FinishExecutionRQ finishExecutionRQ) {
-		expect(launch.getStatus(), not(it -> it.equals(IN_PROGRESS))).verify(FINISH_LAUNCH_NOT_ALLOWED,
+		expect(launch.getStatus(), equalTo(IN_PROGRESS)).verify(FINISH_LAUNCH_NOT_ALLOWED,
 				formattedSupplier("Launch '{}' already finished with status '{}'", launch.getId(), launch.getStatus())
 		);
 
@@ -192,8 +189,7 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 
 		List<TestItemCommon> items = testItemRepository.selectItemsInStatusByLaunch(launch.getId(), IN_PROGRESS);
 
-		expect(items, Preconditions.NOT_EMPTY_COLLECTION).verify(FINISH_LAUNCH_NOT_ALLOWED, new Supplier<String>() {
-			@Override
+		expect(items.isEmpty(), equalTo(true)).verify(FINISH_LAUNCH_NOT_ALLOWED, new Supplier<String>() {
 			public String get() {
 				String[] values = { launch.getId().toString(),
 						items.stream().map(it -> it.getTestItem().getId().toString()).collect(Collectors.joining(",")),
@@ -201,7 +197,6 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 				return MessageFormatter.arrayFormat("Launch '{}' has items '[{}]' with '{}' status", values).getMessage();
 			}
 
-			@Override
 			public String toString() {
 				return get();
 			}

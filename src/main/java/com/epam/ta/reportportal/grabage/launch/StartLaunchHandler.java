@@ -23,12 +23,9 @@ package com.epam.ta.reportportal.grabage.launch;
 
 import com.epam.ta.reportportal.database.dao.LaunchRepository;
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
-import com.epam.ta.reportportal.database.entity.enums.ProjectRoleEnum;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.database.entity.launch.Launch;
-import com.epam.ta.reportportal.database.entity.project.ProjectUser;
 import com.epam.ta.reportportal.grabage.LaunchBuilder;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +38,7 @@ import org.springframework.stereotype.Service;
  * @author Andrei Varabyeu
  */
 @Service
-class StartLaunchHandler implements IStartLaunchHandler {
+public class StartLaunchHandler{
 
 	private final LaunchRepository launchRepository;
 	private final ProjectRepository projectRepository;
@@ -62,21 +59,21 @@ class StartLaunchHandler implements IStartLaunchHandler {
 		 * com.epam.ta.reportportal.ws.IStartLaunchHandler#startLaunch(java.lang
 		 * .String, com.epam.ta.reportportal.ws.model.StartLaunchRQ)
 		 */
-	@Override
 	public StartLaunchRS startLaunch(String username, String projectName, StartLaunchRQ startLaunchRQ) {
 		//TODO replace with new uat
-		ProjectUser projectUser = projectRepository.selectProjectUser(projectName, username);
-		if (startLaunchRQ.getMode() == Mode.DEBUG) {
-			if (projectUser.getProjectRole() == ProjectRoleEnum.CUSTOMER) {
-				startLaunchRQ.setMode(Mode.DEFAULT);
-			}
-		}
+//		ProjectUser projectUser = projectRepository.selectProjectUser(projectName, username);
+//		if (startLaunchRQ.getMode() == Mode.DEBUG) {
+//			if (projectUser.getProjectRole() == ProjectRoleEnum.CUSTOMER) {
+//				startLaunchRQ.setMode(Mode.DEFAULT);
+//			}
+//		}
 		Launch launch = new LaunchBuilder().addStartRQ(startLaunchRQ).addProject(1).addUser(1L).addTags(startLaunchRQ.getTags()).get();
 		launch.setStatus(StatusEnum.IN_PROGRESS);
 
 		//launch.setApproximateDuration(calculateApproximateDuration(projectName, startLaunchRQ.getName(), 5));
 
 		launchRepository.save(launch);
+		launchRepository.refresh(launch);
 		//eventPublisher.publishEvent(new LaunchStartedEvent(launch));
 		return new StartLaunchRS(launch.getId().toString(), launch.getNumber().longValue());
 	}

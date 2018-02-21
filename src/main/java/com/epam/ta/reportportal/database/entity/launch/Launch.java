@@ -54,14 +54,16 @@ public class Launch {
 	private Timestamp lastModified;
 
 	@Column(name = "mode", nullable = false)
+	@Enumerated(EnumType.STRING)
 	@Type(type = "pqsql_enum")
 	private LaunchModeEnum mode;
 
 	@Column(name = "status", nullable = false)
+	@Enumerated(EnumType.STRING)
 	@Type(type = "pqsql_enum")
 	private StatusEnum status;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "launch_id")
 	private Set<LaunchTag> tags;
 
