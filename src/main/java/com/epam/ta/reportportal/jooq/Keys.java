@@ -74,6 +74,8 @@ public class Keys {
     public static final UniqueKey<LaunchTagRecord> LAUNCH_TAG_PK = UniqueKeys0.LAUNCH_TAG_PK;
     public static final UniqueKey<LogRecord> LOG_PK = UniqueKeys0.LOG_PK;
     public static final UniqueKey<OauthAccessTokenRecord> ACCESS_TOKENS_PK = UniqueKeys0.ACCESS_TOKENS_PK;
+    public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_PKEY = UniqueKeys0.OAUTH_REGISTRATION_PKEY;
+    public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_CLIENT_ID_KEY = UniqueKeys0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
     public static final UniqueKey<ProjectRecord> PROJECT_PK = UniqueKeys0.PROJECT_PK;
     public static final UniqueKey<ProjectRecord> PROJECT_PROJECT_CONFIGURATION_ID_KEY = UniqueKeys0.PROJECT_PROJECT_CONFIGURATION_ID_KEY;
     public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_PK = UniqueKeys0.PROJECT_CONFIGURATION_PK;
@@ -173,6 +175,8 @@ public class Keys {
         public static final UniqueKey<LaunchTagRecord> LAUNCH_TAG_PK = createUniqueKey(LaunchTag.LAUNCH_TAG, "launch_tag_pk", LaunchTag.LAUNCH_TAG.ID);
         public static final UniqueKey<LogRecord> LOG_PK = createUniqueKey(Log.LOG, "log_pk", Log.LOG.ID);
         public static final UniqueKey<OauthAccessTokenRecord> ACCESS_TOKENS_PK = createUniqueKey(OauthAccessToken.OAUTH_ACCESS_TOKEN, "access_tokens_pk", OauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, OauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE);
+        public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_PKEY = createUniqueKey(OauthRegistration.OAUTH_REGISTRATION, "oauth_registration_pkey", OauthRegistration.OAUTH_REGISTRATION.ID);
+        public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_CLIENT_ID_KEY = createUniqueKey(OauthRegistration.OAUTH_REGISTRATION, "oauth_registration_client_id_key", OauthRegistration.OAUTH_REGISTRATION.CLIENT_ID);
         public static final UniqueKey<ProjectRecord> PROJECT_PK = createUniqueKey(Project.PROJECT, "project_pk", Project.PROJECT.ID);
         public static final UniqueKey<ProjectRecord> PROJECT_PROJECT_CONFIGURATION_ID_KEY = createUniqueKey(Project.PROJECT, "project_project_configuration_id_key", Project.PROJECT.PROJECT_CONFIGURATION_ID);
         public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_PK = createUniqueKey(ProjectConfiguration.PROJECT_CONFIGURATION, "project_configuration_pk", ProjectConfiguration.PROJECT_CONFIGURATION.ID);

@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 332850868;
+    private static final long serialVersionUID = -2005929794;
 
     /**
      * The reference instance of <code>public</code>
@@ -106,6 +106,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.oauth_access_token</code>.
      */
     public final OauthAccessToken OAUTH_ACCESS_TOKEN = com.epam.ta.reportportal.jooq.tables.OauthAccessToken.OAUTH_ACCESS_TOKEN;
+
+    /**
+     * The table <code>public.oauth_registration</code>.
+     */
+    public final OauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.OauthRegistration.OAUTH_REGISTRATION;
 
     /**
      * The table <code>public.project</code>.
@@ -232,6 +237,7 @@ public class Public extends SchemaImpl {
             LaunchTag.LAUNCH_TAG,
             Log.LOG,
             OauthAccessToken.OAUTH_ACCESS_TOKEN,
+            OauthRegistration.OAUTH_REGISTRATION,
             Project.PROJECT,
             ProjectConfiguration.PROJECT_CONFIGURATION,
             ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION,

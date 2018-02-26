@@ -92,6 +92,11 @@ public class Tables {
     public static final OauthAccessToken OAUTH_ACCESS_TOKEN = com.epam.ta.reportportal.jooq.tables.OauthAccessToken.OAUTH_ACCESS_TOKEN;
 
     /**
+     * The table <code>public.oauth_registration</code>.
+     */
+    public static final OauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.OauthRegistration.OAUTH_REGISTRATION;
+
+    /**
      * The table <code>public.project</code>.
      */
     public static final Project PROJECT = com.epam.ta.reportportal.jooq.tables.Project.PROJECT;
