@@ -73,6 +73,11 @@ public class Sequences {
     public static final Sequence<Long> LOG_ID_SEQ = new SequenceImpl<Long>("log_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
+     * The sequence <code>public.oauth_registration_scope_id_seq</code>
+     */
+    public static final Sequence<Integer> OAUTH_REGISTRATION_SCOPE_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_scope_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
+
+    /**
      * The sequence <code>public.project_configuration_id_seq</code>
      */
     public static final Sequence<Integer> PROJECT_CONFIGURATION_ID_SEQ = new SequenceImpl<Integer>("project_configuration_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));

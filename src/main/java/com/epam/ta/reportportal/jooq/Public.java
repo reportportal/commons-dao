@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -2005929794;
+    private static final long serialVersionUID = 1085767748;
 
     /**
      * The reference instance of <code>public</code>
@@ -111,6 +111,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.oauth_registration</code>.
      */
     public final OauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.OauthRegistration.OAUTH_REGISTRATION;
+
+    /**
+     * The table <code>public.oauth_registration_scope</code>.
+     */
+    public final OauthRegistrationScope OAUTH_REGISTRATION_SCOPE = com.epam.ta.reportportal.jooq.tables.OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
 
     /**
      * The table <code>public.project</code>.
@@ -202,6 +207,7 @@ public class Public extends SchemaImpl {
             Sequences.LAUNCH_ID_SEQ,
             Sequences.LAUNCH_TAG_ID_SEQ,
             Sequences.LOG_ID_SEQ,
+            Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
             Sequences.PROJECT_CONFIGURATION_ID_SEQ,
             Sequences.PROJECT_EMAIL_CONFIGURATION_ID_SEQ,
             Sequences.PROJECT_ID_SEQ,
@@ -238,6 +244,7 @@ public class Public extends SchemaImpl {
             Log.LOG,
             OauthAccessToken.OAUTH_ACCESS_TOKEN,
             OauthRegistration.OAUTH_REGISTRATION,
+            OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             Project.PROJECT,
             ProjectConfiguration.PROJECT_CONFIGURATION,
             ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION,

@@ -48,6 +48,7 @@ public class Indexes {
     public static final Index ACCESS_TOKENS_PK = Indexes0.ACCESS_TOKENS_PK;
     public static final Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Indexes0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
     public static final Index OAUTH_REGISTRATION_PKEY = Indexes0.OAUTH_REGISTRATION_PKEY;
+    public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
     public static final Index PROJECT_PROJECT_CONFIGURATION_ID_KEY = Indexes0.PROJECT_PROJECT_CONFIGURATION_ID_KEY;
     public static final Index PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_KEY = Indexes0.PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_KEY;
@@ -91,6 +92,7 @@ public class Indexes {
         public static Index ACCESS_TOKENS_PK = createIndex("access_tokens_pk", OauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { OauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, OauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE }, true);
         public static Index OAUTH_REGISTRATION_CLIENT_ID_KEY = createIndex("oauth_registration_client_id_key", OauthRegistration.OAUTH_REGISTRATION, new OrderField[] { OauthRegistration.OAUTH_REGISTRATION.CLIENT_ID }, true);
         public static Index OAUTH_REGISTRATION_PKEY = createIndex("oauth_registration_pkey", OauthRegistration.OAUTH_REGISTRATION, new OrderField[] { OauthRegistration.OAUTH_REGISTRATION.ID }, true);
+        public static Index OAUTH_REGISTRATION_SCOPE_PK = createIndex("oauth_registration_scope_pk", OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
         public static Index PROJECT_PK = createIndex("project_pk", Project.PROJECT, new OrderField[] { Project.PROJECT.ID }, true);
         public static Index PROJECT_PROJECT_CONFIGURATION_ID_KEY = createIndex("project_project_configuration_id_key", Project.PROJECT, new OrderField[] { Project.PROJECT.PROJECT_CONFIGURATION_ID }, true);
         public static Index PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_KEY = createIndex("project_configuration_email_configuration_id_key", ProjectConfiguration.PROJECT_CONFIGURATION, new OrderField[] { ProjectConfiguration.PROJECT_CONFIGURATION.EMAIL_CONFIGURATION_ID }, true);

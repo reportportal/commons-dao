@@ -97,6 +97,11 @@ public class Tables {
     public static final OauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.OauthRegistration.OAUTH_REGISTRATION;
 
     /**
+     * The table <code>public.oauth_registration_scope</code>.
+     */
+    public static final OauthRegistrationScope OAUTH_REGISTRATION_SCOPE = com.epam.ta.reportportal.jooq.tables.OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
+
+    /**
      * The table <code>public.project</code>.
      */
     public static final Project PROJECT = com.epam.ta.reportportal.jooq.tables.Project.PROJECT;

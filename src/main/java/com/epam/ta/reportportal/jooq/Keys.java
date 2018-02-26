@@ -41,6 +41,7 @@ public class Keys {
     public static final Identity<LaunchRecord, Long> IDENTITY_LAUNCH = Identities0.IDENTITY_LAUNCH;
     public static final Identity<LaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = Identities0.IDENTITY_LAUNCH_TAG;
     public static final Identity<LogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
+    public static final Identity<OauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
     public static final Identity<ProjectRecord, Integer> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<ProjectConfigurationRecord, Integer> IDENTITY_PROJECT_CONFIGURATION = Identities0.IDENTITY_PROJECT_CONFIGURATION;
     public static final Identity<ProjectEmailConfigurationRecord, Integer> IDENTITY_PROJECT_EMAIL_CONFIGURATION = Identities0.IDENTITY_PROJECT_EMAIL_CONFIGURATION;
@@ -76,6 +77,7 @@ public class Keys {
     public static final UniqueKey<OauthAccessTokenRecord> ACCESS_TOKENS_PK = UniqueKeys0.ACCESS_TOKENS_PK;
     public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_PKEY = UniqueKeys0.OAUTH_REGISTRATION_PKEY;
     public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_CLIENT_ID_KEY = UniqueKeys0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
+    public static final UniqueKey<OauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final UniqueKey<ProjectRecord> PROJECT_PK = UniqueKeys0.PROJECT_PK;
     public static final UniqueKey<ProjectRecord> PROJECT_PROJECT_CONFIGURATION_ID_KEY = UniqueKeys0.PROJECT_PROJECT_CONFIGURATION_ID_KEY;
     public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_PK = UniqueKeys0.PROJECT_CONFIGURATION_PK;
@@ -115,6 +117,7 @@ public class Keys {
     public static final ForeignKey<LaunchTagRecord, LaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = ForeignKeys0.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY;
     public static final ForeignKey<LogRecord, TestItemRecord> LOG__LOG_ITEM_ID_FKEY = ForeignKeys0.LOG__LOG_ITEM_ID_FKEY;
     public static final ForeignKey<OauthAccessTokenRecord, UsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = ForeignKeys0.OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY;
+    public static final ForeignKey<OauthRegistrationScopeRecord, OauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<ProjectRecord, ProjectConfigurationRecord> PROJECT__PROJECT_PROJECT_CONFIGURATION_ID_FKEY = ForeignKeys0.PROJECT__PROJECT_PROJECT_CONFIGURATION_ID_FKEY;
     public static final ForeignKey<ProjectConfigurationRecord, ProjectEmailConfigurationRecord> PROJECT_CONFIGURATION__PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_FKEY = ForeignKeys0.PROJECT_CONFIGURATION__PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_FKEY;
     public static final ForeignKey<ProjectUserRecord, UsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_USER_ID_FKEY;
@@ -144,6 +147,7 @@ public class Keys {
         public static Identity<LaunchRecord, Long> IDENTITY_LAUNCH = createIdentity(Launch.LAUNCH, Launch.LAUNCH.ID);
         public static Identity<LaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = createIdentity(LaunchTag.LAUNCH_TAG, LaunchTag.LAUNCH_TAG.ID);
         public static Identity<LogRecord, Long> IDENTITY_LOG = createIdentity(Log.LOG, Log.LOG.ID);
+        public static Identity<OauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = createIdentity(OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static Identity<ProjectRecord, Integer> IDENTITY_PROJECT = createIdentity(Project.PROJECT, Project.PROJECT.ID);
         public static Identity<ProjectConfigurationRecord, Integer> IDENTITY_PROJECT_CONFIGURATION = createIdentity(ProjectConfiguration.PROJECT_CONFIGURATION, ProjectConfiguration.PROJECT_CONFIGURATION.ID);
         public static Identity<ProjectEmailConfigurationRecord, Integer> IDENTITY_PROJECT_EMAIL_CONFIGURATION = createIdentity(ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION.ID);
@@ -177,6 +181,7 @@ public class Keys {
         public static final UniqueKey<OauthAccessTokenRecord> ACCESS_TOKENS_PK = createUniqueKey(OauthAccessToken.OAUTH_ACCESS_TOKEN, "access_tokens_pk", OauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, OauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE);
         public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_PKEY = createUniqueKey(OauthRegistration.OAUTH_REGISTRATION, "oauth_registration_pkey", OauthRegistration.OAUTH_REGISTRATION.ID);
         public static final UniqueKey<OauthRegistrationRecord> OAUTH_REGISTRATION_CLIENT_ID_KEY = createUniqueKey(OauthRegistration.OAUTH_REGISTRATION, "oauth_registration_client_id_key", OauthRegistration.OAUTH_REGISTRATION.CLIENT_ID);
+        public static final UniqueKey<OauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = createUniqueKey(OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_pk", OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static final UniqueKey<ProjectRecord> PROJECT_PK = createUniqueKey(Project.PROJECT, "project_pk", Project.PROJECT.ID);
         public static final UniqueKey<ProjectRecord> PROJECT_PROJECT_CONFIGURATION_ID_KEY = createUniqueKey(Project.PROJECT, "project_project_configuration_id_key", Project.PROJECT.PROJECT_CONFIGURATION_ID);
         public static final UniqueKey<ProjectConfigurationRecord> PROJECT_CONFIGURATION_PK = createUniqueKey(ProjectConfiguration.PROJECT_CONFIGURATION, "project_configuration_pk", ProjectConfiguration.PROJECT_CONFIGURATION.ID);
@@ -214,6 +219,7 @@ public class Keys {
         public static final ForeignKey<LaunchTagRecord, LaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, LaunchTag.LAUNCH_TAG, "launch_tag__launch_tag_launch_id_fkey", LaunchTag.LAUNCH_TAG.LAUNCH_ID);
         public static final ForeignKey<LogRecord, TestItemRecord> LOG__LOG_ITEM_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, Log.LOG, "log__log_item_id_fkey", Log.LOG.ITEM_ID);
         public static final ForeignKey<OauthAccessTokenRecord, UsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, OauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token__oauth_access_token_user_id_fkey", OauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
+        public static final ForeignKey<OauthRegistrationScopeRecord, OauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", OauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<ProjectRecord, ProjectConfigurationRecord> PROJECT__PROJECT_PROJECT_CONFIGURATION_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_CONFIGURATION_PK, Project.PROJECT, "project__project_project_configuration_id_fkey", Project.PROJECT.PROJECT_CONFIGURATION_ID);
         public static final ForeignKey<ProjectConfigurationRecord, ProjectEmailConfigurationRecord> PROJECT_CONFIGURATION__PROJECT_CONFIGURATION_EMAIL_CONFIGURATION_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_EMAIL_CONFIGURATION_PK, ProjectConfiguration.PROJECT_CONFIGURATION, "project_configuration__project_configuration_email_configuration_id_fkey", ProjectConfiguration.PROJECT_CONFIGURATION.EMAIL_CONFIGURATION_ID);
         public static final ForeignKey<ProjectUserRecord, UsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, ProjectUser.PROJECT_USER, "project_user__project_user_user_id_fkey", ProjectUser.PROJECT_USER.USER_ID);
