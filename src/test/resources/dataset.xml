@@ -1,11 +1,11 @@
 <dataset>
 
-    <oauth_registration id="1" client_id="f4cec43d4541283879c4" client_secret="a31aa6de3e27c11d90762cad11936727d6b0759e"
+    <oauth_registration id="github" client_id="f4cec43d4541283879c4" client_secret="a31aa6de3e27c11d90762cad11936727d6b0759e"
                         token_uri="https://github.com/login/oauth/access_token" user_info_endpoint_uri="https://api.github.com/user"
                         auth_grant_type="authorization_code"
                         client_auth_method="basic" />
 
-    <oauth_registration_scope id="1" oauth_registration_fk="1" scope="user"/>
+    <oauth_registration_scope id="1" oauth_registration_fk="github" scope="user"/>
 
     <project_configuration id="1" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
                            keep_screenshots_interval="2 weeks"/>
