@@ -32,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItem extends TableImpl<TestItemRecord> {
 
-    private static final long serialVersionUID = 1403360555;
+    private static final long serialVersionUID = 245120397;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -48,9 +48,9 @@ public class TestItem extends TableImpl<TestItemRecord> {
     }
 
     /**
-     * The column <code>public.test_item.id</code>.
+     * The column <code>public.test_item.item_id</code>.
      */
-    public final TableField<TestItemRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('test_item_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<TestItemRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('test_item_item_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * The column <code>public.test_item.name</code>.

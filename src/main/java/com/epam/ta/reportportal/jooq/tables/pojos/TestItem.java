@@ -25,9 +25,9 @@ import java.util.Arrays;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItem implements Serializable {
 
-    private static final long serialVersionUID = 1373558017;
+    private static final long serialVersionUID = -702014988;
 
-    private Long             id;
+    private Long             itemId;
     private String           name;
     private TestItemTypeEnum type;
     private Timestamp        startTime;
@@ -39,7 +39,7 @@ public class TestItem implements Serializable {
     public TestItem() {}
 
     public TestItem(TestItem value) {
-        this.id = value.id;
+        this.itemId = value.itemId;
         this.name = value.name;
         this.type = value.type;
         this.startTime = value.startTime;
@@ -50,7 +50,7 @@ public class TestItem implements Serializable {
     }
 
     public TestItem(
-        Long             id,
+        Long             itemId,
         String           name,
         TestItemTypeEnum type,
         Timestamp        startTime,
@@ -59,7 +59,7 @@ public class TestItem implements Serializable {
         Timestamp        lastModified,
         String           uniqueId
     ) {
-        this.id = id;
+        this.itemId = itemId;
         this.name = name;
         this.type = type;
         this.startTime = startTime;
@@ -69,12 +69,12 @@ public class TestItem implements Serializable {
         this.uniqueId = uniqueId;
     }
 
-    public Long getId() {
-        return this.id;
+    public Long getItemId() {
+        return this.itemId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     public String getName() {
@@ -137,7 +137,7 @@ public class TestItem implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder("TestItem (");
 
-        sb.append(id);
+        sb.append(itemId);
         sb.append(", ").append(name);
         sb.append(", ").append(type);
         sb.append(", ").append(startTime);

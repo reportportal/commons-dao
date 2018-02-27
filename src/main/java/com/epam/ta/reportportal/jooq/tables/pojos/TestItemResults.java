@@ -22,9 +22,8 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemResults implements Serializable {
 
-    private static final long serialVersionUID = -921181575;
+    private static final long serialVersionUID = -865913896;
 
-    private Long       id;
     private Long       itemId;
     private StatusEnum status;
     private Float      duration;
@@ -32,30 +31,19 @@ public class TestItemResults implements Serializable {
     public TestItemResults() {}
 
     public TestItemResults(TestItemResults value) {
-        this.id = value.id;
         this.itemId = value.itemId;
         this.status = value.status;
         this.duration = value.duration;
     }
 
     public TestItemResults(
-        Long       id,
         Long       itemId,
         StatusEnum status,
         Float      duration
     ) {
-        this.id = id;
         this.itemId = itemId;
         this.status = status;
         this.duration = duration;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getItemId() {
@@ -86,8 +74,7 @@ public class TestItemResults implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder("TestItemResults (");
 
-        sb.append(id);
-        sb.append(", ").append(itemId);
+        sb.append(itemId);
         sb.append(", ").append(status);
         sb.append(", ").append(duration);
 

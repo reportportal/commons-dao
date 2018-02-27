@@ -1,20 +1,20 @@
 /*
- * Copyright 2016 EPAM Systems
- * 
- * 
+ * Copyright 2017 EPAM Systems
+ *
+ *
  * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/commons-dao
- * 
+ * https://github.com/reportportal/service-api
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -53,8 +53,7 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	}
 
 	public static TestItemTypeEnum fromValue(String value) {
-		return Arrays.stream(TestItemTypeEnum.values()).filter(type -> type.name().equalsIgnoreCase(value))
-				.findAny().orElse(null);
+		return Arrays.stream(TestItemTypeEnum.values()).filter(type -> type.name().equalsIgnoreCase(value)).findAny().orElse(null);
 	}
 
 	public boolean sameLevel(TestItemTypeEnum other) {
@@ -91,8 +90,8 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 	 *
 	 * @author Andrei Varabyeu
 	 */
-	private static final Comparator<TestItemTypeEnum> LEVEL_COMPARATOR =
-			(TestItemTypeEnum o1, TestItemTypeEnum o2) -> (o1.level == o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
+	private static final Comparator<TestItemTypeEnum> LEVEL_COMPARATOR = (TestItemTypeEnum o1, TestItemTypeEnum o2) -> (o1.level
+			== o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
 
 	public static class Constants {
 		public static final int SUITE_LEVEL = 0;

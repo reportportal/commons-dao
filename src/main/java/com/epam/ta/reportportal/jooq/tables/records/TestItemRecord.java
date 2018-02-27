@@ -29,19 +29,19 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemRecord extends UpdatableRecordImpl<TestItemRecord> implements Record8<Long, String, TestItemTypeEnum, Timestamp, String, ParameterRecord[], Timestamp, String> {
 
-    private static final long serialVersionUID = 1707174373;
+    private static final long serialVersionUID = -1400502656;
 
     /**
-     * Setter for <code>public.test_item.id</code>.
+     * Setter for <code>public.test_item.item_id</code>.
      */
-    public void setId(Long value) {
+    public void setItemId(Long value) {
         set(0, value);
     }
 
     /**
-     * Getter for <code>public.test_item.id</code>.
+     * Getter for <code>public.test_item.item_id</code>.
      */
-    public Long getId() {
+    public Long getItemId() {
         return (Long) get(0);
     }
 
@@ -180,7 +180,7 @@ public class TestItemRecord extends UpdatableRecordImpl<TestItemRecord> implemen
      */
     @Override
     public Field<Long> field1() {
-        return TestItem.TEST_ITEM.ID;
+        return TestItem.TEST_ITEM.ITEM_ID;
     }
 
     /**
@@ -244,7 +244,7 @@ public class TestItemRecord extends UpdatableRecordImpl<TestItemRecord> implemen
      */
     @Override
     public Long component1() {
-        return getId();
+        return getItemId();
     }
 
     /**
@@ -308,7 +308,7 @@ public class TestItemRecord extends UpdatableRecordImpl<TestItemRecord> implemen
      */
     @Override
     public Long value1() {
-        return getId();
+        return getItemId();
     }
 
     /**
@@ -372,7 +372,7 @@ public class TestItemRecord extends UpdatableRecordImpl<TestItemRecord> implemen
      */
     @Override
     public TestItemRecord value1(Long value) {
-        setId(value);
+        setItemId(value);
         return this;
     }
 
@@ -469,10 +469,10 @@ public class TestItemRecord extends UpdatableRecordImpl<TestItemRecord> implemen
     /**
      * Create a detached, initialised TestItemRecord
      */
-    public TestItemRecord(Long id, String name, TestItemTypeEnum type, Timestamp startTime, String description, ParameterRecord[] parameters, Timestamp lastModified, String uniqueId) {
+    public TestItemRecord(Long itemId, String name, TestItemTypeEnum type, Timestamp startTime, String description, ParameterRecord[] parameters, Timestamp lastModified, String uniqueId) {
         super(TestItem.TEST_ITEM);
 
-        set(0, id);
+        set(0, itemId);
         set(1, name);
         set(2, type);
         set(3, startTime);

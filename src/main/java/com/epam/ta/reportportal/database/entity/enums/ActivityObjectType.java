@@ -29,29 +29,27 @@ import java.util.Optional;
  */
 public enum ActivityObjectType {
 
-    PROJECT("project"),
-    DEFECT_TYPE("defect_type"),
-    TEST_ITEM("testItem"),
-    LAUNCH("launch"),
-    EXTERNAL_SYSTEM("externalSystem"),
-    DASHBOARD("dashboard"),
-    USER("user"),
-    WIDGET("widget"),
-    USER_FILTER("userFilter");
+	PROJECT("project"),
+	DEFECT_TYPE("defect_type"),
+	TEST_ITEM("testItem"),
+	LAUNCH("launch"),
+	EXTERNAL_SYSTEM("externalSystem"),
+	DASHBOARD("dashboard"),
+	USER("user"),
+	WIDGET("widget"),
+	USER_FILTER("userFilter");
 
-    private String value;
+	private String value;
 
-    ActivityObjectType(String value) {
-        this.value = value;
-    }
+	ActivityObjectType(String value) {
+		this.value = value;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public static Optional<ActivityObjectType> fromString(String string) {
-        return Optional.ofNullable(string)
-                .flatMap(str -> Arrays.stream(values())
-                        .filter(it -> it.value.equals(str)).findAny());
-    }
+	public static Optional<ActivityObjectType> fromString(String string) {
+		return Optional.ofNullable(string).flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equals(str)).findAny());
+	}
 }

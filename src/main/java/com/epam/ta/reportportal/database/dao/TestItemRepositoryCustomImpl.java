@@ -1,3 +1,24 @@
+/*
+ * Copyright 2017 EPAM Systems
+ *
+ *
+ * This file is part of EPAM Report Portal.
+ * https://github.com/reportportal/service-api
+ *
+ * Report Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Report Portal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
@@ -15,7 +36,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.Issue.ISSUE;
+import static com.epam.ta.reportportal.jooq.tables.IssueType.ISSUE_TYPE;
+import static com.epam.ta.reportportal.jooq.tables.TestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.TestItemResults.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.tables.TestItemStructure.TEST_ITEM_STRUCTURE;
 
 /**
  * @author Pavel Bortnik
@@ -45,14 +70,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
-		return dsl.select(TEST_ITEM.ID)
+		return dsl.select(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_STRUCTURE)
-				.on(TEST_ITEM.ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
 				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
 				.join(ISSUE)
-				.on(ISSUE.TEST_ITEM_RESULTS_ID.eq(TEST_ITEM_RESULTS.ID))
+				.on(ISSUE.TEST_ITEM_RESULTS_ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId))
@@ -63,7 +88,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<TestItemCommon> selectItemsInIssueByLaunch(Long launchId, String issueType) {
 		return commonTestItemDslSelect().join(ISSUE)
-				.on(ISSUE.TEST_ITEM_RESULTS_ID.eq(TEST_ITEM_RESULTS.ID))
+				.on(ISSUE.TEST_ITEM_RESULTS_ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId))
@@ -77,9 +102,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return dsl.select()
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_STRUCTURE)
-				.on(TEST_ITEM.ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
 				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ID.eq(TEST_ITEM_RESULTS.ITEM_ID));
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.ITEM_ID));
 	}
 
 }

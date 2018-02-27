@@ -1,24 +1,24 @@
 /*
- * Copyright 2016 EPAM Systems
- * 
- * 
+ * Copyright 2017 EPAM Systems
+ *
+ *
  * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/commons-dao
- * 
+ * https://github.com/reportportal/service-api
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.commons;
 
 import com.epam.ta.reportportal.database.entity.enums.ProjectRoleEnum;
@@ -33,9 +33,8 @@ import java.util.stream.StreamSupport;
 
 /**
  * Several validation checks
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class Preconditions {
 
@@ -43,7 +42,9 @@ public class Preconditions {
 
 	}
 
-	/** grabbed from {@link UUID#fromString(String)} */
+	/**
+	 * grabbed from {@link UUID#fromString(String)}
+	 */
 	public static final Predicate<String> IS_UUID = uuid -> uuid.split("-").length == 5;
 
 	public static final Predicate<Collection<?>> NOT_EMPTY_COLLECTION = t -> null != t && !t.isEmpty();
@@ -56,7 +57,7 @@ public class Preconditions {
 
 	/**
 	 * Start time of item to be creates is later than provided start time
-	 * 
+	 *
 	 * @param startTime
 	 * @return
 	 */
@@ -70,7 +71,7 @@ public class Preconditions {
 
 	/**
 	 * Checks whether iterable contains elements matchers provided predicate
-	 * 
+	 *
 	 * @param filter
 	 * @return
 	 */
@@ -80,18 +81,17 @@ public class Preconditions {
 
 	/**
 	 * Checks whether map contains provided key
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
 	public static <K> Predicate<Map<K, ?>> containsKey(final K key) {
 		return map -> null != map && map.containsKey(key);
 	}
-	
-	
+
 	/**
 	 * Check whether user (principal) has enough role level
-	 * 
+	 *
 	 * @param principalRole
 	 * @return
 	 */

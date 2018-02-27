@@ -1,32 +1,57 @@
+/*
+ * Copyright 2017 EPAM Systems
+ *
+ *
+ * This file is part of EPAM Report Portal.
+ * https://github.com/reportportal/service-api
+ *
+ * Report Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Report Portal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.epam.ta.reportportal.database.entity.item;
 
+import com.epam.ta.reportportal.database.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.database.entity.enums.TestItemTypeEnum;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "test_item", schema = "public", indexes = { @Index(name = "test_item_pk", unique = true, columnList = "id ASC") })
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
+@Table(name = "test_item", schema = "public", indexes = { @Index(name = "test_item_pk", unique = true, columnList = "item_id ASC") })
 public class TestItem implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+	@Column(name = "item_id", unique = true, nullable = false, precision = 64)
+	private Long itemId;
 
 	@Column(name = "name", length = 256)
 	private String name;
 
 	@Enumerated(EnumType.STRING)
+	@Type(type = "pqsql_enum")
 	@Column(name = "type", nullable = false)
 	private TestItemTypeEnum type;
 
@@ -40,18 +65,62 @@ public class TestItem implements Serializable {
 	@Column(name = "last_modified", nullable = false)
 	private Timestamp lastModified;
 
-	@Column(name = "parameters")
-	private Parameter[] parameters;
+	//	@Column(name = "parameters")
+	//	private Parameter[] parameters;
 
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
-	public Long getId() {
-		return id;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "item_id")
+	private Set<TestItemTag> tags;
+
+	@OneToOne(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private TestItemStructure testItemStructure;
+
+	@OneToOne(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private TestItemResults testItemResults;
+
+	public TestItem() {
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public TestItemStructure getTestItemStructure() {
+		return testItemStructure;
+	}
+
+	public void setTestItemStructure(TestItemStructure testItemStructure) {
+		this.testItemStructure = testItemStructure;
+		testItemStructure.setTestItem(this);
+	}
+
+	public TestItemResults getTestItemResults() {
+		return testItemResults;
+	}
+
+	public void setTestItemResults(TestItemResults testItemResults) {
+		this.testItemResults = testItemResults;
+		testItemResults.setTestItem(this);
+	}
+
+	public Set<TestItemTag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<TestItemTag> tags) {
+		if (this.tags != null) {
+			this.tags.clear();
+			this.tags.addAll(tags);
+		} else {
+			this.tags = tags;
+		}
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
 	}
 
 	public String getName() {
@@ -94,13 +163,13 @@ public class TestItem implements Serializable {
 		this.lastModified = lastModified;
 	}
 
-	public Parameter[] getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(Parameter[] parameters) {
-		this.parameters = parameters;
-	}
+	//	public Parameter[] getParameters() {
+	//		return parameters;
+	//	}
+	//
+	//	public void setParameters(Parameter[] parameters) {
+	//		this.parameters = parameters;
+	//	}
 
 	public String getUniqueId() {
 		return uniqueId;
@@ -110,30 +179,4 @@ public class TestItem implements Serializable {
 		this.uniqueId = uniqueId;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		TestItem testItem = (TestItem) o;
-		return Objects.equals(id, testItem.id) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(
-				startTime, testItem.startTime) && Objects.equals(description, testItem.description) && Objects.equals(
-				lastModified, testItem.lastModified) && Arrays.equals(parameters, testItem.parameters) && Objects.equals(
-				uniqueId, testItem.uniqueId);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, name, type, startTime, description, lastModified, parameters, uniqueId);
-	}
-
-	@Override
-	public String toString() {
-		return "TestItem{" + "id=" + id + ", name='" + name + '\'' + ", type=" + type + ", startTime=" + startTime + ", description='"
-				+ description + '\'' + ", lastModified=" + lastModified + ", parameters=" + Arrays.toString(parameters) + ", uniqueId='"
-				+ uniqueId + '\'' + '}';
-	}
 }

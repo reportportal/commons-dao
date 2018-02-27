@@ -1,23 +1,23 @@
 /*
- * Copyright 2016 EPAM Systems
- * 
- * 
+ * Copyright 2017 EPAM Systems
+ *
+ *
  * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/commons-dao
- * 
+ * https://github.com/reportportal/service-api
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity.enums;
 
@@ -65,8 +65,7 @@ public enum LogLevel {
 	 * Convert the string passed as argument to a Level. If there are no such level throws exception
 	 */
 	public static LogLevel toLevel(String levelString) {
-		return Arrays.stream(LogLevel.values()).filter(level -> level.name()
-				.equalsIgnoreCase(levelString)).findAny().orElse(null);
+		return Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelString)).findAny().orElse(null);
 	}
 
 	/**
@@ -87,22 +86,22 @@ public enum LogLevel {
 	 */
 	public static LogLevel toLevel(int intLevel) {
 		switch (intLevel) {
-		case UNKNOWN_INT:
-			return UNKNOWN;
-		case FATAL_INT:
-			return FATAL;
-		case TRACE_INT:
-			return TRACE;
-		case DEBUG_INT:
-			return DEBUG;
-		case INFO_INT:
-			return INFO;
-		case WARN_INT:
-			return WARN;
-		case ERROR_INT:
-			return ERROR;
-		default:
-			throw new IllegalArgumentException("Level " + intLevel + " is unknown.");
+			case UNKNOWN_INT:
+				return UNKNOWN;
+			case FATAL_INT:
+				return FATAL;
+			case TRACE_INT:
+				return TRACE;
+			case DEBUG_INT:
+				return DEBUG;
+			case INFO_INT:
+				return INFO;
+			case WARN_INT:
+				return WARN;
+			case ERROR_INT:
+				return ERROR;
+			default:
+				throw new IllegalArgumentException("Level " + intLevel + " is unknown.");
 		}
 	}
 

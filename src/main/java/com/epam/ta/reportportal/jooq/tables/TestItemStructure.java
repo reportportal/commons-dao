@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
 
-    private static final long serialVersionUID = -283197522;
+    private static final long serialVersionUID = 739566037;
 
     /**
      * The reference instance of <code>public.test_item_structure</code>
@@ -45,14 +45,9 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
     }
 
     /**
-     * The column <code>public.test_item_structure.id</code>.
-     */
-    public final TableField<TestItemStructureRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('test_item_structure_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
-
-    /**
      * The column <code>public.test_item_structure.item_id</code>.
      */
-    public final TableField<TestItemStructureRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<TestItemStructureRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.test_item_structure.launch_id</code>.
@@ -111,15 +106,7 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TEST_ITEM_STRUCTURE_ITEM_ID_KEY, Indexes.TEST_ITEM_STRUCTURE_PK);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity<TestItemStructureRecord, Long> getIdentity() {
-        return Keys.IDENTITY_TEST_ITEM_STRUCTURE;
+        return Arrays.<Index>asList(Indexes.TEST_ITEM_STRUCTURE_PK);
     }
 
     /**
@@ -135,7 +122,7 @@ public class TestItemStructure extends TableImpl<TestItemStructureRecord> {
      */
     @Override
     public List<UniqueKey<TestItemStructureRecord>> getKeys() {
-        return Arrays.<UniqueKey<TestItemStructureRecord>>asList(Keys.TEST_ITEM_STRUCTURE_PK, Keys.TEST_ITEM_STRUCTURE_ITEM_ID_KEY);
+        return Arrays.<UniqueKey<TestItemStructureRecord>>asList(Keys.TEST_ITEM_STRUCTURE_PK);
     }
 
     /**

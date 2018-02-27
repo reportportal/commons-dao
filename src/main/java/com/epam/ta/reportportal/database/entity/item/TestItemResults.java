@@ -1,40 +1,61 @@
+/*
+ * Copyright 2017 EPAM Systems
+ *
+ *
+ * This file is part of EPAM Report Portal.
+ * https://github.com/reportportal/service-api
+ *
+ * Report Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Report Portal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.epam.ta.reportportal.database.entity.item;
 
+import com.epam.ta.reportportal.database.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "test_item_results", schema = "public", indexes = {
-		@Index(name = "test_item_results_item_id_key", unique = true, columnList = "item_id ASC"),
-		@Index(name = "test_item_results_pk", unique = true, columnList = "id ASC") })
+		@Index(name = "test_item_results_pk", unique = true, columnList = "item_id ASC") })
 public class TestItemResults implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
-
 	@Column(name = "item_id", unique = true, nullable = false, precision = 64)
 	private Long itemId;
 
 	@Column(name = "status", nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Type(type = "pqsql_enum")
 	private StatusEnum status;
 
 	@Column(name = "duration", precision = 24)
 	private Float duration;
 
-	public Long getId() {
-		return id;
-	}
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "item_id")
+	private TestItem testItem;
 
-	public void setId(Long id) {
-		this.id = id;
+	public TestItemResults() {
 	}
 
 	public Long getItemId() {
@@ -61,26 +82,11 @@ public class TestItemResults implements Serializable {
 		this.duration = duration;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		TestItemResults that = (TestItemResults) o;
-		return Objects.equals(id, that.id) && Objects.equals(itemId, that.itemId) && status == that.status && Objects.equals(
-				duration, that.duration);
+	public TestItem getTestItem() {
+		return testItem;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, itemId, status, duration);
-	}
-
-	@Override
-	public String toString() {
-		return "TestItemResults{" + "id=" + id + ", itemId=" + itemId + ", status=" + status + ", duration=" + duration + '}';
+	public void setTestItem(TestItem testItem) {
+		this.testItem = testItem;
 	}
 }

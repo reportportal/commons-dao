@@ -1,3 +1,24 @@
+/*
+ * Copyright 2017 EPAM Systems
+ *
+ *
+ * This file is part of EPAM Report Portal.
+ * https://github.com/reportportal/service-api
+ *
+ * Report Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Report Portal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.entity.launch.ExecutionStatistics;
@@ -13,7 +34,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.TestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.TestItemResults.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.tables.TestItemStructure.TEST_ITEM_STRUCTURE;
 import static org.jooq.impl.DSL.*;
 
 /**
@@ -39,9 +62,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return dsl.fetchExists(dsl.selectOne()
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_STRUCTURE)
-				.on(TEST_ITEM.ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_STRUCTURE.ITEM_ID))
 				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.ITEM_ID))
 				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId)
 						.and(TEST_ITEM_RESULTS.STATUS.eq(StatusEnum.FAILED).or(TEST_ITEM_RESULTS.STATUS.eq(StatusEnum.SKIPPED)))));
 	}
@@ -59,9 +82,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		)
 				.from(ti)
 				.join(tr)
-				.on(ti.ID.eq(tr.ITEM_ID))
+				.on(ti.ITEM_ID.eq(tr.ITEM_ID))
 				.join(tis)
-				.on(ti.ID.eq(tis.ITEM_ID))
+				.on(ti.ITEM_ID.eq(tis.ITEM_ID))
 				.join(l)
 				.on(l.ID.eq(tis.LAUNCH_ID))
 				.groupBy(l.ID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.NUMBER, l.LAST_MODIFIED, l.MODE)

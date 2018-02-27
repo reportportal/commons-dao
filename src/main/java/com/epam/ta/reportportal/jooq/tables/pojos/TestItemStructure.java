@@ -20,9 +20,8 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TestItemStructure implements Serializable {
 
-    private static final long serialVersionUID = -484488330;
+    private static final long serialVersionUID = 37783305;
 
-    private Long id;
     private Long itemId;
     private Long launchId;
     private Long parentId;
@@ -31,7 +30,6 @@ public class TestItemStructure implements Serializable {
     public TestItemStructure() {}
 
     public TestItemStructure(TestItemStructure value) {
-        this.id = value.id;
         this.itemId = value.itemId;
         this.launchId = value.launchId;
         this.parentId = value.parentId;
@@ -39,25 +37,15 @@ public class TestItemStructure implements Serializable {
     }
 
     public TestItemStructure(
-        Long id,
         Long itemId,
         Long launchId,
         Long parentId,
         Long retryOf
     ) {
-        this.id = id;
         this.itemId = itemId;
         this.launchId = launchId;
         this.parentId = parentId;
         this.retryOf = retryOf;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getItemId() {
@@ -96,8 +84,7 @@ public class TestItemStructure implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder("TestItemStructure (");
 
-        sb.append(id);
-        sb.append(", ").append(itemId);
+        sb.append(itemId);
         sb.append(", ").append(launchId);
         sb.append(", ").append(parentId);
         sb.append(", ").append(retryOf);

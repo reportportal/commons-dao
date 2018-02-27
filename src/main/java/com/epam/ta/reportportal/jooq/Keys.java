@@ -47,8 +47,6 @@ public class Keys {
     public static final Identity<ProjectEmailConfigurationRecord, Integer> IDENTITY_PROJECT_EMAIL_CONFIGURATION = Identities0.IDENTITY_PROJECT_EMAIL_CONFIGURATION;
     public static final Identity<ServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Identities0.IDENTITY_SERVER_SETTINGS;
     public static final Identity<TestItemRecord, Long> IDENTITY_TEST_ITEM = Identities0.IDENTITY_TEST_ITEM;
-    public static final Identity<TestItemResultsRecord, Long> IDENTITY_TEST_ITEM_RESULTS = Identities0.IDENTITY_TEST_ITEM_RESULTS;
-    public static final Identity<TestItemStructureRecord, Long> IDENTITY_TEST_ITEM_STRUCTURE = Identities0.IDENTITY_TEST_ITEM_STRUCTURE;
     public static final Identity<TicketRecord, Long> IDENTITY_TICKET = Identities0.IDENTITY_TICKET;
     public static final Identity<UsersRecord, Integer> IDENTITY_USERS = Identities0.IDENTITY_USERS;
     public static final Identity<WidgetRecord, Integer> IDENTITY_WIDGET = Identities0.IDENTITY_WIDGET;
@@ -87,9 +85,7 @@ public class Keys {
     public static final UniqueKey<ServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<TestItemRecord> TEST_ITEM_PK = UniqueKeys0.TEST_ITEM_PK;
     public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_PK = UniqueKeys0.TEST_ITEM_RESULTS_PK;
-    public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_ITEM_ID_KEY = UniqueKeys0.TEST_ITEM_RESULTS_ITEM_ID_KEY;
     public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = UniqueKeys0.TEST_ITEM_STRUCTURE_PK;
-    public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_ITEM_ID_KEY = UniqueKeys0.TEST_ITEM_STRUCTURE_ITEM_ID_KEY;
     public static final UniqueKey<TicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
     public static final UniqueKey<TicketRecord> TICKET_TICKET_ID_KEY = UniqueKeys0.TICKET_TICKET_ID_KEY;
     public static final UniqueKey<UsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
@@ -152,9 +148,7 @@ public class Keys {
         public static Identity<ProjectConfigurationRecord, Integer> IDENTITY_PROJECT_CONFIGURATION = createIdentity(ProjectConfiguration.PROJECT_CONFIGURATION, ProjectConfiguration.PROJECT_CONFIGURATION.ID);
         public static Identity<ProjectEmailConfigurationRecord, Integer> IDENTITY_PROJECT_EMAIL_CONFIGURATION = createIdentity(ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION.ID);
         public static Identity<ServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = createIdentity(ServerSettings.SERVER_SETTINGS, ServerSettings.SERVER_SETTINGS.ID);
-        public static Identity<TestItemRecord, Long> IDENTITY_TEST_ITEM = createIdentity(TestItem.TEST_ITEM, TestItem.TEST_ITEM.ID);
-        public static Identity<TestItemResultsRecord, Long> IDENTITY_TEST_ITEM_RESULTS = createIdentity(TestItemResults.TEST_ITEM_RESULTS, TestItemResults.TEST_ITEM_RESULTS.ID);
-        public static Identity<TestItemStructureRecord, Long> IDENTITY_TEST_ITEM_STRUCTURE = createIdentity(TestItemStructure.TEST_ITEM_STRUCTURE, TestItemStructure.TEST_ITEM_STRUCTURE.ID);
+        public static Identity<TestItemRecord, Long> IDENTITY_TEST_ITEM = createIdentity(TestItem.TEST_ITEM, TestItem.TEST_ITEM.ITEM_ID);
         public static Identity<TicketRecord, Long> IDENTITY_TICKET = createIdentity(Ticket.TICKET, Ticket.TICKET.ID);
         public static Identity<UsersRecord, Integer> IDENTITY_USERS = createIdentity(Users.USERS, Users.USERS.ID);
         public static Identity<WidgetRecord, Integer> IDENTITY_WIDGET = createIdentity(Widget.WIDGET, Widget.WIDGET.ID);
@@ -189,11 +183,9 @@ public class Keys {
         public static final UniqueKey<ProjectEmailConfigurationRecord> PROJECT_EMAIL_CONFIGURATION_PK = createUniqueKey(ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, "project_email_configuration_pk", ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION.ID);
         public static final UniqueKey<ProjectUserRecord> USERS_PROJECT_PK = createUniqueKey(ProjectUser.PROJECT_USER, "users_project_pk", ProjectUser.PROJECT_USER.USER_ID, ProjectUser.PROJECT_USER.PROJECT_ID);
         public static final UniqueKey<ServerSettingsRecord> SERVER_SETTINGS_ID = createUniqueKey(ServerSettings.SERVER_SETTINGS, "server_settings_id", ServerSettings.SERVER_SETTINGS.ID);
-        public static final UniqueKey<TestItemRecord> TEST_ITEM_PK = createUniqueKey(TestItem.TEST_ITEM, "test_item_pk", TestItem.TEST_ITEM.ID);
-        public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_PK = createUniqueKey(TestItemResults.TEST_ITEM_RESULTS, "test_item_results_pk", TestItemResults.TEST_ITEM_RESULTS.ID);
-        public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_ITEM_ID_KEY = createUniqueKey(TestItemResults.TEST_ITEM_RESULTS, "test_item_results_item_id_key", TestItemResults.TEST_ITEM_RESULTS.ITEM_ID);
-        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE.ID);
-        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_ITEM_ID_KEY = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_item_id_key", TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID);
+        public static final UniqueKey<TestItemRecord> TEST_ITEM_PK = createUniqueKey(TestItem.TEST_ITEM, "test_item_pk", TestItem.TEST_ITEM.ITEM_ID);
+        public static final UniqueKey<TestItemResultsRecord> TEST_ITEM_RESULTS_PK = createUniqueKey(TestItemResults.TEST_ITEM_RESULTS, "test_item_results_pk", TestItemResults.TEST_ITEM_RESULTS.ITEM_ID);
+        public static final UniqueKey<TestItemStructureRecord> TEST_ITEM_STRUCTURE_PK = createUniqueKey(TestItemStructure.TEST_ITEM_STRUCTURE, "test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID);
         public static final UniqueKey<TicketRecord> TICKET_PK = createUniqueKey(Ticket.TICKET, "ticket_pk", Ticket.TICKET.ID);
         public static final UniqueKey<TicketRecord> TICKET_TICKET_ID_KEY = createUniqueKey(Ticket.TICKET, "ticket_ticket_id_key", Ticket.TICKET.TICKET_ID);
         public static final UniqueKey<UsersRecord> USERS_PK = createUniqueKey(Users.USERS, "users_pk", Users.USERS.ID);

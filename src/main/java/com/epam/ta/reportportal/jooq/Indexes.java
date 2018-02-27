@@ -57,9 +57,7 @@ public class Indexes {
     public static final Index USERS_PROJECT_PK = Indexes0.USERS_PROJECT_PK;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
     public static final Index TEST_ITEM_PK = Indexes0.TEST_ITEM_PK;
-    public static final Index TEST_ITEM_RESULTS_ITEM_ID_KEY = Indexes0.TEST_ITEM_RESULTS_ITEM_ID_KEY;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
-    public static final Index TEST_ITEM_STRUCTURE_ITEM_ID_KEY = Indexes0.TEST_ITEM_STRUCTURE_ITEM_ID_KEY;
     public static final Index TEST_ITEM_STRUCTURE_PK = Indexes0.TEST_ITEM_STRUCTURE_PK;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
@@ -100,11 +98,9 @@ public class Indexes {
         public static Index PROJECT_EMAIL_CONFIGURATION_PK = createIndex("project_email_configuration_pk", ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, new OrderField[] { ProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION.ID }, true);
         public static Index USERS_PROJECT_PK = createIndex("users_project_pk", ProjectUser.PROJECT_USER, new OrderField[] { ProjectUser.PROJECT_USER.USER_ID, ProjectUser.PROJECT_USER.PROJECT_ID }, true);
         public static Index SERVER_SETTINGS_ID = createIndex("server_settings_id", ServerSettings.SERVER_SETTINGS, new OrderField[] { ServerSettings.SERVER_SETTINGS.ID }, true);
-        public static Index TEST_ITEM_PK = createIndex("test_item_pk", TestItem.TEST_ITEM, new OrderField[] { TestItem.TEST_ITEM.ID }, true);
-        public static Index TEST_ITEM_RESULTS_ITEM_ID_KEY = createIndex("test_item_results_item_id_key", TestItemResults.TEST_ITEM_RESULTS, new OrderField[] { TestItemResults.TEST_ITEM_RESULTS.ITEM_ID }, true);
-        public static Index TEST_ITEM_RESULTS_PK = createIndex("test_item_results_pk", TestItemResults.TEST_ITEM_RESULTS, new OrderField[] { TestItemResults.TEST_ITEM_RESULTS.ID }, true);
-        public static Index TEST_ITEM_STRUCTURE_ITEM_ID_KEY = createIndex("test_item_structure_item_id_key", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID }, true);
-        public static Index TEST_ITEM_STRUCTURE_PK = createIndex("test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.ID }, true);
+        public static Index TEST_ITEM_PK = createIndex("test_item_pk", TestItem.TEST_ITEM, new OrderField[] { TestItem.TEST_ITEM.ITEM_ID }, true);
+        public static Index TEST_ITEM_RESULTS_PK = createIndex("test_item_results_pk", TestItemResults.TEST_ITEM_RESULTS, new OrderField[] { TestItemResults.TEST_ITEM_RESULTS.ITEM_ID }, true);
+        public static Index TEST_ITEM_STRUCTURE_PK = createIndex("test_item_structure_pk", TestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { TestItemStructure.TEST_ITEM_STRUCTURE.ITEM_ID }, true);
         public static Index TICKET_PK = createIndex("ticket_pk", Ticket.TICKET, new OrderField[] { Ticket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = createIndex("ticket_ticket_id_key", Ticket.TICKET, new OrderField[] { Ticket.TICKET.TICKET_ID }, true);
         public static Index USERS_LOGIN_KEY = createIndex("users_login_key", Users.USERS, new OrderField[] { Users.USERS.LOGIN }, true);
