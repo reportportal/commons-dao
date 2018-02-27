@@ -20,48 +20,44 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Issue implements Serializable {
 
-    private static final long serialVersionUID = -567303959;
+    private static final long serialVersionUID = -641142338;
 
-    private Long    id;
+    private Long    issueId;
     private Integer issueType;
     private String  issueDescription;
     private Boolean autoAnalyzed;
     private Boolean ignoreAnalyzer;
-    private Long    testItemResultsId;
 
     public Issue() {}
 
     public Issue(Issue value) {
-        this.id = value.id;
+        this.issueId = value.issueId;
         this.issueType = value.issueType;
         this.issueDescription = value.issueDescription;
         this.autoAnalyzed = value.autoAnalyzed;
         this.ignoreAnalyzer = value.ignoreAnalyzer;
-        this.testItemResultsId = value.testItemResultsId;
     }
 
     public Issue(
-        Long    id,
+        Long    issueId,
         Integer issueType,
         String  issueDescription,
         Boolean autoAnalyzed,
-        Boolean ignoreAnalyzer,
-        Long    testItemResultsId
+        Boolean ignoreAnalyzer
     ) {
-        this.id = id;
+        this.issueId = issueId;
         this.issueType = issueType;
         this.issueDescription = issueDescription;
         this.autoAnalyzed = autoAnalyzed;
         this.ignoreAnalyzer = ignoreAnalyzer;
-        this.testItemResultsId = testItemResultsId;
     }
 
-    public Long getId() {
-        return this.id;
+    public Long getIssueId() {
+        return this.issueId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
     }
 
     public Integer getIssueType() {
@@ -96,24 +92,15 @@ public class Issue implements Serializable {
         this.ignoreAnalyzer = ignoreAnalyzer;
     }
 
-    public Long getTestItemResultsId() {
-        return this.testItemResultsId;
-    }
-
-    public void setTestItemResultsId(Long testItemResultsId) {
-        this.testItemResultsId = testItemResultsId;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Issue (");
 
-        sb.append(id);
+        sb.append(issueId);
         sb.append(", ").append(issueType);
         sb.append(", ").append(issueDescription);
         sb.append(", ").append(autoAnalyzed);
         sb.append(", ").append(ignoreAnalyzer);
-        sb.append(", ").append(testItemResultsId);
 
         sb.append(")");
         return sb.toString();

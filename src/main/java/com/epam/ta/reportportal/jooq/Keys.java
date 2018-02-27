@@ -35,7 +35,6 @@ public class Keys {
     public static final Identity<DashboardRecord, Integer> IDENTITY_DASHBOARD = Identities0.IDENTITY_DASHBOARD;
     public static final Identity<DefectFieldAllowedValueRecord, Integer> IDENTITY_DEFECT_FIELD_ALLOWED_VALUE = Identities0.IDENTITY_DEFECT_FIELD_ALLOWED_VALUE;
     public static final Identity<DefectFormFieldRecord, Integer> IDENTITY_DEFECT_FORM_FIELD = Identities0.IDENTITY_DEFECT_FORM_FIELD;
-    public static final Identity<IssueRecord, Long> IDENTITY_ISSUE = Identities0.IDENTITY_ISSUE;
     public static final Identity<IssueTypeRecord, Integer> IDENTITY_ISSUE_TYPE = Identities0.IDENTITY_ISSUE_TYPE;
     public static final Identity<ItemTagRecord, Integer> IDENTITY_ITEM_TAG = Identities0.IDENTITY_ITEM_TAG;
     public static final Identity<LaunchRecord, Long> IDENTITY_LAUNCH = Identities0.IDENTITY_LAUNCH;
@@ -63,7 +62,6 @@ public class Keys {
     public static final UniqueKey<DefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = UniqueKeys0.DEFECT_FIELD_ALLOWED_VALUE_PK;
     public static final UniqueKey<DefectFormFieldRecord> DEFECT_FORM_FIELD_PK = UniqueKeys0.DEFECT_FORM_FIELD_PK;
     public static final UniqueKey<IssueRecord> ISSUE_PK = UniqueKeys0.ISSUE_PK;
-    public static final UniqueKey<IssueRecord> ISSUE_TEST_ITEM_RESULTS_ID_KEY = UniqueKeys0.ISSUE_TEST_ITEM_RESULTS_ID_KEY;
     public static final UniqueKey<IssueTicketRecord> ISSUE_TICKET_PK = UniqueKeys0.ISSUE_TICKET_PK;
     public static final UniqueKey<IssueTypeRecord> ISSUE_TYPE_PK = UniqueKeys0.ISSUE_TYPE_PK;
     public static final UniqueKey<IssueTypeProjectConfigurationRecord> ISSUE_TYPE_PROJECT_CONFIGURATION_PK = UniqueKeys0.ISSUE_TYPE_PROJECT_CONFIGURATION_PK;
@@ -101,8 +99,8 @@ public class Keys {
     public static final ForeignKey<DashboardWidgetRecord, WidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY;
     public static final ForeignKey<DefectFieldAllowedValueRecord, DefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = ForeignKeys0.DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY;
     public static final ForeignKey<DefectFormFieldRecord, BugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUGTRACKING_SYSTEM_FKEY = ForeignKeys0.DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUGTRACKING_SYSTEM_FKEY;
+    public static final ForeignKey<IssueRecord, TestItemResultsRecord> ISSUE__ISSUE_ISSUE_ID_FKEY = ForeignKeys0.ISSUE__ISSUE_ISSUE_ID_FKEY;
     public static final ForeignKey<IssueRecord, IssueTypeRecord> ISSUE__ISSUE_ISSUE_TYPE_FKEY = ForeignKeys0.ISSUE__ISSUE_ISSUE_TYPE_FKEY;
-    public static final ForeignKey<IssueRecord, TestItemResultsRecord> ISSUE__ISSUE_TEST_ITEM_RESULTS_ID_FKEY = ForeignKeys0.ISSUE__ISSUE_TEST_ITEM_RESULTS_ID_FKEY;
     public static final ForeignKey<IssueTicketRecord, IssueRecord> ISSUE_TICKET__ISSUE_TICKET_ISSUE_ID_FKEY = ForeignKeys0.ISSUE_TICKET__ISSUE_TICKET_ISSUE_ID_FKEY;
     public static final ForeignKey<IssueTicketRecord, TicketRecord> ISSUE_TICKET__ISSUE_TICKET_TICKET_ID_FKEY = ForeignKeys0.ISSUE_TICKET__ISSUE_TICKET_TICKET_ID_FKEY;
     public static final ForeignKey<IssueTypeProjectConfigurationRecord, ProjectConfigurationRecord> ISSUE_TYPE_PROJECT_CONFIGURATION__ISSUE_TYPE_PROJECT_CONFIGURATION_CONFIGURATION_ID_FKEY = ForeignKeys0.ISSUE_TYPE_PROJECT_CONFIGURATION__ISSUE_TYPE_PROJECT_CONFIGURATION_CONFIGURATION_ID_FKEY;
@@ -137,7 +135,6 @@ public class Keys {
         public static Identity<DashboardRecord, Integer> IDENTITY_DASHBOARD = createIdentity(Dashboard.DASHBOARD, Dashboard.DASHBOARD.ID);
         public static Identity<DefectFieldAllowedValueRecord, Integer> IDENTITY_DEFECT_FIELD_ALLOWED_VALUE = createIdentity(DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
         public static Identity<DefectFormFieldRecord, Integer> IDENTITY_DEFECT_FORM_FIELD = createIdentity(DefectFormField.DEFECT_FORM_FIELD, DefectFormField.DEFECT_FORM_FIELD.ID);
-        public static Identity<IssueRecord, Long> IDENTITY_ISSUE = createIdentity(Issue.ISSUE, Issue.ISSUE.ID);
         public static Identity<IssueTypeRecord, Integer> IDENTITY_ISSUE_TYPE = createIdentity(IssueType.ISSUE_TYPE, IssueType.ISSUE_TYPE.ID);
         public static Identity<ItemTagRecord, Integer> IDENTITY_ITEM_TAG = createIdentity(ItemTag.ITEM_TAG, ItemTag.ITEM_TAG.ID);
         public static Identity<LaunchRecord, Long> IDENTITY_LAUNCH = createIdentity(Launch.LAUNCH, Launch.LAUNCH.ID);
@@ -162,8 +159,7 @@ public class Keys {
         public static final UniqueKey<DashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = createUniqueKey(DashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", DashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, DashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME);
         public static final UniqueKey<DefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = createUniqueKey(DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value_pk", DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
         public static final UniqueKey<DefectFormFieldRecord> DEFECT_FORM_FIELD_PK = createUniqueKey(DefectFormField.DEFECT_FORM_FIELD, "defect_form_field_pk", DefectFormField.DEFECT_FORM_FIELD.ID);
-        public static final UniqueKey<IssueRecord> ISSUE_PK = createUniqueKey(Issue.ISSUE, "issue_pk", Issue.ISSUE.ID);
-        public static final UniqueKey<IssueRecord> ISSUE_TEST_ITEM_RESULTS_ID_KEY = createUniqueKey(Issue.ISSUE, "issue_test_item_results_id_key", Issue.ISSUE.TEST_ITEM_RESULTS_ID);
+        public static final UniqueKey<IssueRecord> ISSUE_PK = createUniqueKey(Issue.ISSUE, "issue_pk", Issue.ISSUE.ISSUE_ID);
         public static final UniqueKey<IssueTicketRecord> ISSUE_TICKET_PK = createUniqueKey(IssueTicket.ISSUE_TICKET, "issue_ticket_pk", IssueTicket.ISSUE_TICKET.ISSUE_ID, IssueTicket.ISSUE_TICKET.TICKET_ID);
         public static final UniqueKey<IssueTypeRecord> ISSUE_TYPE_PK = createUniqueKey(IssueType.ISSUE_TYPE, "issue_type_pk", IssueType.ISSUE_TYPE.ID);
         public static final UniqueKey<IssueTypeProjectConfigurationRecord> ISSUE_TYPE_PROJECT_CONFIGURATION_PK = createUniqueKey(IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, "issue_type_project_configuration_pk", IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID, IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID);
@@ -199,8 +195,8 @@ public class Keys {
         public static final ForeignKey<DashboardWidgetRecord, WidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_ID, DashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_widget_id_fkey", DashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final ForeignKey<DefectFieldAllowedValueRecord, DefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value__defect_field_allowed_value_defect_form_field_fkey", DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.DEFECT_FORM_FIELD);
         public static final ForeignKey<DefectFormFieldRecord, BugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUGTRACKING_SYSTEM_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, DefectFormField.DEFECT_FORM_FIELD, "defect_form_field__defect_form_field_bugtracking_system_fkey", DefectFormField.DEFECT_FORM_FIELD.BUGTRACKING_SYSTEM);
+        public static final ForeignKey<IssueRecord, TestItemResultsRecord> ISSUE__ISSUE_ISSUE_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_RESULTS_PK, Issue.ISSUE, "issue__issue_issue_id_fkey", Issue.ISSUE.ISSUE_ID);
         public static final ForeignKey<IssueRecord, IssueTypeRecord> ISSUE__ISSUE_ISSUE_TYPE_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.ISSUE_TYPE_PK, Issue.ISSUE, "issue__issue_issue_type_fkey", Issue.ISSUE.ISSUE_TYPE);
-        public static final ForeignKey<IssueRecord, TestItemResultsRecord> ISSUE__ISSUE_TEST_ITEM_RESULTS_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_RESULTS_PK, Issue.ISSUE, "issue__issue_test_item_results_id_fkey", Issue.ISSUE.TEST_ITEM_RESULTS_ID);
         public static final ForeignKey<IssueTicketRecord, IssueRecord> ISSUE_TICKET__ISSUE_TICKET_ISSUE_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.ISSUE_PK, IssueTicket.ISSUE_TICKET, "issue_ticket__issue_ticket_issue_id_fkey", IssueTicket.ISSUE_TICKET.ISSUE_ID);
         public static final ForeignKey<IssueTicketRecord, TicketRecord> ISSUE_TICKET__ISSUE_TICKET_TICKET_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.TICKET_PK, IssueTicket.ISSUE_TICKET, "issue_ticket__issue_ticket_ticket_id_fkey", IssueTicket.ISSUE_TICKET.TICKET_ID);
         public static final ForeignKey<IssueTypeProjectConfigurationRecord, ProjectConfigurationRecord> ISSUE_TYPE_PROJECT_CONFIGURATION__ISSUE_TYPE_PROJECT_CONFIGURATION_CONFIGURATION_ID_FKEY = createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_CONFIGURATION_PK, IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, "issue_type_project_configuration__issue_type_project_configuration_configuration_id_fkey", IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID);

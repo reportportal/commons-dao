@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Issue extends TableImpl<IssueRecord> {
 
-    private static final long serialVersionUID = 926770917;
+    private static final long serialVersionUID = -212757615;
 
     /**
      * The reference instance of <code>public.issue</code>
@@ -45,9 +45,9 @@ public class Issue extends TableImpl<IssueRecord> {
     }
 
     /**
-     * The column <code>public.issue.id</code>.
+     * The column <code>public.issue.issue_id</code>.
      */
-    public final TableField<IssueRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('issue_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<IssueRecord, Long> ISSUE_ID = createField("issue_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.issue.issue_type</code>.
@@ -68,11 +68,6 @@ public class Issue extends TableImpl<IssueRecord> {
      * The column <code>public.issue.ignore_analyzer</code>.
      */
     public final TableField<IssueRecord, Boolean> IGNORE_ANALYZER = createField("ignore_analyzer", org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
-
-    /**
-     * The column <code>public.issue.test_item_results_id</code>.
-     */
-    public final TableField<IssueRecord, Long> TEST_ITEM_RESULTS_ID = createField("test_item_results_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.issue</code> table reference
@@ -116,15 +111,7 @@ public class Issue extends TableImpl<IssueRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ISSUE_PK, Indexes.ISSUE_TEST_ITEM_RESULTS_ID_KEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity<IssueRecord, Long> getIdentity() {
-        return Keys.IDENTITY_ISSUE;
+        return Arrays.<Index>asList(Indexes.ISSUE_PK);
     }
 
     /**
@@ -140,7 +127,7 @@ public class Issue extends TableImpl<IssueRecord> {
      */
     @Override
     public List<UniqueKey<IssueRecord>> getKeys() {
-        return Arrays.<UniqueKey<IssueRecord>>asList(Keys.ISSUE_PK, Keys.ISSUE_TEST_ITEM_RESULTS_ID_KEY);
+        return Arrays.<UniqueKey<IssueRecord>>asList(Keys.ISSUE_PK);
     }
 
     /**
@@ -148,7 +135,7 @@ public class Issue extends TableImpl<IssueRecord> {
      */
     @Override
     public List<ForeignKey<IssueRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<IssueRecord, ?>>asList(Keys.ISSUE__ISSUE_ISSUE_TYPE_FKEY, Keys.ISSUE__ISSUE_TEST_ITEM_RESULTS_ID_FKEY);
+        return Arrays.<ForeignKey<IssueRecord, ?>>asList(Keys.ISSUE__ISSUE_ISSUE_ID_FKEY, Keys.ISSUE__ISSUE_ISSUE_TYPE_FKEY);
     }
 
     /**

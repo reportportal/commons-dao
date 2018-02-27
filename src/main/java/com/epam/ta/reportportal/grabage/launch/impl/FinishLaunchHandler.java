@@ -107,7 +107,7 @@ public class FinishLaunchHandler implements IFinishLaunchHandler {
 		}
 		Optional<StatusEnum> statusEnum = fromValue(finishLaunchRQ.getStatus());
 		StatusEnum fromStatistics = PASSED;
-		if (launchRepository.checkStatus(launchId)) {
+		if (launchRepository.identifyStatus(launchId)) {
 			fromStatistics = StatusEnum.FAILED;
 		}
 		StatusEnum fromStatisticsStatus = fromStatistics;

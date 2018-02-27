@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.grabage.ws.controller.impl;
 
+import com.epam.ta.reportportal.grabage.item.FinishTestItemHandler;
 import com.epam.ta.reportportal.grabage.item.StartTestItemHandler;
 import com.epam.ta.reportportal.grabage.ws.controller.ITestItemController;
 import com.epam.ta.reportportal.ws.model.*;
@@ -55,8 +56,8 @@ public class TestItemController implements ITestItemController {
 //	@Autowired
 //	private DeleteTestItemHandler deleteTestItemHandler;
 //
-//	@Autowired
-//	private FinishTestItemHandler finishTestItemHandler;
+	@Autowired
+	private FinishTestItemHandler finishTestItemHandler;
 
 //	@Autowired
 //	private GetTestItemHandler getTestItemHandler;
@@ -98,10 +99,9 @@ public class TestItemController implements ITestItemController {
 	@ResponseStatus(OK)
 	@ApiOperation("Finish test item")
 	//@PreAuthorize(ALLOWED_TO_REPORT)
-	public OperationCompletionRS finishTestItem(@PathVariable String projectName, @PathVariable String testItemId,
+	public OperationCompletionRS finishTestItem(@PathVariable String projectName, @PathVariable Long testItemId,
 			@RequestBody @Validated FinishTestItemRQ finishExecutionRQ, Principal principal) {
-		//return finishTestItemHandler.finishTestItem(testItemId, finishExecutionRQ, "principal");
-		return null;
+		return finishTestItemHandler.finishTestItem(testItemId, finishExecutionRQ, "principal");
 	}
 
 	@Override

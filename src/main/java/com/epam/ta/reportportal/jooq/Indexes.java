@@ -36,7 +36,6 @@ public class Indexes {
     public static final Index DEFECT_FIELD_ALLOWED_VALUE_PK = Indexes0.DEFECT_FIELD_ALLOWED_VALUE_PK;
     public static final Index DEFECT_FORM_FIELD_PK = Indexes0.DEFECT_FORM_FIELD_PK;
     public static final Index ISSUE_PK = Indexes0.ISSUE_PK;
-    public static final Index ISSUE_TEST_ITEM_RESULTS_ID_KEY = Indexes0.ISSUE_TEST_ITEM_RESULTS_ID_KEY;
     public static final Index ISSUE_TICKET_PK = Indexes0.ISSUE_TICKET_PK;
     public static final Index ISSUE_TYPE_PK = Indexes0.ISSUE_TYPE_PK;
     public static final Index ISSUE_TYPE_PROJECT_CONFIGURATION_PK = Indexes0.ISSUE_TYPE_PROJECT_CONFIGURATION_PK;
@@ -77,8 +76,7 @@ public class Indexes {
         public static Index WIDGET_ON_DASHBOARD_UNQ = createIndex("widget_on_dashboard_unq", DashboardWidget.DASHBOARD_WIDGET, new OrderField[] { DashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, DashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME }, true);
         public static Index DEFECT_FIELD_ALLOWED_VALUE_PK = createIndex("defect_field_allowed_value_pk", DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, new OrderField[] { DefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID }, true);
         public static Index DEFECT_FORM_FIELD_PK = createIndex("defect_form_field_pk", DefectFormField.DEFECT_FORM_FIELD, new OrderField[] { DefectFormField.DEFECT_FORM_FIELD.ID }, true);
-        public static Index ISSUE_PK = createIndex("issue_pk", Issue.ISSUE, new OrderField[] { Issue.ISSUE.ID }, true);
-        public static Index ISSUE_TEST_ITEM_RESULTS_ID_KEY = createIndex("issue_test_item_results_id_key", Issue.ISSUE, new OrderField[] { Issue.ISSUE.TEST_ITEM_RESULTS_ID }, true);
+        public static Index ISSUE_PK = createIndex("issue_pk", Issue.ISSUE, new OrderField[] { Issue.ISSUE.ISSUE_ID }, true);
         public static Index ISSUE_TICKET_PK = createIndex("issue_ticket_pk", IssueTicket.ISSUE_TICKET, new OrderField[] { IssueTicket.ISSUE_TICKET.ISSUE_ID, IssueTicket.ISSUE_TICKET.TICKET_ID }, true);
         public static Index ISSUE_TYPE_PK = createIndex("issue_type_pk", IssueType.ISSUE_TYPE, new OrderField[] { IssueType.ISSUE_TYPE.ID }, true);
         public static Index ISSUE_TYPE_PROJECT_CONFIGURATION_PK = createIndex("issue_type_project_configuration_pk", IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, new OrderField[] { IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID, IssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID }, true);

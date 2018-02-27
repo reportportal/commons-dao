@@ -43,11 +43,6 @@ public class Sequences {
     public static final Sequence<Integer> DEFECT_FORM_FIELD_ID_SEQ = new SequenceImpl<Integer>("defect_form_field_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
-     * The sequence <code>public.issue_id_seq</code>
-     */
-    public static final Sequence<Long> ISSUE_ID_SEQ = new SequenceImpl<Long>("issue_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.issue_type_id_seq</code>
      */
     public static final Sequence<Integer> ISSUE_TYPE_ID_SEQ = new SequenceImpl<Integer>("issue_type_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));

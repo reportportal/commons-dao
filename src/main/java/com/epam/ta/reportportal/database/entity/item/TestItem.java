@@ -31,6 +31,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -179,4 +180,31 @@ public class TestItem implements Serializable {
 		this.uniqueId = uniqueId;
 	}
 
+	@Override
+	public String toString() {
+		return "TestItem{" + "itemId=" + itemId + ", name='" + name + '\'' + ", type=" + type + ", startTime=" + startTime
+				+ ", description='" + description + '\'' + ", lastModified=" + lastModified + ", uniqueId='" + uniqueId + '\'' + ", tags="
+				+ tags + ", testItemStructure=" + testItemStructure + ", testItemResults=" + testItemResults + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TestItem testItem = (TestItem) o;
+		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(
+				startTime, testItem.startTime) && Objects.equals(description, testItem.description) && Objects.equals(
+				lastModified, testItem.lastModified) && Objects.equals(uniqueId, testItem.uniqueId) && Objects.equals(tags, testItem.tags)
+				&& Objects.equals(
+				testItemStructure, testItem.testItemStructure) && Objects.equals(testItemResults, testItem.testItemResults);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(itemId, name, type, startTime, description, lastModified, uniqueId, tags, testItemStructure, testItemResults);
+	}
 }

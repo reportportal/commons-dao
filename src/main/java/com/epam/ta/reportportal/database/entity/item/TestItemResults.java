@@ -23,11 +23,13 @@ package com.epam.ta.reportportal.database.entity.item;
 
 import com.epam.ta.reportportal.database.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.database.entity.item.issue.Issue;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -49,6 +51,9 @@ public class TestItemResults implements Serializable {
 
 	@Column(name = "duration", precision = 24)
 	private Float duration;
+
+	@OneToOne(mappedBy = "testItemResults", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Issue issue;
 
 	@OneToOne
 	@MapsId
@@ -88,5 +93,38 @@ public class TestItemResults implements Serializable {
 
 	public void setTestItem(TestItem testItem) {
 		this.testItem = testItem;
+	}
+
+	public Issue getIssue() {
+		return issue;
+	}
+
+	public void setIssue(Issue issue) {
+		this.issue = issue;
+		issue.setTestItemResults(this);
+	}
+
+	@Override
+	public String toString() {
+		return "TestItemResults{" + "itemId=" + itemId + ", status=" + status + ", duration=" + duration + ", issue=" + issue
+				+ ", testItem=" + testItem + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TestItemResults that = (TestItemResults) o;
+		return Objects.equals(itemId, that.itemId) && status == that.status && Objects.equals(duration, that.duration) && Objects.equals(
+				issue, that.issue) && Objects.equals(testItem, that.testItem);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(itemId, status, duration, issue, testItem);
 	}
 }
