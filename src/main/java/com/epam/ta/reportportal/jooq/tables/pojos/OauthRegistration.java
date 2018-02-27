@@ -5,7 +5,6 @@ package com.epam.ta.reportportal.jooq.tables.pojos;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
-import java.util.Arrays;
 
 
 /**
@@ -21,21 +20,20 @@ import java.util.Arrays;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class OauthRegistration implements Serializable {
 
-    private static final long serialVersionUID = 425360537;
+    private static final long serialVersionUID = 552888407;
 
-    private String   id;
-    private String   clientId;
-    private String   clientSecret;
-    private String   clientAuthMethod;
-    private String   authGrantType;
-    private String   redirectUriTemplate;
-    private String[] scopes;
-    private String   authorizationUri;
-    private String   tokenUri;
-    private String   userInfoEndpointUri;
-    private String   userInfoEndpointNameAttr;
-    private String   jwkSetUri;
-    private String   clientName;
+    private String id;
+    private String clientId;
+    private String clientSecret;
+    private String clientAuthMethod;
+    private String authGrantType;
+    private String redirectUriTemplate;
+    private String authorizationUri;
+    private String tokenUri;
+    private String userInfoEndpointUri;
+    private String userInfoEndpointNameAttr;
+    private String jwkSetUri;
+    private String clientName;
 
     public OauthRegistration() {}
 
@@ -46,7 +44,6 @@ public class OauthRegistration implements Serializable {
         this.clientAuthMethod = value.clientAuthMethod;
         this.authGrantType = value.authGrantType;
         this.redirectUriTemplate = value.redirectUriTemplate;
-        this.scopes = value.scopes;
         this.authorizationUri = value.authorizationUri;
         this.tokenUri = value.tokenUri;
         this.userInfoEndpointUri = value.userInfoEndpointUri;
@@ -56,19 +53,18 @@ public class OauthRegistration implements Serializable {
     }
 
     public OauthRegistration(
-        String   id,
-        String   clientId,
-        String   clientSecret,
-        String   clientAuthMethod,
-        String   authGrantType,
-        String   redirectUriTemplate,
-        String[] scopes,
-        String   authorizationUri,
-        String   tokenUri,
-        String   userInfoEndpointUri,
-        String   userInfoEndpointNameAttr,
-        String   jwkSetUri,
-        String   clientName
+        String id,
+        String clientId,
+        String clientSecret,
+        String clientAuthMethod,
+        String authGrantType,
+        String redirectUriTemplate,
+        String authorizationUri,
+        String tokenUri,
+        String userInfoEndpointUri,
+        String userInfoEndpointNameAttr,
+        String jwkSetUri,
+        String clientName
     ) {
         this.id = id;
         this.clientId = clientId;
@@ -76,7 +72,6 @@ public class OauthRegistration implements Serializable {
         this.clientAuthMethod = clientAuthMethod;
         this.authGrantType = authGrantType;
         this.redirectUriTemplate = redirectUriTemplate;
-        this.scopes = scopes;
         this.authorizationUri = authorizationUri;
         this.tokenUri = tokenUri;
         this.userInfoEndpointUri = userInfoEndpointUri;
@@ -131,14 +126,6 @@ public class OauthRegistration implements Serializable {
 
     public void setRedirectUriTemplate(String redirectUriTemplate) {
         this.redirectUriTemplate = redirectUriTemplate;
-    }
-
-    public String[] getScopes() {
-        return this.scopes;
-    }
-
-    public void setScopes(String... scopes) {
-        this.scopes = scopes;
     }
 
     public String getAuthorizationUri() {
@@ -199,7 +186,6 @@ public class OauthRegistration implements Serializable {
         sb.append(", ").append(clientAuthMethod);
         sb.append(", ").append(authGrantType);
         sb.append(", ").append(redirectUriTemplate);
-        sb.append(", ").append(Arrays.toString(scopes));
         sb.append(", ").append(authorizationUri);
         sb.append(", ").append(tokenUri);
         sb.append(", ").append(userInfoEndpointUri);

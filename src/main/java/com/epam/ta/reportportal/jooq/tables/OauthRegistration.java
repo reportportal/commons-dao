@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class OauthRegistration extends TableImpl<OauthRegistrationRecord> {
 
-    private static final long serialVersionUID = 540555305;
+    private static final long serialVersionUID = 319343878;
 
     /**
      * The reference instance of <code>public.oauth_registration</code>
@@ -73,11 +73,6 @@ public class OauthRegistration extends TableImpl<OauthRegistrationRecord> {
      * The column <code>public.oauth_registration.redirect_uri_template</code>.
      */
     public final TableField<OauthRegistrationRecord, String> REDIRECT_URI_TEMPLATE = createField("redirect_uri_template", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
-
-    /**
-     * The column <code>public.oauth_registration.scopes</code>.
-     */
-    public final TableField<OauthRegistrationRecord, String[]> SCOPES = createField("scopes", org.jooq.impl.SQLDataType.VARCHAR.getArrayDataType(), this, "");
 
     /**
      * The column <code>public.oauth_registration.authorization_uri</code>.
