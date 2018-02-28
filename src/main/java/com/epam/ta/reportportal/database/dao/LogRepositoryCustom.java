@@ -119,11 +119,11 @@ public interface LogRepositoryCustom {
 	 * Find all {@link Log} records with log_level<br>
 	 * more or equal specified level
 	 *
-	 * @param testItemId Test Item id
+	 * @param testItemIds Test Item ids
 	 * @param level      Log level
 	 * @return List of logs
 	 */
-	List<Log> findGreaterOrEqualLevel(String testItemId, LogLevel level);
+	List<Log> findGreaterOrEqualLevel(List<String> testItemIds, LogLevel level);
 
 	/**
 	 * Find all {@link Log} records with log_level<br>
