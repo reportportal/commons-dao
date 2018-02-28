@@ -17,10 +17,11 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
+ */
+
 package com.epam.ta.reportportal.database;
 
+import com.epam.ta.reportportal.database.entity.AnalyzeMode;
 import com.epam.ta.reportportal.database.entity.LogLevel;
 import com.epam.ta.reportportal.database.entity.item.ActivityEventType;
 import com.epam.ta.reportportal.database.entity.item.ActivityObjectType;
@@ -36,6 +37,7 @@ public class CustomMongoConverters {
 	private CustomMongoConverters() {
 		//statics only
 	}
+
 	public enum LogLevelToIntConverter implements Converter<LogLevel, DBObject> {
 		INSTANCE;
 
@@ -100,8 +102,9 @@ public class CustomMongoConverters {
 
 		@Override
 		public ActivityEventType convert(String source) {
-			return null == source ? null : ActivityEventType.fromString(source)
-					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
+			return null == source ?
+					null :
+					ActivityEventType.fromString(source).orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
 		}
 	}
 
@@ -120,8 +123,28 @@ public class CustomMongoConverters {
 
 		@Override
 		public ActivityObjectType convert(String source) {
-			return null == source ? null : ActivityObjectType.fromString(source)
-					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
+			return null == source ?
+					null :
+					ActivityObjectType.fromString(source).orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_ERROR));
+		}
+	}
+
+	public enum AnalyzeModeToStringObjectTypeConverter implements Converter<AnalyzeMode, String> {
+		INSTANCE;
+
+		@Override
+		public String convert(AnalyzeMode source) {
+			return null == source ? null : source.getValue();
+		}
+	}
+
+	@ReadingConverter
+	public enum StringToAnalyzeModeConverter implements Converter<String, AnalyzeMode> {
+		INSTANCE;
+
+		@Override
+		public AnalyzeMode convert(String source) {
+			return null == source ? null : AnalyzeMode.fromString(source);
 		}
 	}
 }
