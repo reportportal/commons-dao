@@ -123,7 +123,6 @@ public final class PersonalProjectService {
         defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
         defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
         defaultConfig.setExternalSystem(Collections.emptyList());
-        defaultConfig.setIsAutoAnalyzerEnabled(false);
 
         return defaultConfig;
 
