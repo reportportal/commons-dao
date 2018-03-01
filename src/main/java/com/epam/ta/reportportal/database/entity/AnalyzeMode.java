@@ -42,7 +42,7 @@ public enum AnalyzeMode {
 
 	public static AnalyzeMode fromString(String mode) {
 		return Arrays.stream(AnalyzeMode.values())
-				.filter(it -> it.getValue().equals(mode))
+				.filter(it -> it.getValue().equalsIgnoreCase(mode))
 				.findFirst()
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Incorrect analyze mode."));
 	}
