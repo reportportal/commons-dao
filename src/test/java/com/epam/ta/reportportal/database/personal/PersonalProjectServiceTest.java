@@ -85,6 +85,7 @@ public class PersonalProjectServiceTest {
 
 		Assert.assertThat("Incorrect project type", configuration.getEntryType(), Matchers.is(EntryType.PERSONAL));
 		Assert.assertThat("Incorrect keep screenshots config", configuration.getKeepScreenshots(), Matchers.notNullValue());
+		Assert.assertThat("Incorrect auto analysis config", configuration.getIsAutoAnalyzerEnabled(), Matchers.is(false));
 		Assert.assertThat("Incorrect auto analysis config", configuration.getAnalyzerMode(), Matchers.nullValue());
 		Assert.assertThat("Incorrect interrupt config", configuration.getInterruptJobTime(), Matchers.notNullValue());
 		Assert.assertThat("Incorrect keep logs config", configuration.getKeepLogs(), Matchers.notNullValue());
