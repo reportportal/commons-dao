@@ -33,7 +33,7 @@ import java.util.Optional;
  * @author Andrei Varabyeu
  * 
  */
-public enum ExternalSystemType {
+public enum ExternalSystemTypeForDel {
 
 	NONE {
 		@Override
@@ -68,7 +68,7 @@ public enum ExternalSystemType {
 
 	public abstract String makeUrl(String base, String id);
 
-	ExternalSystemType() {
+	ExternalSystemTypeForDel() {
 
 	}
 
@@ -80,8 +80,8 @@ public enum ExternalSystemType {
 		}
 	}
 
-	public static Optional<ExternalSystemType> findByName(String name) {
-		return Arrays.stream(ExternalSystemType.values()).filter(type -> type.name()
+	public static Optional<ExternalSystemTypeForDel> findByName(String name) {
+		return Arrays.stream(ExternalSystemTypeForDel.values()).filter(type -> type.name()
 				.equalsIgnoreCase(name)).findAny();
 	}
 
