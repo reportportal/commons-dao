@@ -17,23 +17,21 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.database.entity;
 
-import java.io.Serializable;
-import java.util.List;
-
+import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.epam.ta.reportportal.database.entity.item.issue.ExternalSystemType;
-import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Model representation of External System Configuration for projects
- * 
+ *
  * @author Andrei_Ramanchuk
  */
 @Document
@@ -49,7 +47,7 @@ public class ExternalSystem implements Serializable {
 	@Indexed
 	private String projectRef;
 
-	private ExternalSystemType externalSystemType;
+	private String externalSystemType;
 	private AuthType externalSystemAuth;
 	private String username;
 	private String password;
@@ -66,12 +64,12 @@ public class ExternalSystem implements Serializable {
 		this.id = id;
 	}
 
-	public void setExternalSystemType(ExternalSystemType type) {
-		this.externalSystemType = type;
+	public String getExternalSystemType() {
+		return externalSystemType;
 	}
 
-	public ExternalSystemType getExternalSystemType() {
-		return externalSystemType;
+	public void setExternalSystemType(String externalSystemType) {
+		this.externalSystemType = externalSystemType;
 	}
 
 	public void setExternalSystemAuth(AuthType type) {
