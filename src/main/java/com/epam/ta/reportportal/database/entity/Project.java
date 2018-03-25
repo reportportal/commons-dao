@@ -44,404 +44,430 @@ import static java.util.Collections.singletonList;
  */
 @Document
 public class Project implements Serializable {
-    private static final long serialVersionUID = -7944375232686172158L;
+	private static final long serialVersionUID = -7944375232686172158L;
 
-    public static final String USERS = "users";
-    public static final String PROJECT = "project";
-    public static final String CREATION_DATE = "creationDate";
+	public static final String USERS = "users";
+	public static final String PROJECT = "project";
+	public static final String CREATION_DATE = "creationDate";
 
-    @Id
-    @FilterCriteria("name")
-    private String name;
+	@Id
+	@FilterCriteria("name")
+	private String name;
 
-    @Indexed
-    private String customer;
+	@Indexed
+	private String customer;
 
-    private String addInfo;
+	private String addInfo;
 
-    @FilterCriteria("configuration")
-    private Configuration configuration;
+	@FilterCriteria("configuration")
+	private Configuration configuration;
 
-    // @Indexed
-    @FilterCriteria(USERS)
-    private List<UserConfig> users;
+	// @Indexed
+	@FilterCriteria(USERS)
+	private List<UserConfig> users;
 
-    @FilterCriteria("creationDate")
-    private Date creationDate;
+	@FilterCriteria("creationDate")
+	private Date creationDate;
 
-    private Metadata metadata;
+	private Metadata metadata;
 
-    public Project() {
-    }
+	public Project() {
+	}
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
+	public Date getCreationDate() {
+		return creationDate;
+	}
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
 
-    public String getId() {
-        return this.name;
-    }
+	public String getId() {
+		return this.name;
+	}
 
-    public String getCustomer() {
-        return customer;
-    }
+	public String getCustomer() {
+		return customer;
+	}
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
-    }
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
 
-    public String getAddInfo() {
-        return addInfo;
-    }
+	public String getAddInfo() {
+		return addInfo;
+	}
 
-    public void setAddInfo(String addInfo) {
-        this.addInfo = addInfo;
-    }
+	public void setAddInfo(String addInfo) {
+		this.addInfo = addInfo;
+	}
 
-    public void setUsers(List<UserConfig> users) {
-        this.users = users;
-    }
+	public void setUsers(List<UserConfig> users) {
+		this.users = users;
+	}
 
-    /*
-     * Null-safe getter
-     */
-    public List<UserConfig> getUsers() {
-        return users == null ? users = Collections.emptyList() : users;
-    }
+	/*
+	 * Null-safe getter
+	 */
+	public List<UserConfig> getUsers() {
+		return users == null ? users = Collections.emptyList() : users;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     * NULL-safe getter
-     *
-     * @return the configuration
-     */
-    public Configuration getConfiguration() {
-        return configuration == null ? configuration = new Configuration() : configuration;
-    }
+	/**
+	 * NULL-safe getter
+	 *
+	 * @return the configuration
+	 */
+	public Configuration getConfiguration() {
+		return configuration == null ? configuration = new Configuration() : configuration;
+	}
 
-    /**
-     * @param configuration the configuration to set
-     */
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
+	/**
+	 * @param configuration the configuration to set
+	 */
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
+	}
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+	public Metadata getMetadata() {
+		return metadata;
+	}
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Project project = (Project) o;
-        return Objects.equals(name, project.name) &&
-                Objects.equals(customer, project.customer) &&
-                Objects.equals(addInfo, project.addInfo) &&
-                Objects.equals(configuration, project.configuration) &&
-                Objects.equals(users, project.users) &&
-                Objects.equals(creationDate, project.creationDate) &&
-                Objects.equals(metadata, project.metadata);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Project project = (Project) o;
+		return Objects.equals(name, project.name) && Objects.equals(customer, project.customer) && Objects.equals(addInfo, project.addInfo)
+				&& Objects.equals(configuration, project.configuration) && Objects.equals(users, project.users) && Objects.equals(
+				creationDate, project.creationDate) && Objects.equals(metadata, project.metadata);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, customer, addInfo, configuration, users, creationDate, metadata);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, customer, addInfo, configuration, users, creationDate, metadata);
+	}
 
-    public static class Configuration implements Serializable {
+	public static class Configuration implements Serializable {
 
-        private static final String AB_COLOR = "#f7d63e";
-        private static final String PB_COLOR = "#ec3900";
-        private static final String SI_COLOR = "#0274d1";
-        private static final String ND_COLOR = "#777777";
-        private static final String TI_COLOR = "#ffb743";
+		private static final String AB_COLOR = "#f7d63e";
+		private static final String PB_COLOR = "#ec3900";
+		private static final String SI_COLOR = "#0274d1";
+		private static final String ND_COLOR = "#777777";
+		private static final String TI_COLOR = "#ffb743";
 
-        private static final long serialVersionUID = 1L;
-        private StatisticsCalculationStrategy statisticsCalculationStrategy;
-        private List<String> externalSystem;
-        @FilterCriteria("entryType")
-        private EntryType entryType;
-        private ProjectSpecific projectSpecific;
-        private String interruptJobTime;
-        private String keepLogs;
-        private String keepScreenshots;
-        private Boolean isAutoAnalyzerEnabled;
-        private Boolean analyzeOnTheFly;
-        private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
+		private static final long serialVersionUID = 1L;
+		private StatisticsCalculationStrategy statisticsCalculationStrategy;
+		private List<String> externalSystem;
+		@FilterCriteria("entryType")
+		private EntryType entryType;
+		private ProjectSpecific projectSpecific;
+		private String interruptJobTime;
+		private String keepLogs;
+		private String keepScreenshots;
+		private Boolean isAutoAnalyzerEnabled;
+		private AnalyzeMode analyzerMode;
+		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
-        // Project Email Settings
-        private ProjectEmailConfig emailConfig;
+		// Project Email Settings
+		private ProjectEmailConfig emailConfig;
 
-        public Configuration() {
-            externalSystem = new ArrayList<>();
-            this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
-                {
-                    put(AUTOMATION_BUG,
-                            singletonList(new StatisticSubType(AUTOMATION_BUG.getLocator(), AUTOMATION_BUG.getValue(),
-                                    "Automation Bug", "AB", AB_COLOR)));
-                    put(PRODUCT_BUG, singletonList(
-                            new StatisticSubType(PRODUCT_BUG.getLocator(), PRODUCT_BUG.getValue(), "Product Bug", "PB",
-                                    PB_COLOR)));
-                    put(SYSTEM_ISSUE, singletonList(
-                            new StatisticSubType(SYSTEM_ISSUE.getLocator(), SYSTEM_ISSUE.getValue(), "System Issue",
-                                    "SI", SI_COLOR)));
-                    put(NO_DEFECT,
-                            singletonList(
-                                    new StatisticSubType(NO_DEFECT.getLocator(), NO_DEFECT.getValue(), "No Defect",
-                                            "ND", ND_COLOR)));
-                    put(TO_INVESTIGATE,
-                            singletonList(new StatisticSubType(TO_INVESTIGATE.getLocator(), TO_INVESTIGATE.getValue(),
-                                    "To Investigate", "TI", TI_COLOR)));
-                }
-            };
-        }
-
-        public StatisticSubType getByLocator(String locator) {
-            /* If locator is predefined group */
-            TestItemIssueType type = fromValue(locator);
-            if (null != type) {
-                Optional<StatisticSubType> typeOptional = subTypes.values().stream().flatMap(Collection::stream)
-                        .filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
-                return typeOptional.orElse(null);
-            }
-            /* If not */
-            Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
-                    .filter(one -> one.getLocator().equalsIgnoreCase(locator)).findFirst();
-            return exist.orElse(null);
-        }
-
-        public void setByLocator(StatisticSubType type) {
-            TestItemIssueType global = fromValue(type.getLocator());
-            if (null == global) {
-                Optional<StatisticSubType> exist = subTypes.values().stream().flatMap(Collection::stream)
-                        .filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
-                exist.ifPresent(statisticSubType -> {
-                    if (null != type.getLongName())
-                        statisticSubType.setLongName(type.getLongName());
-                    if (null != type.getShortName())
-                        statisticSubType.setShortName(type.getShortName());
-                    if (null != type.getHexColor())
-                        statisticSubType.setHexColor(type.getHexColor());
-                });
-            }
-        }
-
-        public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
-            this.subTypes = subTypes;
-        }
-
-        public Map<TestItemIssueType, List<StatisticSubType>> getSubTypes() {
-            return subTypes;
-        }
-
-        public void setEntryType(EntryType value) {
-            this.entryType = value;
-        }
-
-        public EntryType getEntryType() {
-            return entryType;
-        }
-
-        public void setProjectSpecific(ProjectSpecific value) {
-            this.projectSpecific = value;
-        }
-
-        public ProjectSpecific getProjectSpecific() {
-            return projectSpecific;
-        }
-
-        public void setInterruptJobTime(String value) {
-            this.interruptJobTime = value;
-        }
-
-        public String getInterruptJobTime() {
-            return interruptJobTime;
-        }
-
-        public void setKeepLogs(String value) {
-            this.keepLogs = value;
-        }
-
-        public String getKeepLogs() {
-            return keepLogs;
-        }
-
-        public void setKeepScreenshots(String value) {
-            this.keepScreenshots = value;
-        }
-
-        public String getKeepScreenshots() {
-            return keepScreenshots;
-        }
-
-        public void setIsAutoAnalyzerEnabled(boolean enabled) {
-            this.isAutoAnalyzerEnabled = enabled;
-        }
-
-        public Boolean getIsAutoAnalyzerEnabled() {
-            return isAutoAnalyzerEnabled;
-        }
-
-		public Boolean getAnalyzeOnTheFly() {
-			return analyzeOnTheFly;
+		public Configuration() {
+			externalSystem = new ArrayList<>();
+			this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
+				{
+					put(
+							AUTOMATION_BUG, singletonList(
+									new StatisticSubType(AUTOMATION_BUG.getLocator(), AUTOMATION_BUG.getValue(), "Automation Bug", "AB",
+											AB_COLOR
+									)));
+					put(
+							PRODUCT_BUG, singletonList(
+									new StatisticSubType(PRODUCT_BUG.getLocator(), PRODUCT_BUG.getValue(), "Product Bug", "PB", PB_COLOR)));
+					put(
+							SYSTEM_ISSUE, singletonList(
+									new StatisticSubType(SYSTEM_ISSUE.getLocator(), SYSTEM_ISSUE.getValue(), "System Issue", "SI",
+											SI_COLOR
+									)));
+					put(NO_DEFECT,
+							singletonList(new StatisticSubType(NO_DEFECT.getLocator(), NO_DEFECT.getValue(), "No Defect", "ND", ND_COLOR))
+					);
+					put(
+							TO_INVESTIGATE, singletonList(
+									new StatisticSubType(TO_INVESTIGATE.getLocator(), TO_INVESTIGATE.getValue(), "To Investigate", "TI",
+											TI_COLOR
+									)));
+				}
+			};
 		}
 
-		public void setAnalyzeOnTheFly(Boolean analyzeOnTheFly) {
-			this.analyzeOnTheFly = analyzeOnTheFly;
+		public StatisticSubType getByLocator(String locator) {
+			/* If locator is predefined group */
+			TestItemIssueType type = fromValue(locator);
+			if (null != type) {
+				Optional<StatisticSubType> typeOptional = subTypes.values()
+						.stream()
+						.flatMap(Collection::stream)
+						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator()))
+						.findFirst();
+				return typeOptional.orElse(null);
+			}
+			/* If not */
+			Optional<StatisticSubType> exist = subTypes.values()
+					.stream()
+					.flatMap(Collection::stream)
+					.filter(one -> one.getLocator().equalsIgnoreCase(locator))
+					.findFirst();
+			return exist.orElse(null);
+		}
+
+		public void setByLocator(StatisticSubType type) {
+			TestItemIssueType global = fromValue(type.getLocator());
+			if (null == global) {
+				Optional<StatisticSubType> exist = subTypes.values()
+						.stream()
+						.flatMap(Collection::stream)
+						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator()))
+						.findFirst();
+				exist.ifPresent(statisticSubType -> {
+					if (null != type.getLongName()) {
+						statisticSubType.setLongName(type.getLongName());
+					}
+					if (null != type.getShortName()) {
+						statisticSubType.setShortName(type.getShortName());
+					}
+					if (null != type.getHexColor()) {
+						statisticSubType.setHexColor(type.getHexColor());
+					}
+				});
+			}
+		}
+
+		public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
+			this.subTypes = subTypes;
+		}
+
+		public Map<TestItemIssueType, List<StatisticSubType>> getSubTypes() {
+			return subTypes;
+		}
+
+		public void setEntryType(EntryType value) {
+			this.entryType = value;
+		}
+
+		public EntryType getEntryType() {
+			return entryType;
+		}
+
+		public void setProjectSpecific(ProjectSpecific value) {
+			this.projectSpecific = value;
+		}
+
+		public ProjectSpecific getProjectSpecific() {
+			return projectSpecific;
+		}
+
+		public void setInterruptJobTime(String value) {
+			this.interruptJobTime = value;
+		}
+
+		public String getInterruptJobTime() {
+			return interruptJobTime;
+		}
+
+		public void setKeepLogs(String value) {
+			this.keepLogs = value;
+		}
+
+		public String getKeepLogs() {
+			return keepLogs;
+		}
+
+		public void setKeepScreenshots(String value) {
+			this.keepScreenshots = value;
+		}
+
+		public String getKeepScreenshots() {
+			return keepScreenshots;
+		}
+
+		public Boolean getIsAutoAnalyzerEnabled() {
+			return isAutoAnalyzerEnabled;
+		}
+
+		public void setIsAutoAnalyzerEnabled(Boolean autoAnalyzerEnabled) {
+			isAutoAnalyzerEnabled = autoAnalyzerEnabled;
+		}
+
+		public AnalyzeMode getAnalyzerMode() {
+			return analyzerMode;
+		}
+
+		public void setAnalyzerMode(AnalyzeMode analyzerMode) {
+			this.analyzerMode = analyzerMode;
 		}
 
 		public void setEmailConfig(ProjectEmailConfig config) {
-            this.emailConfig = config;
-        }
+			this.emailConfig = config;
+		}
 
-        public ProjectEmailConfig getEmailConfig() {
-            return emailConfig;
-        }
+		public ProjectEmailConfig getEmailConfig() {
+			return emailConfig;
+		}
 
-        /**
-         * @return the statisticsCalculationStrategy
-         */
-        public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
-            return statisticsCalculationStrategy;
-        }
+		/**
+		 * @return the statisticsCalculationStrategy
+		 */
+		public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
+			return statisticsCalculationStrategy;
+		}
 
-        /**
-         * @param statisticsCalculationStrategy the statisticsCalculationStrategy to set
-         */
-        public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
-            this.statisticsCalculationStrategy = statisticsCalculationStrategy;
-        }
+		/**
+		 * @param statisticsCalculationStrategy the statisticsCalculationStrategy to set
+		 */
+		public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
+			this.statisticsCalculationStrategy = statisticsCalculationStrategy;
+		}
 
-        public void setExternalSystem(List<String> externalSystemIds) {
-            this.externalSystem = externalSystemIds;
-        }
+		public void setExternalSystem(List<String> externalSystemIds) {
+			this.externalSystem = externalSystemIds;
+		}
 
-        public List<String> getExternalSystem() {
-            return externalSystem;
-        }
-    }
+		public List<String> getExternalSystem() {
+			return externalSystem;
+		}
+	}
 
-    public static class UserConfig implements Serializable {
+	public static class UserConfig implements Serializable {
 
-        private static final long serialVersionUID = 1L;
-        @Indexed
-        private String login;
-        private ProjectRole proposedRole;
-        private ProjectRole projectRole;
+		private static final long serialVersionUID = 1L;
+		@Indexed
+		private String login;
+		private ProjectRole proposedRole;
+		private ProjectRole projectRole;
 
-        public static UserConfig newOne() {
-            return new UserConfig();
-        }
+		public static UserConfig newOne() {
+			return new UserConfig();
+		}
 
-        public UserConfig() {
+		public UserConfig() {
 
-        }
+		}
 
-        public String getLogin() {
-            return login;
-        }
+		public String getLogin() {
+			return login;
+		}
 
-        public void setLogin(String login) {
-            this.login = login;
-        }
+		public void setLogin(String login) {
+			this.login = login;
+		}
 
-        public void setProjectRole(ProjectRole projectRole) {
-            this.projectRole = projectRole;
-        }
+		public void setProjectRole(ProjectRole projectRole) {
+			this.projectRole = projectRole;
+		}
 
-        public void setProposedRole(ProjectRole proposedRole) {
-            this.proposedRole = proposedRole;
-        }
+		public void setProposedRole(ProjectRole proposedRole) {
+			this.proposedRole = proposedRole;
+		}
 
-        public ProjectRole getProjectRole() {
-            return projectRole;
-        }
+		public ProjectRole getProjectRole() {
+			return projectRole;
+		}
 
-        public ProjectRole getProposedRole() {
-            return proposedRole;
-        }
+		public ProjectRole getProposedRole() {
+			return proposedRole;
+		}
 
-        public UserConfig withProposedRole(ProjectRole proposedRole) {
-            this.proposedRole = proposedRole;
-            return this;
-        }
+		public UserConfig withProposedRole(ProjectRole proposedRole) {
+			this.proposedRole = proposedRole;
+			return this;
+		}
 
-        public UserConfig withProjectRole(ProjectRole projectRole) {
-            this.projectRole = projectRole;
-            return this;
-        }
+		public UserConfig withProjectRole(ProjectRole projectRole) {
+			this.projectRole = projectRole;
+			return this;
+		}
 
-        public UserConfig withLogin(String login) {
-            this.login = login;
-            return this;
-        }
+		public UserConfig withLogin(String login) {
+			this.login = login;
+			return this;
+		}
 
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this).add("login", login).add("proposedRole", proposedRole).add("projectRole", projectRole)
-                    .toString();
-        }
-    }
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this)
+					.add("login", login)
+					.add("proposedRole", proposedRole)
+					.add("projectRole", projectRole)
+					.toString();
+		}
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("name", name).add("customer", customer).add("addInfo", addInfo)
-                .add("configuration", configuration).add("users", users).add("creationDate", creationDate).add("metadata", metadata)
-                .toString();
-    }
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("name", name)
+				.add("customer", customer)
+				.add("addInfo", addInfo)
+				.add("configuration", configuration)
+				.add("users", users)
+				.add("creationDate", creationDate)
+				.add("metadata", metadata)
+				.toString();
+	}
 
-    public static class Metadata implements Serializable {
+	public static class Metadata implements Serializable {
 
-        public Metadata() {
-        }
+		public Metadata() {
+		}
 
-        public Metadata(List<String> demoDataPostfix) {
-            this.demoDataPostfix = demoDataPostfix;
-        }
+		public Metadata(List<String> demoDataPostfix) {
+			this.demoDataPostfix = demoDataPostfix;
+		}
 
-        private List<String> demoDataPostfix;
+		private List<String> demoDataPostfix;
 
-        public List<String> getDemoDataPostfix() {
-            return demoDataPostfix;
-        }
+		public List<String> getDemoDataPostfix() {
+			return demoDataPostfix;
+		}
 
-        public void setDemoDataPostfix(List<String> demoDataPostfix) {
-            this.demoDataPostfix = demoDataPostfix;
-        }
+		public void setDemoDataPostfix(List<String> demoDataPostfix) {
+			this.demoDataPostfix = demoDataPostfix;
+		}
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
 
-            Metadata metadata = (Metadata) o;
+			Metadata metadata = (Metadata) o;
 
-            return demoDataPostfix != null ? demoDataPostfix.equals(metadata.demoDataPostfix) : metadata.demoDataPostfix == null;
-        }
+			return demoDataPostfix != null ? demoDataPostfix.equals(metadata.demoDataPostfix) : metadata.demoDataPostfix == null;
+		}
 
-        @Override
-        public int hashCode() {
-            return demoDataPostfix != null ? demoDataPostfix.hashCode() : 0;
-        }
-    }
+		@Override
+		public int hashCode() {
+			return demoDataPostfix != null ? demoDataPostfix.hashCode() : 0;
+		}
+	}
 }

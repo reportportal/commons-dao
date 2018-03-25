@@ -45,16 +45,19 @@ public class PersonalProjectServiceTest {
 		String userName = "John";
 		when(repo.exists(Mockito.anyString())).then(invocation -> "john_personal".equals(invocation.getArguments()[0]));
 
-		Assert.assertThat("Generated personal space name is incorrect", new PersonalProjectService(repo).generatePersonalProjectName(userName),
-				Matchers.is("john_personal_1".toLowerCase()));
+		Assert.assertThat("Generated personal space name is incorrect",
+				new PersonalProjectService(repo).generatePersonalProjectName(userName), Matchers.is("john_personal_1".toLowerCase())
+		);
 	}
 
 	@Test
 	public void personalProjectNameFree() throws Exception {
 		String userName = "John";
 
-		Assert.assertThat("Generated personal space name is incorrect", new PersonalProjectService(mockProjectRepo()).generatePersonalProjectName(userName),
-				Matchers.is("john_personal".toLowerCase()));
+		Assert.assertThat("Generated personal space name is incorrect",
+				new PersonalProjectService(mockProjectRepo()).generatePersonalProjectName(userName),
+				Matchers.is("john_personal".toLowerCase())
+		);
 	}
 
 	@Test
@@ -65,8 +68,7 @@ public class PersonalProjectServiceTest {
 		user.setFullName("John");
 
 		Project project = new PersonalProjectService(mockProjectRepo()).generatePersonalProject(user);
-		Project.UserConfig userConfig = project.getUsers().stream().filter(it ->
-				login.equals(it.getLogin())).findFirst().get();
+		Project.UserConfig userConfig = project.getUsers().stream().filter(it -> login.equals(it.getLogin())).findFirst().get();
 		Assert.assertThat("Project doesn't have user", userConfig.getLogin(), Matchers.equalTo(login));
 		Assert.assertThat("Incorrect role", userConfig.getProjectRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
 		Assert.assertThat("Incorrect role", userConfig.getProposedRole(), Matchers.is(ProjectRole.PROJECT_MANAGER));
@@ -84,12 +86,13 @@ public class PersonalProjectServiceTest {
 		Assert.assertThat("Incorrect project type", configuration.getEntryType(), Matchers.is(EntryType.PERSONAL));
 		Assert.assertThat("Incorrect keep screenshots config", configuration.getKeepScreenshots(), Matchers.notNullValue());
 		Assert.assertThat("Incorrect auto analysis config", configuration.getIsAutoAnalyzerEnabled(), Matchers.is(false));
+		Assert.assertThat("Incorrect auto analysis config", configuration.getAnalyzerMode(), Matchers.nullValue());
 		Assert.assertThat("Incorrect interrupt config", configuration.getInterruptJobTime(), Matchers.notNullValue());
 		Assert.assertThat("Incorrect keep logs config", configuration.getKeepLogs(), Matchers.notNullValue());
 
 	}
 
-	private ProjectRepository mockProjectRepo(){
+	private ProjectRepository mockProjectRepo() {
 		ProjectRepository repo = Mockito.mock(ProjectRepository.class);
 		when(repo.exists(Mockito.anyString())).thenReturn(false);
 		return repo;
