@@ -33,7 +33,7 @@ public enum AnalyzeMode {
 
 	ALL_LAUNCHES("ALL"),
 	BY_LAUNCH_NAME("LAUNCH_NAME"),
-	MATCH_ISSUE("MATCH_ISSUE");
+	CURRENT_LAUNCH("CURRENT_LAUNCH");
 
 	private String value;
 
