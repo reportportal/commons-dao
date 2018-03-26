@@ -21,17 +21,17 @@
 
 package com.epam.ta.reportportal.database.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import com.epam.ta.reportportal.database.search.FilterCriteria;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.epam.ta.reportportal.database.search.FilterCriteria;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
@@ -69,6 +69,7 @@ public class Log implements Serializable, Modifiable {
 	private Date lastModified;
 
 	@FilterCriteria("level")
+	@Indexed
 	private LogLevel level;
 
 	public String getId() {
