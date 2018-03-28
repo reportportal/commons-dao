@@ -448,7 +448,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public TestItem findRetryRoot(String uniqueId, String parent) {
 		Query query = query(where(PARENT).is(parent)).addCriteria(where(UNIQUE_ID).is(uniqueId))
-				.with(new Sort(Sort.Direction.ASC,  "start_time"))
+				.with(new Sort(Sort.Direction.ASC, "start_time"))
 				.limit(1);
 		return mongoTemplate.findOne(query, TestItem.class);
 	}
@@ -465,11 +465,15 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<RetryObject> findRetries(String launchId) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("retryProcessed").exists(true)),
-				sort(new Sort(Sort.Direction.ASC,  "start_time")),
-				group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
+				sort(new Sort(Sort.Direction.ASC, "start_time")), group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
 		);
 
-		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class)
-				.getMappedResults();
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class).getMappedResults();
+	}
+
+	@Override
+	public List<TestItem> findItemsByAutoAnalyzedStatus(boolean status, String launchId) {
+		return mongoTemplate.find(
+				query(where(LAUNCH_REFERENCE).is(launchId).and(ISSUE).exists(true).and(ISSUE_ANALYZED).is(status)), TestItem.class);
 	}
 }
