@@ -53,6 +53,7 @@ import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
+import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.TO_INVESTIGATE;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -473,7 +474,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findItemsByAutoAnalyzedStatus(boolean status, String launchId) {
-		return mongoTemplate.find(
-				query(where(LAUNCH_REFERENCE).is(launchId).and(ISSUE).exists(true).and(ISSUE_ANALYZED).is(status)), TestItem.class);
+		return mongoTemplate.find(query(where(LAUNCH_REFERENCE).is(launchId)
+				.and(ISSUE)
+				.exists(true)
+				.and(ISSUE_TYPE)
+				.ne(TO_INVESTIGATE.getLocator())
+				.and(ISSUE_ANALYZED)
+				.is(status)), TestItem.class);
 	}
 }
