@@ -301,4 +301,9 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 */
 	List<RetryObject> findRetries(String launchId);
 
+	/**
+	 * Find items by provided auto analyzed status of items issue
+	 */
+	List<TestItem> findItemsByAutoAnalyzedStatus(boolean status, String launchId);
+
 }

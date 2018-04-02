@@ -32,7 +32,8 @@ import java.util.Arrays;
 public enum AnalyzeMode {
 
 	ALL_LAUNCHES("ALL"),
-	BY_LAUNCH_NAME("LAUNCH_NAME");
+	BY_LAUNCH_NAME("LAUNCH_NAME"),
+	CURRENT_LAUNCH("CURRENT_LAUNCH");
 
 	private String value;
 
