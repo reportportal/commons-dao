@@ -172,6 +172,11 @@ public class Project implements Serializable {
 		private static final String ND_COLOR = "#777777";
 		private static final String TI_COLOR = "#ffb743";
 
+		private static final int MIN_DOC_FREQ = 7;
+		private static final int MIN_TERM_FREQ = 1;
+		private static final int MIN_SHOULD_MATCH = 80;
+		private static final int NUMBER_OF_LOG_LINES = 2;
+
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
 		private List<String> externalSystem;
@@ -187,6 +192,8 @@ public class Project implements Serializable {
 
 		// Project Email Settings
 		private ProjectEmailConfig emailConfig;
+
+		private ProjectAnalyzerConfig analyzerConfig;
 
 		public Configuration() {
 			externalSystem = new ArrayList<>();
@@ -215,6 +222,7 @@ public class Project implements Serializable {
 									)));
 				}
 			};
+			analyzerConfig = new ProjectAnalyzerConfig(MIN_DOC_FREQ, MIN_TERM_FREQ, MIN_SHOULD_MATCH, NUMBER_OF_LOG_LINES);
 		}
 
 		public StatisticSubType getByLocator(String locator) {
@@ -257,6 +265,14 @@ public class Project implements Serializable {
 					}
 				});
 			}
+		}
+
+		public ProjectAnalyzerConfig getAnalyzerConfig() {
+			return analyzerConfig;
+		}
+
+		public void setAnalyzerConfig(ProjectAnalyzerConfig analyzerConfig) {
+			this.analyzerConfig = analyzerConfig;
 		}
 
 		public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
