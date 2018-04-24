@@ -2,11 +2,13 @@ package com.epam.ta.reportportal.database.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+
 /**
  * @author Pavel Bortnik
  */
 @Document
-public class ProjectAnalyzerConfig {
+public class ProjectAnalyzerConfig implements Serializable {
 
 	public static final int MIN_DOC_FREQ = 7;
 	public static final int MIN_TERM_FREQ = 1;
