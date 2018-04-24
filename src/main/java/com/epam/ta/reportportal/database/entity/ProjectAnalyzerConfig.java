@@ -8,6 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class ProjectAnalyzerConfig {
 
+	public static final int MIN_DOC_FREQ = 7;
+	public static final int MIN_TERM_FREQ = 1;
+	public static final int MIN_SHOULD_MATCH = 80;
+	public static final int NUMBER_OF_LOG_LINES = 2;
+
 	private int minDocFreq;
 
 	private int minTermFreq;
@@ -19,6 +24,17 @@ public class ProjectAnalyzerConfig {
 	private boolean analyzeRunning;
 
 	private boolean indexingRunning;
+
+	private Boolean isAutoAnalyzerEnabled;
+
+	private AnalyzeMode analyzerMode;
+
+	public ProjectAnalyzerConfig() {
+		this.minDocFreq = MIN_DOC_FREQ;
+		this.minTermFreq = MIN_TERM_FREQ;
+		this.minShouldMatch = MIN_SHOULD_MATCH;
+		this.numberOfLogLines = NUMBER_OF_LOG_LINES;
+	}
 
 	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines) {
 		this.minDocFreq = minDocFreq;
@@ -73,5 +89,21 @@ public class ProjectAnalyzerConfig {
 
 	public void setIndexingRunning(boolean indexingRunning) {
 		this.indexingRunning = indexingRunning;
+	}
+
+	public Boolean getIsAutoAnalyzerEnabled() {
+		return isAutoAnalyzerEnabled;
+	}
+
+	public void setIsAutoAnalyzerEnabled(Boolean autoAnalyzerEnabled) {
+		isAutoAnalyzerEnabled = autoAnalyzerEnabled;
+	}
+
+	public AnalyzeMode getAnalyzerMode() {
+		return analyzerMode;
+	}
+
+	public void setAnalyzerMode(AnalyzeMode analyzerMode) {
+		this.analyzerMode = analyzerMode;
 	}
 }

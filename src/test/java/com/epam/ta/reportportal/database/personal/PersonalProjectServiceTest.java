@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static com.epam.ta.reportportal.database.entity.ProjectAnalyzerConfig.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -85,10 +86,21 @@ public class PersonalProjectServiceTest {
 
 		Assert.assertThat("Incorrect project type", configuration.getEntryType(), Matchers.is(EntryType.PERSONAL));
 		Assert.assertThat("Incorrect keep screenshots config", configuration.getKeepScreenshots(), Matchers.notNullValue());
-		Assert.assertThat("Incorrect auto analysis config", configuration.getIsAutoAnalyzerEnabled(), Matchers.is(false));
-		Assert.assertThat("Incorrect auto analysis config", configuration.getAnalyzerMode(), Matchers.nullValue());
 		Assert.assertThat("Incorrect interrupt config", configuration.getInterruptJobTime(), Matchers.notNullValue());
 		Assert.assertThat("Incorrect keep logs config", configuration.getKeepLogs(), Matchers.notNullValue());
+
+		Assert.assertThat(
+				"Incorrect auto analysis config", configuration.getAnalyzerConfig().getIsAutoAnalyzerEnabled(), Matchers.is(false));
+		Assert.assertThat("Incorrect auto analysis config", configuration.getAnalyzerConfig().getAnalyzerMode(), Matchers.nullValue());
+
+		Assert.assertThat("Incorrect default term freq", configuration.getAnalyzerConfig().getMinTermFreq(), Matchers.is(MIN_TERM_FREQ));
+		Assert.assertThat("Incorrect default doc freq", configuration.getAnalyzerConfig().getMinDocFreq(), Matchers.is(MIN_DOC_FREQ));
+		Assert.assertThat(
+				"Incorrect default min should match", configuration.getAnalyzerConfig().getMinShouldMatch(), Matchers.is(MIN_SHOULD_MATCH));
+		Assert.assertThat(
+				"Incorrect default number of log lines", configuration.getAnalyzerConfig().getNumberOfLogLines(),
+				Matchers.is(NUMBER_OF_LOG_LINES)
+		);
 
 	}
 

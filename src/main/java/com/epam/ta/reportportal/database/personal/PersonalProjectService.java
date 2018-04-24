@@ -21,10 +21,7 @@
 package com.epam.ta.reportportal.database.personal;
 
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
-import com.epam.ta.reportportal.database.entity.Project;
-import com.epam.ta.reportportal.database.entity.ProjectRole;
-import com.epam.ta.reportportal.database.entity.ProjectSpecific;
-import com.epam.ta.reportportal.database.entity.StatisticsCalculationStrategy;
+import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.project.*;
 import com.epam.ta.reportportal.database.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
@@ -122,7 +119,9 @@ public final class PersonalProjectService {
 		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
 		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
 		defaultConfig.setExternalSystem(Collections.emptyList());
-		defaultConfig.setIsAutoAnalyzerEnabled(false);
+		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
+		projectAnalyzerConfig.setIsAutoAnalyzerEnabled(false);
+		defaultConfig.setAnalyzerConfig(projectAnalyzerConfig);
 		return defaultConfig;
 
 	}

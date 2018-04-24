@@ -172,10 +172,7 @@ public class Project implements Serializable {
 		private static final String ND_COLOR = "#777777";
 		private static final String TI_COLOR = "#ffb743";
 
-		private static final int MIN_DOC_FREQ = 7;
-		private static final int MIN_TERM_FREQ = 1;
-		private static final int MIN_SHOULD_MATCH = 80;
-		private static final int NUMBER_OF_LOG_LINES = 2;
+
 
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
@@ -186,8 +183,6 @@ public class Project implements Serializable {
 		private String interruptJobTime;
 		private String keepLogs;
 		private String keepScreenshots;
-		private Boolean isAutoAnalyzerEnabled;
-		private AnalyzeMode analyzerMode;
 		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
 		// Project Email Settings
@@ -222,7 +217,7 @@ public class Project implements Serializable {
 									)));
 				}
 			};
-			analyzerConfig = new ProjectAnalyzerConfig(MIN_DOC_FREQ, MIN_TERM_FREQ, MIN_SHOULD_MATCH, NUMBER_OF_LOG_LINES);
+			analyzerConfig = new ProjectAnalyzerConfig();
 		}
 
 		public StatisticSubType getByLocator(String locator) {
@@ -321,22 +316,6 @@ public class Project implements Serializable {
 
 		public String getKeepScreenshots() {
 			return keepScreenshots;
-		}
-
-		public Boolean getIsAutoAnalyzerEnabled() {
-			return isAutoAnalyzerEnabled;
-		}
-
-		public void setIsAutoAnalyzerEnabled(Boolean autoAnalyzerEnabled) {
-			isAutoAnalyzerEnabled = autoAnalyzerEnabled;
-		}
-
-		public AnalyzeMode getAnalyzerMode() {
-			return analyzerMode;
-		}
-
-		public void setAnalyzerMode(AnalyzeMode analyzerMode) {
-			this.analyzerMode = analyzerMode;
 		}
 
 		public void setEmailConfig(ProjectEmailConfig config) {
