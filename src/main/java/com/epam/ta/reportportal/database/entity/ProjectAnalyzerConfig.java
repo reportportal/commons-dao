@@ -23,8 +23,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 
 	private int numberOfLogLines;
 
-	private boolean analyzeRunning;
-
 	private boolean indexingRunning;
 
 	private Boolean isAutoAnalyzerEnabled;
@@ -32,10 +30,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 	private AnalyzeMode analyzerMode;
 
 	public ProjectAnalyzerConfig() {
-		this.minDocFreq = MIN_DOC_FREQ;
-		this.minTermFreq = MIN_TERM_FREQ;
-		this.minShouldMatch = MIN_SHOULD_MATCH;
-		this.numberOfLogLines = NUMBER_OF_LOG_LINES;
 	}
 
 	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines) {
@@ -75,14 +69,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 
 	public void setNumberOfLogLines(int numberOfLogLines) {
 		this.numberOfLogLines = numberOfLogLines;
-	}
-
-	public boolean isAnalyzeRunning() {
-		return analyzeRunning;
-	}
-
-	public void setAnalyzeRunning(boolean analyzeRunning) {
-		this.analyzeRunning = analyzeRunning;
 	}
 
 	public boolean isIndexingRunning() {
