@@ -51,6 +51,7 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	private static final String PROJECT_ID = "_id";
 	private static final String PROJECT_TYPE = "configuration.entryType";
 	private static final String USER_LOGIN = "users.login";
+	private static final String ANALYZING_LAUNCHES = "configuration.analyzerConfig.analyzingLaunches";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -132,6 +133,14 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				.addCriteria(Criteria.where(PROJECT_ID).regex("^" + user + PERSONAL_PROJECT_POSTFIX));
 		query.fields().include("name");
         return Optional.ofNullable(mongoTemplate.findOne(query, Project.class)).map(Project::getName);
+	}
+
+	@Override
+	public void incrementAnalyzingLaunches(String projectName, int value) {
+		Query query = Query.query(Criteria.where(PROJECT_ID).is(projectName));
+		Update update = new Update();
+		update.inc(ANALYZING_LAUNCHES, value);
+		mongoTemplate.updateFirst(query, update, Project.class);
 	}
 
 	private Criteria userExists(String login) {
