@@ -21,6 +21,7 @@
 package com.epam.ta.reportportal.database.personal;
 
 import com.epam.ta.reportportal.database.dao.ProjectRepository;
+import com.epam.ta.reportportal.database.entity.AnalyzeMode;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.ProjectRole;
 import com.epam.ta.reportportal.database.entity.project.EntryType;
@@ -91,7 +92,7 @@ public class PersonalProjectServiceTest {
 
 		Assert.assertThat(
 				"Incorrect auto analysis config", configuration.getAnalyzerConfig().getIsAutoAnalyzerEnabled(), Matchers.is(false));
-		Assert.assertThat("Incorrect auto analysis config", configuration.getAnalyzerConfig().getAnalyzerMode(), Matchers.nullValue());
+		Assert.assertThat("Incorrect auto analysis config", configuration.getAnalyzerConfig().getAnalyzerMode(), Matchers.is(AnalyzeMode.BY_LAUNCH_NAME));
 
 		Assert.assertThat("Incorrect default term freq", configuration.getAnalyzerConfig().getMinTermFreq(), Matchers.is(MIN_TERM_FREQ));
 		Assert.assertThat("Incorrect default doc freq", configuration.getAnalyzerConfig().getMinDocFreq(), Matchers.is(MIN_DOC_FREQ));

@@ -120,6 +120,11 @@ public final class PersonalProjectService {
 		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
 		defaultConfig.setExternalSystem(Collections.emptyList());
 		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
+		projectAnalyzerConfig.setMinDocFreq(ProjectAnalyzerConfig.MIN_DOC_FREQ);
+		projectAnalyzerConfig.setMinTermFreq(ProjectAnalyzerConfig.MIN_TERM_FREQ);
+		projectAnalyzerConfig.setMinShouldMatch(ProjectAnalyzerConfig.MIN_SHOULD_MATCH);
+		projectAnalyzerConfig.setNumberOfLogLines(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES);
+		projectAnalyzerConfig.setAnalyzerMode(AnalyzeMode.BY_LAUNCH_NAME);
 		projectAnalyzerConfig.setIsAutoAnalyzerEnabled(false);
 		defaultConfig.setAnalyzerConfig(projectAnalyzerConfig);
 		return defaultConfig;
