@@ -3,7 +3,6 @@ package com.epam.ta.reportportal.database.entity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Pavel Bortnik
@@ -26,8 +25,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 
 	private boolean indexingRunning;
 
-	private AtomicInteger analyzingLaunches;
-
 	private Boolean isAutoAnalyzerEnabled;
 
 	private AnalyzeMode analyzerMode;
@@ -40,10 +37,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 		this.minTermFreq = minTermFreq;
 		this.minShouldMatch = minShouldMatch;
 		this.numberOfLogLines = numberOfLogLines;
-	}
-
-	public AtomicInteger getAnalyzingLaunches() {
-		return analyzingLaunches;
 	}
 
 	public int getMinDocFreq() {
