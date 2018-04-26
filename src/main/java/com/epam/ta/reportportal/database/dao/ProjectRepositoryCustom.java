@@ -115,11 +115,11 @@ public interface ProjectRepositoryCustom {
 	Optional<String> findPersonalProjectName(String user);
 
 	/**
-	 * Increment value of analyzing launches of project on specified value.
+	 * Changes status of project logs indexing for analyzer
 	 *
 	 * @param projectName Project name
-	 * @param value       Value
+	 * @param value       Status of indexing
 	 */
-	void incrementAnalyzingLaunches(String projectName, int value);
+	void changeProjectIndexingStatus(String projectName, boolean value);
 
 }
