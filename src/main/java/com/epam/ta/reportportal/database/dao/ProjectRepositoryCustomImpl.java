@@ -135,7 +135,7 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
-	public void changeProjectIndexingStatus(String projectName, boolean value) {
+	public void enableProjectIndexing(String projectName, boolean value) {
 		mongoTemplate.updateFirst(
 				Query.query(Criteria.where(PROJECT_ID).is(projectName)), Update.update(PROJECT_INDEXING, value), Project.class);
 	}

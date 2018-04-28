@@ -120,6 +120,6 @@ public interface ProjectRepositoryCustom {
 	 * @param projectName Project name
 	 * @param value       Status of indexing
 	 */
-	void changeProjectIndexingStatus(String projectName, boolean value);
+	void enableProjectIndexing(String projectName, boolean value);
 
 }
