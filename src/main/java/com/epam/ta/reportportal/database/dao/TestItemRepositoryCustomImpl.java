@@ -77,6 +77,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ITEM_REFERENCE = "testItemRef";
 	private static final String ISSUE_TYPE = "issue.issueType";
 	private static final String ISSUE_ANALYZED = "issue.autoAnalyzed";
+	private static final String IGNORE_ANALYZER = "issue.ignoreAnalyzer";
 	private static final String ISSUE_TICKET = "issue.externalSystemIssues";
 	private static final String ISSUE_DESCRIPTION = "issue.issueDescription";
 	private static final String ISSUE = "issue";
@@ -479,6 +480,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.exists(true)
 				.and(ISSUE_TYPE)
 				.ne(TO_INVESTIGATE.getLocator())
+				.and(IGNORE_ANALYZER)
+				.is(false)
 				.and(ISSUE_ANALYZED)
 				.is(status)), TestItem.class);
 	}
