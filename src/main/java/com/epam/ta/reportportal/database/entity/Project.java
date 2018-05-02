@@ -172,6 +172,8 @@ public class Project implements Serializable {
 		private static final String ND_COLOR = "#777777";
 		private static final String TI_COLOR = "#ffb743";
 
+
+
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
 		private List<String> externalSystem;
@@ -181,12 +183,12 @@ public class Project implements Serializable {
 		private String interruptJobTime;
 		private String keepLogs;
 		private String keepScreenshots;
-		private Boolean isAutoAnalyzerEnabled;
-		private AnalyzeMode analyzerMode;
 		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
 		// Project Email Settings
 		private ProjectEmailConfig emailConfig;
+
+		private ProjectAnalyzerConfig analyzerConfig;
 
 		public Configuration() {
 			externalSystem = new ArrayList<>();
@@ -215,6 +217,7 @@ public class Project implements Serializable {
 									)));
 				}
 			};
+			analyzerConfig = new ProjectAnalyzerConfig();
 		}
 
 		public StatisticSubType getByLocator(String locator) {
@@ -257,6 +260,14 @@ public class Project implements Serializable {
 					}
 				});
 			}
+		}
+
+		public ProjectAnalyzerConfig getAnalyzerConfig() {
+			return analyzerConfig;
+		}
+
+		public void setAnalyzerConfig(ProjectAnalyzerConfig analyzerConfig) {
+			this.analyzerConfig = analyzerConfig;
 		}
 
 		public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
@@ -305,22 +316,6 @@ public class Project implements Serializable {
 
 		public String getKeepScreenshots() {
 			return keepScreenshots;
-		}
-
-		public Boolean getIsAutoAnalyzerEnabled() {
-			return isAutoAnalyzerEnabled;
-		}
-
-		public void setIsAutoAnalyzerEnabled(Boolean autoAnalyzerEnabled) {
-			isAutoAnalyzerEnabled = autoAnalyzerEnabled;
-		}
-
-		public AnalyzeMode getAnalyzerMode() {
-			return analyzerMode;
-		}
-
-		public void setAnalyzerMode(AnalyzeMode analyzerMode) {
-			this.analyzerMode = analyzerMode;
 		}
 
 		public void setEmailConfig(ProjectEmailConfig config) {

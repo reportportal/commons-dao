@@ -51,14 +51,15 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	private static final String PROJECT_ID = "_id";
 	private static final String PROJECT_TYPE = "configuration.entryType";
 	private static final String USER_LOGIN = "users.login";
+	private static final String PROJECT_INDEXING = "configuration.analyzerConfig.indexingRunning";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
 	@Override
 	public boolean isAssignedToProject(String project, String login) {
-		return mongoTemplate.exists(Query.query(Criteria.where("name").is(project.toLowerCase()))
-				.addCriteria(userExists(login)), Project.class);
+		return mongoTemplate.exists(
+				Query.query(Criteria.where("name").is(project.toLowerCase())).addCriteria(userExists(login)), Project.class);
 	}
 
 	@Override
@@ -71,8 +72,9 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 		Query query = projectById(projectName);
 		query.fields().include("users");
 		Project p = mongoTemplate.findOne(query, Project.class);
-		return p == null ? null : p.getUsers().stream().map(UserConfig::getLogin)
-				.filter(userNameContains(value)).collect(Collectors.toList());
+		return p == null ?
+				null :
+				p.getUsers().stream().map(UserConfig::getLogin).filter(userNameContains(value)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -84,8 +86,7 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public void removeUserFromProjects(String userId) {
 		Query query = Query.query(Criteria.where(USER_LOGIN).is(userId));
-		mongoTemplate.updateMulti(query, new Update()
-				.pull("users", new BasicDBObject("login", userId)), Project.class);
+		mongoTemplate.updateMulti(query, new Update().pull("users", new BasicDBObject("login", userId)), Project.class);
 	}
 
 	@Override
@@ -114,15 +115,14 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 		final Query q = Query.query(userExists(login));
 		q.fields().include("users");
 		return mongoTemplate.find(q, Project.class).stream().collect(Collectors.
-				toMap(Project::getName, p -> p.getUsers().stream()
-						.filter(it -> login.equals(it.getLogin())).findFirst().get()
-						.getProjectRole()));
+				toMap(Project::getName,
+						p -> p.getUsers().stream().filter(it -> login.equals(it.getLogin())).findFirst().get().getProjectRole()
+				));
 	}
 
 	@Override
 	public void addDemoDataPostfix(String project, String postfix) {
-		mongoTemplate.updateFirst(projectById(project), new Update()
-				.push("metadata.demoDataPostfix", postfix), Project.class);
+		mongoTemplate.updateFirst(projectById(project), new Update().push("metadata.demoDataPostfix", postfix), Project.class);
 	}
 
 	@Override
@@ -131,7 +131,13 @@ class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				.addCriteria(Criteria.where(PROJECT_TYPE).is(EntryType.PERSONAL))
 				.addCriteria(Criteria.where(PROJECT_ID).regex("^" + user + PERSONAL_PROJECT_POSTFIX));
 		query.fields().include("name");
-        return Optional.ofNullable(mongoTemplate.findOne(query, Project.class)).map(Project::getName);
+		return Optional.ofNullable(mongoTemplate.findOne(query, Project.class)).map(Project::getName);
+	}
+
+	@Override
+	public void enableProjectIndexing(String projectName, boolean value) {
+		mongoTemplate.updateFirst(
+				Query.query(Criteria.where(PROJECT_ID).is(projectName)), Update.update(PROJECT_INDEXING, value), Project.class);
 	}
 
 	private Criteria userExists(String login) {

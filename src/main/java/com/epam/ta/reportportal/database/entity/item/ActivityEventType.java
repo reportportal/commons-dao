@@ -53,6 +53,8 @@ public enum ActivityEventType {
 	UNLINK_ISSUE("unlink_issue"),
 	UPDATE_ITEM("update_item"),
 	CREATE_USER("create_user"),
+	DELETE_INDEX("delete_index"),
+	GENERATE_INDEX("generate_index"),
 	START_IMPORT("start_import"),
 	FINISH_IMPORT("finish_import");
 
