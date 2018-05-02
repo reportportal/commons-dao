@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -52,6 +52,7 @@ import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 
 import java.time.Duration;
 import java.util.*;
@@ -118,7 +119,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1), Launch.class
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
+				Launch.class
 		);
 	}
 
@@ -136,7 +138,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public void updateHasRetries(String id, boolean hasRetries) {
-		mongoTemplate.updateFirst(new Query().addCriteria(where(ID_REFERENCE).is(id)), Update.update("hasRetries", hasRetries),
+		mongoTemplate.updateFirst(new Query().addCriteria(where(ID_REFERENCE).is(id)),
+				Update.update("hasRetries", hasRetries),
 				Launch.class
 		);
 
@@ -145,7 +148,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1), Launch.class
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
+				Launch.class
 		);
 	}
 
@@ -221,8 +225,10 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode) {
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy),
+		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)),
+				match(where(MODE).is(mode)),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
+				group(distinctBy),
 				limit(AUTOCOMPLETE_LIMITATION)
 		);
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
@@ -234,8 +240,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from) {
 		Map<String, Integer> output = new HashMap<>();
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
-				match(where(STATUS).ne(IN_PROGRESS.name())), match(where(START_TIME).gt(from)), group("$userRef").count().as("count")
+		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)),
+				match(where(MODE).is(mode)),
+				match(where(STATUS).ne(IN_PROGRESS.name())),
+				match(where(START_TIME).gt(from)),
+				group("$userRef").count().as("count")
 		);
 
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
@@ -366,23 +375,27 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	/*
 	 *	db.launch.aggregate([
-     *  		{ $match : { "$and" : [ { projectRef : "default_personal" } ]}},
-     *  		{ $unwind : "$tags"},
-     *  		{ $match : {tags : {$regex : "^build:.+"}}},
-     *  		{ $group : { _id : "$tags", "statistics$executionCounter$passed" : { "$sum" : "$statistics.executionCounter.passed"}}},
-     *  		{ $addFields : { "len" : { $strLenCP: "$_id" } }},
-     *  		{ $sort : { len: -1, _id : -1 }},
-     *  		{ $limit : 10 }
-     *	])
-	*/
+	 *  		{ $match : { "$and" : [ { projectRef : "default_personal" } ]}},
+	 *  		{ $unwind : "$tags"},
+	 *  		{ $match : {tags : {$regex : "^build:.+"}}},
+	 *  		{ $group : { _id : "$tags", "statistics$executionCounter$passed" : { "$sum" : "$statistics.executionCounter.passed"}}},
+	 *  		{ $addFields : { "len" : { $strLenCP: "$_id" } }},
+	 *  		{ $sort : { len: -1, _id : -1 }},
+	 *  		{ $limit : 10 }
+	 *	])
+	 */
 	@Override
 	public void cumulativeStatisticsGroupedByTag(Queryable filter, List<String> contentFields, long limit, String tagPrefix,
 			DocumentCallbackHandler callbackHandler) {
 		String tag = String.format(REGEX, tagPrefix);
 		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				match(Criteria.where(TAGS).regex(tag)), unwind("$tags"), match(Criteria.where(TAGS).regex(tag)),
-				groupByFieldWithStatisticsSumming(TAGS, contentFields), addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
-				sorting("len", DESC).and(DESC, "_id"), limit(limit)
+				match(Criteria.where(TAGS).regex(tag)),
+				unwind("$tags"),
+				match(Criteria.where(TAGS).regex(tag)),
+				groupByFieldWithStatisticsSumming(TAGS, contentFields),
+				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
+				sorting("len", DESC).and(DESC, "_id"),
+				limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
 				.getMappedResults();
@@ -395,6 +408,17 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.addCriteria(Criteria.where(PROJECT_ID_REFERENCE).is(project));
 		query.fields().include(ID_REFERENCE);
 		return Streams.stream(mongoTemplate.stream(query, Launch.class));
+	}
+
+	@Override
+	public Page<Launch> getModifiedInRange(String project, Date from, Date to, Pageable p) {
+		Query query = Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gte(from).lte((to)))
+				.addCriteria(Criteria.where(PROJECT_ID_REFERENCE).is(project));
+		query.with(p);
+		query.fields().include(ID_REFERENCE);
+
+		List<Launch> content = mongoTemplate.find(query, Launch.class);
+		return PageableExecutionUtils.getPage(content, p, () -> mongoTemplate.count(query, Launch.class));
 	}
 
 	/**
@@ -436,7 +460,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 *        { $skip : skip },
 	 *        { $limit : limit }
 	 *     ])
-	*/
+	 */
 	private List<Launch> findLatest(Queryable filter, Pageable pageable) {
 		List<AggregationOperation> operations = latestLaunchesAggregationOperationsList(filter);
 		operations.add(sort(pageable.getSort()));
@@ -455,10 +479,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 *        }}},
 	 *        { $replaceRoot : { newRoot : "$original" }
 	 *     ])
-	*/
+	 */
 	private List<AggregationOperation> latestLaunchesAggregationOperationsList(Queryable filter) {
-		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class), sort(DESC, NUMBER),
-				group("$name").first(ROOT).as(ORIGINAL), replaceRoot(ORIGINAL)
+		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
+				sort(DESC, NUMBER),
+				group("$name").first(ROOT).as(ORIGINAL),
+				replaceRoot(ORIGINAL)
 		);
 	}
 

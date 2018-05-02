@@ -282,4 +282,14 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @return
 	 */
 	Stream<Launch> streamModifiedInRange(String project, Date from, Date to);
+
+	/**
+	 * Get launch ids of launches that were last modified in range.
+	 *
+	 * @param project Project
+	 * @param from    Later than date
+	 * @param to      Before than date
+	 * @return
+	 */
+	Page<Launch> getModifiedInRange(String project, Date from, Date to, Pageable p);
 }
