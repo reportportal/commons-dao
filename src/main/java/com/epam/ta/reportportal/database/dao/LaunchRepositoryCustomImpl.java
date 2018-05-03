@@ -411,14 +411,23 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Page<Launch> getModifiedInRange(String project, Date from, Date to, Pageable p) {
+	public Page<Launch> findModifiedInRange(String project, Date from, Date to, Pageable p) {
 		Query query = Query.query(Criteria.where(Modifiable.LAST_MODIFIED).gte(from).lte((to)))
 				.addCriteria(Criteria.where(PROJECT_ID_REFERENCE).is(project));
 		query.with(p);
 		query.fields().include(ID_REFERENCE);
 
-		List<Launch> content = mongoTemplate.find(query, Launch.class);
-		return PageableExecutionUtils.getPage(content, p, () -> mongoTemplate.count(query, Launch.class));
+		return pageByQuery(query, p, Launch.class);
+	}
+
+	@Override
+	public Page<Launch> findModifiedBefore(String project, Date before,Pageable p) {
+		Query query = Query.query(Criteria.where(Modifiable.LAST_MODIFIED).lte((before)))
+				.addCriteria(Criteria.where(PROJECT_ID_REFERENCE).is(project));
+		query.with(p);
+		query.fields().include(ID_REFERENCE);
+
+		return pageByQuery(query, p, Launch.class);
 	}
 
 	/**
@@ -486,6 +495,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				group("$name").first(ROOT).as(ORIGINAL),
 				replaceRoot(ORIGINAL)
 		);
+	}
+
+	private <T> Page<T> pageByQuery(Query q,Pageable p, Class<T> clazz) {
+		List<T> content = mongoTemplate.find(q, clazz);
+		return PageableExecutionUtils.getPage(content, p, () -> mongoTemplate.count(q, clazz));
 	}
 
 }
