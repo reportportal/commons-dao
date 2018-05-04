@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,8 +41,7 @@ public interface LogRepositoryCustom {
 	/**
 	 * Removes binary content field for specified fileId
 	 *
-	 * @param fileId
-	 * @return true if successfully removed
+	 * @param fileId ID if file
 	 */
 	void removeBinaryContent(String fileId);
 
@@ -120,7 +119,7 @@ public interface LogRepositoryCustom {
 	 * more or equal specified level
 	 *
 	 * @param testItemIds Test Item ids
-	 * @param level      Log level
+	 * @param level       Log level
 	 * @return List of logs
 	 */
 	List<Log> findGreaterOrEqualLevel(List<String> testItemIds, LogLevel level);
@@ -146,8 +145,9 @@ public interface LogRepositoryCustom {
 	/**
 	 * Remove all items' {@link Log} records that modified before the time
 	 *
-	 * @param time
-	 * @param itemRef
+	 * @param time    Duration
+	 * @param itemRef list of test items
+	 * @return count of items removed
 	 */
-	void deleteByPeriodAndItemsRef(Duration time, List<String> itemRef);
+	long deleteByPeriodAndItemsRef(Duration time, List<String> itemRef);
 }
