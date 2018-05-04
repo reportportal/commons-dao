@@ -172,8 +172,8 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public void deleteByPeriodAndItemsRef(Duration time, List<String> itemsRef){
+	public long deleteByPeriodAndItemsRef(Duration time, List<String> itemsRef){
 		Query query = findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(itemsRef));
-		mongoTemplate.remove(query, Log.class);
+		return mongoTemplate.remove(query, Log.class).getN();
 	}
 }
