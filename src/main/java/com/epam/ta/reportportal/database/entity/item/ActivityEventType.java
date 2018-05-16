@@ -47,6 +47,7 @@ public enum ActivityEventType {
 	FINISH_LAUNCH("finish_launch"),
 	DELETE_LAUNCH("delete_launch"),
 	UPDATE_PROJECT("update_project"),
+	UPDATE_ANALYZER("update_analyzer"),
 	POST_ISSUE("post_issue"),
 	LINK_ISSUE("link_issue"),
 	LINK_ISSUE_AA("link_issue_aa"),
