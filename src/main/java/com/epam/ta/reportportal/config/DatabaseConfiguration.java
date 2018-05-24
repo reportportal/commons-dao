@@ -6,7 +6,9 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -18,8 +20,8 @@ import javax.sql.DataSource;
 /**
  * @author Pavel Bortnik
  */
-//@Configuration
-//@EnableConfigurationProperties
+@Configuration
+@EnableConfigurationProperties
 public class DatabaseConfiguration {
 
 	@Autowired
@@ -38,7 +40,7 @@ public class DatabaseConfiguration {
 
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("com.epam.ta.reportportal.jooq.pojos");
+		factory.setPackagesToScan("com.epam.ta.reportportal.database.entity");
 		factory.setDataSource(dataSource());
 		factory.afterPropertiesSet();
 

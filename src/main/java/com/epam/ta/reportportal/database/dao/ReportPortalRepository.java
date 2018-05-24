@@ -11,6 +11,6 @@ import java.io.Serializable;
 @NoRepositoryBean
 public interface ReportPortalRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
-	void refresh(T t);
+//	void refresh(T t);
 
 }

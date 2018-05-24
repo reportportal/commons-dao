@@ -20,9 +20,9 @@ public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends Simp
 		this.entityManager = entityManager;
 	}
 
-	@Override
-	@Transactional
-	public void refresh(T t) {
-		entityManager.refresh(t);
-	}
+//	@Override
+//	@Transactional
+//	public void refresh(T t) {
+//		entityManager.refresh(t);
+//	}
 }

@@ -84,13 +84,15 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.9.0'
     testCompile 'org.dbunit:dbunit:2.5.4'
 
-    testCompile 'org.springframework.boot:spring-boot-test'
+//    testCompile 'org.springframework.boot:spring-boot-test'
     testCompile 'org.springframework:spring-test'
     testCompile 'org.springframework.security:spring-security-crypto'
     testCompile 'org.springframework.security:spring-security-core'
     testCompile 'org.hibernate:hibernate-validator:6.0.7.Final'
-    testCompile("com.h2database:h2")
 
+    testCompile("com.h2database:h2")
+    testCompile 'com.github.database-rider:rider-spring:1.2.8'
+    testCompile 'org.dbunit:dbunit:2.5.4'
 
 }
 

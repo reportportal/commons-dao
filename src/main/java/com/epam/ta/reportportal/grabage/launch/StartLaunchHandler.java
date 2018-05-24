@@ -73,7 +73,7 @@ public class StartLaunchHandler{
 		//launch.setApproximateDuration(calculateApproximateDuration(projectName, startLaunchRQ.getName(), 5));
 
 		launchRepository.save(launch);
-		launchRepository.refresh(launch);
+//		launchRepository.refresh(launch);
 		//eventPublisher.publishEvent(new LaunchStartedEvent(launch));
 		return new StartLaunchRS(launch.getId().toString(), launch.getNumber().longValue());
 	}
