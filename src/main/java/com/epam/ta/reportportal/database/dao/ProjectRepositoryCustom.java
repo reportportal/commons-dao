@@ -43,7 +43,7 @@ public interface ProjectRepositoryCustom {
 	 * @param login   User name
 	 * @return {@link Boolean#TRUE} if user is assigned to provided project
 	 */
-//	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
+	//	@Cacheable(value = CacheConfiguration.ASSIGNED_USERS_CACHE, key = "#p0 + #p1")
 	boolean isAssignedToProject(String project, String login);
 
 	/**
@@ -113,5 +113,13 @@ public interface ProjectRepositoryCustom {
 	void addDemoDataPostfix(String project, String postfix);
 
 	Optional<String> findPersonalProjectName(String user);
+
+	/**
+	 * Changes status of project logs indexing for analyzer
+	 *
+	 * @param projectName Project name
+	 * @param value       Status of indexing
+	 */
+	void enableProjectIndexing(String projectName, boolean value);
 
 }

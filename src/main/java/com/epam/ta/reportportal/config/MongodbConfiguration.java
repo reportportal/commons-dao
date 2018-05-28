@@ -125,7 +125,9 @@ public class MongodbConfiguration {
 				CustomMongoConverters.ActivityEventTypeToStringConverter.INSTANCE,
 				CustomMongoConverters.StringToActivityEventTypeConverter.INSTANCE,
 				CustomMongoConverters.ActivityObjectTypeToStringConverter.INSTANCE,
-				CustomMongoConverters.StringToActivityObjectTypeConverter.INSTANCE
+				CustomMongoConverters.StringToActivityObjectTypeConverter.INSTANCE,
+				CustomMongoConverters.StringToAnalyzeModeConverter.INSTANCE,
+				CustomMongoConverters.AnalyzeModeToStringObjectTypeConverter.INSTANCE
 		));
 	}
 
