@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +31,6 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	private static final String testItemId3 = "575eace8bd09be0d4019e83e";
 	private static final String testItemId4 = "575eace8bd09be0d4019e84e";
 
-
 	@Autowired
 	private TestItemRepository testItemRepository;
 
@@ -41,12 +41,14 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		TestItem testItem = new TestItem();
 		testItem.setLaunchRef(launch);
 		testItem.setId(testItemId1);
+		testItem.setStartTime(new Date());
 		testItem.setName("test");
 		testItem.setIssue(new TestItemIssue(TestItemIssueType.SYSTEM_ISSUE.getLocator(), null));
 
 		TestItem testItem1 = new TestItem();
 		testItem1.setId(testItemId2);
 		testItem1.setName("testName");
+		testItem1.setStartTime(new Date());
 		testItem1.setLaunchRef(launch);
 		testItem1.setType(TestItemType.SUITE);
 		testItem1.setIssue(new TestItemIssue(TestItemIssueType.NO_DEFECT.getLocator(), null));
@@ -54,6 +56,7 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		TestItem testItem2 = new TestItem();
 		testItem2.setId(testItemId3);
 		testItem2.setName("test2");
+		testItem2.setStartTime(new Date());
 		testItem2.setIssue(new TestItemIssue("nd_custom", null));
 		testItem2.setType(TestItemType.SUITE);
 		testItem2.setLaunchRef(launch);
@@ -65,9 +68,15 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		TestItem child = new TestItem();
 		child.setId(testItemId4);
 		child.setName("child");
+		child.setStartTime(new Date());
 		child.setStatus(Status.FAILED);
 		child.setParent(testItem.getId());
 		testItemRepository.save(child);
+	}
+
+	@Test
+	public void findBla() {
+		testItemRepository.getGroupedBy(null, "", "");
 	}
 
 	@Test

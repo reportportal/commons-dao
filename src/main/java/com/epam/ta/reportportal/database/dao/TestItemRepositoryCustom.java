@@ -31,6 +31,8 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.Filter;
+import com.mongodb.BasicDBObject;
 
 import java.time.Duration;
 import java.util.List;
@@ -130,6 +132,8 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @return
 	 */
 	boolean hasLogs(Iterable<TestItem> items);
+
+	List<BasicDBObject> getGroupedBy(Filter filter, String groupingParam, String project);
 
 	/**
 	 * Load states of specified testItems in specified launches
