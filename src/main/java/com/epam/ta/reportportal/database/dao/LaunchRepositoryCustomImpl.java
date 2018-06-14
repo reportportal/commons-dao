@@ -36,7 +36,6 @@ import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -346,16 +345,21 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<BasicDBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields) {
-		List<Object> res = mongoTemplate.aggregate(newAggregation(
-				GroupingOperation.group().withPeriod("by_day", "$start_time").withField("name", "$name").push("launches", ROOT),
+	public List<Object> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod) {
+		String path = "$latest.launches";
+
+		GroupingOperation groupingOperation = GroupingOperation.group().withField("day", "$_id." + groupingPeriod);
+		for (String contentField : contentFields) {
+			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), path + "." + contentField);
+		}
+
+		List<Object> res = mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
+				GroupingOperation.group().withPeriod(groupingPeriod, "$start_time").withField("name", "$name").push("launches", ROOT),
 				unwind("$launches"), sort(DESC, "$launches.number"), group("$_id.by_day", "$launches.name").first(ROOT).as("latest"),
-				group("$_id.by_day").sum("$latest.launches.statistics.executionCounter.total")
-						.as("total")
-						.push("$latest.launches")
-						.as("launches")
+				groupingOperation.push("launches", path)
 		), mongoTemplate.getCollectionName(Launch.class), Object.class).getMappedResults();
-		return null;
+
+		return res;
 	}
 
 	@Override

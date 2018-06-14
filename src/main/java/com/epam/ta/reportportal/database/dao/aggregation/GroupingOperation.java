@@ -53,6 +53,11 @@ public class GroupingOperation implements AggregationOperation {
 		return this;
 	}
 
+	public GroupingOperation sum(String alias, String contentField) {
+		groupExpression.append(alias, new BasicDBObject("$sum", contentField));
+		return this;
+	}
+
 	public enum GroupingBy {
 		BY_DAY("by_day", "$dayOfYear"),
 		BY_WEEK("by_week", "$week"),
