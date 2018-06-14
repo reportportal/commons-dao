@@ -36,6 +36,7 @@ import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -354,9 +355,13 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		}
 
 		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				GroupingOperation.group().withPeriod(groupingPeriod, "$start_time").withField("name", "$name").push("launches", ROOT),
-				unwind("$launches"), sort(DESC, "$launches.number"), group("$_id.by_day", "$launches.name").first(ROOT).as("latest"),
-				groupingOperation.push("launches", path)
+				GroupingOperation.group()
+						.withPeriod(groupingPeriod, "$start_time")
+						.withField("name", "$name")
+						.push("launches",
+								new BasicDBObject("name", "$name").append("number", "$number").append("statistics", "$statistics")
+						), unwind("$launches"), sort(DESC, "$launches.number"),
+				group("$_id." + groupingPeriod, "$_id.name").first(ROOT).as("latest"), groupingOperation.push("launches", path)
 		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 

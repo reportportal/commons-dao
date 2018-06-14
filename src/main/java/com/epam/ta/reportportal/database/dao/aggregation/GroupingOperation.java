@@ -48,7 +48,7 @@ public class GroupingOperation implements AggregationOperation {
 		return this;
 	}
 
-	public GroupingOperation push(String alias, String value) {
+	public GroupingOperation push(String alias, Object value) {
 		groupExpression.append(alias, new BasicDBObject("$push", value));
 		return this;
 	}
