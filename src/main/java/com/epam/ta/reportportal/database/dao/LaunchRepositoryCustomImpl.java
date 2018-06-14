@@ -348,7 +348,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public List<DBObject> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod) {
 		String path = "$latest.launches";
 
-		GroupingOperation groupingOperation = GroupingOperation.group().withField("day", "$_id." + groupingPeriod);
+		GroupingOperation groupingOperation = GroupingOperation.group().withField("_id", "$_id." + groupingPeriod);
 		for (String contentField : contentFields) {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), path + "." + contentField);
 		}
