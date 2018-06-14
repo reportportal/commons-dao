@@ -28,6 +28,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.Queryable;
+import com.mongodb.DBObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -259,7 +260,7 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @param contentFields
 	 * @return
 	 */
-	List<Object> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod);
+	List<DBObject> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod);
 
 	/**
 	 * @param id   Launch ID

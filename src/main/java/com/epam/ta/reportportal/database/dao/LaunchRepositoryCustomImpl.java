@@ -345,7 +345,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<Object> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod) {
+	public List<DBObject> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod) {
 		String path = "$latest.launches";
 
 		GroupingOperation groupingOperation = GroupingOperation.group().withField("day", "$_id." + groupingPeriod);
@@ -353,13 +353,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), path + "." + contentField);
 		}
 
-		List<Object> res = mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
+		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
 				GroupingOperation.group().withPeriod(groupingPeriod, "$start_time").withField("name", "$name").push("launches", ROOT),
 				unwind("$launches"), sort(DESC, "$launches.number"), group("$_id.by_day", "$launches.name").first(ROOT).as("latest"),
 				groupingOperation.push("launches", path)
-		), mongoTemplate.getCollectionName(Launch.class), Object.class).getMappedResults();
-
-		return res;
+		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
 	@Override
