@@ -28,6 +28,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.Queryable;
+import com.mongodb.BasicDBObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -250,6 +251,16 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @return List of launches
 	 */
 	List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type);
+
+	/**
+	 * Aggregates latest launches stats provided in contentFields per grouping date
+	 * with specified filters.
+	 *
+	 * @param filter
+	 * @param contentFields
+	 * @return
+	 */
+	List<BasicDBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields);
 
 	/**
 	 * @param id   Launch ID

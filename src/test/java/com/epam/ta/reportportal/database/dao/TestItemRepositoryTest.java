@@ -75,11 +75,6 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	}
 
 	@Test
-	public void findBla() {
-		testItemRepository.getGroupedBy(null, "", "");
-	}
-
-	@Test
 	public void findTestItemWithInvestigated() {
 		List<TestItem> ids = testItemRepository.findInIssueTypeItems(TestItemIssueType.SYSTEM_ISSUE.getLocator(), "launch");
 		assertThat(ids.size()).isEqualTo(1);

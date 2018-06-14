@@ -32,10 +32,8 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -344,22 +342,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.as("statusHistory")
 				.addToSet("$status")
 				.as("statusSet");
-	}
-
-	public List<BasicDBObject> getGroupedBy(Filter filter, String groupingParam, String projectName) {
-
-//		BasicDBObject append = new BasicDBObject(
-//				"_id", new BasicDBObject("day", new BasicDBObject("$dayOfYear", "$start_time").append("name", "$name")).append("launches",
-//				new BasicDBObject("$push", "name")
-//		));
-//
-//		BasicDBObject groupOperation = new BasicDBObject("$group", append);
-
-		List<DBObject> res = mongoTemplate.aggregate(newAggregation(
-				addFields("day", new BasicDBObject("$dayOfYear", "$start_time")), group("day", "name").push(ROOT).as("launches")),
-				mongoTemplate.getCollectionName(Launch.class), DBObject.class
-		).getMappedResults();
-		return null;
 	}
 
 	@Override
