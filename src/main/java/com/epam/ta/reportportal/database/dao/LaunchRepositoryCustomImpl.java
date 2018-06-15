@@ -354,15 +354,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), path + "." + contentField);
 		}
 
-		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				GroupingOperation.group()
-						.withPeriod(groupingPeriod, "$start_time")
-						.withField("name", "$name")
-						.push("launches",
-								new BasicDBObject("name", "$name").append("number", "$number").append("statistics", "$statistics")
-						), unwind("$launches"), sort(DESC, "$launches.number"),
-				group("$_id." + groupingPeriod, "$_id.name").first(ROOT).as("latest"), groupingOperation.push("launches", path)
-		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
+		return mongoTemplate.aggregate(
+				newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class), GroupingOperation.group()
+								.withPeriod(groupingPeriod, "$start_time")
+								.withField("name", "$name")
+								.push("launches", new BasicDBObject("name", "$name").append("number", "$number")
+										.append("statistics", "$statistics")
+										.append("start_time", "$start_time")), unwind("$launches"), sort(DESC, "$launches.number"),
+						group("$_id." + groupingPeriod, "$_id.name").first(ROOT).as("latest"),
+						groupingOperation.push("launches", path).withField("start_time", new BasicDBObject("$first", path + ".start_time"))
+				), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
 	@Override
