@@ -36,14 +36,14 @@ public class GroupingOperation implements AggregationOperation {
 		return new GroupingOperation();
 	}
 
-	public GroupingOperation withPeriod(String period, String groupingField) {
+	public GroupingOperation withPeriodId(String period, String groupingField) {
 		BusinessRule.expect(groupingField, Predicates.notNull()).verify(ErrorType.INCORRECT_REQUEST, "Grouping field shouldn't be null");
 		GroupingBy groupBy = GroupingBy.getByValue(period);
 		idExpression.append(groupBy.getValue(), new BasicDBObject(groupBy.getOperation(), groupingField));
 		return this;
 	}
 
-	public GroupingOperation withField(String alias, Object value) {
+	public GroupingOperation withFieldId(String alias, Object value) {
 		idExpression.append(alias, value);
 		return this;
 	}
@@ -55,6 +55,11 @@ public class GroupingOperation implements AggregationOperation {
 
 	public GroupingOperation sum(String alias, String contentField) {
 		groupExpression.append(alias, new BasicDBObject("$sum", contentField));
+		return this;
+	}
+
+	public GroupingOperation first(String alias, String field) {
+		groupExpression.append(alias, new BasicDBObject("$first", field));
 		return this;
 	}
 

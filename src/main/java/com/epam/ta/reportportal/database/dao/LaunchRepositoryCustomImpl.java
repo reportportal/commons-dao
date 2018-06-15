@@ -349,20 +349,20 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public List<DBObject> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod) {
 		String path = "$latest.launches";
 
-		GroupingOperation groupingOperation = GroupingOperation.group().withField("_id", "$_id." + groupingPeriod);
+		GroupingOperation groupingOperation = GroupingOperation.group().withFieldId("_id", "$_id." + groupingPeriod);
 		for (String contentField : contentFields) {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), path + "." + contentField);
 		}
 
 		return mongoTemplate.aggregate(
 				newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class), GroupingOperation.group()
-								.withPeriod(groupingPeriod, "$start_time")
-								.withField("name", "$name")
+								.withPeriodId(groupingPeriod, "$start_time")
+								.withFieldId("name", "$name")
 								.push("launches", new BasicDBObject("name", "$name").append("number", "$number")
 										.append("statistics", "$statistics")
 										.append("start_time", "$start_time")), unwind("$launches"), sort(DESC, "$launches.number"),
 						group("$_id." + groupingPeriod, "$_id.name").first(ROOT).as("latest"),
-						groupingOperation.push("launches", path).withField("start_time", new BasicDBObject("$first", path + ".start_time"))
+						groupingOperation.push("launches", path).first("start_time", path + ".start_time")
 				), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
