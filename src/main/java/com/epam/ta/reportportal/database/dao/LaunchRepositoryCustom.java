@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
+import com.epam.ta.reportportal.database.dao.aggregation.GroupingOperation;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -256,11 +257,23 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * Aggregates latest launches stats provided in contentFields per grouping date
 	 * with specified filters.
 	 *
-	 * @param filter
-	 * @param contentFields
-	 * @return
+	 * @param filter Filter
+	 * @param contentFields Content Fields
+	 * @param groupingPeriod Grouping period
+	 * @return List of aggregated results
 	 */
-	List<DBObject> findLatestGroupedBy(Queryable filter, Sort sort, List<String> contentFields, String groupingPeriod);
+	List<DBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod);
+
+	/**
+	 * Aggregates launches stats provided in contentFields per grouping date
+	 * with specified filters.
+	 *
+	 * @param filter Filter
+	 * @param contentFields Content Fields
+	 * @param groupingPeriod Grouping period
+	 * @return List of aggregated results
+	 */
+	List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod);
 
 	/**
 	 * @param id   Launch ID

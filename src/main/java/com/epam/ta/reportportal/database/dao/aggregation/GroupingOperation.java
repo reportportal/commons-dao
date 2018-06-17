@@ -22,9 +22,13 @@ public class GroupingOperation implements AggregationOperation {
 
 	private BasicDBObject groupExpression;
 
-	public GroupingOperation() {
+	private GroupingOperation() {
 		idExpression = new BasicDBObject();
 		groupExpression = new BasicDBObject();
+	}
+
+	public static GroupingOperation build() {
+		return new GroupingOperation();
 	}
 
 	@Override
@@ -32,14 +36,9 @@ public class GroupingOperation implements AggregationOperation {
 		return new BasicDBObject("$group", groupExpression.append(id, idExpression));
 	}
 
-	public static GroupingOperation group() {
-		return new GroupingOperation();
-	}
-
-	public GroupingOperation withPeriodId(String period, String groupingField) {
+	public GroupingOperation groupWithPeriod(GroupingPeriod period, String groupingField) {
 		BusinessRule.expect(groupingField, Predicates.notNull()).verify(ErrorType.INCORRECT_REQUEST, "Grouping field shouldn't be null");
-		GroupingBy groupBy = GroupingBy.getByValue(period);
-		idExpression.append(groupBy.getValue(), new BasicDBObject(groupBy.getOperation(), groupingField));
+		idExpression.append(period.getValue(), new BasicDBObject(period.getOperation(), groupingField));
 		return this;
 	}
 
@@ -63,7 +62,7 @@ public class GroupingOperation implements AggregationOperation {
 		return this;
 	}
 
-	public enum GroupingBy {
+	public enum GroupingPeriod {
 		BY_DAY("by_day", "$dayOfYear"),
 		BY_WEEK("by_week", "$week"),
 		BY_MONTH("by_month", "$month");
@@ -72,9 +71,19 @@ public class GroupingOperation implements AggregationOperation {
 
 		private String operation;
 
-		GroupingBy(String value, String operation) {
+		GroupingPeriod(String value, String operation) {
 			this.value = value;
 			this.operation = operation;
+		}
+
+		public static GroupingPeriod getByValue(String groupingBy) {
+			return Arrays.stream(GroupingPeriod.values())
+					.filter(it -> it.getValue().equals(groupingBy))
+					.findFirst()
+					.orElseThrow(() -> new ReportPortalException(
+							ErrorType.INCORRECT_REQUEST,
+							groupingBy + " type of grouping is unsupported"
+					));
 		}
 
 		public String getValue() {
@@ -83,14 +92,6 @@ public class GroupingOperation implements AggregationOperation {
 
 		public String getOperation() {
 			return operation;
-		}
-
-		public static GroupingBy getByValue(String groupingBy) {
-			return Arrays.stream(GroupingBy.values())
-					.filter(it -> it.getValue().equals(groupingBy))
-					.findFirst()
-					.orElseThrow(
-							() -> new ReportPortalException(ErrorType.INCORRECT_REQUEST, groupingBy + " type of grouping is unsupported"));
 		}
 	}
 
