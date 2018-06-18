@@ -359,19 +359,21 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 */
 
 	@Override
-	public List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod) {
+	public List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod,
+			int limit) {
 		GroupingOperation groupingOperation = GroupingOperation.build().withFieldId("_id", groupingPeriod.getValue());
 		for (String contentField : contentFields) {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), contentField);
 		}
 		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				groupingOperation.groupWithPeriod(groupingPeriod, "$start_time").first("start_time", "$start_time")
+				groupingOperation.groupWithPeriod(groupingPeriod, "$start_time").first("start_time", "$start_time"),
+				sort(DESC, "$start_time"), limit(limit)
 		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
 	@Override
-	public List<DBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields,
-			GroupingOperation.GroupingPeriod groupingPeriod) {
+	public List<DBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod,
+			int limit) {
 		String path = "$latest.launches";
 
 		GroupingOperation groupingOperation = GroupingOperation.build().withFieldId("_id", "$_id." + groupingPeriod.getValue());
@@ -387,7 +389,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 										.append("statistics", "$statistics")
 										.append("start_time", "$start_time")), unwind("$launches"), sort(DESC, "$launches.number"),
 						group("$_id." + groupingPeriod.getValue(), "$_id.name").first(ROOT).as("latest"),
-						groupingOperation.first("start_time", path + ".start_time")
+						groupingOperation.first("start_time", path + ".start_time"), sort(DESC, "$start_time"), limit(limit)
 				), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 

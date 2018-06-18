@@ -257,23 +257,26 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * Aggregates latest launches stats provided in contentFields per grouping date
 	 * with specified filters.
 	 *
-	 * @param filter Filter
-	 * @param contentFields Content Fields
+	 * @param filter         Filter
+	 * @param contentFields  Content Fields
 	 * @param groupingPeriod Grouping period
+	 * @param limit          Limit of results
 	 * @return List of aggregated results
 	 */
-	List<DBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod);
+	List<DBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod,
+			int limit);
 
 	/**
 	 * Aggregates launches stats provided in contentFields per grouping date
 	 * with specified filters.
 	 *
-	 * @param filter Filter
-	 * @param contentFields Content Fields
+	 * @param filter         Filter
+	 * @param contentFields  Content Fields
 	 * @param groupingPeriod Grouping period
+	 * @param limit          Limit of results
 	 * @return List of aggregated results
 	 */
-	List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod);
+	List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod, int limit);
 
 	/**
 	 * @param id   Launch ID
