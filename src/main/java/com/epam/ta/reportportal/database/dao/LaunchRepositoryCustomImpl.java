@@ -363,11 +363,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 			int limit) {
 		GroupingOperation groupingOperation = new GroupingOperation();
 		for (String contentField : contentFields) {
-			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), contentField);
+			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), "$" + contentField);
 		}
 		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				groupingOperation.groupWithPeriod(groupingPeriod, "$start_time").first("start_time", "$start_time"),
-				sorting("start_time", DESC), limit(limit)
+				addFields("day", new BasicDBObject(groupingPeriod.getOperation(), "$start_time")),
+				groupingOperation.withFieldId("_id", "$day").first("start_time", "$start_time"), sorting("start_time", DESC), limit(limit)
 		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
