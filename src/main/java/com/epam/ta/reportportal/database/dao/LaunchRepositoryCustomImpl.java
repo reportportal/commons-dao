@@ -367,7 +367,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		}
 		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
 				groupingOperation.groupWithPeriod(groupingPeriod, "$start_time").first("start_time", "$start_time"),
-				sort(DESC, "$start_time"), limit(limit)
+				sorting("$start_time", DESC), limit(limit)
 		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
@@ -389,7 +389,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 										.append("statistics", "$statistics")
 										.append("start_time", "$start_time")), unwind("$launches"), sort(DESC, "$launches.number"),
 						group("$_id." + groupingPeriod.getValue(), "$_id.name").first(ROOT).as("latest"),
-						groupingOperation.first("start_time", path + ".start_time"), sort(DESC, "$start_time"), limit(limit)
+						groupingOperation.first("start_time", path + ".start_time"), sorting("$start_time", DESC), limit(limit)
 				), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
