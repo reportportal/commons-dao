@@ -121,8 +121,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
-				Launch.class
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1), Launch.class
 		);
 	}
 
@@ -140,8 +139,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public void updateHasRetries(String id, boolean hasRetries) {
-		mongoTemplate.updateFirst(new Query().addCriteria(where(ID_REFERENCE).is(id)),
-				Update.update("hasRetries", hasRetries),
+		mongoTemplate.updateFirst(new Query().addCriteria(where(ID_REFERENCE).is(id)), Update.update("hasRetries", hasRetries),
 				Launch.class
 		);
 
@@ -150,8 +148,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
 		mongoTemplate.updateMulti(getLaunchQuery(item.getLaunchRef()),
-				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
-				Launch.class
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1), Launch.class
 		);
 	}
 
@@ -227,10 +224,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public List<String> findValuesWithMode(String projectName, String containsValue, String distinctBy, String mode) {
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)),
-				match(where(MODE).is(mode)),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
-				group(distinctBy),
+		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy),
 				limit(AUTOCOMPLETE_LIMITATION)
 		);
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
@@ -242,11 +237,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Map<String, Integer> findGroupedLaunchesByOwner(String projectName, String mode, Date from) {
 		Map<String, Integer> output = new HashMap<>();
-		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)),
-				match(where(MODE).is(mode)),
-				match(where(STATUS).ne(IN_PROGRESS.name())),
-				match(where(START_TIME).gt(from)),
-				group("$userRef").count().as("count")
+		Aggregation aggregation = newAggregation(match(where(PROJECT_ID_REFERENCE).is(projectName)), match(where(MODE).is(mode)),
+				match(where(STATUS).ne(IN_PROGRESS.name())), match(where(START_TIME).gt(from)), group("$userRef").count().as("count")
 		);
 
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, Launch.class, Map.class);
@@ -353,14 +345,27 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return mongoTemplate.find(query, Launch.class);
 	}
 
+	/*
+		db.launch.aggregate([
+		{ $match: { $and: [ { projectRef : "default_personal" } ] } },
+		{ $addFields : { day : {$dayOfYear : "$start_time"} } },
+		{ $group : {
+				"_id" : { name : "$name", day : "$day"},
+				"statistics$executionCounter$total" : { $sum : "$statistics.executionCounter.total" },
+				"start_time" : {$first : "$start_time"},
+			 }},
+
+		])
+	 */
+
 	@Override
 	public List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod) {
-		GroupingOperation groupingOperation = GroupingOperation.build().withFieldId("_id", "$_id." + groupingPeriod.getValue());
+		GroupingOperation groupingOperation = GroupingOperation.build().withFieldId("_id", groupingPeriod.getValue());
 		for (String contentField : contentFields) {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), contentField);
 		}
 		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				groupingOperation.groupWithPeriod(groupingPeriod, "$start_time")
+				groupingOperation.groupWithPeriod(groupingPeriod, "$start_time").first("start_time", "$start_time")
 		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
@@ -374,17 +379,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), path + "." + contentField);
 		}
 
-		return mongoTemplate.aggregate(newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				GroupingOperation.build().groupWithPeriod(groupingPeriod, "$start_time").withFieldId("name", "$name").push("launches",
-						new BasicDBObject("name", "$name").append("number", "$number")
-								.append("statistics", "$statistics")
-								.append("start_time", "$start_time")
-				),
-				unwind("$launches"),
-				sort(DESC, "$launches.number"),
-				group("$_id." + groupingPeriod.getValue(), "$_id.name").first(ROOT).as("latest"),
-				groupingOperation.first("start_time", path + ".start_time")
-		), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
+		return mongoTemplate.aggregate(
+				newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class), GroupingOperation.build()
+								.groupWithPeriod(groupingPeriod, "$start_time")
+								.withFieldId("name", "$name")
+								.push("launches", new BasicDBObject("name", "$name").append("number", "$number")
+										.append("statistics", "$statistics")
+										.append("start_time", "$start_time")), unwind("$launches"), sort(DESC, "$launches.number"),
+						group("$_id." + groupingPeriod.getValue(), "$_id.name").first(ROOT).as("latest"),
+						groupingOperation.first("start_time", path + ".start_time")
+				), mongoTemplate.getCollectionName(Launch.class), DBObject.class).getMappedResults();
 	}
 
 	@Override
@@ -425,13 +429,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 			DocumentCallbackHandler callbackHandler) {
 		String tag = String.format(REGEX, tagPrefix);
 		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				match(Criteria.where(TAGS).regex(tag)),
-				unwind("$tags"),
-				match(Criteria.where(TAGS).regex(tag)),
-				groupByFieldWithStatisticsSumming(TAGS, contentFields),
-				addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
-				sorting("len", DESC).and(DESC, "_id"),
-				limit(limit)
+				match(Criteria.where(TAGS).regex(tag)), unwind("$tags"), match(Criteria.where(TAGS).regex(tag)),
+				groupByFieldWithStatisticsSumming(TAGS, contentFields), addFields("len", Collections.singletonMap("$strLenCP", "$_id")),
+				sorting("len", DESC).and(DESC, "_id"), limit(limit)
 		);
 		List<DBObject> mappedResults = mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Launch.class), DBObject.class)
 				.getMappedResults();
@@ -528,11 +528,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	      ])
 	 */
 	private List<AggregationOperation> latestLaunchesAggregationOperationsList(Queryable filter) {
-		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class),
-				group("$name").push(ROOT).as(ORIGINAL),
-				unwind(ORIGINAL),
-				sort(DESC, ORIGINAL + ".number"),
-				group("$_id").first(ROOT).as(ORIGINAL + "." + ORIGINAL),
+		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class), group("$name").push(ROOT).as(ORIGINAL),
+				unwind(ORIGINAL), sort(DESC, ORIGINAL + ".number"), group("$_id").first(ROOT).as(ORIGINAL + "." + ORIGINAL),
 				replaceRoot(ORIGINAL)
 		);
 	}
