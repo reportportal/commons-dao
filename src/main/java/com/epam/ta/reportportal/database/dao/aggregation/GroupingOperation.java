@@ -22,7 +22,7 @@ public class GroupingOperation implements AggregationOperation {
 
 	private BasicDBObject groupExpression;
 
-	private GroupingOperation() {
+	public GroupingOperation() {
 		idExpression = new BasicDBObject();
 		groupExpression = new BasicDBObject();
 	}
@@ -80,10 +80,8 @@ public class GroupingOperation implements AggregationOperation {
 			return Arrays.stream(GroupingPeriod.values())
 					.filter(it -> it.getValue().equals(groupingBy))
 					.findFirst()
-					.orElseThrow(() -> new ReportPortalException(
-							ErrorType.INCORRECT_REQUEST,
-							groupingBy + " type of grouping is unsupported"
-					));
+					.orElseThrow(
+							() -> new ReportPortalException(ErrorType.INCORRECT_REQUEST, groupingBy + " type of grouping is unsupported"));
 		}
 
 		public String getValue() {

@@ -361,7 +361,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod,
 			int limit) {
-		GroupingOperation groupingOperation = GroupingOperation.build().withFieldId("_id", groupingPeriod.getValue());
+		GroupingOperation groupingOperation = new GroupingOperation();
 		for (String contentField : contentFields) {
 			groupingOperation = groupingOperation.sum(contentField.replace('.', '$'), contentField);
 		}
