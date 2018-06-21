@@ -1,8 +1,28 @@
+/*
+ * Copyright 2017 EPAM Systems
+ *
+ *
+ * This file is part of EPAM Report Portal.
+ * https://github.com/reportportal/commons-dao
+ *
+ * Report Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Report Portal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.epam.ta.reportportal.database.dao.aggregation;
 
 import com.epam.ta.reportportal.commons.Predicates;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -10,8 +30,11 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
+ * Custom group operation for mongo aggregation framework
+ *
  * @author Pavel Bortnik
  */
 public class GroupingOperation implements AggregationOperation {
@@ -76,12 +99,8 @@ public class GroupingOperation implements AggregationOperation {
 			this.operation = operation;
 		}
 
-		public static GroupingPeriod getByValue(String groupingBy) {
-			return Arrays.stream(GroupingPeriod.values())
-					.filter(it -> it.getValue().equals(groupingBy))
-					.findFirst()
-					.orElseThrow(
-							() -> new ReportPortalException(ErrorType.INCORRECT_REQUEST, groupingBy + " type of grouping is unsupported"));
+		public static Optional<GroupingPeriod> getByValue(String groupingBy) {
+			return Arrays.stream(GroupingPeriod.values()).filter(it -> it.getValue().equals(groupingBy)).findFirst();
 		}
 
 		public String getValue() {
