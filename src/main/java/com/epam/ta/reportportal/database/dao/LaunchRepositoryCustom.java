@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database.dao;
 
+import com.epam.ta.reportportal.database.dao.aggregation.GroupingOperation;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
@@ -28,6 +29,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.Queryable;
+import com.mongodb.DBObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -250,6 +252,31 @@ public interface LaunchRepositoryCustom extends StatisticsUpdatePolicy<TestItem,
 	 * @return List of launches
 	 */
 	List<Launch> findLaunchesWithSpecificStat(String projectRef, StatisticSubType type);
+
+	/**
+	 * Aggregates latest launches stats provided in contentFields per grouping date
+	 * with specified filters.
+	 *
+	 * @param filter         Filter
+	 * @param contentFields  Content Fields
+	 * @param groupingPeriod Grouping period
+	 * @param limit          Limit of results
+	 * @return List of aggregated results
+	 */
+	List<DBObject> findLatestGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod,
+			int limit);
+
+	/**
+	 * Aggregates launches stats provided in contentFields per grouping date
+	 * with specified filters.
+	 *
+	 * @param filter         Filter
+	 * @param contentFields  Content Fields
+	 * @param groupingPeriod Grouping period
+	 * @param limit          Limit of results
+	 * @return List of aggregated results
+	 */
+	List<DBObject> findGroupedBy(Queryable filter, List<String> contentFields, GroupingOperation.GroupingPeriod groupingPeriod, int limit);
 
 	/**
 	 * @param id   Launch ID
