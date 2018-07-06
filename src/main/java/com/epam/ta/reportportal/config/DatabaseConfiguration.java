@@ -48,7 +48,7 @@ import java.util.Properties;
 
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = {
-		"com.epam.ta.reportportal.store" }, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
+		"com.epam.ta.reportportal" }, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
 @EnableTransactionManagement
 public class DatabaseConfiguration {
 
@@ -68,11 +68,11 @@ public class DatabaseConfiguration {
 
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("com.epam.ta.reportportal.store");
+		factory.setPackagesToScan("com.epam.ta.reportportal");
 		factory.setDataSource(dataSource());
 
 		Properties jpaProperties = new Properties();
-		jpaProperties.setProperty("hibernate.dialect", "com.epam.ta.reportportal.store.commons.JsonbAwarePostgresDialect");
+		jpaProperties.setProperty("hibernate.dialect", "com.epam.ta.reportportal.commons.JsonbAwarePostgresDialect");
 		factory.setJpaProperties(jpaProperties);
 
 		factory.afterPropertiesSet();
