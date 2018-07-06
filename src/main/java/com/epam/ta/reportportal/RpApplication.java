@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal;
 
-import com.epam.ta.reportportal.database.dao.ReportPortalRepositoryImpl;
+import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

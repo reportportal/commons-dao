@@ -21,15 +21,17 @@
 
 package com.epam.ta.reportportal.commons;
 
-import com.epam.ta.reportportal.database.entity.enums.ProjectRoleEnum;
-import com.epam.ta.reportportal.database.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
-import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import org.apache.commons.lang3.ArrayUtils;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.apache.commons.lang.ArrayUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
+
+import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 
 /**
  * Several validation checks
@@ -51,18 +53,12 @@ public class Preconditions {
 
 	public static final Predicate<Optional<?>> IS_PRESENT = Optional::isPresent;
 
-	public static Predicate<FinishExecutionRQ> finishSameTimeOrLater(final Date startTime) {
-		return input -> input.getEndTime().getTime() >= startTime.getTime();
-	}
-
-	/**
-	 * Start time of item to be creates is later than provided start time
-	 *
-	 * @param startTime
-	 * @return
-	 */
-	public static Predicate<StartTestItemRQ> startSameTimeOrLater(final Date startTime) {
-		return input -> input.getStartTime() != null && input.getStartTime().getTime() >= startTime.getTime();
+	public static Predicate<Date> sameTimeOrLater(final LocalDateTime than) {
+		com.google.common.base.Preconditions.checkNotNull(than, ErrorType.BAD_REQUEST_ERROR);
+		return date -> {
+			LocalDateTime localDateTime = TO_LOCAL_DATE_TIME.apply(date);
+			return localDateTime.isAfter(than) || localDateTime.isEqual(than);
+		};
 	}
 
 	public static Predicate<StatusEnum> statusIn(final StatusEnum... statuses) {
@@ -95,7 +91,7 @@ public class Preconditions {
 	 * @param principalRole
 	 * @return
 	 */
-	public static Predicate<ProjectRoleEnum> isLevelEnough(final ProjectRoleEnum principalRole) {
+	public static Predicate<ProjectRole> isLevelEnough(final ProjectRole principalRole) {
 		return principalRole::sameOrHigherThan;
 	}
 }
