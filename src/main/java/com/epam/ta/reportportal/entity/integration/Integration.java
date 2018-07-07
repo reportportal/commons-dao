@@ -96,7 +96,7 @@ public class Integration implements Serializable{
 		this.creationDate = creationDate;
 	}
 
-	public Boolean getEnabled() {
+	public Boolean isEnabled() {
 		return enabled;
 	}
 
