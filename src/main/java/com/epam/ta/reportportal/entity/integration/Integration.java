@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
 @Table(name = "integration", schema = "public")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "group_type", discriminatorType = DiscriminatorType.STRING)
 public class Integration implements Serializable{
 
 	@Id
