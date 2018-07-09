@@ -35,6 +35,8 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.Serializable;
 import java.util.List;
 
@@ -76,5 +78,10 @@ public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends Simp
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
+	}
+
+	@Override
+	public boolean exists(Filter filter) {
+		return dsl.fetchExists(filter.toQuery());
 	}
 }
