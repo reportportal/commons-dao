@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_STRUCTURE;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static org.jooq.impl.DSL.*;
 
 public enum FilterTarget {
@@ -86,8 +86,7 @@ public enum FilterTarget {
 
 			return DSL.select(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID, l.FILE_PATH, l.THUMBNAIL_FILE_PATH,
 					l.CONTENT_TYPE
-			)
-					.from(l).leftJoin(ti).on(l.ITEM_ID.eq(ti.ITEM_ID))
+			).from(l).leftJoin(ti).on(l.ITEM_ID.eq(ti.ITEM_ID))
 					.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
 					.getQuery();
 		}

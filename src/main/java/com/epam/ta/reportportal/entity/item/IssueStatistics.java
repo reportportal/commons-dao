@@ -37,7 +37,7 @@ public class IssueStatistics implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "counter")
+	@Column(name = "is_counter")
 	private Integer counter;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -35,10 +35,10 @@ public class ExecutionStatistics implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "counter")
+	@Column(name = "es_counter")
 	private Integer counter;
 
-	@Column(name = "status", nullable = false)
+	@Column(name = "es_status", nullable = false)
 	private String status;
 
 	@Column(name = "positive")
