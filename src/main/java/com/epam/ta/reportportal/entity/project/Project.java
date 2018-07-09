@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.entity.bts.BugTrackingSystem;
+import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
