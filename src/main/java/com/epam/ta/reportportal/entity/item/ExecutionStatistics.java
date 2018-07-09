@@ -33,6 +33,7 @@ public class ExecutionStatistics implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "es_id")
 	private Long id;
 
 	@Column(name = "es_counter")
