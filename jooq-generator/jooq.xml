@@ -47,7 +47,7 @@
 
         <target>
             <!-- The destination package of your generated classes (within the destination directory) -->
-            <packageName>com.epam.ta.reportportal.store.jooq</packageName>
+            <packageName>com.epam.ta.reportportal.jooq</packageName>
             <!-- The destination directory of your generated classes. Using Maven directory layout here -->
             <directory>../src/main/java/</directory>
         </target>
