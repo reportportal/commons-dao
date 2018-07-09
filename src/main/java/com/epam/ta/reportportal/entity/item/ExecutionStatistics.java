@@ -76,4 +76,41 @@ public class ExecutionStatistics implements Serializable {
 	public void setPositive(boolean positive) {
 		this.positive = positive;
 	}
+
+	@Override
+	public String toString() {
+		return "ExecutionStatistics{" + "id=" + id + ", counter=" + counter + ", status='" + status + '\'' + ", positive=" + positive + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		ExecutionStatistics that = (ExecutionStatistics) o;
+
+		if (positive != that.positive) {
+			return false;
+		}
+		if (id != null ? !id.equals(that.id) : that.id != null) {
+			return false;
+		}
+		if (counter != null ? !counter.equals(that.counter) : that.counter != null) {
+			return false;
+		}
+		return status != null ? status.equals(that.status) : that.status == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (counter != null ? counter.hashCode() : 0);
+		result = 31 * result + (status != null ? status.hashCode() : 0);
+		result = 31 * result + (positive ? 1 : 0);
+		return result;
+	}
 }
