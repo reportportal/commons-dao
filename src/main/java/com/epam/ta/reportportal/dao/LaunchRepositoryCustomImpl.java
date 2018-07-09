@@ -24,7 +24,10 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
-import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.ExecutionStatistics;
+import com.epam.ta.reportportal.entity.item.IssueStatistics;
+import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -34,15 +37,18 @@ import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -53,14 +59,41 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 @Repository
 public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Launch> LAUNCH_MAPPER = r -> new Launch(r.get(JLaunch.LAUNCH.ID, Long.class),
-			r.get(JLaunch.LAUNCH.UUID, String.class), r.get(JLaunch.LAUNCH.PROJECT_ID, Long.class),
-			r.get(JLaunch.LAUNCH.USER_ID, Long.class), r.get(JLaunch.LAUNCH.NAME, String.class),
-			r.get(JLaunch.LAUNCH.DESCRIPTION, String.class), r.get(JLaunch.LAUNCH.START_TIME, LocalDateTime.class),
-			r.get(JLaunch.LAUNCH.END_TIME, LocalDateTime.class), r.get(JLaunch.LAUNCH.NUMBER, Long.class),
-			r.get(JLaunch.LAUNCH.LAST_MODIFIED, LocalDateTime.class), r.get(JLaunch.LAUNCH.MODE, LaunchModeEnum.class),
-			r.get(JLaunch.LAUNCH.STATUS, StatusEnum.class)
-	);
+	private static final RecordMapper<? super Record, IssueStatistics> ISSUE_STATISTICS_RECORD_MAPPER = r -> {
+		IssueStatistics stats = r.into(IssueStatistics.class);
+		IssueType type = r.into(IssueType.class);
+		IssueGroup group = r.into(IssueGroup.class);
+		type.setIssueGroup(group);
+		stats.setIssueType(type);
+		return stats;
+	};
+
+	private static final RecordMapper<? super Record, ExecutionStatistics> EXECUTION_STATISTICS_RECORD_MAPPER = r -> r.into(
+			ExecutionStatistics.class);
+
+	private static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
+		Launch launch = r.into(Launch.class);
+		launch.getIssueStatistics().add(ISSUE_STATISTICS_RECORD_MAPPER.map(r));
+		launch.getExecutionStatistics().add(EXECUTION_STATISTICS_RECORD_MAPPER.map(r));
+		return launch;
+	};
+
+	private static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
+		Map<Long, Launch> res = new HashMap<>();
+		result.forEach(r -> {
+			Long launchId = r.get(LAUNCH.ID);
+			if (res.containsKey(launchId)) {
+				Launch launch = res.get(launchId);
+				launch.getIssueStatistics().add(ISSUE_STATISTICS_RECORD_MAPPER.map(r));
+				launch.getExecutionStatistics().add(EXECUTION_STATISTICS_RECORD_MAPPER.map(r));
+				res.replace(launchId, launch);
+			} else {
+				Launch launch = LAUNCH_RECORD_MAPPER.map(r);
+				res.put(launchId, launch);
+			}
+		});
+		return new ArrayList<>(res.values());
+	};
 
 	@Autowired
 	private DSLContext dsl;
@@ -76,12 +109,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	public List<Launch> findByFilter(Filter filter) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(LAUNCH_MAPPER);
+		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LAUNCH_MAPPER),
+				LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
 				pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
