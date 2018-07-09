@@ -17,10 +17,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
-package com.epam.ta.reportportal.entity;
+package com.epam.ta.reportportal.entity.project;
 
-public interface StatisticsAwareness {
-	String awareStatisticsField();
+import java.util.Arrays;
+import java.util.Optional;
+
+/**
+ * Project Type enumeration<br>
+ * Used for supporting different project types processing
+ *
+ * @author Andrei_Ramanchuk
+ * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
+ */
+public enum EntryType {
+
+	//@formatter:off
+    PERSONAL,
+    INTERNAL,
+    UPSA;
+
+    //@formatter:on
+	public static EntryType getByName(String type) {
+		return EntryType.valueOf(type);
+	}
+
+	public static Optional<EntryType> findByName(String name) {
+		return Arrays.stream(EntryType.values()).filter(type -> type.name().equals(name)).findAny();
+	}
+
+	public static boolean isPresent(String name) {
+		return findByName(name).isPresent();
+	}
 }

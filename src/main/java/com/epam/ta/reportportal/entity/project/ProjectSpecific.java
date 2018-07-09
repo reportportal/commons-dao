@@ -17,10 +17,34 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
-package com.epam.ta.reportportal.entity;
+package com.epam.ta.reportportal.entity.project;
 
-public interface StatisticsAwareness {
-	String awareStatisticsField();
+import java.util.Arrays;
+import java.util.Optional;
+
+/**
+ * Project types in accordance with testing way<br>
+ * Could be DEFAULT or BDD (not sure if it is required)
+ *
+ * @author Andrei_Ramanchuk
+ */
+// TODO Exceptions handling
+public enum ProjectSpecific {
+
+	DEFAULT,
+	BDD;
+
+	public static ProjectSpecific getByName(String type) {
+		return ProjectSpecific.valueOf(type);
+	}
+
+	public static Optional<ProjectSpecific> findByName(String name) {
+		return Arrays.stream(ProjectSpecific.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
+	}
+
+	public static boolean isPresent(String name) {
+		return findByName(name).isPresent();
+	}
 }
