@@ -39,16 +39,22 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Integration> integrations = Sets.newHashSet();
 
+	@Column(name = "customer")
 	private String customer;
 
+	@Column(name = "additional_info")
 	private String addInfo;
 
+	@JoinColumn(name = "configuration_id")
 	private Configuration configuration;
 
+	@OneToMany(mappedBy = "project")
 	private List<UserConfig> users;
 
+	@Column(name = "creation_date")
 	private Date creationDate;
 
+	@JoinColumn(name = "metadata_id")
 	private Metadata metadata;
 
 	public Project(Long id, String name) {
@@ -158,6 +164,8 @@ public class Project implements Serializable {
 		return Objects.hash(name, customer, addInfo, configuration, users, creationDate, metadata);
 	}
 
+	@Entity
+	@Table(name = "configuration")
 	public static class Configuration implements Serializable {
 
 		private static final String AB_COLOR = "#f7d63e";
@@ -168,11 +176,22 @@ public class Project implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
+
 		private List<String> externalSystem;
+
+		@Enumerated(value = EnumType.STRING)
 		private EntryType entryType;
+
+		@Enumerated(value = EnumType.STRING)
 		private ProjectSpecific projectSpecific;
+
+		@Column(name = "interrupt_jon_time")
 		private String interruptJobTime;
+
+		@Column(name = "keep_logs")
 		private String keepLogs;
+
+		@Column(name = "keep_screenshots")
 		private String keepScreenshots;
 		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
@@ -354,6 +373,8 @@ public class Project implements Serializable {
 		}
 	}
 
+	@Entity
+	@Table(name = "user_config")
 	public static class UserConfig implements Serializable {
 
 		private static final long serialVersionUID = 1L;
@@ -411,11 +432,7 @@ public class Project implements Serializable {
 
 		@Override
 		public String toString() {
-			return MoreObjects.toStringHelper(this)
-					.add("login", login)
-					.add("proposedRole", proposedRole)
-					.add("projectRole", projectRole)
-					.toString();
+			return MoreObjects.toStringHelper(this).add("login", login).add("proposedRole", proposedRole).add("projectRole", projectRole).toString();
 		}
 	}
 

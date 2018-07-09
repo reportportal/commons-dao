@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface UserRepository extends ReportPortalRepository<User, Long>, UserRepositoryCustom {
 
 	Optional<User> findByLogin(String login);
+
+	boolean existsByLogin(String login);
 }
