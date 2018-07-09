@@ -71,8 +71,8 @@ public class Project implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public String getId() {
-		return this.name;
+	public Long getId() {
+		return this.id;
 	}
 
 	public void setId(Long id) {
