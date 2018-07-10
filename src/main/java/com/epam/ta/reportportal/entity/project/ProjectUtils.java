@@ -129,7 +129,7 @@ public class ProjectUtils {
 	 * @return True, if exists
 	 */
 	public static boolean doesHaveUser(Project project, String user) {
-		return project.getUsers().stream().anyMatch(it -> user.equals(it.getLogin()));
+		return project.getUsers().stream().anyMatch(it -> user.equals(it.getUser().getLogin()));
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class ProjectUtils {
 	 */
 	@Nullable
 	public static Project.UserConfig findUserConfigByLogin(Project project, String user) {
-		return project.getUsers().stream().filter(it -> user.equals(it.getLogin())).findAny().orElse(null);
+		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {

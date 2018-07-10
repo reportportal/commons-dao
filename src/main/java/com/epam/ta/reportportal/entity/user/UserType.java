@@ -39,7 +39,15 @@ public enum UserType {
     LDAP;
     //@formatter:on
 
-	public static Optional<UserType> forName(final String name) {
-		return Arrays.stream(UserType.values()).filter(role -> role.name().equalsIgnoreCase(name)).findAny();
+	public static UserType getByName(String type) {
+		return UserType.valueOf(type);
+	}
+
+	public static Optional<UserType> findByName(String name) {
+		return Arrays.stream(UserType.values()).filter(type -> type.name().equals(name)).findAny();
+	}
+
+	public static boolean isPresent(String name) {
+		return findByName(name).isPresent();
 	}
 }

@@ -87,7 +87,7 @@ public final class PersonalProjectService {
 		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
 		Project.UserConfig userConfig = new Project.UserConfig();
-		userConfig.setLogin(user.getLogin());
+		userConfig.getUser().setLogin(user.getLogin());
 		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
 		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
 		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
@@ -123,7 +123,6 @@ public final class PersonalProjectService {
 		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
 		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
 		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
-		defaultConfig.setExternalSystem(Collections.emptyList());
 		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
 		projectAnalyzerConfig.setMinDocFreq(ProjectAnalyzerConfig.MIN_DOC_FREQ);
 		projectAnalyzerConfig.setMinTermFreq(ProjectAnalyzerConfig.MIN_TERM_FREQ);

@@ -15,8 +15,7 @@ public class UserTypeConverter implements AttributeConverter<UserType, String> {
 
 	@Override
 	public UserType convertToEntityAttribute(String dbUserTypeName) {
-		return UserType.forName(dbUserTypeName).orElseThrow(() -> {
-			throw new ReportPortalException("Can not convert user type name from database.");
-		});
+		return UserType.findByName(dbUserTypeName)
+				.orElseThrow(() -> new ReportPortalException("Can not convert user type name from database."));
 	}
 }
