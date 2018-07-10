@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.SendCase;
-import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.entity.statistics.IssueCounter;
@@ -61,8 +60,7 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailCofiguration(Project project) {
-		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER),
-				SendCase.ALWAYS.name(),
+		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS,
 				Lists.newArrayList(),
 				Lists.newArrayList()
 		);

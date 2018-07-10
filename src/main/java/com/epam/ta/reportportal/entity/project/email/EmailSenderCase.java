@@ -54,6 +54,13 @@ public class EmailSenderCase implements Serializable {
 	public EmailSenderCase() {
 	}
 
+	public EmailSenderCase(List<String> recipients, SendCase sendCase, List<Launch> launches, List<String> tags) {
+		this.recipients = recipients;
+		this.sendCase = sendCase;
+		this.launches = launches;
+		this.tags = tags;
+	}
+
 	public Long getId() {
 		return id;
 	}
