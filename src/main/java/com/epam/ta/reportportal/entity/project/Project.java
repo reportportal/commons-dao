@@ -4,9 +4,11 @@ import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.entity.bts.BugTrackingSystem;
 import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,9 +34,6 @@ public class Project implements Serializable {
 
 	@Column(name = "name")
 	private String name;
-
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<BugTrackingSystem> bugTrackingSystems = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Integration> integrations = Sets.newHashSet();
@@ -177,15 +176,13 @@ public class Project implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
-		private List<String> externalSystem;
-
 		@Enumerated(value = EnumType.STRING)
 		private EntryType entryType;
 
 		@Enumerated(value = EnumType.STRING)
 		private ProjectSpecific projectSpecific;
 
-		@Column(name = "interrupt_jon_time")
+		@Column(name = "interrupt_job_time")
 		private String interruptJobTime;
 
 		@Column(name = "keep_logs")
@@ -193,15 +190,22 @@ public class Project implements Serializable {
 
 		@Column(name = "keep_screenshots")
 		private String keepScreenshots;
+
+		//		@OneToMany(mappedBy = "project")
+		//		private List<IssueType> issueTypes;
+
 		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
 		// Project Email Settings
+		@ManyToOne
+		@JoinColumn(name = "project_email_config_id")
 		private ProjectEmailConfig emailConfig;
 
+		@ManyToOne
+		@JoinColumn(name = "project_analyzer_config_id")
 		private ProjectAnalyzerConfig analyzerConfig;
 
 		public Configuration() {
-			externalSystem = new ArrayList<>();
 			this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
 				{
 					put(AUTOMATION_BUG,
@@ -364,13 +368,6 @@ public class Project implements Serializable {
 			this.statisticsCalculationStrategy = statisticsCalculationStrategy;
 		}
 
-		public void setExternalSystem(List<String> externalSystemIds) {
-			this.externalSystem = externalSystemIds;
-		}
-
-		public List<String> getExternalSystem() {
-			return externalSystem;
-		}
 	}
 
 	@Entity
@@ -379,7 +376,10 @@ public class Project implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		private String login;
+		@ManyToOne
+		@JoinColumn(name = "user_id")
+		private User user;
+
 		private ProjectRole proposedRole;
 		private ProjectRole projectRole;
 
@@ -391,12 +391,12 @@ public class Project implements Serializable {
 
 		}
 
-		public String getLogin() {
-			return login;
+		public User getUser() {
+			return user;
 		}
 
-		public void setLogin(String login) {
-			this.login = login;
+		public void setUser(User user) {
+			this.user = user;
 		}
 
 		public void setProjectRole(ProjectRole projectRole) {
@@ -425,14 +425,18 @@ public class Project implements Serializable {
 			return this;
 		}
 
-		public UserConfig withLogin(String login) {
-			this.login = login;
+		public UserConfig withUser(User user) {
+			this.user = user;
 			return this;
 		}
 
 		@Override
 		public String toString() {
-			return MoreObjects.toStringHelper(this).add("login", login).add("proposedRole", proposedRole).add("projectRole", projectRole).toString();
+			return MoreObjects.toStringHelper(this)
+					.add("user login", user.getLogin())
+					.add("proposedRole", proposedRole)
+					.add("projectRole", projectRole)
+					.toString();
 		}
 	}
 
@@ -449,22 +453,37 @@ public class Project implements Serializable {
 				.toString();
 	}
 
+	@Entity
+	@Table(name = "metadata")
 	public static class Metadata implements Serializable {
+
+		@Id
+		@GeneratedValue
+		private Long id;
+
+		@OneToMany(mappedBy = "metadata")
+		private List<DemoDataPostfix> demoDataPostfix;
 
 		public Metadata() {
 		}
 
-		public Metadata(List<String> demoDataPostfix) {
+		public Metadata(List<DemoDataPostfix> demoDataPostfix) {
 			this.demoDataPostfix = demoDataPostfix;
 		}
 
-		private List<String> demoDataPostfix;
+		public Long getId() {
+			return id;
+		}
 
-		public List<String> getDemoDataPostfix() {
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public List<DemoDataPostfix> getDemoDataPostfix() {
 			return demoDataPostfix;
 		}
 
-		public void setDemoDataPostfix(List<String> demoDataPostfix) {
+		public void setDemoDataPostfix(List<DemoDataPostfix> demoDataPostfix) {
 			this.demoDataPostfix = demoDataPostfix;
 		}
 
@@ -476,15 +495,14 @@ public class Project implements Serializable {
 			if (o == null || getClass() != o.getClass()) {
 				return false;
 			}
-
 			Metadata metadata = (Metadata) o;
-
-			return demoDataPostfix != null ? demoDataPostfix.equals(metadata.demoDataPostfix) : metadata.demoDataPostfix == null;
+			return Objects.equals(id, metadata.id) && Objects.equals(demoDataPostfix, metadata.demoDataPostfix);
 		}
 
 		@Override
 		public int hashCode() {
-			return demoDataPostfix != null ? demoDataPostfix.hashCode() : 0;
+
+			return Objects.hash(id, demoDataPostfix);
 		}
 	}
 }

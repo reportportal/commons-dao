@@ -56,6 +56,11 @@ public class User implements Serializable {
 	@JoinColumn(name = "meta_info_id")
 	private MetaInfo metaInfo;
 
+	@Column(name = "photo_path")
+	private String photoPath;
+
+	private UserType userType;
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
 	@Fetch(value = FetchMode.JOIN)
 	private List<ProjectUser> projects;
@@ -141,6 +146,22 @@ public class User implements Serializable {
 
 	public void setExpired(boolean expired) {
 		isExpired = expired;
+	}
+
+	public String getPhotoPath() {
+		return photoPath;
+	}
+
+	public void setPhotoPath(String photoPath) {
+		this.photoPath = photoPath;
+	}
+
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
 	}
 
 	/**
@@ -230,6 +251,5 @@ public class User implements Serializable {
 		}
 
 	}
-
 
 }
