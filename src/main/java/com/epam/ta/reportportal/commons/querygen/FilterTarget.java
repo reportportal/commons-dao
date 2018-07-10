@@ -5,6 +5,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_STRUCTURE;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 
 public enum FilterTarget {
 
@@ -42,6 +43,29 @@ public enum FilterTarget {
 					.on(is.ISSUE_TYPE_ID.eq(it.ID))
 					.join(ig)
 					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID))
+					.getQuery();
+		}
+	},
+
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder("name", "ti.name", String.class, false))) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			return DSL.select()
+					.from(TEST_ITEM_STRUCTURE)
+					.join(Tables.TEST_ITEM)
+					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(Tables.TEST_ITEM.ITEM_ID))
+					.join(TEST_ITEM_RESULTS)
+					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+					.join(EXECUTION_STATISTICS)
+					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(EXECUTION_STATISTICS.ITEM_ID))
+					.join(ISSUE_STATISTICS)
+					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE_STATISTICS.ITEM_ID))
+					.join(ISSUE_TYPE)
+					.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+					.join(ISSUE_GROUP)
+					.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+					.join(ISSUE)
+					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
 					.getQuery();
 		}
 	},
@@ -88,29 +112,6 @@ public enum FilterTarget {
 					l.CONTENT_TYPE
 			).from(l).leftJoin(ti).on(l.ITEM_ID.eq(ti.ITEM_ID))
 					.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
-					.getQuery();
-		}
-	},
-
-	TEST_ITEM(TestItem.class, Arrays.asList(
-
-			new CriteriaHolder("name", "ti.name", String.class, false))) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItemStructure tis = TEST_ITEM_STRUCTURE.as("tis");
-			JLaunch l = JLaunch.LAUNCH.as("l");
-			JParameter p = JParameter.PARAMETER.as("p");
-
-			return DSL.select(ti.ITEM_ID, tis.LAUNCH_ID, ti.NAME, ti.TYPE, ti.START_TIME, ti.DESCRIPTION, ti.LAST_MODIFIED, ti.UNIQUE_ID)
-					.select(p.KEY, p.VALUE)
-					.from(ti)
-					.join(tis)
-					.on(ti.ITEM_ID.eq(tis.STRUCTURE_ID))
-					.leftJoin(l)
-					.on(tis.LAUNCH_ID.eq(l.ID))
-					.leftJoin(p)
-					.on(ti.ITEM_ID.eq(p.ITEM_ID))
 					.getQuery();
 		}
 	};

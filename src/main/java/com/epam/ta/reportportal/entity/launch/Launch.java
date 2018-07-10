@@ -28,6 +28,8 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.ExecutionStatistics;
 import com.epam.ta.reportportal.entity.item.IssueStatistics;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -101,10 +103,12 @@ public class Launch implements Serializable {
 	private Set<LaunchTag> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<ExecutionStatistics> executionStatistics = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<IssueStatistics> issueStatistics = new HashSet<>();
 
