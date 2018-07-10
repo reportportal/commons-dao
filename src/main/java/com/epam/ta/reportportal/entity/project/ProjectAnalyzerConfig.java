@@ -2,6 +2,9 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.AnalyzeMode;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -14,16 +17,26 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public static final int MIN_SHOULD_MATCH = 80;
 	public static final int NUMBER_OF_LOG_LINES = 2;
 
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@Column(name = "min_doc_freq")
 	private int minDocFreq;
 
+	@Column(name = "min_term_freq")
 	private int minTermFreq;
 
+	@Column(name = "min_should_match")
 	private int minShouldMatch;
 
+	@Column(name = "number_of_log_lines")
 	private int numberOfLogLines;
 
+	@Column(name = "indexing_running")
 	private boolean indexingRunning;
 
+	@Column(name = "auto_analyzer_enabled")
 	private Boolean isAutoAnalyzerEnabled;
 
 	private AnalyzeMode analyzerMode;
@@ -36,6 +49,22 @@ public class ProjectAnalyzerConfig implements Serializable {
 		this.minTermFreq = minTermFreq;
 		this.minShouldMatch = minShouldMatch;
 		this.numberOfLogLines = numberOfLogLines;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Boolean getAutoAnalyzerEnabled() {
+		return isAutoAnalyzerEnabled;
+	}
+
+	public void setAutoAnalyzerEnabled(Boolean autoAnalyzerEnabled) {
+		isAutoAnalyzerEnabled = autoAnalyzerEnabled;
 	}
 
 	public int getMinDocFreq() {

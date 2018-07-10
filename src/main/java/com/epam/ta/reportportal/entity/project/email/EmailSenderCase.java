@@ -21,8 +21,10 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.entity.launch.Launch;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,22 +32,34 @@ import java.util.List;
 @Table(name = "email_sender_case")
 public class EmailSenderCase implements Serializable {
 
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@ElementCollection
+	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@Column(name = "recipient")
 	private List<String> recipients;
 
-	private String sendCase;
+	private SendCase sendCase;
 
-	private List<String> launchNames;
+	private List<Launch> launches;
 
 	private List<String> tags;
+
+	@ManyToOne
+	@JoinColumn(name = "project_email_config_id")
+	private ProjectEmailConfig projectEmailConfig;
 
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(List<String> recipients, String sendCase, List<String> launchNames, List<String> tags) {
-		this.recipients = recipients;
-		this.sendCase = sendCase;
-		this.launchNames = launchNames;
-		this.tags = tags;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public List<String> getRecipients() {
@@ -56,59 +70,11 @@ public class EmailSenderCase implements Serializable {
 		this.recipients = recipients;
 	}
 
-	public String getSendCase() {
-		return sendCase;
+	public ProjectEmailConfig getProjectEmailConfig() {
+		return projectEmailConfig;
 	}
 
-	public void setSendCase(String sendCase) {
-		this.sendCase = sendCase;
-	}
-
-	public List<String> getLaunchNames() {
-		return launchNames;
-	}
-
-	public void setLaunchNames(List<String> launchNames) {
-		this.launchNames = launchNames;
-	}
-
-	public List<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		EmailSenderCase that = (EmailSenderCase) o;
-
-		if (recipients != null ? !recipients.equals(that.recipients) : that.recipients != null) {
-			return false;
-		}
-		if (sendCase != null ? !sendCase.equals(that.sendCase) : that.sendCase != null) {
-			return false;
-		}
-		if (launchNames != null ? !launchNames.equals(that.launchNames) : that.launchNames != null) {
-			return false;
-		}
-		return tags != null ? tags.equals(that.tags) : that.tags == null;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = recipients != null ? recipients.hashCode() : 0;
-		result = 31 * result + (sendCase != null ? sendCase.hashCode() : 0);
-		result = 31 * result + (launchNames != null ? launchNames.hashCode() : 0);
-		result = 31 * result + (tags != null ? tags.hashCode() : 0);
-		return result;
+	public void setProjectEmailConfig(ProjectEmailConfig projectEmailConfig) {
+		this.projectEmailConfig = projectEmailConfig;
 	}
 }
