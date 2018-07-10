@@ -2,14 +2,14 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.AnalyzeMode;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
  */
+@Entity
+@Table(name = "project_analyzer_config")
 public class ProjectAnalyzerConfig implements Serializable {
 
 	public static final int MIN_DOC_FREQ = 7;
