@@ -1,11 +1,6 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
-import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.item.issue.TestItemIssueType;
-import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
-import com.epam.ta.reportportal.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
@@ -14,9 +9,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
-
-import static com.epam.ta.reportportal.entity.item.issue.TestItemIssueType.*;
-import static java.util.Collections.singletonList;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -42,8 +34,8 @@ public class Project implements Serializable {
 	@Column(name = "additional_info")
 	private String addInfo;
 
-	@JoinColumn(name = "configuration_id")
-	private Configuration configuration;
+	@JoinColumn(name = "project_configuration_id")
+	private ProjectConfiguration configuration;
 
 	@OneToMany(mappedBy = "project")
 	private List<UserConfig> users;
@@ -130,14 +122,14 @@ public class Project implements Serializable {
 	 *
 	 * @return the configuration
 	 */
-	public Configuration getConfiguration() {
-		return configuration == null ? configuration = new Configuration() : configuration;
+	public ProjectConfiguration getConfiguration() {
+		return configuration == null ? configuration = new ProjectConfiguration() : configuration;
 	}
 
 	/**
 	 * @param configuration the configuration to set
 	 */
-	public void setConfiguration(Configuration configuration) {
+	public void setConfiguration(ProjectConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
@@ -167,225 +159,6 @@ public class Project implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, customer, addInfo, configuration, users, creationDate, metadata);
-	}
-
-	@Entity
-	@Table(name = "configuration")
-	public static class Configuration implements Serializable {
-
-		private static final String AB_COLOR = "#f7d63e";
-		private static final String PB_COLOR = "#ec3900";
-		private static final String SI_COLOR = "#0274d1";
-		private static final String ND_COLOR = "#777777";
-		private static final String TI_COLOR = "#ffb743";
-
-		private static final long serialVersionUID = 1L;
-		private StatisticsCalculationStrategy statisticsCalculationStrategy;
-
-		@Id
-		@GeneratedValue
-		private Long id;
-
-		@Enumerated(value = EnumType.STRING)
-		private EntryType entryType;
-
-		@Enumerated(value = EnumType.STRING)
-		private ProjectSpecific projectSpecific;
-
-		@Column(name = "interrupt_job_time")
-		private String interruptJobTime;
-
-		@Column(name = "keep_logs")
-		private String keepLogs;
-
-		@Column(name = "keep_screenshots")
-		private String keepScreenshots;
-
-		//		@OneToMany(mappedBy = "project")
-		//		private List<IssueType> issueTypes;
-
-		private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
-
-		// Project Email Settings
-		@ManyToOne
-		@JoinColumn(name = "project_email_config_id")
-		private ProjectEmailConfig emailConfig;
-
-		@ManyToOne
-		@JoinColumn(name = "project_analyzer_config_id")
-		private ProjectAnalyzerConfig analyzerConfig;
-
-		public Configuration() {
-			this.subTypes = new HashMap<TestItemIssueType, List<StatisticSubType>>() {
-				{
-					put(AUTOMATION_BUG,
-							singletonList(new StatisticSubType(AUTOMATION_BUG.getLocator(),
-									AUTOMATION_BUG.getValue(),
-									"Automation Bug",
-									"AB",
-									AB_COLOR
-							))
-					);
-					put(PRODUCT_BUG,
-							singletonList(new StatisticSubType(PRODUCT_BUG.getLocator(),
-									PRODUCT_BUG.getValue(),
-									"Product Bug",
-									"PB",
-									PB_COLOR
-							))
-					);
-					put(SYSTEM_ISSUE,
-							singletonList(new StatisticSubType(SYSTEM_ISSUE.getLocator(),
-									SYSTEM_ISSUE.getValue(),
-									"System Issue",
-									"SI",
-									SI_COLOR
-							))
-					);
-					put(NO_DEFECT,
-							singletonList(new StatisticSubType(NO_DEFECT.getLocator(), NO_DEFECT.getValue(), "No Defect", "ND", ND_COLOR))
-					);
-					put(TO_INVESTIGATE,
-							singletonList(new StatisticSubType(TO_INVESTIGATE.getLocator(),
-									TO_INVESTIGATE.getValue(),
-									"To Investigate",
-									"TI",
-									TI_COLOR
-							))
-					);
-				}
-			};
-			analyzerConfig = new ProjectAnalyzerConfig();
-		}
-
-		public StatisticSubType getByLocator(String locator) {
-			/* If locator is predefined group */
-			TestItemIssueType type = fromValue(locator);
-			if (null != type) {
-				Optional<StatisticSubType> typeOptional = subTypes.values()
-						.stream()
-						.flatMap(Collection::stream)
-						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator()))
-						.findFirst();
-				return typeOptional.orElse(null);
-			}
-			/* If not */
-			Optional<StatisticSubType> exist = subTypes.values()
-					.stream()
-					.flatMap(Collection::stream)
-					.filter(one -> one.getLocator().equalsIgnoreCase(locator))
-					.findFirst();
-			return exist.orElse(null);
-		}
-
-		public void setByLocator(StatisticSubType type) {
-			TestItemIssueType global = fromValue(type.getLocator());
-			if (null == global) {
-				Optional<StatisticSubType> exist = subTypes.values()
-						.stream()
-						.flatMap(Collection::stream)
-						.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator()))
-						.findFirst();
-				exist.ifPresent(statisticSubType -> {
-					if (null != type.getLongName()) {
-						statisticSubType.setLongName(type.getLongName());
-					}
-					if (null != type.getShortName()) {
-						statisticSubType.setShortName(type.getShortName());
-					}
-					if (null != type.getHexColor()) {
-						statisticSubType.setHexColor(type.getHexColor());
-					}
-				});
-			}
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public ProjectAnalyzerConfig getAnalyzerConfig() {
-			return analyzerConfig;
-		}
-
-		public void setAnalyzerConfig(ProjectAnalyzerConfig analyzerConfig) {
-			this.analyzerConfig = analyzerConfig;
-		}
-
-		public void setSubTypes(Map<TestItemIssueType, List<StatisticSubType>> subTypes) {
-			this.subTypes = subTypes;
-		}
-
-		public Map<TestItemIssueType, List<StatisticSubType>> getSubTypes() {
-			return subTypes;
-		}
-
-		public void setEntryType(EntryType value) {
-			this.entryType = value;
-		}
-
-		public EntryType getEntryType() {
-			return entryType;
-		}
-
-		public void setProjectSpecific(ProjectSpecific value) {
-			this.projectSpecific = value;
-		}
-
-		public ProjectSpecific getProjectSpecific() {
-			return projectSpecific;
-		}
-
-		public void setInterruptJobTime(String value) {
-			this.interruptJobTime = value;
-		}
-
-		public String getInterruptJobTime() {
-			return interruptJobTime;
-		}
-
-		public void setKeepLogs(String value) {
-			this.keepLogs = value;
-		}
-
-		public String getKeepLogs() {
-			return keepLogs;
-		}
-
-		public void setKeepScreenshots(String value) {
-			this.keepScreenshots = value;
-		}
-
-		public String getKeepScreenshots() {
-			return keepScreenshots;
-		}
-
-		public void setEmailConfig(ProjectEmailConfig config) {
-			this.emailConfig = config;
-		}
-
-		public ProjectEmailConfig getEmailConfig() {
-			return emailConfig;
-		}
-
-		/**
-		 * @return the statisticsCalculationStrategy
-		 */
-		public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
-			return statisticsCalculationStrategy;
-		}
-
-		/**
-		 * @param statisticsCalculationStrategy the statisticsCalculationStrategy to set
-		 */
-		public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
-			this.statisticsCalculationStrategy = statisticsCalculationStrategy;
-		}
-
 	}
 
 	@Entity

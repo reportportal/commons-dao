@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -96,7 +95,7 @@ public final class PersonalProjectService {
 		project.setConfiguration(defaultConfiguration());
 
 		/* Default email configuration */
-		ProjectUtils.setDefaultEmailCofiguration(project);
+		ProjectUtils.setDefaultEmailConfiguration(project);
 
 		return project;
 	}
@@ -115,8 +114,8 @@ public final class PersonalProjectService {
 	/**
 	 * @return Generated default project configuration
 	 */
-	public static Project.Configuration defaultConfiguration() {
-		Project.Configuration defaultConfig = new Project.Configuration();
+	public static ProjectConfiguration defaultConfiguration() {
+		ProjectConfiguration defaultConfig = new ProjectConfiguration();
 		defaultConfig.setEntryType(EntryType.PERSONAL);
 		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
 		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());

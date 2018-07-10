@@ -23,10 +23,12 @@ package com.epam.ta.reportportal.entity.project.email;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.launch.LaunchTag;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "email_sender_case")
@@ -43,18 +45,21 @@ public class EmailSenderCase implements Serializable {
 
 	private SendCase sendCase;
 
-	private List<Launch> launches;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "email_sender_case_id")
+	private Set<Launch> launches;
 
-	private List<String> tags;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "email_sender_case_id")
+	private Set<LaunchTag> tags;
 
-	@ManyToOne
-	@JoinColumn(name = "project_email_config_id")
-	private ProjectEmailConfig projectEmailConfig;
+	@Column(name = "project_email_config_id")
+	private Long projectEmailConfigId;
 
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(List<String> recipients, SendCase sendCase, List<Launch> launches, List<String> tags) {
+	public EmailSenderCase(List<String> recipients, SendCase sendCase, Set<Launch> launches, Set<LaunchTag> tags) {
 		this.recipients = recipients;
 		this.sendCase = sendCase;
 		this.launches = launches;
@@ -77,11 +82,35 @@ public class EmailSenderCase implements Serializable {
 		this.recipients = recipients;
 	}
 
-	public ProjectEmailConfig getProjectEmailConfig() {
-		return projectEmailConfig;
+	public Long getProjectEmailConfigId() {
+		return projectEmailConfigId;
 	}
 
-	public void setProjectEmailConfig(ProjectEmailConfig projectEmailConfig) {
-		this.projectEmailConfig = projectEmailConfig;
+	public void setProjectEmailConfigId(Long projectEmailConfigId) {
+		this.projectEmailConfigId = projectEmailConfigId;
+	}
+
+	public Set<Launch> getLaunches() {
+		return launches;
+	}
+
+	public void setLaunches(Set<Launch> launches) {
+		this.launches = launches;
+	}
+
+	public SendCase getSendCase() {
+		return sendCase;
+	}
+
+	public void setSendCase(SendCase sendCase) {
+		this.sendCase = sendCase;
+	}
+
+	public Set<LaunchTag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<LaunchTag> tags) {
+		this.tags = tags;
 	}
 }

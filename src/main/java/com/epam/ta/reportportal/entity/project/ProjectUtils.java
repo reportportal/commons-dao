@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -59,11 +60,8 @@ public class ProjectUtils {
 	 * @param project
 	 * @return project object with default email config
 	 */
-	public static Project setDefaultEmailCofiguration(Project project) {
-		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS,
-				Lists.newArrayList(),
-				Lists.newArrayList()
-		);
+	public static Project setDefaultEmailConfiguration(Project project) {
+		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
 		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Lists.newArrayList(defaultOne));
 		project.getConfiguration().setEmailConfig(config);
 		return project;
