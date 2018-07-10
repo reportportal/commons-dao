@@ -44,12 +44,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
@@ -148,15 +144,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		JLaunch l = LAUNCH.as("l");
 		JProject p = PROJECT.as("p");
 
-		return dsl.select()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.where(p.ID.eq(projectId))
-				.and(l.ID.in(ids))
-				.fetch(LAUNCH_MAPPER)
-				.stream()
-				.collect(Collectors.toMap(launch -> String.valueOf(launch.getId()), launch -> launch.getStatus().toString()));
+		//		return dsl.select()
+		//				.from(l)
+		//				.leftJoin(p)
+		//				.on(l.PROJECT_ID.eq(p.ID))
+		//				.where(p.ID.eq(projectId))
+		//				.and(l.ID.in(ids))
+		//				.fetch(LAUNCH_MAPPER)
+		//				.stream()
+		//				.collect(Collectors.toMap(launch -> String.valueOf(launch.getId()), launch -> launch.getStatus().toString()));
+		return Collections.emptyMap();
 	}
 
 	@Override

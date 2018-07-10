@@ -5,7 +5,6 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_STRUCTURE;
-import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
-import static org.jooq.impl.DSL.*;
 
 public enum FilterTarget {
 
@@ -30,23 +27,22 @@ public enum FilterTarget {
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
 			JLaunch l = JLaunch.LAUNCH.as("l");
-			JTestItemStructure ti = JTestItemStructure.TEST_ITEM_STRUCTURE.as("ti");
-			JProject p = JProject.PROJECT.as("p");
-			JTestItemResults tr = TEST_ITEM_RESULTS.as("tr");
+			JIssueStatistics is = JIssueStatistics.ISSUE_STATISTICS.as("is");
+			JExecutionStatistics es = JExecutionStatistics.EXECUTION_STATISTICS.as("es");
+			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
+			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
 
-			return DSL.select(l.ID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.NUMBER, l.LAST_MODIFIED, l.MODE,
-					sum(when(tr.STATUS.eq(JStatusEnum.PASSED), 1).otherwise(0)).as("passed"),
-					sum(when(tr.STATUS.eq(JStatusEnum.FAILED), 1).otherwise(0)).as("failed"),
-					sum(when(tr.STATUS.eq(JStatusEnum.SKIPPED), 1).otherwise(0)).as("skipped"), count(tr.STATUS).as("total")
-			)
-					//@formatter:off
+			return DSL.select()
 					.from(l)
-					.leftJoin(ti).on(l.ID.eq(ti.LAUNCH_ID))
-					.leftJoin(tr).on(ti.STRUCTURE_ID.eq(tr.RESULT_ID))
-					.leftJoin(p).on(l.PROJECT_ID.eq(p.ID))
-					.groupBy(l.ID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.NUMBER, l.LAST_MODIFIED, l.MODE)
+					.join(es)
+					.on(l.ID.eq(es.LAUNCH_ID))
+					.join(is)
+					.on(l.ID.eq(is.LAUNCH_ID))
+					.join(it)
+					.on(is.ISSUE_TYPE_ID.eq(it.ID))
+					.join(ig)
+					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID))
 					.getQuery();
-					//@formatter:on
 		}
 	},
 
@@ -59,7 +55,11 @@ public enum FilterTarget {
 			JProject p = JProject.PROJECT.as("p");
 
 			return DSL.select(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
-					.from(i).leftJoin(it).on(i.TYPE.eq(it.ID)).leftJoin(p).on(i.PROJECT_ID.eq(p.ID))
+					.from(i)
+					.leftJoin(it)
+					.on(i.TYPE.eq(it.ID))
+					.leftJoin(p)
+					.on(i.PROJECT_ID.eq(p.ID))
 					.groupBy(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
 					.getQuery();
 		}
