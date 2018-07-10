@@ -21,15 +21,25 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "project_email_config")
 public class ProjectEmailConfig implements Serializable {
 
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@Column(name = "email_enabled")
 	private Boolean emailEnabled;
 
+	@Column(name = "from")
 	private String from;
 
+	@OneToMany(mappedBy = "projectEmailConfig")
 	private List<EmailSenderCase> emailCases;
 
 	public ProjectEmailConfig() {
@@ -39,6 +49,14 @@ public class ProjectEmailConfig implements Serializable {
 		this.emailEnabled = emailEnabled;
 		this.from = from;
 		this.emailCases = emailCases;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Boolean getEmailEnabled() {
@@ -67,6 +85,7 @@ public class ProjectEmailConfig implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ProjectEmailConfig{" + "emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases=" + emailCases + '}';
+		return "ProjectEmailConfig{" + "id=" + id + ", emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases="
+				+ emailCases + '}';
 	}
 }

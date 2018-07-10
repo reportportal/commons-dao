@@ -1,10 +1,8 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
-import com.epam.ta.reportportal.entity.bts.BugTrackingSystem;
 import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.entity.statistics.StatisticSubType;
@@ -119,6 +117,14 @@ public class Project implements Serializable {
 		this.name = name;
 	}
 
+	public Set<Integration> getIntegrations() {
+		return integrations;
+	}
+
+	public void setIntegrations(Set<Integration> integrations) {
+		this.integrations = integrations;
+	}
+
 	/**
 	 * NULL-safe getter
 	 *
@@ -175,6 +181,10 @@ public class Project implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 		private StatisticsCalculationStrategy statisticsCalculationStrategy;
+
+		@Id
+		@GeneratedValue
+		private Long id;
 
 		@Enumerated(value = EnumType.STRING)
 		private EntryType entryType;
@@ -290,6 +300,14 @@ public class Project implements Serializable {
 			}
 		}
 
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
 		public ProjectAnalyzerConfig getAnalyzerConfig() {
 			return analyzerConfig;
 		}
@@ -376,9 +394,17 @@ public class Project implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
+		@Id
+		@GeneratedValue
+		private Long id;
+
 		@ManyToOne
 		@JoinColumn(name = "user_id")
 		private User user;
+
+		@ManyToOne
+		@JoinColumn(name = "project_id")
+		private Project project;
 
 		private ProjectRole proposedRole;
 		private ProjectRole projectRole;
@@ -389,6 +415,14 @@ public class Project implements Serializable {
 
 		public UserConfig() {
 
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
 		}
 
 		public User getUser() {
@@ -413,6 +447,14 @@ public class Project implements Serializable {
 
 		public ProjectRole getProposedRole() {
 			return proposedRole;
+		}
+
+		public Project getProject() {
+			return project;
+		}
+
+		public void setProject(Project project) {
+			this.project = project;
 		}
 
 		public UserConfig withProposedRole(ProjectRole proposedRole) {

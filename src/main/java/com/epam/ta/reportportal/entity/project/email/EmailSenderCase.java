@@ -21,9 +21,13 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "email_sender_case")
 public class EmailSenderCase implements Serializable {
 
 	private List<String> recipients;
