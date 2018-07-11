@@ -32,8 +32,13 @@ public enum FilterTarget {
 			JExecutionStatistics es = JExecutionStatistics.EXECUTION_STATISTICS.as("es");
 			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
 			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
+			JProject p = JProject.PROJECT.as("p");
 
-			return DSL.select()
+			return DSL.select(l.ID, l.UUID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.END_TIME, l.NUMBER,
+					l.LAST_MODIFIED, l.MODE, l.STATUS, es.ES_ID, es.ES_COUNTER, es.ES_STATUS, es.POSITIVE, es.ITEM_ID,
+					es.LAUNCH_ID.as("es_launch_id"), is.IS_ID, is.ISSUE_TYPE_ID, is.IS_COUNTER, is.ITEM_ID, is.LAUNCH_ID.as("is_launch_id"),
+					it.LOCATOR, ig.ISSUE_GROUP_, p.NAME
+			)
 					.from(l)
 					.join(es)
 					.on(l.ID.eq(es.LAUNCH_ID))
@@ -42,7 +47,7 @@ public enum FilterTarget {
 					.join(it)
 					.on(is.ISSUE_TYPE_ID.eq(it.ID))
 					.join(ig)
-					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID))
+					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID)).join(p).on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
 		}
 	},
