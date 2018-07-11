@@ -79,7 +79,7 @@ public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends Simp
 	}
 
 	@Override
-	public boolean existsByFilter(Filter filter) {
+	public boolean existsWithMFilter(Filter filter) {
 		return dsl.fetchExists(filter.toQuery());
 	}
 }
