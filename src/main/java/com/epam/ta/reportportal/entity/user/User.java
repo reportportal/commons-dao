@@ -1,12 +1,16 @@
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Andrei Varabyeu
@@ -36,14 +40,22 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
-	@Column(name = "type")
-	private String type;
-
-	@Column(name = "default_project_id")
-	private Integer defaultProjectId;
+	@JoinColumn(name = "default_project_id")
+	private Project defaultProject;
 
 	@Column(name = "full_name")
 	private String fullName;
+
+	@Column(name = "expired")
+	private boolean isExpired;
+
+	@JoinColumn(name = "meta_info_id")
+	private MetaInfo metaInfo;
+
+	@Column(name = "photo_path")
+	private String photoPath;
+
+	private UserType userType;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
 	@Fetch(value = FetchMode.JOIN)
@@ -100,20 +112,12 @@ public class User implements Serializable {
 		this.projects = projects;
 	}
 
-	public String getType() {
-		return this.type;
+	public Project getDefaultProject() {
+		return this.defaultProject;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Integer getDefaultProjectId() {
-		return this.defaultProjectId;
-	}
-
-	public void setDefaultProjectId(Integer defaultProjectId) {
-		this.defaultProjectId = defaultProjectId;
+	public void setDefaultProject(Project defaultProjectId) {
+		this.defaultProject = defaultProjectId;
 	}
 
 	public String getFullName() {
@@ -122,6 +126,120 @@ public class User implements Serializable {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public boolean isExpired() {
+		return isExpired;
+	}
+
+	public void setExpired(boolean expired) {
+		isExpired = expired;
+	}
+
+	public String getPhotoPath() {
+		return photoPath;
+	}
+
+	public void setPhotoPath(String photoPath) {
+		this.photoPath = photoPath;
+	}
+
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+
+	/**
+	 * Null-safe getter
+	 *
+	 * @return
+	 */
+	@NotNull
+	public MetaInfo getMetaInfo() {
+		return metaInfo == null ? metaInfo = new MetaInfo() : metaInfo;
+	}
+
+	public void setMetaInfo(MetaInfo metaInfo) {
+		this.metaInfo = metaInfo;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		User user = (User) o;
+		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(
+				password,
+				user.password
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metaInfo, user.metaInfo) && Objects.equals(photoPath,
+				user.photoPath
+		) && userType == user.userType;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(id, login, password, email, role, defaultProject, fullName, isExpired, metaInfo, photoPath, userType);
+	}
+
+	@Entity
+	@Table(name = "meta_info")
+	public static class MetaInfo implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		@Id
+		@GeneratedValue
+		private Long id;
+
+		private Date lastLogin;
+
+		private Date synchronizationDate;
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		/**
+		 * @return the lastLogin
+		 */
+		public Date getLastLogin() {
+			return lastLogin;
+		}
+
+		/**
+		 * @param lastLogin the lastLogin to set
+		 */
+		public void setLastLogin(Date lastLogin) {
+			this.lastLogin = lastLogin;
+		}
+
+		/**
+		 * @return the synchronizationDate
+		 */
+		public Date getSynchronizationDate() {
+			return synchronizationDate;
+		}
+
+		/**
+		 * @param synchronizationDate the synchronizationDate to set
+		 */
+		public void setSynchronizationDate(Date synchronizationDate) {
+			this.synchronizationDate = synchronizationDate;
+		}
+
 	}
 
 }

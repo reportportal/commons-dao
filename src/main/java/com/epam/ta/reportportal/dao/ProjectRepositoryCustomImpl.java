@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
+import static com.epam.ta.reportportal.jooq.Tables.USERS;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
@@ -25,5 +29,16 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	public List<Project> findByFilter(Filter filter) {
 
 		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(PROJECT_MAPPER);
+	}
+
+	@Override
+	public Optional<String> findPersonalProjectName(String username) {
+		return Optional.ofNullable(dsl.select()
+				.from(USERS)
+				.join(PROJECT)
+				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID))
+				.where(USERS.LOGIN.eq(username))
+				.fetchOne(PROJECT_MAPPER)
+				.getName());
 	}
 }

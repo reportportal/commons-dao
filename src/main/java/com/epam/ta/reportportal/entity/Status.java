@@ -17,10 +17,39 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.epam.ta.reportportal.entity;
 
-public interface StatisticsAwareness {
-	String awareStatisticsField();
+import java.util.Arrays;
+import java.util.Optional;
+
+public enum Status implements StatisticsAwareness {
+
+	//@formatter:off
+	IN_PROGRESS(""),
+	PASSED("passed"),
+	FAILED("failed"),
+	STOPPED("stopped"), //status for manually stopped launches
+	SKIPPED("skipped"),
+	INTERRUPTED("failed"),
+	RESETED("reseted"), //status for items with deleted descendants
+	CANCELLED("cancelled"); //soupUI specific status
+	//@formatter:on
+
+	private final String executionCounterField;
+
+	Status(String executionCounterField) {
+		this.executionCounterField = executionCounterField;
+	}
+
+	public static Optional<Status> fromValue(String value) {
+		return Arrays.stream(Status.values()).filter(status -> status.name().equalsIgnoreCase(value)).findAny();
+	}
+
+	@Override
+	public String awareStatisticsField() {
+		return executionCounterField;
+	}
+
 }

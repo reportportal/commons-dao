@@ -1,9 +1,9 @@
 /*
- * Copyright 2017 EPAM Systems
+ * Copyright 2016 EPAM Systems
  *
  *
  * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/service-api
+ * https://github.com/reportportal/commons-dao
  *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.epam.ta.reportportal.entity.enums;
+package com.epam.ta.reportportal.entity.user;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -30,7 +30,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-public enum UserTypeEnum {
+public enum UserType {
 
 	//@formatter:off
     INTERNAL,
@@ -39,12 +39,12 @@ public enum UserTypeEnum {
     LDAP;
     //@formatter:on
 
-	public static UserTypeEnum getByName(String type) {
-		return UserTypeEnum.valueOf(type);
+	public static UserType getByName(String type) {
+		return UserType.valueOf(type);
 	}
 
-	public static Optional<UserTypeEnum> findByName(String name) {
-		return Arrays.stream(UserTypeEnum.values()).filter(type -> type.name().equals(name)).findAny();
+	public static Optional<UserType> findByName(String name) {
+		return Arrays.stream(UserType.values()).filter(type -> type.name().equals(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
