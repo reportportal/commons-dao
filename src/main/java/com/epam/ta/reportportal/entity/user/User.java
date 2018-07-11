@@ -3,7 +3,6 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.JoinColumnOrFormula;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -40,9 +39,6 @@ public class User implements Serializable {
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
-
-	@Column(name = "type")
-	private String type;
 
 	@JoinColumn(name = "default_project_id")
 	private Project defaultProject;
@@ -116,14 +112,6 @@ public class User implements Serializable {
 		this.projects = projects;
 	}
 
-	public String getType() {
-		return this.type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public Project getDefaultProject() {
 		return this.defaultProject;
 	}
@@ -187,17 +175,19 @@ public class User implements Serializable {
 			return false;
 		}
 		User user = (User) o;
-		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
+		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(
+				password,
 				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(type, user.type) && Objects.equals(defaultProject,
-				user.defaultProject
-		) && Objects.equals(fullName, user.fullName);
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metaInfo, user.metaInfo) && Objects.equals(photoPath,
+				user.photoPath
+		) && userType == user.userType;
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, login, password, email, role, type, defaultProject, fullName, isExpired);
+		return Objects.hash(id, login, password, email, role, defaultProject, fullName, isExpired, metaInfo, photoPath, userType);
 	}
 
 	@Entity

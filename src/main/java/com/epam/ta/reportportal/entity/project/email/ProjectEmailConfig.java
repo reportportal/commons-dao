@@ -26,14 +26,14 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "project_email_config")
+@Table(name = "project_email_configuration")
 public class ProjectEmailConfig implements Serializable {
 
 	@Id
 	@GeneratedValue
 	private Long id;
 
-	@Column(name = "email_enabled")
+	@Column(name = "enabled")
 	private Boolean emailEnabled;
 
 	@Column(name = "from")

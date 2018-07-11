@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Pavel Bortnik
  */
 @Entity
-@Table(name = "project_analyzer_config")
+@Table(name = "project_analyzer_configuration")
 public class ProjectAnalyzerConfig implements Serializable {
 
 	public static final int MIN_DOC_FREQ = 7;

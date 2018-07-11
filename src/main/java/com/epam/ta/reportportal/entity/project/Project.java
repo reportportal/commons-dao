@@ -34,7 +34,7 @@ public class Project implements Serializable {
 	@Column(name = "additional_info")
 	private String addInfo;
 
-	@JoinColumn(name = "project_configuration_id")
+	@JoinColumn(name = "id")
 	private ProjectConfiguration configuration;
 
 	@OneToMany(mappedBy = "project")

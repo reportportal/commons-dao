@@ -32,27 +32,27 @@ public class ProjectConfiguration implements Serializable {
 	@GeneratedValue
 	private Long id;
 
+	@Column(name = "project_type")
 	@Enumerated(value = EnumType.STRING)
 	private EntryType entryType;
 
+	@Column(name = "project_specific")
 	@Enumerated(value = EnumType.STRING)
 	private ProjectSpecific projectSpecific;
 
-	@Column(name = "interrupt_job_time")
+	@Column(name = "interrupt_timeout")
 	private String interruptJobTime;
 
-	@Column(name = "keep_logs")
+	@Column(name = "keep_logs_interval")
 	private String keepLogs;
 
-	@Column(name = "keep_screenshots")
+	@Column(name = "keep_screenshots_interval")
 	private String keepScreenshots;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project_configuration", joinColumns = { @JoinColumn(name = "configuration_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "issue_type_id") })
 	private List<IssueType> issueTypes;
-
-	//private Map<TestItemIssueType, List<StatisticSubType>> subTypes;
 
 	// Project Email Settings
 	@ManyToOne
