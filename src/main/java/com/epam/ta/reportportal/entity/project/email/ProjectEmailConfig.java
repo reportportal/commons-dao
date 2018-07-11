@@ -36,7 +36,7 @@ public class ProjectEmailConfig implements Serializable {
 	@Column(name = "enabled")
 	private Boolean emailEnabled;
 
-	@Column(name = "from")
+	@Column(name = "email_from")
 	private String from;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
