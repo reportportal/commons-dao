@@ -52,6 +52,6 @@ public interface ReportPortalRepository<T, ID extends Serializable> extends JpaR
 
 	<R> Page<R> findByFilter(Filter filter, Pageable pageable, RecordMapper<? super Record, R> mapper);
 
-	boolean exists(Filter filter);
+	boolean existsByFilter(Filter filter);
 
 }
