@@ -25,6 +25,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author Ivan Budayeu
+ */
 @Entity
 @Table(name = "project_email_configuration")
 public class ProjectEmailConfig implements Serializable {
@@ -86,7 +89,6 @@ public class ProjectEmailConfig implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ProjectEmailConfig{" + "id=" + id + ", emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases="
-				+ emailCases + '}';
+		return "ProjectEmailConfig{" + "id=" + id + ", emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases=" + emailCases + '}';
 	}
 }

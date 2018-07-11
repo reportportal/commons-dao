@@ -30,6 +30,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author Ivan Budayeu
+ */
 @Entity
 @Table(name = "email_sender_case")
 public class EmailSenderCase implements Serializable {

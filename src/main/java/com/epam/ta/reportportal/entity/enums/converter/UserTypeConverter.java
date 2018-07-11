@@ -6,6 +6,9 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+/**
+ * @author Ivan Budayeu
+ */
 @Converter(autoApply = true)
 public class UserTypeConverter implements AttributeConverter<UserType, String> {
 	@Override
@@ -15,7 +18,6 @@ public class UserTypeConverter implements AttributeConverter<UserType, String> {
 
 	@Override
 	public UserType convertToEntityAttribute(String dbUserTypeName) {
-		return UserType.findByName(dbUserTypeName)
-				.orElseThrow(() -> new ReportPortalException("Can not convert user type name from database."));
+		return UserType.findByName(dbUserTypeName).orElseThrow(() -> new ReportPortalException("Can not convert user type name from database."));
 	}
 }

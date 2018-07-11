@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * @author Ivan Budayeu
+ */
 @Entity
 @Table(name = "demo_data_postfix")
 public class DemoDataPostfix implements Serializable {

@@ -15,6 +15,9 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.entity.enums.TestItemIssueGroup.*;
 
+/**
+ * @author Ivan Budayeu
+ */
 @Entity
 @Table(name = "project_configuration")
 public class ProjectConfiguration implements Serializable {
@@ -50,8 +53,7 @@ public class ProjectConfiguration implements Serializable {
 	private String keepScreenshots;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name = "issue_type_project_configuration", joinColumns = { @JoinColumn(name = "configuration_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "issue_type_id") })
+	@JoinTable(name = "issue_type_project_configuration", joinColumns = { @JoinColumn(name = "configuration_id") }, inverseJoinColumns = { @JoinColumn(name = "issue_type_id") })
 	private List<IssueType> issueTypes;
 
 	// Project Email Settings
@@ -81,9 +83,7 @@ public class ProjectConfiguration implements Serializable {
 		/* If locator is predefined group */
 		TestItemIssueGroup type = fromValue(locator);
 		if (null != type) {
-			Optional<IssueType> typeOptional = issueTypes.stream()
-					.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator()))
-					.findFirst();
+			Optional<IssueType> typeOptional = issueTypes.stream().filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
 			return typeOptional.orElse(null);
 		}
 		/* If not */

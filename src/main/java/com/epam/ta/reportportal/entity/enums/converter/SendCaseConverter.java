@@ -6,6 +6,9 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+/**
+ * @author Ivan Budayeu
+ */
 @Converter(autoApply = true)
 public class SendCaseConverter implements AttributeConverter<SendCase, String> {
 	@Override
@@ -15,7 +18,6 @@ public class SendCaseConverter implements AttributeConverter<SendCase, String> {
 
 	@Override
 	public SendCase convertToEntityAttribute(String dbSendCaseName) {
-		return SendCase.findByName(dbSendCaseName)
-				.orElseThrow(() -> new ReportPortalException("Can not convert send case name from database."));
+		return SendCase.findByName(dbSendCaseName).orElseThrow(() -> new ReportPortalException("Can not convert send case name from database."));
 	}
 }
