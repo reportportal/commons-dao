@@ -23,7 +23,8 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
-			new CriteriaHolder("project", "p.name", String.class, false)
+			new CriteriaHolder("project", "p.name", String.class, false),
+			new CriteriaHolder("es_status", "es.es_status", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -46,8 +47,7 @@ public enum FilterTarget {
 					.on(l.ID.eq(is.LAUNCH_ID))
 					.join(it)
 					.on(is.ISSUE_TYPE_ID.eq(it.ID))
-					.join(ig)
-					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID)).join(p).on(l.PROJECT_ID.eq(p.ID))
+					.join(ig).on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID)).join(p).on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
 		}
 	},
