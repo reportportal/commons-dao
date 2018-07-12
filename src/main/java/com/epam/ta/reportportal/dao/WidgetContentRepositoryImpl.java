@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.field;
@@ -26,7 +27,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private DSLContext dsl;
 
 	@Override
-	public List<StatisticsContent> overallStatisticsContent(Filter filter) {
+	public List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields) {
 		return dsl.with("launches")
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(EXECUTION_STATISTICS.ES_STATUS.as("field"), DSL.sumDistinct(EXECUTION_STATISTICS.ES_COUNTER))
@@ -34,6 +35,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(EXECUTION_STATISTICS)
 				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
 				.where(EXECUTION_STATISTICS.LAUNCH_ID.in(dsl.select(field(name("launches", "id")).cast(Long.class)).from(name("launches"))))
+				.and(EXECUTION_STATISTICS.ES_STATUS.in(contentFields.get("executions")))
 				.groupBy(EXECUTION_STATISTICS.ES_STATUS)
 				.unionAll(dsl.select(ISSUE_TYPE.LOCATOR.as("field"), DSL.sumDistinct(ISSUE_STATISTICS.IS_COUNTER))
 						.from(LAUNCH)
@@ -43,6 +45,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 						.where(ISSUE_STATISTICS.LAUNCH_ID.in(
 								dsl.select(field(name("launches", "id")).cast(Long.class)).from(name("launches"))))
+						.and(ISSUE_TYPE.LOCATOR.in(contentFields.get("defects")))
 						.groupBy(ISSUE_TYPE.LOCATOR))
 				.fetchInto(StatisticsContent.class);
 	}
