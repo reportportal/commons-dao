@@ -1,9 +1,13 @@
 package com.epam.ta.reportportal.entity.project;
 
+import com.epam.ta.reportportal.commons.JsonbUserType;
+import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -15,6 +19,7 @@ import java.util.*;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -31,9 +36,6 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Integration> integrations = Sets.newHashSet();
 
-	@Column(name = "customer")
-	private String customer;
-
 	@Column(name = "additional_info")
 	private String addInfo;
 
@@ -43,11 +45,15 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project")
 	private List<UserConfig> users;
 
+	@OneToMany(mappedBy = "project")
+	private List<DemoDataPostfix> demoDataPostfix;
+
 	@Column(name = "creation_date")
 	private Date creationDate;
 
-	@JoinColumn(name = "metadata_id")
-	private Metadata metadata;
+	@Type(type = "jsonb")
+	@Column(name = "metadata")
+	private JsonbObject metadata;
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -75,14 +81,6 @@ public class Project implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(String customer) {
-		this.customer = customer;
 	}
 
 	public String getAddInfo() {
@@ -136,11 +134,24 @@ public class Project implements Serializable {
 		this.configuration = configuration;
 	}
 
-	public Metadata getMetadata() {
+	/**
+	 * NULL-safe getter
+	 *
+	 * @return the list of demo-data postfix
+	 */
+	public List<DemoDataPostfix> getDemoDataPostfix() {
+		return demoDataPostfix == null ? demoDataPostfix = Collections.emptyList() : demoDataPostfix;
+	}
+
+	public void setDemoDataPostfix(List<DemoDataPostfix> demoDataPostfix) {
+		this.demoDataPostfix = demoDataPostfix;
+	}
+
+	public JsonbObject getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(Metadata metadata) {
+	public void setMetadata(JsonbObject metadata) {
 		this.metadata = metadata;
 	}
 
@@ -153,15 +164,18 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(customer, project.customer) && Objects.equals(addInfo, project.addInfo)
-				&& Objects.equals(configuration, project.configuration) && Objects.equals(users, project.users) && Objects.equals(creationDate,
+		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(configuration,
+				project.configuration
+		) && Objects.equals(users, project.users) && Objects.equals(
+				creationDate,
 				project.creationDate
-		) && Objects.equals(metadata, project.metadata);
+		) && Objects.equals(metadata, project.metadata
+		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, customer, addInfo, configuration, users, creationDate, metadata);
+		return Objects.hash(name, addInfo, configuration, users, creationDate);
 	}
 
 	@Entity
@@ -262,65 +276,10 @@ public class Project implements Serializable {
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
 				.add("name", name)
-				.add("customer", customer)
 				.add("addInfo", addInfo)
 				.add("configuration", configuration)
 				.add("users", users)
 				.add("creationDate", creationDate)
-				.add("metadata", metadata)
 				.toString();
-	}
-
-	@Entity
-	@Table(name = "metadata")
-	public static class Metadata implements Serializable {
-
-		@Id
-		@GeneratedValue
-		private Long id;
-
-		@OneToMany(mappedBy = "metadata")
-		private List<DemoDataPostfix> demoDataPostfix;
-
-		public Metadata() {
-		}
-
-		public Metadata(List<DemoDataPostfix> demoDataPostfix) {
-			this.demoDataPostfix = demoDataPostfix;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public List<DemoDataPostfix> getDemoDataPostfix() {
-			return demoDataPostfix;
-		}
-
-		public void setDemoDataPostfix(List<DemoDataPostfix> demoDataPostfix) {
-			this.demoDataPostfix = demoDataPostfix;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) {
-				return true;
-			}
-			if (o == null || getClass() != o.getClass()) {
-				return false;
-			}
-			Metadata metadata = (Metadata) o;
-			return Objects.equals(id, metadata.id) && Objects.equals(demoDataPostfix, metadata.demoDataPostfix);
-		}
-
-		@Override
-		public int hashCode() {
-
-			return Objects.hash(id, demoDataPostfix);
-		}
 	}
 }

@@ -1,14 +1,14 @@
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,8 +49,9 @@ public class User implements Serializable {
 	@Column(name = "expired")
 	private boolean isExpired;
 
-	@JoinColumn(name = "meta_info_id")
-	private MetaInfo metaInfo;
+	@Type(type = "jsonb")
+	@Column(name = "metadata")
+	private JsonbObject metadata;
 
 	@Column(name = "photo_path")
 	private String photoPath;
@@ -152,18 +153,12 @@ public class User implements Serializable {
 		this.userType = userType;
 	}
 
-	/**
-	 * Null-safe getter
-	 *
-	 * @return
-	 */
-	@NotNull
-	public MetaInfo getMetaInfo() {
-		return metaInfo == null ? metaInfo = new MetaInfo() : metaInfo;
+	public JsonbObject getMetadata() {
+		return metadata;
 	}
 
-	public void setMetaInfo(MetaInfo metaInfo) {
-		this.metaInfo = metaInfo;
+	public void setMetadata(JsonbObject metadata) {
+		this.metadata = metadata;
 	}
 
 	@Override
@@ -179,7 +174,8 @@ public class User implements Serializable {
 				password,
 				user.password
 		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
-				&& Objects.equals(fullName, user.fullName) && Objects.equals(metaInfo, user.metaInfo) && Objects.equals(photoPath,
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
+				photoPath,
 				user.photoPath
 		) && userType == user.userType;
 	}
@@ -187,59 +183,7 @@ public class User implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, login, password, email, role, defaultProject, fullName, isExpired, metaInfo, photoPath, userType);
-	}
-
-	@Entity
-	@Table(name = "meta_info")
-	public static class MetaInfo implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		@Id
-		@GeneratedValue
-		private Long id;
-
-		private Date lastLogin;
-
-		private Date synchronizationDate;
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		/**
-		 * @return the lastLogin
-		 */
-		public Date getLastLogin() {
-			return lastLogin;
-		}
-
-		/**
-		 * @param lastLogin the lastLogin to set
-		 */
-		public void setLastLogin(Date lastLogin) {
-			this.lastLogin = lastLogin;
-		}
-
-		/**
-		 * @return the synchronizationDate
-		 */
-		public Date getSynchronizationDate() {
-			return synchronizationDate;
-		}
-
-		/**
-		 * @param synchronizationDate the synchronizationDate to set
-		 */
-		public void setSynchronizationDate(Date synchronizationDate) {
-			this.synchronizationDate = synchronizationDate;
-		}
-
+		return Objects.hash(id, login, password, email, role, defaultProject, fullName, isExpired, metadata, photoPath, userType);
 	}
 
 }
