@@ -33,8 +33,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		if (latest) {
 			commonSelect = dsl.select(field(name("launches", "id")).cast(Long.class))
 					.distinctOn(field(name("launches", "launch_name")).cast(String.class))
-					.from(name("launches"))
-					.orderBy(field(name("launches", "id")).cast(Long.class), field(name("launches", "number")).cast(Integer.class).desc());
+					.from(name("launches")).orderBy(
+							field(name("launches", "launch_name")).cast(String.class),
+							field(name("launches", "number")).cast(Integer.class).desc()
+					);
 		} else {
 			commonSelect = dsl.select(field(name("launches", "id")).cast(Long.class)).from(name("launches"));
 		}
@@ -44,7 +46,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.select(EXECUTION_STATISTICS.ES_STATUS.as("field"), DSL.sumDistinct(EXECUTION_STATISTICS.ES_COUNTER))
 				.from(LAUNCH)
 				.join(EXECUTION_STATISTICS)
-				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID)).where(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
+				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
+				.where(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
 				.and(EXECUTION_STATISTICS.ES_STATUS.in(contentFields.get("executions")))
 				.groupBy(EXECUTION_STATISTICS.ES_STATUS)
 				.unionAll(dsl.select(ISSUE_TYPE.LOCATOR.as("field"), DSL.sumDistinct(ISSUE_STATISTICS.IS_COUNTER))
@@ -52,7 +55,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(ISSUE_STATISTICS)
 						.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
 						.join(ISSUE_TYPE)
-						.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID)).where(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
+						.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+						.where(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
 						.and(ISSUE_TYPE.LOCATOR.in(contentFields.get("defects")))
 						.groupBy(ISSUE_TYPE.LOCATOR))
 				.fetchInto(StatisticsContent.class);
