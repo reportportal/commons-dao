@@ -39,7 +39,7 @@ public class Project implements Serializable {
 	@Column(name = "additional_info")
 	private String addInfo;
 
-	@JoinColumn(name = "id")
+	@OneToOne(mappedBy = "project")
 	private ProjectConfiguration configuration;
 
 	@OneToMany(mappedBy = "project")
