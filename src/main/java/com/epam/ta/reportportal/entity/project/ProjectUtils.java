@@ -62,7 +62,7 @@ public class ProjectUtils {
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
 		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
-		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Lists.newArrayList(defaultOne));
+		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Sets.newHashSet(defaultOne));
 		project.getConfiguration().setEmailConfig(config);
 		return project;
 	}
@@ -81,7 +81,7 @@ public class ProjectUtils {
 					user.getLogin().toLowerCase()
 			)).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
-			List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+			Set<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 			if (null != cases) {
 				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
@@ -103,7 +103,7 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
-		List<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+		Set<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.stream().forEach(c -> {
 				List<String> saved = c.getRecipients();

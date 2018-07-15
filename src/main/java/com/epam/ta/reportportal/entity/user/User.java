@@ -11,6 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Andrei Varabyeu
@@ -60,7 +61,7 @@ public class User implements Serializable {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
 	@Fetch(value = FetchMode.JOIN)
-	private List<ProjectUser> projects;
+	private Set<ProjectUser> projects;
 
 	public User() {
 	}
@@ -105,11 +106,11 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public List<ProjectUser> getProjects() {
+	public Set<ProjectUser> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(List<ProjectUser> projects) {
+	public void setProjects(Set<ProjectUser> projects) {
 		this.projects = projects;
 	}
 
