@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * @author Ivan Budayeu
  */
-public interface UserRepository extends ReportPortalRepository<User, Long> {
+public interface UserRepository extends ReportPortalRepository<User, Long>, UserRepositoryCustom {
 
 	/**
 	 * @param login user login for search
