@@ -7,16 +7,18 @@
 
     <oauth_registration_scope id="1" oauth_registration_fk="github" scope="user"/>
 
-    <project_configuration id="1" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
-                           keep_screenshots_interval="2 weeks"/>
-    <project_configuration id="2" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
-                           keep_screenshots_interval="2 weeks"/>
-    <project_configuration id="3" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
-                           keep_screenshots_interval="2 weeks"/>
 
     <project id="1" name="vasia_personal" project_configuration_id="1"/>
     <project id="2" name="petia_personal" project_configuration_id="2"/>
     <project id="3" name="valera_personal" project_configuration_id="3"/>
+
+    <project_configuration id="1" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
+                           keep_screenshots_interval="2 weeks" aa_enabled="false"/>
+    <project_configuration id="2" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
+                           keep_screenshots_interval="2 weeks" aa_enabled="false"/>
+    <project_configuration id="3" project_type="PERSONAL" interrupt_timeout="1 day" keep_logs_interval="3 month"
+                           keep_screenshots_interval="2 weeks" aa_enabled="false"/>
+
 
     <issue_type id="1" issue_group="TO_INVESTIGATE" locator="TI001" long_name="To Investigate" short_name="TI" hex_color="#ffb743"/>
     <issue_type id="2" issue_group="AUTOMATION_BUG" locator="AB001" long_name="Automation Bug" short_name="AB" hex_color="#f7d63e"/>
@@ -58,30 +60,30 @@
     <project_user user_id="2" project_id="2" project_role="MEMBER"/>
     <project_user user_id="3" project_id="3" project_role="MEMBER"/>
 
-    <launch id="1" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:29:29.008608"
-            last_modified="2018-02-06 19:29:29.008608" number="1" mode="DEFAULT" status="PASSED"/>
-    <launch id="2" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:30:29.008608"
-            last_modified="2018-02-06 19:29:29.008608" number="2" mode="DEFAULT" status="PASSED"/>
-    <launch id="3" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:31:29.008608"
-            last_modified="2018-02-06 19:29:29.008608" number="3" mode="DEFAULT" status="PASSED"/>
+    <!--<launch id="1" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:29:29.008608"-->
+            <!--last_modified="2018-02-06 19:29:29.008608" number="1" mode="DEFAULT" status="PASSED"/>-->
+    <!--<launch id="2" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:30:29.008608"-->
+            <!--last_modified="2018-02-06 19:29:29.008608" number="2" mode="DEFAULT" status="PASSED"/>-->
+    <!--<launch id="3" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:31:29.008608"-->
+            <!--last_modified="2018-02-06 19:29:29.008608" number="3" mode="DEFAULT" status="PASSED"/>-->
 
-    <test_item id="1" name="Test Suite" type="SUITE" start_time="2018-02-06 19:29:45.008608" last_modified="2018-02-06 19:29:45.008608"
-               unique_id="unique_id_suite_1"/>
-    <test_item_structure id="1" item_id="1" launch_id="1" />
+    <!--<test_item id="1" item_id="1" name="Test Suite" type="SUITE" start_time="2018-02-06 19:29:45.008608" last_modified="2018-02-06 19:29:45.008608"-->
+               <!--unique_id="unique_id_suite_1"/>-->
+    <!--<test_item_structure id="1" item_id="1" launch_id="1" />-->
 
-    <test_item id="2" name="Test Class" type="TEST" start_time="2018-02-06 19:29:55.008608" last_modified="2018-02-06 19:29:55.008608"
-               unique_id="unique_id_test_1"/>
-    <test_item_structure id="2" item_id="2" launch_id="1" parent_id="1" />
+    <!--<test_item id="2" item_id="2" name="Test Class" type="TEST" start_time="2018-02-06 19:29:55.008608" last_modified="2018-02-06 19:29:55.008608"-->
+               <!--unique_id="unique_id_test_1"/>-->
+    <!--<test_item_structure id="2" item_id="2" launch_id="1" parent_id="1" />-->
 
-    <test_item id="3" name="Test Step Passed" type="STEP" start_time="2018-02-06 19:29:56.008608" last_modified="2018-02-06 19:29:56.008608"
-               unique_id="unique_id_step_1"/>
-    <test_item_structure id="3" item_id="3" launch_id="1" parent_id="2" />
-    <test_item_results id="1" item_id="3" status="PASSED" duration="0.35"/>
+    <!--<test_item id="3" item_id="3" name="Test Step Passed" type="STEP" start_time="2018-02-06 19:29:56.008608" last_modified="2018-02-06 19:29:56.008608"-->
+               <!--unique_id="unique_id_step_1"/>-->
+    <!--<test_item_structure id="3" item_id="3" launch_id="1" parent_id="2" />-->
+    <!--<test_item_results id="1" item_id="1" status="PASSED" duration="0.35"/>-->
 
-    <test_item id="4" name="Test Step Failed" type="STEP" start_time="2018-02-06 19:29:58.008608" last_modified="2018-02-06 19:29:58.008608"
-               unique_id="unique_id_step_1"/>
-    <test_item_structure id="4" item_id="4" launch_id="1" parent_id="2" />
-    <test_item_results id="2" item_id="4" status="FAILED" duration="0.35"/>
-    <issue id="1" issue_type="1" test_item_results_id="2"/>
+    <!--<test_item id="4" item_id="4" name="Test Step Failed" type="STEP" start_time="2018-02-06 19:29:58.008608" last_modified="2018-02-06 19:29:58.008608"-->
+               <!--unique_id="unique_id_step_1"/>-->
+    <!--<test_item_structure id="4" item_id="4" launch_id="1" parent_id="2" />-->
+    <!--<test_item_results id="2" item_id="4" status="FAILED" duration="0.35"/>-->
+    <!--<issue id="1" issue_id="1" issue_type="1" test_item_results_id="1"/>-->
 
 </dataset>

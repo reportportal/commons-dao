@@ -8,17 +8,18 @@ import org.dbunit.dataset.datatype.DataTypeException;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.xml.sax.InputSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -31,7 +32,7 @@ import java.sql.Types;
 public class BaseTest {
 
 	@Autowired
-	private EmbeddedDatabase dataSource;
+	private DataSource dataSource;
 
 	@Autowired
 	@Value("classpath:dataset.xml")
@@ -56,7 +57,7 @@ public class BaseTest {
 		});
 
 		FlatXmlDataSet dataSet = new FlatXmlDataSet(new FlatXmlProducer(new InputSource(dataset.getInputStream())));
-		//DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
+		DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
 	}
 
 	@Test
