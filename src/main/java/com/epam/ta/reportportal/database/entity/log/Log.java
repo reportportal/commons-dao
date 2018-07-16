@@ -37,6 +37,12 @@ public class Log {
 	@Column(name = "log_level", nullable = false, precision = 32)
 	private Integer logLevel;
 
+	@Column(name = "binaryId", nullable = false)
+	private String binaryId;
+
+	@Column(name = "thumbnailId", nullable = false)
+	private String thumbnailId;
+
 	public Long getId() {
 		return id;
 	}
@@ -85,6 +91,22 @@ public class Log {
 		this.logLevel = logLevel;
 	}
 
+	public String getBinaryId() {
+		return binaryId;
+	}
+
+	public void setBinaryId(String binaryId) {
+		this.binaryId = binaryId;
+	}
+
+	public String getThumbnailId() {
+		return thumbnailId;
+	}
+
+	public void setThumbnailId(String thumbnailId) {
+		this.thumbnailId = thumbnailId;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -95,18 +117,20 @@ public class Log {
 		}
 		Log log = (Log) o;
 		return Objects.equals(id, log.id) && Objects.equals(logTime, log.logTime) && Objects.equals(logMessage, log.logMessage)
-				&& Objects.equals(itemId, log.itemId) && Objects.equals(lastModified, log.lastModified) && Objects.equals(
-				logLevel, log.logLevel);
+				&& Objects.equals(itemId, log.itemId) && Objects.equals(lastModified, log.lastModified) && Objects.equals(logLevel,
+				log.logLevel
+		) && Objects.equals(binaryId, log.binaryId) && Objects.equals(thumbnailId, log.thumbnailId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, logTime, logMessage, itemId, lastModified, logLevel);
+		return Objects.hash(id, logTime, logMessage, itemId, lastModified, logLevel, binaryId, thumbnailId);
 	}
 
 	@Override
 	public String toString() {
 		return "Log{" + "id=" + id + ", logTime=" + logTime + ", logMessage='" + logMessage + '\'' + ", itemId=" + itemId
-				+ ", lastModified=" + lastModified + ", logLevel=" + logLevel + '}';
+				+ ", lastModified=" + lastModified + ", logLevel=" + logLevel + ", binaryId='" + binaryId + '\'' + ", thumbnailId='"
+				+ thumbnailId + '\'' + '}';
 	}
 }
