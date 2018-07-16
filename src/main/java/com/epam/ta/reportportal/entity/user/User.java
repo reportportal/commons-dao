@@ -1,12 +1,16 @@
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Andrei Varabyeu
@@ -36,18 +40,28 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
-	@Column(name = "type")
-	private String type;
-
-	@Column(name = "default_project_id")
-	private Integer defaultProjectId;
+	@JoinColumn(name = "default_project_id")
+	private Project defaultProject;
 
 	@Column(name = "full_name")
 	private String fullName;
 
+	@Column(name = "expired")
+	private boolean isExpired;
+
+	@Type(type = "jsonb")
+	@Column(name = "metadata")
+	private JsonbObject metadata;
+
+	@Column(name = "photo_path")
+	private String photoPath;
+
+	@Column(name = "type")
+	private UserType userType;
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
 	@Fetch(value = FetchMode.JOIN)
-	private List<ProjectUser> projects;
+	private Set<ProjectUser> projects;
 
 	public User() {
 	}
@@ -92,28 +106,20 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public List<ProjectUser> getProjects() {
+	public Set<ProjectUser> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(List<ProjectUser> projects) {
+	public void setProjects(Set<ProjectUser> projects) {
 		this.projects = projects;
 	}
 
-	public String getType() {
-		return this.type;
+	public Project getDefaultProject() {
+		return this.defaultProject;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Integer getDefaultProjectId() {
-		return this.defaultProjectId;
-	}
-
-	public void setDefaultProjectId(Integer defaultProjectId) {
-		this.defaultProjectId = defaultProjectId;
+	public void setDefaultProject(Project defaultProjectId) {
+		this.defaultProject = defaultProjectId;
 	}
 
 	public String getFullName() {
@@ -122,6 +128,63 @@ public class User implements Serializable {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public boolean isExpired() {
+		return isExpired;
+	}
+
+	public void setExpired(boolean expired) {
+		isExpired = expired;
+	}
+
+	public String getPhotoPath() {
+		return photoPath;
+	}
+
+	public void setPhotoPath(String photoPath) {
+		this.photoPath = photoPath;
+	}
+
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+
+	public JsonbObject getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(JsonbObject metadata) {
+		this.metadata = metadata;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		User user = (User) o;
+		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(
+				password,
+				user.password
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
+				photoPath,
+				user.photoPath
+		) && userType == user.userType;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(id, login, password, email, role, defaultProject, fullName, isExpired, metadata, photoPath, userType);
 	}
 
 }

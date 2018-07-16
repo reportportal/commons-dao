@@ -84,6 +84,9 @@ public class Launch implements Serializable {
 	@Column(name = "number", nullable = false, precision = 32)
 	private Long number;
 
+	@Column(name = "email_sender_case_id")
+	private Long emailSenderCaseId;
+
 	@Column(name = "last_modified", nullable = false)
 	@LastModifiedDate
 	private LocalDateTime lastModified;
@@ -218,6 +221,14 @@ public class Launch implements Serializable {
 
 	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
+	}
+
+	public Long getEmailSenderCaseId() {
+		return emailSenderCaseId;
+	}
+
+	public void setEmailSenderCaseId(Long emailSenderCaseId) {
+		this.emailSenderCaseId = emailSenderCaseId;
 	}
 
 	public Long getNumber() {

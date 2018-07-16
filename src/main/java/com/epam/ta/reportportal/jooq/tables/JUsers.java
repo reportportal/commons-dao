@@ -11,6 +11,7 @@ import com.epam.ta.reportportal.jooq.enums.JUserTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import javax.annotation.Generated;
@@ -79,7 +80,12 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * The column <code>public.users.default_project_id</code>.
      */
-    public final TableField<JUsersRecord, Integer> DEFAULT_PROJECT_ID = createField("default_project_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final TableField<JUsersRecord, Long> DEFAULT_PROJECT_ID = createField(
+            "default_project_id",
+            SQLDataType.BIGINT.nullable(false),
+            this,
+            ""
+    );
 
     /**
      * The column <code>public.users.full_name</code>.
