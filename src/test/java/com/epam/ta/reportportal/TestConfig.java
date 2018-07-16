@@ -1,10 +1,8 @@
 package com.epam.ta.reportportal;
 
-import com.epam.ta.reportportal.config.DatabaseConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 /**
@@ -13,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @EnableConfigurationProperties
 @EnableAutoConfiguration
-@Import(DatabaseConfiguration.class)
+//@Import(DatabaseConfiguration.class)
 @PropertySource("classpath:test-application.properties")
 public class TestConfig {
 	//	@Bean
