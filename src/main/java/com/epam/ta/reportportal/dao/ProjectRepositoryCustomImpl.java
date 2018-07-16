@@ -37,7 +37,9 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 		Optional<Project> projectOptional = Optional.ofNullable(dsl.select()
 				.from(USERS)
 				.join(PROJECT)
-				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID)).where(USERS.LOGIN.eq(username)).fetchOne(PROJECT_MAPPER));
+				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID))
+				.where(USERS.LOGIN.eq(username))
+				.fetchOne(PROJECT_MAPPER));
 		if (projectOptional.isPresent()) {
 			return Optional.ofNullable(projectOptional.get().getName());
 		} else {
