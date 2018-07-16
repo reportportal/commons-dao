@@ -65,6 +65,11 @@ public class ProjectConfiguration implements Serializable {
 	@JoinColumn(name = "project_analyzer_config_id")
 	private ProjectAnalyzerConfig analyzerConfig;
 
+	@OneToOne
+	@JoinColumn(name = "id")
+	@MapsId
+	private Project project;
+
 	public ProjectConfiguration() {
 		this.issueTypes = new ArrayList<IssueType>() {
 			{
@@ -179,6 +184,14 @@ public class ProjectConfiguration implements Serializable {
 
 	public ProjectEmailConfig getEmailConfig() {
 		return emailConfig;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	/**

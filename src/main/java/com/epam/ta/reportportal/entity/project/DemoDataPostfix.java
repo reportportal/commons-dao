@@ -21,8 +21,8 @@ public class DemoDataPostfix implements Serializable {
 	private String data;
 
 	@ManyToOne
-	@JoinColumn(name = "metadata_id")
-	private Project.Metadata metadata;
+	@JoinColumn(name = "project_id")
+	private Project project;
 
 	public Long getId() {
 		return id;
@@ -40,12 +40,12 @@ public class DemoDataPostfix implements Serializable {
 		this.data = data;
 	}
 
-	public Project.Metadata getMetadata() {
-		return metadata;
+	public Project getProject() {
+		return project;
 	}
 
-	public void setMetadata(Project.Metadata metadata) {
-		this.metadata = metadata;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	@Override
@@ -57,12 +57,12 @@ public class DemoDataPostfix implements Serializable {
 			return false;
 		}
 		DemoDataPostfix that = (DemoDataPostfix) o;
-		return Objects.equals(id, that.id) && Objects.equals(data, that.data) && Objects.equals(metadata, that.metadata);
+		return Objects.equals(id, that.id) && Objects.equals(data, that.data) && Objects.equals(project, that.project);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, data, metadata);
+		return Objects.hash(id, data, project);
 	}
 }
