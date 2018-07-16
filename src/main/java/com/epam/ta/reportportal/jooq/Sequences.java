@@ -8,6 +8,7 @@ import org.jooq.impl.SequenceImpl;
 
 import javax.annotation.Generated;
 
+
 /**
  * Convenience access to all sequences in public
  */
@@ -47,10 +48,10 @@ public class Sequences {
     public static final Sequence<Long> DEFECT_FORM_FIELD_ID_SEQ = new SequenceImpl<Long>("defect_form_field_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
 	/**
-	 * The sequence <code>public.execution_statistics_id_seq</code>
+	 * The sequence <code>public.execution_statistics_es_id_seq</code>
 	 */
-	public static final Sequence<Long> EXECUTION_STATISTICS_ID_SEQ = new SequenceImpl<Long>(
-			"execution_statistics_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+	public static final Sequence<Long> EXECUTION_STATISTICS_ES_ID_SEQ = new SequenceImpl<Long>(
+			"execution_statistics_es_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
 	/**
 	 * The sequence <code>public.filter_condition_id_seq</code>
@@ -87,10 +88,10 @@ public class Sequences {
 			"issue_group_issue_group_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
 
 	/**
-	 * The sequence <code>public.issue_statistics_id_seq</code>
+	 * The sequence <code>public.issue_statistics_is_id_seq</code>
 	 */
-	public static final Sequence<Long> ISSUE_STATISTICS_ID_SEQ = new SequenceImpl<Long>(
-			"issue_statistics_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+	public static final Sequence<Long> ISSUE_STATISTICS_IS_ID_SEQ = new SequenceImpl<Long>(
+			"issue_statistics_is_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.issue_type_id_seq</code>

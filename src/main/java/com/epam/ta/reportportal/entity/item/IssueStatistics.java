@@ -35,9 +35,10 @@ public class IssueStatistics implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "is_id")
 	private Long id;
 
-	@Column(name = "counter")
+	@Column(name = "is_counter")
 	private Integer counter;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -66,5 +67,38 @@ public class IssueStatistics implements Serializable {
 
 	public void setIssueType(IssueType issueType) {
 		this.issueType = issueType;
+	}
+
+	@Override
+	public String toString() {
+		return "IssueStatistics{" + "id=" + id + ", counter=" + counter + ", issueType=" + issueType + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		IssueStatistics that = (IssueStatistics) o;
+
+		if (id != null ? !id.equals(that.id) : that.id != null) {
+			return false;
+		}
+		if (counter != null ? !counter.equals(that.counter) : that.counter != null) {
+			return false;
+		}
+		return issueType != null ? issueType.equals(that.issueType) : that.issueType == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (counter != null ? counter.hashCode() : 0);
+		result = 31 * result + (issueType != null ? issueType.hashCode() : 0);
+		return result;
 	}
 }

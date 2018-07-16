@@ -7,6 +7,7 @@ import com.epam.ta.reportportal.jooq.tables.*;
 
 import javax.annotation.Generated;
 
+
 /**
  * Convenience access to all tables in public
  */
