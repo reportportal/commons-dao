@@ -292,7 +292,7 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
 	public JIntegrationRecord value4(Object value) {
 		setParams(value);
 		return this;
-    }
+	}
 
     /**
      * {@inheritDoc}

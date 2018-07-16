@@ -350,7 +350,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
 	public JIntegrationTypeRecord value6(Object value) {
 		setDetails(value);
 		return this;
-    }
+	}
 
     /**
      * {@inheritDoc}

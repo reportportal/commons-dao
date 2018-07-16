@@ -300,17 +300,15 @@ public class JPublic extends SchemaImpl {
 				JIntegration.INTEGRATION, JIntegrationType.INTEGRATION_TYPE, JIssue.ISSUE, JIssueGroup.ISSUE_GROUP,
 				JIssueStatistics.ISSUE_STATISTICS, JIssueTicket.ISSUE_TICKET, JIssueType.ISSUE_TYPE,
 				JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, JItemTag.ITEM_TAG, JLaunch.LAUNCH, JLaunchTag.LAUNCH_TAG,
-				JLog.LOG,
-            JOauthAccessToken.OAUTH_ACCESS_TOKEN,
+				JLog.LOG, JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JParameter.PARAMETER,
             JProject.PROJECT,
-            JProjectConfiguration.PROJECT_CONFIGURATION,
-            JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, JProjectUser.PROJECT_USER, JServerSettings.SERVER_SETTINGS,
-				JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS, JTestItemStructure.TEST_ITEM_STRUCTURE, JTicket.TICKET,
-				JUserFilter.USER_FILTER, JUsers.USERS, JWidget.WIDGET, JWidgetFilter.WIDGET_FILTER, JWidgetOption.WIDGET_OPTION,
-				JWidgetOptionValue.WIDGET_OPTION_VALUE
+            JProjectConfiguration.PROJECT_CONFIGURATION, JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, JProjectUser.PROJECT_USER,
+				JServerSettings.SERVER_SETTINGS, JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS,
+				JTestItemStructure.TEST_ITEM_STRUCTURE, JTicket.TICKET, JUserFilter.USER_FILTER, JUsers.USERS, JWidget.WIDGET,
+				JWidgetFilter.WIDGET_FILTER, JWidgetOption.WIDGET_OPTION, JWidgetOptionValue.WIDGET_OPTION_VALUE
 		);
 	}
 }

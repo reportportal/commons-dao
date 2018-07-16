@@ -340,7 +340,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
 	public JActivityRecord value5(Object value) {
 		setDetails(value);
 		return this;
-    }
+	}
 
     /**
      * {@inheritDoc}

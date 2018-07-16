@@ -355,7 +355,7 @@ public class JIssueTypeRecord extends UpdatableRecordImpl<JIssueTypeRecord>
 		value5(value5);
 		value6(value6);
 		return this;
-    }
+	}
 
     // -------------------------------------------------------------------------
     // Constructors

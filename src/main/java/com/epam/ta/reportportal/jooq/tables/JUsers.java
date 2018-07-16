@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-	private static final long serialVersionUID = -77413213;
+	private static final long serialVersionUID = 1452164694;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -79,8 +79,8 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * The column <code>public.users.default_project_id</code>.
      */
-	public final TableField<JUsersRecord, Integer> DEFAULT_PROJECT_ID = createField(
-			"default_project_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
+	public final TableField<JUsersRecord, Long> DEFAULT_PROJECT_ID = createField(
+			"default_project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.users.full_name</code>.

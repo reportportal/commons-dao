@@ -205,7 +205,7 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
 	public JProjectRecord value3(Object value) {
 		setMetadata(value);
 		return this;
-    }
+	}
 
     /**
      * {@inheritDoc}

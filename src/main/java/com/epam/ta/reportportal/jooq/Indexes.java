@@ -57,7 +57,7 @@ public class Indexes {
 	public static final Index LAUNCH_PK = Indexes0.LAUNCH_PK;
 	public static final Index UNQ_NAME_NUMBER = Indexes0.UNQ_NAME_NUMBER;
 	public static final Index LAUNCH_TAG_PK = Indexes0.LAUNCH_TAG_PK;
-    public static final Index LOG_PK = Indexes0.LOG_PK;
+	public static final Index LOG_PK = Indexes0.LOG_PK;
     public static final Index ACCESS_TOKENS_PK = Indexes0.ACCESS_TOKENS_PK;
     public static final Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Indexes0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
     public static final Index OAUTH_REGISTRATION_PKEY = Indexes0.OAUTH_REGISTRATION_PKEY;
@@ -151,8 +151,9 @@ public class Indexes {
 				"unq_name_number", JLaunch.LAUNCH,
 				new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID }, true
 		);
-		public static Index LAUNCH_TAG_PK = Internal.createIndex("launch_tag_pk", JLaunchTag.LAUNCH_TAG, new OrderField[] { JLaunchTag.LAUNCH_TAG.ID }, true);
-        public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
+		public static Index LAUNCH_TAG_PK = Internal.createIndex(
+				"launch_tag_pk", JLaunchTag.LAUNCH_TAG, new OrderField[] { JLaunchTag.LAUNCH_TAG.ID }, true);
+		public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
         public static Index ACCESS_TOKENS_PK = Internal.createIndex("access_tokens_pk", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, JOauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE }, true);
         public static Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Internal.createIndex("oauth_registration_client_id_key", JOauthRegistration.OAUTH_REGISTRATION, new OrderField[] { JOauthRegistration.OAUTH_REGISTRATION.CLIENT_ID }, true);
         public static Index OAUTH_REGISTRATION_PKEY = Internal.createIndex("oauth_registration_pkey", JOauthRegistration.OAUTH_REGISTRATION, new OrderField[] { JOauthRegistration.OAUTH_REGISTRATION.ID }, true);

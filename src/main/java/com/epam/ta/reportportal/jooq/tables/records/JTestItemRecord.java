@@ -404,7 +404,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord>
 		value4(value4);
 		value5(value5);
 		value6(value6);
-        value7(value7);
+		value7(value7);
         return this;
     }
 

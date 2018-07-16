@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-	private static final long serialVersionUID = 362009811;
+	private static final long serialVersionUID = -322089132;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -90,18 +90,6 @@ public class JLog extends TableImpl<JLogRecord> {
      * The column <code>public.log.content_type</code>.
      */
 	public final TableField<JLogRecord, String> CONTENT_TYPE = createField("content_type", org.jooq.impl.SQLDataType.CLOB, this, "");
-
-	/**
-	 * The column <code>public.log.binaryid</code>.
-	 */
-	public final TableField<JLogRecord, String> BINARYID = createField(
-			"binaryid", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
-
-	/**
-	 * The column <code>public.log.thumbnailid</code>.
-	 */
-	public final TableField<JLogRecord, String> THUMBNAILID = createField(
-			"thumbnailid", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * Create a <code>public.log</code> table reference
