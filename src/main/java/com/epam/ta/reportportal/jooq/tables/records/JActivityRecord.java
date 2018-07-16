@@ -188,7 +188,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
 	@Override
 	public Field<Object> field5() {
 		return JActivity.ACTIVITY.DETAILS;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -237,7 +237,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
 	@Override
 	public Object component5() {
 		return getDetails();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -286,7 +286,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
 	@Override
 	public Object value5() {
 		return getDetails();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -339,7 +339,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
 	@Override
 	public JActivityRecord value5(Object value) {
 		setDetails(value);
-        return this;
+		return this;
     }
 
     /**

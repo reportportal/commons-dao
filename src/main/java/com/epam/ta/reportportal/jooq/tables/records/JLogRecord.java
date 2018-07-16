@@ -6,8 +6,8 @@ package com.epam.ta.reportportal.jooq.tables.records;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record9;
-import org.jooq.Row9;
+import org.jooq.Record11;
+import org.jooq.Row11;
 import org.jooq.impl.UpdatableRecordImpl;
 
 import javax.annotation.Generated;
@@ -26,9 +26,9 @@ import java.sql.Timestamp;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
-		implements Record9<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String> {
+		implements Record11<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String, String, String> {
 
-	private static final long serialVersionUID = -1988190574;
+	private static final long serialVersionUID = 292235915;
 
     /**
      * Setter for <code>public.log.id</code>.
@@ -156,6 +156,34 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return (String) get(8);
     }
 
+	/**
+	 * Setter for <code>public.log.binaryid</code>.
+	 */
+	public void setBinaryid(String value) {
+		set(9, value);
+	}
+
+	/**
+	 * Getter for <code>public.log.binaryid</code>.
+	 */
+	public String getBinaryid() {
+		return (String) get(9);
+	}
+
+	/**
+	 * Setter for <code>public.log.thumbnailid</code>.
+	 */
+	public void setThumbnailid(String value) {
+		set(10, value);
+	}
+
+	/**
+	 * Getter for <code>public.log.thumbnailid</code>.
+	 */
+	public String getThumbnailid() {
+		return (String) get(10);
+	}
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -169,24 +197,24 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
     }
 
     // -------------------------------------------------------------------------
-    // Record9 type implementation
-    // -------------------------------------------------------------------------
+	// Record11 type implementation
+	// -------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Row9<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String> fieldsRow() {
-        return (Row9) super.fieldsRow();
-    }
+	public Row11<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String, String, String> fieldsRow() {
+		return (Row11) super.fieldsRow();
+	}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Row9<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String> valuesRow() {
-        return (Row9) super.valuesRow();
-    }
+	public Row11<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String, String, String> valuesRow() {
+		return (Row11) super.valuesRow();
+	}
 
     /**
      * {@inheritDoc}
@@ -260,6 +288,22 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return JLog.LOG.CONTENT_TYPE;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<String> field10() {
+		return JLog.LOG.BINARYID;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<String> field11() {
+		return JLog.LOG.THUMBNAILID;
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -332,6 +376,22 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return getContentType();
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String component10() {
+		return getBinaryid();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String component11() {
+		return getThumbnailid();
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -403,6 +463,22 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
     public String value9() {
         return getContentType();
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String value10() {
+		return getBinaryid();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String value11() {
+		return getThumbnailid();
+	}
 
     /**
      * {@inheritDoc}
@@ -489,8 +565,27 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
      * {@inheritDoc}
      */
     @Override
-    public JLogRecord values(Long value1, Timestamp value2, String value3, Long value4, Timestamp value5, Integer value6, String value7, String value8, String value9) {
-        value1(value1);
+	public JLogRecord value10(String value) {
+		setBinaryid(value);
+		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public JLogRecord value11(String value) {
+		setThumbnailid(value);
+		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public JLogRecord values(Long value1, Timestamp value2, String value3, Long value4, Timestamp value5, Integer value6, String value7,
+			String value8, String value9, String value10, String value11) {
+		value1(value1);
         value2(value2);
         value3(value3);
         value4(value4);
@@ -499,7 +594,9 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         value7(value7);
         value8(value8);
         value9(value9);
-        return this;
+		value10(value10);
+		value11(value11);
+		return this;
     }
 
     // -------------------------------------------------------------------------
@@ -516,8 +613,9 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
     /**
      * Create a detached, initialised JLogRecord
      */
-    public JLogRecord(Long id, Timestamp logTime, String logMessage, Long itemId, Timestamp lastModified, Integer logLevel, String filePath, String thumbnailFilePath, String contentType) {
-        super(JLog.LOG);
+	public JLogRecord(Long id, Timestamp logTime, String logMessage, Long itemId, Timestamp lastModified, Integer logLevel, String filePath,
+			String thumbnailFilePath, String contentType, String binaryid, String thumbnailid) {
+		super(JLog.LOG);
 
         set(0, id);
         set(1, logTime);
@@ -528,5 +626,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         set(6, filePath);
         set(7, thumbnailFilePath);
         set(8, contentType);
-    }
+		set(9, binaryid);
+		set(10, thumbnailid);
+	}
 }

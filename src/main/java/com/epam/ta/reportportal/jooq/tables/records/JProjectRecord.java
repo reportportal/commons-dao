@@ -127,7 +127,7 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
 	@Override
 	public Field<Object> field3() {
 		return JProject.PROJECT.METADATA;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -152,7 +152,7 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
 	@Override
 	public Object component3() {
 		return getMetadata();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -177,7 +177,7 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
 	@Override
 	public Object value3() {
 		return getMetadata();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -204,7 +204,7 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
 	@Override
 	public JProjectRecord value3(Object value) {
 		setMetadata(value);
-        return this;
+		return this;
     }
 
     /**

@@ -41,7 +41,8 @@ public class JIssueStatistics extends TableImpl<JIssueStatisticsRecord> {
 	/**
 	 * The column <code>public.issue_statistics.is_id</code>.
 	 */
-	public final TableField<JIssueStatisticsRecord, Long> IS_ID = createField("is_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false)
+	public final TableField<JIssueStatisticsRecord, Long> IS_ID = createField(
+			"is_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false)
 					.defaultValue(
 							org.jooq.impl.DSL.field("nextval('issue_statistics_is_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)),
 			this, ""
@@ -56,8 +57,8 @@ public class JIssueStatistics extends TableImpl<JIssueStatisticsRecord> {
 	/**
 	 * The column <code>public.issue_statistics.is_counter</code>.
 	 */
-	public final TableField<JIssueStatisticsRecord, Integer> IS_COUNTER = createField("is_counter",
-			org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.INTEGER)),
+	public final TableField<JIssueStatisticsRecord, Integer> IS_COUNTER = createField(
+			"is_counter", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.INTEGER)),
 			this, ""
 	);
 

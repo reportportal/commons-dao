@@ -165,7 +165,7 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
 	@Override
 	public Field<Object> field4() {
 		return JIntegration.INTEGRATION.PARAMS;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -206,7 +206,7 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
 	@Override
 	public Object component4() {
 		return getParams();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -247,7 +247,7 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
 	@Override
 	public Object value4() {
 		return getParams();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -291,7 +291,7 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
 	@Override
 	public JIntegrationRecord value4(Object value) {
 		setParams(value);
-        return this;
+		return this;
     }
 
     /**

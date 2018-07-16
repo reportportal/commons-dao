@@ -197,7 +197,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
 	@Override
 	public Field<Object> field6() {
 		return JIntegrationType.INTEGRATION_TYPE.DETAILS;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -246,7 +246,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
 	@Override
 	public Object component6() {
 		return getDetails();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -295,7 +295,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
 	@Override
 	public Object value6() {
 		return getDetails();
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -349,7 +349,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
 	@Override
 	public JIntegrationTypeRecord value6(Object value) {
 		setDetails(value);
-        return this;
+		return this;
     }
 
     /**

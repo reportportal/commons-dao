@@ -274,7 +274,7 @@ public class JPublic extends SchemaImpl {
     }
 
     private final List<Sequence<?>> getSequences0() {
-        return Arrays.<Sequence<?>>asList(Sequences.ACTIVITY_ID_SEQ, Sequences.BUG_TRACKING_SYSTEM_ID_SEQ, Sequences.DASHBOARD_ID_SEQ,
+		return Arrays.<Sequence<?>>asList(Sequences.ACTIVITY_ID_SEQ, Sequences.BUG_TRACKING_SYSTEM_ID_SEQ, Sequences.DASHBOARD_ID_SEQ,
 				Sequences.DEFECT_FIELD_ALLOWED_VALUE_ID_SEQ, Sequences.DEFECT_FORM_FIELD_ID_SEQ, Sequences.EXECUTION_STATISTICS_ES_ID_SEQ,
 				Sequences.FILTER_CONDITION_ID_SEQ, Sequences.FILTER_ID_SEQ, Sequences.FILTER_SORT_ID_SEQ, Sequences.INTEGRATION_ID_SEQ,
 				Sequences.INTEGRATION_TYPE_ID_SEQ, Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ, Sequences.ISSUE_STATISTICS_IS_ID_SEQ,
@@ -300,17 +300,16 @@ public class JPublic extends SchemaImpl {
 				JIntegration.INTEGRATION, JIntegrationType.INTEGRATION_TYPE, JIssue.ISSUE, JIssueGroup.ISSUE_GROUP,
 				JIssueStatistics.ISSUE_STATISTICS, JIssueTicket.ISSUE_TICKET, JIssueType.ISSUE_TYPE,
 				JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, JItemTag.ITEM_TAG, JLaunch.LAUNCH, JLaunchTag.LAUNCH_TAG,
-            JLog.LOG,
+				JLog.LOG,
             JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JParameter.PARAMETER,
             JProject.PROJECT,
             JProjectConfiguration.PROJECT_CONFIGURATION,
-            JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION,
-            JProjectUser.PROJECT_USER, JServerSettings.SERVER_SETTINGS, JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS,
-				JTestItemStructure.TEST_ITEM_STRUCTURE, JTicket.TICKET, JUserFilter.USER_FILTER, JUsers.USERS, JWidget.WIDGET,
-				JWidgetFilter.WIDGET_FILTER, JWidgetOption.WIDGET_OPTION,
+            JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, JProjectUser.PROJECT_USER, JServerSettings.SERVER_SETTINGS,
+				JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS, JTestItemStructure.TEST_ITEM_STRUCTURE, JTicket.TICKET,
+				JUserFilter.USER_FILTER, JUsers.USERS, JWidget.WIDGET, JWidgetFilter.WIDGET_FILTER, JWidgetOption.WIDGET_OPTION,
 				JWidgetOptionValue.WIDGET_OPTION_VALUE
 		);
 	}
