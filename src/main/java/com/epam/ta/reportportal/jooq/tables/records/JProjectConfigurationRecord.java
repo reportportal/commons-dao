@@ -64,48 +64,48 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	public void setInterruptTimeout(Object value) {
-        set(2, value);
-    }
+		set(2, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getInterruptTimeout() {
-        return get(2);
-    }
+		return get(2);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public void setKeepLogsInterval(Object value) {
-        set(3, value);
-    }
+		set(3, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getKeepLogsInterval() {
-        return get(3);
-    }
+		return get(3);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public void setKeepScreenshotsInterval(Object value) {
-        set(4, value);
-    }
+		set(4, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getKeepScreenshotsInterval() {
-        return get(4);
-    }
+		return get(4);
+	}
 
     /**
      * Setter for <code>public.project_configuration.aa_enabled</code>.
@@ -126,16 +126,16 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	public void setMetadata(Object value) {
-        set(6, value);
-    }
+		set(6, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getMetadata() {
-        return get(6);
-    }
+		return get(6);
+	}
 
     /**
      * Setter for <code>public.project_configuration.email_configuration_id</code>.
@@ -218,8 +218,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field3() {
-        return JProjectConfiguration.PROJECT_CONFIGURATION.INTERRUPT_TIMEOUT;
+	public Field<Object> field3() {
+		return JProjectConfiguration.PROJECT_CONFIGURATION.INTERRUPT_TIMEOUT;
     }
 
     /**
@@ -227,8 +227,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field4() {
-        return JProjectConfiguration.PROJECT_CONFIGURATION.KEEP_LOGS_INTERVAL;
+	public Field<Object> field4() {
+		return JProjectConfiguration.PROJECT_CONFIGURATION.KEEP_LOGS_INTERVAL;
     }
 
     /**
@@ -236,8 +236,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field5() {
-        return JProjectConfiguration.PROJECT_CONFIGURATION.KEEP_SCREENSHOTS_INTERVAL;
+	public Field<Object> field5() {
+		return JProjectConfiguration.PROJECT_CONFIGURATION.KEEP_SCREENSHOTS_INTERVAL;
     }
 
     /**
@@ -253,8 +253,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field7() {
-        return JProjectConfiguration.PROJECT_CONFIGURATION.METADATA;
+	public Field<Object> field7() {
+		return JProjectConfiguration.PROJECT_CONFIGURATION.METADATA;
     }
 
     /**
@@ -294,8 +294,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component3() {
-        return getInterruptTimeout();
+	public Object component3() {
+		return getInterruptTimeout();
     }
 
     /**
@@ -303,8 +303,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component4() {
-        return getKeepLogsInterval();
+	public Object component4() {
+		return getKeepLogsInterval();
     }
 
     /**
@@ -312,8 +312,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component5() {
-        return getKeepScreenshotsInterval();
+	public Object component5() {
+		return getKeepScreenshotsInterval();
     }
 
     /**
@@ -329,8 +329,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component7() {
-        return getMetadata();
+	public Object component7() {
+		return getMetadata();
     }
 
     /**
@@ -370,8 +370,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value3() {
-        return getInterruptTimeout();
+	public Object value3() {
+		return getInterruptTimeout();
     }
 
     /**
@@ -379,8 +379,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value4() {
-        return getKeepLogsInterval();
+	public Object value4() {
+		return getKeepLogsInterval();
     }
 
     /**
@@ -388,8 +388,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value5() {
-        return getKeepScreenshotsInterval();
+	public Object value5() {
+		return getKeepScreenshotsInterval();
     }
 
     /**
@@ -405,8 +405,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value7() {
-        return getMetadata();
+	public Object value7() {
+		return getMetadata();
     }
 
     /**
@@ -448,8 +448,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public JProjectConfigurationRecord value3(Object value) {
-        setInterruptTimeout(value);
+	public JProjectConfigurationRecord value3(Object value) {
+		setInterruptTimeout(value);
         return this;
     }
 
@@ -458,8 +458,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public JProjectConfigurationRecord value4(Object value) {
-        setKeepLogsInterval(value);
+	public JProjectConfigurationRecord value4(Object value) {
+		setKeepLogsInterval(value);
         return this;
     }
 
@@ -468,8 +468,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public JProjectConfigurationRecord value5(Object value) {
-        setKeepScreenshotsInterval(value);
+	public JProjectConfigurationRecord value5(Object value) {
+		setKeepScreenshotsInterval(value);
         return this;
     }
 
@@ -487,8 +487,8 @@ public class JProjectConfigurationRecord extends UpdatableRecordImpl<JProjectCon
      */
 	@java.lang.Deprecated
 	@Override
-    public JProjectConfigurationRecord value7(Object value) {
-        setMetadata(value);
+	public JProjectConfigurationRecord value7(Object value) {
+		setMetadata(value);
         return this;
     }
 

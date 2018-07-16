@@ -18,6 +18,7 @@ public class ProjectRoleConverter implements AttributeConverter<ProjectRole, Str
 
 	@Override
 	public ProjectRole convertToEntityAttribute(String dbProjectRoleName) {
-		return ProjectRole.forName(dbProjectRoleName).orElseThrow(() -> new ReportPortalException("Can not convert project role name from database."));
+		return ProjectRole.forName(dbProjectRoleName)
+				.orElseThrow(() -> new ReportPortalException("Can not convert project role name from database."));
 	}
 }

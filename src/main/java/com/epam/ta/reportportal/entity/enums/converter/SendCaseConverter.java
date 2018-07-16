@@ -18,6 +18,7 @@ public class SendCaseConverter implements AttributeConverter<SendCase, String> {
 
 	@Override
 	public SendCase convertToEntityAttribute(String dbSendCaseName) {
-		return SendCase.findByName(dbSendCaseName).orElseThrow(() -> new ReportPortalException("Can not convert send case name from database."));
+		return SendCase.findByName(dbSendCaseName)
+				.orElseThrow(() -> new ReportPortalException("Can not convert send case name from database."));
 	}
 }

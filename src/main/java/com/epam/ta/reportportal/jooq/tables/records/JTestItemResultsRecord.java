@@ -284,5 +284,5 @@ public class JTestItemResultsRecord extends UpdatableRecordImpl<JTestItemResults
 		set(1, status);
 		set(2, endTime);
 		set(3, duration);
-    }
+	}
 }

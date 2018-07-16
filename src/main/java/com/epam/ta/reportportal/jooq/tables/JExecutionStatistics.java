@@ -51,8 +51,8 @@ public class JExecutionStatistics extends TableImpl<JExecutionStatisticsRecord> 
 	/**
 	 * The column <code>public.execution_statistics.es_counter</code>.
 	 */
-	public final TableField<JExecutionStatisticsRecord, Integer> ES_COUNTER = createField(
-			"es_counter", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.INTEGER)),
+	public final TableField<JExecutionStatisticsRecord, Integer> ES_COUNTER = createField("es_counter",
+			org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.INTEGER)),
 			this, ""
 	);
 

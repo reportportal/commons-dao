@@ -47,9 +47,8 @@ public class SeaweedDataStoreTest {
 	private SeaweedDataStore dataStore;
 	private static final Integer port = getFreePort();
 	@ClassRule
-	public static GenericContainer seaweedMaster = new GenericContainer("chrislusf/seaweedfs:latest").withCommand(String.format("server -master.port=%d",
-			port
-	)).withCreateContainerCmdModifier(new Consumer<CreateContainerCmd>() {
+	public static GenericContainer seaweedMaster = new GenericContainer("chrislusf/seaweedfs:latest").withCommand(
+			String.format("server -master.port=%d", port)).withCreateContainerCmdModifier(new Consumer<CreateContainerCmd>() {
 		@Override
 		public void accept(CreateContainerCmd cmd) {
 			cmd.withHostName("localhost");

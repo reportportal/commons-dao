@@ -176,9 +176,7 @@ public class User implements Serializable {
 				user.password
 		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
 				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
-				photoPath,
-				user.photoPath
-		) && userType == user.userType;
+				photoPath, user.photoPath) && userType == user.userType;
 	}
 
 	@Override

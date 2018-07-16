@@ -49,8 +49,8 @@ public class Keys {
 	public static final Identity<JLaunchRecord, Long> IDENTITY_LAUNCH = Identities0.IDENTITY_LAUNCH;
 	public static final Identity<JLaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = Identities0.IDENTITY_LAUNCH_TAG;
 	public static final Identity<JLogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
-    public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
-    public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
+	public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
+	public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectEmailConfigurationRecord, Long> IDENTITY_PROJECT_EMAIL_CONFIGURATION = Identities0.IDENTITY_PROJECT_EMAIL_CONFIGURATION;
     public static final Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Identities0.IDENTITY_SERVER_SETTINGS;
 	public static final Identity<JTestItemStructureRecord, Long> IDENTITY_TEST_ITEM_STRUCTURE = Identities0.IDENTITY_TEST_ITEM_STRUCTURE;
@@ -89,8 +89,8 @@ public class Keys {
 	public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_PK = UniqueKeys0.ISSUE_TYPE_PK;
 	public static final UniqueKey<JIssueTypeProjectConfigurationRecord> ISSUE_TYPE_PROJECT_CONFIGURATION_PK = UniqueKeys0.ISSUE_TYPE_PROJECT_CONFIGURATION_PK;
 	public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = UniqueKeys0.ITEM_TAG_PK;
-    public static final UniqueKey<JLaunchRecord> LAUNCH_PK = UniqueKeys0.LAUNCH_PK;
-    public static final UniqueKey<JLaunchRecord> UNQ_NAME_NUMBER = UniqueKeys0.UNQ_NAME_NUMBER;
+	public static final UniqueKey<JLaunchRecord> LAUNCH_PK = UniqueKeys0.LAUNCH_PK;
+	public static final UniqueKey<JLaunchRecord> UNQ_NAME_NUMBER = UniqueKeys0.UNQ_NAME_NUMBER;
     public static final UniqueKey<JLaunchTagRecord> LAUNCH_TAG_PK = UniqueKeys0.LAUNCH_TAG_PK;
     public static final UniqueKey<JLogRecord> LOG_PK = UniqueKeys0.LOG_PK;
     public static final UniqueKey<JOauthAccessTokenRecord> ACCESS_TOKENS_PK = UniqueKeys0.ACCESS_TOKENS_PK;
@@ -127,8 +127,8 @@ public class Keys {
 	public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY;
 	public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY;
 	public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = ForeignKeys0.DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY;
-    public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY;
-    public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY;
+	public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY;
+	public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY;
 	public static final ForeignKey<JExecutionStatisticsRecord, JTestItemResultsRecord> EXECUTION_STATISTICS__EXECUTION_STATISTICS_ITEM_ID_FKEY = ForeignKeys0.EXECUTION_STATISTICS__EXECUTION_STATISTICS_ITEM_ID_FKEY;
 	public static final ForeignKey<JExecutionStatisticsRecord, JLaunchRecord> EXECUTION_STATISTICS__EXECUTION_STATISTICS_LAUNCH_ID_FKEY = ForeignKeys0.EXECUTION_STATISTICS__EXECUTION_STATISTICS_LAUNCH_ID_FKEY;
 	public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = ForeignKeys0.FILTER__FILTER_PROJECT_ID_FKEY;
@@ -148,8 +148,8 @@ public class Keys {
 	public static final ForeignKey<JIssueTypeProjectConfigurationRecord, JIssueTypeRecord> ISSUE_TYPE_PROJECT_CONFIGURATION__ISSUE_TYPE_PROJECT_CONFIGURATION_ISSUE_TYPE_ID_FKEY = ForeignKeys0.ISSUE_TYPE_PROJECT_CONFIGURATION__ISSUE_TYPE_PROJECT_CONFIGURATION_ISSUE_TYPE_ID_FKEY;
 	public static final ForeignKey<JItemTagRecord, JTestItemRecord> ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY = ForeignKeys0.ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY;
 	public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_PROJECT_ID_FKEY;
-    public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_USER_ID_FKEY;
-    public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = ForeignKeys0.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY;
+	public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_USER_ID_FKEY;
+	public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = ForeignKeys0.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY;
     public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = ForeignKeys0.LOG__LOG_ITEM_ID_FKEY;
     public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = ForeignKeys0.OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY;
     public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
@@ -206,8 +206,9 @@ public class Keys {
 		public static Identity<JLaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = Internal.createIdentity(
 				JLaunchTag.LAUNCH_TAG, JLaunchTag.LAUNCH_TAG.ID);
 		public static Identity<JLogRecord, Long> IDENTITY_LOG = Internal.createIdentity(JLog.LOG, JLog.LOG.ID);
-        public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
-        public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
+		public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(
+				JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
+		public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectEmailConfigurationRecord, Long> IDENTITY_PROJECT_EMAIL_CONFIGURATION = Internal.createIdentity(JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION.ID);
         public static Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Internal.createIdentity(JServerSettings.SERVER_SETTINGS, JServerSettings.SERVER_SETTINGS.ID);
 		public static Identity<JTestItemStructureRecord, Long> IDENTITY_TEST_ITEM_STRUCTURE = Internal.createIdentity(
@@ -270,9 +271,10 @@ public class Keys {
 				JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID,
 				JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID
 		);
-		public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = Internal.createUniqueKey(JItemTag.ITEM_TAG, "item_tag_pk", JItemTag.ITEM_TAG.ID);
-        public static final UniqueKey<JLaunchRecord> LAUNCH_PK = Internal.createUniqueKey(JLaunch.LAUNCH, "launch_pk", JLaunch.LAUNCH.ID);
-        public static final UniqueKey<JLaunchRecord> UNQ_NAME_NUMBER = Internal.createUniqueKey(JLaunch.LAUNCH, "unq_name_number", JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID);
+		public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = Internal.createUniqueKey(
+				JItemTag.ITEM_TAG, "item_tag_pk", JItemTag.ITEM_TAG.ID);
+		public static final UniqueKey<JLaunchRecord> LAUNCH_PK = Internal.createUniqueKey(JLaunch.LAUNCH, "launch_pk", JLaunch.LAUNCH.ID);
+		public static final UniqueKey<JLaunchRecord> UNQ_NAME_NUMBER = Internal.createUniqueKey(JLaunch.LAUNCH, "unq_name_number", JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID);
         public static final UniqueKey<JLaunchTagRecord> LAUNCH_TAG_PK = Internal.createUniqueKey(JLaunchTag.LAUNCH_TAG, "launch_tag_pk", JLaunchTag.LAUNCH_TAG.ID);
         public static final UniqueKey<JLogRecord> LOG_PK = Internal.createUniqueKey(JLog.LOG, "log_pk", JLog.LOG.ID);
         public static final UniqueKey<JOauthAccessTokenRecord> ACCESS_TOKENS_PK = Internal.createUniqueKey(JOauthAccessToken.OAUTH_ACCESS_TOKEN, "access_tokens_pk", JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, JOauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE);
@@ -327,9 +329,18 @@ public class Keys {
 				com.epam.ta.reportportal.jooq.Keys.WIDGET_ID, JDashboardWidget.DASHBOARD_WIDGET,
 				"dashboard_widget__dashboard_widget_widget_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID
 		);
-		public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value__defect_field_allowed_value_defect_form_field_fkey", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.DEFECT_FORM_FIELD);
-        public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, JDefectFormField.DEFECT_FORM_FIELD, "defect_form_field__defect_form_field_bug_tracking_system_id_fkey", JDefectFormField.DEFECT_FORM_FIELD.BUG_TRACKING_SYSTEM_ID);
-        public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE, "defect_form_field_value__defect_form_field_value_id_fkey", JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE.ID);
+		public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = Internal
+				.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK,
+						JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE,
+						"defect_field_allowed_value__defect_field_allowed_value_defect_form_field_fkey",
+						JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.DEFECT_FORM_FIELD
+				);
+		public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = Internal
+				.createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, JDefectFormField.DEFECT_FORM_FIELD,
+						"defect_form_field__defect_form_field_bug_tracking_system_id_fkey",
+						JDefectFormField.DEFECT_FORM_FIELD.BUG_TRACKING_SYSTEM_ID
+				);
+		public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE, "defect_form_field_value__defect_form_field_value_id_fkey", JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE.ID);
 		public static final ForeignKey<JExecutionStatisticsRecord, JTestItemResultsRecord> EXECUTION_STATISTICS__EXECUTION_STATISTICS_ITEM_ID_FKEY = Internal
 				.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_RESULTS_PK, JExecutionStatistics.EXECUTION_STATISTICS,
 						"execution_statistics__execution_statistics_item_id_fkey", JExecutionStatistics.EXECUTION_STATISTICS.ITEM_ID
@@ -358,7 +369,8 @@ public class Keys {
 		);
 		public static final ForeignKey<JIssueRecord, JTestItemResultsRecord> ISSUE__ISSUE_ISSUE_ID_FKEY = Internal.createForeignKey(
 				com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_RESULTS_PK, JIssue.ISSUE, "issue__issue_issue_id_fkey", JIssue.ISSUE.ISSUE_ID);
-		public static final ForeignKey<JIssueRecord, JIssueTypeRecord> ISSUE__ISSUE_ISSUE_TYPE_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ISSUE_TYPE_PK, JIssue.ISSUE, "issue__issue_issue_type_fkey", JIssue.ISSUE.ISSUE_TYPE);
+		public static final ForeignKey<JIssueRecord, JIssueTypeRecord> ISSUE__ISSUE_ISSUE_TYPE_FKEY = Internal.createForeignKey(
+				com.epam.ta.reportportal.jooq.Keys.ISSUE_TYPE_PK, JIssue.ISSUE, "issue__issue_issue_type_fkey", JIssue.ISSUE.ISSUE_TYPE);
 		public static final ForeignKey<JIssueStatisticsRecord, JIssueTypeRecord> ISSUE_STATISTICS__ISSUE_STATISTICS_ISSUE_TYPE_ID_FKEY = Internal
 				.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ISSUE_TYPE_PK, JIssueStatistics.ISSUE_STATISTICS,
 						"issue_statistics__issue_statistics_issue_type_id_fkey", JIssueStatistics.ISSUE_STATISTICS.ISSUE_TYPE_ID
@@ -399,9 +411,11 @@ public class Keys {
 				com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JItemTag.ITEM_TAG, "item_tag__item_tag_item_id_fkey",
 				JItemTag.ITEM_TAG.ITEM_ID
 		);
-		public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JLaunch.LAUNCH, "launch__launch_project_id_fkey", JLaunch.LAUNCH.PROJECT_ID);
-        public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JLaunch.LAUNCH, "launch__launch_user_id_fkey", JLaunch.LAUNCH.USER_ID);
-        public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JLaunchTag.LAUNCH_TAG, "launch_tag__launch_tag_launch_id_fkey", JLaunchTag.LAUNCH_TAG.LAUNCH_ID);
+		public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = Internal.createForeignKey(
+				com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JLaunch.LAUNCH, "launch__launch_project_id_fkey", JLaunch.LAUNCH.PROJECT_ID);
+		public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = Internal.createForeignKey(
+				com.epam.ta.reportportal.jooq.Keys.USERS_PK, JLaunch.LAUNCH, "launch__launch_user_id_fkey", JLaunch.LAUNCH.USER_ID);
+		public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JLaunchTag.LAUNCH_TAG, "launch_tag__launch_tag_launch_id_fkey", JLaunchTag.LAUNCH_TAG.LAUNCH_ID);
         public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JLog.LOG, "log__log_item_id_fkey", JLog.LOG.ITEM_ID);
         public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JOauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token__oauth_access_token_user_id_fkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
         public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);

@@ -166,11 +166,8 @@ public class Project implements Serializable {
 		Project project = (Project) o;
 		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(configuration,
 				project.configuration
-		) && Objects.equals(users, project.users) && Objects.equals(
-				creationDate,
-				project.creationDate
-		) && Objects.equals(metadata, project.metadata
-		);
+		) && Objects.equals(users, project.users) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
+				metadata, project.metadata);
 	}
 
 	@Override

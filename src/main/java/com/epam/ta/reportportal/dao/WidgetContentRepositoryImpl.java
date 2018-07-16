@@ -32,8 +32,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Select commonSelect;
 		if (latest) {
 			commonSelect = dsl.select(field(name("launches", "id")).cast(Long.class))
-					.distinctOn(field(name("launches", "launch_name")).cast(String.class))
-					.from(name("launches")).orderBy(
+					.distinctOn(field(name("launches", "launch_name")).cast(String.class)).from(name("launches")).orderBy(
 							field(name("launches", "launch_name")).cast(String.class),
 							field(name("launches", "number")).cast(Integer.class).desc()
 					);

@@ -61,16 +61,16 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
      */
 	@java.lang.Deprecated
 	public void setMetadata(Object value) {
-        set(2, value);
-    }
+		set(2, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getMetadata() {
-        return get(2);
-    }
+		return get(2);
+	}
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -125,8 +125,8 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field3() {
-        return JProject.PROJECT.METADATA;
+	public Field<Object> field3() {
+		return JProject.PROJECT.METADATA;
     }
 
     /**
@@ -150,8 +150,8 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component3() {
-        return getMetadata();
+	public Object component3() {
+		return getMetadata();
     }
 
     /**
@@ -175,8 +175,8 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value3() {
-        return getMetadata();
+	public Object value3() {
+		return getMetadata();
     }
 
     /**
@@ -202,8 +202,8 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implemen
      */
 	@java.lang.Deprecated
 	@Override
-    public JProjectRecord value3(Object value) {
-        setMetadata(value);
+	public JProjectRecord value3(Object value) {
+		setMetadata(value);
         return this;
     }
 

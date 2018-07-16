@@ -77,16 +77,16 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
      */
 	@java.lang.Deprecated
 	public void setParams(Object value) {
-        set(3, value);
-    }
+		set(3, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getParams() {
-        return get(3);
-    }
+		return get(3);
+	}
 
     /**
      * Setter for <code>public.integration.creation_date</code>.
@@ -163,8 +163,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field4() {
-        return JIntegration.INTEGRATION.PARAMS;
+	public Field<Object> field4() {
+		return JIntegration.INTEGRATION.PARAMS;
     }
 
     /**
@@ -204,8 +204,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component4() {
-        return getParams();
+	public Object component4() {
+		return getParams();
     }
 
     /**
@@ -245,8 +245,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value4() {
-        return getParams();
+	public Object value4() {
+		return getParams();
     }
 
     /**
@@ -289,8 +289,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public JIntegrationRecord value4(Object value) {
-        setParams(value);
+	public JIntegrationRecord value4(Object value) {
+		setParams(value);
         return this;
     }
 

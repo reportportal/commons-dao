@@ -36,11 +36,11 @@
  */
 package com.epam.ta.reportportal.entity.statistics;
 
+import com.epam.ta.reportportal.entity.item.issue.TestItemIssueType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.epam.ta.reportportal.entity.item.issue.TestItemIssueType;
 
 //@formatter:off
 /**

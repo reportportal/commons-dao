@@ -64,7 +64,8 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JIntegrationRecord, Object> PARAMS = createField("params", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+	public final TableField<JIntegrationRecord, Object> PARAMS = createField(
+			"params", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * The column <code>public.integration.creation_date</code>.

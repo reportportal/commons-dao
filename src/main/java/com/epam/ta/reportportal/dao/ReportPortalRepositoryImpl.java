@@ -35,8 +35,6 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.Serializable;
 import java.util.List;
 

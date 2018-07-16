@@ -304,8 +304,8 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
 		value2(value2);
 		value3(value3);
 		value4(value4);
-        value5(value5);
-        return this;
+		value5(value5);
+		return this;
     }
 
     // -------------------------------------------------------------------------

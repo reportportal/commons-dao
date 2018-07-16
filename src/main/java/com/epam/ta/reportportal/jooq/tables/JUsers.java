@@ -80,12 +80,9 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * The column <code>public.users.default_project_id</code>.
      */
-    public final TableField<JUsersRecord, Long> DEFAULT_PROJECT_ID = createField(
-            "default_project_id",
-            SQLDataType.BIGINT.nullable(false),
-            this,
-            ""
-    );
+	public final TableField<JUsersRecord, Long> DEFAULT_PROJECT_ID = createField("default_project_id", SQLDataType.BIGINT.nullable(false),
+			this, ""
+	);
 
     /**
      * The column <code>public.users.full_name</code>.
@@ -96,7 +93,8 @@ public class JUsers extends TableImpl<JUsersRecord> {
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JUsersRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+	public final TableField<JUsersRecord, Object> METADATA = createField(
+			"metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * Create a <code>public.users</code> table reference

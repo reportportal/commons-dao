@@ -23,7 +23,6 @@ package com.epam.ta.reportportal.entity.project.email;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -90,6 +89,7 @@ public class ProjectEmailConfig implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ProjectEmailConfig{" + "id=" + id + ", emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases=" + emailCases + '}';
+		return "ProjectEmailConfig{" + "id=" + id + ", emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases="
+				+ emailCases + '}';
 	}
 }

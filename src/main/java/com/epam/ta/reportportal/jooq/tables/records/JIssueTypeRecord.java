@@ -352,8 +352,8 @@ public class JIssueTypeRecord extends UpdatableRecordImpl<JIssueTypeRecord>
 		value2(value2);
 		value3(value3);
 		value4(value4);
-        value5(value5);
-        value6(value6);
+		value5(value5);
+		value6(value6);
         return this;
     }
 
@@ -380,5 +380,5 @@ public class JIssueTypeRecord extends UpdatableRecordImpl<JIssueTypeRecord>
 		set(3, issueName);
 		set(4, abbreviation);
 		set(5, hexColor);
-    }
+	}
 }

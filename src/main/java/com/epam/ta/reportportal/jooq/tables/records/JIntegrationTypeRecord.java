@@ -107,16 +107,16 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
      */
 	@java.lang.Deprecated
 	public void setDetails(Object value) {
-        set(5, value);
-    }
+		set(5, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getDetails() {
-        return get(5);
-    }
+		return get(5);
+	}
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -195,8 +195,8 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field6() {
-        return JIntegrationType.INTEGRATION_TYPE.DETAILS;
+	public Field<Object> field6() {
+		return JIntegrationType.INTEGRATION_TYPE.DETAILS;
     }
 
     /**
@@ -244,8 +244,8 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component6() {
-        return getDetails();
+	public Object component6() {
+		return getDetails();
     }
 
     /**
@@ -293,8 +293,8 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value6() {
-        return getDetails();
+	public Object value6() {
+		return getDetails();
     }
 
     /**
@@ -347,8 +347,8 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
      */
 	@java.lang.Deprecated
 	@Override
-    public JIntegrationTypeRecord value6(Object value) {
-        setDetails(value);
+	public JIntegrationTypeRecord value6(Object value) {
+		setDetails(value);
         return this;
     }
 

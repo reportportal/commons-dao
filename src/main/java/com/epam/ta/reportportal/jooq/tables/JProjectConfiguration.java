@@ -60,19 +60,22 @@ public class JProjectConfiguration extends TableImpl<JProjectConfigurationRecord
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JProjectConfigurationRecord, Object> INTERRUPT_TIMEOUT = createField("interrupt_timeout", org.jooq.impl.DefaultDataType.getDefaultDataType("interval"), this, "");
+	public final TableField<JProjectConfigurationRecord, Object> INTERRUPT_TIMEOUT = createField(
+			"interrupt_timeout", org.jooq.impl.DefaultDataType.getDefaultDataType("interval"), this, "");
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JProjectConfigurationRecord, Object> KEEP_LOGS_INTERVAL = createField("keep_logs_interval", org.jooq.impl.DefaultDataType.getDefaultDataType("interval"), this, "");
+	public final TableField<JProjectConfigurationRecord, Object> KEEP_LOGS_INTERVAL = createField(
+			"keep_logs_interval", org.jooq.impl.DefaultDataType.getDefaultDataType("interval"), this, "");
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JProjectConfigurationRecord, Object> KEEP_SCREENSHOTS_INTERVAL = createField("keep_screenshots_interval", org.jooq.impl.DefaultDataType.getDefaultDataType("interval"), this, "");
+	public final TableField<JProjectConfigurationRecord, Object> KEEP_SCREENSHOTS_INTERVAL = createField(
+			"keep_screenshots_interval", org.jooq.impl.DefaultDataType.getDefaultDataType("interval"), this, "");
 
     /**
      * The column <code>public.project_configuration.aa_enabled</code>.
@@ -83,7 +86,8 @@ public class JProjectConfiguration extends TableImpl<JProjectConfigurationRecord
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JProjectConfigurationRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+	public final TableField<JProjectConfigurationRecord, Object> METADATA = createField(
+			"metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * The column <code>public.project_configuration.email_configuration_id</code>.

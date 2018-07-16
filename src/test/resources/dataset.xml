@@ -61,27 +61,27 @@
     <project_user user_id="3" project_id="3" project_role="MEMBER"/>
 
     <!--<launch id="1" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:29:29.008608"-->
-            <!--last_modified="2018-02-06 19:29:29.008608" number="1" mode="DEFAULT" status="PASSED"/>-->
+    <!--last_modified="2018-02-06 19:29:29.008608" number="1" mode="DEFAULT" status="PASSED"/>-->
     <!--<launch id="2" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:30:29.008608"-->
-            <!--last_modified="2018-02-06 19:29:29.008608" number="2" mode="DEFAULT" status="PASSED"/>-->
+    <!--last_modified="2018-02-06 19:29:29.008608" number="2" mode="DEFAULT" status="PASSED"/>-->
     <!--<launch id="3" project_id="1" user_id="1" name="Test launch" description="Test description" start_time="2018-02-06 19:31:29.008608"-->
-            <!--last_modified="2018-02-06 19:29:29.008608" number="3" mode="DEFAULT" status="PASSED"/>-->
+    <!--last_modified="2018-02-06 19:29:29.008608" number="3" mode="DEFAULT" status="PASSED"/>-->
 
     <!--<test_item id="1" item_id="1" name="Test Suite" type="SUITE" start_time="2018-02-06 19:29:45.008608" last_modified="2018-02-06 19:29:45.008608"-->
-               <!--unique_id="unique_id_suite_1"/>-->
+    <!--unique_id="unique_id_suite_1"/>-->
     <!--<test_item_structure id="1" item_id="1" launch_id="1" />-->
 
     <!--<test_item id="2" item_id="2" name="Test Class" type="TEST" start_time="2018-02-06 19:29:55.008608" last_modified="2018-02-06 19:29:55.008608"-->
-               <!--unique_id="unique_id_test_1"/>-->
+    <!--unique_id="unique_id_test_1"/>-->
     <!--<test_item_structure id="2" item_id="2" launch_id="1" parent_id="1" />-->
 
     <!--<test_item id="3" item_id="3" name="Test Step Passed" type="STEP" start_time="2018-02-06 19:29:56.008608" last_modified="2018-02-06 19:29:56.008608"-->
-               <!--unique_id="unique_id_step_1"/>-->
+    <!--unique_id="unique_id_step_1"/>-->
     <!--<test_item_structure id="3" item_id="3" launch_id="1" parent_id="2" />-->
     <!--<test_item_results id="1" item_id="1" status="PASSED" duration="0.35"/>-->
 
     <!--<test_item id="4" item_id="4" name="Test Step Failed" type="STEP" start_time="2018-02-06 19:29:58.008608" last_modified="2018-02-06 19:29:58.008608"-->
-               <!--unique_id="unique_id_step_1"/>-->
+    <!--unique_id="unique_id_step_1"/>-->
     <!--<test_item_structure id="4" item_id="4" launch_id="1" parent_id="2" />-->
     <!--<test_item_results id="2" item_id="4" status="FAILED" duration="0.35"/>-->
     <!--<issue id="1" issue_id="1" issue_type="1" test_item_results_id="1"/>-->

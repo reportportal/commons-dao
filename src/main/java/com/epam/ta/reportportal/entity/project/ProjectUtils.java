@@ -76,10 +76,8 @@ public class ProjectUtils {
 	 */
 	public static Project excludeProjectRecipients(Iterable<User> users, Project project) {
 		if (users != null) {
-			Set<String> toExclude = stream(users.spliterator(), false).map(user -> asList(
-					user.getEmail().toLowerCase(),
-					user.getLogin().toLowerCase()
-			)).flatMap(List::stream).collect(toSet());
+			Set<String> toExclude = stream(users.spliterator(), false).map(
+					user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
 			Set<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
 			if (null != cases) {

@@ -92,16 +92,16 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
      */
 	@java.lang.Deprecated
 	public void setDetails(Object value) {
-        set(4, value);
-    }
+		set(4, value);
+	}
 
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
 	public Object getDetails() {
-        return get(4);
-    }
+		return get(4);
+	}
 
     /**
      * Setter for <code>public.activity.creation_date</code>.
@@ -186,8 +186,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public Field<Object> field5() {
-        return JActivity.ACTIVITY.DETAILS;
+	public Field<Object> field5() {
+		return JActivity.ACTIVITY.DETAILS;
     }
 
     /**
@@ -235,8 +235,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public Object component5() {
-        return getDetails();
+	public Object component5() {
+		return getDetails();
     }
 
     /**
@@ -284,8 +284,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public Object value5() {
-        return getDetails();
+	public Object value5() {
+		return getDetails();
     }
 
     /**
@@ -337,8 +337,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
      */
 	@java.lang.Deprecated
 	@Override
-    public JActivityRecord value5(Object value) {
-        setDetails(value);
+	public JActivityRecord value5(Object value) {
+		setDetails(value);
         return this;
     }
 

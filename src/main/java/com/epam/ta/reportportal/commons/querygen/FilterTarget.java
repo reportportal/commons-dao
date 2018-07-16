@@ -46,7 +46,11 @@ public enum FilterTarget {
 					.join(is)
 					.on(l.ID.eq(is.LAUNCH_ID))
 					.join(it)
-					.on(is.ISSUE_TYPE_ID.eq(it.ID)).join(ig).on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID)).join(p).on(l.PROJECT_ID.eq(p.ID))
+					.on(is.ISSUE_TYPE_ID.eq(it.ID))
+					.join(ig)
+					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID))
+					.join(p)
+					.on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
 		}
 	},

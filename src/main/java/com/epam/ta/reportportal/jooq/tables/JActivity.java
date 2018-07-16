@@ -70,7 +70,8 @@ public class JActivity extends TableImpl<JActivityRecord> {
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
 	@java.lang.Deprecated
-	public final TableField<JActivityRecord, Object> DETAILS = createField("details", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+	public final TableField<JActivityRecord, Object> DETAILS = createField(
+			"details", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * The column <code>public.activity.creation_date</code>.
