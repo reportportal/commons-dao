@@ -28,6 +28,8 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.ExecutionStatistics;
 import com.epam.ta.reportportal.entity.item.IssueStatistics;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -36,7 +38,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -82,6 +84,9 @@ public class Launch implements Serializable {
 	@Column(name = "number", nullable = false, precision = 32)
 	private Long number;
 
+	@Column(name = "email_sender_case_id")
+	private Long emailSenderCaseId;
+
 	@Column(name = "last_modified", nullable = false)
 	@LastModifiedDate
 	private LocalDateTime lastModified;
@@ -101,12 +106,14 @@ public class Launch implements Serializable {
 	private Set<LaunchTag> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
-	private Set<ExecutionStatistics> executionStatistics;
+	private Set<ExecutionStatistics> executionStatistics = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
-	private Set<IssueStatistics> issueStatistics;
+	private Set<IssueStatistics> issueStatistics = new HashSet<>();
 
 	public Set<LaunchTag> getTags() {
 		return tags;
@@ -216,6 +223,14 @@ public class Launch implements Serializable {
 		this.endTime = endTime;
 	}
 
+	public Long getEmailSenderCaseId() {
+		return emailSenderCaseId;
+	}
+
+	public void setEmailSenderCaseId(Long emailSenderCaseId) {
+		this.emailSenderCaseId = emailSenderCaseId;
+	}
+
 	public Long getNumber() {
 		return number;
 	}
@@ -250,9 +265,10 @@ public class Launch implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Launch{" + "id=" + id + ", projectId=" + projectId + ", userId=" + userId + ", name='" + name + '\'' + ", description='"
-				+ description + '\'' + ", startTime=" + startTime + ", number=" + number + ", lastModified=" + lastModified + ", mode="
-				+ mode + ", status=" + status + ", tags=" + tags + '}';
+		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", userId=" + userId + ", name='" + name
+				+ '\'' + ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
+				+ ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status + ", tags=" + tags + ", executionStatistics="
+				+ executionStatistics + ", issueStatistics=" + issueStatistics + '}';
 	}
 
 	@Override
@@ -263,16 +279,71 @@ public class Launch implements Serializable {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
+
 		Launch launch = (Launch) o;
-		return Objects.equals(id, launch.id) && Objects.equals(projectId, launch.projectId) && Objects.equals(userId, launch.userId)
-				&& Objects.equals(name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(startTime,
-				launch.startTime
-		) && Objects.equals(number, launch.number) && Objects.equals(lastModified, launch.lastModified) && mode == launch.mode
-				&& status == launch.status && Objects.equals(tags, launch.tags);
+
+		if (id != null ? !id.equals(launch.id) : launch.id != null) {
+			return false;
+		}
+		if (uuid != null ? !uuid.equals(launch.uuid) : launch.uuid != null) {
+			return false;
+		}
+		if (projectId != null ? !projectId.equals(launch.projectId) : launch.projectId != null) {
+			return false;
+		}
+		if (userId != null ? !userId.equals(launch.userId) : launch.userId != null) {
+			return false;
+		}
+		if (name != null ? !name.equals(launch.name) : launch.name != null) {
+			return false;
+		}
+		if (description != null ? !description.equals(launch.description) : launch.description != null) {
+			return false;
+		}
+		if (startTime != null ? !startTime.equals(launch.startTime) : launch.startTime != null) {
+			return false;
+		}
+		if (endTime != null ? !endTime.equals(launch.endTime) : launch.endTime != null) {
+			return false;
+		}
+		if (number != null ? !number.equals(launch.number) : launch.number != null) {
+			return false;
+		}
+		if (lastModified != null ? !lastModified.equals(launch.lastModified) : launch.lastModified != null) {
+			return false;
+		}
+		if (mode != launch.mode) {
+			return false;
+		}
+		if (status != launch.status) {
+			return false;
+		}
+		if (tags != null ? !tags.equals(launch.tags) : launch.tags != null) {
+			return false;
+		}
+		if (executionStatistics != null ? !executionStatistics.equals(launch.executionStatistics) : launch.executionStatistics != null) {
+			return false;
+		}
+		return issueStatistics != null ? issueStatistics.equals(launch.issueStatistics) : launch.issueStatistics == null;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, projectId, userId, name, description, startTime, number, lastModified, mode, status, tags);
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
+		result = 31 * result + (projectId != null ? projectId.hashCode() : 0);
+		result = 31 * result + (userId != null ? userId.hashCode() : 0);
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
+		result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
+		result = 31 * result + (number != null ? number.hashCode() : 0);
+		result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
+		result = 31 * result + (mode != null ? mode.hashCode() : 0);
+		result = 31 * result + (status != null ? status.hashCode() : 0);
+		result = 31 * result + (tags != null ? tags.hashCode() : 0);
+		result = 31 * result + (executionStatistics != null ? executionStatistics.hashCode() : 0);
+		result = 31 * result + (issueStatistics != null ? issueStatistics.hashCode() : 0);
+		return result;
 	}
 }

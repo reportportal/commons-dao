@@ -5,7 +5,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -15,9 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_STRUCTURE;
-import static org.jooq.impl.DSL.*;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 
 public enum FilterTarget {
 
@@ -25,28 +23,54 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
-			new CriteriaHolder("project", "p.name", String.class, false)
+			new CriteriaHolder("project", "p.name", String.class, false),
+			new CriteriaHolder("es_status", "es.es_status", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
 			JLaunch l = JLaunch.LAUNCH.as("l");
-			JTestItemStructure ti = JTestItemStructure.TEST_ITEM_STRUCTURE.as("ti");
+			JIssueStatistics is = JIssueStatistics.ISSUE_STATISTICS.as("is");
+			JExecutionStatistics es = JExecutionStatistics.EXECUTION_STATISTICS.as("es");
+			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
+			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
 			JProject p = JProject.PROJECT.as("p");
-			JTestItemResults tr = TEST_ITEM_RESULTS.as("tr");
 
-			return DSL.select(l.ID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.NUMBER, l.LAST_MODIFIED, l.MODE,
-					sum(when(tr.STATUS.eq(JStatusEnum.PASSED), 1).otherwise(0)).as("passed"),
-					sum(when(tr.STATUS.eq(JStatusEnum.FAILED), 1).otherwise(0)).as("failed"),
-					sum(when(tr.STATUS.eq(JStatusEnum.SKIPPED), 1).otherwise(0)).as("skipped"), count(tr.STATUS).as("total")
+			return DSL.select(l.ID, l.UUID, l.PROJECT_ID, l.USER_ID, l.NAME.as("launch_name"), l.DESCRIPTION, l.START_TIME, l.END_TIME,
+					l.NUMBER, l.LAST_MODIFIED, l.MODE, l.STATUS, es.ES_ID, es.ES_COUNTER, es.ES_STATUS, es.POSITIVE, es.ITEM_ID,
+					es.LAUNCH_ID.as("es_launch_id"), is.IS_ID, is.ISSUE_TYPE_ID, is.IS_COUNTER, is.ITEM_ID, is.LAUNCH_ID.as("is_launch_id"),
+					it.LOCATOR, ig.ISSUE_GROUP_, p.NAME
 			)
-					//@formatter:off
 					.from(l)
-					.leftJoin(ti).on(l.ID.eq(ti.LAUNCH_ID))
-					.leftJoin(tr).on(ti.STRUCTURE_ID.eq(tr.RESULT_ID))
-					.leftJoin(p).on(l.PROJECT_ID.eq(p.ID))
-					.groupBy(l.ID, l.PROJECT_ID, l.USER_ID, l.NAME, l.DESCRIPTION, l.START_TIME, l.NUMBER, l.LAST_MODIFIED, l.MODE)
+					.join(es)
+					.on(l.ID.eq(es.LAUNCH_ID))
+					.join(is)
+					.on(l.ID.eq(is.LAUNCH_ID))
+					.join(it)
+					.on(is.ISSUE_TYPE_ID.eq(it.ID)).join(ig).on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID)).join(p).on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
-					//@formatter:on
+		}
+	},
+
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder("name", "ti.name", String.class, false))) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			return DSL.select()
+					.from(TEST_ITEM_STRUCTURE)
+					.join(Tables.TEST_ITEM)
+					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(Tables.TEST_ITEM.ITEM_ID))
+					.join(TEST_ITEM_RESULTS)
+					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+					.join(EXECUTION_STATISTICS)
+					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(EXECUTION_STATISTICS.ITEM_ID))
+					.join(ISSUE_STATISTICS)
+					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE_STATISTICS.ITEM_ID))
+					.join(ISSUE_TYPE)
+					.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+					.join(ISSUE_GROUP)
+					.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+					.join(ISSUE)
+					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+					.getQuery();
 		}
 	},
 
@@ -59,7 +83,11 @@ public enum FilterTarget {
 			JProject p = JProject.PROJECT.as("p");
 
 			return DSL.select(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
-					.from(i).leftJoin(it).on(i.TYPE.eq(it.ID)).leftJoin(p).on(i.PROJECT_ID.eq(p.ID))
+					.from(i)
+					.leftJoin(it)
+					.on(i.TYPE.eq(it.ID))
+					.leftJoin(p)
+					.on(i.PROJECT_ID.eq(p.ID))
 					.groupBy(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
 					.getQuery();
 		}
@@ -86,32 +114,8 @@ public enum FilterTarget {
 
 			return DSL.select(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID, l.FILE_PATH, l.THUMBNAIL_FILE_PATH,
 					l.CONTENT_TYPE
-			)
-					.from(l).leftJoin(ti).on(l.ITEM_ID.eq(ti.ITEM_ID))
+			).from(l).leftJoin(ti).on(l.ITEM_ID.eq(ti.ITEM_ID))
 					.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
-					.getQuery();
-		}
-	},
-
-	TEST_ITEM(TestItem.class, Arrays.asList(
-
-			new CriteriaHolder("name", "ti.name", String.class, false))) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItemStructure tis = TEST_ITEM_STRUCTURE.as("tis");
-			JLaunch l = JLaunch.LAUNCH.as("l");
-			JParameter p = JParameter.PARAMETER.as("p");
-
-			return DSL.select(ti.ITEM_ID, tis.LAUNCH_ID, ti.NAME, ti.TYPE, ti.START_TIME, ti.DESCRIPTION, ti.LAST_MODIFIED, ti.UNIQUE_ID)
-					.select(p.KEY, p.VALUE)
-					.from(ti)
-					.join(tis)
-					.on(ti.ITEM_ID.eq(tis.STRUCTURE_ID))
-					.leftJoin(l)
-					.on(tis.LAUNCH_ID.eq(l.ID))
-					.leftJoin(p)
-					.on(ti.ITEM_ID.eq(p.ITEM_ID))
 					.getQuery();
 		}
 	};

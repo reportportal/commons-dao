@@ -10,6 +10,7 @@ import org.jooq.impl.Internal;
 
 import javax.annotation.Generated;
 
+
 /**
  * A class modelling indexes of tables of the <code>public</code> schema.
  */
@@ -52,7 +53,7 @@ public class Indexes {
 	public static final Index ISSUE_TICKET_PK = Indexes0.ISSUE_TICKET_PK;
 	public static final Index ISSUE_TYPE_PK = Indexes0.ISSUE_TYPE_PK;
 	public static final Index ISSUE_TYPE_PROJECT_CONFIGURATION_PK = Indexes0.ISSUE_TYPE_PROJECT_CONFIGURATION_PK;
-    public static final Index ITEM_TAG_PK = Indexes0.ITEM_TAG_PK;
+	public static final Index ITEM_TAG_PK = Indexes0.ITEM_TAG_PK;
     public static final Index LAUNCH_PK = Indexes0.LAUNCH_PK;
     public static final Index UNQ_NAME_NUMBER = Indexes0.UNQ_NAME_NUMBER;
     public static final Index LAUNCH_TAG_PK = Indexes0.LAUNCH_TAG_PK;
@@ -96,17 +97,17 @@ public class Indexes {
         public static Index DEFECT_FORM_FIELD_PK = Internal.createIndex("defect_form_field_pk", JDefectFormField.DEFECT_FORM_FIELD, new OrderField[] { JDefectFormField.DEFECT_FORM_FIELD.ID }, true);
 		public static Index PK_EXECUTION_STATISTICS = Internal.createIndex(
 				"pk_execution_statistics", JExecutionStatistics.EXECUTION_STATISTICS,
-				new OrderField[] { JExecutionStatistics.EXECUTION_STATISTICS.ID }, true
+				new OrderField[] { JExecutionStatistics.EXECUTION_STATISTICS.ES_ID }, true
 		);
 		public static Index UNIQUE_STATUS_ITEM = Internal.createIndex(
 				"unique_status_item", JExecutionStatistics.EXECUTION_STATISTICS,
-				new OrderField[] { JExecutionStatistics.EXECUTION_STATISTICS.STATUS, JExecutionStatistics.EXECUTION_STATISTICS.ITEM_ID },
+				new OrderField[] { JExecutionStatistics.EXECUTION_STATISTICS.ES_STATUS, JExecutionStatistics.EXECUTION_STATISTICS.ITEM_ID },
 				true
 		);
 		public static Index UNIQUE_STATUS_LAUNCH = Internal.createIndex(
 				"unique_status_launch", JExecutionStatistics.EXECUTION_STATISTICS,
-				new OrderField[] { JExecutionStatistics.EXECUTION_STATISTICS.STATUS, JExecutionStatistics.EXECUTION_STATISTICS.LAUNCH_ID },
-				true
+				new OrderField[] { JExecutionStatistics.EXECUTION_STATISTICS.ES_STATUS,
+						JExecutionStatistics.EXECUTION_STATISTICS.LAUNCH_ID }, true
 		);
 		public static Index FILTER_PK = Internal.createIndex("filter_pk", JFilter.FILTER, new OrderField[] { JFilter.FILTER.ID }, true);
 		public static Index FILTER_CONDITION_PK = Internal.createIndex(
@@ -121,7 +122,9 @@ public class Indexes {
 		public static Index ISSUE_GROUP_PK = Internal.createIndex(
 				"issue_group_pk", JIssueGroup.ISSUE_GROUP, new OrderField[] { JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID }, true);
 		public static Index PK_ISSUE_STATISTICS = Internal.createIndex(
-				"pk_issue_statistics", JIssueStatistics.ISSUE_STATISTICS, new OrderField[] { JIssueStatistics.ISSUE_STATISTICS.ID }, true);
+				"pk_issue_statistics", JIssueStatistics.ISSUE_STATISTICS, new OrderField[] { JIssueStatistics.ISSUE_STATISTICS.IS_ID },
+				true
+		);
 		public static Index UNIQUE_ISSUE_ITEM = Internal.createIndex(
 				"unique_issue_item", JIssueStatistics.ISSUE_STATISTICS,
 				new OrderField[] { JIssueStatistics.ISSUE_STATISTICS.ISSUE_TYPE_ID, JIssueStatistics.ISSUE_STATISTICS.ITEM_ID }, true
@@ -136,8 +139,12 @@ public class Indexes {
 		);
 		public static Index ISSUE_TYPE_PK = Internal.createIndex(
 				"issue_type_pk", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.ID }, true);
-		public static Index ISSUE_TYPE_PROJECT_CONFIGURATION_PK = Internal.createIndex("issue_type_project_configuration_pk", JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, new OrderField[] { JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID, JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID }, true);
-        public static Index ITEM_TAG_PK = Internal.createIndex("item_tag_pk", JItemTag.ITEM_TAG, new OrderField[] { JItemTag.ITEM_TAG.ID }, true);
+		public static Index ISSUE_TYPE_PROJECT_CONFIGURATION_PK = Internal.createIndex(
+				"issue_type_project_configuration_pk", JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION,
+				new OrderField[] { JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID,
+						JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID }, true
+		);
+		public static Index ITEM_TAG_PK = Internal.createIndex("item_tag_pk", JItemTag.ITEM_TAG, new OrderField[] { JItemTag.ITEM_TAG.ID }, true);
         public static Index LAUNCH_PK = Internal.createIndex("launch_pk", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.ID }, true);
         public static Index UNQ_NAME_NUMBER = Internal.createIndex("unq_name_number", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID }, true);
         public static Index LAUNCH_TAG_PK = Internal.createIndex("launch_tag_pk", JLaunchTag.LAUNCH_TAG, new OrderField[] { JLaunchTag.LAUNCH_TAG.ID }, true);
@@ -163,7 +170,8 @@ public class Indexes {
 				new OrderField[] { JTestItemStructure.TEST_ITEM_STRUCTURE.STRUCTURE_ID }, true
 		);
 		public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
-		public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
+		public static Index TICKET_TICKET_ID_KEY = Internal.createIndex(
+				"ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
 		public static Index USER_FILTER_PK = Internal.createIndex(
 				"user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
 		public static Index USERS_LOGIN_KEY = Internal.createIndex(

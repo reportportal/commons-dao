@@ -3,6 +3,9 @@ package com.epam.ta.reportportal.entity.project;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * @author Ivan Budayeu
+ */
 public enum ProjectRole implements Comparable<ProjectRole> {
 
 	OPERATOR(0),

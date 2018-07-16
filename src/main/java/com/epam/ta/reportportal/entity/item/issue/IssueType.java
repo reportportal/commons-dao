@@ -22,10 +22,12 @@
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.entity.project.ProjectConfiguration;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Pavel Bortnik
@@ -38,7 +40,7 @@ public class IssueType implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false, precision = 32)
-	private Integer id;
+	private Long id;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "issue_group_id")
@@ -56,14 +58,25 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
+	@ManyToMany(mappedBy = "issueTypes")
+	private List<ProjectConfiguration> projectConfigurations;
+
 	public IssueType() {
 	}
 
-	public Integer getId() {
+	public IssueType(IssueGroup issueGroup, String locator, String longName, String shortName, String hexColor) {
+		this.issueGroup = issueGroup;
+		this.locator = locator;
+		this.longName = longName;
+		this.shortName = shortName;
+		this.hexColor = hexColor;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -107,4 +120,11 @@ public class IssueType implements Serializable {
 		this.hexColor = hexColor;
 	}
 
+	public List<ProjectConfiguration> getProjectConfigurations() {
+		return projectConfigurations;
+	}
+
+	public void setProjectConfigurations(List<ProjectConfiguration> projectConfigurations) {
+		this.projectConfigurations = projectConfigurations;
+	}
 }

@@ -61,25 +61,25 @@ public class Log implements Serializable {
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
-	@Column(name = "file_path")
-	private String filePath;
+	@Column(name = "attachment")
+	private String attachment;
 
-	@Column(name = "thumbnail_file_path")
-	private String thumbnailFilePath;
+	@Column(name = "attachment_thumbnail")
+	private String attachmentThumbnail;
 
 	@Column(name = "content_type")
 	private String contentType;
 
 	public Log(Long id, LocalDateTime logTime, String logMessage, LocalDateTime lastModified, Integer logLevel, TestItem testItem,
-			String filePath, String thumbnailFilePath, String contentType) {
+			String attachment, String attachmentThumbnail, String contentType) {
 		this.id = id;
 		this.logTime = logTime;
 		this.logMessage = logMessage;
 		this.lastModified = lastModified;
 		this.logLevel = logLevel;
 		this.testItem = testItem;
-		this.filePath = filePath;
-		this.thumbnailFilePath = thumbnailFilePath;
+		this.attachment = attachment;
+		this.attachmentThumbnail = attachmentThumbnail;
 		this.contentType = contentType;
 	}
 
@@ -134,20 +134,20 @@ public class Log implements Serializable {
 		this.logLevel = logLevel;
 	}
 
-	public String getFilePath() {
-		return filePath;
+	public String getAttachment() {
+		return attachment;
 	}
 
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
+	public void setAttachment(String attachment) {
+		this.attachment = attachment;
 	}
 
-	public String getThumbnailFilePath() {
-		return thumbnailFilePath;
+	public String getAttachmentThumbnail() {
+		return attachmentThumbnail;
 	}
 
-	public void setThumbnailFilePath(String thumbnailFilePath) {
-		this.thumbnailFilePath = thumbnailFilePath;
+	public void setAttachmentThumbnail(String attachmentThumbnail) {
+		this.attachmentThumbnail = attachmentThumbnail;
 	}
 
 	public String getContentType() {
