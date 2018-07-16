@@ -86,7 +86,7 @@ public final class PersonalProjectService {
 		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
 		Project.UserConfig userConfig = new Project.UserConfig();
-		userConfig.getUser().setLogin(user.getLogin());
+		userConfig.setUser(user);
 		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
 		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
 		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());

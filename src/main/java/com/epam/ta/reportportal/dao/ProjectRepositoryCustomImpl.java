@@ -20,7 +20,8 @@ import static com.epam.ta.reportportal.jooq.Tables.USERS;
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	private static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> new Project(r.get(JProject.PROJECT.ID, Long.class),
-			r.get(JProject.PROJECT.NAME, String.class));
+			r.get(JProject.PROJECT.NAME, String.class)
+	);
 
 	@Autowired
 	private DSLContext dsl;
@@ -33,12 +34,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public Optional<String> findPersonalProjectName(String username) {
-		return Optional.ofNullable(dsl.select()
+		Optional<Project> projectOptional = Optional.ofNullable(dsl.select()
 				.from(USERS)
 				.join(PROJECT)
 				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID))
 				.where(USERS.LOGIN.eq(username))
-				.fetchOne(PROJECT_MAPPER)
-				.getName());
+				.fetchOne(PROJECT_MAPPER));
+		return projectOptional.map(Project::getName);
 	}
 }
