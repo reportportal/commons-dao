@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -57,6 +56,7 @@ public class User implements Serializable {
 	@Column(name = "photo_path")
 	private String photoPath;
 
+	@Column(name = "type")
 	private UserType userType;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
