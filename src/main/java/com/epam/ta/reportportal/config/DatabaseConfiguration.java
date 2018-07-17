@@ -13,8 +13,10 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManager;
@@ -44,11 +46,11 @@ public class DatabaseConfiguration {
 	public EntityManagerFactory entityManagerFactory() {
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setGenerateDdl(false);
+		vendorAdapter.setGenerateDdl(true);
 
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("com.epam.ta.reportportal.entity", "com.epam.ta.reportportal.commons");
+		factory.setPackagesToScan("com.epam.ta.reportportal.commons", "com.epam.ta.reportportal.entity");
 		factory.setDataSource(dataSource());
 
 		Properties jpaProperties = new Properties();
@@ -59,14 +61,6 @@ public class DatabaseConfiguration {
 
 		return factory.getObject();
 	}
-
-	//	@Bean
-	//	public PlatformTransactionManager transactionManager() {
-	//		JpaTransactionManager txManager = new JpaTransactionManager();
-	//		txManager.setEntityManagerFactory(entityManagerFactory());
-	//		txManager.setDataSource(dataSource());
-	//		return txManager;
-	//	}
 
 	public static class RpRepoFactoryBean<T extends Repository<S, ID>, S, ID> extends JpaRepositoryFactoryBean {
 
@@ -102,6 +96,12 @@ public class DatabaseConfiguration {
 		}
 	}
 
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(entityManagerFactory());
+		return transactionManager;
+	}
 	//	@Bean
 	//	public TransactionAwareDataSourceProxy transactionAwareDataSource() {
 	//		return new TransactionAwareDataSourceProxy(dataSource());
