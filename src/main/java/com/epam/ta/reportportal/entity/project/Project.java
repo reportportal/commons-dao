@@ -185,11 +185,11 @@ public class Project implements Serializable {
 		@GeneratedValue
 		private Long id;
 
-		@ManyToOne
+		@ManyToOne(cascade = CascadeType.ALL)
 		@JoinColumn(name = "user_id")
 		private User user;
 
-		@ManyToOne
+		@ManyToOne(cascade = CascadeType.ALL)
 		@JoinColumn(name = "project_id")
 		private Project project;
 

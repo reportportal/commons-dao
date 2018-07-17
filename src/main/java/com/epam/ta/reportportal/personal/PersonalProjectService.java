@@ -89,6 +89,7 @@ public final class PersonalProjectService {
 		userConfig.setUser(user);
 		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
 		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
+		userConfig.setProject(project);
 		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
 
 		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
