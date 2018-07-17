@@ -32,7 +32,6 @@ public class ProjectConfiguration implements Serializable {
 	private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
 	@Id
-	@GeneratedValue
 	private Long id;
 
 	@Column(name = "project_type")

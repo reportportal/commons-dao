@@ -92,7 +92,7 @@ public final class PersonalProjectService {
 		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
 
 		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
-		project.setConfiguration(defaultConfiguration());
+		project.setConfiguration(defaultConfiguration(project));
 
 		/* Default email configuration */
 		ProjectUtils.setDefaultEmailConfiguration(project);
@@ -114,7 +114,7 @@ public final class PersonalProjectService {
 	/**
 	 * @return Generated default project configuration
 	 */
-	public static ProjectConfiguration defaultConfiguration() {
+	public static ProjectConfiguration defaultConfiguration(Project project) {
 		ProjectConfiguration defaultConfig = new ProjectConfiguration();
 		defaultConfig.setEntryType(EntryType.PERSONAL);
 		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
@@ -122,6 +122,7 @@ public final class PersonalProjectService {
 		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
 		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
 		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
+		defaultConfig.setProject(project);
 		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
 		projectAnalyzerConfig.setMinDocFreq(ProjectAnalyzerConfig.MIN_DOC_FREQ);
 		projectAnalyzerConfig.setMinTermFreq(ProjectAnalyzerConfig.MIN_TERM_FREQ);
