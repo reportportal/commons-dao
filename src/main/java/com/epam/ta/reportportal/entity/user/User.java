@@ -43,6 +43,7 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_project_id")
 	private Project defaultProject;
 
