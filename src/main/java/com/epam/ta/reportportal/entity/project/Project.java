@@ -39,10 +39,10 @@ public class Project implements Serializable {
 	@Column(name = "additional_info")
 	private String addInfo;
 
-	@OneToOne(mappedBy = "project")
+	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
 	private ProjectConfiguration configuration;
 
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
 	private List<UserConfig> users;
 
 	@OneToMany(mappedBy = "project")
