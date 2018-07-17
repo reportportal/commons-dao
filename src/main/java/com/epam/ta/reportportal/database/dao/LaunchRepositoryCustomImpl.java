@@ -531,7 +531,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	 */
 	private List<AggregationOperation> latestLaunchesAggregationOperationsList(Queryable filter) {
 		return Lists.newArrayList(matchOperationFromFilter(filter, mongoTemplate, Launch.class), group("$name").push(ROOT).as(ORIGINAL),
-				unwind(ORIGINAL), sort(DESC, ORIGINAL + ".number"), group("$_id").first(ROOT).as("temp"), replaceRoot("temp")
+				unwind(ORIGINAL), sort(DESC, ORIGINAL + ".number"), group("$_id").first(ROOT).as("temp"), replaceRoot("temp." + ORIGINAL)
 		);
 	}
 
