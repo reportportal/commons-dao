@@ -47,7 +47,7 @@ public enum SendCase {
 
 	public static Optional<SendCase> findByName(String name) {
 		for (SendCase send : SendCase.values()) {
-			if (send.name().equals(name)) {
+			if (send.name().equalsIgnoreCase(name)) {
 				return Optional.of(send);
 			}
 		}

@@ -44,7 +44,7 @@ public enum UserType {
 	}
 
 	public static Optional<UserType> findByName(String name) {
-		return Arrays.stream(UserType.values()).filter(type -> type.name().equals(name)).findAny();
+		return Arrays.stream(UserType.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
