@@ -46,7 +46,7 @@ public class OAuthRegistration implements Serializable {
 	@Column(name = "user_info_endpoint_name_attr", length = 256)
 	private String userInfoEndpointNameAttribute;
 
-	@Column(name = "jwt_set_uri", length = 256)
+	@Column(name = "jwk_set_uri", length = 256)
 	private String jwkSetUri;
 
 	@Column(name = "client_name", length = 128)
