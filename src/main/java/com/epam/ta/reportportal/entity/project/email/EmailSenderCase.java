@@ -57,7 +57,7 @@ public class EmailSenderCase implements Serializable {
 	private Set<LaunchTag> tags;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_email_config_id")
+	@JoinColumn(name = "project_email_config_id", nullable = false)
 	private ProjectEmailConfig projectEmailConfig;
 
 	public EmailSenderCase() {
