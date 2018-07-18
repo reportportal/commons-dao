@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.commons;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -46,12 +47,7 @@ public enum SendCase {
 	}
 
 	public static Optional<SendCase> findByName(String name) {
-		for (SendCase send : SendCase.values()) {
-			if (send.name().equalsIgnoreCase(name)) {
-				return Optional.of(send);
-			}
-		}
-		return Optional.empty();
+		return Arrays.stream(SendCase.values()).filter(val -> val.getCaseString().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {

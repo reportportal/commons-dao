@@ -28,6 +28,4 @@ import com.epam.ta.reportportal.entity.ldap.AuthConfig;
 
 public interface AuthConfigRepository extends ReportPortalRepository<AuthConfig, String>, AuthConfigRepositoryCustom {
 
-	String DEFAULT_PROFILE = "default";
-
 }

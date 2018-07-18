@@ -26,12 +26,14 @@ import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.util.Optional;
 
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -80,29 +82,24 @@ public class AuthConfigRepositoryCustomImpl implements AuthConfigRepositoryCusto
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<AuthConfig> configCriteriaQuery = criteriaBuilder.createQuery(AuthConfig.class);
-		Root<AuthConfig> authConfigRoot = configCriteriaQuery.from(AuthConfig.class);
-
-		Join<AuthConfig, LdapConfig> authConfigLdapConfigJoin = authConfigRoot.join("ldap");
-
-		return ofNullable(entityManager.createQuery(configCriteriaQuery.where(criteriaBuilder.equal(authConfigLdapConfigJoin.get("enabled"),
-				true
-		), criteriaBuilder.equal(authConfigRoot.get("id"), "default")))
-				.getSingleResult()).flatMap(cfg -> ofNullable(cfg.getLdap()));
+		TypedQuery<AuthConfig> authConfigTypedQuery = entityManager.createQuery(
+				"SELECT a FROM AuthConfig a JOIN a.ldap l JOIN Integration i ON l.id = i.id WHERE a.id = :id AND i.enabled = :enabled",
+				AuthConfig.class
+		);
+		authConfigTypedQuery.setParameter("id", DEFAULT_PROFILE);
+		authConfigTypedQuery.setParameter("enabled", enabled);
+		return ofNullable(authConfigTypedQuery.getSingleResult()).flatMap(cfg -> ofNullable(cfg.getLdap()));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<AuthConfig> configCriteriaQuery = criteriaBuilder.createQuery(AuthConfig.class);
-		Root<AuthConfig> authConfigRoot = configCriteriaQuery.from(AuthConfig.class);
-
-		Join<AuthConfig, ActiveDirectoryConfig> authConfigActiveDirectoryConfigJoin = authConfigRoot.join("activeDirectory");
-
-		return ofNullable(entityManager.createQuery(configCriteriaQuery.where(criteriaBuilder.equal(authConfigActiveDirectoryConfigJoin.get(
-				"enabled"), true), criteriaBuilder.equal(authConfigRoot.get("id"), "default")))
-				.getSingleResult()).flatMap(cfg -> ofNullable(cfg.getActiveDirectory()));
+		TypedQuery<AuthConfig> authConfigTypedQuery = entityManager.createQuery(
+				"SELECT a FROM AuthConfig a JOIN a.activeDirectory ad JOIN Integration i ON ad.id = i.id WHERE a.id = :id AND i.enabled = :enabled",
+				AuthConfig.class
+		);
+		authConfigTypedQuery.setParameter("id", DEFAULT_PROFILE);
+		authConfigTypedQuery.setParameter("enabled", enabled);
+		return ofNullable(authConfigTypedQuery.getSingleResult()).flatMap(cfg -> ofNullable(cfg.getActiveDirectory()));
 	}
 
 	//    private Update updateExisting(Object object) {

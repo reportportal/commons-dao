@@ -32,6 +32,8 @@ import java.util.Optional;
  */
 public interface AuthConfigRepositoryCustom {
 
+	String DEFAULT_PROFILE = "default";
+
 	//
 	//    void deleteSettings(AuthIntegrationType type);
 	//
