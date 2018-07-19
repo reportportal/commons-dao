@@ -27,13 +27,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -86,9 +82,8 @@ public class AuthConfigRepositoryCustomImpl implements AuthConfigRepositoryCusto
 				"SELECT a FROM AuthConfig a JOIN a.ldap l JOIN Integration i ON l.id = i.id WHERE a.id = :id AND i.enabled = :enabled",
 				AuthConfig.class
 		);
-		authConfigTypedQuery.setParameter("id", DEFAULT_PROFILE);
-		authConfigTypedQuery.setParameter("enabled", enabled);
-		return ofNullable(authConfigTypedQuery.getSingleResult()).flatMap(cfg -> ofNullable(cfg.getLdap()));
+
+		return retrieveAuthConfig(authConfigTypedQuery, enabled).flatMap(cfg -> ofNullable(cfg.getLdap()));
 	}
 
 	@Override
@@ -97,9 +92,15 @@ public class AuthConfigRepositoryCustomImpl implements AuthConfigRepositoryCusto
 				"SELECT a FROM AuthConfig a JOIN a.activeDirectory ad JOIN Integration i ON ad.id = i.id WHERE a.id = :id AND i.enabled = :enabled",
 				AuthConfig.class
 		);
+
+		return retrieveAuthConfig(authConfigTypedQuery, enabled).flatMap(cfg -> ofNullable(cfg.getActiveDirectory()));
+	}
+
+	private Optional<AuthConfig> retrieveAuthConfig(TypedQuery<AuthConfig> authConfigTypedQuery, boolean enabled) {
 		authConfigTypedQuery.setParameter("id", DEFAULT_PROFILE);
 		authConfigTypedQuery.setParameter("enabled", enabled);
-		return ofNullable(authConfigTypedQuery.getSingleResult()).flatMap(cfg -> ofNullable(cfg.getActiveDirectory()));
+
+		return authConfigTypedQuery.getResultList().stream().findFirst();
 	}
 
 	//    private Update updateExisting(Object object) {
