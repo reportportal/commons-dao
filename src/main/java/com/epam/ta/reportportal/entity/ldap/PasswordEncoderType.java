@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 EPAM Systems
+ * Copyright 2017 EPAM Systems
  *
  *
  * This file is part of EPAM Report Portal.
@@ -18,36 +18,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.epam.ta.reportportal.entity.user;
-
-import java.util.Arrays;
-import java.util.Optional;
+package com.epam.ta.reportportal.entity.ldap;
 
 /**
- * User Type enumeration<br>
- * Used for supporting different project types processing
- *
- * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
+ * @author Andrei Varabyeu
  */
-public enum UserType {
+public enum PasswordEncoderType {
+	PLAIN,
+	SHA,
+	LDAP_SHA,
+	MD4,
+	MD5
 
-	//@formatter:off
-    INTERNAL,
-    UPSA,
-    GITHUB,
-    LDAP;
-    //@formatter:on
-
-	public static UserType getByName(String type) {
-		return UserType.valueOf(type);
-	}
-
-	public static Optional<UserType> findByName(String name) {
-		return Arrays.stream(UserType.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
-	}
-
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
 }

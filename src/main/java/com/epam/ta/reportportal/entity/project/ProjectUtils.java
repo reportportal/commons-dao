@@ -63,6 +63,7 @@ public class ProjectUtils {
 	public static Project setDefaultEmailConfiguration(Project project) {
 		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
 		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Sets.newHashSet(defaultOne));
+		defaultOne.setProjectEmailConfig(config);
 		project.getConfiguration().setEmailConfig(config);
 		return project;
 	}

@@ -42,8 +42,7 @@ public class ProjectEmailConfig implements Serializable {
 	@Column(name = "email_from")
 	private String from;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "project_email_config_id")
+	@OneToMany(mappedBy = "projectEmailConfig", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<EmailSenderCase> emailCases;
 
 	public ProjectEmailConfig() {

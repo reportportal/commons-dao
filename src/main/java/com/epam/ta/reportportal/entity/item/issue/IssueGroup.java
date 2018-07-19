@@ -44,6 +44,9 @@ public class IssueGroup implements Serializable {
 	@Type(type = "pqsql_enum")
 	private TestItemIssueGroup testItemIssueGroup;
 
+	public IssueGroup() {
+	}
+
 	public IssueGroup(TestItemIssueGroup testItemIssueGroup) {
 		this.testItemIssueGroup = testItemIssueGroup;
 	}

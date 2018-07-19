@@ -56,8 +56,9 @@ public class EmailSenderCase implements Serializable {
 	@JoinColumn(name = "email_sender_case_id")
 	private Set<LaunchTag> tags;
 
-	@Column(name = "project_email_config_id")
-	private Long projectEmailConfigId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "project_email_config_id", nullable = false)
+	private ProjectEmailConfig projectEmailConfig;
 
 	public EmailSenderCase() {
 	}
@@ -85,12 +86,12 @@ public class EmailSenderCase implements Serializable {
 		this.recipients = recipients;
 	}
 
-	public Long getProjectEmailConfigId() {
-		return projectEmailConfigId;
+	public ProjectEmailConfig getProjectEmailConfig() {
+		return projectEmailConfig;
 	}
 
-	public void setProjectEmailConfigId(Long projectEmailConfigId) {
-		this.projectEmailConfigId = projectEmailConfigId;
+	public void setProjectEmailConfig(ProjectEmailConfig projectEmailConfig) {
+		this.projectEmailConfig = projectEmailConfig;
 	}
 
 	public Set<Launch> getLaunches() {

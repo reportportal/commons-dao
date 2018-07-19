@@ -32,7 +32,6 @@ public class ProjectConfiguration implements Serializable {
 	private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
 	@Id
-	@GeneratedValue
 	private Long id;
 
 	@Column(name = "project_type")
@@ -58,11 +57,11 @@ public class ProjectConfiguration implements Serializable {
 	private List<IssueType> issueTypes;
 
 	// Project Email Settings
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "project_email_config_id")
 	private ProjectEmailConfig emailConfig;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "project_analyzer_config_id")
 	private ProjectAnalyzerConfig analyzerConfig;
 

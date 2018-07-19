@@ -39,10 +39,10 @@ public class Project implements Serializable {
 	@Column(name = "additional_info")
 	private String addInfo;
 
-	@OneToOne(mappedBy = "project")
+	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
 	private ProjectConfiguration configuration;
 
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
 	private List<UserConfig> users;
 
 	@OneToMany(mappedBy = "project")
@@ -185,11 +185,11 @@ public class Project implements Serializable {
 		@GeneratedValue
 		private Long id;
 
-		@ManyToOne
+		@ManyToOne(cascade = CascadeType.ALL)
 		@JoinColumn(name = "user_id")
 		private User user;
 
-		@ManyToOne
+		@ManyToOne(cascade = CascadeType.ALL)
 		@JoinColumn(name = "project_id")
 		private Project project;
 

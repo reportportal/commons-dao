@@ -1,10 +1,12 @@
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.commons.JsonbUserType;
+import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -17,6 +19,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
@@ -40,6 +43,7 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_project_id")
 	private Project defaultProject;
 
@@ -51,7 +55,7 @@ public class User implements Serializable {
 
 	@Type(type = "jsonb")
 	@Column(name = "metadata")
-	private JsonbObject metadata;
+	private MetaData metadata;
 
 	@Column(name = "photo_path")
 	private String photoPath;
@@ -154,11 +158,11 @@ public class User implements Serializable {
 		this.userType = userType;
 	}
 
-	public JsonbObject getMetadata() {
+	public MetaData getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(JsonbObject metadata) {
+	public void setMetadata(MetaData metadata) {
 		this.metadata = metadata;
 	}
 
