@@ -29,7 +29,6 @@ public class ProjectConfiguration implements Serializable {
 	private static final String TI_COLOR = "#ffb743";
 
 	private static final long serialVersionUID = 1L;
-	private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
 	@Id
 	private Long id;
@@ -37,6 +36,10 @@ public class ProjectConfiguration implements Serializable {
 	@Column(name = "project_type")
 	@Enumerated(value = EnumType.STRING)
 	private EntryType entryType;
+
+	@Column(name = "statistics_calculation_strategy")
+	@Enumerated(value = EnumType.STRING)
+	private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
 	@Column(name = "interrupt_timeout")
 	private String interruptJobTime;
