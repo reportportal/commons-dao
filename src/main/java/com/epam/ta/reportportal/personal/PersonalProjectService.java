@@ -121,7 +121,6 @@ public final class PersonalProjectService {
 		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
 		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
 		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
-		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
 		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
 		defaultConfig.setProject(project);
 		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();

@@ -38,10 +38,6 @@ public class ProjectConfiguration implements Serializable {
 	@Enumerated(value = EnumType.STRING)
 	private EntryType entryType;
 
-	@Column(name = "project_specific")
-	@Enumerated(value = EnumType.STRING)
-	private ProjectSpecific projectSpecific;
-
 	@Column(name = "interrupt_timeout")
 	private String interruptJobTime;
 
@@ -146,14 +142,6 @@ public class ProjectConfiguration implements Serializable {
 
 	public EntryType getEntryType() {
 		return entryType;
-	}
-
-	public void setProjectSpecific(ProjectSpecific value) {
-		this.projectSpecific = value;
-	}
-
-	public ProjectSpecific getProjectSpecific() {
-		return projectSpecific;
 	}
 
 	public void setInterruptJobTime(String value) {
