@@ -43,11 +43,22 @@ public class LaunchTag implements Serializable {
 	@Column(name = "launch_id", precision = 64)
 	private Long launchId;
 
+	@Column(name = "email_sender_case_id", precision = 64)
+	private Long emailSenderCaseId;
+
 	public LaunchTag() {
 	}
 
 	public LaunchTag(String value) {
 		this.value = value;
+	}
+
+	public Long getEmailSenderCaseId() {
+		return emailSenderCaseId;
+	}
+
+	public void setEmailSenderCaseId(Long emailSenderCaseId) {
+		this.emailSenderCaseId = emailSenderCaseId;
 	}
 
 	public Long getId() {

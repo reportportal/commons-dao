@@ -20,7 +20,7 @@ public class OAuthRegistrationScope implements Serializable {
 	private Integer id;
 
 	@ManyToOne
-	@JoinColumn(name = "registration_id", nullable = false)
+	@JoinColumn(name = "oauth_registration_fk", nullable = false)
 	private OAuthRegistration registration;
 
 	@Column(name = "scope", nullable = false, length = 256)
@@ -59,12 +59,15 @@ public class OAuthRegistrationScope implements Serializable {
 			return false;
 		}
 		OAuthRegistrationScope that = (OAuthRegistrationScope) o;
-		return Objects.equals(id, that.id) && Objects.equals(scope, that.scope);
+		return Objects.equals(registration.getId(), that.registration.getId()) && Objects.equals(
+				scope,
+				that.scope
+		);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, scope);
+		return Objects.hash(registration.getId(), scope);
 	}
 }
