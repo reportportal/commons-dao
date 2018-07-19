@@ -31,6 +31,8 @@ public class ProjectConfiguration implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "project_type")
@@ -64,7 +66,7 @@ public class ProjectConfiguration implements Serializable {
 	@JoinColumn(name = "project_analyzer_config_id")
 	private ProjectAnalyzerConfig analyzerConfig;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id")
 	@MapsId
 	private Project project;
