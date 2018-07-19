@@ -33,7 +33,7 @@ import java.util.Set;
 public class ProjectEmailConfig implements Serializable {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "enabled")

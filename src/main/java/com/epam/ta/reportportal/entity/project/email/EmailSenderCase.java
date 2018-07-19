@@ -38,7 +38,7 @@ import java.util.Set;
 public class EmailSenderCase implements Serializable {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ElementCollection
