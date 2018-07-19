@@ -1,6 +1,5 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
@@ -38,10 +37,6 @@ public class ProjectConfiguration implements Serializable {
 	@Column(name = "project_type")
 	@Enumerated(value = EnumType.STRING)
 	private EntryType entryType;
-
-	@Column(name = "statistics_calculation_strategy")
-	@Enumerated(value = EnumType.STRING)
-	private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
 	@Column(name = "interrupt_timeout")
 	private String interruptJobTime;
@@ -187,20 +182,6 @@ public class ProjectConfiguration implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
-	}
-
-	/**
-	 * @return the statisticsCalculationStrategy
-	 */
-	public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
-		return statisticsCalculationStrategy;
-	}
-
-	/**
-	 * @param statisticsCalculationStrategy the statisticsCalculationStrategy to set
-	 */
-	public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
-		this.statisticsCalculationStrategy = statisticsCalculationStrategy;
 	}
 
 }
