@@ -20,7 +20,9 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
+import com.epam.ta.reportportal.entity.ldap.AuthConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 
 import java.util.Optional;
@@ -34,14 +36,13 @@ public interface AuthConfigRepositoryCustom {
 
 	String DEFAULT_PROFILE = "default";
 
-	//
-	//    void deleteSettings(AuthIntegrationType type);
-	//
-	//    void updatePartially(AuthConfig entity);
-	//
-	//    void updateLdap(LdapConfig ldapConfig);
-	//
-	//    void updateActiveDirectory(ActiveDirectoryConfig adConfig);
+	void deleteSettings(Integration integration);
+
+	void updatePartially(AuthConfig authConfig);
+
+	void updateLdap(LdapConfig ldapConfig);
+
+	void updateActiveDirectory(ActiveDirectoryConfig adConfig);
 
 	Optional<LdapConfig> findLdap(boolean enabled);
 

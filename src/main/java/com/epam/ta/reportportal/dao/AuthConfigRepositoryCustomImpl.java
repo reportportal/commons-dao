@@ -20,10 +20,12 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.AuthConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -49,32 +51,30 @@ public class AuthConfigRepositoryCustomImpl implements AuthConfigRepositoryCusto
 		//		createDefaultProfileIfAbsent();
 	}
 
-	//
-	//    @Override
-	//    public void deleteSettings(AuthIntegrationType type) {
-	//        mongoOperations.updateFirst(findDefaultQuery(), new Update().unset(type.getDbField()), AuthConfigEntity.class);
-	//    }
-	//
-	//    @Override
-	//    public void updatePartially(AuthConfigEntity entity) {
-	//        mongoOperations.updateFirst(findDefaultQuery(), updateExisting(entity), AuthConfigEntity.class);
-	//    }
-	//
-	//    @Override
-	//    public void updateLdap(LdapConfig ldapConfig) {
-	//        mongoOperations
-	//                .updateFirst(findDefaultQuery(), Update.update(AuthIntegrationType.LDAP.getDbField(), ldapConfig),
-	//                        AuthConfigEntity.class);
-	//
-	//    }
-	//
-	//    @Override
-	//    public void updateActiveDirectory(ActiveDirectoryConfig adConfig) {
-	//        mongoOperations
-	//                .updateFirst(findDefaultQuery(),
-	//                        Update.update(AuthIntegrationType.ACTIVE_DIRECTORY.getDbField(), adConfig),
-	//                        AuthConfigEntity.class);
-	//    }
+	@Transactional
+	@Override
+	public void deleteSettings(Integration integration) {
+		entityManager.remove(integration);
+	}
+
+
+	@Transactional
+	@Override
+	public void updatePartially(AuthConfig authConfig) {
+		entityManager.merge(authConfig);
+	}
+
+	@Override
+	public void updateLdap(LdapConfig ldapConfig) {
+		entityManager.merge(ldapConfig);
+
+	}
+
+	@Transactional
+	@Override
+	public void updateActiveDirectory(ActiveDirectoryConfig adConfig) {
+		entityManager.merge(adConfig);
+	}
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
