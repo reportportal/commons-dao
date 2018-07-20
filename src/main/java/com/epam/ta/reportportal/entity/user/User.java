@@ -57,8 +57,11 @@ public class User implements Serializable {
 	@Column(name = "metadata")
 	private MetaData metadata;
 
-	@Column(name = "photo_path")
-	private String photoPath;
+	@Column(name = "attachment")
+	private String attachment;
+
+	@Column(name = "attachment_thumbnail")
+	private String attachmentThumbnail;
 
 	@Column(name = "type")
 	private UserType userType;
@@ -142,12 +145,20 @@ public class User implements Serializable {
 		isExpired = expired;
 	}
 
-	public String getPhotoPath() {
-		return photoPath;
+	public String getAttachment() {
+		return attachment;
 	}
 
-	public void setPhotoPath(String photoPath) {
-		this.photoPath = photoPath;
+	public void setAttachment(String attachment) {
+		this.attachment = attachment;
+	}
+
+	public String getAttachmentThumbnail() {
+		return attachmentThumbnail;
+	}
+
+	public void setAttachmentThumbnail(String attachmentThumbnail) {
+		this.attachmentThumbnail = attachmentThumbnail;
 	}
 
 	public UserType getUserType() {
@@ -175,18 +186,31 @@ public class User implements Serializable {
 			return false;
 		}
 		User user = (User) o;
-		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(
-				password,
+		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
 		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
-				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
-				photoPath, user.photoPath) && userType == user.userType;
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
+				user.attachment
+		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, login, password, email, role, defaultProject, fullName, isExpired, metadata, photoPath, userType);
+		return Objects.hash(
+				id,
+				login,
+				password,
+				email,
+				role,
+				defaultProject,
+				fullName,
+				isExpired,
+				metadata,
+				attachment,
+				attachmentThumbnail,
+				userType
+		);
 	}
 
 }
