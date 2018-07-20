@@ -1,8 +1,8 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
-import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
@@ -53,7 +53,7 @@ public class Project implements Serializable {
 
 	@Type(type = "jsonb")
 	@Column(name = "metadata")
-	private JsonbObject metadata;
+	private MetaData metadata;
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -147,11 +147,11 @@ public class Project implements Serializable {
 		this.demoDataPostfix = demoDataPostfix;
 	}
 
-	public JsonbObject getMetadata() {
+	public MetaData getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(JsonbObject metadata) {
+	public void setMetadata(MetaData metadata) {
 		this.metadata = metadata;
 	}
 
