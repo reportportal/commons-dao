@@ -20,11 +20,11 @@ public class MetaData extends JsonbObject {
 		this.metadata = metadata;
 	}
 
-	public Map<String, Object> getDetails() {
+	public Map<String, Object> getMetadata() {
 		return metadata;
 	}
 
-	public void setDetails(Map<String, Object> details) {
+	public void setMetadata(Map<String, Object> metadata) {
 		this.metadata = metadata;
 	}
 }
