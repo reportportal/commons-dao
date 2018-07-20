@@ -52,8 +52,7 @@ public class EmailSenderCase implements Serializable {
 	@JoinColumn(name = "email_sender_case_id")
 	private Set<Launch> launches;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "email_sender_case_id")
+	@OneToMany(mappedBy = "emailSenderCase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<LaunchTag> tags;
 
 	@ManyToOne(fetch = FetchType.LAZY)

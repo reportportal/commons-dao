@@ -39,7 +39,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 	@Column(name = "enabled")
 	private Boolean isAutoAnalyzerEnabled;
 
-	@Column(name = "mode")
 	private AnalyzeMode analyzerMode;
 
 	public ProjectAnalyzerConfig() {
