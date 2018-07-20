@@ -22,7 +22,6 @@ package com.epam.ta.reportportal.personal;
 
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.AnalyzeMode;
-import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.enums.InterruptionJobDelay;
 import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
@@ -121,8 +120,6 @@ public final class PersonalProjectService {
 		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
 		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
 		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
-		defaultConfig.setProjectSpecific(ProjectSpecific.DEFAULT);
-		defaultConfig.setStatisticsCalculationStrategy(StatisticsCalculationStrategy.STEP_BASED);
 		defaultConfig.setProject(project);
 		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
 		projectAnalyzerConfig.setMinDocFreq(ProjectAnalyzerConfig.MIN_DOC_FREQ);

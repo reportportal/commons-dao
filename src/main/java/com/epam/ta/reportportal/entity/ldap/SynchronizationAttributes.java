@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * @author Andrei Varabyeu
  */
 @Entity
-@Table(name = "synchronization_attributes")
+@Table(name = "ldap_synchronization_attributes")
 public class SynchronizationAttributes {
 
 	@Id

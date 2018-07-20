@@ -18,7 +18,7 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public static final int NUMBER_OF_LOG_LINES = 2;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "min_doc_freq")
@@ -36,7 +36,7 @@ public class ProjectAnalyzerConfig implements Serializable {
 	@Column(name = "indexing_running")
 	private boolean indexingRunning;
 
-	@Column(name = "auto_analyzer_enabled")
+	@Column(name = "enabled")
 	private Boolean isAutoAnalyzerEnabled;
 
 	private AnalyzeMode analyzerMode;

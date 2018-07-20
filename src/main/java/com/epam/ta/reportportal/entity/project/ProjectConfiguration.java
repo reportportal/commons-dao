@@ -1,6 +1,5 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.StatisticsCalculationStrategy;
 import com.epam.ta.reportportal.entity.enums.EntryType;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
@@ -29,7 +28,6 @@ public class ProjectConfiguration implements Serializable {
 	private static final String TI_COLOR = "#ffb743";
 
 	private static final long serialVersionUID = 1L;
-	private StatisticsCalculationStrategy statisticsCalculationStrategy;
 
 	@Id
 	private Long id;
@@ -37,10 +35,6 @@ public class ProjectConfiguration implements Serializable {
 	@Column(name = "project_type")
 	@Enumerated(value = EnumType.STRING)
 	private EntryType entryType;
-
-	@Column(name = "project_specific")
-	@Enumerated(value = EnumType.STRING)
-	private ProjectSpecific projectSpecific;
 
 	@Column(name = "interrupt_timeout")
 	private String interruptJobTime;
@@ -65,7 +59,7 @@ public class ProjectConfiguration implements Serializable {
 	@JoinColumn(name = "project_analyzer_config_id")
 	private ProjectAnalyzerConfig analyzerConfig;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id")
 	@MapsId
 	private Project project;
@@ -148,14 +142,6 @@ public class ProjectConfiguration implements Serializable {
 		return entryType;
 	}
 
-	public void setProjectSpecific(ProjectSpecific value) {
-		this.projectSpecific = value;
-	}
-
-	public ProjectSpecific getProjectSpecific() {
-		return projectSpecific;
-	}
-
 	public void setInterruptJobTime(String value) {
 		this.interruptJobTime = value;
 	}
@@ -194,20 +180,6 @@ public class ProjectConfiguration implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
-	}
-
-	/**
-	 * @return the statisticsCalculationStrategy
-	 */
-	public StatisticsCalculationStrategy getStatisticsCalculationStrategy() {
-		return statisticsCalculationStrategy;
-	}
-
-	/**
-	 * @param statisticsCalculationStrategy the statisticsCalculationStrategy to set
-	 */
-	public void setStatisticsCalculationStrategy(StatisticsCalculationStrategy statisticsCalculationStrategy) {
-		this.statisticsCalculationStrategy = statisticsCalculationStrategy;
 	}
 
 }

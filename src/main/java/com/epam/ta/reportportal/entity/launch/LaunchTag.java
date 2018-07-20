@@ -21,6 +21,8 @@
 
 package com.epam.ta.reportportal.entity.launch;
 
+import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -43,11 +45,23 @@ public class LaunchTag implements Serializable {
 	@Column(name = "launch_id", precision = 64)
 	private Long launchId;
 
+	@ManyToOne
+	@JoinColumn(name = "email_sender_case_id", nullable = false)
+	private EmailSenderCase emailSenderCase;
+
 	public LaunchTag() {
 	}
 
 	public LaunchTag(String value) {
 		this.value = value;
+	}
+
+	public EmailSenderCase getEmailSenderCase() {
+		return emailSenderCase;
+	}
+
+	public void setEmailSenderCase(EmailSenderCase emailSenderCase) {
+		this.emailSenderCase = emailSenderCase;
 	}
 
 	public Long getId() {
