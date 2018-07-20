@@ -36,9 +36,10 @@ public class ProjectAnalyzerConfig implements Serializable {
 	@Column(name = "indexing_running")
 	private boolean indexingRunning;
 
-	@Column(name = "auto_analyzer_enabled")
+	@Column(name = "enabled")
 	private Boolean isAutoAnalyzerEnabled;
 
+	@Column(name = "mode")
 	private AnalyzeMode analyzerMode;
 
 	public ProjectAnalyzerConfig() {
