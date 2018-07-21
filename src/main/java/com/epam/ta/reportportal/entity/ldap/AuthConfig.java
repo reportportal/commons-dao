@@ -32,11 +32,11 @@ public class AuthConfig {
 	@Id
 	private String id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ldap_config_id")
 	private LdapConfig ldap;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "active_directory_config_id")
 	private ActiveDirectoryConfig activeDirectory;
 
