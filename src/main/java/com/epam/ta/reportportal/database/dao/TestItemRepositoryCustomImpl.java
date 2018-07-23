@@ -505,9 +505,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public List<DurationTestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
 				context -> new BasicDBObject("$project",
-						new BasicDBObject("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time")))
+						new BasicDBObject("duration",
+								new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time"))
+						).append(ID, 1)
+								.append(NAME, 1)
+								.append(UNIQUE_ID, 1)
+								.append(STATUS, 1)
+								.append(TYPE, 1)
 				),
-				project(ID, NAME, UNIQUE_ID, STATUS, TYPE),
 				SortingOperation.sorting("duration", DESC),
 				limit(limit)
 		);

@@ -40,6 +40,8 @@ public class DurationTestItem implements Serializable {
 
 	private String uniqueId;
 
+	private Long duration;
+
 	private Status status;
 
 	private TestItemType type;
@@ -66,6 +68,14 @@ public class DurationTestItem implements Serializable {
 
 	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
+	}
+
+	public Long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Long duration) {
+		this.duration = duration;
 	}
 
 	public Status getStatus() {
