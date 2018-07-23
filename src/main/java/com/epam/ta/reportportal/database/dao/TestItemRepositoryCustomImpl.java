@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.database.entity.*;
+import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
@@ -500,14 +501,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
+	public List<DurationTestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
 				context -> new BasicDBObject("$project",
 						new BasicDBObject("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time")))
 				),
+				project(ID, NAME, UNIQUE_ID, STATUS, TYPE),
 				sort(new Sort(DESC, "$duration")),
 				limit(limit)
 		);
-		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), TestItem.class).getMappedResults();
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DurationTestItem.class)
+				.getMappedResults();
 	}
 }

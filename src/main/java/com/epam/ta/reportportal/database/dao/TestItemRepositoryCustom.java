@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
@@ -314,6 +315,6 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param limit    Query limit
 	 * @return List of most time consuming test items
 	 */
-	List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit);
+	List<DurationTestItem> findMostTimeConsumingTestItems(String launchId, int limit);
 
 }
