@@ -502,7 +502,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
-				addFields("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time"))),
+				context -> new BasicDBObject("$project",
+						new BasicDBObject("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time")))
+				),
 				sort(new Sort(DESC, "$duration")),
 				limit(limit)
 		);
