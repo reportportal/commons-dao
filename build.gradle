@@ -71,6 +71,8 @@ dependencies {
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.10.RELEASE'
 
+    compile 'org.springframework.security:spring-security-oauth2-client'
+
     compile('org.postgresql:postgresql')
     runtime('org.postgresql:postgresql')
 
