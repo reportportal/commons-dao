@@ -103,13 +103,6 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	}
 
 	@Test
-	public void findMostTimeConsuming() {
-		List<DurationTestItem> items = testItemRepository.findMostTimeConsumingTestItems("launch", 20);
-		assertThat(items.size()).isEqualTo(2);
-		assertThat(items.get(0).getDuration()).isGreaterThan(items.get(1).getDuration());
-	}
-
-	@Test
 	public void findItemIdsByLaunchRef() {
 		List<String> ids = testItemRepository.findItemIdsByLaunchRef(singletonList("launch"));
 		assertThat(ids.size()).isEqualTo(5);
