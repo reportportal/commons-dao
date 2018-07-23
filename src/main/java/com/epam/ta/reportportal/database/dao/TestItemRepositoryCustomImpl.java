@@ -501,12 +501,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
-
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
 				addFields("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time"))),
 				sort(new Sort(DESC, "$duration")),
-				limit(limit),
-				project(ID_REFERENCE, NAME, START_TIME, END_TIME, UNIQUE_ID, TYPE, STATUS)
+				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), TestItem.class).getMappedResults();
 	}
