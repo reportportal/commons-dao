@@ -32,6 +32,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.Filter;
 
 import java.time.Duration;
 import java.util.List;
@@ -311,10 +312,10 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	/**
 	 * Finds most time consuming test cases for specified launch
 	 *
-	 * @param launchId Launch id
-	 * @param limit    Query limit
+	 * @param filter Filter
+	 * @param limit  Query limit
 	 * @return List of most time consuming test items
 	 */
-	List<DurationTestItem> findMostTimeConsumingTestItems(String launchId, int limit);
+	List<DurationTestItem> findMostTimeConsumingTestItems(Filter filter, int limit);
 
 }

@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
+import com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils;
 import com.epam.ta.reportportal.database.dao.aggregation.SortingOperation;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
@@ -34,6 +35,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
@@ -502,8 +504,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<DurationTestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
+	public List<DurationTestItem> findMostTimeConsumingTestItems(Filter filter, int limit) {
+		Aggregation aggregation = newAggregation(AggregationUtils.matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
 				context -> new BasicDBObject("$project",
 						new BasicDBObject("duration",
 								new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time"))
