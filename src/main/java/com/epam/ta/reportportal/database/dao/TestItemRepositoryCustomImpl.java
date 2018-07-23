@@ -508,7 +508,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						new BasicDBObject("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time")))
 				),
 				project(ID, NAME, UNIQUE_ID, STATUS, TYPE),
-				SortingOperation.sorting("$duration", DESC),
+				SortingOperation.sorting("duration", DESC),
 				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DurationTestItem.class)
