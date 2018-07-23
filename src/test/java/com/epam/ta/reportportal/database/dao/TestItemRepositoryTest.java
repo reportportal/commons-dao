@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
@@ -103,10 +104,9 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 
 	@Test
 	public void findMostTimeConsuming() {
-		List<TestItem> items = testItemRepository.findMostTimeConsumingTestItems("launch", 20);
+		List<DurationTestItem> items = testItemRepository.findMostTimeConsumingTestItems("launch", 20);
 		assertThat(items.size()).isEqualTo(2);
-		assertThat(items.get(0).getEndTime().getTime() - items.get(0).getStartTime().getTime()).isGreaterThan(
-				items.get(1).getEndTime().getTime() - items.get(1).getStartTime().getTime());
+		assertThat(items.get(0).getDuration()).isGreaterThan(items.get(1).getDuration());
 	}
 
 	@Test

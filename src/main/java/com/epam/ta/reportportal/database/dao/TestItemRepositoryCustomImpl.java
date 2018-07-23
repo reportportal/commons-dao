@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
+import com.epam.ta.reportportal.database.dao.aggregation.SortingOperation;
 import com.epam.ta.reportportal.database.entity.*;
 import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
@@ -507,7 +508,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						new BasicDBObject("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time")))
 				),
 				project(ID, NAME, UNIQUE_ID, STATUS, TYPE),
-				sort(new Sort(DESC, "$duration")),
+				SortingOperation.sorting("$duration", DESC),
 				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DurationTestItem.class)
