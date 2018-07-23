@@ -85,6 +85,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ISSUE = "issue";
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
+	private static final String END_TIME = "end_time";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";
 	private static final String STATUS = "status";
@@ -500,10 +501,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
-		return mongoTemplate.aggregate(newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
+
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
 				addFields("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time"))),
 				sort(new Sort(DESC, "$duration")),
-				limit(limit)
-		), mongoTemplate.getCollectionName(TestItem.class), TestItem.class).getMappedResults();
+				limit(limit),
+				project(ID_REFERENCE, NAME, START_TIME, END_TIME, UNIQUE_ID, TYPE, STATUS)
+		);
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), TestItem.class).getMappedResults();
 	}
 }
