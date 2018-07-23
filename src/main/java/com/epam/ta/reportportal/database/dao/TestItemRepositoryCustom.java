@@ -296,6 +296,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Find retries in launch
+	 *
 	 * @param launchId
 	 * @return
 	 */
@@ -305,5 +306,14 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * Find items by provided auto analyzed status of items issue
 	 */
 	List<TestItem> findItemsByAutoAnalyzedStatus(boolean status, String launchId);
+
+	/**
+	 * Finds most time consuming test cases for specified launch
+	 *
+	 * @param launchId Launch id
+	 * @param limit    Query limit
+	 * @return List of most time consuming test items
+	 */
+	List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit);
 
 }

@@ -33,6 +33,7 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -71,6 +72,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  */
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
+	public static final int HISTORY_LIMIT = 2000;
 	private static final String ID_REFERENCE = "id";
 	private static final String ID = "_id";
 	private static final String LAUNCH_REFERENCE = "launchRef";
@@ -90,9 +92,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String UNIQUE_ID = "uniqueId";
 	private static final String TOTAL = "total";
 	private static final String FAILED = "failed";
-
-	public static final int HISTORY_LIMIT = 2000;
-
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -103,7 +102,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
+		mongoTemplate.updateMulti(getItemQuery(item),
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
 				TestItem.class
 		);
 	}
@@ -139,7 +139,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
 			update.set(ISSUE_ANALYZED, newValue.isAutoAnalyzed());
-			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)), update,
+			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
+					update,
 					mongoTemplate.getCollectionName(TestItem.class)
 			);
 		});
@@ -157,7 +158,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
+		mongoTemplate.updateMulti(getItemQuery(item),
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
 				TestItem.class
 		);
 	}
@@ -238,8 +240,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<String> findDistinctValues(String launchId, String containsValue, String distinctBy) {
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId)), unwind(distinctBy),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy)
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId)),
+				unwind(distinctBy),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
+				group(distinctBy)
 		);
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
 		return result.getMappedResults().stream().map(entry -> entry.get("_id").toString()).collect(toList());
@@ -249,8 +253,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<String> getUniqueTicketsCount(List<Launch> launches) {
 		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(ISSUE_TICKET).exists(true)),
-				unwind(ISSUE_TICKET), group(ISSUE_TICKET)
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(ISSUE_TICKET).exists(true)),
+				unwind(ISSUE_TICKET),
+				group(ISSUE_TICKET)
 		);
 		// Count be as
 		// Aggregation.group("issue.externalSystemIssues").count().as("count");
@@ -285,7 +291,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		final int MINIMUM_FOR_FAILED = 0;
 		Sort orders = new Sort(new Sort.Order(DESC, FAILED), new Sort.Order(ASC, TOTAL));
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
-				sort(Sort.Direction.ASC, START_TIME), mostFailedGroup(criteria), match(where(FAILED).gt(MINIMUM_FOR_FAILED)), sort(orders),
+				sort(Sort.Direction.ASC, START_TIME),
+				mostFailedGroup(criteria),
+				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
+				sort(orders),
 				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistory.class)
@@ -327,7 +336,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	 	*/
 		final int MINIMUM_FOR_FLAKY = 1;
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
-				sort(Sort.Direction.ASC, START_TIME), flakyItemsGroup(), addFields("size", new BasicDBObject("$size", "$statusSet")),
+				sort(Sort.Direction.ASC, START_TIME),
+				flakyItemsGroup(),
+				addFields("size", new BasicDBObject("$size", "$statusSet")),
 				match(where("size").gt(MINIMUM_FOR_FLAKY))
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistory.class).getMappedResults();
@@ -467,7 +478,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<RetryObject> findRetries(String launchId) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("retryProcessed").exists(true)),
-				sort(new Sort(Sort.Direction.ASC, "start_time")), group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
+				sort(new Sort(Sort.Direction.ASC, "start_time")),
+				group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
 		);
 
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class).getMappedResults();
@@ -484,5 +496,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.is(false)
 				.and(ISSUE_ANALYZED)
 				.is(status)), TestItem.class);
+	}
+
+	@Override
+	public List<TestItem> findMostTimeConsumingTestItems(String launchId, int limit) {
+		return mongoTemplate.aggregate(newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and(HAS_CHILD).is(false)),
+				addFields("duration", new BasicDBObject("$subtract", Lists.newArrayList("$end_time", "$start_time"))),
+				sort(new Sort(DESC, "$duration")),
+				limit(limit)
+		), mongoTemplate.getCollectionName(TestItem.class), TestItem.class).getMappedResults();
 	}
 }

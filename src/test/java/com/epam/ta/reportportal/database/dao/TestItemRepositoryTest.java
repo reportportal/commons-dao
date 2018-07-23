@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	private static final String testItemId2 = "575eace8bd09be0d4019e82e";
 	private static final String testItemId3 = "575eace8bd09be0d4019e83e";
 	private static final String testItemId4 = "575eace8bd09be0d4019e84e";
+	private static final String testItemId5 = "575eace8bd09be0d4019e85e";
 
 	@Autowired
 	private TestItemRepository testItemRepository;
@@ -41,37 +43,56 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 		TestItem testItem = new TestItem();
 		testItem.setLaunchRef(launch);
 		testItem.setId(testItemId1);
-		testItem.setStartTime(new Date());
+		testItem.setStartTime(Date.from(Instant.ofEpochSecond(123456789000L)));
 		testItem.setName("test");
+		testItem.setHasChilds(true);
 		testItem.setIssue(new TestItemIssue(TestItemIssueType.SYSTEM_ISSUE.getLocator(), null));
 
 		TestItem testItem1 = new TestItem();
 		testItem1.setId(testItemId2);
 		testItem1.setName("testName");
-		testItem1.setStartTime(new Date());
+		testItem1.setStartTime(Date.from(Instant.ofEpochSecond(123456789001L)));
 		testItem1.setLaunchRef(launch);
 		testItem1.setType(TestItemType.SUITE);
+		testItem1.setHasChilds(true);
 		testItem1.setIssue(new TestItemIssue(TestItemIssueType.NO_DEFECT.getLocator(), null));
 
 		TestItem testItem2 = new TestItem();
 		testItem2.setId(testItemId3);
 		testItem2.setName("test2");
-		testItem2.setStartTime(new Date());
+		testItem2.setStartTime(Date.from(Instant.ofEpochSecond(123456789002L)));
 		testItem2.setIssue(new TestItemIssue("nd_custom", null));
 		testItem2.setType(TestItemType.SUITE);
+		testItem2.setHasChilds(true);
 		testItem2.setLaunchRef(launch);
 
 		testItemRepository.save(testItem2);
 		testItemRepository.save(testItem1);
-
 		testItemRepository.save(testItem);
+
 		TestItem child = new TestItem();
 		child.setId(testItemId4);
 		child.setName("child");
-		child.setStartTime(new Date());
+		child.setStartTime(Date.from(Instant.ofEpochSecond(12345678903L)));
+		child.setEndTime(Date.from(Instant.ofEpochSecond(12345678912L)));
 		child.setStatus(Status.FAILED);
+		child.setType(TestItemType.STEP);
+		child.setHasChilds(false);
 		child.setParent(testItem.getId());
+		child.setLaunchRef(launch);
 		testItemRepository.save(child);
+
+		TestItem child2 = new TestItem();
+		child2.setId(testItemId5);
+		child2.setName("child");
+		child2.setStartTime(Date.from(Instant.ofEpochSecond(12345678903L)));
+		child2.setEndTime(Date.from(Instant.ofEpochSecond(12345678907L)));
+		child2.setStatus(Status.FAILED);
+		child2.setType(TestItemType.STEP);
+		child2.setHasChilds(false);
+		child2.setParent(testItem.getId());
+		child2.setLaunchRef(launch);
+		testItemRepository.save(child2);
 	}
 
 	@Test
@@ -81,9 +102,17 @@ public class TestItemRepositoryTest extends BaseDaoTest {
 	}
 
 	@Test
+	public void findMostTimeConsuming() {
+		List<TestItem> items = testItemRepository.findMostTimeConsumingTestItems("launch", 20);
+		assertThat(items.size()).isEqualTo(2);
+		assertThat(items.get(0).getEndTime().getTime() - items.get(0).getStartTime().getTime()).isGreaterThan(
+				items.get(1).getEndTime().getTime() - items.get(1).getStartTime().getTime());
+	}
+
+	@Test
 	public void findItemIdsByLaunchRef() {
 		List<String> ids = testItemRepository.findItemIdsByLaunchRef(singletonList("launch"));
-		assertThat(ids.size()).isEqualTo(3);
+		assertThat(ids.size()).isEqualTo(5);
 	}
 
 	@Test
