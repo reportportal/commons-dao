@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "oauth_registration_scope", schema = "public")
+@Table(name = "oauth_registration_restriction", schema = "public")
 public class OAuthRegistrationRestriction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
