@@ -3,12 +3,13 @@ package com.epam.ta.reportportal.entity.oauth;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "oauth_registration_restriction", schema = "public")
-public class OAuthRegistrationRestriction {
+public class OAuthRegistrationRestriction implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
