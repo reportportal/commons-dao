@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.database.dao;
 import com.epam.ta.reportportal.database.entity.Launch;
 import com.epam.ta.reportportal.database.entity.Project;
 import com.epam.ta.reportportal.database.entity.Status;
+import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
@@ -31,6 +32,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.Filter;
 
 import java.time.Duration;
 import java.util.List;
@@ -296,6 +298,7 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 
 	/**
 	 * Find retries in launch
+	 *
 	 * @param launchId
 	 * @return
 	 */
@@ -305,5 +308,14 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * Find items by provided auto analyzed status of items issue
 	 */
 	List<TestItem> findItemsByAutoAnalyzedStatus(boolean status, String launchId);
+
+	/**
+	 * Finds most time consuming test cases for specified launch
+	 *
+	 * @param filter Filter
+	 * @param limit  Query limit
+	 * @return List of most time consuming test items
+	 */
+	List<DurationTestItem> findMostTimeConsumingTestItems(Filter filter, int limit);
 
 }
