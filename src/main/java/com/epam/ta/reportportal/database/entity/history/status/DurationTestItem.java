@@ -22,12 +22,15 @@ package com.epam.ta.reportportal.database.entity.history.status;
 
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
+import com.epam.ta.reportportal.database.search.Filter;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Does not db object. Represents results of query
- * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#findMostTimeConsumingTestItems(String, int)}}
+ * {@link com.epam.ta.reportportal.database.dao.TestItemRepositoryCustom#findMostTimeConsumingTestItems(Filter, int)}}
  * aggregation query.
  *
  * @author Pavel Bortnik
@@ -45,6 +48,9 @@ public class DurationTestItem implements Serializable {
 	private Status status;
 
 	private TestItemType type;
+
+	@Field(value = "start_time")
+	private Date startTime;
 
 	public String getId() {
 		return id;
@@ -92,5 +98,13 @@ public class DurationTestItem implements Serializable {
 
 	public void setType(TestItemType type) {
 		this.type = type;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
 }
