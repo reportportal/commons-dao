@@ -515,6 +515,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 								.append(STATUS, 1)
 								.append(TYPE, 1)
 								.append(START_TIME, 1)
+								.append(END_TIME, 1)
 				),
 				SortingOperation.sorting("duration", DESC),
 				limit(limit)

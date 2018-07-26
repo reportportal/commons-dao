@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database.entity.history.status;
 import com.epam.ta.reportportal.database.entity.Status;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.search.Filter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
@@ -50,7 +51,12 @@ public class DurationTestItem implements Serializable {
 	private TestItemType type;
 
 	@Field(value = "start_time")
+	@JsonProperty(value = "start_time")
 	private Date startTime;
+
+	@Field(value = "end_time")
+	@JsonProperty(value = "end_time")
+	private Date endTime;
 
 	public String getId() {
 		return id;
