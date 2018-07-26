@@ -31,7 +31,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "filter")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Filter {
+public abstract class Queryable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +41,7 @@ public abstract class Filter {
 	private String name;
 
 	@Column(name = "target")
-	private String targetClass;
+	private Class<?> targetClass;
 
 	@Column(name = "description")
 	private String description;
@@ -66,11 +66,11 @@ public abstract class Filter {
 		this.name = name;
 	}
 
-	public String getTargetClass() {
+	public Class<?> getTargetClass() {
 		return targetClass;
 	}
 
-	public void setTargetClass(String targetClass) {
+	public void setTargetClass(Class<?> targetClass) {
 		this.targetClass = targetClass;
 	}
 

@@ -37,7 +37,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user_filter", schema = "public")
-public class UserFilter extends Filter implements Serializable {
+public class UserFilter extends Queryable implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")
