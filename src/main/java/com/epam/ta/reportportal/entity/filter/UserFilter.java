@@ -29,6 +29,9 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Extension of basic filter object. Represents user filter
+ * with sorting and conditions
+ *
  * @author Pavel Bortnik
  */
 
