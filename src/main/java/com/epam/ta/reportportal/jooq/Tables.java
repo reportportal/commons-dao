@@ -3,7 +3,60 @@
 */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
+
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
+import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
+import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JExecutionStatistics;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueStatistics;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProjectConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JProjectConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JProjectEmailConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRecipients;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserConfig;
+import com.epam.ta.reportportal.jooq.tables.JUserFilter;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue;
 
 import javax.annotation.Generated;
 
@@ -22,19 +75,29 @@ import javax.annotation.Generated;
 public class Tables {
 
     /**
+     * The table <code>public.active_directory_config</code>.
+     */
+    public static final JActiveDirectoryConfig ACTIVE_DIRECTORY_CONFIG = com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
+
+    /**
      * The table <code>public.activity</code>.
      */
     public static final JActivity ACTIVITY = com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+
+    /**
+     * The table <code>public.auth_config</code>.
+     */
+    public static final JAuthConfig AUTH_CONFIG = com.epam.ta.reportportal.jooq.tables.JAuthConfig.AUTH_CONFIG;
 
     /**
      * The table <code>public.bug_tracking_system</code>.
      */
     public static final JBugTrackingSystem BUG_TRACKING_SYSTEM = com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem.BUG_TRACKING_SYSTEM;
 
-	/**
-	 * The table <code>public.content_field</code>.
-	 */
-	public static final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
+    /**
+     * The table <code>public.content_field</code>.
+     */
+    public static final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
 
     /**
      * The table <code>public.dashboard</code>.
@@ -61,25 +124,35 @@ public class Tables {
      */
     public static final JDefectFormFieldValue DEFECT_FORM_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE;
 
-	/**
-	 * The table <code>public.execution_statistics</code>.
-	 */
-	public static final JExecutionStatistics EXECUTION_STATISTICS = com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
+    /**
+     * The table <code>public.demo_data_postfix</code>.
+     */
+    public static final JDemoDataPostfix DEMO_DATA_POSTFIX = com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix.DEMO_DATA_POSTFIX;
 
-	/**
-	 * The table <code>public.filter</code>.
-	 */
-	public static final JFilter FILTER = com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
+    /**
+     * The table <code>public.email_sender_case</code>.
+     */
+    public static final JEmailSenderCase EMAIL_SENDER_CASE = com.epam.ta.reportportal.jooq.tables.JEmailSenderCase.EMAIL_SENDER_CASE;
 
-	/**
-	 * The table <code>public.filter_condition</code>.
-	 */
-	public static final JFilterCondition FILTER_CONDITION = com.epam.ta.reportportal.jooq.tables.JFilterCondition.FILTER_CONDITION;
+    /**
+     * The table <code>public.execution_statistics</code>.
+     */
+    public static final JExecutionStatistics EXECUTION_STATISTICS = com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
 
-	/**
-	 * The table <code>public.filter_sort</code>.
-	 */
-	public static final JFilterSort FILTER_SORT = com.epam.ta.reportportal.jooq.tables.JFilterSort.FILTER_SORT;
+    /**
+     * The table <code>public.filter</code>.
+     */
+    public static final JFilter FILTER = com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
+
+    /**
+     * The table <code>public.filter_condition</code>.
+     */
+    public static final JFilterCondition FILTER_CONDITION = com.epam.ta.reportportal.jooq.tables.JFilterCondition.FILTER_CONDITION;
+
+    /**
+     * The table <code>public.filter_sort</code>.
+     */
+    public static final JFilterSort FILTER_SORT = com.epam.ta.reportportal.jooq.tables.JFilterSort.FILTER_SORT;
 
     /**
      * The table <code>public.integration</code>.
@@ -96,15 +169,15 @@ public class Tables {
      */
     public static final JIssue ISSUE = com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 
-	/**
-	 * The table <code>public.issue_group</code>.
-	 */
-	public static final JIssueGroup ISSUE_GROUP = com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
+    /**
+     * The table <code>public.issue_group</code>.
+     */
+    public static final JIssueGroup ISSUE_GROUP = com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 
-	/**
-	 * The table <code>public.issue_statistics</code>.
-	 */
-	public static final JIssueStatistics ISSUE_STATISTICS = com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
+    /**
+     * The table <code>public.issue_statistics</code>.
+     */
+    public static final JIssueStatistics ISSUE_STATISTICS = com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
 
     /**
      * The table <code>public.issue_ticket</code>.
@@ -137,6 +210,16 @@ public class Tables {
     public static final JLaunchTag LAUNCH_TAG = com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 
     /**
+     * The table <code>public.ldap_config</code>.
+     */
+    public static final JLdapConfig LDAP_CONFIG = com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
+
+    /**
+     * The table <code>public.ldap_synchronization_attributes</code>.
+     */
+    public static final JLdapSynchronizationAttributes LDAP_SYNCHRONIZATION_ATTRIBUTES = com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
+
+    /**
      * The table <code>public.log</code>.
      */
     public static final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
@@ -150,6 +233,11 @@ public class Tables {
      * The table <code>public.oauth_registration</code>.
      */
     public static final JOauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.JOauthRegistration.OAUTH_REGISTRATION;
+
+    /**
+     * The table <code>public.oauth_registration_restriction</code>.
+     */
+    public static final JOauthRegistrationRestriction OAUTH_REGISTRATION_RESTRICTION = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION;
 
     /**
      * The table <code>public.oauth_registration_scope</code>.
@@ -167,6 +255,11 @@ public class Tables {
     public static final JProject PROJECT = com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 
     /**
+     * The table <code>public.project_analyzer_configuration</code>.
+     */
+    public static final JProjectAnalyzerConfiguration PROJECT_ANALYZER_CONFIGURATION = com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration.PROJECT_ANALYZER_CONFIGURATION;
+
+    /**
      * The table <code>public.project_configuration</code>.
      */
     public static final JProjectConfiguration PROJECT_CONFIGURATION = com.epam.ta.reportportal.jooq.tables.JProjectConfiguration.PROJECT_CONFIGURATION;
@@ -180,6 +273,11 @@ public class Tables {
      * The table <code>public.project_user</code>.
      */
     public static final JProjectUser PROJECT_USER = com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
+
+    /**
+     * The table <code>public.recipients</code>.
+     */
+    public static final JRecipients RECIPIENTS = com.epam.ta.reportportal.jooq.tables.JRecipients.RECIPIENTS;
 
     /**
      * The table <code>public.server_settings</code>.
@@ -206,10 +304,15 @@ public class Tables {
      */
     public static final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 
-	/**
-	 * The table <code>public.user_filter</code>.
-	 */
-	public static final JUserFilter USER_FILTER = com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
+    /**
+     * The table <code>public.user_config</code>.
+     */
+    public static final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
+
+    /**
+     * The table <code>public.user_filter</code>.
+     */
+    public static final JUserFilter USER_FILTER = com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
 
     /**
      * The table <code>public.users</code>.
@@ -221,18 +324,18 @@ public class Tables {
      */
     public static final JWidget WIDGET = com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 
-	/**
-	 * The table <code>public.widget_filter</code>.
-	 */
-	public static final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
+    /**
+     * The table <code>public.widget_filter</code>.
+     */
+    public static final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
-	/**
-	 * The table <code>public.widget_option</code>.
-	 */
-	public static final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
+    /**
+     * The table <code>public.widget_option</code>.
+     */
+    public static final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
 
-	/**
-	 * The table <code>public.widget_option_value</code>.
-	 */
-	public static final JWidgetOptionValue WIDGET_OPTION_VALUE = com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue.WIDGET_OPTION_VALUE;
+    /**
+     * The table <code>public.widget_option_value</code>.
+     */
+    public static final JWidgetOptionValue WIDGET_OPTION_VALUE = com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue.WIDGET_OPTION_VALUE;
 }

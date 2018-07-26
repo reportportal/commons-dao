@@ -3,15 +3,17 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.enums.JProjectRoleEnum;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Row3;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProjectUserRecord extends UpdatableRecordImpl<JProjectUserRecord> implements Record3<Long, Long, JProjectRoleEnum> {
 
-	private static final long serialVersionUID = -1971102862;
+    private static final long serialVersionUID = -1971102862;
 
     /**
      * Setter for <code>public.project_user.user_id</code>.

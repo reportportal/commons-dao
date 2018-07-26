@@ -3,19 +3,29 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemResultsRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -31,7 +41,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
 
-	private static final long serialVersionUID = -1343011361;
+    private static final long serialVersionUID = -1343011361;
 
     /**
      * The reference instance of <code>public.test_item_results</code>
@@ -47,10 +57,9 @@ public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
     }
 
     /**
-	 * The column <code>public.test_item_results.result_id</code>.
-	 */
-	public final TableField<JTestItemResultsRecord, Long> RESULT_ID = createField(
-			"result_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+     * The column <code>public.test_item_results.result_id</code>.
+     */
+    public final TableField<JTestItemResultsRecord, Long> RESULT_ID = createField("result_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.test_item_results.status</code>.
@@ -133,8 +142,8 @@ public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
      */
     @Override
     public List<ForeignKey<JTestItemResultsRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<JTestItemResultsRecord, ?>>asList(Keys.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY);
-	}
+        return Arrays.<ForeignKey<JTestItemResultsRecord, ?>>asList(Keys.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY);
+    }
 
     /**
      * {@inheritDoc}

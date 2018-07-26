@@ -3,14 +3,16 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JItemTag;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Row3;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JItemTagRecord extends UpdatableRecordImpl<JItemTagRecord> implements Record3<Integer, String, Long> {
 
-	private static final long serialVersionUID = -441725004;
+    private static final long serialVersionUID = -441725004;
 
     /**
      * Setter for <code>public.item_tag.id</code>.

@@ -3,13 +3,15 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.TableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -25,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDefectFormFieldValueRecord extends TableRecordImpl<JDefectFormFieldValueRecord> implements Record2<Long, String> {
 
-	private static final long serialVersionUID = -1195888995;
+    private static final long serialVersionUID = -1195888995;
 
     /**
      * Setter for <code>public.defect_form_field_value.id</code>.

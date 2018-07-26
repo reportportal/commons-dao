@@ -3,14 +3,16 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Row3;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JServerSettingsRecord extends UpdatableRecordImpl<JServerSettingsRecord> implements Record3<Short, String, String> {
 
-	private static final long serialVersionUID = 1567074796;
+    private static final long serialVersionUID = 1567074796;
 
     /**
      * Setter for <code>public.server_settings.id</code>.

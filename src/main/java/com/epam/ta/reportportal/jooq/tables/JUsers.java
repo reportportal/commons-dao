@@ -3,19 +3,28 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
-import com.epam.ta.reportportal.jooq.enums.JUserRoleEnum;
-import com.epam.ta.reportportal.jooq.enums.JUserTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -31,7 +40,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-	private static final long serialVersionUID = 1452164694;
+    private static final long serialVersionUID = -540793677;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -59,7 +68,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * The column <code>public.users.password</code>.
      */
-    public final TableField<JUsersRecord, String> PASSWORD = createField("password", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<JUsersRecord, String> PASSWORD = createField("password", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.users.email</code>.
@@ -67,20 +76,34 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, String> EMAIL = createField("email", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
+     * The column <code>public.users.attachment</code>.
+     */
+    public final TableField<JUsersRecord, String> ATTACHMENT = createField("attachment", org.jooq.impl.SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.users.attachment_thumbnail</code>.
+     */
+    public final TableField<JUsersRecord, String> ATTACHMENT_THUMBNAIL = createField("attachment_thumbnail", org.jooq.impl.SQLDataType.VARCHAR, this, "");
+
+    /**
      * The column <code>public.users.role</code>.
      */
-    public final TableField<JUsersRecord, JUserRoleEnum> ROLE = createField("role", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.JUserRoleEnum.class), this, "");
+    public final TableField<JUsersRecord, String> ROLE = createField("role", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.users.type</code>.
      */
-    public final TableField<JUsersRecord, JUserTypeEnum> TYPE = createField("type", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.JUserTypeEnum.class), this, "");
+    public final TableField<JUsersRecord, String> TYPE = createField("type", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.users.expired</code>.
+     */
+    public final TableField<JUsersRecord, Boolean> EXPIRED = createField("expired", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false), this, "");
 
     /**
      * The column <code>public.users.default_project_id</code>.
      */
-	public final TableField<JUsersRecord, Long> DEFAULT_PROJECT_ID = createField(
-			"default_project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JUsersRecord, Long> DEFAULT_PROJECT_ID = createField("default_project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.users.full_name</code>.
@@ -90,9 +113,8 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
-	@java.lang.Deprecated
-	public final TableField<JUsersRecord, Object> METADATA = createField(
-			"metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+    @java.lang.Deprecated
+    public final TableField<JUsersRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * Create a <code>public.users</code> table reference
