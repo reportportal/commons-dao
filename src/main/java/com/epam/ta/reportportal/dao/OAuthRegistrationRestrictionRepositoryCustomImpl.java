@@ -28,11 +28,4 @@ public class OAuthRegistrationRestrictionRepositoryCustomImpl implements OAuthRe
 				.where(OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK.eq(registrationId))
 				.fetch().into(OAuthRegistrationRestriction.class);
 	}
-
-	@Override
-	public int deleteByRegistrationId(String registrationId) {
-		return dsl.deleteFrom(OAUTH_REGISTRATION_RESTRICTION)
-				.where(OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK.eq(registrationId))
-				.execute();
-	}
 }

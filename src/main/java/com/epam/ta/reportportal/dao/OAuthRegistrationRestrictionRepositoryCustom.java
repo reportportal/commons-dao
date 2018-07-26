@@ -9,5 +9,4 @@ import java.util.List;
  */
 public interface OAuthRegistrationRestrictionRepositoryCustom {
 	List<OAuthRegistrationRestriction> findByRegistrationId(String registrationId);
-	int deleteByRegistrationId(String registrationId);
 }

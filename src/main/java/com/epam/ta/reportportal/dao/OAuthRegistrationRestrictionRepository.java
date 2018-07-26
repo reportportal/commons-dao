@@ -8,6 +8,4 @@ import com.epam.ta.reportportal.entity.oauth.OAuthRegistrationRestriction;
  */
 public interface OAuthRegistrationRestrictionRepository extends ReportPortalRepository<OAuthRegistrationRestriction, Long>, OAuthRegistrationRestrictionRepositoryCustom {
 
-//	List<OAuthRegistrationRestriction> findAllByRegistration(OAuthRegistration oAuthRegistration);
-
 }
