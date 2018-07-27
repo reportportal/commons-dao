@@ -24,7 +24,7 @@ public enum FilterTarget {
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
-			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
+			new CriteriaHolder("project_id", "l.project_id", String.class, false),
 			new CriteriaHolder("mode", "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder("status", "l.status", JStatusEnum.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
@@ -84,8 +84,11 @@ public enum FilterTarget {
 	},
 
 	INTEGRATION(Integration.class, Arrays.asList(
-
-			new CriteriaHolder("project", "p.name", String.class, false), new CriteriaHolder("type", "it.name", String.class, false))) {
+			//@formatter:off
+			new CriteriaHolder("project", "p.name", String.class, false),
+			new CriteriaHolder("type", "it.name", String.class, false)
+			//@formatter:on
+	)) {
 		public SelectQuery<? extends Record> getQuery() {
 			JIntegration i = JIntegration.INTEGRATION.as("i");
 			JIntegrationType it = JIntegrationType.INTEGRATION_TYPE.as("it");
@@ -121,7 +124,8 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(l.ID,
+			return DSL.select(
+					l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,
