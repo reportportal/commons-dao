@@ -12,8 +12,8 @@ import java.util.Objects;
 public class OAuthRegistrationRestriction implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Integer id;
+	@Column(name = "id", unique = true, nullable = false)
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "oauth_registration_fk", nullable = false)
@@ -25,11 +25,11 @@ public class OAuthRegistrationRestriction implements Serializable {
 	@Column(name = "value", nullable = false, length = 256)
 	private String value;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

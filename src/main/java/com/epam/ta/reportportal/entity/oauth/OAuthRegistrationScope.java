@@ -16,8 +16,8 @@ public class OAuthRegistrationScope implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Integer id;
+	@Column(name = "id", unique = true, nullable = false)
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "oauth_registration_fk", nullable = false)
@@ -26,11 +26,11 @@ public class OAuthRegistrationScope implements Serializable {
 	@Column(name = "scope", nullable = false, length = 256)
 	private String scope;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
