@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.entity.Status;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -8,7 +9,6 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.*;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 import org.jooq.impl.DSL;
@@ -25,8 +25,8 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
-			new CriteriaHolder("mode", "l.mode", Mode.class, false),
-			new CriteriaHolder("status", "l.status", Status.class, false),
+			new CriteriaHolder("mode", "l.mode", LaunchModeEnum.class, false),
+			new CriteriaHolder("status", "l.status", StatusEnum.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
 			new CriteriaHolder("project", "p.name", String.class, false),
 			new CriteriaHolder("es_status", "es.es_status", String.class, false)
@@ -121,9 +121,19 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID, l.FILE_PATH, l.THUMBNAIL_FILE_PATH,
+			return DSL.select(l.ID,
+					l.LOG_TIME,
+					l.LOG_MESSAGE,
+					l.LAST_MODIFIED,
+					l.LOG_LEVEL,
+					l.ITEM_ID,
+					l.FILE_PATH,
+					l.THUMBNAIL_FILE_PATH,
 					l.CONTENT_TYPE
-			).from(l).leftJoin(ti).on(l.ITEM_ID.eq(ti.ITEM_ID))
+			)
+					.from(l)
+					.leftJoin(ti)
+					.on(l.ITEM_ID.eq(ti.ITEM_ID))
 					.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
 					.getQuery();
 		}
