@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -23,8 +24,7 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
-			new CriteriaHolder("mode", "l.mode", String.class, false),
-			new CriteriaHolder("status", "l.status", String.class, false),
+			new CriteriaHolder("status", "l.status", StatusEnum.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
 			new CriteriaHolder("project", "p.name", String.class, false),
 			new CriteriaHolder("es_status", "es.es_status", String.class, false)
@@ -38,10 +38,32 @@ public enum FilterTarget {
 			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
 			JProject p = JProject.PROJECT.as("p");
 
-			return DSL.select(l.ID, l.UUID, l.PROJECT_ID, l.USER_ID, l.NAME.as("launch_name"), l.DESCRIPTION, l.START_TIME, l.END_TIME,
-					l.NUMBER, l.LAST_MODIFIED, l.MODE, l.STATUS, es.ES_ID, es.ES_COUNTER, es.ES_STATUS, es.POSITIVE, es.ITEM_ID,
-					es.LAUNCH_ID.as("es_launch_id"), is.IS_ID, is.ISSUE_TYPE_ID, is.IS_COUNTER, is.ITEM_ID, is.LAUNCH_ID.as("is_launch_id"),
-					it.LOCATOR, ig.ISSUE_GROUP_, p.NAME
+			return DSL.select(l.ID,
+					l.UUID,
+					l.PROJECT_ID,
+					l.USER_ID,
+					l.NAME.as("launch_name"),
+					l.DESCRIPTION,
+					l.START_TIME,
+					l.END_TIME,
+					l.NUMBER,
+					l.LAST_MODIFIED,
+					l.MODE,
+					l.STATUS,
+					es.ES_ID,
+					es.ES_COUNTER,
+					es.ES_STATUS,
+					es.POSITIVE,
+					es.ITEM_ID,
+					es.LAUNCH_ID.as("es_launch_id"),
+					is.IS_ID,
+					is.ISSUE_TYPE_ID,
+					is.IS_COUNTER,
+					is.ITEM_ID,
+					is.LAUNCH_ID.as("is_launch_id"),
+					it.LOCATOR,
+					ig.ISSUE_GROUP_,
+					p.NAME
 			)
 					.from(l)
 					.join(es)
@@ -122,8 +144,7 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,
