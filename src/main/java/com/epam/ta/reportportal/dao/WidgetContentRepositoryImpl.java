@@ -31,7 +31,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private DSLContext dsl;
 
 	@Override
-	public List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latest) {
+	public List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latest,
+			int limit) {
 		Select commonSelect;
 		if (latest) {
 			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
@@ -63,6 +64,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
 						.and(ISSUE_TYPE.LOCATOR.in(contentFields.get(DEFECTS_KEY)))
 						.groupBy(ISSUE_TYPE.LOCATOR))
+				.limit(limit)
 				.fetchInto(StatisticsContent.class);
 	}
 

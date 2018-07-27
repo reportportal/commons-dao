@@ -18,7 +18,7 @@ public interface WidgetContentRepository {
 	 * @param filter Filter
 	 * @return List of {@link StatisticsContent}
 	 */
-	List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latestMode);
+	List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latestMode, int limit);
 
 	/**
 	 * Most failed content loading by execution status criteria.
