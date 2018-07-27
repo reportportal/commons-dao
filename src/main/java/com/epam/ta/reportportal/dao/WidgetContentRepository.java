@@ -25,16 +25,18 @@ public interface WidgetContentRepository {
 	 *
 	 * @param launchName Launch name
 	 * @param criteria   Execution criteria
+	 * @param limit      Results limit
 	 * @return List of {@link MostFailedContent}
 	 */
-	List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria);
+	List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria, int limit);
 
 	/**
 	 * Most failed content loading by defect status criteria.
 	 *
 	 * @param launchName Launch name
 	 * @param criteria   Defect criteria
+	 * @param limit      Results limit
 	 * @return List of {@link MostFailedContent}
 	 */
-	List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria);
+	List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria, int limit);
 }

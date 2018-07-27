@@ -66,4 +66,12 @@ public class MostFailedContent implements Serializable {
 	public void setStatus(List<String> status) {
 		this.status = status;
 	}
+
+	public List<LocalDateTime> getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(List<LocalDateTime> startTime) {
+		this.startTime = startTime;
+	}
 }

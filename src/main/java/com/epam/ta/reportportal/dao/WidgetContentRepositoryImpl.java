@@ -67,7 +67,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria) {
+	public List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria, int limit) {
 		return dsl.with(HISTORY)
 				.as(dsl.select(TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
@@ -95,12 +95,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
+				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(0))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
+				.limit(limit)
 				.fetchInto(MostFailedContent.class);
 	}
 
 	@Override
-	public List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria) {
+	public List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria, int limit) {
 		return dsl.with(HISTORY)
 				.as(dsl.select(TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
@@ -134,7 +136,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
+				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(0))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
+				.limit(limit)
 				.fetchInto(MostFailedContent.class);
 	}
 }
