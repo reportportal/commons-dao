@@ -11,11 +11,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.Predicates.or;
+import static com.epam.ta.reportportal.commons.querygen.FilterRules.*;
 import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
 import static com.epam.ta.reportportal.commons.validation.BusinessRule.fail;
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
-import static com.epam.ta.reportportal.commons.Predicates.or;
-import static com.epam.ta.reportportal.commons.querygen.FilterRules.*;
 import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAMETERS;
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
@@ -35,13 +35,15 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getQueryCriteria()).eq(filter.getValue());
+			return field(criteriaHolder.getQueryCriteria()).eq(this.castValue(criteriaHolder,
+					filter.getValue(),
+					INCORRECT_FILTER_PARAMETERS
+			));
 		}
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(isNegative, val -> Objects.equals(val, false)).verify(
-					errorType,
+			expect(isNegative, val -> Objects.equals(val, false)).verify(errorType,
 					"Filter is incorrect. '!' can't be used with 'is' - use 'ne' instead"
 			);
 		}
