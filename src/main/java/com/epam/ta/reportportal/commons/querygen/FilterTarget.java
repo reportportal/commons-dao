@@ -6,8 +6,6 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.Tables;
-import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -24,9 +22,9 @@ public enum FilterTarget {
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
-			new CriteriaHolder("project_id", "l.project_id", String.class, false),
-			new CriteriaHolder("mode", "l.mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder("status", "l.status", JStatusEnum.class, false),
+			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
+			new CriteriaHolder("mode", "l.mode", String.class, false),
+			new CriteriaHolder("status", "l.status", String.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
 			new CriteriaHolder("project", "p.name", String.class, false),
 			new CriteriaHolder("es_status", "es.es_status", String.class, false)
