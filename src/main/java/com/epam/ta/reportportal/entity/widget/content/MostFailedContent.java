@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import javax.persistence.Column;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.*;
@@ -25,7 +25,7 @@ public class MostFailedContent implements Serializable {
 	private List<String> status;
 
 	@Column(name = START_TIME_HISTORY)
-	private List<LocalDateTime> startTime;
+	private List<Date> startTime;
 
 	public String getUniqueId() {
 		return uniqueId;
@@ -67,11 +67,11 @@ public class MostFailedContent implements Serializable {
 		this.status = status;
 	}
 
-	public List<LocalDateTime> getStartTime() {
+	public List<Date> getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(List<LocalDateTime> startTime) {
+	public void setStartTime(List<Date> startTime) {
 		this.startTime = startTime;
 	}
 }
