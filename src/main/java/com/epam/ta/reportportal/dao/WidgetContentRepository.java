@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.widget.content.MostFailedContent;
 import com.epam.ta.reportportal.entity.widget.content.StatisticsContent;
 
 import java.util.List;
@@ -18,4 +19,22 @@ public interface WidgetContentRepository {
 	 * @return List of {@link StatisticsContent}
 	 */
 	List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latestMode);
+
+	/**
+	 * Most failed content loading by execution status criteria.
+	 *
+	 * @param launchName Launch name
+	 * @param criteria   Execution criteria
+	 * @return List of {@link MostFailedContent}
+	 */
+	List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria);
+
+	/**
+	 * Most failed content loading by defect status criteria.
+	 *
+	 * @param launchName Launch name
+	 * @param criteria   Defect criteria
+	 * @return List of {@link MostFailedContent}
+	 */
+	List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria);
 }
