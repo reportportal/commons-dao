@@ -1,12 +1,12 @@
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.Tables;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -24,7 +24,7 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
-			new CriteriaHolder("status", "l.status", StatusEnum.class, false),
+			new CriteriaHolder("status", "l.status", JStatusEnum.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
 			new CriteriaHolder("project", "p.name", String.class, false),
 			new CriteriaHolder("es_status", "es.es_status", String.class, false)

@@ -3,7 +3,6 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
-import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.MoreObjects;
@@ -106,11 +105,6 @@ public class CriteriaHolder {
 			castedValue = LogLevel.toLevel(oneValue);
 			BusinessRule.expect(castedValue, Objects::nonNull)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
-		} else if (StatusEnum.class.isAssignableFrom(getDataType())) {
-			castedValue = DSL.field(oneValue).cast(getDataType());
-			//					.orElseThrow(() -> new ReportPortalException(errorType,
-			//							Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue)
-			//					));
 		} else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {
 			castedValue = TestItemIssueGroup.validate(oneValue);
 			BusinessRule.expect(castedValue, Objects::nonNull)
@@ -121,7 +115,7 @@ public class CriteriaHolder {
 		} else if (String.class.isAssignableFrom(getDataType())) {
 			castedValue = oneValue != null ? oneValue.trim() : null;
 		} else {
-			castedValue = oneValue;
+			castedValue = DSL.field(oneValue).cast(getDataType());
 		}
 		return castedValue;
 	}
