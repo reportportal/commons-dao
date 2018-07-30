@@ -115,7 +115,7 @@ public class CriteriaHolder {
 		} else if (String.class.isAssignableFrom(getDataType())) {
 			castedValue = oneValue != null ? oneValue.trim() : null;
 		} else {
-			castedValue = DSL.field(oneValue).cast(getDataType());
+			castedValue = DSL.val(oneValue).cast(getDataType());
 		}
 		return castedValue;
 	}
