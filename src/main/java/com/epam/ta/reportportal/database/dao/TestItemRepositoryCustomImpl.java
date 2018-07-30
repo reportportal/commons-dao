@@ -23,7 +23,10 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
+import com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils;
+import com.epam.ta.reportportal.database.dao.aggregation.SortingOperation;
 import com.epam.ta.reportportal.database.entity.*;
+import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
@@ -32,8 +35,10 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
+import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -73,6 +78,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  */
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
+	public static final int HISTORY_LIMIT = 2000;
 	private static final String ID_REFERENCE = "id";
 	private static final String ID = "_id";
 	private static final String LAUNCH_REFERENCE = "launchRef";
@@ -85,6 +91,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ISSUE = "issue";
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
+	private static final String END_TIME = "end_time";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";
 	private static final String STATUS = "status";
@@ -92,8 +99,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String UNIQUE_ID = "uniqueId";
 	private static final String TOTAL = "total";
 	private static final String FAILED = "failed";
-
-	public static final int HISTORY_LIMIT = 2000;
+	private static final List<String> DURATION_FIELDS = Lists.newArrayList("$end_time", "$start_time");
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -499,5 +505,24 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.is(false)
 				.and(ISSUE_ANALYZED)
 				.is(status)), TestItem.class);
+	}
+
+	@Override
+	public List<DurationTestItem> findMostTimeConsumingTestItems(Queryable filter, int limit) {
+		Aggregation aggregation = newAggregation(AggregationUtils.matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
+				context -> new BasicDBObject("$project",
+						new BasicDBObject("duration", new BasicDBObject("$subtract", DURATION_FIELDS)).append(ID, 1)
+								.append(NAME, 1)
+								.append(UNIQUE_ID, 1)
+								.append(STATUS, 1)
+								.append(TYPE, 1)
+								.append(START_TIME, 1)
+								.append(END_TIME, 1)
+				),
+				SortingOperation.sorting("duration", DESC),
+				limit(limit)
+		);
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DurationTestItem.class)
+				.getMappedResults();
 	}
 }
