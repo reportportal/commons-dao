@@ -99,14 +99,4 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 		return activeDirectoryConfigTypedQuery.getResultList().stream().findFirst();
 	}
 
-	//    private Update updateExisting(Object object) {
-	//        try {
-	//            Update update = new Update();
-	//            PropertyUtils.describe(object).entrySet().stream().filter(e -> null != e.getValue())
-	//                    .forEach(it -> update.set(it.getKey(), it.getValue()));
-	//            return update;
-	//        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-	//            throw new ReportPortalException("Error during auth config update", e);
-	//        }
-	//    }
 }
