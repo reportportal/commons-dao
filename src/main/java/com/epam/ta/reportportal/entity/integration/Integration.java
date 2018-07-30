@@ -26,11 +26,11 @@ public class Integration implements Serializable{
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "project_id")
 	private Project project;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "type")
 	private IntegrationType type;
 
