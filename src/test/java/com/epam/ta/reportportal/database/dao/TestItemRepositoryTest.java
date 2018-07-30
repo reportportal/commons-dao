@@ -2,7 +2,6 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Status;
-import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;

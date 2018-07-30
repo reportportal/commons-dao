@@ -35,7 +35,6 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
