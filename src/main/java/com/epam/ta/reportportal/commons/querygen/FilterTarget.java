@@ -6,6 +6,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.Tables;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
@@ -25,6 +26,7 @@ public enum FilterTarget {
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
 			new CriteriaHolder("status", "l.status", JStatusEnum.class, false),
+			new CriteriaHolder("mode", "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder("name", "l.name", String.class, false),
 			new CriteriaHolder("project", "p.name", String.class, false),
 			new CriteriaHolder("es_status", "es.es_status", String.class, false)
@@ -38,7 +40,8 @@ public enum FilterTarget {
 			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
 			JProject p = JProject.PROJECT.as("p");
 
-			return DSL.select(l.ID,
+			return DSL.select(
+					l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -144,7 +147,8 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(l.ID,
+			return DSL.select(
+					l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,
