@@ -47,6 +47,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -157,8 +158,10 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Launch findLatestByName(String launchName) {
-		return dsl.select()
+	public Launch findLatestByNameAndFilter(String launchName, Filter filter) {
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select()
 				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
 				.where(LAUNCH.NAME.eq(launchName))
