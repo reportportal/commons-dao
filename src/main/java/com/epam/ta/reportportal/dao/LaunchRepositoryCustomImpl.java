@@ -157,11 +157,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Launch findLatestByName(String launchName) {
+	public Launch findLatestByNameAndProjectId(String launchName, Long projectId) {
 		return dsl.select()
 				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
 				.where(LAUNCH.NAME.eq(launchName))
+				.and(LAUNCH.PROJECT_ID.eq(projectId))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOne()
 				.into(Launch.class);
