@@ -35,8 +35,8 @@ import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.Filter;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.epam.ta.reportportal.database.search.Queryable;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -58,6 +58,7 @@ import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
+import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
 import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.TO_INVESTIGATE;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
 import static java.util.stream.Collectors.toList;
@@ -273,7 +274,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<MostFailedHistory> getMostFailedItemHistory(List<String> launchIds, String criteria, int limit) {
+	public List<MostFailedHistory> getMostFailedItemHistory(Queryable filter, String criteria, int limit) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { "launchRef" : { "$in" : [""]}}},
@@ -297,7 +298,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		*/
 		final int MINIMUM_FOR_FAILED = 0;
 		Sort orders = new Sort(new Sort.Order(DESC, FAILED), new Sort.Order(ASC, TOTAL));
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
 				sort(Sort.Direction.ASC, START_TIME),
 				mostFailedGroup(criteria),
 				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
@@ -321,7 +322,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<FlakyHistory> getFlakyItemStatusHistory(List<String> launchIds) {
+	public List<FlakyHistory> getFlakyItemStatusHistory(Queryable filter) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { $and: [ "launchRef" : { "$in" : [""]}, has_childs : false ]}},
@@ -342,7 +343,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			])
 	 	*/
 		final int MINIMUM_FOR_FLAKY = 1;
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
+		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
 				sort(Sort.Direction.ASC, START_TIME),
 				flakyItemsGroup(),
 				addFields("size", new BasicDBObject("$size", "$statusSet")),
@@ -506,7 +507,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<DurationTestItem> findMostTimeConsumingTestItems(Filter filter, int limit) {
+	public List<DurationTestItem> findMostTimeConsumingTestItems(Queryable filter, int limit) {
 		Aggregation aggregation = newAggregation(AggregationUtils.matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
 				context -> new BasicDBObject("$project",
 						new BasicDBObject("duration", new BasicDBObject("$subtract", DURATION_FIELDS)).append(ID, 1)

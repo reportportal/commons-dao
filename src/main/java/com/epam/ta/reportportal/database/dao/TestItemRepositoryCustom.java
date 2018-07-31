@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,7 +32,7 @@ import com.epam.ta.reportportal.database.entity.item.TestItem;
 import com.epam.ta.reportportal.database.entity.item.TestItemType;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
-import com.epam.ta.reportportal.database.search.Filter;
+import com.epam.ta.reportportal.database.search.Queryable;
 
 import java.time.Duration;
 import java.util.List;
@@ -109,21 +109,21 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * Get history of most failed test items limited by historyLimit
 	 * and sorted by failed count
 	 *
-	 * @param launchIds    Launches history
-	 * @param criteria     Criteria to find by
-	 * @param historyLimit History limit
+	 * @param filter   Filter
+	 * @param criteria Criteria
+	 * @param limit    Limit of history
 	 * @return List of history of most failed test items
 	 */
-	List<MostFailedHistory> getMostFailedItemHistory(List<String> launchIds, String criteria, int historyLimit);
+	List<MostFailedHistory> getMostFailedItemHistory(Queryable filter, String criteria, int limit);
 
 	/**
 	 * Get status history of potential flaky items in specified launches.
 	 * Results contain only items that have at least one status' switch
 	 *
-	 * @param launchIds Launches to find
+	 * @param filter Filter
 	 * @return List of history of flaky test items
 	 */
-	List<FlakyHistory> getFlakyItemStatusHistory(List<String> launchIds);
+	List<FlakyHistory> getFlakyItemStatusHistory(Queryable filter);
 
 	/**
 	 * Whether some of provided items has logs
@@ -316,6 +316,6 @@ public interface TestItemRepositoryCustom extends StatisticsUpdatePolicy<TestIte
 	 * @param limit  Query limit
 	 * @return List of most time consuming test items
 	 */
-	List<DurationTestItem> findMostTimeConsumingTestItems(Filter filter, int limit);
+	List<DurationTestItem> findMostTimeConsumingTestItems(Queryable filter, int limit);
 
 }
