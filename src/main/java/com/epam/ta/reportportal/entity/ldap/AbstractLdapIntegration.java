@@ -48,7 +48,7 @@ public class AbstractLdapIntegration extends Integration {
 	@Column(name = "base_dn", length = 256)
 	private String baseDn;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "sync_attributes_id")
 	private SynchronizationAttributes synchronizationAttributes;
 

@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
 public class SynchronizationAttributes {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotEmpty(groups = { IfEnabled.class })
