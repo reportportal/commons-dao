@@ -3,20 +3,31 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -32,7 +43,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-	private static final long serialVersionUID = 676769097;
+    private static final long serialVersionUID = -581710348;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -108,6 +119,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     public final TableField<JLaunchRecord, JStatusEnum> STATUS = createField("status", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.JStatusEnum.class), this, "");
 
     /**
+     * The column <code>public.launch.email_sender_case_id</code>.
+     */
+    public final TableField<JLaunchRecord, Long> EMAIL_SENDER_CASE_ID = createField("email_sender_case_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
      * Create a <code>public.launch</code> table reference
      */
     public JLaunch() {
@@ -181,7 +197,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     @Override
     public List<ForeignKey<JLaunchRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLaunchRecord, ?>>asList(Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY);
+        return Arrays.<ForeignKey<JLaunchRecord, ?>>asList(Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY, Keys.LAUNCH__LAUNCH_EMAIL_SENDER_CASE_ID_FKEY);
     }
 
     /**

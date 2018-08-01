@@ -3,17 +3,28 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchTagRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +40,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunchTag extends TableImpl<JLaunchTagRecord> {
 
-	private static final long serialVersionUID = -1610849767;
+    private static final long serialVersionUID = -488947581;
 
     /**
      * The reference instance of <code>public.launch_tag</code>
@@ -53,6 +64,11 @@ public class JLaunchTag extends TableImpl<JLaunchTagRecord> {
      * The column <code>public.launch_tag.value</code>.
      */
     public final TableField<JLaunchTagRecord, String> VALUE = createField("value", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.launch_tag.email_sender_case_id</code>.
+     */
+    public final TableField<JLaunchTagRecord, Long> EMAIL_SENDER_CASE_ID = createField("email_sender_case_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.launch_tag.launch_id</code>.
@@ -133,7 +149,7 @@ public class JLaunchTag extends TableImpl<JLaunchTagRecord> {
      */
     @Override
     public List<ForeignKey<JLaunchTagRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLaunchTagRecord, ?>>asList(Keys.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY);
+        return Arrays.<ForeignKey<JLaunchTagRecord, ?>>asList(Keys.LAUNCH_TAG__LAUNCH_TAG_EMAIL_SENDER_CASE_ID_FKEY, Keys.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY);
     }
 
     /**

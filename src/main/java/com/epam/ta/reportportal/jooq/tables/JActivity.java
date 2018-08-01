@@ -3,6 +3,7 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -31,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-	private static final long serialVersionUID = 1398458462;
+    private static final long serialVersionUID = -1642915663;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -69,14 +70,18 @@ public class JActivity extends TableImpl<JActivityRecord> {
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
-	@java.lang.Deprecated
-	public final TableField<JActivityRecord, Object> DETAILS = createField(
-			"details", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+    @java.lang.Deprecated
+    public final TableField<JActivityRecord, Object> DETAILS = createField("details", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * The column <code>public.activity.creation_date</code>.
      */
     public final TableField<JActivityRecord, Timestamp> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.project_id</code>.
+     */
+    public final TableField<JActivityRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.activity</code> table reference
@@ -152,7 +157,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
      */
     @Override
     public List<ForeignKey<JActivityRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JActivityRecord, ?>>asList(Keys.ACTIVITY__ACTIVITY_USER_ID_FKEY);
+        return Arrays.<ForeignKey<JActivityRecord, ?>>asList(Keys.ACTIVITY__ACTIVITY_USER_ID_FKEY, Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FK);
     }
 
     /**

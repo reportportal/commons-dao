@@ -3,17 +3,27 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectEmailConfigurationRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +39,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProjectEmailConfiguration extends TableImpl<JProjectEmailConfigurationRecord> {
 
-	private static final long serialVersionUID = 1028480525;
+    private static final long serialVersionUID = 624024119;
 
     /**
      * The reference instance of <code>public.project_email_configuration</code>
@@ -55,9 +65,9 @@ public class JProjectEmailConfiguration extends TableImpl<JProjectEmailConfigura
     public final TableField<JProjectEmailConfigurationRecord, Boolean> ENABLED = createField("enabled", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
-     * The column <code>public.project_email_configuration.recipients</code>.
+     * The column <code>public.project_email_configuration.email_from</code>.
      */
-    public final TableField<JProjectEmailConfigurationRecord, String[]> RECIPIENTS = createField("recipients", org.jooq.impl.SQLDataType.VARCHAR.getArrayDataType(), this, "");
+    public final TableField<JProjectEmailConfigurationRecord, String> EMAIL_FROM = createField("email_from", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
 
     /**
      * Create a <code>public.project_email_configuration</code> table reference

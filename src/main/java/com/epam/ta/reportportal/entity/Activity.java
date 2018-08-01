@@ -28,6 +28,9 @@ public class Activity {
 	@Column(name = "user_id", nullable = false, precision = 32)
 	private Long userId;
 
+	@Column(name = "project_id", nullable = false)
+	private Long projectId;
+
 	@Column(name = "entity", unique = true, nullable = false)
 	@Type(type = "pqsql_enum")
 	private Entity entity;
@@ -56,6 +59,14 @@ public class Activity {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
 	}
 
 	public Entity getEntity() {

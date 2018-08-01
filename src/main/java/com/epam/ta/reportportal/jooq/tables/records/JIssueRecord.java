@@ -3,14 +3,16 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JIssue;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements Record5<Long, Long, String, Boolean, Boolean> {
 
-	private static final long serialVersionUID = 912542271;
+    private static final long serialVersionUID = 912542271;
 
     /**
      * Setter for <code>public.issue.issue_id</code>.
@@ -45,16 +47,16 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
     /**
      * Setter for <code>public.issue.issue_type</code>.
      */
-	public void setIssueType(Long value) {
-		set(1, value);
-	}
+    public void setIssueType(Long value) {
+        set(1, value);
+    }
 
     /**
      * Getter for <code>public.issue.issue_type</code>.
      */
-	public Long getIssueType() {
-		return (Long) get(1);
-	}
+    public Long getIssueType() {
+        return (Long) get(1);
+    }
 
     /**
      * Setter for <code>public.issue.issue_description</code>.
@@ -118,17 +120,17 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
      * {@inheritDoc}
      */
     @Override
-	public Row5<Long, Long, String, Boolean, Boolean> fieldsRow() {
-		return (Row5) super.fieldsRow();
-	}
+    public Row5<Long, Long, String, Boolean, Boolean> fieldsRow() {
+        return (Row5) super.fieldsRow();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Row5<Long, Long, String, Boolean, Boolean> valuesRow() {
-		return (Row5) super.valuesRow();
-	}
+    public Row5<Long, Long, String, Boolean, Boolean> valuesRow() {
+        return (Row5) super.valuesRow();
+    }
 
     /**
      * {@inheritDoc}
@@ -142,9 +144,9 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
      * {@inheritDoc}
      */
     @Override
-	public Field<Long> field2() {
-		return JIssue.ISSUE.ISSUE_TYPE;
-	}
+    public Field<Long> field2() {
+        return JIssue.ISSUE.ISSUE_TYPE;
+    }
 
     /**
      * {@inheritDoc}
@@ -182,9 +184,9 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
      * {@inheritDoc}
      */
     @Override
-	public Long component2() {
-		return getIssueType();
-	}
+    public Long component2() {
+        return getIssueType();
+    }
 
     /**
      * {@inheritDoc}
@@ -222,9 +224,9 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
      * {@inheritDoc}
      */
     @Override
-	public Long value2() {
-		return getIssueType();
-	}
+    public Long value2() {
+        return getIssueType();
+    }
 
     /**
      * {@inheritDoc}
@@ -263,10 +265,10 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
      * {@inheritDoc}
      */
     @Override
-	public JIssueRecord value2(Long value) {
-		setIssueType(value);
-		return this;
-	}
+    public JIssueRecord value2(Long value) {
+        setIssueType(value);
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -299,14 +301,14 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
      * {@inheritDoc}
      */
     @Override
-	public JIssueRecord values(Long value1, Long value2, String value3, Boolean value4, Boolean value5) {
-		value1(value1);
-		value2(value2);
-		value3(value3);
-		value4(value4);
-		value5(value5);
-		return this;
-	}
+    public JIssueRecord values(Long value1, Long value2, String value3, Boolean value4, Boolean value5) {
+        value1(value1);
+        value2(value2);
+        value3(value3);
+        value4(value4);
+        value5(value5);
+        return this;
+    }
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -322,8 +324,8 @@ public class JIssueRecord extends UpdatableRecordImpl<JIssueRecord> implements R
     /**
      * Create a detached, initialised JIssueRecord
      */
-	public JIssueRecord(Long issueId, Long issueType, String issueDescription, Boolean autoAnalyzed, Boolean ignoreAnalyzer) {
-		super(JIssue.ISSUE);
+    public JIssueRecord(Long issueId, Long issueType, String issueDescription, Boolean autoAnalyzed, Boolean ignoreAnalyzer) {
+        super(JIssue.ISSUE);
 
         set(0, issueId);
         set(1, issueType);

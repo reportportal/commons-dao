@@ -3,14 +3,16 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Row4;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,21 +28,21 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStructureRecord> implements Record4<Long, Long, Long, Long> {
 
-	private static final long serialVersionUID = 1687203660;
+    private static final long serialVersionUID = 1687203660;
 
     /**
-	 * Setter for <code>public.test_item_structure.structure_id</code>.
-	 */
-	public void setStructureId(Long value) {
-		set(0, value);
-	}
+     * Setter for <code>public.test_item_structure.structure_id</code>.
+     */
+    public void setStructureId(Long value) {
+        set(0, value);
+    }
 
     /**
-	 * Getter for <code>public.test_item_structure.structure_id</code>.
-	 */
-	public Long getStructureId() {
-		return (Long) get(0);
-	}
+     * Getter for <code>public.test_item_structure.structure_id</code>.
+     */
+    public Long getStructureId() {
+        return (Long) get(0);
+    }
 
     /**
      * Setter for <code>public.test_item_structure.parent_id</code>.
@@ -70,19 +72,19 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
         return (Long) get(2);
     }
 
-	/**
-	 * Setter for <code>public.test_item_structure.launch_id</code>.
-	 */
-	public void setLaunchId(Long value) {
-		set(3, value);
-	}
+    /**
+     * Setter for <code>public.test_item_structure.launch_id</code>.
+     */
+    public void setLaunchId(Long value) {
+        set(3, value);
+    }
 
-	/**
-	 * Getter for <code>public.test_item_structure.launch_id</code>.
-	 */
-	public Long getLaunchId() {
-		return (Long) get(3);
-	}
+    /**
+     * Getter for <code>public.test_item_structure.launch_id</code>.
+     */
+    public Long getLaunchId() {
+        return (Long) get(3);
+    }
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -97,32 +99,32 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
     }
 
     // -------------------------------------------------------------------------
-	// Record4 type implementation
-	// -------------------------------------------------------------------------
+    // Record4 type implementation
+    // -------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Row4<Long, Long, Long, Long> fieldsRow() {
-		return (Row4) super.fieldsRow();
-	}
+    public Row4<Long, Long, Long, Long> fieldsRow() {
+        return (Row4) super.fieldsRow();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Row4<Long, Long, Long, Long> valuesRow() {
-		return (Row4) super.valuesRow();
-	}
+    public Row4<Long, Long, Long, Long> valuesRow() {
+        return (Row4) super.valuesRow();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Field<Long> field1() {
-		return JTestItemStructure.TEST_ITEM_STRUCTURE.STRUCTURE_ID;
-	}
+        return JTestItemStructure.TEST_ITEM_STRUCTURE.STRUCTURE_ID;
+    }
 
     /**
      * {@inheritDoc}
@@ -140,21 +142,21 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
         return JTestItemStructure.TEST_ITEM_STRUCTURE.RETRY_OF;
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Field<Long> field4() {
-		return JTestItemStructure.TEST_ITEM_STRUCTURE.LAUNCH_ID;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Field<Long> field4() {
+        return JTestItemStructure.TEST_ITEM_STRUCTURE.LAUNCH_ID;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Long component1() {
-		return getStructureId();
-	}
+        return getStructureId();
+    }
 
     /**
      * {@inheritDoc}
@@ -172,21 +174,21 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
         return getRetryOf();
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Long component4() {
-		return getLaunchId();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long component4() {
+        return getLaunchId();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Long value1() {
-		return getStructureId();
-	}
+        return getStructureId();
+    }
 
     /**
      * {@inheritDoc}
@@ -204,22 +206,22 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
         return getRetryOf();
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Long value4() {
-		return getLaunchId();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long value4() {
+        return getLaunchId();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public JTestItemStructureRecord value1(Long value) {
-		setStructureId(value);
-		return this;
-	}
+        setStructureId(value);
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -243,22 +245,22 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
      * {@inheritDoc}
      */
     @Override
-	public JTestItemStructureRecord value4(Long value) {
-		setLaunchId(value);
-		return this;
-	}
+    public JTestItemStructureRecord value4(Long value) {
+        setLaunchId(value);
+        return this;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public JTestItemStructureRecord values(Long value1, Long value2, Long value3, Long value4) {
-		value1(value1);
-		value2(value2);
-		value3(value3);
-		value4(value4);
-		return this;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JTestItemStructureRecord values(Long value1, Long value2, Long value3, Long value4) {
+        value1(value1);
+        value2(value2);
+        value3(value3);
+        value4(value4);
+        return this;
+    }
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -274,12 +276,12 @@ public class JTestItemStructureRecord extends UpdatableRecordImpl<JTestItemStruc
     /**
      * Create a detached, initialised JTestItemStructureRecord
      */
-	public JTestItemStructureRecord(Long structureId, Long parentId, Long retryOf, Long launchId) {
-		super(JTestItemStructure.TEST_ITEM_STRUCTURE);
+    public JTestItemStructureRecord(Long structureId, Long parentId, Long retryOf, Long launchId) {
+        super(JTestItemStructure.TEST_ITEM_STRUCTURE);
 
-		set(0, structureId);
-		set(1, parentId);
-		set(2, retryOf);
-		set(3, launchId);
-	}
+        set(0, structureId);
+        set(1, parentId);
+        set(2, retryOf);
+        set(3, launchId);
+    }
 }

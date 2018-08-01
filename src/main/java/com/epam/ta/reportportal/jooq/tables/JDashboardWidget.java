@@ -3,17 +3,27 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JDashboardWidgetRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +39,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
 
-	private static final long serialVersionUID = -1332083387;
+    private static final long serialVersionUID = -1332083387;
 
     /**
      * The reference instance of <code>public.dashboard_widget</code>
@@ -60,16 +70,14 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
     public final TableField<JDashboardWidgetRecord, String> WIDGET_NAME = createField("widget_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-	 * The column <code>public.dashboard_widget.widget_width</code>.
-	 */
-	public final TableField<JDashboardWidgetRecord, Integer> WIDGET_WIDTH = createField(
-			"widget_width", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+     * The column <code>public.dashboard_widget.widget_width</code>.
+     */
+    public final TableField<JDashboardWidgetRecord, Integer> WIDGET_WIDTH = createField("widget_width", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-	 * The column <code>public.dashboard_widget.widget_height</code>.
-	 */
-	public final TableField<JDashboardWidgetRecord, Integer> WIDGET_HEIGHT = createField(
-			"widget_height", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+     * The column <code>public.dashboard_widget.widget_height</code>.
+     */
+    public final TableField<JDashboardWidgetRecord, Integer> WIDGET_HEIGHT = createField("widget_height", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * The column <code>public.dashboard_widget.widget_position_x</code>.

@@ -3,13 +3,15 @@
 */
 package com.epam.ta.reportportal.jooq;
 
-import org.jooq.Schema;
-import org.jooq.impl.CatalogImpl;
 
-import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Schema;
+import org.jooq.impl.CatalogImpl;
 
 
 /**
@@ -25,7 +27,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-	private static final long serialVersionUID = -344073902;
+    private static final long serialVersionUID = -344073902;
 
     /**
      * The reference instance of <code></code>
