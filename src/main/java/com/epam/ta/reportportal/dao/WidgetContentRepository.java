@@ -53,7 +53,7 @@ public interface WidgetContentRepository {
 	Map<Integer, Map<String, Integer>> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
 
 	Map<Integer, Map<String, Double>> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
-			Long... launchNumbers);
+			Long... launchIds);
 
 	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields);
 

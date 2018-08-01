@@ -308,9 +308,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public Map<Integer, Map<String, Double>> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
-			Long... launchNumbers) {
+			Long... launchIds) {
 
-		List<Long> launchNumbersList = Arrays.stream(launchNumbers).collect(Collectors.toList());
+		List<Long> launchIdList = Arrays.stream(launchIds).collect(Collectors.toList());
 
 		List<ComparisonStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -328,7 +328,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.join(ISSUE_GROUP)
 				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.and(LAUNCH.NUMBER.in(launchNumbersList))
+				.and(LAUNCH.ID.in(launchIdList))
 				.and(ISSUE_GROUP.ISSUE_GROUP_.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
 				.groupBy(LAUNCH.NUMBER, ISSUE_GROUP.ISSUE_GROUP_)
 				.unionAll(dsl.select(LAUNCH.NUMBER.as("launchNumber"),
@@ -341,7 +341,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.from(LAUNCH)
 						.join(EXECUTION_STATISTICS)
 						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-						.and(LAUNCH.NUMBER.in(launchNumbersList))
+						.and(LAUNCH.ID.in(launchIdList))
 						.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
 						.groupBy(LAUNCH.NUMBER, EXECUTION_STATISTICS.ES_STATUS))
