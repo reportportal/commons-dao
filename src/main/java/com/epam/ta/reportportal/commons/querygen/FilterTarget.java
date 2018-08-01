@@ -17,18 +17,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.DESCRIPTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.ES_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder(LaunchCriteriaConstant.DESCRIPTION, "l.description", String.class, false),
-			new CriteriaHolder(LaunchCriteriaConstant.PROJECT_ID, "l.project_id", Long.class, false),
-			new CriteriaHolder(LaunchCriteriaConstant.STATUS,"l.status", StatusEnum.class, false),
-			new CriteriaHolder(LaunchCriteriaConstant.NAME, "l.name", String.class, false),
-			new CriteriaHolder(LaunchCriteriaConstant.PROJECT, "p.name", String.class, false),
-			new CriteriaHolder(LaunchCriteriaConstant.ES_STATUS, "es.es_status", String.class, false)
+			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
+			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
+			new CriteriaHolder(STATUS,"l.status", StatusEnum.class, false),
+			new CriteriaHolder(NAME, "l.name", String.class, false),
+			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
+			new CriteriaHolder(ES_STATUS, "es.es_status", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -81,7 +87,7 @@ public enum FilterTarget {
 		}
 	},
 
-	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(TestItemCriteriaConstant.NAME, "ti.name", String.class, false))) {
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			return DSL.select()
@@ -106,8 +112,8 @@ public enum FilterTarget {
 
 	INTEGRATION(Integration.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder(IntegrationCriteriaConstant.PROJECT, "p.name", String.class, false),
-			new CriteriaHolder(IntegrationCriteriaConstant.TYPE, "it.name", String.class, false)
+			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
+			new CriteriaHolder(TYPE, "it.name", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -128,7 +134,7 @@ public enum FilterTarget {
 
 	PROJECT(Project.class, Arrays.asList(
 
-			new CriteriaHolder(ProjectCriteriaConstant.NAME, "p.name", String.class, false))) {
+			new CriteriaHolder(NAME, "p.name", String.class, false))) {
 		public SelectQuery<? extends Record> getQuery() {
 			JProject p = JProject.PROJECT.as("p");
 
@@ -138,7 +144,6 @@ public enum FilterTarget {
 	},
 
 	LOG(Log.class, Arrays.asList(
-
 			new CriteriaHolder(LogCriteriaConstant.LOG_MESSAGE, "l.log_message", String.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {

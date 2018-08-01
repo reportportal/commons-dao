@@ -24,9 +24,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public class LaunchCriteriaConstant {
 	public static final String DESCRIPTION = "description";
-	public static final String PROJECT_ID = "project_id";
 	public static final String STATUS = "status";
-	public static final String NAME = "name";
-	public static final String PROJECT = "project";
 	public static final String ES_STATUS = "es_status";
 }
