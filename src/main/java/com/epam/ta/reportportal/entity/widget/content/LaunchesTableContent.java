@@ -12,22 +12,19 @@ import java.util.Map;
  * @author Ivan Budayeu
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LaunchesTableContent implements Serializable {
-
-	@JsonProperty(value = "launch_id")
-	private Long launchId;
+public class LaunchesTableContent extends AbstractLaunchStatisticsContent implements Serializable {
 
 	@JsonIgnore
 	private int issueCount;
 
-	private Integer number;
-
 	@JsonIgnore
 	private String issueName;
 
-	private String name;
-
+	@JsonProperty(value = "status")
 	private String status;
+
+	@JsonProperty(value = "end_time")
+	private Timestamp endTime;
 
 	@JsonProperty(value = "last_modified")
 	private Timestamp lastModified;
@@ -38,43 +35,11 @@ public class LaunchesTableContent implements Serializable {
 	public LaunchesTableContent() {
 	}
 
-	public Integer getNumber() {
-		return number;
-	}
-
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Timestamp getLastModified() {
-		return lastModified;
-	}
-
-	public void setLastModified(Timestamp lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	public Integer getIssueCount() {
+	public int getIssueCount() {
 		return issueCount;
 	}
 
-	public void setIssueCount(Integer issueCount) {
+	public void setIssueCount(int issueCount) {
 		this.issueCount = issueCount;
 	}
 
@@ -86,8 +51,28 @@ public class LaunchesTableContent implements Serializable {
 		this.issueName = issueName;
 	}
 
-	public void setIssueCount(int issueCount) {
-		this.issueCount = issueCount;
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Timestamp getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Timestamp endTime) {
+		this.endTime = endTime;
+	}
+
+	public Timestamp getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(Timestamp lastModified) {
+		this.lastModified = lastModified;
 	}
 
 	public Map<String, Integer> getIssueStatisticsMap() {
@@ -96,13 +81,5 @@ public class LaunchesTableContent implements Serializable {
 
 	public void setIssueStatisticsMap(Map<String, Integer> issueStatisticsMap) {
 		this.issueStatisticsMap = issueStatisticsMap;
-	}
-
-	public Long getLaunchId() {
-		return launchId;
-	}
-
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
 	}
 }

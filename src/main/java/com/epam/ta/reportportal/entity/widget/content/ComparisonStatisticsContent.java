@@ -1,25 +1,34 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Ivan Budayeu
  */
-public class ComparisonStatisticsContent implements Serializable {
+public class ComparisonStatisticsContent extends AbstractLaunchStatisticsContent implements Serializable {
 
-	private Integer launchNumber;
-	private String issueName;
+	@JsonIgnore
 	private Double issuePercentage;
+
+	@JsonIgnore
+	private String issueName;
+
+	@JsonProperty(value = "statistics")
+	private Map<String, Double> statistics;
 
 	public ComparisonStatisticsContent() {
 	}
 
-	public Integer getLaunchNumber() {
-		return launchNumber;
+	public Double getIssuePercentage() {
+		return issuePercentage;
 	}
 
-	public void setLaunchNumber(Integer launchNumber) {
-		this.launchNumber = launchNumber;
+	public void setIssuePercentage(Double issuePercentage) {
+		this.issuePercentage = issuePercentage;
 	}
 
 	public String getIssueName() {
@@ -30,11 +39,11 @@ public class ComparisonStatisticsContent implements Serializable {
 		this.issueName = issueName;
 	}
 
-	public Double getIssuePercentage() {
-		return issuePercentage;
+	public Map<String, Double> getStatistics() {
+		return statistics;
 	}
 
-	public void setIssuePercentage(Double issuePercentage) {
-		this.issuePercentage = issuePercentage;
+	public void setStatistics(Map<String, Double> statistics) {
+		this.statistics = statistics;
 	}
 }

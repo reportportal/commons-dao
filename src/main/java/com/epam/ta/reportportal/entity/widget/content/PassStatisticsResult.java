@@ -1,5 +1,7 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
@@ -7,7 +9,10 @@ import java.io.Serializable;
  */
 public class PassStatisticsResult implements Serializable {
 
+	@JsonProperty(value = "passed")
 	private int passed;
+
+	@JsonProperty(value = "total")
 	private int total;
 
 	public PassStatisticsResult() {

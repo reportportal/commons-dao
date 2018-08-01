@@ -1,25 +1,21 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
  * @author Ivan Budayeu
  */
-public class LaunchStatisticsContent implements Serializable {
+public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent implements Serializable {
 
-	private Integer launchNumber;
-	private String issueName;
+	@JsonIgnore
 	private Integer issueCount;
 
+	@JsonIgnore
+	private String issueName;
+
 	public LaunchStatisticsContent() {
-	}
-
-	public Integer getLaunchNumber() {
-		return launchNumber;
-	}
-
-	public void setLaunchNumber(Integer launchNumber) {
-		this.launchNumber = launchNumber;
 	}
 
 	public String getIssueName() {

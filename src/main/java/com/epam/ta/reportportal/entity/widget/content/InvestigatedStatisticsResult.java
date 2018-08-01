@@ -1,28 +1,21 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * @author Ivan Budayeu
  */
-public class InvestigatedStatisticsResult implements Serializable {
+public class InvestigatedStatisticsResult extends AbstractLaunchStatisticsContent implements Serializable {
 
-	private Integer launchNumber;
+	@JsonProperty(value = "to_investigate")
 	private double notInvestigatedPercentage;
+
+	@JsonProperty(value = "investigated")
 	private double investigatedPercentage;
-	private String name;
-	private Timestamp startTime;
 
 	public InvestigatedStatisticsResult() {
-	}
-
-	public Integer getLaunchNumber() {
-		return launchNumber;
-	}
-
-	public void setLaunchNumber(Integer launchNumber) {
-		this.launchNumber = launchNumber;
 	}
 
 	public double getNotInvestigatedPercentage() {
@@ -39,21 +32,5 @@ public class InvestigatedStatisticsResult implements Serializable {
 
 	public void setInvestigatedPercentage(double investigatedPercentage) {
 		this.investigatedPercentage = investigatedPercentage;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Timestamp getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
 	}
 }

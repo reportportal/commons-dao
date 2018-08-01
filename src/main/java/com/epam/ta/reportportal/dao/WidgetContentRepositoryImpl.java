@@ -21,11 +21,14 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static org.jooq.impl.DSL.*;
 
 /**
@@ -47,8 +50,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
 					.distinctOn(field(name(LAUNCHES, "launch_name")).cast(String.class))
 					.from(name(LAUNCHES))
-					.orderBy(
-							field(name(LAUNCHES, "launch_name")).cast(String.class),
+					.orderBy(field(name(LAUNCHES, "launch_name")).cast(String.class),
 							field(name(LAUNCHES, "number")).cast(Integer.class).desc()
 					);
 		} else {
@@ -179,7 +181,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(LaunchStatisticsContent.class);
 
 		return launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchNumber,
+				.collect(Collectors.groupingBy(LaunchStatisticsContent::getNumber,
 						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
 								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
 						)
@@ -298,7 +300,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(LaunchStatisticsContent.class);
 
 		return launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchNumber,
+				.collect(Collectors.groupingBy(LaunchStatisticsContent::getNumber,
 						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
 								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
 						)
@@ -307,14 +309,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<Integer, Map<String, Double>> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
+	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
 			Long... launchIds) {
 
 		List<Long> launchIdList = Arrays.stream(launchIds).collect(Collectors.toList());
 
-		List<ComparisonStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
+		List<ComparisonStatisticsContent> comparisonStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NUMBER.as("launchNumber"),
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NAME.as("name"),
+						LAUNCH.START_TIME.as("startTime"),
+						LAUNCH.NUMBER.as("number"),
 						ISSUE_GROUP.ISSUE_GROUP_.cast(String.class).as("issueName"),
 						(sum(ISSUE_STATISTICS.IS_COUNTER)).cast(Double.class)
 								.div(sum(sum(ISSUE_STATISTICS.IS_COUNTER)).over().partitionBy(LAUNCH.NUMBER))
@@ -330,8 +335,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
 				.and(LAUNCH.ID.in(launchIdList))
 				.and(ISSUE_GROUP.ISSUE_GROUP_.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-				.groupBy(LAUNCH.NUMBER, ISSUE_GROUP.ISSUE_GROUP_)
-				.unionAll(dsl.select(LAUNCH.NUMBER.as("launchNumber"),
+				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, ISSUE_GROUP.ISSUE_GROUP_)
+				.unionAll(dsl.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NAME.as("name"),
+						LAUNCH.START_TIME.as("startTime"),
+						LAUNCH.NUMBER.as("number"),
 						EXECUTION_STATISTICS.ES_STATUS.as("issueName"),
 						(sum(EXECUTION_STATISTICS.ES_COUNTER)).cast(Double.class)
 								.div(sum(sum(EXECUTION_STATISTICS.ES_COUNTER)).over().partitionBy(LAUNCH.NUMBER))
@@ -344,14 +352,27 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(LAUNCH.ID.in(launchIdList))
 						.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
-						.groupBy(LAUNCH.NUMBER, EXECUTION_STATISTICS.ES_STATUS))
+						.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, EXECUTION_STATISTICS.ES_STATUS))
 				.fetchInto(ComparisonStatisticsContent.class);
 
-		return launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(ComparisonStatisticsContent::getLaunchNumber, Collectors.groupingBy(
-						ComparisonStatisticsContent::getIssueName,
-						Collectors.summingDouble(ComparisonStatisticsContent::getIssuePercentage)
-				)));
+		Map<Long, Map<String, Double>> issuesMap = comparisonStatisticsContents.stream()
+				.collect(Collectors.groupingBy(ComparisonStatisticsContent::getLaunchId,
+						Collectors.groupingBy(ComparisonStatisticsContent::getIssueName,
+								Collectors.summingDouble(ComparisonStatisticsContent::getIssuePercentage)
+						)
+				));
+
+		List<ComparisonStatisticsContent> resultComparisonStatisticsContent = new ArrayList<>(issuesMap.size());
+
+		issuesMap.forEach((key, value) -> comparisonStatisticsContents.stream()
+				.filter(content -> Objects.equals(key, content.getLaunchId()))
+				.findFirst()
+				.ifPresent(content -> {
+					content.setStatistics(value);
+					resultComparisonStatisticsContent.add(content);
+				}));
+
+		return resultComparisonStatisticsContent;
 	}
 
 	@Override
@@ -398,24 +419,41 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields,
 			List<String> tableColumns) {
 
-		Set<Field<?>> selectFields = buildColumnsSelect(tableColumns,
+		Set<Field<?>> commonSelectFields = buildColumnsSelect(tableColumns);
+		Set<Field<?>> executionsSelectFields = new LinkedHashSet<>(commonSelectFields);
+
+		Set<Field<?>> issuesSelectFields = fillWithCustomFields(commonSelectFields,
 				LAUNCH.ID.as("launchId"),
-				LAUNCH.STATUS.as("status"),
 				ISSUE_TYPE.LOCATOR.as("issueName"),
 				ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
 		);
 
+		executionsSelectFields = fillWithCustomFields(executionsSelectFields,
+				LAUNCH.ID.as("launchId"),
+				EXECUTION_STATISTICS.ES_STATUS.as("issueName"),
+				EXECUTION_STATISTICS.ES_COUNTER.as("issueCount")
+		);
+
 		List<LaunchesTableContent> launchesTableContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(selectFields)
+				.select(issuesSelectFields)
 				.from(LAUNCH)
 				.leftJoin(ISSUE_STATISTICS)
 				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
 				.leftJoin(ISSUE_TYPE)
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-				.groupBy(selectFields)
+				.groupBy(issuesSelectFields)
 				.orderBy(LAUNCH.ID)
+				.unionAll(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select(executionsSelectFields)
+						.from(LAUNCH)
+						.leftJoin(EXECUTION_STATISTICS)
+						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
+						.where(EXECUTION_STATISTICS.ES_STATUS.in(contentFields.get(EXECUTIONS_KEY)))
+						.groupBy(executionsSelectFields)
+						.orderBy(LAUNCH.ID))
 				.fetchInto(LaunchesTableContent.class);
 
 		Map<Long, Map<String, Integer>> issuesMap = launchesTableContents.stream()
@@ -439,10 +477,29 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	}
 
-	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns, Field<?>... selectFields) {
+	@Override
+	public List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login) {
+		return dsl.select(ACTIVITY.ID.as("activityId"),
+				ACTIVITY.ACTION.as("actionType"),
+				ACTIVITY.ENTITY.as("entity"),
+				ACTIVITY.CREATION_DATE.as("lastModified"),
+				USERS.LOGIN.as("userLogin"),
+				PROJECT.ID.as("projectId"),
+				PROJECT.NAME.as("projectName")
+		)
+				.from(ACTIVITY)
+				.leftJoin(USERS)
+				.on(ACTIVITY.USER_ID.eq(USERS.ID))
+				.leftJoin(PROJECT)
+				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+				.where(USERS.LOGIN.eq(login))
+				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
+				.fetchInto(ActivityContent.class);
+	}
 
-		Set<Field<?>> resultSelectFields = new HashSet<>();
-		Collections.addAll(resultSelectFields, selectFields);
+	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {
+
+		Set<Field<?>> resultSelectFields = new LinkedHashSet<>(tableColumns.size());
 
 		tableColumns.forEach(columnName -> {
 			Optional<Field<?>> selectField = Optional.ofNullable(LAUNCH.field(columnName)
@@ -451,5 +508,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		});
 
 		return resultSelectFields;
+	}
+
+	private Set<Field<?>> fillWithCustomFields(Set<Field<?>> fieldSet, Field<?>... fields) {
+		fieldSet.addAll(Arrays.stream(fields).collect(Collectors.toSet()));
+		return fieldSet;
 	}
 }

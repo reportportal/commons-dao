@@ -52,7 +52,7 @@ public interface WidgetContentRepository {
 
 	Map<Integer, Map<String, Integer>> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
 
-	Map<Integer, Map<String, Double>> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
+	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
 			Long... launchIds);
 
 	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields);
@@ -60,4 +60,6 @@ public interface WidgetContentRepository {
 	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields);
 
 	List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, List<String> tableColumns);
+
+	List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login);
 }

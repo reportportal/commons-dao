@@ -1,29 +1,21 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * @author Ivan Budayeu
  */
-public class CasesTrendContent implements Serializable {
+public class CasesTrendContent extends AbstractLaunchStatisticsContent implements Serializable {
 
-	private String launchId;
-	private String launchName;
-	private Integer launchNumber;
-	private Timestamp startTime;
+	@JsonProperty(value = "delta")
 	private int delta;
+
+	@JsonProperty(value = "total")
 	private int total;
 
 	public CasesTrendContent() {
-	}
-
-	public Integer getLaunchNumber() {
-		return launchNumber;
-	}
-
-	public void setLaunchNumber(Integer launchNumber) {
-		this.launchNumber = launchNumber;
 	}
 
 	public int getDelta() {
@@ -40,29 +32,5 @@ public class CasesTrendContent implements Serializable {
 
 	public void setTotal(int total) {
 		this.total = total;
-	}
-
-	public Timestamp getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
-	}
-
-	public String getLaunchId() {
-		return launchId;
-	}
-
-	public void setLaunchId(String launchId) {
-		this.launchId = launchId;
-	}
-
-	public String getLaunchName() {
-		return launchName;
-	}
-
-	public void setLaunchName(String launchName) {
-		this.launchName = launchName;
 	}
 }

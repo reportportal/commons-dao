@@ -1,35 +1,23 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * @author Ivan Budayeu
  */
-public class LaunchesDurationContent implements Serializable {
+public class LaunchesDurationContent extends AbstractLaunchStatisticsContent implements Serializable {
 
-	private Integer number;
-	private String name;
+	@JsonProperty(value = "status")
 	private String status;
-	private Timestamp startTime;
+
+	@JsonProperty(value = "end_time")
 	private Timestamp endTime;
+
+	@JsonProperty(value = "duration")
 	private long duration;
-
-	public Integer getNumber() {
-		return number;
-	}
-
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getStatus() {
 		return status;
@@ -37,14 +25,6 @@ public class LaunchesDurationContent implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Timestamp getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
 	}
 
 	public Timestamp getEndTime() {
