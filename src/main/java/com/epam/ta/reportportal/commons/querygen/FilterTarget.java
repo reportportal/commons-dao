@@ -18,10 +18,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.ES_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.DESCRIPTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 public enum FilterTarget {
