@@ -9,7 +9,6 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -22,9 +21,7 @@ import java.util.Optional;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.DESCRIPTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.ES_STATUS;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 public enum FilterTarget {
@@ -33,7 +30,8 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
-			new CriteriaHolder(STATUS,"l.status", StatusEnum.class, false),
+			new CriteriaHolder(STATUS, "l.status", StatusEnum.class, false),
+			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(NAME, "l.name", String.class, false),
 			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
 			new CriteriaHolder(ES_STATUS, "es.es_status", String.class, false)
@@ -146,8 +144,7 @@ public enum FilterTarget {
 		}
 	},
 
-	LOG(Log.class, Arrays.asList(
-			new CriteriaHolder(LogCriteriaConstant.LOG_MESSAGE, "l.log_message", String.class, false))) {
+	LOG(Log.class, Arrays.asList(new CriteriaHolder(LogCriteriaConstant.LOG_MESSAGE, "l.log_message", String.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			JLog l = JLog.LOG.as("l");

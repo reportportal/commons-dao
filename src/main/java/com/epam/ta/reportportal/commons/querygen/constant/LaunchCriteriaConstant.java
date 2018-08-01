@@ -26,4 +26,5 @@ public class LaunchCriteriaConstant {
 	public static final String DESCRIPTION = "description";
 	public static final String STATUS = "status";
 	public static final String ES_STATUS = "es_status";
+	public static final String MODE = "mode";
 }
