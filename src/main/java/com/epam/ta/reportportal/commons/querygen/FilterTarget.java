@@ -23,6 +23,7 @@ public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
+			new CriteriaHolder("id", "l.id", Long.class, false),
 			new CriteriaHolder("description", "l.description", String.class, false),
 			new CriteriaHolder("project_id", "l.project_id", Long.class, false),
 			new CriteriaHolder("status", "l.status", JStatusEnum.class, false),
