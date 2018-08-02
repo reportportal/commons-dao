@@ -555,8 +555,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login,
-			List<String> activityTypes) {
+	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes) {
 
 		Select commonSelect = dsl.select(field(name("activities", "id")).cast(Long.class)).from(name("activities"));
 
