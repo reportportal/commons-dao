@@ -242,8 +242,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
-
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
@@ -259,7 +257,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 						.orElseGet(Collections::emptyList)))
 				.and(LAUNCH.NUMBER.eq(launch.getNumber().intValue()))
-				.and(LAUNCH.ID.in(commonSelect))
+				.and(LAUNCH.ID.eq(launch.getId()))
 				.groupBy(LAUNCH.NAME)
 				.fetchInto(PassStatisticsResult.class)
 				.stream()
