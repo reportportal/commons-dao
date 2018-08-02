@@ -40,7 +40,7 @@ public interface WidgetContentRepository {
 	 */
 	List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria, int limit);
 
-	Map<Integer, Map<String, Integer>> launchStatistics(Filter filter, Map<String, List<String>> contentFields);
+	List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields);
 
 	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Map<String, List<String>> contentFields);
 
@@ -50,7 +50,7 @@ public interface WidgetContentRepository {
 
 	List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
 
-	Map<Integer, Map<String, Integer>> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
+	List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
 
 	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
 			Long... launchIds);

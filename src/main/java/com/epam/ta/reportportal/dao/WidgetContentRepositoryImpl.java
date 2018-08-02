@@ -157,7 +157,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<Integer, Map<String, Integer>> launchStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -193,13 +193,24 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.STATUS, ISSUE_STATISTICS.IS_COUNTER))
 				.fetchInto(LaunchStatisticsContent.class);
 
-		return launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getNumber,
+		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
 						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
 								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
 						)
 				));
 
+		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
+
+		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+				.filter(content -> Objects.equals(key, content.getLaunchId()))
+				.findFirst()
+				.ifPresent(content -> {
+					content.setIssuesMap(value);
+					resultLaunchStatisticsContents.add(content);
+				}));
+
+		return resultLaunchStatisticsContents;
 	}
 
 	@Override
@@ -312,7 +323,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<Integer, Map<String, Integer>> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -336,12 +347,24 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.fetchInto(LaunchStatisticsContent.class);
 
-		return launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getNumber,
+		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
 						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
 								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
 						)
 				));
+
+		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
+
+		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+				.filter(content -> Objects.equals(key, content.getLaunchId()))
+				.findFirst()
+				.ifPresent(content -> {
+					content.setIssuesMap(value);
+					resultLaunchStatisticsContents.add(content);
+				}));
+
+		return resultLaunchStatisticsContents;
 
 	}
 

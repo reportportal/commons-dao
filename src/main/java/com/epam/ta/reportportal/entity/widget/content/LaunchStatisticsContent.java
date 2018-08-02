@@ -1,19 +1,23 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Ivan Budayeu
  */
-public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent implements Serializable {
+public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	@JsonIgnore
 	private Integer issueCount;
 
 	@JsonIgnore
 	private String issueName;
+
+	@JsonProperty(value = "statistics")
+	private Map<String, Integer> issuesMap;
 
 	public LaunchStatisticsContent() {
 	}
@@ -34,4 +38,11 @@ public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent imp
 		this.issueCount = issueCount;
 	}
 
+	public Map<String, Integer> getIssuesMap() {
+		return issuesMap;
+	}
+
+	public void setIssuesMap(Map<String, Integer> issuesMap) {
+		this.issuesMap = issuesMap;
+	}
 }

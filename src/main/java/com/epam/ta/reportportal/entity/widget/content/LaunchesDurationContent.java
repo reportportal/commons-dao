@@ -2,13 +2,12 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * @author Ivan Budayeu
  */
-public class LaunchesDurationContent extends AbstractLaunchStatisticsContent implements Serializable {
+public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 
 	@JsonProperty(value = "status")
 	private String status;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Map;
 
@@ -12,7 +11,7 @@ import java.util.Map;
  * @author Ivan Budayeu
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LaunchesTableContent extends AbstractLaunchStatisticsContent implements Serializable {
+public class LaunchesTableContent extends AbstractLaunchStatisticsContent {
 
 	@JsonIgnore
 	private int issueCount;

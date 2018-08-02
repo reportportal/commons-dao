@@ -3,13 +3,12 @@ package com.epam.ta.reportportal.entity.widget.content;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
  * @author Ivan Budayeu
  */
-public class ComparisonStatisticsContent extends AbstractLaunchStatisticsContent implements Serializable {
+public class ComparisonStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	@JsonIgnore
 	private Double issuePercentage;
