@@ -210,7 +210,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("launchNumber"),
+						LAUNCH.NUMBER.as("number"),
 						LAUNCH.NAME.as("name"),
 						LAUNCH.START_TIME.as("startTime"),
 						(sum(when(ISSUE_GROUP.ISSUE_GROUP_.equal(JIssueGroupEnum.TO_INVESTIGATE),
@@ -283,7 +283,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(EXECUTION_STATISTICS)
 				.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 						.orElseGet(Collections::emptyList)))
-				.and(LAUNCH.ID.in(commonSelect))
+				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
 				.fetchInto(PassStatisticsResult.class)
 				.stream()
 				.findFirst()
@@ -298,9 +298,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("launchNumber"),
+						LAUNCH.NUMBER.as("number"),
 						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.NAME.as("launchName"),
+						LAUNCH.NAME.as("name"),
 						sum(EXECUTION_STATISTICS.ES_COUNTER).as("total"),
 						sum(EXECUTION_STATISTICS.ES_COUNTER).sub(lag(sum(EXECUTION_STATISTICS.ES_COUNTER)).over().orderBy(LAUNCH.NUMBER))
 								.as("delta")
@@ -321,10 +321,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("launchNumber"),
+						LAUNCH.NUMBER.as("number"),
 						LAUNCH.UUID.as("launchId"),
 						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.NAME.as("launchName"),
+						LAUNCH.NAME.as("name"),
 						ISSUE_TYPE.LOCATOR.as("issueName"),
 						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
 				)
@@ -462,8 +462,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
 				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 						.orElseGet(Collections::emptyList)))
-				.and(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
+				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
+				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
 				.fetchInto(NotPassedCasesContent.class);
 	}
 
