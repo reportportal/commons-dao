@@ -163,7 +163,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NUMBER.as("launchNumber"), ISSUE_TYPE.LOCATOR.as("issueName"), ISSUE_STATISTICS.IS_COUNTER.as("issueCount"))
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NUMBER.as("number"),
+						LAUNCH.NAME.as("name"),
+						LAUNCH.START_TIME.as("startTime"),
+						ISSUE_TYPE.LOCATOR.as("issueName"),
+						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
+				)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
 				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
@@ -171,8 +177,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
 				.and(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.NUMBER, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
-				.unionAll(dsl.select(LAUNCH.NUMBER.as("launchNumber"),
+				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
+				.unionAll(dsl.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NUMBER.as("number"),
+						LAUNCH.NAME.as("name"),
+						LAUNCH.START_TIME.as("startTime"),
 						LAUNCH.STATUS.cast(String.class),
 						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
 				)
@@ -181,7 +190,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
 						.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
 						.and(LAUNCH.ID.in(commonSelect))
-						.groupBy(LAUNCH.NUMBER, LAUNCH.STATUS, ISSUE_STATISTICS.IS_COUNTER))
+						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.STATUS, ISSUE_STATISTICS.IS_COUNTER))
 				.fetchInto(LaunchStatisticsContent.class);
 
 		return launchStatisticsContents.stream()
@@ -200,7 +209,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NUMBER.as("launchNumber"),
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NUMBER.as("launchNumber"),
 						LAUNCH.NAME.as("name"),
 						LAUNCH.START_TIME.as("startTime"),
 						(sum(when(ISSUE_GROUP.ISSUE_GROUP_.equal(JIssueGroupEnum.TO_INVESTIGATE),
@@ -224,7 +234,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(ISSUE_GROUP)
 				.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
 				.and(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
+				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
 				.orderBy(LAUNCH.NUMBER)
 				.fetchInto(InvestigatedStatisticsResult.class);
 	}
@@ -287,8 +297,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NUMBER.as("launchNumber"),
-						LAUNCH.UUID.as("launchId"),
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NUMBER.as("launchNumber"),
 						LAUNCH.START_TIME.as("startTime"),
 						LAUNCH.NAME.as("launchName"),
 						sum(EXECUTION_STATISTICS.ES_COUNTER).as("total"),
@@ -299,7 +309,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(LAUNCH)
 				.on(EXECUTION_STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.NUMBER, LAUNCH.UUID, LAUNCH.START_TIME, LAUNCH.NAME)
+				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME)
 				.fetchInto(CasesTrendContent.class);
 	}
 
@@ -310,7 +320,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NUMBER.as("launchNumber"), ISSUE_TYPE.LOCATOR.as("issueName"), ISSUE_STATISTICS.IS_COUNTER.as("issueCount"))
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NUMBER.as("launchNumber"),
+						LAUNCH.UUID.as("launchId"),
+						LAUNCH.START_TIME.as("startTime"),
+						LAUNCH.NAME.as("launchName"),
+						ISSUE_TYPE.LOCATOR.as("issueName"),
+						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
+				)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
 				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
@@ -318,7 +335,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
 				.and(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.NUMBER, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
+				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.fetchInto(LaunchStatisticsContent.class);
 
 		return launchStatisticsContents.stream()
@@ -404,7 +421,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<LaunchesDurationContent> launchesDurationContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NAME.as("name"),
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NAME.as("name"),
 						LAUNCH.NUMBER.as("number"),
 						LAUNCH.STATUS.as("status"),
 						LAUNCH.START_TIME.as("startTime"),
@@ -413,7 +431,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(LAUNCH)
 				.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
 				.and(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.STATUS, LAUNCH.START_TIME, LAUNCH.END_TIME)
+				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.STATUS, LAUNCH.START_TIME, LAUNCH.END_TIME)
 				.fetchInto(LaunchesDurationContent.class);
 
 		launchesDurationContents.forEach(content -> content.setDuration(content.getEndTime().getTime() - content.getStartTime().getTime()));
@@ -428,13 +446,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.NUMBER.as("number"), LAUNCH.NAME.as("name"), LAUNCH.START_TIME.as("startTime"), (sum(when(
-						EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
-						0
-				).otherwise(EXECUTION_STATISTICS.ES_COUNTER))).cast(Double.class)
-						.mul(100)
-						.div(sum(EXECUTION_STATISTICS.ES_COUNTER))
-						.as("percentage"))
+				.select(LAUNCH.ID.as("launchId"),
+						LAUNCH.NUMBER.as("number"),
+						LAUNCH.NAME.as("name"),
+						LAUNCH.START_TIME.as("startTime"),
+						(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
+								0
+						).otherwise(EXECUTION_STATISTICS.ES_COUNTER))).cast(Double.class)
+								.mul(100)
+								.div(sum(EXECUTION_STATISTICS.ES_COUNTER))
+								.as("percentage")
+				)
 				.from(LAUNCH)
 				.join(EXECUTION_STATISTICS)
 				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
