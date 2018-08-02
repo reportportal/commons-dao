@@ -112,7 +112,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
 				LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
-				pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
 
@@ -132,7 +133,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		JProject p = PROJECT.as("p");
 		JUsers u = USERS.as("u");
 
-		return dsl.selectDistinct().from(l).leftJoin(p).on(l.PROJECT_ID.eq(p.ID)).leftJoin(u).on(l.USER_ID.eq(u.ID))
+		return dsl.selectDistinct()
+				.from(l)
+				.leftJoin(p)
+				.on(l.PROJECT_ID.eq(p.ID))
+				.leftJoin(u)
+				.on(l.USER_ID.eq(u.ID))
 				.where(p.ID.eq(projectId))
 				.and(u.FULL_NAME.like("%" + value + "%"))
 				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
@@ -158,8 +164,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Launch findLatestByNameAndFilter(String launchName, Filter filter) {
-		return dsl.with(LAUNCHES)
+	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
+		return Optional.ofNullable(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select()
 				.distinctOn(LAUNCH.NAME)
@@ -167,6 +173,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOne()
-				.into(Launch.class);
+				.into(Launch.class));
 	}
 }
