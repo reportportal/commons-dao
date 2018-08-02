@@ -331,7 +331,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(LAUNCH.ID.as("launchId"),
 						LAUNCH.NUMBER.as("number"),
-						LAUNCH.UUID.as("launchId"),
 						LAUNCH.START_TIME.as("startTime"),
 						LAUNCH.NAME.as("name"),
 						ISSUE_TYPE.LOCATOR.as("issueName"),
