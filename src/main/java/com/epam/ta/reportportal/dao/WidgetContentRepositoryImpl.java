@@ -478,21 +478,29 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login) {
-		return dsl.select(ACTIVITY.ID.as("activityId"),
-				ACTIVITY.ACTION.as("actionType"),
-				ACTIVITY.ENTITY.as("entity"),
-				ACTIVITY.CREATION_DATE.as("lastModified"),
-				USERS.LOGIN.as("userLogin"),
-				PROJECT.ID.as("projectId"),
-				PROJECT.NAME.as("projectName")
-		)
+	public List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login,
+			List<String> activityTypes) {
+
+		Select commonSelect = dsl.select(field(name("activities", "id")).cast(Long.class)).from(name("activities"));
+
+		return dsl.with("activities")
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select(ACTIVITY.ID.as("activityId"),
+						ACTIVITY.ACTION.as("actionType"),
+						ACTIVITY.ENTITY.as("entity"),
+						ACTIVITY.CREATION_DATE.as("lastModified"),
+						USERS.LOGIN.as("userLogin"),
+						PROJECT.ID.as("projectId"),
+						PROJECT.NAME.as("projectName")
+				)
 				.from(ACTIVITY)
 				.leftJoin(USERS)
 				.on(ACTIVITY.USER_ID.eq(USERS.ID))
 				.leftJoin(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
 				.where(USERS.LOGIN.eq(login))
+				.and(ACTIVITY.ACTION.in(activityTypes))
+				.and(ACTIVITY.ID.in(commonSelect))
 				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
 				.fetchInto(ActivityContent.class);
 	}

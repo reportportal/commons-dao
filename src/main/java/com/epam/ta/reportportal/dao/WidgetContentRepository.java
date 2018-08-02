@@ -61,5 +61,5 @@ public interface WidgetContentRepository {
 
 	List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, List<String> tableColumns);
 
-	List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login);
+	List<ActivityContent> activityStatistics(Filter filter, Map<String, List<String>> contentFields, String login, List<String> activityTypes);
 }
