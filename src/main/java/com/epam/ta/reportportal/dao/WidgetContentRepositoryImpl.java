@@ -157,7 +157,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -214,7 +214,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -251,7 +251,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch) {
+	public PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch,
+			int limit) {
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -277,7 +278,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public PassStatisticsResult summaryPassStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public PassStatisticsResult summaryPassStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -300,7 +301,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -323,7 +324,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -368,7 +369,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
+	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, int limit,
 			Long... launchIds) {
 
 		List<Long> launchIdList = Arrays.stream(launchIds).collect(Collectors.toList());
@@ -435,7 +436,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -460,7 +461,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields) {
+	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -489,7 +490,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields,
-			List<String> tableColumns) {
+			List<String> tableColumns, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -555,7 +556,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes) {
+	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit) {
 
 		Select commonSelect = dsl.select(field(name("activities", "id")).cast(Long.class)).from(name("activities"));
 

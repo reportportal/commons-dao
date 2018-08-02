@@ -40,26 +40,119 @@ public interface WidgetContentRepository {
 	 */
 	List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria, int limit);
 
-	List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Launch statistics content loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return List of {@link LaunchStatisticsContent}
+	 */
+	List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Investigated statistics loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return List of{@link InvestigatedStatisticsResult}
+	 */
+	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch);
+	/**
+	 * Launch pass result for specified launch
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param launch        Statistics' target launch
+	 * @param limit         Results limit
+	 * @return {@link PassStatisticsResult}
+	 */
+	PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch, int limit);
 
-	PassStatisticsResult summaryPassStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Launches pass result for all launches
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return {@link PassStatisticsResult}
+	 */
+	PassStatisticsResult summaryPassStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Test cases' count trend loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return List of{@link CasesTrendContent}
+	 */
+	List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Bug trend loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return List of{@link LaunchStatisticsContent}
+	 */
+	List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
+	/**
+	 * Comparison statistics content loading for launches with specified Ids
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @param launchIds     Launches' Ids for comparison statistics
+	 * @return List of{@link ComparisonStatisticsContent}
+	 */
+	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, int limit,
 			Long... launchIds);
 
-	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Launches duration content loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return List of{@link LaunchesDurationContent}
+	 */
+	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields);
+	/**
+	 * Not passed cases content loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param limit         Results limit
+	 * @return List of{@link NotPassedCasesContent}
+	 */
+	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
-	List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, List<String> tableColumns);
+	/**
+	 * Launches table content loading
+	 *
+	 * @param filter        Filter
+	 * @param contentFields Fields with restrictions
+	 * @param tableColumns  Specified fields of launch for query
+	 * @param limit         Results limit
+	 * @return List of{@link LaunchesTableContent}
+	 */
+	List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, List<String> tableColumns,
+			int limit);
 
-	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes);
+	/**
+	 * User activity content loading
+	 *
+	 * @param filter        Filter
+	 * @param login         User login for activity tracking
+	 * @param activityTypes Activities to track
+	 * @param limit         Results limit
+	 * @return List of{@link ActivityContent}
+	 */
+	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit);
 }
