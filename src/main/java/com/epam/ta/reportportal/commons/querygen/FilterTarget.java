@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -81,6 +82,16 @@ public enum FilterTarget {
 					.join(p)
 					.on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
+		}
+	},
+
+	ACTIVITY(Activity.class, Arrays.asList(new CriteriaHolder("project_id", "a.project_id", Long.class, false))) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			JActivity a = JActivity.ACTIVITY.as("a");
+			JUsers u = JUsers.USERS.as("u");
+			JProject p = JProject.PROJECT.as("p");
+			return DSL.select().from(a).join(u).on(a.USER_ID.eq(u.ID)).join(p).on(a.PROJECT_ID.eq(p.ID)).getQuery();
 		}
 	},
 
