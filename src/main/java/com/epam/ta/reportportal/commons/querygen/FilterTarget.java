@@ -42,8 +42,7 @@ public enum FilterTarget {
 			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
 			JProject p = JProject.PROJECT.as("p");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -85,7 +84,11 @@ public enum FilterTarget {
 		}
 	},
 
-	ACTIVITY(Activity.class, Arrays.asList(new CriteriaHolder("project_id", "a.project_id", Long.class, false))) {
+	ACTIVITY(Activity.class,
+			Arrays.asList(new CriteriaHolder("id", "a.id", Long.class, false),
+					new CriteriaHolder("project_id", "a.project_id", Long.class, false)
+			)
+	) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			JActivity a = JActivity.ACTIVITY.as("a");
@@ -159,8 +162,7 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,
