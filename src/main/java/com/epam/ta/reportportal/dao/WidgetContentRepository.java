@@ -153,4 +153,6 @@ public interface WidgetContentRepository {
 	 * @return List of{@link ActivityContent}
 	 */
 	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit);
+
+	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 }

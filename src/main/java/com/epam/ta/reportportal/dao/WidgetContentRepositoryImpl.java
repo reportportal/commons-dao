@@ -21,14 +21,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.*;
-import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
+import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
+import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
+import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static org.jooq.impl.DSL.*;
 
@@ -608,6 +613,35 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
 				.limit(limit)
 				.fetchInto(ActivityContent.class);
+	}
+
+	@Override
+	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+		List<UniqueBugContent> uniqueBugContents = dsl.select(
+				TICKET.TICKET_ID.as("ticketId"),
+				TICKET.SUBMIT_DATE.as("submitDate"),
+				TICKET.URL.as("url"),
+				TEST_ITEM.ITEM_ID.as("testItemId"),
+				TEST_ITEM.NAME.as("testItemName"),
+				USERS.LOGIN.as("submitter")
+
+		)
+				.from(TICKET)
+				.join(ISSUE_TICKET)
+				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
+				.join(ISSUE)
+				.on(ISSUE_TICKET.ISSUE_ID.eq(ISSUE.ISSUE_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(TEST_ITEM_STRUCTURE)
+				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM_STRUCTURE.STRUCTURE_ID))
+				.join(TEST_ITEM)
+				.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(USERS)
+				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
+				.fetchInto(UniqueBugContent.class);
+
+		return uniqueBugContents.stream().collect(Collectors.groupingBy(UniqueBugContent::getTicketId));
 	}
 
 	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {
