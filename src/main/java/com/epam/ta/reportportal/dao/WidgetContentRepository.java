@@ -138,12 +138,10 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
-	 * @param tableColumns  Specified fields of launch for query
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchesTableContent}
 	 */
-	List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, List<String> tableColumns,
-			int limit);
+	List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
 	/**
 	 * User activity content loading

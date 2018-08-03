@@ -191,6 +191,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
 						.and(LAUNCH.ID.in(commonSelect))
 						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.STATUS, ISSUE_STATISTICS.IS_COUNTER))
+				.limit(limit)
 				.fetchInto(LaunchStatisticsContent.class);
 
 		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
@@ -247,6 +248,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.and(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
 				.orderBy(LAUNCH.NUMBER)
+				.limit(limit)
 				.fetchInto(InvestigatedStatisticsResult.class);
 	}
 
@@ -271,6 +273,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.and(LAUNCH.NUMBER.eq(launch.getNumber().intValue()))
 				.and(LAUNCH.ID.eq(launch.getId()))
 				.groupBy(LAUNCH.NAME)
+				.limit(limit)
 				.fetchInto(PassStatisticsResult.class)
 				.stream()
 				.findFirst()
@@ -294,6 +297,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 						.orElseGet(Collections::emptyList)))
 				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
+				.limit(limit)
 				.fetchInto(PassStatisticsResult.class)
 				.stream()
 				.findFirst()
@@ -320,6 +324,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(EXECUTION_STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME)
+				.limit(limit)
 				.fetchInto(CasesTrendContent.class);
 	}
 
@@ -345,6 +350,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
 				.and(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
+				.limit(limit)
 				.fetchInto(LaunchStatisticsContent.class);
 
 		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
@@ -413,6 +419,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
 						.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, EXECUTION_STATISTICS.ES_STATUS))
+				.limit(limit)
 				.fetchInto(ComparisonStatisticsContent.class);
 
 		Map<Long, Map<String, Double>> issuesMap = comparisonStatisticsContents.stream()
@@ -453,6 +460,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
 				.and(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.STATUS, LAUNCH.START_TIME, LAUNCH.END_TIME)
+				.limit(limit)
 				.fetchInto(LaunchesDurationContent.class);
 
 		launchesDurationContents.forEach(content -> content.setDuration(content.getEndTime().getTime() - content.getStartTime().getTime()));
@@ -485,16 +493,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.orElseGet(Collections::emptyList)))
 				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
+				.limit(limit)
 				.fetchInto(NotPassedCasesContent.class);
 	}
 
 	@Override
-	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields,
-			List<String> tableColumns, int limit) {
+	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
-		Set<Field<?>> commonSelectFields = buildColumnsSelect(tableColumns);
+		Set<Field<?>> commonSelectFields = buildColumnsSelect(contentFields.get(TABLE_COLUMN_KEY));
 		Set<Field<?>> executionsSelectFields = new LinkedHashSet<>(commonSelectFields);
 
 		Set<Field<?>> issuesSelectFields = fillWithCustomFields(commonSelectFields,
@@ -532,6 +540,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(LAUNCH.ID.in(commonSelect))
 						.groupBy(executionsSelectFields)
 						.orderBy(LAUNCH.ID))
+				.limit(limit)
 				.fetchInto(LaunchesTableContent.class);
 
 		Map<Long, Map<String, Integer>> issuesMap = launchesTableContents.stream()
@@ -579,6 +588,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.and(ACTIVITY.ACTION.in(activityTypes))
 				.and(ACTIVITY.ID.in(commonSelect))
 				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
+				.limit(limit)
 				.fetchInto(ActivityContent.class);
 	}
 
