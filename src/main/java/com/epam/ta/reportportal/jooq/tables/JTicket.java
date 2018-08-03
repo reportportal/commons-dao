@@ -8,24 +8,15 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JTicketRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -69,7 +60,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
     /**
      * The column <code>public.ticket.submitter_id</code>.
      */
-    public final TableField<JTicketRecord, Integer> SUBMITTER_ID = createField("submitter_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<JTicketRecord, Long> SUBMITTER_ID = createField("submitter_id", SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.submit_date</code>.
