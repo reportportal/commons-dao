@@ -24,14 +24,12 @@ package com.epam.ta.reportportal.entity.widget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,14 +55,13 @@ public class Widget implements Serializable {
 	@Column(name = "items_count")
 	private int itemsCount;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
-	@Column(name = "field")
-	private List<String> contentFields = Lists.newArrayList();
-
 	@ManyToOne
 	@JoinColumn(name = "filter_id")
 	private UserFilter filter;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinColumn(name = "widget_id")
+	private Set<ContentField> contentFields = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "widget_id")
@@ -118,11 +115,11 @@ public class Widget implements Serializable {
 		this.itemsCount = itemsCount;
 	}
 
-	public List<String> getContentFields() {
+	public Set<ContentField> getContentFields() {
 		return contentFields;
 	}
 
-	public void setContentFields(List<String> contentFields) {
+	public void setContentFields(Set<ContentField> contentFields) {
 		this.contentFields = contentFields;
 	}
 
