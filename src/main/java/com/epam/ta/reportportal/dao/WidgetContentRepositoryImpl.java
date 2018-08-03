@@ -178,17 +178,18 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
 				.and(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
-				.unionAll(dsl.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.STATUS.cast(String.class),
-						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
+				.unionAll(dsl.select(LAUNCH.ID,
+						LAUNCH.NUMBER,
+						LAUNCH.NAME,
+						LAUNCH.START_TIME,
+						EXECUTION_STATISTICS.ES_STATUS,
+						EXECUTION_STATISTICS.ES_COUNTER
 				)
 						.from(LAUNCH)
-						.join(ISSUE_STATISTICS)
-						.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
-						.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
+						.join(EXECUTION_STATISTICS)
+						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
+						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
+								.orElseGet(Collections::emptyList)))
 						.and(LAUNCH.ID.in(commonSelect))
 						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.STATUS, ISSUE_STATISTICS.IS_COUNTER))
 				.limit(limit)
