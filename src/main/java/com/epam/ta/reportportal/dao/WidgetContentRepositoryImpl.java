@@ -401,7 +401,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(ISSUE_GROUP)
 				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
 				.and(LAUNCH.ID.in(launchIdList))
-				.and(ISSUE_GROUP.ISSUE_GROUP_.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+				.and(ISSUE_GROUP.ISSUE_GROUP_.in(Optional.ofNullable(contentFields.get(ISSUE_GROUP_KEY)).orElseGet(Collections::emptyList)))
 				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, ISSUE_GROUP.ISSUE_GROUP_)
 				.unionAll(dsl.select(LAUNCH.ID.as("launchId"),
 						LAUNCH.NAME.as("name"),
