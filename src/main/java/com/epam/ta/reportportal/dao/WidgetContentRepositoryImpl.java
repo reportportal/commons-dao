@@ -191,7 +191,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
 						.and(LAUNCH.ID.in(commonSelect))
-						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.STATUS, ISSUE_STATISTICS.IS_COUNTER))
+						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER))
 				.limit(limit)
 				.fetchInto(LaunchStatisticsContent.class);
 
