@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -191,7 +192,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
 						.and(LAUNCH.ID.in(commonSelect))
-						.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER))
+						.groupBy(LAUNCH.ID,
+								LAUNCH.NUMBER,
+								LAUNCH.NAME,
+								LAUNCH.START_TIME,
+								EXECUTION_STATISTICS.ES_STATUS,
+								EXECUTION_STATISTICS.ES_COUNTER
+						))
 				.limit(limit)
 				.fetchInto(LaunchStatisticsContent.class);
 
@@ -208,7 +215,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.filter(content -> Objects.equals(key, content.getLaunchId()))
 				.findFirst()
 				.ifPresent(content -> {
-					content.setIssuesMap(value);
+					Map<String, Integer> executions = new HashMap<>();
+					Map<String, Integer> defects = new HashMap<>();
+					value.keySet().forEach(name -> {
+						if (StatusEnum.isPresent(name)) {
+							executions.put(name, value.get(name));
+						} else {
+							defects.put(name, value.get(name));
+						}
+					});
+					content.setDefectsMap(defects);
+					content.setExecutionsMap(executions);
 					resultLaunchStatisticsContents.add(content);
 				}));
 
@@ -367,7 +384,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.filter(content -> Objects.equals(key, content.getLaunchId()))
 				.findFirst()
 				.ifPresent(content -> {
-					content.setIssuesMap(value);
+					content.setDefectsMap(value);
 					resultLaunchStatisticsContents.add(content);
 				}));
 
