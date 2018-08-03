@@ -70,20 +70,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findByTestItemId(String itemId, int limit, boolean isLoadBinaryData) {
+	public List<Log> findByTestItemId(Long itemId, int limit, boolean isLoadBinaryData) {
 		if (itemId == null || limit <= 0) {
 			return new ArrayList<>();
 		}
-
-		Long id = Long.valueOf(itemId);
-
-		return dsl.select()
-				.from(LOG)
-				.where(TEST_ITEM.ITEM_ID.eq(id))
-				.orderBy(LOG.LOG_TIME.asc())
-				.limit(limit)
-				.fetch()
-				.map(LOG_MAPPER);
+		return dsl.select().from(LOG).where(TEST_ITEM.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).limit(limit).fetch().map(LOG_MAPPER);
 	}
 
 	@Override
