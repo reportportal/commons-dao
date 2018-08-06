@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -207,34 +208,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.limit(limit)
 				.fetchInto(LaunchStatisticsContent.class);
 
-		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
-						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
-								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
-						)
-				));
-
-		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
-
-		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
-				.filter(content -> Objects.equals(key, content.getLaunchId()))
-				.findFirst()
-				.ifPresent(content -> {
-					Map<String, Integer> executions = new HashMap<>();
-					Map<String, Integer> defects = new HashMap<>();
-					value.keySet().forEach(name -> {
-						if (StatusEnum.isPresent(name)) {
-							executions.put(name, value.get(name));
-						} else {
-							defects.put(name, value.get(name));
-						}
-					});
-					content.setDefectsMap(defects);
-					content.setExecutionsMap(executions);
-					resultLaunchStatisticsContents.add(content);
-				}));
-
-		return resultLaunchStatisticsContents;
+		return buildResultLaunchesStatistics(launchStatisticsContents);
 	}
 
 	@Override
@@ -458,7 +432,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.filter(content -> Objects.equals(key, content.getLaunchId()))
 				.findFirst()
 				.ifPresent(content -> {
-					content.setStatistics(value);
+					Map<String, Double> executions = new HashMap<>();
+					Map<String, Double> defectGroups = new HashMap<>();
+					value.keySet().forEach(name -> {
+						if (TestItemIssueGroup.TO_INVESTIGATE.getValue().equalsIgnoreCase(name)) {
+							executions.put(name, value.get(name));
+						} else {
+							defectGroups.put(name, value.get(name));
+						}
+					});
+					content.setDefectGroups(defectGroups);
+					content.setExecutionsMap(executions);
 					resultComparisonStatisticsContent.add(content);
 				}));
 
@@ -521,7 +505,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+	public List<LaunchStatisticsContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
 
@@ -540,7 +524,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				EXECUTION_STATISTICS.ES_COUNTER.as("issueCount")
 		);
 
-		List<LaunchesTableContent> launchesTableContents = dsl.with(LAUNCHES)
+		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(issuesSelectFields)
 				.from(LAUNCH)
@@ -564,26 +548,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(executionsSelectFields)
 						.orderBy(LAUNCH.ID))
 				.limit(limit)
-				.fetchInto(LaunchesTableContent.class);
+				.fetchInto(LaunchStatisticsContent.class);
 
-		Map<Long, Map<String, Integer>> issuesMap = launchesTableContents.stream()
-				.collect(Collectors.groupingBy(LaunchesTableContent::getLaunchId,
-						Collectors.groupingBy(LaunchesTableContent::getIssueName,
-								Collectors.summingInt(LaunchesTableContent::getIssueCount)
-						)
-				));
-
-		List<LaunchesTableContent> resultLaunchesTableContent = new ArrayList<>(issuesMap.size());
-
-		issuesMap.forEach((key, value) -> launchesTableContents.stream()
-				.filter(content -> Objects.equals(key, content.getLaunchId()))
-				.findFirst()
-				.ifPresent(content -> {
-					content.setIssueStatisticsMap(value);
-					resultLaunchesTableContent.add(content);
-				}));
-
-		return resultLaunchesTableContent;
+		return buildResultLaunchesStatistics(launchStatisticsContents);
 
 	}
 
@@ -617,8 +584,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
-		List<UniqueBugContent> uniqueBugContents = dsl.select(
-				TICKET.TICKET_ID.as("ticketId"),
+		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID.as("ticketId"),
 				TICKET.SUBMIT_DATE.as("submitDate"),
 				TICKET.URL.as("url"),
 				TEST_ITEM.ITEM_ID.as("testItemId"),
@@ -642,6 +608,38 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(UniqueBugContent.class);
 
 		return uniqueBugContents.stream().collect(Collectors.groupingBy(UniqueBugContent::getTicketId));
+	}
+
+	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {
+
+		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
+						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
+								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
+						)
+				));
+
+		List<LaunchStatisticsContent> resultLaunchStatisticsContent = new ArrayList<>(issuesMap.size());
+
+		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+				.filter(content -> Objects.equals(key, content.getLaunchId()))
+				.findFirst()
+				.ifPresent(content -> {
+					Map<String, Integer> executions = new HashMap<>();
+					Map<String, Integer> defects = new HashMap<>();
+					value.keySet().forEach(name -> {
+						if (StatusEnum.isPresent(name)) {
+							executions.put(name, value.get(name));
+						} else {
+							defects.put(name, value.get(name));
+						}
+					});
+					content.setDefectsMap(defects);
+					content.setExecutionsMap(executions);
+					resultLaunchStatisticsContent.add(content);
+				}));
+
+		return resultLaunchStatisticsContent;
 	}
 
 	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {

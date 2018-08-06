@@ -16,8 +16,11 @@ public class ComparisonStatisticsContent extends AbstractLaunchStatisticsContent
 	@JsonIgnore
 	private String issueName;
 
-	@JsonProperty(value = "statistics")
-	private Map<String, Double> statistics;
+	@JsonProperty(value = "defect_groups")
+	private Map<String, Double> defectGroups;
+
+	@JsonProperty(value = "executions")
+	private Map<String, Double> executionsMap;
 
 	public ComparisonStatisticsContent() {
 	}
@@ -38,11 +41,19 @@ public class ComparisonStatisticsContent extends AbstractLaunchStatisticsContent
 		this.issueName = issueName;
 	}
 
-	public Map<String, Double> getStatistics() {
-		return statistics;
+	public Map<String, Double> getDefectGroups() {
+		return defectGroups;
 	}
 
-	public void setStatistics(Map<String, Double> statistics) {
-		this.statistics = statistics;
+	public void setDefectGroups(Map<String, Double> defectGroups) {
+		this.defectGroups = defectGroups;
+	}
+
+	public Map<String, Double> getExecutionsMap() {
+		return executionsMap;
+	}
+
+	public void setExecutionsMap(Map<String, Double> executionsMap) {
+		this.executionsMap = executionsMap;
 	}
 }
