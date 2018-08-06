@@ -435,9 +435,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 					Map<String, Double> executions = new HashMap<>();
 					Map<String, Double> defectGroups = new HashMap<>();
 					value.keySet().forEach(name -> {
-						if (TestItemIssueGroup.TO_INVESTIGATE.getValue().equalsIgnoreCase(name)) {
+						if (StatusEnum.isPresent(name)) {
 							executions.put(name, value.get(name));
-						} else {
+						} else if (TestItemIssueGroup.isPresent(name)) {
 							defectGroups.put(name, value.get(name));
 						}
 					});
