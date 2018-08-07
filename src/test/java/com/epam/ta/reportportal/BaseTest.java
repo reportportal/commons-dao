@@ -9,6 +9,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +45,7 @@ public class BaseTest {
 		connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory() {
 			@Override
 			public boolean isEnumType(String sqlTypeName) {
-				return sqlTypeName.endsWith("enum");
+				return sqlTypeName.endsWith("ENUM");
 			}
 
 			@Override
