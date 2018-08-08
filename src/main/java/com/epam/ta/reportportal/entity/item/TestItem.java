@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.entity.item;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -79,6 +80,7 @@ public class TestItem implements Serializable {
 	@JoinColumn(name = "item_id")
 	private Set<TestItemTag> tags = Sets.newHashSet();
 
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
 	private Set<Log> logs = Sets.newHashSet();
