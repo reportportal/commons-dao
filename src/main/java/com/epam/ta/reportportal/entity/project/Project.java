@@ -4,6 +4,8 @@ import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -34,6 +36,7 @@ public class Project implements Serializable {
 	private String name;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonBackReference
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	@Column(name = "additional_info")
@@ -43,9 +46,11 @@ public class Project implements Serializable {
 	private ProjectConfiguration configuration;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+	@JsonBackReference
 	private List<UserConfig> users;
 
 	@OneToMany(mappedBy = "project")
+	@JsonBackReference
 	private List<DemoDataPostfix> demoDataPostfix;
 
 	@Column(name = "creation_date")
@@ -191,6 +196,7 @@ public class Project implements Serializable {
 
 		@ManyToOne(cascade = CascadeType.ALL)
 		@JoinColumn(name = "project_id")
+		@JsonManagedReference
 		private Project project;
 
 		private ProjectRole proposedRole;
