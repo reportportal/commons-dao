@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.entity.widget.content;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.sql.Timestamp;
 import java.util.Map;
@@ -91,5 +92,18 @@ public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	public void setExecutionsMap(Map<String, Integer> executionsMap) {
 		this.executionsMap = executionsMap;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + MoreObjects.toStringHelper(this)
+				.add("issueCount", issueCount)
+				.add("issueName", issueName)
+				.add("status", status)
+				.add("endTime", endTime)
+				.add("lastModified", lastModified)
+				.add("defectsMap", defectsMap)
+				.add("executionsMap", executionsMap)
+				.toString();
 	}
 }

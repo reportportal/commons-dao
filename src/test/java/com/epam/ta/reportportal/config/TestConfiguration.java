@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "com.epam.ta.reportportal.dao")
-@PropertySource("classpath:application-test.properties")
+@PropertySource("classpath:test-application.properties")
 public class TestConfiguration {
 
 }

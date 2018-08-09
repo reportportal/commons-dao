@@ -1,84 +1,3 @@
-DROP TABLE IF EXISTS schema_migrations CASCADE;
-DROP TABLE IF EXISTS server_settings CASCADE;
-DROP TABLE IF EXISTS bug_tracking_system CASCADE;
-DROP TABLE IF EXISTS defect_form_field CASCADE;
-DROP TABLE IF EXISTS defect_field_allowed_value CASCADE;
-DROP TABLE IF EXISTS bug_tracking_system_auth CASCADE;
-
-DROP TABLE IF EXISTS project_analyzer_configuration CASCADE;
-DROP TABLE IF EXISTS recipients CASCADE;
-DROP TABLE IF EXISTS email_sender_case CASCADE;
-DROP TABLE IF EXISTS project_email_configuration CASCADE;
-DROP TABLE IF EXISTS project_configuration CASCADE;
-DROP TABLE IF EXISTS issue_type_project_configuration CASCADE;
-DROP TABLE IF EXISTS issue_type CASCADE;
-
-DROP TABLE IF EXISTS dashboard CASCADE;
-DROP TABLE IF EXISTS widget CASCADE;
-DROP TABLE IF EXISTS dashboard_widget CASCADE;
-DROP TABLE IF EXISTS filter CASCADE;
-DROP TABLE IF EXISTS user_filter CASCADE;
-DROP TABLE IF EXISTS filter_condition CASCADE;
-DROP TABLE IF EXISTS filter_sort CASCADE;
-DROP TABLE IF EXISTS widget_filter CASCADE;
-DROP TABLE IF EXISTS content_field CASCADE;
-DROP TABLE IF EXISTS content_field_value CASCADE;
-DROP TABLE IF EXISTS widget_option CASCADE;
-DROP TABLE IF EXISTS widget_option_value CASCADE;
-
-DROP TABLE IF EXISTS demo_data_postfix CASCADE;
-DROP TABLE IF EXISTS project CASCADE;
-DROP TABLE IF EXISTS user_config CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS project_user CASCADE;
-DROP TABLE IF EXISTS oauth_access_token CASCADE;
-DROP TABLE IF EXISTS oauth_registration_scope CASCADE;
-DROP TABLE IF EXISTS oauth_registration CASCADE;
-
-DROP TABLE IF EXISTS test_item_structure CASCADE;
-DROP TABLE IF EXISTS test_item_results CASCADE;
-
-DROP TABLE IF EXISTS execution_statistics CASCADE;
-DROP TABLE IF EXISTS issue_statistics CASCADE;
-DROP TABLE IF EXISTS issue_group CASCADE;
-DROP TABLE IF EXISTS issue_type_project_configuration CASCADE;
-
-DROP TABLE IF EXISTS issue CASCADE;
-DROP TABLE IF EXISTS issue_ticket CASCADE;
-DROP TABLE IF EXISTS ticket CASCADE;
-DROP TABLE IF EXISTS defect_form_field_value CASCADE;
-DROP TABLE IF EXISTS parameter CASCADE;
-
-DROP TABLE IF EXISTS launch CASCADE;
-DROP TABLE IF EXISTS launch_tag CASCADE;
-DROP TABLE IF EXISTS item_tag CASCADE;
-
-DROP TABLE IF EXISTS test_item CASCADE;
-DROP TABLE IF EXISTS log CASCADE;
-DROP TABLE IF EXISTS auth_config CASCADE;
-DROP TABLE IF EXISTS ldap_config CASCADE;
-DROP TABLE IF EXISTS active_directory_config CASCADE;
-DROP TABLE IF EXISTS ldap_synchronization_attributes CASCADE;
-DROP TABLE IF EXISTS integration CASCADE;
-DROP TABLE IF EXISTS integration_type CASCADE;
-DROP TABLE IF EXISTS activity CASCADE;
-
-DROP TYPE IF EXISTS PROJECT_TYPE_ENUM;
-DROP TYPE IF EXISTS USER_ROLE_ENUM;
-DROP TYPE IF EXISTS USER_TYPE_ENUM;
-DROP TYPE IF EXISTS PROJECT_ROLE_ENUM;
-DROP TYPE IF EXISTS LAUNCH_MODE_ENUM;
-DROP TYPE IF EXISTS STATUS_ENUM;
-DROP TYPE IF EXISTS AUTH_TYPE_ENUM;
-DROP TYPE IF EXISTS TEST_ITEM_TYPE_ENUM;
-DROP TYPE IF EXISTS ISSUE_GROUP_ENUM;
-DROP TYPE IF EXISTS ACCESS_TOKEN_TYPE_ENUM;
-DROP TYPE IF EXISTS ACTIVITY_ENTITY_ENUM;
-DROP TYPE IF EXISTS INTEGRATION_AUTH_FLOW_ENUM;
-DROP TYPE IF EXISTS INTEGRATION_GROUP_ENUM;
-DROP TYPE IF EXISTS FILTER_CONDITION_ENUM;
-DROP TYPE IF EXISTS PASSWORD_ENCODER_TYPE;
-
 CREATE TYPE PROJECT_ROLE_ENUM AS ENUM ('OPERATOR', 'CUSTOMER', 'MEMBER', 'PROJECT_MANAGER');
 
 CREATE TYPE STATUS_ENUM AS ENUM ('IN_PROGRESS', 'PASSED', 'FAILED', 'STOPPED', 'SKIPPED', 'INTERRUPTED', 'RESETED', 'CANCELLED');
@@ -570,3 +489,323 @@ CREATE TABLE issue_ticket (
   ticket_id BIGINT REFERENCES ticket (id),
   CONSTRAINT issue_ticket_pk PRIMARY KEY (issue_id, ticket_id)
 );
+
+
+CREATE OR REPLACE FUNCTION delete_item_statistics()
+  RETURNS TRIGGER AS
+$$
+BEGIN
+  DELETE FROM execution_statistics
+  WHERE execution_statistics.item_id = old.result_id;
+  DELETE FROM issue_statistics
+  WHERE issue_statistics.item_id = old.result_id;
+  RETURN old;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION increment_execution_statistics()
+  RETURNS TRIGGER AS $$
+DECLARE cur_id BIGINT;
+BEGIN
+  IF exists(SELECT 1
+            FROM test_item_structure AS s
+              JOIN test_item_structure AS s2 ON s.structure_id = s2.parent_id
+            WHERE s.structure_id = new.result_id)
+  THEN RETURN new;
+  END IF;
+
+
+  FOR cur_id IN
+  (WITH RECURSIVE item_structure(parent_id, item_id) AS (
+    SELECT
+      parent_id,
+      tir.result_id
+    FROM test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tir.result_id = NEW.result_id
+    UNION ALL
+    SELECT
+      tis.parent_id,
+      tis.structure_id
+    FROM item_structure tis_r, test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tis.structure_id = tis_r.parent_id)
+  SELECT item_structure.item_id
+  FROM item_structure)
+
+  LOOP
+    INSERT INTO execution_statistics (es_counter, es_status, positive, item_id) VALUES (1, new.status, TRUE, cur_id)
+    ON CONFLICT (es_status, item_id)
+      DO UPDATE SET es_counter = execution_statistics.es_counter + 1;
+  END LOOP;
+
+  INSERT INTO execution_statistics (es_counter, es_status, positive, launch_id) VALUES (1, new.status, TRUE,
+                                                                                        (SELECT launch_id
+                                                                                         FROM test_item_structure
+                                                                                         WHERE
+                                                                                           test_item_structure.structure_id = new.result_id)
+  )
+  ON CONFLICT (es_status, launch_id)
+    DO UPDATE SET es_counter = execution_statistics.es_counter + 1;
+  RETURN new;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION decrease_execution_statistics()
+  RETURNS TRIGGER AS $$
+DECLARE   asc_id  BIGINT;
+  DECLARE desc_id BIGINT;
+BEGIN
+
+  IF old.launch_id NOTNULL
+  THEN
+    DELETE FROM execution_statistics
+    WHERE item_id IN (SELECT item_id
+                      FROM test_item_structure
+                      WHERE test_item_structure.launch_id = old.launch_id);
+    RETURN old;
+  END IF;
+
+  FOR asc_id IN
+  (WITH RECURSIVE item_structure(parent_id, item_id) AS (
+    SELECT
+      parent_id,
+      tir.result_id
+    FROM test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tir.result_id = old.item_id
+    UNION ALL
+    SELECT
+      tis.parent_id,
+      tis.structure_id
+    FROM item_structure tis_r, test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tis.structure_id = tis_r.parent_id)
+  SELECT item_structure.item_id
+  FROM item_structure
+  WHERE NOT item_id = old.item_id)
+
+  LOOP
+    UPDATE execution_statistics AS es
+    SET es_counter = es.es_counter - old.es_counter
+    WHERE es.item_id = asc_id AND es_status = old.es_status;
+  END LOOP;
+
+  UPDATE execution_statistics AS es
+  SET es_counter = es.es_counter - old.es_counter
+  WHERE es.launch_id = (SELECT launch_id
+                        FROM test_item
+                        WHERE test_item.item_id = old.item_id) AND es_status = old.es_status;
+
+  FOR desc_id IN
+  (WITH RECURSIVE item_structure(parent_id, item_id) AS (
+    SELECT
+      parent_id,
+      tir.result_id
+    FROM test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tir.result_id = old.item_id
+    UNION ALL
+    SELECT
+      tis.parent_id,
+      tis.structure_id
+    FROM item_structure tis_r, test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tis.parent_id = tis_r.item_id)
+  SELECT item_structure.item_id
+  FROM item_structure
+  WHERE NOT item_id = old.item_id)
+
+  LOOP
+    DELETE FROM execution_statistics
+    WHERE execution_statistics.item_id = desc_id AND execution_statistics.es_status = old.es_status;
+  END LOOP;
+
+  RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+
+------------------------------- Statistics triggers ----------------------------
+
+
+CREATE TRIGGER after_test_results_update
+AFTER UPDATE ON test_item_results
+FOR EACH ROW EXECUTE PROCEDURE increment_execution_statistics();
+
+CREATE TRIGGER before_test_item_delete
+BEFORE DELETE ON test_item_results
+FOR EACH ROW EXECUTE PROCEDURE delete_item_statistics();
+
+
+CREATE TRIGGER delete_execution_statistics
+AFTER DELETE ON execution_statistics
+FOR EACH ROW WHEN (pg_trigger_depth() < 2)
+EXECUTE PROCEDURE decrease_execution_statistics();
+
+------------------------------- Issue statistics functions ----------------------------
+
+CREATE OR REPLACE FUNCTION increment_issue_statistics()
+  RETURNS TRIGGER AS $$
+DECLARE   cur_id    BIGINT;
+  DECLARE is_update BOOLEAN;
+  DECLARE launch    BIGINT;
+BEGIN
+
+  IF exists(SELECT 1
+            FROM test_item_structure AS s
+              JOIN test_item_structure AS s2 ON s.structure_id = s2.parent_id
+            WHERE s.structure_id = new.issue_id)
+  THEN RETURN new;
+  END IF;
+
+
+  is_update = exists(SELECT 1
+                     FROM issue_statistics
+                     WHERE item_id = new.issue_id);
+
+  FOR cur_id IN
+  (WITH RECURSIVE item_structure(parent_id, item_id) AS (
+    SELECT
+      parent_id,
+      tir.result_id
+    FROM test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tir.result_id = NEW.issue_id
+    UNION ALL
+    SELECT
+      tis.parent_id,
+      tis.structure_id
+    FROM item_structure tis_r, test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tis.structure_id = tis_r.parent_id)
+  SELECT item_structure.item_id
+  FROM item_structure)
+
+  LOOP
+    IF is_update
+    THEN UPDATE issue_statistics
+    SET is_counter = issue_statistics.is_counter - 1
+    WHERE issue_statistics.item_id = cur_id AND issue_statistics.issue_type_id = old.issue_type;
+    END IF;
+
+    INSERT INTO issue_statistics (issue_type_id, is_counter, item_id, launch_id) VALUES (new.issue_type, 1, cur_id, NULL)
+    ON CONFLICT (issue_type_id, item_id)
+      DO UPDATE SET is_counter = issue_statistics.is_counter + 1;
+  END LOOP;
+
+  launch = (SELECT launch_id
+            FROM test_item_structure
+            WHERE
+              test_item_structure.structure_id = new.issue_id);
+
+  INSERT INTO issue_statistics (issue_type_id, is_counter, item_id, launch_id) VALUES (new.issue_type, 1, NULL, launch)
+  ON CONFLICT (issue_type_id, launch_id)
+    DO UPDATE SET is_counter = issue_statistics.is_counter + 1;
+
+  IF is_update
+  THEN UPDATE issue_statistics
+  SET is_counter = issue_statistics.is_counter - 1
+  WHERE issue_statistics.launch_id = launch_id AND issue_statistics.issue_type_id = old.issue_type;
+  END IF;
+
+  RETURN new;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION decrease_issue_statistics()
+  RETURNS TRIGGER AS $$
+DECLARE   asc_id  BIGINT;
+  DECLARE desc_id BIGINT;
+BEGIN
+
+  IF old.launch_id NOTNULL
+  THEN
+    DELETE FROM issue_statistics
+    WHERE item_id IN (SELECT item_id
+                      FROM test_item_structure
+                      WHERE test_item_structure.launch_id = old.launch_id);
+    RETURN old;
+  END IF;
+
+  FOR asc_id IN
+  (WITH RECURSIVE item_structure(parent_id, item_id) AS (
+    SELECT
+      parent_id,
+      tir.result_id
+    FROM test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tir.result_id = old.item_id
+    UNION ALL
+    SELECT
+      tis.parent_id,
+      tis.structure_id
+    FROM item_structure tis_r, test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tis.structure_id = tis_r.parent_id)
+  SELECT item_structure.item_id
+  FROM item_structure
+  WHERE NOT item_id = old.item_id)
+
+  LOOP
+    UPDATE issue_statistics
+    SET is_counter = issue_statistics.is_counter - old.is_counter
+    WHERE issue_statistics.item_id = asc_id AND issue_statistics.issue_type_id = old.issue_type_id;
+  END LOOP;
+
+  UPDATE issue_statistics
+  SET is_counter = issue_statistics.is_counter - old.is_counter
+  WHERE issue_statistics.launch_id = (SELECT launch_id
+                                      FROM test_item
+                                      WHERE test_item.item_id = old.item_id) AND issue_statistics.issue_type_id = old.issue_type_id;
+
+  FOR desc_id IN
+  (WITH RECURSIVE item_structure(parent_id, item_id) AS (
+    SELECT
+      parent_id,
+      tir.result_id
+    FROM test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tir.result_id = old.item_id
+    UNION ALL
+    SELECT
+      tis.parent_id,
+      tis.structure_id
+    FROM item_structure tis_r, test_item_structure tis
+      JOIN test_item_results tir ON tis.structure_id = tir.result_id
+    WHERE tis.parent_id = tis_r.item_id)
+  SELECT item_structure.item_id
+  FROM item_structure
+  WHERE NOT item_id = old.item_id)
+
+  LOOP
+    DELETE FROM issue_statistics
+    WHERE issue_statistics.item_id = desc_id AND issue_statistics.issue_type_id = old.issue_type_id;
+  END LOOP;
+
+  RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+
+------------------------------- Issue statistics triggers ----------------------------
+
+CREATE TRIGGER on_issue_insert
+AFTER INSERT ON issue
+FOR EACH ROW EXECUTE PROCEDURE increment_issue_statistics();
+
+CREATE TRIGGER on_issue_update
+AFTER UPDATE ON issue
+FOR EACH ROW WHEN (pg_trigger_depth() = 0) EXECUTE PROCEDURE increment_issue_statistics();
+
+CREATE TRIGGER delete_issue_statistics
+AFTER DELETE ON issue_statistics
+FOR EACH ROW WHEN (pg_trigger_depth() < 2)
+EXECUTE PROCEDURE decrease_issue_statistics();
+.;

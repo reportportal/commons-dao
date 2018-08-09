@@ -11,6 +11,7 @@ import com.epam.ta.reportportal.entity.widget.content.LaunchStatisticsContent;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,13 +47,14 @@ public class WidgetContentRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
 		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -83,8 +85,9 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
-		List<LaunchStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 1000);
-		System.out.println(launchStatisticsContents);
+		List<LaunchStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 10);
+		Assert.assertNotNull(launchStatisticsContents);
+		Assert.assertEquals(launchStatisticsContents.size(), 10L);
 	}
 
 	@Test

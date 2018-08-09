@@ -166,7 +166,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
+		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
+				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
+				.from(name(LAUNCHES)).limit(limit);
 
 		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -183,7 +185,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(ISSUE_TYPE)
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-				.and(LAUNCH.ID.in(commonSelect))
+				.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.unionAll(dsl.select(LAUNCH.ID,
 						LAUNCH.NUMBER,
@@ -197,7 +199,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
 						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
-						.and(LAUNCH.ID.in(commonSelect))
+						.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
 						.groupBy(LAUNCH.ID,
 								LAUNCH.NUMBER,
 								LAUNCH.NAME,
@@ -205,7 +207,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								EXECUTION_STATISTICS.ES_STATUS,
 								EXECUTION_STATISTICS.ES_COUNTER
 						))
-				.limit(limit)
 				.fetchInto(LaunchStatisticsContent.class);
 
 		return buildResultLaunchesStatistics(launchStatisticsContents);

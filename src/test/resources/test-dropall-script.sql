@@ -78,3 +78,31 @@ DROP TYPE IF EXISTS INTEGRATION_AUTH_FLOW_ENUM;
 DROP TYPE IF EXISTS INTEGRATION_GROUP_ENUM;
 DROP TYPE IF EXISTS FILTER_CONDITION_ENUM;
 DROP TYPE IF EXISTS PASSWORD_ENCODER_TYPE;
+
+DROP TRIGGER IF EXISTS last_launch_number_trigger
+ON launch;
+DROP TRIGGER IF EXISTS after_ticket_delete
+ON issue_ticket;
+DROP TRIGGER IF EXISTS after_widget_delete
+ON dashboard_widget;
+DROP TRIGGER IF EXISTS after_test_results_update
+ON test_item_results;
+DROP TRIGGER IF EXISTS on_issue_update
+ON issue;
+DROP TRIGGER IF EXISTS on_issue_insert
+ON issue;
+DROP TRIGGER IF EXISTS before_test_item_delete
+ON test_item_results;
+DROP TRIGGER IF EXISTS delete_execution_statistics
+ON execution_statistics;
+DROP TRIGGER IF EXISTS delete_issue_statistics
+ON issue_statistics;
+
+DROP FUNCTION IF EXISTS get_last_launch_number();
+DROP FUNCTION IF EXISTS check_wired_tickets();
+DROP FUNCTION IF EXISTS check_wired_widgets();
+DROP FUNCTION IF EXISTS increment_execution_statistics();
+DROP FUNCTION IF EXISTS increment_issue_statistics();
+DROP FUNCTION IF EXISTS delete_item_statistics();
+DROP FUNCTION IF EXISTS decrease_execution_statistics();
+DROP FUNCTION IF EXISTS decrease_issue_statistics();
