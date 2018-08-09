@@ -3,16 +3,71 @@
 */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
+
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
+import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
+import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JExecutionStatistics;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueStatistics;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProjectConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JProjectConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JProjectEmailConfiguration;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRecipients;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserConfig;
+import com.epam.ta.reportportal.jooq.tables.JUserFilter;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import org.jooq.Catalog;
 import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
-
-import javax.annotation.Generated;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -28,7 +83,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-	private static final long serialVersionUID = 1240208401;
+    private static final long serialVersionUID = 798716109;
 
     /**
      * The reference instance of <code>public</code>
@@ -36,19 +91,29 @@ public class JPublic extends SchemaImpl {
     public static final JPublic PUBLIC = new JPublic();
 
     /**
+     * The table <code>public.active_directory_config</code>.
+     */
+    public final JActiveDirectoryConfig ACTIVE_DIRECTORY_CONFIG = com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
+
+    /**
      * The table <code>public.activity</code>.
      */
     public final JActivity ACTIVITY = com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+
+    /**
+     * The table <code>public.auth_config</code>.
+     */
+    public final JAuthConfig AUTH_CONFIG = com.epam.ta.reportportal.jooq.tables.JAuthConfig.AUTH_CONFIG;
 
     /**
      * The table <code>public.bug_tracking_system</code>.
      */
     public final JBugTrackingSystem BUG_TRACKING_SYSTEM = com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem.BUG_TRACKING_SYSTEM;
 
-	/**
-	 * The table <code>public.content_field</code>.
-	 */
-	public final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
+    /**
+     * The table <code>public.content_field</code>.
+     */
+    public final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
 
     /**
      * The table <code>public.dashboard</code>.
@@ -75,25 +140,35 @@ public class JPublic extends SchemaImpl {
      */
     public final JDefectFormFieldValue DEFECT_FORM_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE;
 
-	/**
-	 * The table <code>public.execution_statistics</code>.
-	 */
-	public final JExecutionStatistics EXECUTION_STATISTICS = com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
+    /**
+     * The table <code>public.demo_data_postfix</code>.
+     */
+    public final JDemoDataPostfix DEMO_DATA_POSTFIX = com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix.DEMO_DATA_POSTFIX;
 
-	/**
-	 * The table <code>public.filter</code>.
-	 */
-	public final JFilter FILTER = com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
+    /**
+     * The table <code>public.email_sender_case</code>.
+     */
+    public final JEmailSenderCase EMAIL_SENDER_CASE = com.epam.ta.reportportal.jooq.tables.JEmailSenderCase.EMAIL_SENDER_CASE;
 
-	/**
-	 * The table <code>public.filter_condition</code>.
-	 */
-	public final JFilterCondition FILTER_CONDITION = com.epam.ta.reportportal.jooq.tables.JFilterCondition.FILTER_CONDITION;
+    /**
+     * The table <code>public.execution_statistics</code>.
+     */
+    public final JExecutionStatistics EXECUTION_STATISTICS = com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
 
-	/**
-	 * The table <code>public.filter_sort</code>.
-	 */
-	public final JFilterSort FILTER_SORT = com.epam.ta.reportportal.jooq.tables.JFilterSort.FILTER_SORT;
+    /**
+     * The table <code>public.filter</code>.
+     */
+    public final JFilter FILTER = com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
+
+    /**
+     * The table <code>public.filter_condition</code>.
+     */
+    public final JFilterCondition FILTER_CONDITION = com.epam.ta.reportportal.jooq.tables.JFilterCondition.FILTER_CONDITION;
+
+    /**
+     * The table <code>public.filter_sort</code>.
+     */
+    public final JFilterSort FILTER_SORT = com.epam.ta.reportportal.jooq.tables.JFilterSort.FILTER_SORT;
 
     /**
      * The table <code>public.integration</code>.
@@ -110,15 +185,15 @@ public class JPublic extends SchemaImpl {
      */
     public final JIssue ISSUE = com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 
-	/**
-	 * The table <code>public.issue_group</code>.
-	 */
-	public final JIssueGroup ISSUE_GROUP = com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
+    /**
+     * The table <code>public.issue_group</code>.
+     */
+    public final JIssueGroup ISSUE_GROUP = com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 
-	/**
-	 * The table <code>public.issue_statistics</code>.
-	 */
-	public final JIssueStatistics ISSUE_STATISTICS = com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
+    /**
+     * The table <code>public.issue_statistics</code>.
+     */
+    public final JIssueStatistics ISSUE_STATISTICS = com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
 
     /**
      * The table <code>public.issue_ticket</code>.
@@ -151,6 +226,16 @@ public class JPublic extends SchemaImpl {
     public final JLaunchTag LAUNCH_TAG = com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 
     /**
+     * The table <code>public.ldap_config</code>.
+     */
+    public final JLdapConfig LDAP_CONFIG = com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
+
+    /**
+     * The table <code>public.ldap_synchronization_attributes</code>.
+     */
+    public final JLdapSynchronizationAttributes LDAP_SYNCHRONIZATION_ATTRIBUTES = com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
+
+    /**
      * The table <code>public.log</code>.
      */
     public final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
@@ -164,6 +249,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.oauth_registration</code>.
      */
     public final JOauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.JOauthRegistration.OAUTH_REGISTRATION;
+
+    /**
+     * The table <code>public.oauth_registration_restriction</code>.
+     */
+    public final JOauthRegistrationRestriction OAUTH_REGISTRATION_RESTRICTION = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION;
 
     /**
      * The table <code>public.oauth_registration_scope</code>.
@@ -181,6 +271,11 @@ public class JPublic extends SchemaImpl {
     public final JProject PROJECT = com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 
     /**
+     * The table <code>public.project_analyzer_configuration</code>.
+     */
+    public final JProjectAnalyzerConfiguration PROJECT_ANALYZER_CONFIGURATION = com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration.PROJECT_ANALYZER_CONFIGURATION;
+
+    /**
      * The table <code>public.project_configuration</code>.
      */
     public final JProjectConfiguration PROJECT_CONFIGURATION = com.epam.ta.reportportal.jooq.tables.JProjectConfiguration.PROJECT_CONFIGURATION;
@@ -194,6 +289,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.project_user</code>.
      */
     public final JProjectUser PROJECT_USER = com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
+
+    /**
+     * The table <code>public.recipients</code>.
+     */
+    public final JRecipients RECIPIENTS = com.epam.ta.reportportal.jooq.tables.JRecipients.RECIPIENTS;
 
     /**
      * The table <code>public.server_settings</code>.
@@ -220,10 +320,15 @@ public class JPublic extends SchemaImpl {
      */
     public final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 
-	/**
-	 * The table <code>public.user_filter</code>.
-	 */
-	public final JUserFilter USER_FILTER = com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
+    /**
+     * The table <code>public.user_config</code>.
+     */
+    public final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
+
+    /**
+     * The table <code>public.user_filter</code>.
+     */
+    public final JUserFilter USER_FILTER = com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
 
     /**
      * The table <code>public.users</code>.
@@ -235,20 +340,20 @@ public class JPublic extends SchemaImpl {
      */
     public final JWidget WIDGET = com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 
-	/**
-	 * The table <code>public.widget_filter</code>.
-	 */
-	public final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
+    /**
+     * The table <code>public.widget_filter</code>.
+     */
+    public final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
-	/**
-	 * The table <code>public.widget_option</code>.
-	 */
-	public final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
+    /**
+     * The table <code>public.widget_option</code>.
+     */
+    public final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
 
-	/**
-	 * The table <code>public.widget_option_value</code>.
-	 */
-	public final JWidgetOptionValue WIDGET_OPTION_VALUE = com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue.WIDGET_OPTION_VALUE;
+    /**
+     * The table <code>public.widget_option_value</code>.
+     */
+    public final JWidgetOptionValue WIDGET_OPTION_VALUE = com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue.WIDGET_OPTION_VALUE;
 
     /**
      * No further instances allowed
@@ -274,16 +379,41 @@ public class JPublic extends SchemaImpl {
     }
 
     private final List<Sequence<?>> getSequences0() {
-		return Arrays.<Sequence<?>>asList(Sequences.ACTIVITY_ID_SEQ, Sequences.BUG_TRACKING_SYSTEM_ID_SEQ, Sequences.DASHBOARD_ID_SEQ,
-				Sequences.DEFECT_FIELD_ALLOWED_VALUE_ID_SEQ, Sequences.DEFECT_FORM_FIELD_ID_SEQ, Sequences.EXECUTION_STATISTICS_ES_ID_SEQ,
-				Sequences.FILTER_CONDITION_ID_SEQ, Sequences.FILTER_ID_SEQ, Sequences.FILTER_SORT_ID_SEQ, Sequences.INTEGRATION_ID_SEQ,
-				Sequences.INTEGRATION_TYPE_ID_SEQ, Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ, Sequences.ISSUE_STATISTICS_IS_ID_SEQ,
-				Sequences.ISSUE_TYPE_ID_SEQ, Sequences.ITEM_TAG_ID_SEQ, Sequences.LAUNCH_ID_SEQ, Sequences.LAUNCH_TAG_ID_SEQ,
-				Sequences.LOG_ID_SEQ, Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ, Sequences.PROJECT_EMAIL_CONFIGURATION_ID_SEQ,
-				Sequences.PROJECT_ID_SEQ, Sequences.SERVER_SETTINGS_ID_SEQ, Sequences.TEST_ITEM_STRUCTURE_STRUCTURE_ID_SEQ,
-				Sequences.TICKET_ID_SEQ, Sequences.USERS_ID_SEQ, Sequences.WIDGET_ID_SEQ, Sequences.WIDGET_OPTION_ID_SEQ
-		);
-	}
+        return Arrays.<Sequence<?>>asList(
+            Sequences.ACTIVITY_ID_SEQ,
+            Sequences.BUG_TRACKING_SYSTEM_ID_SEQ,
+            Sequences.DASHBOARD_ID_SEQ,
+            Sequences.DEFECT_FIELD_ALLOWED_VALUE_ID_SEQ,
+            Sequences.DEFECT_FORM_FIELD_ID_SEQ,
+            Sequences.DEMO_DATA_POSTFIX_ID_SEQ,
+            Sequences.EMAIL_SENDER_CASE_ID_SEQ,
+            Sequences.EXECUTION_STATISTICS_ES_ID_SEQ,
+            Sequences.FILTER_CONDITION_ID_SEQ,
+            Sequences.FILTER_ID_SEQ,
+            Sequences.FILTER_SORT_ID_SEQ,
+            Sequences.INTEGRATION_ID_SEQ,
+            Sequences.INTEGRATION_TYPE_ID_SEQ,
+            Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ,
+            Sequences.ISSUE_STATISTICS_IS_ID_SEQ,
+            Sequences.ISSUE_TYPE_ID_SEQ,
+            Sequences.ITEM_TAG_ID_SEQ,
+            Sequences.LAUNCH_ID_SEQ,
+            Sequences.LAUNCH_TAG_ID_SEQ,
+            Sequences.LDAP_SYNCHRONIZATION_ATTRIBUTES_ID_SEQ,
+            Sequences.LOG_ID_SEQ,
+            Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
+            Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
+            Sequences.PROJECT_ANALYZER_CONFIGURATION_ID_SEQ,
+            Sequences.PROJECT_EMAIL_CONFIGURATION_ID_SEQ,
+            Sequences.PROJECT_ID_SEQ,
+            Sequences.SERVER_SETTINGS_ID_SEQ,
+            Sequences.TEST_ITEM_STRUCTURE_STRUCTURE_ID_SEQ,
+            Sequences.TICKET_ID_SEQ,
+            Sequences.USER_CONFIG_ID_SEQ,
+            Sequences.USERS_ID_SEQ,
+            Sequences.WIDGET_ID_SEQ,
+            Sequences.WIDGET_OPTION_ID_SEQ);
+    }
 
     @Override
     public final List<Table<?>> getTables() {
@@ -293,22 +423,59 @@ public class JPublic extends SchemaImpl {
     }
 
     private final List<Table<?>> getTables0() {
-		return Arrays.<Table<?>>asList(JActivity.ACTIVITY, JBugTrackingSystem.BUG_TRACKING_SYSTEM, JContentField.CONTENT_FIELD,
-				JDashboard.DASHBOARD, JDashboardWidget.DASHBOARD_WIDGET, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE,
-				JDefectFormField.DEFECT_FORM_FIELD, JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE,
-				JExecutionStatistics.EXECUTION_STATISTICS, JFilter.FILTER, JFilterCondition.FILTER_CONDITION, JFilterSort.FILTER_SORT,
-				JIntegration.INTEGRATION, JIntegrationType.INTEGRATION_TYPE, JIssue.ISSUE, JIssueGroup.ISSUE_GROUP,
-				JIssueStatistics.ISSUE_STATISTICS, JIssueTicket.ISSUE_TICKET, JIssueType.ISSUE_TYPE,
-				JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION, JItemTag.ITEM_TAG, JLaunch.LAUNCH, JLaunchTag.LAUNCH_TAG,
-				JLog.LOG, JOauthAccessToken.OAUTH_ACCESS_TOKEN,
+        return Arrays.<Table<?>>asList(
+            JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG,
+            JActivity.ACTIVITY,
+            JAuthConfig.AUTH_CONFIG,
+            JBugTrackingSystem.BUG_TRACKING_SYSTEM,
+            JContentField.CONTENT_FIELD,
+            JDashboard.DASHBOARD,
+            JDashboardWidget.DASHBOARD_WIDGET,
+            JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE,
+            JDefectFormField.DEFECT_FORM_FIELD,
+            JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE,
+            JDemoDataPostfix.DEMO_DATA_POSTFIX,
+            JEmailSenderCase.EMAIL_SENDER_CASE,
+            JExecutionStatistics.EXECUTION_STATISTICS,
+            JFilter.FILTER,
+            JFilterCondition.FILTER_CONDITION,
+            JFilterSort.FILTER_SORT,
+            JIntegration.INTEGRATION,
+            JIntegrationType.INTEGRATION_TYPE,
+            JIssue.ISSUE,
+            JIssueGroup.ISSUE_GROUP,
+            JIssueStatistics.ISSUE_STATISTICS,
+            JIssueTicket.ISSUE_TICKET,
+            JIssueType.ISSUE_TYPE,
+            JIssueTypeProjectConfiguration.ISSUE_TYPE_PROJECT_CONFIGURATION,
+            JItemTag.ITEM_TAG,
+            JLaunch.LAUNCH,
+            JLaunchTag.LAUNCH_TAG,
+            JLdapConfig.LDAP_CONFIG,
+            JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES,
+            JLog.LOG,
+            JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
+            JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JParameter.PARAMETER,
             JProject.PROJECT,
-            JProjectConfiguration.PROJECT_CONFIGURATION, JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION, JProjectUser.PROJECT_USER,
-				JServerSettings.SERVER_SETTINGS, JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS,
-				JTestItemStructure.TEST_ITEM_STRUCTURE, JTicket.TICKET, JUserFilter.USER_FILTER, JUsers.USERS, JWidget.WIDGET,
-				JWidgetFilter.WIDGET_FILTER, JWidgetOption.WIDGET_OPTION, JWidgetOptionValue.WIDGET_OPTION_VALUE
-		);
-	}
+            JProjectAnalyzerConfiguration.PROJECT_ANALYZER_CONFIGURATION,
+            JProjectConfiguration.PROJECT_CONFIGURATION,
+            JProjectEmailConfiguration.PROJECT_EMAIL_CONFIGURATION,
+            JProjectUser.PROJECT_USER,
+            JRecipients.RECIPIENTS,
+            JServerSettings.SERVER_SETTINGS,
+            JTestItem.TEST_ITEM,
+            JTestItemResults.TEST_ITEM_RESULTS,
+            JTestItemStructure.TEST_ITEM_STRUCTURE,
+            JTicket.TICKET,
+            JUserConfig.USER_CONFIG,
+            JUserFilter.USER_FILTER,
+            JUsers.USERS,
+            JWidget.WIDGET,
+            JWidgetFilter.WIDGET_FILTER,
+            JWidgetOption.WIDGET_OPTION,
+            JWidgetOptionValue.WIDGET_OPTION_VALUE);
+    }
 }

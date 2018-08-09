@@ -3,13 +3,15 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JParameter;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record3;
 import org.jooq.Row3;
 import org.jooq.impl.TableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -25,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JParameterRecord extends TableRecordImpl<JParameterRecord> implements Record3<Long, String, String> {
 
-	private static final long serialVersionUID = -1581402050;
+    private static final long serialVersionUID = -1581402050;
 
     /**
      * Setter for <code>public.parameter.item_id</code>.

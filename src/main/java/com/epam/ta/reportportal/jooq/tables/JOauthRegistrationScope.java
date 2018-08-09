@@ -3,17 +3,28 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +40,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthRegistrationScope extends TableImpl<JOauthRegistrationScopeRecord> {
 
-	private static final long serialVersionUID = -1803210064;
+    private static final long serialVersionUID = 389278580;
 
     /**
      * The reference instance of <code>public.oauth_registration_scope</code>
@@ -101,7 +112,7 @@ public class JOauthRegistrationScope extends TableImpl<JOauthRegistrationScopeRe
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.OAUTH_REGISTRATION_SCOPE_PK);
+        return Arrays.<Index>asList(Indexes.OAUTH_REGISTRATION_SCOPE_PK, Indexes.OAUTH_REGISTRATION_SCOPE_UNIQUE);
     }
 
     /**
@@ -125,7 +136,7 @@ public class JOauthRegistrationScope extends TableImpl<JOauthRegistrationScopeRe
      */
     @Override
     public List<UniqueKey<JOauthRegistrationScopeRecord>> getKeys() {
-        return Arrays.<UniqueKey<JOauthRegistrationScopeRecord>>asList(Keys.OAUTH_REGISTRATION_SCOPE_PK);
+        return Arrays.<UniqueKey<JOauthRegistrationScopeRecord>>asList(Keys.OAUTH_REGISTRATION_SCOPE_PK, Keys.OAUTH_REGISTRATION_SCOPE_UNIQUE);
     }
 
     /**

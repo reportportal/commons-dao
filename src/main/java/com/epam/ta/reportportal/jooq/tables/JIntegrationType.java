@@ -3,20 +3,30 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JIntegrationTypeRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -32,7 +42,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
 
-	private static final long serialVersionUID = -143459830;
+    private static final long serialVersionUID = -143459830;
 
     /**
      * The reference instance of <code>public.integration_type</code>
@@ -75,9 +85,8 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
     /**
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
-	@java.lang.Deprecated
-	public final TableField<JIntegrationTypeRecord, Object> DETAILS = createField(
-			"details", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
+    @java.lang.Deprecated
+    public final TableField<JIntegrationTypeRecord, Object> DETAILS = createField("details", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "");
 
     /**
      * Create a <code>public.integration_type</code> table reference

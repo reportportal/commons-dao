@@ -3,14 +3,16 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JWidget;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record6;
 import org.jooq.Row6;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,21 +28,21 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements Record6<Long, String, String, String, Short, Long> {
 
-	private static final long serialVersionUID = 1687888189;
+    private static final long serialVersionUID = 1687888189;
 
     /**
      * Setter for <code>public.widget.id</code>.
      */
-	public void setId(Long value) {
-		set(0, value);
-	}
+    public void setId(Long value) {
+        set(0, value);
+    }
 
     /**
      * Getter for <code>public.widget.id</code>.
      */
-	public Long getId() {
-		return (Long) get(0);
-	}
+    public Long getId() {
+        return (Long) get(0);
+    }
 
     /**
      * Setter for <code>public.widget.name</code>.
@@ -56,61 +58,61 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
         return (String) get(1);
     }
 
-	/**
-	 * Setter for <code>public.widget.description</code>.
-	 */
-	public void setDescription(String value) {
-		set(2, value);
-	}
+    /**
+     * Setter for <code>public.widget.description</code>.
+     */
+    public void setDescription(String value) {
+        set(2, value);
+    }
 
-	/**
-	 * Getter for <code>public.widget.description</code>.
-	 */
-	public String getDescription() {
-		return (String) get(2);
-	}
+    /**
+     * Getter for <code>public.widget.description</code>.
+     */
+    public String getDescription() {
+        return (String) get(2);
+    }
 
-	/**
-	 * Setter for <code>public.widget.widget_type</code>.
-	 */
-	public void setWidgetType(String value) {
-		set(3, value);
-	}
+    /**
+     * Setter for <code>public.widget.widget_type</code>.
+     */
+    public void setWidgetType(String value) {
+        set(3, value);
+    }
 
-	/**
-	 * Getter for <code>public.widget.widget_type</code>.
-	 */
-	public String getWidgetType() {
-		return (String) get(3);
-	}
+    /**
+     * Getter for <code>public.widget.widget_type</code>.
+     */
+    public String getWidgetType() {
+        return (String) get(3);
+    }
 
-	/**
-	 * Setter for <code>public.widget.items_count</code>.
-	 */
-	public void setItemsCount(Short value) {
-		set(4, value);
-	}
+    /**
+     * Setter for <code>public.widget.items_count</code>.
+     */
+    public void setItemsCount(Short value) {
+        set(4, value);
+    }
 
-	/**
-	 * Getter for <code>public.widget.items_count</code>.
-	 */
-	public Short getItemsCount() {
-		return (Short) get(4);
-	}
+    /**
+     * Getter for <code>public.widget.items_count</code>.
+     */
+    public Short getItemsCount() {
+        return (Short) get(4);
+    }
 
     /**
      * Setter for <code>public.widget.project_id</code>.
      */
     public void setProjectId(Long value) {
-		set(5, value);
-	}
+        set(5, value);
+    }
 
     /**
      * Getter for <code>public.widget.project_id</code>.
      */
     public Long getProjectId() {
-		return (Long) get(5);
-	}
+        return (Long) get(5);
+    }
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -120,37 +122,37 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      * {@inheritDoc}
      */
     @Override
-	public Record1<Long> key() {
-		return (Record1) super.key();
-	}
+    public Record1<Long> key() {
+        return (Record1) super.key();
+    }
 
     // -------------------------------------------------------------------------
-	// Record6 type implementation
-	// -------------------------------------------------------------------------
+    // Record6 type implementation
+    // -------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Row6<Long, String, String, String, Short, Long> fieldsRow() {
-		return (Row6) super.fieldsRow();
-	}
+    public Row6<Long, String, String, String, Short, Long> fieldsRow() {
+        return (Row6) super.fieldsRow();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Row6<Long, String, String, String, Short, Long> valuesRow() {
-		return (Row6) super.valuesRow();
-	}
+    public Row6<Long, String, String, String, Short, Long> valuesRow() {
+        return (Row6) super.valuesRow();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Field<Long> field1() {
-		return JWidget.WIDGET.ID;
-	}
+    public Field<Long> field1() {
+        return JWidget.WIDGET.ID;
+    }
 
     /**
      * {@inheritDoc}
@@ -164,41 +166,41 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      * {@inheritDoc}
      */
     @Override
-	public Field<String> field3() {
-		return JWidget.WIDGET.DESCRIPTION;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Field<String> field4() {
-		return JWidget.WIDGET.WIDGET_TYPE;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Field<Short> field5() {
-		return JWidget.WIDGET.ITEMS_COUNT;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Field<Long> field6() {
-		return JWidget.WIDGET.PROJECT_ID;
-	}
+    public Field<String> field3() {
+        return JWidget.WIDGET.DESCRIPTION;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Long component1() {
-		return getId();
-	}
+    public Field<String> field4() {
+        return JWidget.WIDGET.WIDGET_TYPE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Field<Short> field5() {
+        return JWidget.WIDGET.ITEMS_COUNT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Field<Long> field6() {
+        return JWidget.WIDGET.PROJECT_ID;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long component1() {
+        return getId();
+    }
 
     /**
      * {@inheritDoc}
@@ -212,41 +214,41 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      * {@inheritDoc}
      */
     @Override
-	public String component3() {
-		return getDescription();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String component4() {
-		return getWidgetType();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Short component5() {
-		return getItemsCount();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Long component6() {
-		return getProjectId();
-	}
+    public String component3() {
+        return getDescription();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public Long value1() {
-		return getId();
-	}
+    public String component4() {
+        return getWidgetType();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Short component5() {
+        return getItemsCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long component6() {
+        return getProjectId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long value1() {
+        return getId();
+    }
 
     /**
      * {@inheritDoc}
@@ -260,42 +262,42 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      * {@inheritDoc}
      */
     @Override
-	public String value3() {
-		return getDescription();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String value4() {
-		return getWidgetType();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Short value5() {
-		return getItemsCount();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Long value6() {
-		return getProjectId();
-	}
+    public String value3() {
+        return getDescription();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public JWidgetRecord value1(Long value) {
-		setId(value);
-		return this;
-	}
+    public String value4() {
+        return getWidgetType();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Short value5() {
+        return getItemsCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long value6() {
+        return getProjectId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JWidgetRecord value1(Long value) {
+        setId(value);
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -310,51 +312,51 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      * {@inheritDoc}
      */
     @Override
-	public JWidgetRecord value3(String value) {
-		setDescription(value);
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public JWidgetRecord value4(String value) {
-		setWidgetType(value);
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public JWidgetRecord value5(Short value) {
-		setItemsCount(value);
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public JWidgetRecord value6(Long value) {
-		setProjectId(value);
-		return this;
-	}
+    public JWidgetRecord value3(String value) {
+        setDescription(value);
+        return this;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public JWidgetRecord values(Long value1, String value2, String value3, String value4, Short value5, Long value6) {
-		value1(value1);
-		value2(value2);
-		value3(value3);
-		value4(value4);
-		value5(value5);
-		value6(value6);
-		return this;
-	}
+    public JWidgetRecord value4(String value) {
+        setWidgetType(value);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JWidgetRecord value5(Short value) {
+        setItemsCount(value);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JWidgetRecord value6(Long value) {
+        setProjectId(value);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JWidgetRecord values(Long value1, String value2, String value3, String value4, Short value5, Long value6) {
+        value1(value1);
+        value2(value2);
+        value3(value3);
+        value4(value4);
+        value5(value5);
+        value6(value6);
+        return this;
+    }
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -370,14 +372,14 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
     /**
      * Create a detached, initialised JWidgetRecord
      */
-	public JWidgetRecord(Long id, String name, String description, String widgetType, Short itemsCount, Long projectId) {
-		super(JWidget.WIDGET);
+    public JWidgetRecord(Long id, String name, String description, String widgetType, Short itemsCount, Long projectId) {
+        super(JWidget.WIDGET);
 
         set(0, id);
         set(1, name);
-		set(2, description);
-		set(3, widgetType);
-		set(4, itemsCount);
-		set(5, projectId);
-	}
+        set(2, description);
+        set(3, widgetType);
+        set(4, itemsCount);
+        set(5, projectId);
+    }
 }

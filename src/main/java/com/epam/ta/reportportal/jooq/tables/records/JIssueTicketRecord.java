@@ -3,13 +3,15 @@
 */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -25,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssueTicketRecord extends UpdatableRecordImpl<JIssueTicketRecord> implements Record2<Long, Long> {
 
-	private static final long serialVersionUID = 324090401;
+    private static final long serialVersionUID = 324090401;
 
     /**
      * Setter for <code>public.issue_ticket.issue_id</code>.

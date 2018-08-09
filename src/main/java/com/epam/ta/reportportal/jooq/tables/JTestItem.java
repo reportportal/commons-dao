@@ -3,19 +3,29 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -31,7 +41,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-	private static final long serialVersionUID = -838859216;
+    private static final long serialVersionUID = -838859216;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -49,8 +59,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.item_id</code>.
      */
-	public final TableField<JTestItemRecord, Long> ITEM_ID = createField(
-			"item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JTestItemRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.test_item.name</code>.
@@ -148,8 +157,8 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     @Override
     public List<ForeignKey<JTestItemRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<JTestItemRecord, ?>>asList(Keys.TEST_ITEM__TEST_ITEM_ITEM_ID_FKEY);
-	}
+        return Arrays.<ForeignKey<JTestItemRecord, ?>>asList(Keys.TEST_ITEM__TEST_ITEM_ITEM_ID_FKEY);
+    }
 
     /**
      * {@inheritDoc}

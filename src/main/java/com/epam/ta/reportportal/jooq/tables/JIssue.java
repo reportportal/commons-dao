@@ -3,17 +3,27 @@
 */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JIssueRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +39,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssue extends TableImpl<JIssueRecord> {
 
-	private static final long serialVersionUID = -2126638759;
+    private static final long serialVersionUID = -2126638759;
 
     /**
      * The reference instance of <code>public.issue</code>
@@ -52,7 +62,7 @@ public class JIssue extends TableImpl<JIssueRecord> {
     /**
      * The column <code>public.issue.issue_type</code>.
      */
-	public final TableField<JIssueRecord, Long> ISSUE_TYPE = createField("issue_type", org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JIssueRecord, Long> ISSUE_TYPE = createField("issue_type", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.issue.issue_description</code>.
@@ -111,8 +121,8 @@ public class JIssue extends TableImpl<JIssueRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-		return Arrays.<Index>asList(Indexes.ISSUE_PK);
-	}
+        return Arrays.<Index>asList(Indexes.ISSUE_PK);
+    }
 
     /**
      * {@inheritDoc}
@@ -127,8 +137,8 @@ public class JIssue extends TableImpl<JIssueRecord> {
      */
     @Override
     public List<UniqueKey<JIssueRecord>> getKeys() {
-		return Arrays.<UniqueKey<JIssueRecord>>asList(Keys.ISSUE_PK);
-	}
+        return Arrays.<UniqueKey<JIssueRecord>>asList(Keys.ISSUE_PK);
+    }
 
     /**
      * {@inheritDoc}
