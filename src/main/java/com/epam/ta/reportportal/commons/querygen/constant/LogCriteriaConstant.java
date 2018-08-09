@@ -24,4 +24,5 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public class LogCriteriaConstant {
 	public static final String LOG_MESSAGE = "log_message";
+	public static final String TEST_ITEM_ID = "item_id";
 }
