@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.integration;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,11 +27,12 @@ public class Integration implements Serializable{
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "project_id")
+	@JsonManagedReference
 	private Project project;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "type")
 	private IntegrationType type;
 

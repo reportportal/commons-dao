@@ -29,12 +29,15 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Extension of basic filter object. Represents user filter
+ * with sorting and conditions
+ *
  * @author Pavel Bortnik
  */
 
 @Entity
 @Table(name = "user_filter", schema = "public")
-public class UserFilter extends Filter implements Serializable {
+public class UserFilter extends Queryable implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")

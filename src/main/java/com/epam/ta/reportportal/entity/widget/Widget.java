@@ -62,8 +62,9 @@ public class Widget implements Serializable {
 	@Column(name = "field")
 	private List<String> contentFields = Lists.newArrayList();
 
-	@ManyToMany(mappedBy = "widgets")
-	private Set<UserFilter> filters = Sets.newHashSet();
+	@ManyToOne
+	@JoinColumn(name = "filter_id")
+	private UserFilter filter;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "widget_id")
@@ -149,11 +150,11 @@ public class Widget implements Serializable {
 		this.dashboardWidgets = dashboardWidgets;
 	}
 
-	public Set<UserFilter> getFilters() {
-		return filters;
+	public UserFilter getFilter() {
+		return filter;
 	}
 
-	public void setFilters(Set<UserFilter> filters) {
-		this.filters = filters;
+	public void setFilter(UserFilter filter) {
+		this.filter = filter;
 	}
 }

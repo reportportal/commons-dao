@@ -48,5 +48,5 @@ public interface LogRepositoryCustom  extends FilterableRepository<Log>{
 	 * @param isLoadBinaryData
 	 * @return
 	 */
-	List<Log> findByTestItemId(String itemId, int limit, boolean isLoadBinaryData);
+	List<Log> findByTestItemId(Long itemId, int limit, boolean isLoadBinaryData);
 }

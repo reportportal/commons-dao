@@ -22,19 +22,16 @@
 package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.entity.widget.Widget;
-import com.google.common.collect.Sets;
 
 import javax.persistence.*;
-import java.util.Set;
 
 /**
- * @author Pavel Bortnik1
+ * @author Pavel Bortnik
  */
 @Entity
 @Table(name = "filter")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Filter {
+public abstract class Queryable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +41,7 @@ public abstract class Filter {
 	private String name;
 
 	@Column(name = "target")
-	private String targetClass;
+	private Class<?> targetClass;
 
 	@Column(name = "description")
 	private String description;
@@ -52,10 +49,6 @@ public abstract class Filter {
 	@ManyToOne
 	@JoinColumn(name = "project_id")
 	private Project project;
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "widget_filter", joinColumns = @JoinColumn(name = "filter_id"), inverseJoinColumns = @JoinColumn(name = "widget_id"))
-	private Set<Widget> widgets = Sets.newHashSet();
 
 	public Long getId() {
 		return id;
@@ -73,11 +66,11 @@ public abstract class Filter {
 		this.name = name;
 	}
 
-	public String getTargetClass() {
+	public Class<?> getTargetClass() {
 		return targetClass;
 	}
 
-	public void setTargetClass(String targetClass) {
+	public void setTargetClass(Class<?> targetClass) {
 		this.targetClass = targetClass;
 	}
 
@@ -95,13 +88,5 @@ public abstract class Filter {
 
 	public void setProject(Project project) {
 		this.project = project;
-	}
-
-	public Set<Widget> getWidgets() {
-		return widgets;
-	}
-
-	public void setWidgets(Set<Widget> widgets) {
-		this.widgets = widgets;
 	}
 }
