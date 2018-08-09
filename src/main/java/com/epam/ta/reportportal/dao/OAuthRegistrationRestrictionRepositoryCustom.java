@@ -8,5 +8,4 @@ import java.util.List;
  * @author Anton Machulski
  */
 public interface OAuthRegistrationRestrictionRepositoryCustom {
-	List<OAuthRegistrationRestriction> findByRegistrationId(String registrationId);
 }

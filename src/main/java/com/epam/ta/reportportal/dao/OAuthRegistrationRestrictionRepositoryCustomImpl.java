@@ -14,18 +14,4 @@ import static com.epam.ta.reportportal.jooq.Tables.OAUTH_REGISTRATION_RESTRICTIO
  */
 @Repository
 public class OAuthRegistrationRestrictionRepositoryCustomImpl implements OAuthRegistrationRestrictionRepositoryCustom {
-	private DSLContext dsl;
-
-	@Autowired
-	public void setDsl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
-
-	@Override
-	public List<OAuthRegistrationRestriction> findByRegistrationId(String registrationId) {
-		return dsl.select()
-				.from(OAUTH_REGISTRATION_RESTRICTION)
-				.where(OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK.eq(registrationId))
-				.fetch().into(OAuthRegistrationRestriction.class);
-	}
 }
