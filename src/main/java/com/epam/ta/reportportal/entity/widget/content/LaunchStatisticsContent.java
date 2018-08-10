@@ -1,24 +1,17 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.epam.ta.reportportal.entity.item.ExecutionStatistics;
+import com.epam.ta.reportportal.entity.item.IssueStatistics;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 
 import java.sql.Timestamp;
-import java.util.Map;
 
 /**
  * @author Ivan Budayeu
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent {
-
-	@JsonIgnore
-	private Integer issueCount;
-
-	@JsonIgnore
-	private String issueName;
 
 	@JsonProperty(value = "status")
 	private String status;
@@ -29,29 +22,11 @@ public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent {
 	@JsonProperty(value = "last_modified")
 	private Timestamp lastModified;
 
-	@JsonProperty(value = "defects")
-	private Map<String, Integer> defectsMap;
+	private IssueStatistics issueStatistics;
 
-	@JsonProperty(value = "executions")
-	private Map<String, Integer> executionsMap;
+	private ExecutionStatistics executionStatistics;
 
 	public LaunchStatisticsContent() {
-	}
-
-	public String getIssueName() {
-		return issueName;
-	}
-
-	public void setIssueName(String issueName) {
-		this.issueName = issueName;
-	}
-
-	public Integer getIssueCount() {
-		return issueCount;
-	}
-
-	public void setIssueCount(Integer issueCount) {
-		this.issueCount = issueCount;
 	}
 
 	public String getStatus() {
@@ -78,32 +53,4 @@ public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent {
 		this.lastModified = lastModified;
 	}
 
-	public Map<String, Integer> getDefectsMap() {
-		return defectsMap;
-	}
-
-	public void setDefectsMap(Map<String, Integer> defectsMap) {
-		this.defectsMap = defectsMap;
-	}
-
-	public Map<String, Integer> getExecutionsMap() {
-		return executionsMap;
-	}
-
-	public void setExecutionsMap(Map<String, Integer> executionsMap) {
-		this.executionsMap = executionsMap;
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + MoreObjects.toStringHelper(this)
-				.add("issueCount", issueCount)
-				.add("issueName", issueName)
-				.add("status", status)
-				.add("endTime", endTime)
-				.add("lastModified", lastModified)
-				.add("defectsMap", defectsMap)
-				.add("executionsMap", executionsMap)
-				.toString();
-	}
 }

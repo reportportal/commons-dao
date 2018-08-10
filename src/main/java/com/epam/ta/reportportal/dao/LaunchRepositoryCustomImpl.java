@@ -56,7 +56,7 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 @Repository
 public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
-	private static final RecordMapper<? super Record, IssueStatistics> ISSUE_STATISTICS_RECORD_MAPPER = r -> {
+	public static final RecordMapper<? super Record, IssueStatistics> ISSUE_STATISTICS_RECORD_MAPPER = r -> {
 		IssueStatistics stats = r.into(IssueStatistics.class);
 		IssueType type = r.into(IssueType.class);
 		IssueGroup group = r.into(IssueGroup.class);
@@ -65,17 +65,17 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return stats;
 	};
 
-	private static final RecordMapper<? super Record, ExecutionStatistics> EXECUTION_STATISTICS_RECORD_MAPPER = r -> r.into(
+	public static final RecordMapper<? super Record, ExecutionStatistics> EXECUTION_STATISTICS_RECORD_MAPPER = r -> r.into(
 			ExecutionStatistics.class);
 
-	private static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
+	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
 		Launch launch = r.into(Launch.class);
 		launch.getIssueStatistics().add(ISSUE_STATISTICS_RECORD_MAPPER.map(r));
 		launch.getExecutionStatistics().add(EXECUTION_STATISTICS_RECORD_MAPPER.map(r));
 		return launch;
 	};
 
-	private static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
+	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
 		Map<Long, Launch> res = new HashMap<>();
 		result.forEach(r -> {
 			Long launchId = r.get(LAUNCH.ID);

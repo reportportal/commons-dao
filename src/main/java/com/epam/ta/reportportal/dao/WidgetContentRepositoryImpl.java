@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.LaunchRepositoryCustomImpl.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
@@ -172,31 +173,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(name(LAUNCHES))
 				.limit(limit);
 
-		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
+		List<Launch> launchStatisticsContents = LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.START_TIME.as("startTime"),
-						ISSUE_TYPE.LOCATOR.as("issueName"),
-						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
-				)
+				.select(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
 				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-				.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
-				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
-				.unionAll(dsl.select(LAUNCH.ID,
-						LAUNCH.NUMBER,
-						LAUNCH.NAME,
-						LAUNCH.START_TIME,
-						EXECUTION_STATISTICS.ES_STATUS,
-						EXECUTION_STATISTICS.ES_COUNTER
-				)
-						.from(LAUNCH)
+				.join(select(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER).from(LAUNCH)
 						.join(EXECUTION_STATISTICS)
 						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
 						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
@@ -208,10 +193,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								LAUNCH.START_TIME,
 								EXECUTION_STATISTICS.ES_STATUS,
 								EXECUTION_STATISTICS.ES_COUNTER
-						))
-				.fetchInto(LaunchStatisticsContent.class);
+						)
+						.asTable("tbl"))
+				.on(LAUNCH.ID.eq(field(name("tbl", "id")).cast(Long.class)))
+				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+				.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
+				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
+				.fetch());
 
-		return buildResultLaunchesStatistics(launchStatisticsContents);
+		System.out.println();
+		return null;
 	}
 
 	@Override
@@ -361,24 +352,24 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.fetchInto(LaunchStatisticsContent.class);
 
-		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
-						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
-								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
-						)
-				));
+//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+//				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
+//						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
+//								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
+//						)
+//				));
+//
+//		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
+//
+//		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+//				.filter(content -> Objects.equals(key, content.getLaunchId()))
+//				.findFirst()
+//				.ifPresent(content -> {
+//					content.setDefectsMap(value);
+//					resultLaunchStatisticsContents.add(content);
+//				}));
 
-		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
-
-		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
-				.filter(content -> Objects.equals(key, content.getLaunchId()))
-				.findFirst()
-				.ifPresent(content -> {
-					content.setDefectsMap(value);
-					resultLaunchStatisticsContents.add(content);
-				}));
-
-		return resultLaunchStatisticsContents;
+		return null;
 
 	}
 
@@ -631,39 +622,39 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {
 
-		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
-				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
-						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
-								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
-						)
-				));
+//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+//				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
+//						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
+//								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
+//						)
+//				));
+//
+//		List<LaunchStatisticsContent> resultLaunchStatisticsContent = new ArrayList<>(issuesMap.size());
+//
+//		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+//				.filter(content -> Objects.equals(key, content.getLaunchId()))
+//				.findFirst()
+//				.ifPresent(content -> {
+//					Map<String, Integer> executions = new HashMap<>();
+//					Map<String, Integer> defects = new HashMap<>();
+//					value.keySet().forEach(name -> {
+//						if (StatusEnum.isPresent(name)) {
+//							executions.put(name, value.get(name));
+//						} else {
+//							defects.put(name, value.get(name));
+//						}
+//					});
+//					content.setDefectsMap(defects);
+//					content.setExecutionsMap(executions);
+//					resultLaunchStatisticsContent.add(content);
+//				}));
 
-		List<LaunchStatisticsContent> resultLaunchStatisticsContent = new ArrayList<>(issuesMap.size());
-
-		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
-				.filter(content -> Objects.equals(key, content.getLaunchId()))
-				.findFirst()
-				.ifPresent(content -> {
-					Map<String, Integer> executions = new HashMap<>();
-					Map<String, Integer> defects = new HashMap<>();
-					value.keySet().forEach(name -> {
-						if (StatusEnum.isPresent(name)) {
-							executions.put(name, value.get(name));
-						} else {
-							defects.put(name, value.get(name));
-						}
-					});
-					content.setDefectsMap(defects);
-					content.setExecutionsMap(executions);
-					resultLaunchStatisticsContent.add(content);
-				}));
-
-		return resultLaunchStatisticsContent;
+		return null;
 	}
 
 	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {
 
-		if(CollectionUtils.isEmpty(tableColumns)) {
+		if (CollectionUtils.isEmpty(tableColumns)) {
 			return new LinkedHashSet<>(LAUNCHES_TABLE_MIN_COLUMNS_COUNT);
 		}
 
