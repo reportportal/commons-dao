@@ -185,7 +185,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ISSUE_STATISTICS.IS_COUNTER,
 						ISSUE_GROUP.ISSUE_GROUP_,
 						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
-						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName()))
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
 				)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
@@ -213,7 +213,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ISSUE_STATISTICS.IS_COUNTER,
 						ISSUE_GROUP.ISSUE_GROUP_ID,
 						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
-						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName()))
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
 				)
 				.fetch());
 
