@@ -166,7 +166,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+	public List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
 				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
@@ -187,13 +187,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
 						.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-						.groupBy(LAUNCH.ID,
-								LAUNCH.NUMBER,
-								LAUNCH.NAME,
-								LAUNCH.START_TIME,
-								EXECUTION_STATISTICS.ES_STATUS,
-								EXECUTION_STATISTICS.ES_COUNTER
-						)
+						.groupBy(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER)
 						.asTable("tbl"))
 				.on(LAUNCH.ID.eq(field(name("tbl", "id")).cast(Long.class)))
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
@@ -201,8 +195,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.fetch());
 
-		System.out.println();
-		return null;
+		return launchStatisticsContents;
 	}
 
 	@Override
@@ -352,22 +345,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER)
 				.fetchInto(LaunchStatisticsContent.class);
 
-//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
-//				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
-//						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
-//								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
-//						)
-//				));
-//
-//		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
-//
-//		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
-//				.filter(content -> Objects.equals(key, content.getLaunchId()))
-//				.findFirst()
-//				.ifPresent(content -> {
-//					content.setDefectsMap(value);
-//					resultLaunchStatisticsContents.add(content);
-//				}));
+		//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+		//				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
+		//						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
+		//								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
+		//						)
+		//				));
+		//
+		//		List<LaunchStatisticsContent> resultLaunchStatisticsContents = new ArrayList<>(issuesMap.size());
+		//
+		//		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+		//				.filter(content -> Objects.equals(key, content.getLaunchId()))
+		//				.findFirst()
+		//				.ifPresent(content -> {
+		//					content.setDefectsMap(value);
+		//					resultLaunchStatisticsContents.add(content);
+		//				}));
 
 		return null;
 
@@ -622,32 +615,32 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {
 
-//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
-//				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
-//						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
-//								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
-//						)
-//				));
-//
-//		List<LaunchStatisticsContent> resultLaunchStatisticsContent = new ArrayList<>(issuesMap.size());
-//
-//		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
-//				.filter(content -> Objects.equals(key, content.getLaunchId()))
-//				.findFirst()
-//				.ifPresent(content -> {
-//					Map<String, Integer> executions = new HashMap<>();
-//					Map<String, Integer> defects = new HashMap<>();
-//					value.keySet().forEach(name -> {
-//						if (StatusEnum.isPresent(name)) {
-//							executions.put(name, value.get(name));
-//						} else {
-//							defects.put(name, value.get(name));
-//						}
-//					});
-//					content.setDefectsMap(defects);
-//					content.setExecutionsMap(executions);
-//					resultLaunchStatisticsContent.add(content);
-//				}));
+		//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
+		//				.collect(Collectors.groupingBy(LaunchStatisticsContent::getLaunchId,
+		//						Collectors.groupingBy(LaunchStatisticsContent::getIssueName,
+		//								Collectors.summingInt(LaunchStatisticsContent::getIssueCount)
+		//						)
+		//				));
+		//
+		//		List<LaunchStatisticsContent> resultLaunchStatisticsContent = new ArrayList<>(issuesMap.size());
+		//
+		//		issuesMap.forEach((key, value) -> launchStatisticsContents.stream()
+		//				.filter(content -> Objects.equals(key, content.getLaunchId()))
+		//				.findFirst()
+		//				.ifPresent(content -> {
+		//					Map<String, Integer> executions = new HashMap<>();
+		//					Map<String, Integer> defects = new HashMap<>();
+		//					value.keySet().forEach(name -> {
+		//						if (StatusEnum.isPresent(name)) {
+		//							executions.put(name, value.get(name));
+		//						} else {
+		//							defects.put(name, value.get(name));
+		//						}
+		//					});
+		//					content.setDefectsMap(defects);
+		//					content.setExecutionsMap(executions);
+		//					resultLaunchStatisticsContent.add(content);
+		//				}));
 
 		return null;
 	}

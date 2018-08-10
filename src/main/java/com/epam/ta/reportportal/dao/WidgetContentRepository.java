@@ -48,7 +48,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of {@link LaunchStatisticsContent}
 	 */
-	List<LaunchStatisticsContent> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
 	/**
 	 * Investigated statistics loading
