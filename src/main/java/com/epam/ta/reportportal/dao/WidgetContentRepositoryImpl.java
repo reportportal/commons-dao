@@ -211,7 +211,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						LAUNCH.START_TIME,
 						ISSUE_TYPE.LOCATOR,
 						ISSUE_STATISTICS.IS_COUNTER,
-						ISSUE_GROUP.ISSUE_GROUP_ID
+						ISSUE_GROUP.ISSUE_GROUP_ID,
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName()))
 				)
 				.fetch());
 
