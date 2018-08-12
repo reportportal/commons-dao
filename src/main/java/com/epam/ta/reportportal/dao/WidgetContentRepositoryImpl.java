@@ -548,30 +548,72 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				EXECUTION_STATISTICS.ES_COUNTER.as("issueCount")
 		);
 
-		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
+		List<Launch> launchStatisticsContents = LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(issuesSelectFields)
+				.select(LAUNCH.ID,
+						LAUNCH.NUMBER,
+						LAUNCH.NAME,
+						LAUNCH.START_TIME,
+						ISSUE_TYPE.LOCATOR,
+						ISSUE_STATISTICS.IS_COUNTER,
+						ISSUE_GROUP.ISSUE_GROUP_,
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
+				)
 				.from(LAUNCH)
-				.leftJoin(ISSUE_STATISTICS)
+				.join(ISSUE_STATISTICS)
 				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
-				.leftJoin(ISSUE_TYPE)
+				.join(ISSUE_TYPE)
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-				.and(LAUNCH.ID.in(commonSelect))
-				.groupBy(issuesSelectFields)
-				.orderBy(LAUNCH.ID)
-				.unionAll(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).build())
-						.select(executionsSelectFields)
-						.from(LAUNCH)
-						.leftJoin(EXECUTION_STATISTICS)
+				.join(ISSUE_GROUP)
+				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+				.join(select(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER).from(LAUNCH)
+						.join(EXECUTION_STATISTICS)
 						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
 						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
-						.and(LAUNCH.ID.in(commonSelect))
-						.groupBy(executionsSelectFields)
-						.orderBy(LAUNCH.ID))
-				.fetchInto(LaunchStatisticsContent.class);
+						.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
+						.groupBy(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER)
+						.asTable(EXECUTION_STATS))
+				.on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, "id")).cast(Long.class)))
+				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+				.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
+				.groupBy(LAUNCH.ID,
+						LAUNCH.NUMBER,
+						LAUNCH.NAME,
+						LAUNCH.START_TIME,
+						ISSUE_TYPE.LOCATOR,
+						ISSUE_STATISTICS.IS_COUNTER,
+						ISSUE_GROUP.ISSUE_GROUP_ID,
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
+						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
+				)
+				.fetch());
+
+//		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
+//				.as(QueryBuilder.newBuilder(filter).build())
+//				.select(issuesSelectFields)
+//				.from(LAUNCH)
+//				.leftJoin(ISSUE_STATISTICS)
+//				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
+//				.leftJoin(ISSUE_TYPE)
+//				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+//				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+//				.and(LAUNCH.ID.in(commonSelect))
+//				.groupBy(issuesSelectFields)
+//				.orderBy(LAUNCH.ID)
+//				.unionAll(dsl.with(LAUNCHES)
+//						.as(QueryBuilder.newBuilder(filter).build())
+//						.select(executionsSelectFields)
+//						.from(LAUNCH)
+//						.leftJoin(EXECUTION_STATISTICS)
+//						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
+//						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
+//								.orElseGet(Collections::emptyList)))
+//						.and(LAUNCH.ID.in(commonSelect))
+//						.groupBy(executionsSelectFields)
+//						.orderBy(LAUNCH.ID))
+//				.fetchInto(LaunchStatisticsContent.class);
 
 		return buildResultLaunchesStatistics(launchStatisticsContents);
 
