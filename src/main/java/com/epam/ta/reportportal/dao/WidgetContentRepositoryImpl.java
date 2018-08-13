@@ -10,7 +10,6 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
-import com.google.common.base.CaseFormat;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -705,8 +704,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		}
 
 		tableColumns.forEach(columnName -> {
-			Optional<Field<?>> selectField = Optional.ofNullable(LAUNCH.field(columnName)
-					.as(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, columnName)));
+			Optional<Field<?>> selectField = Optional.ofNullable(LAUNCH.field(columnName));
 			selectField.ifPresent(resultSelectFields::add);
 		});
 
