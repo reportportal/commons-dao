@@ -30,6 +30,8 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,9 +65,15 @@ public class Widget implements Serializable {
 	@JoinColumn(name = "widget_id")
 	private Set<ContentField> contentFields = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinColumn(name = "widget_id")
-	private Set<WidgetOption> widgetOptions = Sets.newHashSet();
+	//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	//	@JoinColumn(name = "widget_id")
+	//	private Set<WidgetOption> widgetOptions = Sets.newHashSet();
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))
+	@MapKeyColumn(name = "option")
+	@Column(name = "value")
+	private Map<String, String> widgetOptions = new HashMap<String, String>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
@@ -123,11 +131,11 @@ public class Widget implements Serializable {
 		this.contentFields = contentFields;
 	}
 
-	public Set<WidgetOption> getWidgetOptions() {
+	public Map<String, String> getWidgetOptions() {
 		return widgetOptions;
 	}
 
-	public void setWidgetOptions(Set<WidgetOption> widgetOptions) {
+	public void setWidgetOptions(Map<String, String> widgetOptions) {
 		this.widgetOptions = widgetOptions;
 	}
 
