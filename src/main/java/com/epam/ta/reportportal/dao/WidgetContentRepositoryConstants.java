@@ -2,8 +2,6 @@ package com.epam.ta.reportportal.dao;
 
 public class WidgetContentRepositoryConstants {
 
-	public static final Integer LAUNCHES_TABLE_MIN_COLUMNS_COUNT = 3;
-
 	public static final String TOTAL = "total";
 	public static final String EXECUTIONS_KEY = "executions";
 	public static final String DEFECTS_KEY = "defects";

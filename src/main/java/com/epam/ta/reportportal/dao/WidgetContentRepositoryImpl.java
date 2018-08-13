@@ -11,13 +11,11 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.base.CaseFormat;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Select;
+import org.apache.commons.collections.CollectionUtils;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -526,7 +524,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchStatisticsContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+	public List<Launch> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+
+		final String EXECUTION_STATS = "execution_stats";
+
+		final boolean executionsFlag = Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).isPresent();
+		final boolean defectsFlag = Optional.ofNullable(contentFields.get(DEFECTS_KEY)).isPresent();
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
 				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
@@ -534,88 +537,34 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.limit(limit);
 
 		Set<Field<?>> commonSelectFields = buildColumnsSelect(contentFields.get(TABLE_COLUMN_KEY));
+
 		Set<Field<?>> executionsSelectFields = new LinkedHashSet<>(commonSelectFields);
 
-		Set<Field<?>> issuesSelectFields = fillWithCustomFields(commonSelectFields,
-				LAUNCH.ID.as("launchId"),
-				ISSUE_TYPE.LOCATOR.as("issueName"),
-				ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
-		);
+		if (null != contentFields.get(EXECUTIONS_KEY)) {
+			Collections.addAll(commonSelectFields,
+					field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
+					field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
+			);
+			Collections.addAll(executionsSelectFields, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER);
+		}
 
-		executionsSelectFields = fillWithCustomFields(executionsSelectFields,
-				LAUNCH.ID.as("launchId"),
-				EXECUTION_STATISTICS.ES_STATUS.as("issueName"),
-				EXECUTION_STATISTICS.ES_COUNTER.as("issueCount")
-		);
+		if (null != contentFields.get(DEFECTS_KEY)) {
+			Collections.addAll(commonSelectFields, ISSUE_TYPE.LOCATOR, ISSUE_STATISTICS.IS_COUNTER);
+		}
 
-		List<Launch> launchStatisticsContents = LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
+		SelectJoinStep<Record> selectJoinStep = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID,
-						LAUNCH.NUMBER,
-						LAUNCH.NAME,
-						LAUNCH.START_TIME,
-						ISSUE_TYPE.LOCATOR,
-						ISSUE_STATISTICS.IS_COUNTER,
-						ISSUE_GROUP.ISSUE_GROUP_,
-						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
-						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
-				)
-				.from(LAUNCH)
-				.join(ISSUE_STATISTICS)
-				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
-				.join(ISSUE_TYPE)
-				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-				.join(ISSUE_GROUP)
-				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.join(select(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER).from(LAUNCH)
-						.join(EXECUTION_STATISTICS)
-						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-								.orElseGet(Collections::emptyList)))
-						.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-						.groupBy(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER)
-						.asTable(EXECUTION_STATS))
-				.on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, "id")).cast(Long.class)))
-				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-				.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
-				.groupBy(LAUNCH.ID,
-						LAUNCH.NUMBER,
-						LAUNCH.NAME,
-						LAUNCH.START_TIME,
-						ISSUE_TYPE.LOCATOR,
-						ISSUE_STATISTICS.IS_COUNTER,
-						ISSUE_GROUP.ISSUE_GROUP_ID,
-						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_STATUS.getName())),
-						field(name(EXECUTION_STATS, EXECUTION_STATISTICS.ES_COUNTER.getName()))
-				)
-				.fetch());
+				.select(commonSelectFields)
+				.from(LAUNCH);
 
-//		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
-//				.as(QueryBuilder.newBuilder(filter).build())
-//				.select(issuesSelectFields)
-//				.from(LAUNCH)
-//				.leftJoin(ISSUE_STATISTICS)
-//				.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
-//				.leftJoin(ISSUE_TYPE)
-//				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-//				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-//				.and(LAUNCH.ID.in(commonSelect))
-//				.groupBy(issuesSelectFields)
-//				.orderBy(LAUNCH.ID)
-//				.unionAll(dsl.with(LAUNCHES)
-//						.as(QueryBuilder.newBuilder(filter).build())
-//						.select(executionsSelectFields)
-//						.from(LAUNCH)
-//						.leftJoin(EXECUTION_STATISTICS)
-//						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-//						.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-//								.orElseGet(Collections::emptyList)))
-//						.and(LAUNCH.ID.in(commonSelect))
-//						.groupBy(executionsSelectFields)
-//						.orderBy(LAUNCH.ID))
-//				.fetchInto(LaunchStatisticsContent.class);
-
-		return buildResultLaunchesStatistics(launchStatisticsContents);
+		return LAUNCH_FETCHER.apply(buildJoins(selectJoinStep,
+				commonSelectFields,
+				executionsSelectFields,
+				commonSelect,
+				contentFields,
+				executionsFlag,
+				defectsFlag
+		).fetch());
 
 	}
 
@@ -709,13 +658,51 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return null;
 	}
 
-	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {
+	private SelectHavingStep<Record> buildJoins(SelectJoinStep<Record> select, Set<Field<?>> commonSelectFields,
+			Set<Field<?>> executionsSelectFields, Select commonSelect, Map<String, List<String>> contentFields, boolean executionsFlag,
+			boolean defectsFlag) {
+		String EXECUTION_STATS = "execution_stats";
 
-		if (CollectionUtils.isEmpty(tableColumns)) {
-			return new LinkedHashSet<>(LAUNCHES_TABLE_MIN_COLUMNS_COUNT);
+		if (executionsFlag) {
+			select = select.join(select(executionsSelectFields).from(LAUNCH)
+					.join(EXECUTION_STATISTICS)
+					.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
+					.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
+							.orElseGet(Collections::emptyList)))
+					.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
+					.groupBy(executionsSelectFields)
+					.asTable(EXECUTION_STATS)).on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, "id")).cast(Long.class)));
 		}
 
-		Set<Field<?>> resultSelectFields = new LinkedHashSet<>(tableColumns.size());
+		if (defectsFlag) {
+			return select.join(ISSUE_STATISTICS)
+					.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
+					.join(ISSUE_TYPE)
+					.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+					.join(ISSUE_GROUP)
+					.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+					.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+					.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
+					.groupBy(commonSelectFields);
+		}
+		return select;
+	}
+
+	private Set<Field<?>> buildSelectQuery(Set<Field<?>> queryFields, Field<?>... fields) {
+
+		Collections.addAll(queryFields, fields);
+		return queryFields;
+
+	}
+
+	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {
+
+		Set<Field<?>> resultSelectFields = new LinkedHashSet<>();
+		resultSelectFields.add(LAUNCH.ID);
+
+		if (CollectionUtils.isEmpty(tableColumns)) {
+			return resultSelectFields;
+		}
 
 		tableColumns.forEach(columnName -> {
 			Optional<Field<?>> selectField = Optional.ofNullable(LAUNCH.field(columnName)
@@ -726,8 +713,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return resultSelectFields;
 	}
 
-	private Set<Field<?>> fillWithCustomFields(Set<Field<?>> fieldSet, Field<?>... fields) {
-		fieldSet.addAll(Arrays.stream(fields).collect(Collectors.toSet()));
-		return fieldSet;
-	}
+	//	private Set<Field<?>> fillWithCustomFields(Set<Field<?>> fieldSet, Field<?>... fields) {
+	//		fieldSet.addAll(Arrays.stream(fields).collect(Collectors.toSet()));
+	//		return fieldSet;
+	//	}
 }

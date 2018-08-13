@@ -308,12 +308,8 @@ CREATE TABLE content_field_value (
 CREATE TABLE widget_option (
   id        BIGSERIAL CONSTRAINT widget_option_pk PRIMARY KEY,
   widget_id BIGINT REFERENCES widget (id) ON DELETE CASCADE,
-  option    VARCHAR NOT NULL
-);
-
-CREATE TABLE widget_option_value (
-  id    BIGINT REFERENCES widget_option (id) ON DELETE CASCADE,
-  value VARCHAR NOT NULL
+  option    VARCHAR NOT NULL,
+  value     VARCHAR NOT NULL
 );
 
 CREATE TABLE dashboard_widget (

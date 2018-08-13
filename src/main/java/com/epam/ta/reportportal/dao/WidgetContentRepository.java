@@ -46,7 +46,7 @@ public interface WidgetContentRepository {
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return List of {@link LaunchStatisticsContent}
+	 * @return List of {@link Launch}
 	 */
 	List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
@@ -139,9 +139,9 @@ public interface WidgetContentRepository {
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return List of{@link LaunchStatisticsContent}
+	 * @return List of{@link Launch}
 	 */
-	List<LaunchStatisticsContent> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<Launch> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
 	/**
 	 * User activity content loading

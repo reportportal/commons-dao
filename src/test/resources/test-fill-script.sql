@@ -58,36 +58,21 @@ INSERT INTO widget (id, name, description, widget_type, items_count, project_id,
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id, filter_id) VALUES (1, 'start', null, 'overall_statistics', 1000, 1, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id, filter_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1, 2);
 
-INSERT INTO widget_option (id, widget_id, option) VALUES (1, 1, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (2, 2, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (3, 3, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (5, 5, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (6, 6, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (7, 7, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (9, 9, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (10, 10, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (11, 11, 'launch_name_filter');
-INSERT INTO widget_option (id, widget_id, option) VALUES (12, 12, 'filterName');
-INSERT INTO widget_option (id, widget_id, option) VALUES (8, 8, 'launch_name_filter');
-INSERT INTO widget_option (id, widget_id, option) VALUES (4, 4, 'launch_name_filter');
-INSERT INTO widget_option (id, widget_id, option) VALUES (17, 17, 'login');
-INSERT INTO widget_option (id, widget_id, option) VALUES (18, 17, 'activity_type');
-
-INSERT INTO widget_option_value (id, value) VALUES (1, 'New_filter');
-INSERT INTO widget_option_value (id, value) VALUES (2, 'New_filter');
-INSERT INTO widget_option_value (id, value) VALUES (3, 'New_filter');
-INSERT INTO widget_option_value (id, value) VALUES (4, 'launch name');
-INSERT INTO widget_option_value (id, value) VALUES (5, 'New filter');
-INSERT INTO widget_option_value (id, value) VALUES (6, 'New filter');
-INSERT INTO widget_option_value (id, value) VALUES (7, 'New filter');
-INSERT INTO widget_option_value (id, value) VALUES (8, 'launch name');
-INSERT INTO widget_option_value (id, value) VALUES (9, 'New filter');
-INSERT INTO widget_option_value (id, value) VALUES (10, 'New filter');
-INSERT INTO widget_option_value (id, value) VALUES (11, 'launch name');
-INSERT INTO widget_option_value (id, value) VALUES (12, 'New filter');
-INSERT INTO widget_option_value (id, value) VALUES (17, 'default');
-INSERT INTO widget_option_value (id, value) VALUES (18, 'CREATE_ITEM');
-INSERT INTO widget_option_value (id, value) VALUES (18, 'UPDATE_LAUNCH');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (1, 1, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (2, 2, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (3, 3, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (5, 5, 'filterName', 'New filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (6, 6, 'filterName', 'New filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (7, 7, 'filterName', 'New filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (9, 9, 'filterName', 'New filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (10, 10, 'filterName', 'New filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (11, 11, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (12, 12, 'filterName', 'New filter');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (8, 8, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (4, 4, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (17, 17, 'login', 'default');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (18, 17, 'activity_type', 'CREATE_ITEM');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (19, 17, 'activity_type', 'UPDATE_LAUNCH');
 
 INSERT INTO content_field (id, widget_id, field) VALUES (1, 2, 'executions');
 INSERT INTO content_field (id, widget_id, field) VALUES (2, 2, 'defects');
@@ -184,7 +169,7 @@ BEGIN
   WHILE counter < 20 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
     VALUES
-      ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), counter, 'DEFAULT',
+      ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), counter+1, 'DEFAULT',
        'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
@@ -200,7 +185,7 @@ BEGIN
     VALUES (cur_item_id, 'First test', 'TEST', now(), 'description', now(), 'uniqueId2');
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
 
-    WHILE step_counter < 250 LOOP
+    WHILE step_counter < 30 LOOP
       rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
 
       INSERT INTO test_item_structure (parent_id, launch_id) VALUES (cur_item_id, cur_launch_id);

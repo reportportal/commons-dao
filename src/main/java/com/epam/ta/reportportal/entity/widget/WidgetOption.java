@@ -23,7 +23,6 @@ package com.epam.ta.reportportal.entity.widget;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -42,10 +41,8 @@ public class WidgetOption implements Serializable {
 	@Column(name = "option")
 	private String widgetOption;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "widget_option_value", joinColumns = @JoinColumn(name = "id"))
 	@Column(name = "value")
-	private Set<String> values;
+	private String value;
 
 	public WidgetOption() {
 	}
@@ -74,11 +71,11 @@ public class WidgetOption implements Serializable {
 		this.widgetOption = widgetOption;
 	}
 
-	public Set<String> getValues() {
-		return values;
+	public String getValue() {
+		return value;
 	}
 
-	public void setValues(Set<String> values) {
-		this.values = values;
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

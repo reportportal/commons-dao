@@ -8,8 +8,6 @@ import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
@@ -26,7 +24,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -87,7 +88,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
-		List<LaunchStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 10);
+		List<Launch> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 10);
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(launchStatisticsContents.size(), 10);
 	}
@@ -111,22 +112,13 @@ public class WidgetContentRepositoryTest {
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
 		Launch launch = new Launch();
-		launch.setId(1L);
-		launch.setNumber(1L);
-		launch.setProjectId(1L);
+		launch.setId(20L);
+		launch.setNumber(20L);
 		launch.setName("launch name");
-
-		Launch launchName = launchRepository.findLatestByNameAndFilter("launch name", filter)
-				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE, "asdasd"));
-
-		System.out.println(launch.getId().equals(launchName.getId()));
-		System.out.println(launch.getNumber().equals(launchName.getNumber()));
-		System.out.println(launch.getName().equals(launchName.getName()));
-		System.out.println(launch.getProjectId().equals(launchName.getProjectId()));
 
 		PassStatisticsResult passStatisticsResult = widgetContentRepository.launchPassPerLaunchStatistics(filter,
 				contentFields,
-				launchName,
+				launch,
 				12
 		);
 
@@ -216,7 +208,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
-		List<LaunchStatisticsContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter, contentFields, 10);
+		List<Launch> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter, contentFields, 10);
 
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(launchStatisticsContents.size(), 10);
