@@ -624,6 +624,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
 
+		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
+				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
+				.from(name(LAUNCHES))
+				.limit(limit);
+
 		return dsl.select(
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as("uniqueId"),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as("itemName"),
@@ -647,7 +652,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(TEST_ITEM)
 						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
-						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+						.where(LAUNCH.ID.in(commonSelect))
+						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
 						.asTable(FLAKY_TABLE_RESULTS))
 				.groupBy(
