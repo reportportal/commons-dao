@@ -96,10 +96,8 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void investigatedStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
 		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter,
-				contentFields,
 				11
 		);
 		Assert.assertNotNull(investigatedStatisticsResults);
