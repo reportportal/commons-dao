@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 public class WidgetContentRepositoryConstants {
 
+	public static final String EXECUTION_STATS = "execution_stats";
 	public static final String TOTAL = "total";
 	public static final String EXECUTIONS_KEY = "executions";
 	public static final String DEFECTS_KEY = "defects";
@@ -16,5 +17,8 @@ public class WidgetContentRepositoryConstants {
 
 	/* Overall statistics widget constants */
 	public static final String LAUNCHES = "launches";
+
+	/*Flaky test table widget constants*/
+	public static final String FLAKY_TABLE_RESULTS = "flaky";
 
 }

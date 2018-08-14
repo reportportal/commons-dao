@@ -165,8 +165,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		final String EXECUTION_STATS = "execution_stats";
-
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
 				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
 				.from(name(LAUNCHES))
@@ -218,7 +216,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
 				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
@@ -525,8 +523,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<Launch> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		final String EXECUTION_STATS = "execution_stats";
-
 		final boolean executionsFlag = Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).isPresent();
 		final boolean defectsFlag = Optional.ofNullable(contentFields.get(DEFECTS_KEY)).isPresent();
 
@@ -625,6 +621,42 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return uniqueBugContents.stream().collect(Collectors.groupingBy(UniqueBugContent::getTicketId));
 	}
 
+	@Override
+	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
+
+		return dsl.select(
+				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as("uniqueId"),
+				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as("itemName"),
+				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as("statuses"),
+				sum(field(name(FLAKY_TABLE_RESULTS, "switch_flag")).cast(Long.class)).as("flakyCount"),
+				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
+		)
+				.from(dsl.select(TEST_ITEM.UNIQUE_ID,
+						TEST_ITEM.NAME,
+						TEST_ITEM_RESULTS.STATUS,
+						when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
+								1
+						).otherwise(0)
+								.as("switch_flag"),
+						count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
+				)
+						.from(LAUNCH)
+						.join(TEST_ITEM_STRUCTURE)
+						.on(LAUNCH.ID.eq(TEST_ITEM_STRUCTURE.LAUNCH_ID))
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.join(TEST_ITEM)
+						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
+						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
+						.asTable(FLAKY_TABLE_RESULTS))
+				.groupBy(
+						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
+						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
+				)
+				.fetchInto(FlakyCasesTableContent.class);
+	}
+
 	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {
 
 		//		Map<Long, Map<String, Integer>> issuesMap = launchStatisticsContents.stream()
@@ -660,7 +692,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private SelectHavingStep<Record> buildJoins(SelectJoinStep<Record> select, Set<Field<?>> commonSelectFields,
 			Set<Field<?>> executionsSelectFields, Select commonSelect, Map<String, List<String>> contentFields, boolean executionsFlag,
 			boolean defectsFlag) {
-		String EXECUTION_STATS = "execution_stats";
 
 		if (executionsFlag) {
 			select = select.join(select(executionsSelectFields).from(LAUNCH)
@@ -685,13 +716,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 					.groupBy(commonSelectFields);
 		}
 		return select;
-	}
-
-	private Set<Field<?>> buildSelectQuery(Set<Field<?>> queryFields, Field<?>... fields) {
-
-		Collections.addAll(queryFields, fields);
-		return queryFields;
-
 	}
 
 	private Set<Field<?>> buildColumnsSelect(List<String> tableColumns) {
