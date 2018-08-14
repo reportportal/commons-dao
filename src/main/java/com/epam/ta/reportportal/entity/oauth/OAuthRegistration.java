@@ -52,8 +52,11 @@ public class OAuthRegistration implements Serializable {
 	@Column(name = "client_name", length = 128)
 	private String clientName;
 
-	@OneToMany(mappedBy = "registration", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "registration", cascade = CascadeType.ALL)
 	private Set<OAuthRegistrationScope> scopes;
+
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "registration", cascade = CascadeType.ALL)
+	private Set<OAuthRegistrationRestriction> restrictions;
 
 	public String getId() {
 		return id;
@@ -159,6 +162,14 @@ public class OAuthRegistration implements Serializable {
 		this.scopes = scopes;
 	}
 
+	public Set<OAuthRegistrationRestriction> getRestrictions() {
+		return restrictions;
+	}
+
+	public void setRestrictions(Set<OAuthRegistrationRestriction> restrictions) {
+		this.restrictions = restrictions;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -170,15 +181,14 @@ public class OAuthRegistration implements Serializable {
 		OAuthRegistration that = (OAuthRegistration) o;
 		return Objects.equals(id, that.id) && Objects.equals(clientId, that.clientId) && Objects.equals(clientSecret, that.clientSecret)
 				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(authGrantType, that.authGrantType)
-				&& Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(authorizationUri, that.authorizationUri)
-				&& Objects.equals(tokenUri, that.tokenUri) && Objects.equals(userInfoEndpointUri, that.userInfoEndpointUri)
-				&& Objects.equals(
+				&& Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(
+				authorizationUri,
+				that.authorizationUri
+		) && Objects.equals(tokenUri, that.tokenUri) && Objects.equals(userInfoEndpointUri, that.userInfoEndpointUri) && Objects.equals(
 				userInfoEndpointNameAttribute,
 				that.userInfoEndpointNameAttribute
-		) && Objects.equals(jwkSetUri, that.jwkSetUri) && Objects.equals(clientName, that.clientName) && Objects.equals(
-				scopes,
-				that.scopes
-		);
+		) && Objects.equals(jwkSetUri, that.jwkSetUri) && Objects.equals(clientName, that.clientName) && Objects.equals(scopes, that.scopes)
+				&& Objects.equals(restrictions, that.restrictions);
 	}
 
 	@Override
@@ -196,7 +206,8 @@ public class OAuthRegistration implements Serializable {
 				userInfoEndpointNameAttribute,
 				jwkSetUri,
 				clientName,
-				scopes
+				scopes,
+				restrictions
 		);
 	}
 }
