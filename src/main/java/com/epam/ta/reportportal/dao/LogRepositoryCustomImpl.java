@@ -70,7 +70,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findByTestItemId(String itemId, int limit, boolean isLoadBinaryData) {
+	public List<Log> findByTestItemId(Long itemId, int limit, boolean isLoadBinaryData) {
 		if (itemId == null || limit <= 0) {
 			return new ArrayList<>();
 		}
