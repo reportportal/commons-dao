@@ -594,7 +594,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit) {
 		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID.as("ticketId"),
 				TICKET.SUBMIT_DATE.as("submitDate"),
 				TICKET.URL.as("url"),

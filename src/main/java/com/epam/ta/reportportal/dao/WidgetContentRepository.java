@@ -153,7 +153,7 @@ public interface WidgetContentRepository {
 	 */
 	List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> contentFields, int limit);
 
-	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit);
 
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
 }
