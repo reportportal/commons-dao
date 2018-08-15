@@ -408,6 +408,7 @@ CREATE TABLE activity (
   entity        ACTIVITY_ENTITY_ENUM                                     NOT NULL,
   action        VARCHAR(128)                                             NOT NULL,
   details       JSONB                                                    NULL,
+  project_id    BIGINT REFERENCES project (id) ON DELETE CASCADE           NOT NULL,
   creation_date TIMESTAMP                                                NOT NULL
 );
 

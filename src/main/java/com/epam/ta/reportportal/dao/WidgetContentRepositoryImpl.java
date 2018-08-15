@@ -566,9 +566,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> activityTypes, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
+		Select commonSelect = dsl.select(field(name("activities", "id")).cast(Long.class))
+				.distinctOn(field(name("activities", "id")).cast(Long.class))
+				.from(name("activities"))
 				.limit(limit);
 
 		return dsl.with("activities")

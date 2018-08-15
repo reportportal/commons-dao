@@ -71,8 +71,6 @@ INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (12, 12, 
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (8, 8, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (4, 4, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (17, 17, 'login', 'default');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (18, 17, 'activity_type', 'CREATE_ITEM');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (19, 17, 'activity_type', 'UPDATE_LAUNCH');
 
 INSERT INTO content_field (id, widget_id, field) VALUES (1, 2, 'executions');
 INSERT INTO content_field (id, widget_id, field) VALUES (2, 2, 'defects');
@@ -87,6 +85,7 @@ INSERT INTO content_field (id, widget_id, field) VALUES (11, 12, 'executions');
 INSERT INTO content_field (id, widget_id, field) VALUES (12, 12, 'defects');
 INSERT INTO content_field (id, widget_id, field) VALUES (7, 8, 'groups');
 INSERT INTO content_field (id, widget_id, field) VALUES (13, 12, 'columns');
+INSERT INTO content_field (id, widget_id, field) VALUES (14, 17, 'activity_type');
 
 INSERT INTO content_field_value (id, value) VALUES (1, 'FAILED');
 INSERT INTO content_field_value (id, value) VALUES (1, 'SKIPPED');
@@ -135,6 +134,9 @@ INSERT INTO content_field_value (id, value) VALUES (7, 'PRODUCT_BUG');
 INSERT INTO content_field_value (id, value) VALUES (13, 'number');
 INSERT INTO content_field_value (id, value) VALUES (13, 'last_modified');
 INSERT INTO content_field_value (id, value) VALUES (6, 'ND001');
+INSERT INTO content_field_value (id, value) VALUES (14, 'UPDATE_LAUNCH');
+INSERT INTO content_field_value (id, value) VALUES (14, 'CREATE_ITEM');
+
 
 INSERT INTO issue_group(issue_group_id, issue_group) VALUES (1, 'TO_INVESTIGATE');
 INSERT INTO issue_group(issue_group_id, issue_group) VALUES (2, 'AUTOMATION_BUG');
