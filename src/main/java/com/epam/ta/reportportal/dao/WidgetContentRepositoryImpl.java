@@ -384,10 +384,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, int limit,
-			Long... launchIds) {
+	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
+			String launchName, int limit) {
 
-		List<Long> launchIdList = Arrays.stream(launchIds).collect(Collectors.toList());
+		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
+				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
+				.from(name(LAUNCHES))
+				.where(field(name(LAUNCHES, "launch_name")).eq(launchName))
+				.limit(limit);
 
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -408,7 +412,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.join(ISSUE_GROUP)
 				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.and(LAUNCH.ID.in(launchIdList))
+				.where(LAUNCH.ID.in(commonSelect))
 				.and(ISSUE_GROUP.ISSUE_GROUP_.in(Optional.ofNullable(contentFields.get(ISSUE_GROUP_KEY)).orElseGet(Collections::emptyList)))
 				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, ISSUE_GROUP.ISSUE_GROUP_)
 				.unionAll(dsl.select(LAUNCH.ID.as("launchId"),
@@ -424,11 +428,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.from(LAUNCH)
 						.join(EXECUTION_STATISTICS)
 						.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-						.and(LAUNCH.ID.in(launchIdList))
+						.where(LAUNCH.ID.in(commonSelect))
 						.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 								.orElseGet(Collections::emptyList)))
 						.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, EXECUTION_STATISTICS.ES_STATUS))
-				.limit(limit)
 				.fetchInto(ComparisonStatisticsContent.class);
 
 		Map<Long, Map<String, Double>> issuesMap = comparisonStatisticsContents.stream()
@@ -629,8 +632,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(name(LAUNCHES))
 				.limit(limit);
 
-		return dsl.select(
-				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as("uniqueId"),
+		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as("uniqueId"),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as("itemName"),
 				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as("statuses"),
 				sum(field(name(FLAKY_TABLE_RESULTS, "switch_flag")).cast(Long.class)).as("flakyCount"),
@@ -656,8 +658,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
 						.asTable(FLAKY_TABLE_RESULTS))
-				.groupBy(
-						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
+				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
 				.fetchInto(FlakyCasesTableContent.class);

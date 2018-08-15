@@ -105,12 +105,11 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
+	 * @param launchName	Name of launch to compare
 	 * @param limit         Results limit
-	 * @param launchIds     Launches' Ids for comparison statistics
 	 * @return List of{@link ComparisonStatisticsContent}
 	 */
-	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, int limit,
-			Long... launchIds);
+	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, String launchName, int limit);
 
 	/**
 	 * Launches duration content loading

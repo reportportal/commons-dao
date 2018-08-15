@@ -164,13 +164,12 @@ public class WidgetContentRepositoryTest {
 
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
-				100,
-				1L,
-				2L
+				"launch name",
+				2
 		);
 
 		Assert.assertNotNull(comparisonStatisticsContents);
-		Assert.assertEquals(comparisonStatisticsContents.size(), 2);
+		Assert.assertEquals(2, comparisonStatisticsContents.size());
 
 	}
 
