@@ -32,7 +32,23 @@ import java.util.Optional;
 /**
  * @author Pavel Bortnik
  */
-public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>{
+public interface TestItemRepositoryCustom extends FilterableRepository<TestItem> {
+
+	/**
+	 * Selects all descendants of TestItem with provided id.
+	 *
+	 * @param itemId TestItem id
+	 * @return List of all descendants
+	 */
+	List<TestItem> selectAllDescendants(Long itemId);
+
+	/**
+	 * Selects all descendants of TestItem with provided id, which has at least one child.
+	 *
+	 * @param itemId TestItem id
+	 * @return List of descendants
+	 */
+	List<TestItem> selectAllDescendantsWithChildren(Long itemId);
 
 	/**
 	 * Select ids and names of down to item structure tree.
