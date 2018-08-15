@@ -21,4 +21,7 @@ public class WidgetContentRepositoryConstants {
 	/*Flaky test table widget constants*/
 	public static final String FLAKY_TABLE_RESULTS = "flaky";
 
+	/*Activity table widget constants*/
+	public static final String ACTIVITY_TYPE = "activity_type";
+
 }

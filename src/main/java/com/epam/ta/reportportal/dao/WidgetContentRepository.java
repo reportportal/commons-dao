@@ -147,11 +147,11 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        Filter
 	 * @param login         User login for activity tracking
-	 * @param activityTypes Activities to track
+	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
 	 * @return List of{@link ActivityContent}
 	 */
-	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit);
+	List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> contentFields, int limit);
 
 	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
