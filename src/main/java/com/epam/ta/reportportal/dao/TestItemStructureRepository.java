@@ -23,9 +23,11 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.TestItemStructure;
 
+import java.util.List;
+
 /**
  * @author Pavel Bortnik
  */
 public interface TestItemStructureRepository extends ReportPortalRepository<TestItemStructure, Long>, TestItemStructureRepositoryCustom {
-
+	List<TestItemStructure> findByLaunchId(Long launchId);
 }
