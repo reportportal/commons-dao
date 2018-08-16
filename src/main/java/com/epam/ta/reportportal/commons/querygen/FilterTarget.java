@@ -94,7 +94,7 @@ public enum FilterTarget {
 
 	ACTIVITY(Activity.class,
 			Arrays.asList(new CriteriaHolder("id", "a.id", Long.class, false),
-					new CriteriaHolder("project_id", "a.project_id", Long.class, false)
+					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false)
 			)
 	) {
 		@Override

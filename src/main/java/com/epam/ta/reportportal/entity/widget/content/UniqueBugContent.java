@@ -26,7 +26,7 @@ public class UniqueBugContent implements Serializable {
 	@JsonProperty(value = "url")
 	private String url;
 
-	@JsonProperty(value = "submit date")
+	@JsonProperty(value = "submit_date")
 	private Timestamp submitDate;
 
 	public UniqueBugContent() {
