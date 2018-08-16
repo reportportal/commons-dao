@@ -24,14 +24,14 @@ package com.epam.ta.reportportal.entity.widget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,18 +57,19 @@ public class Widget implements Serializable {
 	@Column(name = "items_count")
 	private int itemsCount;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
-	@Column(name = "field")
-	private List<String> contentFields = Lists.newArrayList();
-
 	@ManyToOne
 	@JoinColumn(name = "filter_id")
 	private UserFilter filter;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "widget_id")
-	private Set<WidgetOption> widgetOptions = Sets.newHashSet();
+	private Set<ContentField> contentFields = Sets.newHashSet();
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))
+	@MapKeyColumn(name = "option")
+	@Column(name = "value")
+	private Map<String, String> widgetOptions = new HashMap<String, String>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
@@ -118,19 +119,19 @@ public class Widget implements Serializable {
 		this.itemsCount = itemsCount;
 	}
 
-	public List<String> getContentFields() {
+	public Set<ContentField> getContentFields() {
 		return contentFields;
 	}
 
-	public void setContentFields(List<String> contentFields) {
+	public void setContentFields(Set<ContentField> contentFields) {
 		this.contentFields = contentFields;
 	}
 
-	public Set<WidgetOption> getWidgetOptions() {
+	public Map<String, String> getWidgetOptions() {
 		return widgetOptions;
 	}
 
-	public void setWidgetOptions(Set<WidgetOption> widgetOptions) {
+	public void setWidgetOptions(Map<String, String> widgetOptions) {
 		this.widgetOptions = widgetOptions;
 	}
 

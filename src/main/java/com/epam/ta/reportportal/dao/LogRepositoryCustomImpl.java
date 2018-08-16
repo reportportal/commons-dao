@@ -74,7 +74,16 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		if (itemId == null || limit <= 0) {
 			return new ArrayList<>();
 		}
-		return dsl.select().from(LOG).where(TEST_ITEM.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).limit(limit).fetch().map(LOG_MAPPER);
+
+		Long id = Long.valueOf(itemId);
+
+		return dsl.select()
+				.from(LOG)
+				.where(TEST_ITEM.ITEM_ID.eq(id))
+				.orderBy(LOG.LOG_TIME.asc())
+				.limit(limit)
+				.fetch()
+				.map(LOG_MAPPER);
 	}
 
 	@Override

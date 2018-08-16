@@ -36,7 +36,6 @@ import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JProject;
@@ -54,7 +53,6 @@ import com.epam.ta.reportportal.jooq.tables.JUserConfig;
 import com.epam.ta.reportportal.jooq.tables.JUserFilter;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
 import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
 import com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue;
 
@@ -235,11 +233,6 @@ public class Tables {
     public static final JOauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.JOauthRegistration.OAUTH_REGISTRATION;
 
     /**
-     * The table <code>public.oauth_registration_restriction</code>.
-     */
-    public static final JOauthRegistrationRestriction OAUTH_REGISTRATION_RESTRICTION = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION;
-
-    /**
      * The table <code>public.oauth_registration_scope</code>.
      */
     public static final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
@@ -323,11 +316,6 @@ public class Tables {
      * The table <code>public.widget</code>.
      */
     public static final JWidget WIDGET = com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
-
-    /**
-     * The table <code>public.widget_filter</code>.
-     */
-    public static final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
     /**
      * The table <code>public.widget_option</code>.

@@ -4,60 +4,12 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
-import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
-import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JExecutionStatistics;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueStatistics;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProjectConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JItemTag;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectEmailConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserConfig;
-import com.epam.ta.reportportal.jooq.tables.JUserFilter;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
-
-import javax.annotation.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -117,10 +69,7 @@ public class Indexes {
     public static final Index ACCESS_TOKENS_PK = Indexes0.ACCESS_TOKENS_PK;
     public static final Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Indexes0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
     public static final Index OAUTH_REGISTRATION_PKEY = Indexes0.OAUTH_REGISTRATION_PKEY;
-    public static final Index OAUTH_REGISTRATION_RESTRICTION_PK = Indexes0.OAUTH_REGISTRATION_RESTRICTION_PK;
-    public static final Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Indexes0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
-    public static final Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Indexes0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
     public static final Index PROJECT_ANALYZER_CONFIGURATION_PK = Indexes0.PROJECT_ANALYZER_CONFIGURATION_PK;
     public static final Index PROJECT_CONFIGURATION_PK = Indexes0.PROJECT_CONFIGURATION_PK;
@@ -139,7 +88,6 @@ public class Indexes {
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
     public static final Index WIDGET_ID = Indexes0.WIDGET_ID;
-    public static final Index WIDGET_FILTER_PO = Indexes0.WIDGET_FILTER_PO;
     public static final Index WIDGET_OPTION_PK = Indexes0.WIDGET_OPTION_PK;
 
     // -------------------------------------------------------------------------
@@ -187,10 +135,7 @@ public class Indexes {
         public static Index ACCESS_TOKENS_PK = Internal.createIndex("access_tokens_pk", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, JOauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE }, true);
         public static Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Internal.createIndex("oauth_registration_client_id_key", JOauthRegistration.OAUTH_REGISTRATION, new OrderField[] { JOauthRegistration.OAUTH_REGISTRATION.CLIENT_ID }, true);
         public static Index OAUTH_REGISTRATION_PKEY = Internal.createIndex("oauth_registration_pkey", JOauthRegistration.OAUTH_REGISTRATION, new OrderField[] { JOauthRegistration.OAUTH_REGISTRATION.ID }, true);
-        public static Index OAUTH_REGISTRATION_RESTRICTION_PK = Internal.createIndex("oauth_registration_restriction_pk", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID }, true);
-        public static Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createIndex("oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_PK = Internal.createIndex("oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
-        public static Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createIndex("oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK }, true);
         public static Index PROJECT_PK = Internal.createIndex("project_pk", JProject.PROJECT, new OrderField[] { JProject.PROJECT.ID }, true);
         public static Index PROJECT_ANALYZER_CONFIGURATION_PK = Internal.createIndex("project_analyzer_configuration_pk", JProjectAnalyzerConfiguration.PROJECT_ANALYZER_CONFIGURATION, new OrderField[] { JProjectAnalyzerConfiguration.PROJECT_ANALYZER_CONFIGURATION.ID }, true);
         public static Index PROJECT_CONFIGURATION_PK = Internal.createIndex("project_configuration_pk", JProjectConfiguration.PROJECT_CONFIGURATION, new OrderField[] { JProjectConfiguration.PROJECT_CONFIGURATION.ID }, true);
@@ -209,7 +154,6 @@ public class Indexes {
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);
         public static Index WIDGET_ID = Internal.createIndex("widget_id", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.ID }, true);
-        public static Index WIDGET_FILTER_PO = Internal.createIndex("widget_filter_po", JWidgetFilter.WIDGET_FILTER, new OrderField[] { JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID }, true);
         public static Index WIDGET_OPTION_PK = Internal.createIndex("widget_option_pk", JWidgetOption.WIDGET_OPTION, new OrderField[] { JWidgetOption.WIDGET_OPTION.ID }, true);
     }
 }

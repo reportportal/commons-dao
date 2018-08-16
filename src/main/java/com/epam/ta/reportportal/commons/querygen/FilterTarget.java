@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.commons.querygen.constant.*;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -31,6 +32,7 @@ public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
+			new CriteriaHolder("id", "l.id", Long.class, false),
 			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
@@ -48,8 +50,7 @@ public enum FilterTarget {
 			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
 			JProject p = JProject.PROJECT.as("p");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -88,6 +89,18 @@ public enum FilterTarget {
 					.join(p)
 					.on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
+		}
+	},
+
+	ACTIVITY(Activity.class,
+			Arrays.asList(new CriteriaHolder("id", "a.id", Long.class, false),
+					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false)
+			)
+	) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			JActivity a = JActivity.ACTIVITY.as("a");
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID).from(a).getQuery();
 		}
 	},
 
@@ -153,8 +166,7 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,

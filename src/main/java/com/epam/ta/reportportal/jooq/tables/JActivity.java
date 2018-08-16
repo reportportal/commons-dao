@@ -9,24 +9,14 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -42,7 +32,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = 1398458462;
+    private static final long serialVersionUID = -1642915663;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -87,6 +77,11 @@ public class JActivity extends TableImpl<JActivityRecord> {
      * The column <code>public.activity.creation_date</code>.
      */
     public final TableField<JActivityRecord, Timestamp> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.project_id</code>.
+     */
+    public final TableField<JActivityRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.activity</code> table reference
@@ -162,7 +157,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
      */
     @Override
     public List<ForeignKey<JActivityRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JActivityRecord, ?>>asList(Keys.ACTIVITY__ACTIVITY_USER_ID_FKEY);
+        return Arrays.<ForeignKey<JActivityRecord, ?>>asList(Keys.ACTIVITY__ACTIVITY_USER_ID_FKEY, Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FK);
     }
 
     /**

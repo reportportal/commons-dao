@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
@@ -46,5 +47,5 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
 	Map<String, String> getStatuses(Long projectId, Long[] ids);
 
-	Launch findLatestByName(String launchName);
+	Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter);
 }

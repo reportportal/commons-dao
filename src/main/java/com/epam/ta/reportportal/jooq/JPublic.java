@@ -4,70 +4,16 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
-import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
-import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JExecutionStatistics;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueStatistics;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProjectConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JItemTag;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectEmailConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRecipients;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserConfig;
-import com.epam.ta.reportportal.jooq.tables.JUserFilter;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Catalog;
 import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
+
+import javax.annotation.Generated;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -83,7 +29,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 798716109;
+    private static final long serialVersionUID = 1984660257;
 
     /**
      * The reference instance of <code>public</code>
@@ -251,11 +197,6 @@ public class JPublic extends SchemaImpl {
     public final JOauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.JOauthRegistration.OAUTH_REGISTRATION;
 
     /**
-     * The table <code>public.oauth_registration_restriction</code>.
-     */
-    public final JOauthRegistrationRestriction OAUTH_REGISTRATION_RESTRICTION = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION;
-
-    /**
      * The table <code>public.oauth_registration_scope</code>.
      */
     public final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
@@ -341,11 +282,6 @@ public class JPublic extends SchemaImpl {
     public final JWidget WIDGET = com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 
     /**
-     * The table <code>public.widget_filter</code>.
-     */
-    public final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
-
-    /**
      * The table <code>public.widget_option</code>.
      */
     public final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
@@ -401,7 +337,6 @@ public class JPublic extends SchemaImpl {
             Sequences.LAUNCH_TAG_ID_SEQ,
             Sequences.LDAP_SYNCHRONIZATION_ATTRIBUTES_ID_SEQ,
             Sequences.LOG_ID_SEQ,
-            Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
             Sequences.PROJECT_ANALYZER_CONFIGURATION_ID_SEQ,
             Sequences.PROJECT_EMAIL_CONFIGURATION_ID_SEQ,
@@ -456,7 +391,6 @@ public class JPublic extends SchemaImpl {
             JLog.LOG,
             JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
-            JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JParameter.PARAMETER,
             JProject.PROJECT,
@@ -474,7 +408,6 @@ public class JPublic extends SchemaImpl {
             JUserFilter.USER_FILTER,
             JUsers.USERS,
             JWidget.WIDGET,
-            JWidgetFilter.WIDGET_FILTER,
             JWidgetOption.WIDGET_OPTION,
             JWidgetOptionValue.WIDGET_OPTION_VALUE);
     }

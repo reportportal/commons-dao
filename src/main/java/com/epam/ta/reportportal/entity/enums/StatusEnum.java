@@ -50,6 +50,10 @@ public enum StatusEnum {
 		return Arrays.stream(StatusEnum.values()).filter(status -> status.name().equalsIgnoreCase(value)).findAny();
 	}
 
+	public static boolean isPresent(String name) {
+		return fromValue(name).isPresent();
+	}
+
 	public String getExecutionCounterField() {
 		return executionCounterField;
 	}

@@ -47,6 +47,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -55,7 +56,7 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 @Repository
 public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
-	private static final RecordMapper<? super Record, IssueStatistics> ISSUE_STATISTICS_RECORD_MAPPER = r -> {
+	public static final RecordMapper<? super Record, IssueStatistics> ISSUE_STATISTICS_RECORD_MAPPER = r -> {
 		IssueStatistics stats = r.into(IssueStatistics.class);
 		IssueType type = r.into(IssueType.class);
 		IssueGroup group = r.into(IssueGroup.class);
@@ -64,17 +65,17 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return stats;
 	};
 
-	private static final RecordMapper<? super Record, ExecutionStatistics> EXECUTION_STATISTICS_RECORD_MAPPER = r -> r.into(
+	public static final RecordMapper<? super Record, ExecutionStatistics> EXECUTION_STATISTICS_RECORD_MAPPER = r -> r.into(
 			ExecutionStatistics.class);
 
-	private static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
+	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
 		Launch launch = r.into(Launch.class);
 		launch.getIssueStatistics().add(ISSUE_STATISTICS_RECORD_MAPPER.map(r));
 		launch.getExecutionStatistics().add(EXECUTION_STATISTICS_RECORD_MAPPER.map(r));
 		return launch;
 	};
 
-	private static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
+	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
 		Map<Long, Launch> res = new HashMap<>();
 		result.forEach(r -> {
 			Long launchId = r.get(LAUNCH.ID);
@@ -111,7 +112,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
 				LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
-				pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
 
@@ -131,7 +133,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		JProject p = PROJECT.as("p");
 		JUsers u = USERS.as("u");
 
-		return dsl.selectDistinct().from(l).leftJoin(p).on(l.PROJECT_ID.eq(p.ID)).leftJoin(u).on(l.USER_ID.eq(u.ID))
+		return dsl.selectDistinct()
+				.from(l)
+				.leftJoin(p)
+				.on(l.PROJECT_ID.eq(p.ID))
+				.leftJoin(u)
+				.on(l.USER_ID.eq(u.ID))
 				.where(p.ID.eq(projectId))
 				.and(u.FULL_NAME.like("%" + value + "%"))
 				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
@@ -157,13 +164,15 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Launch findLatestByName(String launchName) {
-		return dsl.select()
+	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
+		return Optional.ofNullable(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select()
 				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOne()
-				.into(Launch.class);
+				.into(Launch.class));
 	}
 }

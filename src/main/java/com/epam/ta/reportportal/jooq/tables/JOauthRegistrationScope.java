@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthRegistrationScope extends TableImpl<JOauthRegistrationScopeRecord> {
 
-    private static final long serialVersionUID = 389278580;
+    private static final long serialVersionUID = -1803210064;
 
     /**
      * The reference instance of <code>public.oauth_registration_scope</code>
@@ -112,7 +112,7 @@ public class JOauthRegistrationScope extends TableImpl<JOauthRegistrationScopeRe
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.OAUTH_REGISTRATION_SCOPE_PK, Indexes.OAUTH_REGISTRATION_SCOPE_UNIQUE);
+        return Arrays.<Index>asList(Indexes.OAUTH_REGISTRATION_SCOPE_PK);
     }
 
     /**
@@ -136,7 +136,7 @@ public class JOauthRegistrationScope extends TableImpl<JOauthRegistrationScopeRe
      */
     @Override
     public List<UniqueKey<JOauthRegistrationScopeRecord>> getKeys() {
-        return Arrays.<UniqueKey<JOauthRegistrationScopeRecord>>asList(Keys.OAUTH_REGISTRATION_SCOPE_PK, Keys.OAUTH_REGISTRATION_SCOPE_UNIQUE);
+        return Arrays.<UniqueKey<JOauthRegistrationScopeRecord>>asList(Keys.OAUTH_REGISTRATION_SCOPE_PK);
     }
 
     /**
