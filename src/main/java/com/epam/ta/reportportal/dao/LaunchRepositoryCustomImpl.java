@@ -47,7 +47,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.LAUNCHES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**

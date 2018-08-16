@@ -1,7 +1,6 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -57,11 +56,12 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("launchId", launchId)
-				.add("number", number)
-				.add("name", name)
-				.add("startTime", startTime)
-				.toString();
+		final StringBuilder sb = new StringBuilder("AbstractLaunchStatisticsContent{");
+		sb.append("launchId=").append(launchId);
+		sb.append(", number=").append(number);
+		sb.append(", name='").append(name).append('\'');
+		sb.append(", startTime=").append(startTime);
+		sb.append('}');
+		return sb.toString();
 	}
 }

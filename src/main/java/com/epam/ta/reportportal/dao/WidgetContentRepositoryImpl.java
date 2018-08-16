@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.LaunchRepositoryCustomImpl.LAUNCH_FETCHER;
-import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -53,14 +53,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			int limit) {
 		Select commonSelect;
 		if (latest) {
-			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
+			commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
 					.distinctOn(field(name(LAUNCHES, "launch_name")).cast(String.class))
 					.from(name(LAUNCHES))
 					.orderBy(field(name(LAUNCHES, "launch_name")).cast(String.class),
-							field(name(LAUNCHES, "number")).cast(Integer.class).desc()
+							field(name(LAUNCHES, LAUNCH_NUMBER)).cast(Integer.class).desc()
 					);
 		} else {
-			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
+			commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES));
 		}
 
 		return dsl.with(LAUNCHES)
@@ -99,8 +99,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.as(STATUS_HISTORY),
 						DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
 						DSL.sum(DSL.when(TEST_ITEM_RESULTS.STATUS.eq(DSL.cast(criteria.toUpperCase(), TEST_ITEM_RESULTS.STATUS)), 1)
-								.otherwise(0))
-								.as(CRITERIA),
+								.otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
 						DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 				)
 						.from(LAUNCH)
@@ -115,7 +114,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
-				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(0))
+				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(ZERO_QUERY_VALUE))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(limit)
 				.fetchInto(MostFailedContent.class);
@@ -134,8 +133,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.as(STATUS_HISTORY),
 						DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
 						DSL.sum(DSL.when(ISSUE_GROUP.ISSUE_GROUP_.eq(DSL.cast(criteria.toUpperCase(), ISSUE_GROUP.ISSUE_GROUP_)), 1)
-								.otherwise(0))
-								.as(CRITERIA),
+								.otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
 						DSL.count(TEST_ITEM_RESULTS.RESULT_ID).as(TOTAL)
 				)
 						.from(LAUNCH)
@@ -156,7 +154,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
-				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(0))
+				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(ZERO_QUERY_VALUE))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(limit)
 				.fetchInto(MostFailedContent.class);
@@ -165,10 +163,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		List<Launch> launchStatisticsContents = LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -197,7 +192,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
 						.groupBy(LAUNCH.ID, EXECUTION_STATISTICS.ES_STATUS, EXECUTION_STATISTICS.ES_COUNTER)
 						.asTable(EXECUTION_STATS))
-				.on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, "id")).cast(Long.class)))
+				.on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, ID)).cast(Long.class)))
 				.where(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
 				.and(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
 				.groupBy(LAUNCH.ID,
@@ -218,29 +213,26 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.START_TIME.as("startTime"),
+				.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						LAUNCH.NAME.as(NAME),
+						LAUNCH.START_TIME.as(START_TIME),
 						(sum(when(ISSUE_GROUP.ISSUE_GROUP_.equal(JIssueGroupEnum.TO_INVESTIGATE),
-								0
+								ZERO_QUERY_VALUE
 						).otherwise(ISSUE_STATISTICS.IS_COUNTER))).cast(Double.class)
-								.mul(100)
+								.mul(PERCENTAGE_MULTIPLIER)
 								.div(sum(ISSUE_STATISTICS.IS_COUNTER))
-								.as("investigatedPercentage"),
+								.as(INVESTIGATED_PERCENTAGE),
 						(sum(when(ISSUE_GROUP.ISSUE_GROUP_.notEqual(JIssueGroupEnum.TO_INVESTIGATE),
-								0
+								ZERO_QUERY_VALUE
 						).otherwise(ISSUE_STATISTICS.IS_COUNTER))).cast(Double.class)
-								.mul(100)
+								.mul(PERCENTAGE_MULTIPLIER)
 								.div(sum(ISSUE_STATISTICS.IS_COUNTER))
-								.as("notInvestigatedPercentage")
+								.as(NOT_INVESTIGATED_PERCENTAGE)
 				)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
@@ -251,21 +243,21 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
 				.and(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
-				.orderBy(LAUNCH.NUMBER)
 				.fetchInto(InvestigatedStatisticsResult.class);
 	}
 
 	@Override
-	public PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch,
+	public PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch,
 			int limit) {
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
-						EXECUTION_STATISTICS.ES_COUNTER
-						)).as("passed"),
+				.select(
+						sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
+								EXECUTION_STATISTICS.ES_COUNTER
+						)).as(PASSED),
 						sum(when(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-								.orElseGet(Collections::emptyList)), EXECUTION_STATISTICS.ES_COUNTER)).as("total")
+								.orElseGet(Collections::emptyList)), EXECUTION_STATISTICS.ES_COUNTER)).as(TOTAL)
 				)
 				.from(LAUNCH)
 				.join(EXECUTION_STATISTICS)
@@ -277,33 +269,31 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.and(LAUNCH.ID.eq(launch.getId()))
 				.groupBy(LAUNCH.NAME)
 				.limit(limit)
-				.fetchInto(PassStatisticsResult.class)
+				.fetchInto(PassingRateStatisticsResult.class)
 				.stream()
 				.findFirst()
 				.orElseThrow(() -> new ReportPortalException("Widget for launch name: " + launch.getName() + " not found"));
 	}
 
 	@Override
-	public PassStatisticsResult summaryPassStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+	public PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
-						EXECUTION_STATISTICS.ES_COUNTER
-						)).as("passed"),
+				.select(
+						sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
+								EXECUTION_STATISTICS.ES_COUNTER
+						)).as(PASSED),
 						sum(when(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-								.orElseGet(Collections::emptyList)), EXECUTION_STATISTICS.ES_COUNTER)).as("total")
+								.orElseGet(Collections::emptyList)), EXECUTION_STATISTICS.ES_COUNTER)).as(TOTAL)
 				)
 				.from(EXECUTION_STATISTICS)
 				.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
 						.orElseGet(Collections::emptyList)))
 				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-				.fetchInto(PassStatisticsResult.class)
+				.fetchInto(PassingRateStatisticsResult.class)
 				.stream()
 				.findFirst()
 				.orElseThrow(() -> new ReportPortalException("No results for filter were found"));
@@ -312,20 +302,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.NAME.as("name"),
-						sum(EXECUTION_STATISTICS.ES_COUNTER).as("total"),
+				.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						LAUNCH.START_TIME.as(START_TIME),
+						LAUNCH.NAME.as(NAME),
+						sum(EXECUTION_STATISTICS.ES_COUNTER).as(TOTAL),
 						sum(EXECUTION_STATISTICS.ES_COUNTER).sub(lag(sum(EXECUTION_STATISTICS.ES_COUNTER)).over().orderBy(LAUNCH.NUMBER))
-								.as("delta")
+								.as(DELTA)
 				)
 				.from(EXECUTION_STATISTICS)
 				.join(LAUNCH)
@@ -338,19 +325,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.NAME.as("name"),
-						ISSUE_TYPE.LOCATOR.as("issueName"),
-						ISSUE_STATISTICS.IS_COUNTER.as("issueCount")
+				.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						LAUNCH.START_TIME.as(START_TIME),
+						LAUNCH.NAME.as(NAME),
+						ISSUE_TYPE.LOCATOR.as(ISSUE_NAME),
+						ISSUE_STATISTICS.IS_COUNTER.as(ISSUE_COUNT)
 				)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
@@ -387,23 +371,23 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
 			String launchName, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
+		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
+				.distinctOn(field(name(LAUNCHES, ID)).cast(Long.class))
 				.from(name(LAUNCHES))
 				.where(field(name(LAUNCHES, "launch_name")).eq(launchName))
 				.limit(limit);
 
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.NUMBER.as("number"),
-						ISSUE_GROUP.ISSUE_GROUP_.cast(String.class).as("issueName"),
+				.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NAME.as(NAME),
+						LAUNCH.START_TIME.as(START_TIME),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						ISSUE_GROUP.ISSUE_GROUP_.cast(String.class).as(ISSUE_NAME),
 						(sum(ISSUE_STATISTICS.IS_COUNTER)).cast(Double.class)
 								.div(sum(sum(ISSUE_STATISTICS.IS_COUNTER)).over().partitionBy(LAUNCH.NUMBER))
-								.mul(100)
-								.as("issuePercentage")
+								.mul(PERCENTAGE_MULTIPLIER)
+								.as(ISSUE_PERCENTAGE)
 				)
 				.from(LAUNCH)
 				.join(ISSUE_STATISTICS)
@@ -415,15 +399,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(LAUNCH.ID.in(commonSelect))
 				.and(ISSUE_GROUP.ISSUE_GROUP_.in(Optional.ofNullable(contentFields.get(ISSUE_GROUP_KEY)).orElseGet(Collections::emptyList)))
 				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.START_TIME, LAUNCH.NUMBER, ISSUE_GROUP.ISSUE_GROUP_)
-				.unionAll(dsl.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.NUMBER.as("number"),
-						EXECUTION_STATISTICS.ES_STATUS.as("issueName"),
+				.unionAll(dsl.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NAME.as(NAME),
+						LAUNCH.START_TIME.as(START_TIME),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						EXECUTION_STATISTICS.ES_STATUS.as(ISSUE_NAME),
 						(sum(EXECUTION_STATISTICS.ES_COUNTER)).cast(Double.class)
 								.div(sum(sum(EXECUTION_STATISTICS.ES_COUNTER)).over().partitionBy(LAUNCH.NUMBER))
-								.mul(100)
-								.as("issuePercentage")
+								.mul(PERCENTAGE_MULTIPLIER)
+								.as(ISSUE_PERCENTAGE)
 				)
 						.from(LAUNCH)
 						.join(EXECUTION_STATISTICS)
@@ -467,19 +451,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		List<LaunchesDurationContent> launchesDurationContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.STATUS.as("status"),
-						LAUNCH.START_TIME.as("startTime"),
-						LAUNCH.END_TIME.as("endTime")
+				.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NAME.as(NAME),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						LAUNCH.STATUS.as(STATUS),
+						LAUNCH.START_TIME.as(START_TIME),
+						LAUNCH.END_TIME.as(END_TIME)
 				)
 				.from(LAUNCH)
 				.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
@@ -495,23 +476,19 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as("launchId"),
-						LAUNCH.NUMBER.as("number"),
-						LAUNCH.NAME.as("name"),
-						LAUNCH.START_TIME.as("startTime"),
-						(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
-								0
-						).otherwise(EXECUTION_STATISTICS.ES_COUNTER))).cast(Double.class)
-								.mul(100)
+				.select(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
+						LAUNCH.NAME.as(NAME),
+						LAUNCH.START_TIME.as(START_TIME),
+						(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()), ZERO_QUERY_VALUE).otherwise(
+								EXECUTION_STATISTICS.ES_COUNTER))).cast(Double.class)
+								.mul(PERCENTAGE_MULTIPLIER)
 								.div(sum(EXECUTION_STATISTICS.ES_COUNTER))
-								.as("percentage")
+								.as(PERCENTAGE)
 				)
 				.from(LAUNCH)
 				.join(EXECUTION_STATISTICS)
@@ -529,10 +506,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		final boolean executionsFlag = Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).isPresent();
 		final boolean defectsFlag = Optional.ofNullable(contentFields.get(DEFECTS_KEY)).isPresent();
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
 		Set<Field<?>> commonSelectFields = buildColumnsSelect(contentFields.get(TABLE_COLUMN_KEY));
 
@@ -569,20 +543,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> activityTypes, int limit) {
 
-		Select commonSelect = dsl.select(field(name("activities", "id")).cast(Long.class))
-				.distinctOn(field(name("activities", "id")).cast(Long.class))
-				.from(name("activities"))
+		Select commonSelect = dsl.select(field(name(ACTIVITIES, ID)).cast(Long.class))
+				.distinctOn(field(name(ACTIVITIES, ID)).cast(Long.class))
+				.from(name(ACTIVITIES))
 				.limit(limit);
 
-		return dsl.with("activities")
+		return dsl.with(ACTIVITIES)
 				.as(QueryBuilder.newBuilder(filter).build())
-				.select(ACTIVITY.ID.as("activityId"),
-						ACTIVITY.ACTION.as("actionType"),
-						ACTIVITY.ENTITY.as("entity"),
-						ACTIVITY.CREATION_DATE.as("lastModified"),
-						USERS.LOGIN.as("userLogin"),
-						PROJECT.ID.as("projectId"),
-						PROJECT.NAME.as("projectName")
+				.select(ACTIVITY.ID.as(ACTIVITY_ID),
+						ACTIVITY.ACTION.as(ACTION_TYPE),
+						ACTIVITY.ENTITY.as(ENTITY),
+						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
+						USERS.LOGIN.as(USER_LOGIN),
+						PROJECT.ID.as(PROJECT_ID),
+						PROJECT.NAME.as(PROJECT_NAME)
 				)
 				.from(ACTIVITY)
 				.leftJoin(USERS)
@@ -598,12 +572,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit) {
-		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID.as("ticketId"),
-				TICKET.SUBMIT_DATE.as("submitDate"),
-				TICKET.URL.as("url"),
-				TEST_ITEM.ITEM_ID.as("testItemId"),
-				TEST_ITEM.NAME.as("testItemName"),
-				USERS.LOGIN.as("submitter")
+
+		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID.as(TICKET_ID),
+				TICKET.SUBMIT_DATE.as(SUBMIT_DATE),
+				TICKET.URL.as(URL),
+				TEST_ITEM.ITEM_ID.as(TEST_ITEM_ID),
+				TEST_ITEM.NAME.as(TEST_ITEM_NAME),
+				USERS.LOGIN.as(SUBMITTER)
 
 		)
 				.from(TICKET)
@@ -627,15 +602,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, "id")).cast(Long.class))
-				.from(name(LAUNCHES))
-				.limit(limit);
+		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
 
-		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as("uniqueId"),
-				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as("itemName"),
-				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as("statuses"),
-				sum(field(name(FLAKY_TABLE_RESULTS, "switch_flag")).cast(Long.class)).as("flakyCount"),
+		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
+				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
+				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
+				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
 		)
 				.from(dsl.select(TEST_ITEM.UNIQUE_ID,
@@ -643,8 +615,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						TEST_ITEM_RESULTS.STATUS,
 						when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
 								1
-						).otherwise(0)
-								.as("switch_flag"),
+						).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
 						count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 				)
 						.from(LAUNCH)
@@ -662,6 +633,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
 				.fetchInto(FlakyCasesTableContent.class);
+	}
+
+	private Select buildLaunchesCommonSelectWithLimit(int limit) {
+		return dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
+				.distinctOn(field(name(LAUNCHES, ID)).cast(Long.class))
+				.from(name(LAUNCHES))
+				.limit(limit);
 	}
 
 	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {
@@ -708,7 +686,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							.orElseGet(Collections::emptyList)))
 					.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
 					.groupBy(executionsSelectFields)
-					.asTable(EXECUTION_STATS)).on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, "id")).cast(Long.class)));
+					.asTable(EXECUTION_STATS)).on(LAUNCH.ID.eq(field(name(EXECUTION_STATS, ID)).cast(Long.class)));
 		}
 
 		if (defectsFlag) {

@@ -53,32 +53,32 @@ public interface WidgetContentRepository {
 	/**
 	 * Investigated statistics loading
 	 *
-	 * @param filter        Filter
-	 * @param limit         Results limit
+	 * @param filter Filter
+	 * @param limit  Results limit
 	 * @return List of{@link InvestigatedStatisticsResult}
 	 */
 	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit);
 
 	/**
-	 * Launch pass result for specified launch
+	 * Launch passing rate result for specified launch
 	 *
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param launch        Statistics' target launch
 	 * @param limit         Results limit
-	 * @return {@link PassStatisticsResult}
+	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassStatisticsResult launchPassPerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch, int limit);
+	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch, int limit);
 
 	/**
-	 * Launches pass result for all launches
+	 * Launches passing rate result for all launches of project
 	 *
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return {@link PassStatisticsResult}
+	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassStatisticsResult summaryPassStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
 	/**
 	 * Test cases' count trend loading
@@ -105,11 +105,12 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
-	 * @param launchName	Name of launch to compare
+	 * @param launchName    Name of launch to compare
 	 * @param limit         Results limit
 	 * @return List of{@link ComparisonStatisticsContent}
 	 */
-	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, String launchName, int limit);
+	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
+			String launchName, int limit);
 
 	/**
 	 * Launches duration content loading
@@ -152,7 +153,21 @@ public interface WidgetContentRepository {
 	 */
 	List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> contentFields, int limit);
 
+	/**
+	 * Loading unique bugs content that was produced by Bug Tracking System
+	 *
+	 * @param filter Filter
+	 * @param limit  Results limit
+	 * @return Map grouped by ticket id as key and List of {@link UniqueBugContent} as value
+	 */
 	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit);
 
+	/**
+	 * Loading the most "flaky" test cases content
+	 *
+	 * @param filter Filter
+	 * @param limit  Results limit
+	 * @return List of {@link FlakyCasesTableContent}
+	 */
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
 }

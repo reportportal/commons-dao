@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * @author Ivan Budayeu
  */
-public class PassStatisticsResult implements Serializable {
+public class PassingRateStatisticsResult implements Serializable {
 
 	@JsonProperty(value = "passed")
 	private int passed;
@@ -15,7 +15,7 @@ public class PassStatisticsResult implements Serializable {
 	@JsonProperty(value = "total")
 	private int total;
 
-	public PassStatisticsResult() {
+	public PassingRateStatisticsResult() {
 	}
 
 	public int getPassed() {
