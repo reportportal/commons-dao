@@ -163,7 +163,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		List<Launch> launchStatisticsContents = LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -213,7 +213,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -278,7 +278,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -302,7 +302,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -325,7 +325,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		List<LaunchStatisticsContent> launchStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -369,13 +369,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
-			String launchName, int limit) {
+			int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, ID)).cast(Long.class))
-				.from(name(LAUNCHES))
-				.where(field(name(LAUNCHES, "launch_name")).eq(launchName))
-				.limit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -451,7 +447,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		List<LaunchesDurationContent> launchesDurationContents = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -476,7 +472,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -506,7 +502,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		final boolean executionsFlag = Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).isPresent();
 		final boolean defectsFlag = Optional.ofNullable(contentFields.get(DEFECTS_KEY)).isPresent();
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		Set<Field<?>> commonSelectFields = buildColumnsSelect(contentFields.get(TABLE_COLUMN_KEY));
 
@@ -543,10 +539,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> activityTypes, int limit) {
 
-		Select commonSelect = dsl.select(field(name(ACTIVITIES, ID)).cast(Long.class))
-				.distinctOn(field(name(ACTIVITIES, ID)).cast(Long.class))
-				.from(name(ACTIVITIES))
-				.limit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(ACTIVITIES, limit);
 
 		return dsl.with(ACTIVITIES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -602,7 +595,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
 
-		Select commonSelect = buildLaunchesCommonSelectWithLimit(limit);
+		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
 		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
@@ -635,10 +628,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
-	private Select buildLaunchesCommonSelectWithLimit(int limit) {
-		return dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
-				.distinctOn(field(name(LAUNCHES, ID)).cast(Long.class))
-				.from(name(LAUNCHES))
+	private Select buildCommonSelectWithLimit(String alias, int limit) {
+		return dsl.select(field(name(alias, ID)).cast(Long.class))
+				.distinctOn(field(name(alias, ID)).cast(Long.class))
+				.from(name(alias))
 				.limit(limit);
 	}
 

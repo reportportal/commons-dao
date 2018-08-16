@@ -68,7 +68,8 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch, int limit);
+	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch,
+			int limit);
 
 	/**
 	 * Launches passing rate result for all launches of project
@@ -105,12 +106,10 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
-	 * @param launchName    Name of launch to compare
 	 * @param limit         Results limit
 	 * @return List of{@link ComparisonStatisticsContent}
 	 */
-	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields,
-			String launchName, int limit);
+	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
 
 	/**
 	 * Launches duration content loading

@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.google.common.collect.Sets;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -24,11 +25,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
 
 /**
  * @author Ivan Budayeu
@@ -97,9 +97,7 @@ public class WidgetContentRepositoryTest {
 	public void investigatedStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter,
-				11
-		);
+		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, 11);
 		Assert.assertNotNull(investigatedStatisticsResults);
 		Assert.assertEquals(investigatedStatisticsResults.size(), 11);
 	}
@@ -114,7 +112,7 @@ public class WidgetContentRepositoryTest {
 		launch.setNumber(20L);
 		launch.setName("launch name");
 
-		PassStatisticsResult passStatisticsResult = widgetContentRepository.launchPassPerLaunchStatistics(filter,
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter,
 				contentFields,
 				launch,
 				12
@@ -128,7 +126,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
-		PassStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassStatistics(filter, contentFields, 10);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, contentFields, 10);
 
 		Assert.assertNotNull(passStatisticsResult);
 	}
@@ -161,10 +159,10 @@ public class WidgetContentRepositoryTest {
 	public void launchesComparisonStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
-
+		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
+		filter = filter.withConditions(defaultConditions);
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
-				"launch name",
 				2
 		);
 
@@ -221,12 +219,15 @@ public class WidgetContentRepositoryTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		return Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), "project_id"))
-				.withCondition(new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"))
-				.withCondition(new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"))
-				.build();
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						"project_id"
+				),
+				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+		);
+		return new Filter(Launch.class, conditionSet);
 	}
 
 	private Map<String, List<String>> buildDefaultContentFields() {

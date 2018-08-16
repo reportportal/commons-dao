@@ -65,10 +65,6 @@ public class Widget implements Serializable {
 	@JoinColumn(name = "widget_id")
 	private Set<ContentField> contentFields = Sets.newHashSet();
 
-	//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	//	@JoinColumn(name = "widget_id")
-	//	private Set<WidgetOption> widgetOptions = Sets.newHashSet();
-
 	@ElementCollection(fetch = FetchType.LAZY)
 	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))
 	@MapKeyColumn(name = "option")
