@@ -431,6 +431,14 @@ CREATE TABLE issue_type (
   hex_color      VARCHAR(7)
 );
 
+CREATE TABLE statistics (
+  s_id          BIGSERIAL NOT NULL CONSTRAINT pk_statistics PRIMARY KEY,
+  s_name        VARCHAR(256),
+  s_counter     INT DEFAULT 0,
+  item_id       BIGINT REFERENCES test_item_results (result_id) ON DELETE CASCADE,
+  launch_id     BIGINT REFERENCES launch (id) ON DELETE CASCADE
+)
+
 CREATE TABLE issue_statistics (
   is_id         BIGSERIAL NOT NULL CONSTRAINT pk_issue_statistics PRIMARY KEY,
   issue_type_id BIGINT REFERENCES issue_type (id) ON UPDATE NO ACTION,
