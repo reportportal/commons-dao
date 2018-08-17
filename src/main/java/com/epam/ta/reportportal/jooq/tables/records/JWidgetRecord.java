@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements Record7<Long, String, String, String, Short, Long, Long> {
 
-    private static final long serialVersionUID = -1640354229;
+    private static final long serialVersionUID = 769622511;
 
     /**
      * Setter for <code>public.widget.id</code>.
@@ -101,30 +101,30 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
     }
 
     /**
-     * Setter for <code>public.widget.project_id</code>.
-     */
-    public void setProjectId(Long value) {
-        set(5, value);
-    }
-
-    /**
-     * Getter for <code>public.widget.project_id</code>.
-     */
-    public Long getProjectId() {
-        return (Long) get(5);
-    }
-
-    /**
      * Setter for <code>public.widget.filter_id</code>.
      */
     public void setFilterId(Long value) {
-        set(6, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.widget.filter_id</code>.
      */
     public Long getFilterId() {
+        return (Long) get(5);
+    }
+
+    /**
+     * Setter for <code>public.widget.project_id</code>.
+     */
+    public void setProjectId(Long value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.widget.project_id</code>.
+     */
+    public Long getProjectId() {
         return (Long) get(6);
     }
 
@@ -205,7 +205,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public Field<Long> field6() {
-        return JWidget.WIDGET.PROJECT_ID;
+        return JWidget.WIDGET.FILTER_ID;
     }
 
     /**
@@ -213,7 +213,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public Field<Long> field7() {
-        return JWidget.WIDGET.FILTER_ID;
+        return JWidget.WIDGET.PROJECT_ID;
     }
 
     /**
@@ -261,7 +261,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public Long component6() {
-        return getProjectId();
+        return getFilterId();
     }
 
     /**
@@ -269,7 +269,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public Long component7() {
-        return getFilterId();
+        return getProjectId();
     }
 
     /**
@@ -317,7 +317,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public Long value6() {
-        return getProjectId();
+        return getFilterId();
     }
 
     /**
@@ -325,7 +325,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public Long value7() {
-        return getFilterId();
+        return getProjectId();
     }
 
     /**
@@ -378,7 +378,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public JWidgetRecord value6(Long value) {
-        setProjectId(value);
+        setFilterId(value);
         return this;
     }
 
@@ -387,7 +387,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
      */
     @Override
     public JWidgetRecord value7(Long value) {
-        setFilterId(value);
+        setProjectId(value);
         return this;
     }
 
@@ -420,7 +420,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
     /**
      * Create a detached, initialised JWidgetRecord
      */
-    public JWidgetRecord(Long id, String name, String description, String widgetType, Short itemsCount, Long projectId, Long filterId) {
+    public JWidgetRecord(Long id, String name, String description, String widgetType, Short itemsCount, Long filterId, Long projectId) {
         super(JWidget.WIDGET);
 
         set(0, id);
@@ -428,7 +428,7 @@ public class JWidgetRecord extends UpdatableRecordImpl<JWidgetRecord> implements
         set(2, description);
         set(3, widgetType);
         set(4, itemsCount);
-        set(5, projectId);
-        set(6, filterId);
+        set(5, filterId);
+        set(6, projectId);
     }
 }

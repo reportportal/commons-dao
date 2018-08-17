@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidget extends TableImpl<JWidgetRecord> {
 
-    private static final long serialVersionUID = 739722575;
+    private static final long serialVersionUID = 1338776367;
 
     /**
      * The reference instance of <code>public.widget</code>
@@ -81,14 +81,14 @@ public class JWidget extends TableImpl<JWidgetRecord> {
     public final TableField<JWidgetRecord, Short> ITEMS_COUNT = createField("items_count", org.jooq.impl.SQLDataType.SMALLINT, this, "");
 
     /**
-     * The column <code>public.widget.project_id</code>.
-     */
-    public final TableField<JWidgetRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
-
-    /**
      * The column <code>public.widget.filter_id</code>.
      */
     public final TableField<JWidgetRecord, Long> FILTER_ID = createField("filter_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.widget.project_id</code>.
+     */
+    public final TableField<JWidgetRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.widget</code> table reference
@@ -164,7 +164,7 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      */
     @Override
     public List<ForeignKey<JWidgetRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JWidgetRecord, ?>>asList(Keys.WIDGET__WIDGET_PROJECT_ID_FKEY, Keys.WIDGET__WIDGET_USER_FILTER_ID_FK);
+        return Arrays.<ForeignKey<JWidgetRecord, ?>>asList(Keys.WIDGET__WIDGET_FILTER_ID_FKEY, Keys.WIDGET__WIDGET_PROJECT_ID_FKEY);
     }
 
     /**

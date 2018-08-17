@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidgetOption extends TableImpl<JWidgetOptionRecord> {
 
-    private static final long serialVersionUID = 886353906;
+    private static final long serialVersionUID = -1366228674;
 
     /**
      * The reference instance of <code>public.widget_option</code>
@@ -69,6 +69,11 @@ public class JWidgetOption extends TableImpl<JWidgetOptionRecord> {
      * The column <code>public.widget_option.option</code>.
      */
     public final TableField<JWidgetOptionRecord, String> OPTION = createField("option", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.widget_option.value</code>.
+     */
+    public final TableField<JWidgetOptionRecord, String> VALUE = createField("value", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * Create a <code>public.widget_option</code> table reference

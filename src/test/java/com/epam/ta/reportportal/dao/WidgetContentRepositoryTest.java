@@ -50,14 +50,14 @@ public class WidgetContentRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		//runSqlScript("/test-dropall-script.sql");
+		//runSqlScript("/test-create-script.sql");
+		//runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+		//runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -136,10 +136,12 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
-		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, contentFields, 10);
+		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.CONTAINS, false, "TI001", "s_result"));
+		filter = filter.withConditions(defaultConditions);
+		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, contentFields, 2);
 
 		Assert.assertNotNull(casesTrendContents);
-		Assert.assertEquals(casesTrendContents.size(), 10);
+		Assert.assertEquals(casesTrendContents.size(), 2);
 
 	}
 

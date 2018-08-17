@@ -5,14 +5,16 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 
 import com.epam.ta.reportportal.jooq.tables.JTicket;
+
+import java.sql.Timestamp;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record6;
 import org.jooq.Row6;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
-import java.sql.Timestamp;
 
 
 /**
@@ -28,7 +30,7 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicketRecord extends UpdatableRecordImpl<JTicketRecord> implements Record6<Long, String, Long, Timestamp, Integer, String> {
 
-    private static final long serialVersionUID = 1578672290;
+    private static final long serialVersionUID = 170083340;
 
     /**
      * Setter for <code>public.ticket.id</code>.
@@ -372,7 +374,7 @@ public class JTicketRecord extends UpdatableRecordImpl<JTicketRecord> implements
     /**
      * Create a detached, initialised JTicketRecord
      */
-    public JTicketRecord(Long id, String ticketId, Integer submitterId, Timestamp submitDate, Integer btsId, String url) {
+    public JTicketRecord(Long id, String ticketId, Long submitterId, Timestamp submitDate, Integer btsId, String url) {
         super(JTicket.TICKET);
 
         set(0, id);

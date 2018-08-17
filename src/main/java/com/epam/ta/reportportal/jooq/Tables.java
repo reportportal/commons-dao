@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
 import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JContentFieldValue;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
@@ -45,6 +46,7 @@ import com.epam.ta.reportportal.jooq.tables.JProjectEmailConfiguration;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
@@ -54,7 +56,6 @@ import com.epam.ta.reportportal.jooq.tables.JUserFilter;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue;
 
 import javax.annotation.Generated;
 
@@ -96,6 +97,11 @@ public class Tables {
      * The table <code>public.content_field</code>.
      */
     public static final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
+
+    /**
+     * The table <code>public.content_field_value</code>.
+     */
+    public static final JContentFieldValue CONTENT_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JContentFieldValue.CONTENT_FIELD_VALUE;
 
     /**
      * The table <code>public.dashboard</code>.
@@ -278,6 +284,11 @@ public class Tables {
     public static final JServerSettings SERVER_SETTINGS = com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
 
     /**
+     * The table <code>public.statistics</code>.
+     */
+    public static final JStatistics STATISTICS = com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
+
+    /**
      * The table <code>public.test_item</code>.
      */
     public static final JTestItem TEST_ITEM = com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -321,9 +332,4 @@ public class Tables {
      * The table <code>public.widget_option</code>.
      */
     public static final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
-
-    /**
-     * The table <code>public.widget_option_value</code>.
-     */
-    public static final JWidgetOptionValue WIDGET_OPTION_VALUE = com.epam.ta.reportportal.jooq.tables.JWidgetOptionValue.WIDGET_OPTION_VALUE;
 }

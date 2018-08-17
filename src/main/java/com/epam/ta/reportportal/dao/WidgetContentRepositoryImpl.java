@@ -30,6 +30,7 @@ import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
+import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
@@ -304,19 +305,42 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
+//		dsl.with(LAUNCHES)
+//				.as(QueryBuilder.newBuilder(filter).build())
+//				.select(LAUNCH.ID,
+//						LAUNCH.NUMBER,
+//						LAUNCH.NAME,
+//						LAUNCH.START_TIME,
+//						STATISTICS.S_NAME,
+//						STATISTICS.S_COUNTER
+//				)
+//				.from(LAUNCH)
+//				.join(STATISTICS)
+//				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+//				.where(STATISTICS.S_NAME.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+//				.and(STATISTICS.LAUNCH_ID.in(commonSelect))
+//				.groupBy(LAUNCH.ID,
+//						LAUNCH.NUMBER,
+//						LAUNCH.NAME,
+//						LAUNCH.START_TIME,
+//						STATISTICS.S_NAME,
+//						STATISTICS.S_COUNTER
+//				)
+//				.fetch()
+
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select(LAUNCH.ID.as(LAUNCH_ID),
 						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
 						LAUNCH.START_TIME.as(START_TIME),
 						LAUNCH.NAME.as(NAME),
-						sum(EXECUTION_STATISTICS.ES_COUNTER).as(TOTAL),
-						sum(EXECUTION_STATISTICS.ES_COUNTER).sub(lag(sum(EXECUTION_STATISTICS.ES_COUNTER)).over().orderBy(LAUNCH.NUMBER))
+						sum(STATISTICS.S_COUNTER).as(TOTAL),
+						sum(STATISTICS.S_COUNTER).sub(lag(sum(STATISTICS.S_COUNTER)).over().orderBy(LAUNCH.NUMBER))
 								.as(DELTA)
 				)
-				.from(EXECUTION_STATISTICS)
+				.from(STATISTICS)
 				.join(LAUNCH)
-				.on(EXECUTION_STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
+				.on(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME)
 				.fetchInto(CasesTrendContent.class);
@@ -630,8 +654,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	private Select buildCommonSelectWithLimit(String alias, int limit) {
 		return dsl.select(field(name(alias, ID)).cast(Long.class))
-				.distinctOn(field(name(alias, ID)).cast(Long.class))
 				.from(name(alias))
+				.groupBy(field(name(alias, ID)), field(name(alias, "s_counter")))
+				.orderBy((field(name(alias, "s_counter")).desc()))
 				.limit(limit);
 	}
 

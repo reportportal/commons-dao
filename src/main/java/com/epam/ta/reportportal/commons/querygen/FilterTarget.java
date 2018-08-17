@@ -1,7 +1,8 @@
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
+import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.commons.querygen.constant.*;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -19,13 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.ES_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.DESCRIPTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 public enum FilterTarget {
@@ -39,15 +37,12 @@ public enum FilterTarget {
 			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(NAME, "l.name", String.class, false),
 			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
-			new CriteriaHolder(ES_STATUS, "es.es_status", String.class, false)
+			new CriteriaHolder("s_result", "s.s_name", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
 			JLaunch l = JLaunch.LAUNCH.as("l");
-			JIssueStatistics is = JIssueStatistics.ISSUE_STATISTICS.as("is");
-			JExecutionStatistics es = JExecutionStatistics.EXECUTION_STATISTICS.as("es");
-			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
-			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
+			JStatistics s = JStatistics.STATISTICS.as("s");
 			JProject p = JProject.PROJECT.as("p");
 
 			return DSL.select(l.ID,
@@ -62,30 +57,16 @@ public enum FilterTarget {
 					l.LAST_MODIFIED,
 					l.MODE,
 					l.STATUS,
-					es.ES_ID,
-					es.ES_COUNTER,
-					es.ES_STATUS,
-					es.POSITIVE,
-					es.ITEM_ID,
-					es.LAUNCH_ID.as("es_launch_id"),
-					is.IS_ID,
-					is.ISSUE_TYPE_ID,
-					is.IS_COUNTER,
-					is.ITEM_ID,
-					is.LAUNCH_ID.as("is_launch_id"),
-					it.LOCATOR,
-					ig.ISSUE_GROUP_,
+					s.LAUNCH_ID.as("s_launch_id"),
+					s.S_ID,
+					s.S_NAME,
+					s.S_COUNTER,
+					s.ITEM_ID.as("s_item_id"),
 					p.NAME
 			)
 					.from(l)
-					.join(es)
-					.on(l.ID.eq(es.LAUNCH_ID))
-					.join(is)
-					.on(l.ID.eq(is.LAUNCH_ID))
-					.join(it)
-					.on(is.ISSUE_TYPE_ID.eq(it.ID))
-					.join(ig)
-					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID))
+					.join(s)
+					.on(l.ID.eq(s.LAUNCH_ID))
 					.join(p)
 					.on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();

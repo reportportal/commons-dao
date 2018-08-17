@@ -483,7 +483,7 @@ CREATE TABLE issue (
 CREATE TABLE ticket (
   id           BIGSERIAL CONSTRAINT ticket_pk PRIMARY KEY,
   ticket_id    VARCHAR(64)                                                   NOT NULL UNIQUE,
-  submitter_id INTEGER REFERENCES users (id)                                 NOT NULL,
+  submitter_id BIGINT REFERENCES users (id)                                 NOT NULL,
   submit_date  TIMESTAMP DEFAULT now()                                       NOT NULL,
   bts_id       INTEGER REFERENCES bug_tracking_system (id) ON DELETE CASCADE NOT NULL,
   url          VARCHAR(256)                                                  NOT NULL
