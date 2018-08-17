@@ -305,28 +305,43 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
-//		dsl.with(LAUNCHES)
-//				.as(QueryBuilder.newBuilder(filter).build())
-//				.select(LAUNCH.ID,
-//						LAUNCH.NUMBER,
-//						LAUNCH.NAME,
-//						LAUNCH.START_TIME,
-//						STATISTICS.S_NAME,
-//						STATISTICS.S_COUNTER
-//				)
-//				.from(LAUNCH)
-//				.join(STATISTICS)
-//				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
-//				.where(STATISTICS.S_NAME.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-//				.and(STATISTICS.LAUNCH_ID.in(commonSelect))
-//				.groupBy(LAUNCH.ID,
-//						LAUNCH.NUMBER,
-//						LAUNCH.NAME,
-//						LAUNCH.START_TIME,
-//						STATISTICS.S_NAME,
-//						STATISTICS.S_COUNTER
-//				)
-//				.fetch()
+		//		dsl.with(LAUNCHES)
+		//				.as(QueryBuilder.newBuilder(filter).build())
+		//				.select(LAUNCH.ID,
+		//						LAUNCH.NUMBER,
+		//						LAUNCH.NAME,
+		//						LAUNCH.START_TIME,
+		//						STATISTICS.S_NAME,
+		//						STATISTICS.S_COUNTER
+		//				)
+		//				.from(LAUNCH)
+		//				.join(STATISTICS)
+		//				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+		//				.where(STATISTICS.S_NAME.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
+		//				.and(STATISTICS.LAUNCH_ID.in(commonSelect))
+		//				.groupBy(LAUNCH.ID,
+		//						LAUNCH.NUMBER,
+		//						LAUNCH.NAME,
+		//						LAUNCH.START_TIME,
+		//						STATISTICS.S_NAME,
+		//						STATISTICS.S_COUNTER
+		//				)
+		//				.fetch()
+
+		Select<?> raw = DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_NAME, max(STATISTICS.S_COUNTER))
+				.from(STATISTICS)
+				.groupBy(STATISTICS.LAUNCH_ID, STATISTICS.S_NAME)
+				.orderBy(STATISTICS.LAUNCH_ID, STATISTICS.S_NAME);
+
+		Select<?> crossTabValues = DSL.selectDistinct(STATISTICS.S_NAME) //these are is known to be distinct
+				.from(STATISTICS).orderBy(STATISTICS.S_NAME);
+
+		Result<Record> fetch = PostgresWrapper.pivot(dsl, raw, crossTabValues)
+				.join(LAUNCH)
+				.on(field(name("launch_id")).eq(LAUNCH.ID))
+				.where(field(name("launch_id")).eq(1l))
+				.fetch();
+		System.out.println();
 
 		return dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -335,8 +350,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						LAUNCH.START_TIME.as(START_TIME),
 						LAUNCH.NAME.as(NAME),
 						sum(STATISTICS.S_COUNTER).as(TOTAL),
-						sum(STATISTICS.S_COUNTER).sub(lag(sum(STATISTICS.S_COUNTER)).over().orderBy(LAUNCH.NUMBER))
-								.as(DELTA)
+						sum(STATISTICS.S_COUNTER).sub(lag(sum(STATISTICS.S_COUNTER)).over().orderBy(LAUNCH.NUMBER)).as(DELTA)
 				)
 				.from(STATISTICS)
 				.join(LAUNCH)
@@ -344,6 +358,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(LAUNCH.ID.in(commonSelect))
 				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME)
 				.fetchInto(CasesTrendContent.class);
+
 	}
 
 	@Override

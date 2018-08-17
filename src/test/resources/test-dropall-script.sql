@@ -36,6 +36,7 @@ DROP TABLE IF EXISTS oauth_registration CASCADE;
 DROP TABLE IF EXISTS test_item_structure CASCADE;
 DROP TABLE IF EXISTS test_item_results CASCADE;
 
+DROP TABLE IF EXISTS statistics CASCADE;
 DROP TABLE IF EXISTS execution_statistics CASCADE;
 DROP TABLE IF EXISTS issue_statistics CASCADE;
 DROP TABLE IF EXISTS issue_group CASCADE;
