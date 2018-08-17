@@ -1,12 +1,12 @@
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.querygen.constant.*;
+import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
+import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
@@ -18,14 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.ES_STATUS;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.DESCRIPTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
-import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 
 public enum FilterTarget {
 
@@ -41,76 +36,14 @@ public enum FilterTarget {
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
-			JLaunch l = JLaunch.LAUNCH.as("l");
-			JIssueStatistics is = JIssueStatistics.ISSUE_STATISTICS.as("is");
-			JExecutionStatistics es = JExecutionStatistics.EXECUTION_STATISTICS.as("es");
-			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
-			JIssueGroup ig = JIssueGroup.ISSUE_GROUP.as("ig");
-			JProject p = JProject.PROJECT.as("p");
-
-			return DSL.select(
-					l.ID,
-					l.UUID,
-					l.PROJECT_ID,
-					l.USER_ID,
-					l.NAME.as("launch_name"),
-					l.DESCRIPTION,
-					l.START_TIME,
-					l.END_TIME,
-					l.NUMBER,
-					l.LAST_MODIFIED,
-					l.MODE,
-					l.STATUS,
-					es.ES_ID,
-					es.ES_COUNTER,
-					es.ES_STATUS,
-					es.POSITIVE,
-					es.ITEM_ID,
-					es.LAUNCH_ID.as("es_launch_id"),
-					is.IS_ID,
-					is.ISSUE_TYPE_ID,
-					is.IS_COUNTER,
-					is.ITEM_ID,
-					is.LAUNCH_ID.as("is_launch_id"),
-					it.LOCATOR,
-					ig.ISSUE_GROUP_,
-					p.NAME
-			)
-					.from(l)
-					.join(es)
-					.on(l.ID.eq(es.LAUNCH_ID))
-					.join(is)
-					.on(l.ID.eq(is.LAUNCH_ID))
-					.join(it)
-					.on(is.ISSUE_TYPE_ID.eq(it.ID))
-					.join(ig)
-					.on(it.ISSUE_GROUP_ID.eq(ig.ISSUE_GROUP_ID))
-					.join(p)
-					.on(l.PROJECT_ID.eq(p.ID))
-					.getQuery();
+			return null;
 		}
 	},
 
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
-			return DSL.select()
-					.from(TEST_ITEM_STRUCTURE)
-					.join(Tables.TEST_ITEM)
-					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(Tables.TEST_ITEM.ITEM_ID))
-					.join(TEST_ITEM_RESULTS)
-					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-					.join(EXECUTION_STATISTICS)
-					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(EXECUTION_STATISTICS.ITEM_ID))
-					.join(ISSUE_STATISTICS)
-					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE_STATISTICS.ITEM_ID))
-					.join(ISSUE_TYPE)
-					.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-					.join(ISSUE_GROUP)
-					.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-					.join(ISSUE)
-					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
-					.getQuery();
+			return null;
 		}
 	},
 
