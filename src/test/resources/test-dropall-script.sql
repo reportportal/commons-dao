@@ -20,8 +20,8 @@ DROP TABLE IF EXISTS filter CASCADE;
 DROP TABLE IF EXISTS user_filter CASCADE;
 DROP TABLE IF EXISTS filter_condition CASCADE;
 DROP TABLE IF EXISTS filter_sort CASCADE;
+DROP TABLE IF EXISTS widget_filter CASCADE;
 DROP TABLE IF EXISTS content_field CASCADE;
-DROP TABLE IF EXISTS content_field_value CASCADE;
 DROP TABLE IF EXISTS widget_option CASCADE;
 
 DROP TABLE IF EXISTS demo_data_postfix CASCADE;
@@ -31,14 +31,14 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS project_user CASCADE;
 DROP TABLE IF EXISTS oauth_access_token CASCADE;
 DROP TABLE IF EXISTS oauth_registration_scope CASCADE;
+DROP TABLE IF EXISTS oauth_registration_restriction CASCADE;
 DROP TABLE IF EXISTS oauth_registration CASCADE;
 
 DROP TABLE IF EXISTS test_item_structure CASCADE;
 DROP TABLE IF EXISTS test_item_results CASCADE;
 
 DROP TABLE IF EXISTS statistics CASCADE;
-DROP TABLE IF EXISTS execution_statistics CASCADE;
-DROP TABLE IF EXISTS issue_statistics CASCADE;
+
 DROP TABLE IF EXISTS issue_group CASCADE;
 DROP TABLE IF EXISTS issue_type_project_configuration CASCADE;
 
