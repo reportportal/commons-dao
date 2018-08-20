@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> implements Record5<Long, String, Integer, Long, Long> {
 
-    private static final long serialVersionUID = 251756937;
+    private static final long serialVersionUID = 170224099;
 
     /**
      * Setter for <code>public.statistics.s_id</code>.
@@ -45,16 +45,16 @@ public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> im
     }
 
     /**
-     * Setter for <code>public.statistics.s_name</code>.
+     * Setter for <code>public.statistics.s_field</code>.
      */
-    public void setSName(String value) {
+    public void setSField(String value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>public.statistics.s_name</code>.
+     * Getter for <code>public.statistics.s_field</code>.
      */
-    public String getSName() {
+    public String getSField() {
         return (String) get(1);
     }
 
@@ -145,7 +145,7 @@ public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> im
      */
     @Override
     public Field<String> field2() {
-        return JStatistics.STATISTICS.S_NAME;
+        return JStatistics.STATISTICS.S_FIELD;
     }
 
     /**
@@ -185,7 +185,7 @@ public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> im
      */
     @Override
     public String component2() {
-        return getSName();
+        return getSField();
     }
 
     /**
@@ -225,7 +225,7 @@ public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> im
      */
     @Override
     public String value2() {
-        return getSName();
+        return getSField();
     }
 
     /**
@@ -266,7 +266,7 @@ public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> im
      */
     @Override
     public JStatisticsRecord value2(String value) {
-        setSName(value);
+        setSField(value);
         return this;
     }
 
@@ -324,11 +324,11 @@ public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> im
     /**
      * Create a detached, initialised JStatisticsRecord
      */
-    public JStatisticsRecord(Long sId, String sName, Integer sCounter, Long itemId, Long launchId) {
+    public JStatisticsRecord(Long sId, String sField, Integer sCounter, Long itemId, Long launchId) {
         super(JStatistics.STATISTICS);
 
         set(0, sId);
-        set(1, sName);
+        set(1, sField);
         set(2, sCounter);
         set(3, itemId);
         set(4, launchId);

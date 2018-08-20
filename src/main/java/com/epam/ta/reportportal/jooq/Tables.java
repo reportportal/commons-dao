@@ -8,8 +8,12 @@ import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
 import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JConnectby;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JContentFieldValue;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab2;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab3;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab4;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
@@ -17,7 +21,6 @@ import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
 import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
 import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
 import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JExecutionStatistics;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
@@ -25,7 +28,6 @@ import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
 import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueStatistics;
 import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
 import com.epam.ta.reportportal.jooq.tables.JIssueType;
 import com.epam.ta.reportportal.jooq.tables.JIssueTypeProjectConfiguration;
@@ -35,8 +37,10 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
 import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
 import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
 import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JNormalRand;
 import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JProject;
@@ -56,8 +60,19 @@ import com.epam.ta.reportportal.jooq.tables.JUserFilter;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+import com.epam.ta.reportportal.jooq.tables.records.JConnectbyRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstab2Record;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstab3Record;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstab4Record;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstabRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JNormalRandRecord;
 
 import javax.annotation.Generated;
+
+import org.jooq.Configuration;
+import org.jooq.Field;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 
 /**
@@ -94,14 +109,139 @@ public class Tables {
     public static final JBugTrackingSystem BUG_TRACKING_SYSTEM = com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem.BUG_TRACKING_SYSTEM;
 
     /**
+     * The table <code>public.connectby</code>.
+     */
+    public static final JConnectby CONNECTBY = com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY;
+
+    /**
+     * Call <code>public.connectby</code>.
+     */
+    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, String __5, Integer __6) {
+        return DSL.using(configuration).selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6)).fetch();
+    }
+
+    /**
+     * Get <code>public.connectby</code> as a table.
+     */
+    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6) {
+        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+    }
+
+    /**
+     * Get <code>public.connectby</code> as a table.
+     */
+    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5, Field<Integer> __6) {
+        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+    }
+
+    /**
      * The table <code>public.content_field</code>.
      */
     public static final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
 
     /**
-     * The table <code>public.content_field_value</code>.
+     * The table <code>public.crosstab</code>.
      */
-    public static final JContentFieldValue CONTENT_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JContentFieldValue.CONTENT_FIELD_VALUE;
+    public static final JCrosstab CROSSTAB = com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB;
+
+    /**
+     * Call <code>public.crosstab</code>.
+     */
+    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+        return DSL.using(configuration).selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
+    }
+
+    /**
+     * Get <code>public.crosstab</code> as a table.
+     */
+    public static JCrosstab CROSSTAB(String __1, Integer __2) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
+    }
+
+    /**
+     * Get <code>public.crosstab</code> as a table.
+     */
+    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
+    }
+
+    /**
+     * The table <code>public.crosstab2</code>.
+     */
+    public static final JCrosstab2 CROSSTAB2 = com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2;
+
+    /**
+     * Call <code>public.crosstab2</code>.
+     */
+    public static Result<JCrosstab2Record> CROSSTAB2(Configuration configuration, String __1) {
+        return DSL.using(configuration).selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1)).fetch();
+    }
+
+    /**
+     * Get <code>public.crosstab2</code> as a table.
+     */
+    public static JCrosstab2 CROSSTAB2(String __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1);
+    }
+
+    /**
+     * Get <code>public.crosstab2</code> as a table.
+     */
+    public static JCrosstab2 CROSSTAB2(Field<String> __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1);
+    }
+
+    /**
+     * The table <code>public.crosstab3</code>.
+     */
+    public static final JCrosstab3 CROSSTAB3 = com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3;
+
+    /**
+     * Call <code>public.crosstab3</code>.
+     */
+    public static Result<JCrosstab3Record> CROSSTAB3(Configuration configuration, String __1) {
+        return DSL.using(configuration).selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1)).fetch();
+    }
+
+    /**
+     * Get <code>public.crosstab3</code> as a table.
+     */
+    public static JCrosstab3 CROSSTAB3(String __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1);
+    }
+
+    /**
+     * Get <code>public.crosstab3</code> as a table.
+     */
+    public static JCrosstab3 CROSSTAB3(Field<String> __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1);
+    }
+
+    /**
+     * The table <code>public.crosstab4</code>.
+     */
+    public static final JCrosstab4 CROSSTAB4 = com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4;
+
+    /**
+     * Call <code>public.crosstab4</code>.
+     */
+    public static Result<JCrosstab4Record> CROSSTAB4(Configuration configuration, String __1) {
+        return DSL.using(configuration).selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1)).fetch();
+    }
+
+    /**
+     * Get <code>public.crosstab4</code> as a table.
+     */
+    public static JCrosstab4 CROSSTAB4(String __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1);
+    }
+
+    /**
+     * Get <code>public.crosstab4</code> as a table.
+     */
+    public static JCrosstab4 CROSSTAB4(Field<String> __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1);
+    }
 
     /**
      * The table <code>public.dashboard</code>.
@@ -139,11 +279,6 @@ public class Tables {
     public static final JEmailSenderCase EMAIL_SENDER_CASE = com.epam.ta.reportportal.jooq.tables.JEmailSenderCase.EMAIL_SENDER_CASE;
 
     /**
-     * The table <code>public.execution_statistics</code>.
-     */
-    public static final JExecutionStatistics EXECUTION_STATISTICS = com.epam.ta.reportportal.jooq.tables.JExecutionStatistics.EXECUTION_STATISTICS;
-
-    /**
      * The table <code>public.filter</code>.
      */
     public static final JFilter FILTER = com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
@@ -177,11 +312,6 @@ public class Tables {
      * The table <code>public.issue_group</code>.
      */
     public static final JIssueGroup ISSUE_GROUP = com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
-
-    /**
-     * The table <code>public.issue_statistics</code>.
-     */
-    public static final JIssueStatistics ISSUE_STATISTICS = com.epam.ta.reportportal.jooq.tables.JIssueStatistics.ISSUE_STATISTICS;
 
     /**
      * The table <code>public.issue_ticket</code>.
@@ -229,6 +359,32 @@ public class Tables {
     public static final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
 
     /**
+     * The table <code>public.normal_rand</code>.
+     */
+    public static final JNormalRand NORMAL_RAND = com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND;
+
+    /**
+     * Call <code>public.normal_rand</code>.
+     */
+    public static Result<JNormalRandRecord> NORMAL_RAND(Configuration configuration, Integer __1, Double __2, Double __3) {
+        return DSL.using(configuration).selectFrom(com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3)).fetch();
+    }
+
+    /**
+     * Get <code>public.normal_rand</code> as a table.
+     */
+    public static JNormalRand NORMAL_RAND(Integer __1, Double __2, Double __3) {
+        return com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3);
+    }
+
+    /**
+     * Get <code>public.normal_rand</code> as a table.
+     */
+    public static JNormalRand NORMAL_RAND(Field<Integer> __1, Field<Double> __2, Field<Double> __3) {
+        return com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3);
+    }
+
+    /**
      * The table <code>public.oauth_access_token</code>.
      */
     public static final JOauthAccessToken OAUTH_ACCESS_TOKEN = com.epam.ta.reportportal.jooq.tables.JOauthAccessToken.OAUTH_ACCESS_TOKEN;
@@ -237,6 +393,11 @@ public class Tables {
      * The table <code>public.oauth_registration</code>.
      */
     public static final JOauthRegistration OAUTH_REGISTRATION = com.epam.ta.reportportal.jooq.tables.JOauthRegistration.OAUTH_REGISTRATION;
+
+    /**
+     * The table <code>public.oauth_registration_restriction</code>.
+     */
+    public static final JOauthRegistrationRestriction OAUTH_REGISTRATION_RESTRICTION = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION;
 
     /**
      * The table <code>public.oauth_registration_scope</code>.

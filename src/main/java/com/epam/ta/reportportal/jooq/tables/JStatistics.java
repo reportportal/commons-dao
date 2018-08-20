@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatistics extends TableImpl<JStatisticsRecord> {
 
-    private static final long serialVersionUID = -1198261652;
+    private static final long serialVersionUID = -1221287798;
 
     /**
      * The reference instance of <code>public.statistics</code>
@@ -61,9 +61,9 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
     public final TableField<JStatisticsRecord, Long> S_ID = createField("s_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('statistics_s_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>public.statistics.s_name</code>.
+     * The column <code>public.statistics.s_field</code>.
      */
-    public final TableField<JStatisticsRecord, String> S_NAME = createField("s_name", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+    public final TableField<JStatisticsRecord, String> S_FIELD = createField("s_field", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.statistics.s_counter</code>.
@@ -122,7 +122,7 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PK_STATISTICS);
+        return Arrays.<Index>asList(Indexes.PK_STATISTICS, Indexes.UNIQUE_STATUS_ITEM, Indexes.UNIQUE_STATUS_LAUNCH);
     }
 
     /**
@@ -146,7 +146,7 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public List<UniqueKey<JStatisticsRecord>> getKeys() {
-        return Arrays.<UniqueKey<JStatisticsRecord>>asList(Keys.PK_STATISTICS);
+        return Arrays.<UniqueKey<JStatisticsRecord>>asList(Keys.PK_STATISTICS, Keys.UNIQUE_STATUS_ITEM, Keys.UNIQUE_STATUS_LAUNCH);
     }
 
     /**

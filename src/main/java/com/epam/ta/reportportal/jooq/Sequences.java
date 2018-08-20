@@ -34,14 +34,9 @@ public class Sequences {
     public static final Sequence<Long> BUG_TRACKING_SYSTEM_ID_SEQ = new SequenceImpl<Long>("bug_tracking_system_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.content_field_id_seq</code>
-     */
-    public static final Sequence<Long> CONTENT_FIELD_ID_SEQ = new SequenceImpl<Long>("content_field_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.dashboard_id_seq</code>
      */
-    public static final Sequence<Long> DASHBOARD_ID_SEQ = new SequenceImpl<Long>("dashboard_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Integer> DASHBOARD_ID_SEQ = new SequenceImpl<Integer>("dashboard_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
      * The sequence <code>public.defect_field_allowed_value_id_seq</code>
@@ -64,11 +59,6 @@ public class Sequences {
     public static final Sequence<Long> EMAIL_SENDER_CASE_ID_SEQ = new SequenceImpl<Long>("email_sender_case_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.execution_statistics_es_id_seq</code>
-     */
-    public static final Sequence<Long> EXECUTION_STATISTICS_ES_ID_SEQ = new SequenceImpl<Long>("execution_statistics_es_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.filter_condition_id_seq</code>
      */
     public static final Sequence<Long> FILTER_CONDITION_ID_SEQ = new SequenceImpl<Long>("filter_condition_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
@@ -84,29 +74,19 @@ public class Sequences {
     public static final Sequence<Long> FILTER_SORT_ID_SEQ = new SequenceImpl<Long>("filter_sort_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.hibernate_sequence</code>
-     */
-    public static final Sequence<Long> HIBERNATE_SEQUENCE = new SequenceImpl<Long>("hibernate_sequence", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.integration_id_seq</code>
      */
-    public static final Sequence<Long> INTEGRATION_ID_SEQ = new SequenceImpl<Long>("integration_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Integer> INTEGRATION_ID_SEQ = new SequenceImpl<Integer>("integration_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
      * The sequence <code>public.integration_type_id_seq</code>
      */
-    public static final Sequence<Long> INTEGRATION_TYPE_ID_SEQ = new SequenceImpl<Long>("integration_type_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Integer> INTEGRATION_TYPE_ID_SEQ = new SequenceImpl<Integer>("integration_type_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
      * The sequence <code>public.issue_group_issue_group_id_seq</code>
      */
-    public static final Sequence<Long> ISSUE_GROUP_ISSUE_GROUP_ID_SEQ = new SequenceImpl<Long>("issue_group_issue_group_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.issue_statistics_is_id_seq</code>
-     */
-    public static final Sequence<Long> ISSUE_STATISTICS_IS_ID_SEQ = new SequenceImpl<Long>("issue_statistics_is_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Short> ISSUE_GROUP_ISSUE_GROUP_ID_SEQ = new SequenceImpl<Short>("issue_group_issue_group_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
 
     /**
      * The sequence <code>public.issue_type_id_seq</code>
@@ -116,7 +96,7 @@ public class Sequences {
     /**
      * The sequence <code>public.item_tag_id_seq</code>
      */
-    public static final Sequence<Long> ITEM_TAG_ID_SEQ = new SequenceImpl<Long>("item_tag_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Integer> ITEM_TAG_ID_SEQ = new SequenceImpl<Integer>("item_tag_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
      * The sequence <code>public.launch_id_seq</code>
@@ -139,9 +119,14 @@ public class Sequences {
     public static final Sequence<Long> LOG_ID_SEQ = new SequenceImpl<Long>("log_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
+     * The sequence <code>public.oauth_registration_restriction_id_seq</code>
+     */
+    public static final Sequence<Integer> OAUTH_REGISTRATION_RESTRICTION_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_restriction_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
+
+    /**
      * The sequence <code>public.oauth_registration_scope_id_seq</code>
      */
-    public static final Sequence<Long> OAUTH_REGISTRATION_SCOPE_ID_SEQ = new SequenceImpl<Long>("oauth_registration_scope_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Integer> OAUTH_REGISTRATION_SCOPE_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_scope_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
      * The sequence <code>public.project_analyzer_configuration_id_seq</code>
@@ -161,7 +146,7 @@ public class Sequences {
     /**
      * The sequence <code>public.server_settings_id_seq</code>
      */
-    public static final Sequence<Long> SERVER_SETTINGS_ID_SEQ = new SequenceImpl<Long>("server_settings_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Short> SERVER_SETTINGS_ID_SEQ = new SequenceImpl<Short>("server_settings_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
 
     /**
      * The sequence <code>public.statistics_s_id_seq</code>

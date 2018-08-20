@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = -1050323661;
+    private static final long serialVersionUID = 14631341;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -123,7 +123,7 @@ public class JProject extends TableImpl<JProjectRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PROJECT_PK);
+        return Arrays.<Index>asList(Indexes.PROJECT_NAME_KEY, Indexes.PROJECT_PK);
     }
 
     /**
@@ -147,7 +147,7 @@ public class JProject extends TableImpl<JProjectRecord> {
      */
     @Override
     public List<UniqueKey<JProjectRecord>> getKeys() {
-        return Arrays.<UniqueKey<JProjectRecord>>asList(Keys.PROJECT_PK);
+        return Arrays.<UniqueKey<JProjectRecord>>asList(Keys.PROJECT_PK, Keys.PROJECT_NAME_KEY);
     }
 
     /**

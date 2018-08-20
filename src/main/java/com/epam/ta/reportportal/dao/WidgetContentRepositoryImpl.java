@@ -9,15 +9,20 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.entity.widget.content.MostFailedContent;
+import com.epam.ta.reportportal.entity.widget.content.StatisticsContent;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
+import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 import static com.epam.ta.reportportal.dao.LaunchRepositoryCustomImpl.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
@@ -37,6 +42,8 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static org.jooq.impl.DSL.*;
+import static com.epam.ta.reportportal.dao.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
  * Repository that contains queries of content loading for widgets.
@@ -52,39 +59,41 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latest,
 			int limit) {
-		Select commonSelect;
-		if (latest) {
-			commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
-					.distinctOn(field(name(LAUNCHES, "launch_name")).cast(String.class))
-					.from(name(LAUNCHES))
-					.orderBy(field(name(LAUNCHES, "launch_name")).cast(String.class),
-							field(name(LAUNCHES, LAUNCH_NUMBER)).cast(Integer.class).desc()
-					);
-		} else {
-			commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES));
-		}
-
-		return dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).build())
-				.select(EXECUTION_STATISTICS.ES_STATUS.as("field"), DSL.sumDistinct(EXECUTION_STATISTICS.ES_COUNTER))
-				.from(LAUNCH)
-				.join(EXECUTION_STATISTICS)
-				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-				.where(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-						.orElse(Collections.emptyList())))
-				.groupBy(EXECUTION_STATISTICS.ES_STATUS)
-				.unionAll(dsl.select(ISSUE_TYPE.LOCATOR.as("field"), DSL.sumDistinct(ISSUE_STATISTICS.IS_COUNTER))
-						.from(LAUNCH)
-						.join(ISSUE_STATISTICS)
-						.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
-						.join(ISSUE_TYPE)
-						.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-						.where(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
-						.and(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElse(Collections.emptyList())))
-						.groupBy(ISSUE_TYPE.LOCATOR))
-				.limit(limit)
-				.fetchInto(StatisticsContent.class);
+//		Select commonSelect;
+//		if (latest) {
+//			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
+//					.distinctOn(field(name(LAUNCHES, "launch_name")).cast(String.class))
+//					.from(name(LAUNCHES))
+//					.orderBy(
+//							field(name(LAUNCHES, "launch_name")).cast(String.class),
+//							field(name(LAUNCHES, "number")).cast(Integer.class).desc()
+//					);
+//		} else {
+//			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
+//		}
+//
+//		return dsl.with(LAUNCHES)
+//				.as(QueryBuilder.newBuilder(filter).build())
+//				.select(EXECUTION_STATISTICS.ES_STATUS.as("field"), DSL.sumDistinct(EXECUTION_STATISTICS.ES_COUNTER))
+//				.from(LAUNCH)
+//				.join(EXECUTION_STATISTICS)
+//				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
+//				.where(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
+//				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
+//						.orElse(Collections.emptyList())))
+//				.groupBy(EXECUTION_STATISTICS.ES_STATUS)
+//				.unionAll(dsl.select(ISSUE_TYPE.LOCATOR.as("field"), DSL.sumDistinct(ISSUE_STATISTICS.IS_COUNTER))
+//						.from(LAUNCH)
+//						.join(ISSUE_STATISTICS)
+//						.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
+//						.join(ISSUE_TYPE)
+//						.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+//						.where(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
+//						.and(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElse(Collections.emptyList())))
+//						.groupBy(ISSUE_TYPE.LOCATOR))
+//				.limit(limit)
+//				.fetchInto(StatisticsContent.class);
+		return null;
 	}
 
 	@Override

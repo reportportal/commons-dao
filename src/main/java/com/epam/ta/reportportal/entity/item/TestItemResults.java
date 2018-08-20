@@ -30,7 +30,6 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -65,14 +64,6 @@ public class TestItemResults implements Serializable {
 	@JoinColumn(name = "result_id")
 	private TestItemStructure itemStructure;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_id", insertable = false, updatable = false)
-	private Set<ExecutionStatistics> executionStatistics;
-
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_id", insertable = false, updatable = false)
-	private Set<IssueStatistics> issueStatistics;
-
 	public TestItemResults() {
 	}
 
@@ -90,22 +81,6 @@ public class TestItemResults implements Serializable {
 
 	public void setStatus(StatusEnum status) {
 		this.status = status;
-	}
-
-	public Set<ExecutionStatistics> getExecutionStatistics() {
-		return executionStatistics;
-	}
-
-	public void setExecutionStatistics(Set<ExecutionStatistics> executionStatistics) {
-		this.executionStatistics = executionStatistics;
-	}
-
-	public Set<IssueStatistics> getIssueStatistics() {
-		return issueStatistics;
-	}
-
-	public void setIssueStatistics(Set<IssueStatistics> issueStatistics) {
-		this.issueStatistics = issueStatistics;
 	}
 
 	public LocalDateTime getEndTime() {
