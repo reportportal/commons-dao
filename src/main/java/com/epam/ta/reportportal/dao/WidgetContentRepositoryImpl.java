@@ -5,6 +5,7 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -302,6 +303,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
+
+		List<String> cfs = Lists.newArrayList("statisitcs$executions$total", "statisitcs$executions$passed");
+
+		List<Field<Integer>> collect = cfs.stream().map(f -> {
+			return field(name(f)).cast(Integer.class).as(f);
+		}).collect(Collectors.toList());
 
 		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
