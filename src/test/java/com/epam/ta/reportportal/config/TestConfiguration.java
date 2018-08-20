@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties
 @EnableAutoConfiguration
 @Import(DatabaseConfiguration.class)
-@ComponentScan(basePackages = "com.epam.ta.reportportal.dao")
+@ComponentScan(basePackages = "com.epam.ta.reportportal")
 @PropertySource("classpath:test-application.properties")
 public class TestConfiguration {
 

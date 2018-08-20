@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -10,15 +11,19 @@ import java.sql.Timestamp;
  */
 public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
+	@Column(name = "launch_id")
 	@JsonProperty(value = "id")
 	private Long launchId;
 
+	@Column(name = "number")
 	@JsonProperty(value = "number")
 	private Integer number;
 
+	@Column(name = "project")
 	@JsonProperty(value = "name")
 	private String name;
 
+	@Column(name = "start_time")
 	@JsonProperty(value = "start_time")
 	private Timestamp startTime;
 

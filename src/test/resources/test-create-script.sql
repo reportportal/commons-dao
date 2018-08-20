@@ -24,6 +24,8 @@ CREATE TYPE FILTER_CONDITION_ENUM AS ENUM ('EQUALS', 'NOT_EQUALS', 'CONTAINS', '
 
 CREATE TYPE PASSWORD_ENCODER_TYPE AS ENUM ('PLAIN', 'SHA', 'LDAP_SHA', 'MD4', 'MD5');
 
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
 CREATE TABLE server_settings (
   id    SMALLSERIAL CONSTRAINT server_settings_id PRIMARY KEY,
   key   VARCHAR NOT NULL UNIQUE,
@@ -494,7 +496,6 @@ CREATE TABLE issue_ticket (
   ticket_id BIGINT REFERENCES ticket (id),
   CONSTRAINT issue_ticket_pk PRIMARY KEY (issue_id, ticket_id)
 );
-
 
 CREATE OR REPLACE FUNCTION delete_item_statistics()
   RETURNS TRIGGER AS

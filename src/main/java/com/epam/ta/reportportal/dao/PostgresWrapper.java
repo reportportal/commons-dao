@@ -4,7 +4,7 @@ import org.jooq.*;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Ivan Budayeu
  */
-@Component
+@Service
 public class PostgresWrapper {
 
 	@Autowired
@@ -20,7 +20,7 @@ public class PostgresWrapper {
 
 	//@formatter:off
 
-	public SelectJoinStep<Record> pivot(Select<?> raw, Select<?> crossTabValues)
+	public SelectJoinStep<Record> pivot(Select<?> fieldsForSelect, Select<?> raw, Select<?> crossTabValues)
 	{
 		List<Field<?>> resultFields = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class PostgresWrapper {
 							DSL.field
 									(
 											r.getValue(0).toString(),
-											rawFields[rawFields.length - 2].getDataType(context.configuration())
+											rawFields[rawFields.length - 1].getDataType(context.configuration())
 									)
 					);
 		}
@@ -60,7 +60,9 @@ public class PostgresWrapper {
 			}
 		}
 
-		return context.select().from( "crosstab('"
+		fieldsForSelect.getSelect().addAll(resultFields);
+
+		return context.select(fieldsForSelect.getSelect()).from( "crosstab('"
 				+ raw.getSQL(ParamType.INLINED).replace("'", "''") + "', '"
 				+ crossTabValues.getSQL(ParamType.INLINED).replace("'", "''")
 				+ "') as ct(" + ctList.toString() + " )");

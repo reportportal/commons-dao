@@ -303,62 +303,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit) {
 
-		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
-
-		//		dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(LAUNCH.ID,
-		//						LAUNCH.NUMBER,
-		//						LAUNCH.NAME,
-		//						LAUNCH.START_TIME,
-		//						STATISTICS.S_NAME,
-		//						STATISTICS.S_COUNTER
-		//				)
-		//				.from(LAUNCH)
-		//				.join(STATISTICS)
-		//				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
-		//				.where(STATISTICS.S_NAME.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElseGet(Collections::emptyList)))
-		//				.and(STATISTICS.LAUNCH_ID.in(commonSelect))
-		//				.groupBy(LAUNCH.ID,
-		//						LAUNCH.NUMBER,
-		//						LAUNCH.NAME,
-		//						LAUNCH.START_TIME,
-		//						STATISTICS.S_NAME,
-		//						STATISTICS.S_COUNTER
-		//				)
-		//				.fetch()
-
-		Select<?> raw = DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_NAME, max(STATISTICS.S_COUNTER))
-				.from(STATISTICS)
-				.groupBy(STATISTICS.LAUNCH_ID, STATISTICS.S_NAME)
-				.orderBy(STATISTICS.LAUNCH_ID, STATISTICS.S_NAME);
-
-		Select<?> crossTabValues = DSL.selectDistinct(STATISTICS.S_NAME) //these are is known to be distinct
-				.from(STATISTICS).orderBy(STATISTICS.S_NAME);
-
-		Result<Record> fetch = PostgresWrapper.pivot(dsl, raw, crossTabValues)
-				.join(LAUNCH)
-				.on(field(name("launch_id")).eq(LAUNCH.ID))
-				.where(field(name("launch_id")).eq(1l))
-				.fetch();
-		System.out.println();
-
-		return dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LAUNCH.ID.as(LAUNCH_ID),
-						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
-						LAUNCH.START_TIME.as(START_TIME),
-						LAUNCH.NAME.as(NAME),
-						sum(STATISTICS.S_COUNTER).as(TOTAL),
-						sum(STATISTICS.S_COUNTER).sub(lag(sum(STATISTICS.S_COUNTER)).over().orderBy(LAUNCH.NUMBER)).as(DELTA)
-				)
-				.from(STATISTICS)
-				.join(LAUNCH)
-				.on(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.ID.in(commonSelect))
-				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME)
+		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME),
+				sum(fieldName(STATISTICS.S_COUNTER).cast(Integer.class)).as(TOTAL),
+				sum(fieldName(STATISTICS.S_COUNTER).cast(Integer.class)).sub(lag(sum(fieldName(STATISTICS.S_COUNTER).cast(Integer.class))).over()
+						.orderBy(LAUNCH.NUMBER)).as(DELTA)
+		)
+				.from(QueryBuilder.newBuilder(filter).build())
+				.groupBy(fieldName(STATISTICS.LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME))
 				.fetchInto(CasesTrendContent.class);
-
 	}
 
 	@Override
@@ -668,11 +623,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	private Select buildCommonSelectWithLimit(String alias, int limit) {
-		return dsl.select(field(name(alias, ID)).cast(Long.class))
-				.from(name(alias))
-				.groupBy(field(name(alias, ID)), field(name(alias, "s_counter")))
-				.orderBy((field(name(alias, "s_counter")).desc()))
-				.limit(limit);
+		return dsl.select(field(name(alias, ID)).cast(Long.class)).from(name(alias)).limit(limit);
+	}
+
+	private Field<?> fieldName(TableField tableField) {
+		return field(name(tableField.getName()));
 	}
 
 	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {
