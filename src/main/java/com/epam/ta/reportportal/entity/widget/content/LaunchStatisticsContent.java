@@ -1,7 +1,5 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.epam.ta.reportportal.entity.item.ExecutionStatistics;
-import com.epam.ta.reportportal.entity.item.IssueStatistics;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,10 +19,6 @@ public class LaunchStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	@JsonProperty(value = "last_modified")
 	private Timestamp lastModified;
-
-	private IssueStatistics issueStatistics;
-
-	private ExecutionStatistics executionStatistics;
 
 	public LaunchStatisticsContent() {
 	}

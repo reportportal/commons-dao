@@ -2,12 +2,14 @@ package com.epam.ta.reportportal.dao;
 
 import org.jooq.*;
 import org.jooq.conf.ParamType;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 /**
  * @author Ivan Budayeu
@@ -29,7 +31,7 @@ public class PostgresWrapper {
 		Field<?> []rawFields = raw.fields();
 		for (int i = 0; i < rawFields.length - 2; i++)
 		{
-			resultFields.add(rawFields[i]);
+			resultFields.add(field(name(rawFields[i].getName()), Long.class));
 		}
 
 		//And then one column for each cross tab value specified
@@ -38,7 +40,7 @@ public class PostgresWrapper {
 		{
 			resultFields.add
 					(
-							DSL.field
+							field
 									(
 											r.getValue(0).toString(),
 											rawFields[rawFields.length - 1].getDataType(context.configuration())
@@ -51,7 +53,7 @@ public class PostgresWrapper {
 		StringBuilder ctList = new StringBuilder();
 		for (int i = 0; i < resultFields.size(); i++)
 		{
-			ctList.append("\"").append(resultFields.get(i).getName()).append("\" ").append(resultFields.get(i).getDataType(context.configuration())
+			ctList.append(resultFields.get(i).getName()).append(" ").append(resultFields.get(i).getDataType(context.configuration())
 									.getTypeName(context.configuration()));
 
 			if (i < resultFields.size() - 1)

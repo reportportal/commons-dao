@@ -136,12 +136,10 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		Map<String, List<String>> contentFields = buildDefaultContentFields();
 
-		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.CONTAINS, false, "TI001", "s_result"));
-		filter = filter.withConditions(defaultConditions);
 		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, contentFields, 2);
 
 		Assert.assertNotNull(casesTrendContents);
-		Assert.assertEquals(casesTrendContents.size(), 2);
+		Assert.assertEquals(2, casesTrendContents.size());
 
 	}
 

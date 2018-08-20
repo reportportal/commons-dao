@@ -38,47 +38,41 @@ public enum FilterTarget {
 			//@formatter:off
 			new CriteriaHolder("id", "l.id", Long.class, false),
 			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
-			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
-			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
-			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder(NAME, "l.name", String.class, false),
-			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
-			new CriteriaHolder("s_result", "s.s_name", String.class, false)
+			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
+			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
+			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder(NAME, "name", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
-			JLaunch l = JLaunch.LAUNCH.as("l");
-			JStatistics s = JStatistics.STATISTICS.as("s");
-			JProject p = JProject.PROJECT.as("p");
+			JLaunch l = JLaunch.LAUNCH;
+			JStatistics s = JStatistics.STATISTICS;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
-					l.NAME.as("launch_name"),
+					l.NAME,
 					l.DESCRIPTION,
 					l.START_TIME,
 					l.END_TIME,
 					l.NUMBER,
 					l.LAST_MODIFIED,
 					l.MODE,
-					l.STATUS,
-					p.NAME
+					l.STATUS
 			);
 
-			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_NAME, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.LAUNCH_ID, s.S_NAME)
-					.orderBy(s.LAUNCH_ID, s.S_NAME);
+					.groupBy(s.LAUNCH_ID, s.S_FIELD)
+					.orderBy(s.LAUNCH_ID, s.S_FIELD);
 
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_NAME) //these are is known to be distinct
-					.from(s).orderBy(s.S_NAME);
+			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
+					.from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(l)
 					.on(field(DSL.name("launch_id")).eq(l.ID))
-					.join(p)
-					.on(l.PROJECT_ID.eq(p.ID))
 					.getQuery();
 			//			return DSL.select(l.ID,
 			//					l.UUID,
@@ -94,7 +88,7 @@ public enum FilterTarget {
 			//					l.STATUS,
 			//					s.LAUNCH_ID.as("s_launch_id"),
 			//					s.S_ID,
-			//					s.S_NAME,
+			//					s.S_FIELD,
 			//					s.S_COUNTER,
 			//					s.ITEM_ID.as("s_item_id"),
 			//					p.NAME
@@ -129,11 +123,11 @@ public enum FilterTarget {
 			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
 			JStatistics s = JStatistics.STATISTICS.as("s");
 
-			Select<?> raw = DSL.select(s.ITEM_ID, s.S_NAME, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.ITEM_ID, s.S_NAME)
-					.orderBy(s.ITEM_ID, s.S_NAME);
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_NAME).from(s).orderBy(s.S_NAME);
+					.groupBy(s.ITEM_ID, s.S_FIELD)
+					.orderBy(s.ITEM_ID, s.S_FIELD);
+			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(DSL.select(), raw, crossTabValues)
 					.join(tis)
