@@ -2,6 +2,17 @@ package com.epam.ta.reportportal.dao.constant;
 
 public class WidgetContentRepositoryConstants {
 
+	public static final String EXECUTIONS_TOTAL = "statistics$executions$total";
+	public static final String EXECUTIONS_FAILED = "statistics$executions$failed";
+	public static final String EXECUTIONS_SKIPPED = "statistics$executions$skipped";
+	public static final String EXECUTIONS_PASSED = "statistics$executions$passed";
+
+	public static final String DEFECTS_AUTOMATION_BUG_TOTAL = "statistics$defects$automation_bug$total";
+	public static final String DEFECTS_PRODUCT_BUG_TOTAL = "statistics$defects$product_bug$total";
+	public static final String DEFECTS_NO_DEFECT_TOTAL = "statistics$defects$no_defect$total";
+	public static final String DEFECTS_SYSTEM_ISSUE_TOTAL = "statistics$defects$system_issue$total";
+	public static final String DEFECTS_TO_INVESTIGATE_TOTAL = "statistics$defects$to_investigate$total";
+
 	public static final String EXECUTION_STATS = "execution_stats";
 	public static final String TOTAL = "total";
 	public static final String EXECUTIONS_KEY = "executions";
@@ -10,8 +21,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String ISSUE_GROUP_KEY = "groups";
 
 	/*Constants for result query mapping*/
+	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;
-	public static final Integer PERCENTAGE_MULTIPLIER = 100;
 	public static final String LAUNCH_ID = "launchId";
 	public static final String LAUNCH_NUMBER = "number";
 	public static final String START_TIME = "startTime";
@@ -44,8 +55,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String ACTIVITY_TYPE = "activity_type";
 
 	/*Investigation widget constants*/
-	public static final String INVESTIGATED_PERCENTAGE = "investigatedPercentage";
-	public static final String NOT_INVESTIGATED_PERCENTAGE = "notInvestigatedPercentage";
+	public static final String INVESTIGATED = "investigated";
+	public static final String TO_INVESTIGATE = "to_investigate";
 
 	/*Launch pass widget constants*/
 	public static final String PASSED = "passed";

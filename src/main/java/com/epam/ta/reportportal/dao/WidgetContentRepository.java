@@ -60,26 +60,13 @@ public interface WidgetContentRepository {
 	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit);
 
 	/**
-	 * Launch passing rate result for specified launch
+	 * Launches passing rate result for launch or for all launches depending on the filter conditions
 	 *
 	 * @param filter        Filter
-	 * @param contentFields Fields with restrictions
-	 * @param launch        Statistics' target launch
 	 * @param limit         Results limit
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, List<String> contentFields, Launch launch,
-			int limit);
-
-	/**
-	 * Launches passing rate result for all launches of project
-	 *
-	 * @param filter        Filter
-	 * @param contentFields Fields with restrictions
-	 * @param limit         Results limit
-	 * @return {@link PassingRateStatisticsResult}
-	 */
-	PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, List<String> contentFields, int limit);
+	PassingRateStatisticsResult passingRateStatistics(Filter filter, int limit);
 
 	/**
 	 * Test cases' count trend loading
@@ -115,21 +102,19 @@ public interface WidgetContentRepository {
 	 * Launches duration content loading
 	 *
 	 * @param filter        Filter
-	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchesDurationContent}
 	 */
-	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, int limit);
 
 	/**
 	 * Not passed cases content loading
 	 *
 	 * @param filter        Filter
-	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
 	 * @return List of{@link NotPassedCasesContent}
 	 */
-	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, List<String> contentFields, int limit);
+	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, int limit);
 
 	/**
 	 * Launches table content loading

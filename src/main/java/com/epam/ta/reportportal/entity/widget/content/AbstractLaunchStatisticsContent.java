@@ -19,13 +19,16 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 	@JsonProperty(value = "number")
 	private Integer number;
 
-	@Column(name = "project")
+	@Column(name = "name")
 	@JsonProperty(value = "name")
 	private String name;
 
 	@Column(name = "start_time")
 	@JsonProperty(value = "start_time")
 	private Timestamp startTime;
+
+	public AbstractLaunchStatisticsContent() {
+	}
 
 	public Long getLaunchId() {
 		return launchId;

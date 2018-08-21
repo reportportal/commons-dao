@@ -105,18 +105,10 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchPassPerLaunchStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
 
-		Launch launch = new Launch();
-		launch.setId(20L);
-		launch.setNumber(20L);
-		launch.setName("launch name");
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name test", NAME));
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter,
-				contentFields,
-				launch,
-				12
-		);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, 12);
 
 		Assert.assertNotNull(passStatisticsResult);
 	}
@@ -124,9 +116,8 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, contentFields, 10);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, 10);
 
 		Assert.assertNotNull(passStatisticsResult);
 	}
@@ -176,12 +167,8 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
 
-		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter,
-				contentFields,
-				10
-		);
+		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, 10);
 
 		Assert.assertNotNull(launchesDurationContents);
 		Assert.assertEquals(launchesDurationContents.size(), 10);
@@ -191,9 +178,8 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
 
-		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, contentFields, 10);
+		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, 10);
 
 		Assert.assertNotNull(notPassedCasesContents);
 		Assert.assertEquals(notPassedCasesContents.size(), 10);
@@ -237,5 +223,11 @@ public class WidgetContentRepositoryTest {
 		return Arrays.stream(new String[] { "statistics$defects$no_defect$ND001", "statistics$defects$product_bug$PB001",
 				"statistics$defects$automation_bug$AB001", "statistics$defects$automation_bug$AB002",
 				"statistics$defects$system_issue$SI001", "statistics$defects$to_investigate$TI001" }).collect(Collectors.toList());
+	}
+
+	private List<String> buildDefaultExecutionsContentFields() {
+
+		return Arrays.stream(new String[] { "statistics$executions$failed", "statistics$executions$skipped",
+				"statistics$executions$total" }).collect(Collectors.toList());
 	}
 }

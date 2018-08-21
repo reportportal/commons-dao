@@ -4,6 +4,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
@@ -11,21 +12,26 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.stream.Collectors.groupingBy;
 import static org.jooq.impl.DSL.*;
 
 /**
@@ -205,95 +211,36 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit) {
 
-		//		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
-		//
-		//		return dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(LAUNCH.ID.as(LAUNCH_ID),
-		//						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
-		//						LAUNCH.NAME.as(NAME),
-		//						LAUNCH.START_TIME.as(START_TIME),
-		//						(sum(when(ISSUE_GROUP.ISSUE_GROUP_.equal(JIssueGroupEnum.TO_INVESTIGATE),
-		//								ZERO_QUERY_VALUE
-		//						).otherwise(ISSUE_STATISTICS.IS_COUNTER))).cast(Double.class)
-		//								.mul(PERCENTAGE_MULTIPLIER)
-		//								.div(sum(ISSUE_STATISTICS.IS_COUNTER))
-		//								.as(INVESTIGATED_PERCENTAGE),
-		//						(sum(when(ISSUE_GROUP.ISSUE_GROUP_.notEqual(JIssueGroupEnum.TO_INVESTIGATE),
-		//								ZERO_QUERY_VALUE
-		//						).otherwise(ISSUE_STATISTICS.IS_COUNTER))).cast(Double.class)
-		//								.mul(PERCENTAGE_MULTIPLIER)
-		//								.div(sum(ISSUE_STATISTICS.IS_COUNTER))
-		//								.as(NOT_INVESTIGATED_PERCENTAGE)
-		//				)
-		//				.from(LAUNCH)
-		//				.join(ISSUE_STATISTICS)
-		//				.on(ISSUE_STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
-		//				.join(ISSUE_TYPE)
-		//				.on(ISSUE_TYPE.ID.eq(ISSUE_STATISTICS.ISSUE_TYPE_ID))
-		//				.join(ISSUE_GROUP)
-		//				.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
-		//				.and(LAUNCH.ID.in(commonSelect))
-		//				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
-		//				.fetchInto(InvestigatedStatisticsResult.class);
+		Field<Double> toInvestigate = round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL).cast(Double.class))
+				.div(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
+						.add(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL))
+						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
+						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL))
+						.cast(Double.class)), 2);
 
-		return null;
+		return dsl.select(
+				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME),
+				toInvestigate.as(TO_INVESTIGATE),
+				val(PERCENTAGE_MULTIPLIER).sub(toInvestigate).as(INVESTIGATED)
+		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(InvestigatedStatisticsResult.class);
+
 	}
 
 	@Override
-	public PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, List<String> contentFields, Launch launch, int limit) {
+	public PassingRateStatisticsResult passingRateStatistics(Filter filter, int limit) {
 
-		//		return dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(
-		//						sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
-		//								EXECUTION_STATISTICS.ES_COUNTER
-		//						)).as(PASSED),
-		//						sum(when(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-		//								.orElseGet(Collections::emptyList)), EXECUTION_STATISTICS.ES_COUNTER)).as(TOTAL)
-		//				)
-		//				.from(LAUNCH)
-		//				.join(EXECUTION_STATISTICS)
-		//				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-		//				.where(LAUNCH.NAME.eq(launch.getName()))
-		//				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-		//						.orElseGet(Collections::emptyList)))
-		//				.and(LAUNCH.NUMBER.eq(launch.getNumber().intValue()))
-		//				.and(LAUNCH.ID.eq(launch.getId()))
-		//				.groupBy(LAUNCH.NAME)
-		//				.limit(limit)
-		//				.fetchInto(PassingRateStatisticsResult.class)
-		//				.stream()
-		//				.findFirst()
-		//				.orElseThrow(() -> new ReportPortalException("Widget for launch name: " + launch.getName() + " not found"));
-
-		return null;
-	}
-
-	@Override
-	public PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, List<String> contentFields, int limit) {
-
-		//		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
-		//
-		//		return dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(
-		//						sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()),
-		//								EXECUTION_STATISTICS.ES_COUNTER
-		//						)).as(PASSED),
-		//						sum(when(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-		//								.orElseGet(Collections::emptyList)), EXECUTION_STATISTICS.ES_COUNTER)).as(TOTAL)
-		//				)
-		//				.from(EXECUTION_STATISTICS)
-		//				.where(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-		//						.orElseGet(Collections::emptyList)))
-		//				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-		//				.fetchInto(PassingRateStatisticsResult.class)
-		//				.stream()
-		//				.findFirst()
-		//				.orElseThrow(() -> new ReportPortalException("No results for filter were found"));
-
-		return null;
+		return dsl.select(
+				sum(fieldName(EXECUTIONS_PASSED).cast(Integer.class)).as(PASSED),
+				sum(fieldName(EXECUTIONS_TOTAL).cast(Integer.class)).as(TOTAL)
+		)
+				.from(QueryBuilder.newBuilder(filter).with(limit).build())
+				.fetchInto(PassingRateStatisticsResult.class)
+				.stream()
+				.findFirst()
+				.orElseThrow(() -> new ReportPortalException("No results for filter were found"));
 	}
 
 	@Override
@@ -306,7 +253,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
-				executionField.as(TOTAL),
+				executionField.as(executionContentField),
 				executionField.sub(lag(executionField).over().orderBy(executionField)).as(DELTA)
 		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(CasesTrendContent.class);
 	}
@@ -435,60 +382,44 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, List<String> contentFields, int limit) {
+	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, int limit) {
 
-		//		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
-		//
-		//		List<LaunchesDurationContent> launchesDurationContents = dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(LAUNCH.ID.as(LAUNCH_ID),
-		//						LAUNCH.NAME.as(NAME),
-		//						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
-		//						LAUNCH.STATUS.as(STATUS),
-		//						LAUNCH.START_TIME.as(START_TIME),
-		//						LAUNCH.END_TIME.as(END_TIME)
-		//				)
-		//				.from(LAUNCH)
-		//				.where(LAUNCH.STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY)).orElseGet(Collections::emptyList)))
-		//				.and(LAUNCH.ID.in(commonSelect))
-		//				.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.STATUS, LAUNCH.START_TIME, LAUNCH.END_TIME)
-		//				.fetchInto(LaunchesDurationContent.class);
-		//
-		//		launchesDurationContents.forEach(content -> content.setDuration(content.getEndTime().getTime() - content.getStartTime().getTime()));
-		//
-		//		return launchesDurationContents;
-
-		return null;
+		return dsl.select(
+				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.NAME),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.STATUS),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.END_TIME),
+				timestampDiff(fieldName(LAUNCH.END_TIME).cast(Timestamp.class), (fieldName(LAUNCH.START_TIME).cast(Timestamp.class))).as(
+						"duration")
+		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(LaunchesDurationContent.class);
 	}
 
 	@Override
-	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, List<String> contentFields, int limit) {
+	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, int limit) {
 
-		//		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
-		//
-		//		return dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(LAUNCH.ID.as(LAUNCH_ID),
-		//						LAUNCH.NUMBER.as(LAUNCH_NUMBER),
-		//						LAUNCH.NAME.as(NAME),
-		//						LAUNCH.START_TIME.as(START_TIME),
-		//						(sum(when(EXECUTION_STATISTICS.ES_STATUS.equal(JStatusEnum.PASSED.getLiteral()), ZERO_QUERY_VALUE).otherwise(
-		//								EXECUTION_STATISTICS.ES_COUNTER))).cast(Double.class)
-		//								.mul(PERCENTAGE_MULTIPLIER)
-		//								.div(sum(EXECUTION_STATISTICS.ES_COUNTER))
-		//								.as(PERCENTAGE)
-		//				)
-		//				.from(LAUNCH)
-		//				.join(EXECUTION_STATISTICS)
-		//				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-		//				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-		//						.orElseGet(Collections::emptyList)))
-		//				.and(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-		//				.groupBy(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.NAME, LAUNCH.START_TIME)
-		//				.fetchInto(NotPassedCasesContent.class);
-
-		return null;
+		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(
+				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME),
+				fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED))
+						.div(fieldName(EXECUTIONS_TOTAL).cast(Double.class))
+						.as(PERCENTAGE)
+		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetch());
 	}
+
+	private static final Function<Result<? extends Record>, List<NotPassedCasesContent>> NOT_PASSED_CASES_FETCHER = result -> result.stream()
+			.map(r -> {
+				NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
+
+				Map<String, String> executionMap = new LinkedHashMap<>();
+				executionMap.put("% (Failed+Skipped)/Total", String.valueOf(r.getValue(fieldName(PERCENTAGE))));
+				res.setValues(executionMap);
+				return res;
+			})
+			.collect(Collectors.toList());
 
 	@Override
 	public List<Launch> launchesTableStatistics(Filter filter, List<String> contentFields, int limit) {
@@ -535,30 +466,29 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit) {
 
-		//		Select commonSelect = buildCommonSelectWithLimit(ACTIVITIES, limit);
-		//
-		//		return dsl.with(ACTIVITIES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(ACTIVITY.ID.as(ACTIVITY_ID),
-		//						ACTIVITY.ACTION.as(ACTION_TYPE),
-		//						ACTIVITY.ENTITY.as(ENTITY),
-		//						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
-		//						USERS.LOGIN.as(USER_LOGIN),
-		//						PROJECT.ID.as(PROJECT_ID),
-		//						PROJECT.NAME.as(PROJECT_NAME)
-		//				)
-		//				.from(ACTIVITY)
-		//				.leftJoin(USERS)
-		//				.on(ACTIVITY.USER_ID.eq(USERS.ID))
-		//				.leftJoin(PROJECT)
-		//				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-		//				.where(USERS.LOGIN.eq(login))
-		//				.and(ACTIVITY.ACTION.in(activityTypes.get(ACTIVITY_TYPE)))
-		//				.and(ACTIVITY.ID.in(commonSelect))
-		//				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
-		//				.fetchInto(ActivityContent.class);
+		Select commonSelect = buildCommonSelectWithLimit(ACTIVITIES, limit);
 
-		return null;
+		return dsl.with(ACTIVITIES)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select(ACTIVITY.ID.as(ACTIVITY_ID),
+						ACTIVITY.ACTION.as(ACTION_TYPE),
+						ACTIVITY.ENTITY.as(ENTITY),
+						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
+						USERS.LOGIN.as(USER_LOGIN),
+						PROJECT.ID.as(PROJECT_ID),
+						PROJECT.NAME.as(PROJECT_NAME)
+				)
+				.from(ACTIVITY)
+				.leftJoin(USERS)
+				.on(ACTIVITY.USER_ID.eq(USERS.ID))
+				.leftJoin(PROJECT)
+				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+				.where(USERS.LOGIN.eq(login))
+				.and(ACTIVITY.ACTION.in(activityTypes))
+				.and(ACTIVITY.ID.in(commonSelect))
+				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
+				.fetchInto(ActivityContent.class);
+
 	}
 
 	@Override
@@ -588,7 +518,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
 				.fetchInto(UniqueBugContent.class);
 
-		return uniqueBugContents.stream().collect(Collectors.groupingBy(UniqueBugContent::getTicketId));
+		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
 	}
 
 	@Override
@@ -632,8 +562,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return dsl.select(field(name(alias, ID)).cast(Long.class)).from(name(alias)).limit(limit);
 	}
 
-	private Field<?> fieldName(TableField tableField) {
+	private static Field<?> fieldName(TableField tableField) {
 		return field(name(tableField.getName()));
+	}
+
+	private static Field<?> fieldName(String tableFieldName) {
+		return field(name(tableFieldName));
 	}
 
 	private List<LaunchStatisticsContent> buildResultLaunchesStatistics(List<LaunchStatisticsContent> launchStatisticsContents) {

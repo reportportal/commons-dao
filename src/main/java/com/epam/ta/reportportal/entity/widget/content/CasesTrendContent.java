@@ -13,7 +13,7 @@ public class CasesTrendContent extends AbstractLaunchStatisticsContent {
 	@JsonProperty(value = "delta")
 	private int delta;
 
-	@Column(name = "total")
+	@Column(name = "statistics$executions$total")
 	@JsonProperty(value = "statistics$executions$total")
 	private int total;
 

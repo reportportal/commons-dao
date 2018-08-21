@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import java.sql.Timestamp;
 
 /**
@@ -12,9 +13,11 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 	@JsonProperty(value = "status")
 	private String status;
 
+	@Column(name = "end_time")
 	@JsonProperty(value = "end_time")
 	private Timestamp endTime;
 
+	@Column(name = "duration")
 	@JsonProperty(value = "duration")
 	private long duration;
 
