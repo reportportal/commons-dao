@@ -86,7 +86,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		List<Launch> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 10);
 		Assert.assertNotNull(launchStatisticsContents);
@@ -105,7 +105,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchPassPerLaunchStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		Launch launch = new Launch();
 		launch.setId(20L);
@@ -124,7 +124,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, contentFields, 10);
 
@@ -134,19 +134,21 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void casesTrendStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		String executionContentField = "statistics$executions$total";
 
-		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, contentFields, 2);
+		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, executionContentField, 2);
 
 		Assert.assertNotNull(casesTrendContents);
 		Assert.assertEquals(2, casesTrendContents.size());
+
+		System.out.println(casesTrendContents);
 
 	}
 
 	@Test
 	public void bugTrendStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		List<LaunchStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter, contentFields, 12);
 
@@ -158,7 +160,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesComparisonStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
@@ -174,7 +176,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter,
 				contentFields,
@@ -189,7 +191,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, contentFields, 10);
 
@@ -201,7 +203,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		Map<String, List<String>> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildDefaultContentFields();
 
 		List<Launch> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter, contentFields, 10);
 
@@ -230,13 +232,10 @@ public class WidgetContentRepositoryTest {
 		return new Filter(Launch.class, conditionSet);
 	}
 
-	private Map<String, List<String>> buildDefaultContentFields() {
-		Map<String, List<String>> contentFields = new HashMap<>();
-		contentFields.put(DEFECTS_KEY,
-				Arrays.stream(new String[] { "ND001", "PB001", "AB001", "AB002", "SI001", "TI001" }).collect(Collectors.toList())
-		);
-		contentFields.put(EXECUTIONS_KEY, Arrays.stream(new String[] { "FAILED", "SKIPPED", "PASSED" }).collect(Collectors.toList()));
+	private List<String> buildDefaultContentFields() {
 
-		return contentFields;
+		return Arrays.stream(new String[] { "statistics$defects$no_defect$ND001", "statistics$defects$product_bug$PB001",
+				"statistics$defects$automation_bug$AB001", "statistics$defects$automation_bug$AB002",
+				"statistics$defects$system_issue$SI001", "statistics$defects$to_investigate$TI001" }).collect(Collectors.toList());
 	}
 }

@@ -18,7 +18,7 @@ public interface WidgetContentRepository {
 	 * @param filter Filter
 	 * @return List of {@link StatisticsContent}
 	 */
-	List<StatisticsContent> overallStatisticsContent(Filter filter, Map<String, List<String>> contentFields, boolean latestMode, int limit);
+	List<StatisticsContent> overallStatisticsContent(Filter filter, List<String> contentFields, boolean latestMode, int limit);
 
 	/**
 	 * Most failed content loading by execution status criteria.
@@ -48,7 +48,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of {@link Launch}
 	 */
-	List<Launch> launchStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<Launch> launchStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Investigated statistics loading
@@ -68,7 +68,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Map<String, List<String>> contentFields, Launch launch,
+	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, List<String> contentFields, Launch launch,
 			int limit);
 
 	/**
@@ -79,17 +79,17 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Test cases' count trend loading
 	 *
-	 * @param filter        Filter
-	 * @param contentFields Fields with restrictions
-	 * @param limit         Results limit
+	 * @param filter        		Filter
+	 * @param executionContentField Content field with table column name
+	 * @param limit         		Results limit
 	 * @return List of{@link CasesTrendContent}
 	 */
-	List<CasesTrendContent> casesTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, int limit);
 
 	/**
 	 * Bug trend loading
@@ -99,7 +99,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchStatisticsContent}
 	 */
-	List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Comparison statistics content loading for launches with specified Ids
@@ -109,7 +109,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link ComparisonStatisticsContent}
 	 */
-	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Launches duration content loading
@@ -119,7 +119,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchesDurationContent}
 	 */
-	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Not passed cases content loading
@@ -129,7 +129,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link NotPassedCasesContent}
 	 */
-	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Launches table content loading
@@ -139,7 +139,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link Launch}
 	 */
-	List<Launch> launchesTableStatistics(Filter filter, Map<String, List<String>> contentFields, int limit);
+	List<Launch> launchesTableStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * User activity content loading
@@ -150,7 +150,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link ActivityContent}
 	 */
-	List<ActivityContent> activityStatistics(Filter filter, String login, Map<String, List<String>> contentFields, int limit);
+	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> contentFields, int limit);
 
 	/**
 	 * Loading unique bugs content that was produced by Bug Tracking System

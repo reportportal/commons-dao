@@ -14,7 +14,7 @@ public class CasesTrendContent extends AbstractLaunchStatisticsContent {
 	private int delta;
 
 	@Column(name = "total")
-	@JsonProperty(value = "total")
+	@JsonProperty(value = "statistics$executions$total")
 	private int total;
 
 	public CasesTrendContent() {
@@ -34,5 +34,15 @@ public class CasesTrendContent extends AbstractLaunchStatisticsContent {
 
 	public void setTotal(int total) {
 		this.total = total;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("CasesTrendContent{");
+		sb.append(super.toString());
+		sb.append("delta=").append(delta);
+		sb.append(", total=").append(total);
+		sb.append('}');
+		return sb.toString();
 	}
 }
