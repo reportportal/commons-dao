@@ -24,12 +24,14 @@ package com.epam.ta.reportportal.entity.item;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
+import com.epam.ta.reportportal.ws.model.statistics.Statistics;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -63,6 +65,10 @@ public class TestItemResults implements Serializable {
 	@MapsId
 	@JoinColumn(name = "result_id")
 	private TestItemStructure itemStructure;
+
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "item_id", insertable = false, updatable = false)
+	private Set<Statistics> statistics;
 
 	public TestItemResults() {
 	}
@@ -114,5 +120,13 @@ public class TestItemResults implements Serializable {
 
 	public void setItemStructure(TestItemStructure itemStructure) {
 		this.itemStructure = itemStructure;
+	}
+
+	public Set<Statistics> getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(Set<Statistics> statistics) {
+		this.statistics = statistics;
 	}
 }

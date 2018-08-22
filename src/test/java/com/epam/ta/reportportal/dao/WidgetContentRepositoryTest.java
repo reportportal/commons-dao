@@ -10,6 +10,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Sets;
+import org.assertj.core.util.Lists;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -151,7 +152,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesComparisonStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildTotalContentFields();
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
 		List<ComparisonStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
@@ -223,6 +224,18 @@ public class WidgetContentRepositoryTest {
 		return Arrays.stream(new String[] { "statistics$defects$no_defect$ND001", "statistics$defects$product_bug$PB001",
 				"statistics$defects$automation_bug$AB001", "statistics$defects$automation_bug$AB002",
 				"statistics$defects$system_issue$SI001", "statistics$defects$to_investigate$TI001" }).collect(Collectors.toList());
+	}
+
+	private List<String> buildTotalContentFields() {
+		return Lists.newArrayList("statistics$defects$no_defect$total",
+				"statistics$defects$product_bug$total",
+				"statistics$defects$automation_bug$total",
+				"statistics$defects$system_issue$total",
+				"statistics$defects$to_investigate$total",
+				"statistics$executions$failed",
+				"statistics$executions$skipped",
+				"statistics$executions$total"
+		);
 	}
 
 	private List<String> buildDefaultExecutionsContentFields() {

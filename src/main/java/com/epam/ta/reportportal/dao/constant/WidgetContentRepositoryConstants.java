@@ -68,11 +68,11 @@ public class WidgetContentRepositoryConstants {
 	public static final String ISSUE_PERCENTAGE = "issuePercentage";
 
 	/*Launches duration widget constants*/
-	public static final String STATUS = "status";
-	public static final String END_TIME = "endTime";
+	public static final String DURATION = "duration";
 
 	/*Not passed cases widget constants*/
 	public static final String PERCENTAGE = "percentage";
+	public static final String NOT_PASSED_STATISTICS_KEY = "% (Failed+Skipped)/Total";
 
 	/*Unique bugs table widget constants*/
 	public static final String TICKET_ID = "ticketId";

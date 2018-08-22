@@ -24,7 +24,10 @@ package com.epam.ta.reportportal.entity.launch;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.ws.model.statistics.Statistics;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -33,6 +36,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -98,6 +102,11 @@ public class Launch implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "launch_id")
 	private Set<LaunchTag> tags = Sets.newHashSet();
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
+	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
+	private Set<Statistics> statistics = new HashSet<>();
 
 	public Set<LaunchTag> getTags() {
 		return tags;
@@ -181,6 +190,14 @@ public class Launch implements Serializable {
 
 	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
+	}
+
+	public Set<Statistics> getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(Set<Statistics> statistics) {
+		this.statistics = statistics;
 	}
 
 	public LocalDateTime getEndTime() {

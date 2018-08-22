@@ -6,6 +6,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -218,8 +220,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL))
 						.cast(Double.class)), 2);
 
-		return dsl.select(
-				fieldName(STATISTICS.LAUNCH_ID),
+		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -232,8 +233,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public PassingRateStatisticsResult passingRateStatistics(Filter filter, int limit) {
 
-		return dsl.select(
-				sum(fieldName(EXECUTIONS_PASSED).cast(Integer.class)).as(PASSED),
+		return dsl.select(sum(fieldName(EXECUTIONS_PASSED).cast(Integer.class)).as(PASSED),
 				sum(fieldName(EXECUTIONS_TOTAL).cast(Integer.class)).as(TOTAL)
 		)
 				.from(QueryBuilder.newBuilder(filter).with(limit).build())
@@ -248,8 +248,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Field<Integer> executionField = field(name(executionContentField)).cast(Integer.class);
 
-		return dsl.select(
-				fieldName(STATISTICS.LAUNCH_ID),
+		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -303,8 +302,45 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	}
 
+	public static final BiFunction<Result<? extends Record>, List<String>, List<ComparisonStatisticsContent>> LAUNCHES_COMPARISON_FETCHER = (result, contentFields) -> result
+			.stream()
+			.map(record -> {
+				ComparisonStatisticsContent statisticsContent = record.into(ComparisonStatisticsContent.class);
+
+				Map<String, String> statisticsMap = new LinkedHashMap<>();
+
+				contentFields.forEach(contentField -> statisticsMap.put(contentField,
+						String.valueOf(record.getValue(fieldName(contentField)))
+				));
+
+				return statisticsContent;
+			})
+			.collect(Collectors.toList());
+
 	@Override
 	public List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, int limit) {
+
+		List<Field<?>> fields = contentFields.stream()
+				.map(contentField -> fieldName(contentField).as(contentField))
+				.collect(Collectors.toList());
+
+		Field<Double> contentFieldsSum = fields.stream()
+				.reduce((prev, curr) -> prev.add(curr))
+				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
+				.cast(Double.class);
+
+		List<Field<?>> statisticsFields = fields.stream().map(field -> field.div(contentFieldsSum).as(field)).collect(Collectors.toList());
+
+		Collections.addAll(statisticsFields,
+				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.NAME),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME)
+		);
+
+		return LAUNCHES_COMPARISON_FETCHER.apply(dsl.select(statisticsFields)
+				.from(QueryBuilder.newBuilder(filter).with(limit).build())
+				.fetch(), contentFields);
 
 		//		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 		//
@@ -378,29 +414,26 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		//
 		//		return resultComparisonStatisticsContent;
 
-		return null;
 	}
 
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, int limit) {
 
-		return dsl.select(
-				fieldName(STATISTICS.LAUNCH_ID),
+		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.STATUS),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.END_TIME),
 				timestampDiff(fieldName(LAUNCH.END_TIME).cast(Timestamp.class), (fieldName(LAUNCH.START_TIME).cast(Timestamp.class))).as(
-						"duration")
+						DURATION)
 		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(LaunchesDurationContent.class);
 	}
 
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, int limit) {
 
-		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(
-				fieldName(STATISTICS.LAUNCH_ID),
+		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -415,7 +448,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
 
 				Map<String, String> executionMap = new LinkedHashMap<>();
-				executionMap.put("% (Failed+Skipped)/Total", String.valueOf(r.getValue(fieldName(PERCENTAGE))));
+				executionMap.put(NOT_PASSED_STATISTICS_KEY, String.valueOf(r.getValue(fieldName(PERCENTAGE))));
 				res.setValues(executionMap);
 				return res;
 			})
@@ -494,8 +527,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit) {
 
-		List<UniqueBugContent> uniqueBugContents = dsl.select(
-				TICKET.TICKET_ID.as(TICKET_ID),
+		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID.as(TICKET_ID),
 				TICKET.SUBMIT_DATE.as(SUBMIT_DATE),
 				TICKET.URL.as(URL),
 				TEST_ITEM.ITEM_ID.as(TEST_ITEM_ID),
@@ -526,8 +558,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
 
-		return dsl.select(
-				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
+		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
 				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
