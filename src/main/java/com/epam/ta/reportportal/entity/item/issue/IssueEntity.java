@@ -112,6 +112,14 @@ public class IssueEntity implements Serializable {
 		this.ignoreAnalyzer = ignoreAnalyzer;
 	}
 
+	public TestItemResults getTestItemResults() {
+		return testItemResults;
+	}
+
+	public void setTestItemResults(TestItemResults testItemResults) {
+		this.testItemResults = testItemResults;
+	}
+
 	public void removeTicket(Ticket ticket) {
 		tickets.remove(ticket);
 		ticket.getIssues().remove(this);
@@ -127,8 +135,9 @@ public class IssueEntity implements Serializable {
 		}
 		IssueEntity that = (IssueEntity) o;
 		return Objects.equals(issueId, that.issueId) && Objects.equals(issueType, that.issueType) && Objects.equals(
-				issueDescription, that.issueDescription) && Objects.equals(autoAnalyzed, that.autoAnalyzed) && Objects.equals(
-				ignoreAnalyzer, that.ignoreAnalyzer);
+				issueDescription,
+				that.issueDescription
+		) && Objects.equals(autoAnalyzed, that.autoAnalyzed) && Objects.equals(ignoreAnalyzer, that.ignoreAnalyzer);
 	}
 
 	@Override
