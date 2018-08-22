@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.10.0.xsd">
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd">
     <!-- Configure the database connection here -->
     <jdbc>
         <driver>org.postgresql.Driver</driver>
@@ -16,12 +16,12 @@
              Defaults to org.jooq.util.JavaGenerator -->
 
         <strategy>
-            <name>org.jooq.util.example.JPrefixGeneratorStrategy</name>
+            <name>org.jooq.codegen.example.JPrefixGeneratorStrategy</name>
         </strategy>
         <database>
             <!-- The database type. The format here is:
                  org.util.[database].[database]Database -->
-            <name>org.jooq.util.postgres.PostgresDatabase</name>
+            <name>org.jooq.meta.postgres.PostgresDatabase</name>
 
             <!-- The database schema (or in the absence of schema support, in your RDBMS this
                  can be the owner, user, database name) to be generated -->
@@ -41,7 +41,6 @@
         <generate>
             <pojos>false</pojos>
             <jpaAnnotations>false</jpaAnnotations>
-            <dateAsTimestamp>false</dateAsTimestamp>
             <routines>false</routines>
         </generate>
 
@@ -57,5 +56,5 @@
         <!--
                 Put the property file, jooq*.jar and the JDBC driver into a directory, e.g. C:\temp\jooq
                 Go to C:\temp\jooq
-                Run java -cp jooq-3.10.5.jar:jooq-meta-3.10.5.jar:jooq-codegen-3.10.5.jar:postgresql-42.2.1.jar:. org.jooq.util.GenerationTool /jooq.xml
+                Run java -cp jooq-3.11.4.jar:jooq-meta-3.11.4.jar:jooq-codegen-3.11.4.jar:postgresql-42.2.4.jar:. org.jooq.codegen.GenerationTool /jooq.xml
         -->
