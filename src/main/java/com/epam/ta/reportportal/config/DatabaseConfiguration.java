@@ -1,6 +1,10 @@
 package com.epam.ta.reportportal.config;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -13,6 +17,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -102,26 +107,26 @@ public class DatabaseConfiguration {
 		transactionManager.setEntityManagerFactory(entityManagerFactory());
 		return transactionManager;
 	}
-	//	@Bean
-	//	public TransactionAwareDataSourceProxy transactionAwareDataSource() {
-	//		return new TransactionAwareDataSourceProxy(dataSource());
-	//	}
-	//
-	//	@Bean
-	//	public DataSourceConnectionProvider connectionProvider() {
-	//		return new DataSourceConnectionProvider(transactionAwareDataSource());
-	//	}
-	//	//
-	//		@Bean
-	//		public DefaultConfiguration configuration() {
-	//			DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-	//			jooqConfiguration.set(SQLDialect.POSTGRES);
-	//			jooqConfiguration.setConnectionProvider(connectionProvider());
-	//			return jooqConfiguration;
-	//		}
-	//	//
-	//	@Bean
-	//	public DefaultDSLContext dsl() {
-	//		return new DefaultDSLContext(configuration());
-	//	}
+		@Bean
+		public TransactionAwareDataSourceProxy transactionAwareDataSource() {
+			return new TransactionAwareDataSourceProxy(dataSource());
+		}
+
+		@Bean
+		public DataSourceConnectionProvider connectionProvider() {
+			return new DataSourceConnectionProvider(transactionAwareDataSource());
+		}
+		//
+			@Bean
+			public DefaultConfiguration configuration() {
+				DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
+				jooqConfiguration.set(SQLDialect.POSTGRES);
+				jooqConfiguration.setConnectionProvider(connectionProvider());
+				return jooqConfiguration;
+			}
+		//
+		@Bean
+		public DefaultDSLContext dsl() {
+			return new DefaultDSLContext(configuration());
+		}
 }

@@ -3,10 +3,11 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-import org.jooq.Sequence;
-import org.jooq.impl.SequenceImpl;
 
 import javax.annotation.Generated;
+
+import org.jooq.Sequence;
+import org.jooq.impl.SequenceImpl;
 
 
 /**

@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -74,8 +75,8 @@ public enum TestItemIssueGroup /*implements StatisticsAwareness*/ {
 	 * @param value - string representation of desired TestItemIssueType value
 	 * @return TestItemIssueType value
 	 */
-	public static TestItemIssueGroup fromValue(String value) {
-		return Arrays.stream(TestItemIssueGroup.values()).filter(type -> type.getValue().equalsIgnoreCase(value)).findAny().orElse(null);
+	public static Optional<TestItemIssueGroup> fromValue(String value) {
+		return Arrays.stream(TestItemIssueGroup.values()).filter(type -> type.getValue().equalsIgnoreCase(value)).findAny();
 	}
 
 	public static TestItemIssueGroup validate(String value) {
@@ -83,6 +84,10 @@ public enum TestItemIssueGroup /*implements StatisticsAwareness*/ {
 				.filter(type -> type.getValue().replace(" ", "_").equalsIgnoreCase(value))
 				.findAny()
 				.orElse(null);
+	}
+
+	public static boolean isPresent(String name) {
+		return fromValue(name).isPresent();
 	}
 
 	//	public static TestItemIssueType fromCounterField(String value) {

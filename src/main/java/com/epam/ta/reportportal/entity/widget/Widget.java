@@ -59,14 +59,14 @@ public class Widget implements Serializable {
 	@Column(name = "items_count")
 	private int itemsCount;
 
+	@ManyToOne
+	@JoinColumn(name = "filter_id")
+	private UserFilter filter;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
 	@Column(name = "field")
 	private List<String> contentFields = Lists.newArrayList();
-
-	@ManyToOne
-	@JoinColumn(name = "filter_id")
-	private UserFilter filter;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))

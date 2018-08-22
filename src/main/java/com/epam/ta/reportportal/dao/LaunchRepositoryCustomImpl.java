@@ -43,6 +43,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -112,12 +113,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		JProject p = PROJECT.as("p");
 		JUsers u = USERS.as("u");
 
-		return dsl.selectDistinct()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.leftJoin(u)
-				.on(l.USER_ID.eq(u.ID))
+		return dsl.selectDistinct().from(l).leftJoin(p).on(l.PROJECT_ID.eq(p.ID)).leftJoin(u).on(l.USER_ID.eq(u.ID))
 				.where(p.ID.eq(projectId))
 				.and(u.FULL_NAME.like("%" + value + "%"))
 				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
@@ -143,13 +139,15 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Launch findLatestByName(String launchName) {
-		return dsl.select()
+	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
+		return Optional.ofNullable(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select()
 				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOne()
-				.into(Launch.class);
+				.into(Launch.class));
 	}
 }

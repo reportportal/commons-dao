@@ -80,10 +80,11 @@ public class ProjectConfiguration implements Serializable {
 
 	public IssueType getByLocator(String locator) {
 		/* If locator is predefined group */
-		TestItemIssueGroup type = fromValue(locator);
-		if (null != type) {
+		Optional<TestItemIssueGroup> type = fromValue(locator);
+		if (type.isPresent()) {
+			String foundLocator = type.get().getLocator();
 			Optional<IssueType> typeOptional = issueTypes.stream()
-					.filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator()))
+					.filter(one -> one.getLocator().equalsIgnoreCase(foundLocator))
 					.findFirst();
 			return typeOptional.orElse(null);
 		}
@@ -93,8 +94,8 @@ public class ProjectConfiguration implements Serializable {
 	}
 
 	public void setByLocator(IssueType type) {
-		TestItemIssueGroup global = fromValue(type.getLocator());
-		if (null == global) {
+		Optional<TestItemIssueGroup> global = fromValue(type.getLocator());
+		if (!global.isPresent()) {
 			Optional<IssueType> exist = issueTypes.stream().filter(one -> one.getLocator().equalsIgnoreCase(type.getLocator())).findFirst();
 			exist.ifPresent(statisticSubType -> {
 				if (null != type.getLongName()) {

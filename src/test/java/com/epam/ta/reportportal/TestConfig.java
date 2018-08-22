@@ -16,14 +16,14 @@ import org.springframework.context.annotation.PropertySource;
 @Import(DatabaseConfiguration.class)
 @PropertySource("classpath:test-application.properties")
 public class TestConfig {
-	//	@Bean
-	//	public DataSource dataSource() {
-	//		return new EmbeddedDatabaseBuilder().generateUniqueName(true)
-	////				.setType(H2)
-	//				.setScriptEncoding("UTF-8")
-	//				.ignoreFailedDrops(true)
-	//				//.addScript("schema.sql")
-	//				//				.addScripts("user_data.sql", "country_data.sql")
-	//				.build();
-	//	}
+//		@Bean
+//		public DataSource dataSource() {
+//			return new EmbeddedDatabaseBuilder().generateUniqueName(true)
+//					.setType(H2)
+//					.setScriptEncoding("UTF-8")
+//					.ignoreFailedDrops(true)
+//					//.addScript("schema.sql")
+//					//				.addScripts("user_data.sql", "country_data.sql")
+//					.build();
+//		}
 }
