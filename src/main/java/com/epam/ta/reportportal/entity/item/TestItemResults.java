@@ -24,7 +24,7 @@ package com.epam.ta.reportportal.entity.item;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
-import com.epam.ta.reportportal.ws.model.statistics.Statistics;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 

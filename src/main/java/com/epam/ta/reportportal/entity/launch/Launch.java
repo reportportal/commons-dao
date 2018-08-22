@@ -24,7 +24,7 @@ package com.epam.ta.reportportal.entity.launch;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.ws.model.statistics.Statistics;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
