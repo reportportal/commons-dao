@@ -21,6 +21,11 @@
 
 package com.epam.ta.reportportal.entity.filter;
 
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.springframework.data.domain.Sort;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -28,6 +33,7 @@ import java.io.Serializable;
  * @author Pavel Bortnik
  */
 @Entity
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "filter_sort", schema = "public")
 public class FilterSort implements Serializable {
 
@@ -39,8 +45,10 @@ public class FilterSort implements Serializable {
 	@Column(name = "field")
 	private String field;
 
-	@Column(name = "ascending")
-	private boolean isAscending;
+	@Column(name = "direction", nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Type(type = "pqsql_enum")
+	private Sort.Direction direction;
 
 	public Long getId() {
 		return id;
@@ -58,11 +66,11 @@ public class FilterSort implements Serializable {
 		this.field = field;
 	}
 
-	public boolean isAscending() {
-		return isAscending;
+	public Sort.Direction getDirection() {
+		return direction;
 	}
 
-	public void setAscending(boolean ascending) {
-		isAscending = ascending;
+	public void setDirection(Sort.Direction direction) {
+		this.direction = direction;
 	}
 }
