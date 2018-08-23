@@ -68,11 +68,11 @@ public class Widget implements Serializable {
 	@Column(name = "field")
 	private List<String> contentFields = Lists.newArrayList();
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))
 	@MapKeyColumn(name = "option")
 	@Column(name = "value")
-	private Map<String, String> widgetOptions = new HashMap<String, String>();
+	private Map<String, String> widgetOptions = new HashMap<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
