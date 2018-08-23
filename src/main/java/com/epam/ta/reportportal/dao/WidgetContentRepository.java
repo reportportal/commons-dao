@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of {@link LaunchesStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Investigated statistics loading
@@ -134,7 +135,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link ActivityContent}
 	 */
-	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> contentFields, int limit);
+	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Loading unique bugs content that was produced by Bug Tracking System

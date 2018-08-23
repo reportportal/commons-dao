@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -159,7 +160,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, int limit) {
+	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
 
@@ -170,7 +171,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NAME)
 		);
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetch(),
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch(),
 				contentFields
 		);
 
@@ -355,12 +356,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit) {
+	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, Sort sort, int limit) {
 
 		Select commonSelect = dsl.select(fieldName(ID).cast(Long.class)).from(name(ACTIVITIES));
 
 		return dsl.with(ACTIVITIES)
-				.as(QueryBuilder.newBuilder(filter).build())
+				.as(QueryBuilder.newBuilder(filter).with(sort).build())
 				.select(ACTIVITY.ID.as(ACTIVITY_ID),
 						ACTIVITY.ACTION.as(ACTION_TYPE),
 						ACTIVITY.ENTITY.as(ENTITY),

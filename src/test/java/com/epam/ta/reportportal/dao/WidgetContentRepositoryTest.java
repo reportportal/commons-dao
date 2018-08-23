@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +88,11 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 3);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort,3);
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(3, launchStatisticsContents.size());
 	}
@@ -203,9 +208,13 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultActivityFilter(1L);
 
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "creation_date"));
+
+		Sort sort = Sort.by(orderings);
+
 		List<String> contentFields = buildActivityContentFields();
 
-		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, "default", contentFields, 4);
+		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, "default", contentFields, sort, 4);
 
 		Assert.assertNotNull(activityContentList);
 		Assert.assertEquals(4, activityContentList.size());

@@ -38,6 +38,8 @@ INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launc
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
 
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
+
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (6, 1, 'EQUALS', '1', 'project_id', false);
