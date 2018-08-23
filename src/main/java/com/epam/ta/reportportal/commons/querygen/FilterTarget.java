@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
-import com.epam.ta.reportportal.dao.PostgresWrapper;
+import com.epam.ta.reportportal.dao.PostgresCrosstabWrapper;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -12,6 +12,8 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
+import com.google.common.collect.Lists;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -20,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
@@ -48,7 +47,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JStatistics s = JStatistics.STATISTICS;
 
-			Select<?> fieldsForSelect = DSL.select(l.ID,
+			List<Field<?>> defaultFields = Lists.newArrayList(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -70,7 +69,7 @@ public enum FilterTarget {
 			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
 					.from(s).orderBy(s.S_FIELD);
 
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
+			return getPostgresWrapper().pivot(defaultFields, raw, crossTabValues)
 					.join(l)
 					.on(field(DSL.name("launch_id")).eq(l.ID))
 					.getQuery();
@@ -129,7 +128,7 @@ public enum FilterTarget {
 					.orderBy(s.ITEM_ID, s.S_FIELD);
 			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
 
-			return getPostgresWrapper().pivot(DSL.select(), raw, crossTabValues)
+			return getPostgresWrapper().pivot(Collections.emptyList(), raw, crossTabValues)
 					.join(tis)
 					.on(field(DSL.name("item_id")).eq(tis.STRUCTURE_ID))
 					.join(ti)
@@ -217,7 +216,7 @@ public enum FilterTarget {
 
 	private Class<?> clazz;
 	private List<CriteriaHolder> criterias;
-	private PostgresWrapper postgresWrapper;
+	private PostgresCrosstabWrapper postgresCrosstabWrapper;
 
 	FilterTarget(Class<?> clazz, List<CriteriaHolder> criterias) {
 		this.clazz = clazz;
@@ -226,12 +225,12 @@ public enum FilterTarget {
 
 	public abstract SelectQuery<? extends Record> getQuery();
 
-	public void setPostgresWrapper(PostgresWrapper postgresWrapper) {
-		this.postgresWrapper = postgresWrapper;
+	public void setPostgresWrapper(PostgresCrosstabWrapper postgresCrosstabWrapper) {
+		this.postgresCrosstabWrapper = postgresCrosstabWrapper;
 	}
 
-	public PostgresWrapper getPostgresWrapper() {
-		return postgresWrapper;
+	public PostgresCrosstabWrapper getPostgresWrapper() {
+		return postgresCrosstabWrapper;
 	}
 
 	public Class<?> getClazz() {
@@ -255,10 +254,10 @@ public enum FilterTarget {
 
 	@Component
 	public static class FilterTargetServiceInjector {
-		private final PostgresWrapper postgresWrapper;
+		private final PostgresCrosstabWrapper postgresWrapper;
 
 		@Autowired
-		public FilterTargetServiceInjector(PostgresWrapper postgresWrapper) {
+		public FilterTargetServiceInjector(PostgresCrosstabWrapper postgresWrapper) {
 			this.postgresWrapper = postgresWrapper;
 		}
 
