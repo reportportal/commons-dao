@@ -85,7 +85,7 @@ public enum FilterTarget {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			JActivity a = JActivity.ACTIVITY.as("a");
-			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID).from(a).getQuery();
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.CREATION_DATE).from(a).getQuery();
 		}
 	},
 

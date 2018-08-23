@@ -5,6 +5,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
@@ -38,9 +39,6 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @ContextConfiguration(classes = TestConfiguration.class)
 @Transactional("transactionManager")
 public class WidgetContentRepositoryTest {
-
-	public static final String EXECUTIONS_KEY = "executions";
-	public static final String DEFECTS_KEY = "defects";
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
@@ -202,6 +200,15 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void activityStatistics() {
+
+		Filter filter = buildDefaultActivityFilter(1L);
+
+		List<String> contentFields = buildActivityContentFields();
+
+		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, "default", contentFields, 4);
+
+		Assert.assertNotNull(activityContentList);
+		Assert.assertEquals(4, activityContentList.size());
 	}
 
 	@Test
@@ -218,6 +225,15 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
 		);
 		return new Filter(Launch.class, conditionSet);
+	}
+
+	private Filter buildDefaultActivityFilter(Long projectId) {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+				false,
+				String.valueOf(projectId),
+				"project_id"
+		));
+		return new Filter(Activity.class, conditionSet);
 	}
 
 	private List<String> buildLaunchesTableContentFields() {
@@ -274,6 +290,10 @@ public class WidgetContentRepositoryTest {
 				"statistics$executions$skipped",
 				"statistics$executions$total"
 		);
+	}
+
+	private List<String> buildActivityContentFields() {
+		return Lists.newArrayList("CREATE_LAUNCH", "CREATE_ITEM");
 	}
 
 }

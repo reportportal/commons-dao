@@ -357,7 +357,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, int limit) {
 
-		Select commonSelect = buildCommonSelectWithLimit(ACTIVITIES, limit);
+		Select commonSelect = dsl.select(fieldName(ID).cast(Long.class)).from(name(ACTIVITIES));
 
 		return dsl.with(ACTIVITIES)
 				.as(QueryBuilder.newBuilder(filter).build())
@@ -370,14 +370,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						PROJECT.NAME.as(PROJECT_NAME)
 				)
 				.from(ACTIVITY)
-				.leftJoin(USERS)
+				.join(USERS)
 				.on(ACTIVITY.USER_ID.eq(USERS.ID))
-				.leftJoin(PROJECT)
+				.join(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
 				.where(USERS.LOGIN.eq(login))
 				.and(ACTIVITY.ACTION.in(activityTypes))
 				.and(ACTIVITY.ID.in(commonSelect))
-				.groupBy(ACTIVITY.ID, ACTIVITY.ACTION, ACTIVITY.ENTITY, ACTIVITY.CREATION_DATE, USERS.LOGIN, PROJECT.ID, PROJECT.NAME)
+				.orderBy(ACTIVITY.CREATION_DATE.desc())
+				.limit(limit)
 				.fetchInto(ActivityContent.class);
 
 	}

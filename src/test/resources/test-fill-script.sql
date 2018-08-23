@@ -252,6 +252,19 @@ INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defe
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$AB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$PB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
+
+
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:31:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:32:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'UPDATE_LAUNCH', 1, '2018-08-23 15:33:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'REMOVE_LAUNCH', 1, '2018-08-23 15:34:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:35:00');
+
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'CREATE_ITEM', 1, '2018-08-23 15:31:10');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'CREATE_ITEM', 1, '2018-08-23 15:31:12');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'UPDATE_ITEM', 1, '2018-08-23 15:31:22');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'REMOVE_ITEM', 1, '2018-08-23 15:31:25');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'CREATE_ITEM', 1, '2018-08-23 15:32:10');
 .;
 
 
