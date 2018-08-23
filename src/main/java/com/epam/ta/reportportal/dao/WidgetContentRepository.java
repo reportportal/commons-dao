@@ -1,7 +1,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 
 import java.util.List;
@@ -46,9 +45,9 @@ public interface WidgetContentRepository {
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return List of {@link Launch}
+	 * @return List of {@link LaunchesStatisticsContent}
 	 */
-	List<Launch> launchStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Investigated statistics loading
@@ -84,9 +83,9 @@ public interface WidgetContentRepository {
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return List of{@link LaunchStatisticsContent}
+	 * @return List of{@link LaunchesStatisticsContent}
 	 */
-	List<LaunchStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Comparison statistics content loading for launches with specified Ids
@@ -94,9 +93,9 @@ public interface WidgetContentRepository {
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return List of{@link ComparisonStatisticsContent}
+	 * @return List of{@link LaunchesStatisticsContent}
 	 */
-	List<ComparisonStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * Launches duration content loading
@@ -122,9 +121,9 @@ public interface WidgetContentRepository {
 	 * @param filter        Filter
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
-	 * @return List of{@link Launch}
+	 * @return List of{@link LaunchesStatisticsContent}
 	 */
-	List<Launch> launchesTableStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, int limit);
 
 	/**
 	 * User activity content loading

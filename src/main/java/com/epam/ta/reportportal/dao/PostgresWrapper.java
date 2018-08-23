@@ -38,13 +38,15 @@ public class PostgresWrapper {
 		Result<?> crossTabHeadings = context.fetch(crossTabValues);
 		for (Record r : crossTabHeadings)
 		{
+			String value = r.getValue(0, String.class);
 			resultFields.add
 					(
 							field
 									(
-											r.getValue(0).toString(),
+											value,
 											rawFields[rawFields.length - 1].getDataType(context.configuration())
 									)
+							.as(value)
 					);
 		}
 
@@ -62,9 +64,10 @@ public class PostgresWrapper {
 			}
 		}
 
-		fieldsForSelect.getSelect().addAll(resultFields);
+		List<Field<?>> select = fieldsForSelect.getSelect();
+		select.addAll(resultFields);
 
-		return context.select(fieldsForSelect.getSelect()).from( "crosstab('"
+		return context.select(select).from( "crosstab('"
 				+ raw.getSQL(ParamType.INLINED).replace("'", "''") + "', '"
 				+ crossTabValues.getSQL(ParamType.INLINED).replace("'", "''")
 				+ "') as ct(" + ctList.toString() + " )");

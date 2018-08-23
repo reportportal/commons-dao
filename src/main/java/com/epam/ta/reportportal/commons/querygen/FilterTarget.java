@@ -74,31 +74,6 @@ public enum FilterTarget {
 					.join(l)
 					.on(field(DSL.name("launch_id")).eq(l.ID))
 					.getQuery();
-			//			return DSL.select(l.ID,
-			//					l.UUID,
-			//					l.PROJECT_ID,
-			//					l.USER_ID,
-			//					l.NAME.as("launch_name"),
-			//					l.DESCRIPTION,
-			//					l.START_TIME,
-			//					l.END_TIME,
-			//					l.NUMBER,
-			//					l.LAST_MODIFIED,
-			//					l.MODE,
-			//					l.STATUS,
-			//					s.LAUNCH_ID.as("s_launch_id"),
-			//					s.S_ID,
-			//					s.S_FIELD,
-			//					s.S_COUNTER,
-			//					s.ITEM_ID.as("s_item_id"),
-			//					p.NAME
-			//			)
-			//					.from(l)
-			//					.join(s)
-			//					.on(l.ID.eq(s.LAUNCH_ID))
-			//					.join(p)
-			//					.on(l.PROJECT_ID.eq(p.ID))
-			//					.getQuery();
 		}
 	},
 

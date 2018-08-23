@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Set;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
 
@@ -87,20 +87,20 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildContentFields();
 
-		List<Launch> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 10);
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, 3);
 		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(launchStatisticsContents.size(), 10);
+		Assert.assertEquals(3, launchStatisticsContents.size());
 	}
 
 	@Test
 	public void investigatedStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, 11);
+		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, 2);
 		Assert.assertNotNull(investigatedStatisticsResults);
-		Assert.assertEquals(investigatedStatisticsResults.size(), 11);
+		Assert.assertEquals(2, investigatedStatisticsResults.size());
 	}
 
 	@Test
@@ -133,19 +133,17 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(casesTrendContents);
 		Assert.assertEquals(2, casesTrendContents.size());
 
-		System.out.println(casesTrendContents);
-
 	}
 
 	@Test
 	public void bugTrendStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildTotalDefectsContentFields();
 
-		List<LaunchStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter, contentFields, 12);
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter, contentFields, 3);
 
 		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(launchStatisticsContents.size(), 12);
+		Assert.assertEquals(3, launchStatisticsContents.size());
 
 	}
 
@@ -155,7 +153,7 @@ public class WidgetContentRepositoryTest {
 		List<String> contentFields = buildTotalContentFields();
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
-		List<ComparisonStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
+		List<LaunchesStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
 				2
 		);
@@ -169,10 +167,10 @@ public class WidgetContentRepositoryTest {
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, 10);
+		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, 4);
 
 		Assert.assertNotNull(launchesDurationContents);
-		Assert.assertEquals(launchesDurationContents.size(), 10);
+		Assert.assertEquals(4, launchesDurationContents.size());
 
 	}
 
@@ -180,22 +178,25 @@ public class WidgetContentRepositoryTest {
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, 10);
+		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, 3);
 
 		Assert.assertNotNull(notPassedCasesContents);
-		Assert.assertEquals(notPassedCasesContents.size(), 10);
+		Assert.assertEquals(3, notPassedCasesContents.size());
 
 	}
 
 	@Test
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildDefaultContentFields();
+		List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<Launch> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter, contentFields, 10);
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
+				contentFields,
+				3
+		);
 
 		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(launchStatisticsContents.size(), 10);
+		Assert.assertEquals(3, launchStatisticsContents.size());
 
 	}
 
@@ -219,11 +220,48 @@ public class WidgetContentRepositoryTest {
 		return new Filter(Launch.class, conditionSet);
 	}
 
-	private List<String> buildDefaultContentFields() {
+	private List<String> buildLaunchesTableContentFields() {
+		return Lists.newArrayList("statistics$defects$no_defect$ND001",
+				"statistics$defects$product_bug$PB001",
+				"statistics$defects$automation_bug$AB001",
+				"statistics$defects$system_issue$SI001",
+				"statistics$defects$to_investigate$TI001",
+				"end_time",
+				"description",
+				"last_modified",
+				"statistics$executions$total",
+				"statistics$executions$failed",
+				"statistics$executions$passed",
+				"statistics$executions$skipped"
+		);
+	}
 
-		return Arrays.stream(new String[] { "statistics$defects$no_defect$ND001", "statistics$defects$product_bug$PB001",
-				"statistics$defects$automation_bug$AB001", "statistics$defects$automation_bug$AB002",
-				"statistics$defects$system_issue$SI001", "statistics$defects$to_investigate$TI001" }).collect(Collectors.toList());
+	private List<String> buildContentFields() {
+
+		return Lists.newArrayList("statistics$defects$no_defect$ND001",
+				"statistics$defects$product_bug$PB001",
+				"statistics$defects$automation_bug$AB001",
+				"statistics$defects$system_issue$SI001",
+				"statistics$defects$to_investigate$TI001",
+				"statistics$executions$failed",
+				"statistics$executions$skipped",
+				"statistics$executions$total",
+				"statistics$defects$no_defect$total",
+				"statistics$defects$product_bug$total",
+				"statistics$defects$automation_bug$total",
+				"statistics$defects$system_issue$total",
+				"statistics$defects$to_investigate$total"
+
+		);
+	}
+
+	private List<String> buildTotalDefectsContentFields() {
+		return Lists.newArrayList("statistics$defects$to_investigate$total",
+				"statistics$defects$product_bug$total",
+				"statistics$defects$automation_bug$total",
+				"statistics$defects$system_issue$total",
+				"statistics$defects$no_defect$total"
+		);
 	}
 
 	private List<String> buildTotalContentFields() {
@@ -238,9 +276,4 @@ public class WidgetContentRepositoryTest {
 		);
 	}
 
-	private List<String> buildDefaultExecutionsContentFields() {
-
-		return Arrays.stream(new String[] { "statistics$executions$failed", "statistics$executions$skipped",
-				"statistics$executions$total" }).collect(Collectors.toList());
-	}
 }

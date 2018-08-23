@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * @author Ivan Budayeu
  */
-public class ComparisonStatisticsContent extends AbstractLaunchStatisticsContent {
+public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	@JsonProperty(value = "values")
 	private Map<String, String> values;
