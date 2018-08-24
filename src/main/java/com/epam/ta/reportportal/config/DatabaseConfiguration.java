@@ -10,6 +10,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
@@ -102,31 +103,33 @@ public class DatabaseConfiguration {
 	}
 
 	@Bean
+	@Primary
 	public PlatformTransactionManager transactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(entityManagerFactory());
 		return transactionManager;
 	}
-		@Bean
-		public TransactionAwareDataSourceProxy transactionAwareDataSource() {
-			return new TransactionAwareDataSourceProxy(dataSource());
-		}
 
-		@Bean
-		public DataSourceConnectionProvider connectionProvider() {
-			return new DataSourceConnectionProvider(transactionAwareDataSource());
-		}
-		//
-			@Bean
-			public DefaultConfiguration configuration() {
-				DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-				jooqConfiguration.set(SQLDialect.POSTGRES);
-				jooqConfiguration.setConnectionProvider(connectionProvider());
-				return jooqConfiguration;
-			}
-		//
-		@Bean
-		public DefaultDSLContext dsl() {
-			return new DefaultDSLContext(configuration());
-		}
+	@Bean
+	public TransactionAwareDataSourceProxy transactionAwareDataSource() {
+		return new TransactionAwareDataSourceProxy(dataSource());
+	}
+
+	@Bean
+	public DataSourceConnectionProvider connectionProvider() {
+		return new DataSourceConnectionProvider(transactionAwareDataSource());
+	}
+
+	@Bean
+	public DefaultConfiguration configuration() {
+		DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
+		jooqConfiguration.set(SQLDialect.POSTGRES);
+		jooqConfiguration.setConnectionProvider(connectionProvider());
+		return jooqConfiguration;
+	}
+
+	@Bean
+	public DefaultDSLContext dsl() {
+		return new DefaultDSLContext(configuration());
+	}
 }
