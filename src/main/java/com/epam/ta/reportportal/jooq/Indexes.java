@@ -3,59 +3,12 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
-import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
-import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProjectConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JItemTag;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAnalyzerConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectEmailConfiguration;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserConfig;
-import com.epam.ta.reportportal.jooq.tables.JUserFilter;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
-
-import javax.annotation.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -127,6 +80,8 @@ public class Indexes {
     public static final Index UNIQUE_STATUS_LAUNCH = Indexes0.UNIQUE_STATUS_LAUNCH;
     public static final Index TEST_ITEM_PK = Indexes0.TEST_ITEM_PK;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
+    public static final Index PATH_GIST_IDX = Indexes0.PATH_GIST_IDX;
+    public static final Index PATH_IDX = Indexes0.PATH_IDX;
     public static final Index TEST_ITEM_STRUCTURE_PK = Indexes0.TEST_ITEM_STRUCTURE_PK;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
@@ -194,6 +149,8 @@ public class Indexes {
         public static Index UNIQUE_STATUS_LAUNCH = Internal.createIndex("unique_status_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.LAUNCH_ID }, true);
         public static Index TEST_ITEM_PK = Internal.createIndex("test_item_pk", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.ITEM_ID }, true);
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
+        public static Index PATH_GIST_IDX = Internal.createIndex("path_gist_idx", JTestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { JTestItemStructure.TEST_ITEM_STRUCTURE.PATH }, false);
+        public static Index PATH_IDX = Internal.createIndex("path_idx", JTestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { JTestItemStructure.TEST_ITEM_STRUCTURE.PATH }, false);
         public static Index TEST_ITEM_STRUCTURE_PK = Internal.createIndex("test_item_structure_pk", JTestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { JTestItemStructure.TEST_ITEM_STRUCTURE.STRUCTURE_ID }, true);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
