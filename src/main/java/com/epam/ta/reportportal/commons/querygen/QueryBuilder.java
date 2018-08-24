@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
 /**
@@ -91,10 +92,11 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Sort sort) {
-		StreamSupport.stream(sort.spliterator(), false)
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
 				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
 						SortOrder.DESC :
-						SortOrder.ASC)));
+						SortOrder.ASC))));
+
 
 		return this;
 	}

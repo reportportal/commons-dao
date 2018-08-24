@@ -30,6 +30,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
 
@@ -92,7 +93,7 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort,3);
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort, 3);
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(3, launchStatisticsContents.size());
 	}
@@ -101,7 +102,11 @@ public class WidgetContentRepositoryTest {
 	public void investigatedStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, 2);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, sort, 2);
 		Assert.assertNotNull(investigatedStatisticsResults);
 		Assert.assertEquals(2, investigatedStatisticsResults.size());
 	}
@@ -112,7 +117,11 @@ public class WidgetContentRepositoryTest {
 
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name test", NAME));
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, 12);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 12);
 
 		Assert.assertNotNull(passStatisticsResult);
 	}
@@ -121,7 +130,11 @@ public class WidgetContentRepositoryTest {
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, 10);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 10);
 
 		Assert.assertNotNull(passStatisticsResult);
 	}
@@ -131,7 +144,11 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		String executionContentField = "statistics$executions$total";
 
-		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, executionContentField, 2);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, executionContentField, sort, 2);
 
 		Assert.assertNotNull(casesTrendContents);
 		Assert.assertEquals(2, casesTrendContents.size());
@@ -143,7 +160,15 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalDefectsContentFields();
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter, contentFields, 3);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter,
+				contentFields,
+				sort,
+				3
+		);
 
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(3, launchStatisticsContents.size());
@@ -156,8 +181,14 @@ public class WidgetContentRepositoryTest {
 		List<String> contentFields = buildTotalContentFields();
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
 		List<LaunchesStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
+				sort,
 				2
 		);
 
@@ -169,8 +200,11 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
 
-		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, 4);
+		Sort sort = Sort.by(orderings);
+
+		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, sort, 4);
 
 		Assert.assertNotNull(launchesDurationContents);
 		Assert.assertEquals(4, launchesDurationContents.size());
@@ -181,7 +215,11 @@ public class WidgetContentRepositoryTest {
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, 3);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, sort, 3);
 
 		Assert.assertNotNull(notPassedCasesContents);
 		Assert.assertEquals(3, notPassedCasesContents.size());
@@ -191,10 +229,16 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+
+		Sort sort = Sort.by(orderings);
+
 		List<String> contentFields = buildLaunchesTableContentFields();
 
 		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
 				contentFields,
+				sort,
 				3
 		);
 
@@ -214,7 +258,13 @@ public class WidgetContentRepositoryTest {
 
 		List<String> contentFields = buildActivityContentFields();
 
-		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, "default", contentFields, sort, 4);
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "login"))
+				.withCondition(new FilterCondition(Condition.IN,
+						false, String.join(",", contentFields),
+						"action"
+				));
+
+		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, contentFields, sort, 4);
 
 		Assert.assertNotNull(activityContentList);
 		Assert.assertEquals(4, activityContentList.size());

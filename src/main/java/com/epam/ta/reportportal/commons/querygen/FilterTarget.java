@@ -79,13 +79,24 @@ public enum FilterTarget {
 
 	ACTIVITY(Activity.class,
 			Arrays.asList(new CriteriaHolder("id", "a.id", Long.class, false),
-					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false)
+					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
+					new CriteriaHolder("login", "u.login", String.class, false),
+					new CriteriaHolder("action", "a.action", String.class, false)
 			)
 	) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
+
 			JActivity a = JActivity.ACTIVITY.as("a");
-			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.CREATION_DATE).from(a).getQuery();
+			JUsers u = JUsers.USERS.as("u");
+			JProject p = JProject.PROJECT.as("p");
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION,a.CREATION_DATE, u.LOGIN, p.NAME)
+					.from(a)
+					.join(u)
+					.on(a.USER_ID.eq(u.ID))
+					.join(p)
+					.on(a.PROJECT_ID.eq(p.ID))
+					.getQuery();
 		}
 	},
 

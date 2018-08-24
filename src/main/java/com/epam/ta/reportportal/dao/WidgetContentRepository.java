@@ -57,26 +57,26 @@ public interface WidgetContentRepository {
 	 * @param limit  Results limit
 	 * @return List of{@link InvestigatedStatisticsResult}
 	 */
-	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit);
+	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Launches passing rate result for launch or for all launches depending on the filter conditions
 	 *
-	 * @param filter        Filter
-	 * @param limit         Results limit
+	 * @param filter Filter
+	 * @param limit  Results limit
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult passingRateStatistics(Filter filter, int limit);
+	PassingRateStatisticsResult passingRateStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Test cases' count trend loading
 	 *
-	 * @param filter        		Filter
+	 * @param filter                Filter
 	 * @param executionContentField Content field with table column name
-	 * @param limit         		Results limit
+	 * @param limit                 Results limit
 	 * @return List of{@link CasesTrendContent}
 	 */
-	List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, int limit);
+	List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, Sort sort, int limit);
 
 	/**
 	 * Bug trend loading
@@ -86,7 +86,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchesStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Comparison statistics content loading for launches with specified Ids
@@ -96,25 +96,25 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchesStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Launches duration content loading
 	 *
-	 * @param filter        Filter
-	 * @param limit         Results limit
+	 * @param filter Filter
+	 * @param limit  Results limit
 	 * @return List of{@link LaunchesDurationContent}
 	 */
-	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, int limit);
+	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Not passed cases content loading
 	 *
-	 * @param filter        Filter
-	 * @param limit         Results limit
+	 * @param filter Filter
+	 * @param limit  Results limit
 	 * @return List of{@link NotPassedCasesContent}
 	 */
-	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, int limit);
+	List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Launches table content loading
@@ -124,18 +124,17 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return List of{@link LaunchesStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, int limit);
+	List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * User activity content loading
 	 *
 	 * @param filter        Filter
-	 * @param login         User login for activity tracking
 	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
 	 * @return List of{@link ActivityContent}
 	 */
-	List<ActivityContent> activityStatistics(Filter filter, String login, List<String> contentFields, Sort sort, int limit);
+	List<ActivityContent> activityStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Loading unique bugs content that was produced by Bug Tracking System

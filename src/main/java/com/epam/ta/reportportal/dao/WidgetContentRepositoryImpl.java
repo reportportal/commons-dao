@@ -171,14 +171,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NAME)
 		);
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch(),
-				contentFields
-		);
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.fetch(), contentFields);
 
 	}
 
 	@Override
-	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, int limit) {
+	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit) {
 
 		Field<Double> toInvestigate = round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL).cast(Double.class))
 				.div(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
@@ -193,17 +193,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NAME),
 				toInvestigate.as(TO_INVESTIGATE),
 				val(PERCENTAGE_MULTIPLIER).sub(toInvestigate).as(INVESTIGATED)
-		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(InvestigatedStatisticsResult.class);
+		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(InvestigatedStatisticsResult.class);
 
 	}
 
 	@Override
-	public PassingRateStatisticsResult passingRateStatistics(Filter filter, int limit) {
+	public PassingRateStatisticsResult passingRateStatistics(Filter filter, Sort sort, int limit) {
 
 		return dsl.select(sum(fieldName(EXECUTIONS_PASSED).cast(Integer.class)).as(PASSED),
 				sum(fieldName(EXECUTIONS_TOTAL).cast(Integer.class)).as(TOTAL)
 		)
-				.from(QueryBuilder.newBuilder(filter).with(limit).build())
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
 				.fetchInto(PassingRateStatisticsResult.class)
 				.stream()
 				.findFirst()
@@ -211,7 +211,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, int limit) {
+	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, Sort sort, int limit) {
 
 		Field<Integer> executionField = field(name(executionContentField)).cast(Integer.class);
 
@@ -221,11 +221,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NAME),
 				executionField.as(executionContentField),
 				executionField.sub(lag(executionField).over().orderBy(executionField)).as(DELTA)
-		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(CasesTrendContent.class);
+		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(CasesTrendContent.class);
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, int limit) {
+	public List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		List<Field<?>> fields = contentFields.stream()
 				.map(contentField -> fieldName(contentField).as(contentField))
@@ -244,9 +244,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.START_TIME)
 		);
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetch(),
-				contentFields
-		);
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.fetch(), contentFields);
 
 	}
 
@@ -271,7 +271,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			.collect(Collectors.toList());
 
 	@Override
-	public List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, int limit) {
+	public List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		List<Field<Double>> fields = contentFields.stream()
 				.map(contentField -> fieldName(contentField).cast(Double.class).as(contentField))
@@ -293,13 +293,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		);
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(statisticsFields)
-				.from(QueryBuilder.newBuilder(filter).with(limit).build())
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
 				.fetch(), contentFields);
 
 	}
 
 	@Override
-	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, int limit) {
+	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, int limit) {
 
 		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
@@ -309,11 +309,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.END_TIME),
 				timestampDiff(fieldName(LAUNCH.END_TIME).cast(Timestamp.class), (fieldName(LAUNCH.START_TIME).cast(Timestamp.class))).as(
 						DURATION)
-		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(LaunchesDurationContent.class);
+		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(LaunchesDurationContent.class);
 	}
 
 	@Override
-	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, int limit) {
+	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
 		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
@@ -321,7 +321,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NAME),
 				round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED)).cast(Double.class))
 						.div(fieldName(EXECUTIONS_TOTAL).cast(Double.class)), 2).as(PERCENTAGE)
-		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetch());
+		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch());
 	}
 
 	private static final Function<Result<? extends Record>, List<NotPassedCasesContent>> NOT_PASSED_CASES_FETCHER = result -> result.stream()
@@ -336,7 +336,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			.collect(Collectors.toList());
 
 	@Override
-	public List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, int limit) {
+	public List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		List<Field<?>> fields = contentFields.stream()
 				.map(contentField -> fieldName(contentField).as(contentField))
@@ -349,38 +349,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NAME)
 		);
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetch(),
-				contentFields
-		);
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.fetch(), contentFields);
 
 	}
 
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, String login, List<String> activityTypes, Sort sort, int limit) {
+	public List<ActivityContent> activityStatistics(Filter filter, List<String> activityTypes, Sort sort, int limit) {
 
-		Select commonSelect = dsl.select(fieldName(ID).cast(Long.class)).from(name(ACTIVITIES));
-
-		return dsl.with(ACTIVITIES)
-				.as(QueryBuilder.newBuilder(filter).with(sort).build())
-				.select(ACTIVITY.ID.as(ACTIVITY_ID),
-						ACTIVITY.ACTION.as(ACTION_TYPE),
-						ACTIVITY.ENTITY.as(ENTITY),
-						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
-						USERS.LOGIN.as(USER_LOGIN),
-						PROJECT.ID.as(PROJECT_ID),
-						PROJECT.NAME.as(PROJECT_NAME)
-				)
-				.from(ACTIVITY)
-				.join(USERS)
-				.on(ACTIVITY.USER_ID.eq(USERS.ID))
-				.join(PROJECT)
-				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-				.where(USERS.LOGIN.eq(login))
-				.and(ACTIVITY.ACTION.in(activityTypes))
-				.and(ACTIVITY.ID.in(commonSelect))
-				.orderBy(ACTIVITY.CREATION_DATE.desc())
-				.limit(limit)
-				.fetchInto(ActivityContent.class);
+		return dsl.select(fieldName(ACTIVITY.ID).as(ACTIVITY_ID),
+				fieldName(ACTIVITY.ACTION).as(ACTION_TYPE),
+				fieldName(ACTIVITY.ENTITY).as(ENTITY),
+				fieldName(ACTIVITY.CREATION_DATE).as(LAST_MODIFIED),
+				fieldName(USERS.LOGIN).as(USER_LOGIN),
+				fieldName(PROJECT.NAME).as(PROJECT_NAME)
+		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(ActivityContent.class);
 
 	}
 

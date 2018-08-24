@@ -19,6 +19,7 @@ import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSup
 import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAMETERS;
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
+import static org.jooq.impl.DSL.any;
 import static org.jooq.impl.DSL.field;
 
 /**
@@ -88,10 +89,11 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForString()).verify(errorType, formattedSupplier(
-					"Contains condition applyable only for strings. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, filterForString()).verify(errorType,
+					formattedSupplier("Contains condition applyable only for strings. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -155,7 +157,7 @@ public enum Condition {
 	IN("in") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(filter.getSearchCriteria()).in(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
+			return field(filter.getSearchCriteria()).eq(any(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)));
 		}
 
 		@Override
@@ -164,7 +166,7 @@ public enum Condition {
 		}
 
 		@Override
-		public Object castValue(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
+		public Object[] castValue(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
 			return castArray(criteriaHolder, value, errorType);
 		}
 	},
@@ -336,12 +338,10 @@ public enum Condition {
 				);
 			} else if (value.contains(TIMESTAMP_SEPARATOR)) {
 				final String[] values = value.split(TIMESTAMP_SEPARATOR);
-				expect(values, countOfValues(3)).verify(errorType,
-						formattedSupplier(
-								"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
-								value
-						)
-				);
+				expect(values, countOfValues(3)).verify(errorType, formattedSupplier(
+						"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
+						value
+				));
 				expect(values[2], zoneOffset()).verify(errorType,
 						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'", values[2])
 				);
@@ -352,12 +352,10 @@ public enum Condition {
 						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[1])
 				);
 			} else {
-				fail().withError(errorType,
-						formattedSupplier(
-								"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
-								value
-						)
-				);
+				fail().withError(errorType, formattedSupplier(
+						"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
+						value
+				));
 			}
 		}
 
