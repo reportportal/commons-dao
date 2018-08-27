@@ -202,8 +202,8 @@ public enum FilterTarget {
 					l.LAST_MODIFIED,
 					l.LOG_LEVEL,
 					l.ITEM_ID,
-					l.FILE_PATH,
-					l.THUMBNAIL_FILE_PATH,
+					l.ATTACHMENT,
+					l.ATTACHMENT_THUMBNAIL,
 					l.CONTENT_TYPE
 			)
 					.from(l)
