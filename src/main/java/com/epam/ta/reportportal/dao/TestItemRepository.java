@@ -26,7 +26,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Pavel Bortnik
@@ -53,6 +52,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath itemPath
 	 * @return Map of id -> name
 	 */
-	@Query(value = "SELECT t.item_id, t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
-	Map<Long, String> selectPathNames(@Param("itemPath") String itemPath);
+	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
+	List<String> selectPathNames(@Param("itemPath") String itemPath);
 }
