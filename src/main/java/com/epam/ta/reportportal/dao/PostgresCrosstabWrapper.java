@@ -2,10 +2,10 @@ package com.epam.ta.reportportal.dao;
 
 import org.jooq.*;
 import org.jooq.conf.ParamType;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jooq.impl.DSL.field;

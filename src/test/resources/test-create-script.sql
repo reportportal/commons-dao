@@ -403,18 +403,18 @@ CREATE TABLE log (
   item_id             BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE  NOT NULL,
   last_modified       TIMESTAMP                                                NOT NULL,
   log_level           INTEGER                                                  NOT NULL,
-  file_path           TEXT,
-  thumbnail_file_path TEXT,
-  content_type        TEXT
+  attachment           TEXT,
+  attachment_thumbnail TEXT,
+  content_type         TEXT
 );
 
 CREATE TABLE activity (
   id            BIGSERIAL CONSTRAINT activity_pk PRIMARY KEY,
   user_id       BIGINT REFERENCES users (id) ON DELETE CASCADE           NOT NULL,
+  project_id    BIGINT REFERENCES project (id) ON DELETE CASCADE         NOT NULL,
   entity        ACTIVITY_ENTITY_ENUM                                     NOT NULL,
   action        VARCHAR(128)                                             NOT NULL,
   details       JSONB                                                    NULL,
-  project_id    BIGINT REFERENCES project (id) ON DELETE CASCADE           NOT NULL,
   creation_date TIMESTAMP                                                NOT NULL
 );
 
@@ -468,10 +468,9 @@ CREATE TABLE issue (
 CREATE TABLE ticket (
   id           BIGSERIAL CONSTRAINT ticket_pk PRIMARY KEY,
   ticket_id    VARCHAR(64)                                                   NOT NULL UNIQUE,
-  submitter_id BIGINT REFERENCES users (id)                                 NOT NULL,
+  submitter_id BIGINT  REFERENCES users (id)                                 NOT NULL,
   submit_date  TIMESTAMP DEFAULT now()                                       NOT NULL,
   bts_id       INTEGER REFERENCES bug_tracking_system (id) ON DELETE CASCADE NOT NULL,
-  project_id   BIGINT REFERENCES project(id)               ON DELETE CASCADE NOT NULL,
   url          VARCHAR(256)                                                  NOT NULL
 );
 

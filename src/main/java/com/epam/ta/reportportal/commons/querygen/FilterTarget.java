@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
-import com.epam.ta.reportportal.dao.PostgresWrapper;
+import com.epam.ta.reportportal.dao.PostgresCrosstabWrapper;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -12,8 +12,6 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
-import com.google.common.collect.Lists;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -22,19 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
-import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
-import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
-import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
-import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
-import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
-import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -107,7 +100,7 @@ public enum FilterTarget {
 	},
 
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false),
-			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false))) {
+			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 
@@ -119,6 +112,7 @@ public enum FilterTarget {
 			JUsers u = JUsers.USERS;
 			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
 			JIssue i = JIssue.ISSUE;
+			JLaunch l = JLaunch.LAUNCH.as("l");
 
 			Select<?> fieldsForSelect = DSL.select(tic.TICKET_ID,
 					tic.SUBMIT_DATE,
@@ -140,6 +134,8 @@ public enum FilterTarget {
 					.on(ti.ITEM_ID.eq(tis.STRUCTURE_ID))
 					.join(tir)
 					.on(tis.STRUCTURE_ID.eq(tir.RESULT_ID))
+					.join(l)
+					.on(tis.LAUNCH_ID.eq(l.ID))
 					.join(i)
 					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
 					.join(it)
@@ -211,7 +207,7 @@ public enum FilterTarget {
 
 	private Class<?> clazz;
 	private List<CriteriaHolder> criterias;
-	private PostgresWrapper postgresWrapper;
+	private PostgresCrosstabWrapper postgresWrapper;
 
 	FilterTarget(Class<?> clazz, List<CriteriaHolder> criterias) {
 		this.clazz = clazz;
@@ -220,11 +216,11 @@ public enum FilterTarget {
 
 	public abstract SelectQuery<? extends Record> getQuery();
 
-	public void setPostgresWrapper(PostgresWrapper postgresWrapper) {
+	public void setPostgresWrapper(PostgresCrosstabWrapper postgresWrapper) {
 		this.postgresWrapper = postgresWrapper;
 	}
 
-	public PostgresWrapper getPostgresWrapper() {
+	public PostgresCrosstabWrapper getPostgresWrapper() {
 		return postgresWrapper;
 	}
 
@@ -249,10 +245,10 @@ public enum FilterTarget {
 
 	@Component
 	public static class FilterTargetServiceInjector {
-		private final PostgresWrapper postgresWrapper;
+		private final PostgresCrosstabWrapper postgresWrapper;
 
 		@Autowired
-		public FilterTargetServiceInjector(PostgresWrapper postgresWrapper) {
+		public FilterTargetServiceInjector(PostgresCrosstabWrapper postgresWrapper) {
 			this.postgresWrapper = postgresWrapper;
 		}
 
