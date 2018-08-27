@@ -44,7 +44,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM #{#entityName} t WHERE t.path ~ cast(concat(:itemPath, '.*{1}') AS LQUERY) LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path ~ cast(concat(:itemPath, '.*{1}') AS LQUERY) LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param("itemPath") String itemPath);
 
 	/**
@@ -53,6 +53,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath itemPath
 	 * @return Map of id -> name
 	 */
-	@Query(value = "SELECT t.item_id, t.name FROM #{#entityName} t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
+	@Query(value = "SELECT t.item_id, t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
 	Map<Long, String> selectPathNames(@Param("itemPath") String itemPath);
 }
