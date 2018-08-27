@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.entity.item;
 
 import com.epam.ta.reportportal.entity.launch.Launch;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -52,10 +51,6 @@ public class TestItemStructure implements Serializable {
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "itemStructure")
 	private TestItemResults itemResults;
-
-	@Column(name = "path", nullable = false, columnDefinition = "ltree")
-	@Type(type = "LTreeType")
-	private String path;
 
 	@Column(name = "retry_of", precision = 64)
 	private Long retryOf;
@@ -109,13 +104,5 @@ public class TestItemStructure implements Serializable {
 
 	public void setLaunch(Launch launch) {
 		this.launch = launch;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 }
