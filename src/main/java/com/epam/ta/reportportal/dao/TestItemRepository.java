@@ -36,4 +36,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
+
+	/**
+	 * Checks does test item have children.
+	 *
+	 * @param itemPath Current item path in a tree
+	 * @return True if has
+	 */
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item WHERE test_item.path ~ :path + '.{1}' LIMIT 1);", nativeQuery = true)
+	boolean hasChildren(@Param(value = "path") String itemPath);
 }

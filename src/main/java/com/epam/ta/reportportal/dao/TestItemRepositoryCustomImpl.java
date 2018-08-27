@@ -23,12 +23,14 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.Tables;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -39,6 +41,12 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 
 /**
  * @author Pavel Bortnik
@@ -46,15 +54,14 @@ import java.util.Map;
 @Repository
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
-	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_MAPPER = r -> new TestItem(r.get(JTestItem.TEST_ITEM.ITEM_ID,
-			Long.class
-	),
-			r.get(JTestItem.TEST_ITEM.NAME, String.class),
-			r.get(JTestItem.TEST_ITEM.TYPE, TestItemTypeEnum.class),
-			r.get(JTestItem.TEST_ITEM.START_TIME, LocalDateTime.class),
-			r.get(JTestItem.TEST_ITEM.DESCRIPTION, String.class),
-			r.get(JTestItem.TEST_ITEM.LAST_MODIFIED, LocalDateTime.class),
-			r.get(JTestItem.TEST_ITEM.UNIQUE_ID, String.class)
+	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_MAPPER = r -> new TestItem(
+			r.get(TEST_ITEM.ITEM_ID, Long.class),
+			r.get(TEST_ITEM.NAME, String.class),
+			r.get(TEST_ITEM.TYPE, TestItemTypeEnum.class),
+			r.get(TEST_ITEM.START_TIME, LocalDateTime.class),
+			r.get(TEST_ITEM.DESCRIPTION, String.class),
+			r.get(TEST_ITEM.LAST_MODIFIED, LocalDateTime.class),
+			r.get(TEST_ITEM.UNIQUE_ID, String.class)
 	);
 
 	private static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_MAPPER = r -> {
@@ -160,41 +167,31 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	//				});
 	//	}
 	//
-	//	@Override
-	//	public StatusEnum identifyStatus(Long testItemId) {
-	//		return dsl.fetchExists(dsl.selectOne()
-	//				.from(TEST_ITEM)
-	//				.join(TEST_ITEM_STRUCTURE)
-	//				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_STRUCTURE.STRUCTURE_ID))
-	//				.join(TEST_ITEM_RESULTS)
-	//				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-	//				.where(TEST_ITEM_STRUCTURE.PARENT_ID.eq(testItemId)
-	//						.and(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.FAILED).or(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.SKIPPED))))) ?
-	//				StatusEnum.FAILED :
-	//				StatusEnum.PASSED;
-	//	}
-	//
-	//	@Override
-	//	public boolean hasChildren(Long testItemId) {
-	//		return dsl.fetchExists(dsl.selectOne()
-	//				.from(TEST_ITEM)
-	//				.join(TEST_ITEM_STRUCTURE)
-	//				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_STRUCTURE.STRUCTURE_ID))
-	//				.where(TEST_ITEM_STRUCTURE.PARENT_ID.eq(testItemId)));
-	//	}
-	//
-	//	@Override
-	//	public List<IssueType> selectIssueLocatorsByProject(Long projectId) {
-	//		return dsl.select()
-	//				.from(PROJECT)
-	//				.join(PROJECT_CONFIGURATION)
-	//				.on(PROJECT_CONFIGURATION.ID.eq(PROJECT.ID))
-	//				.join(ISSUE_TYPE_PROJECT_CONFIGURATION)
-	//				.on(PROJECT_CONFIGURATION.ID.eq(ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID))
-	//				.join(Tables.ISSUE_TYPE)
-	//				.on(ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID.eq(Tables.ISSUE_TYPE.ID))
-	//				.fetch(ISSUE_TYPE_MAPPER);
-	//	}
+	@Override
+	public StatusEnum identifyStatus(Long testItemId) {
+		return dsl.fetchExists(dsl.selectOne()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.PARENT_ID.eq(testItemId)
+						.and(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.FAILED).or(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.SKIPPED))))) ?
+				StatusEnum.FAILED :
+				StatusEnum.PASSED;
+	}
+
+	@Override
+	public List<IssueType> selectIssueLocatorsByProject(Long projectId) {
+		return dsl.select()
+				.from(PROJECT)
+				.join(PROJECT_CONFIGURATION)
+				.on(PROJECT_CONFIGURATION.ID.eq(PROJECT.ID))
+				.join(ISSUE_TYPE_PROJECT_CONFIGURATION)
+				.on(PROJECT_CONFIGURATION.ID.eq(ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID))
+				.join(Tables.ISSUE_TYPE)
+				.on(ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID.eq(Tables.ISSUE_TYPE.ID))
+				.fetch(ISSUE_TYPE_MAPPER);
+	}
+
 	//
 	//	@Override
 	//	public void interruptInProgressItems(Long launchId) {
@@ -210,18 +207,19 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	//				.execute();
 	//	}
 	//
-	//	@Override
-	//	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
-	//		return Optional.ofNullable(dsl.select()
-	//				.from(ISSUE_TYPE)
-	//				.join(ISSUE_GROUP)
-	//				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-	//				.join(ISSUE_TYPE_PROJECT_CONFIGURATION)
-	//				.on(ISSUE_TYPE.ID.eq(ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID))
-	//				.where(ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID.eq(projectId))
-	//				.and(ISSUE_TYPE.LOCATOR.eq(locator))
-	//				.fetchOne(ISSUE_TYPE_MAPPER));
-	//	}
+	@Override
+	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
+		return Optional.ofNullable(dsl.select()
+				.from(ISSUE_TYPE)
+				.join(ISSUE_GROUP)
+				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+				.join(ISSUE_TYPE_PROJECT_CONFIGURATION)
+				.on(ISSUE_TYPE.ID.eq(ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID))
+				.where(ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID.eq(projectId))
+				.and(ISSUE_TYPE.LOCATOR.eq(locator))
+				.fetchOne(ISSUE_TYPE_MAPPER));
+	}
+
 	//
 	//	/**
 	//	 * Extracts duration in seconds from interval.
