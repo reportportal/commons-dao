@@ -54,4 +54,29 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
 	List<String> selectPathNames(@Param("itemPath") String itemPath);
+
+	/**
+	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items.
+	 * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
+	 *
+	 * @param parentId Parent Item Id
+	 * @param path     Parent Item location in tree
+	 */
+	@Query(value =
+			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
+					+ "FROM test_item i WHERE i.item_id = result_id AND result_id IN (SELECT item_id FROM test_item WHERE path <@ cast(:itemPath AS LTREE) AND item_id != :parentId AND status = 'IN_PROGRESS')", nativeQuery = true)
+	void interruptInProgressItems(@Param("parentId") Long parentId, @Param("itemPath") String path);
+
+	/**
+	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
+	 * launch with provided launchId.
+	 * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
+	 *
+	 * @param launchId Launch id
+	 */
+	@Query(value =
+			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
+					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launch_id AND status = 'IN_PROGRESS'", nativeQuery = true)
+	void interruptInProgressItems(@Param("launchId") Long launchId);
+
 }

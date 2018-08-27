@@ -27,6 +27,8 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
+import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
@@ -35,10 +37,12 @@ import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
+import org.jooq.SelectOnConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +51,7 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Pavel Bortnik
@@ -75,8 +80,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	 */
 	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
 		TestItem testItem = r.into(TestItem.class);
-		//		testItem.setTestItemStructure(r.into(TestItemStructure.class));
-		//		testItem.setTestItemResults(r.into(TestItemResults.class));
+		testItem.setItemResults(r.into(TestItemResults.class));
 		return testItem;
 	};
 
@@ -87,65 +91,64 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		this.dsl = dsl;
 	}
 
-	//
-	//	@Override
-	//	public List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
-	//		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-	//		return commonTestItemDslSelect().where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
-	//				.fetch(TEST_ITEM_FETCH);
-	//	}
-	//
-	//	@Override
-	//	public List<TestItem> selectItemsInStatusByParent(Long itemId, StatusEnum... statuses) {
-	//		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-	//		return commonTestItemDslSelect().where(TEST_ITEM_STRUCTURE.PARENT_ID.eq(itemId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
-	//				.fetch(TEST_ITEM_FETCH);
-	//	}
-	//
-	//	@Override
-	//	public Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
-	//		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-	//		return dsl.fetchExists(dsl.selectOne()
-	//				.from(TEST_ITEM_STRUCTURE)
-	//				.join(TEST_ITEM_RESULTS)
-	//				.onKey()
-	//				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId))
-	//				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
-	//	}
-	//
-	//	@Override
-	//	public Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses) {
-	//		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-	//		return dsl.fetchExists(commonTestItemDslSelect().where(TEST_ITEM_STRUCTURE.PARENT_ID.eq(parentId))
-	//				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
-	//	}
-	//
-	//	@Override
-	//	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
-	//		return commonTestItemDslSelect().join(ISSUE)
-	//				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-	//				.join(ISSUE_TYPE)
-	//				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-	//				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId))
-	//				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
-	//				.fetchInto(Long.class);
-	//	}
-	//
-	//	@Override
-	//	public List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType) {
-	//		return commonTestItemDslSelect().join(ISSUE)
-	//				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-	//				.join(ISSUE_TYPE)
-	//				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-	//				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId))
-	//				.and(ISSUE_TYPE.LOCATOR.eq(issueType))
-	//				.fetch(r -> {
-	//					TestItem item = TEST_ITEM_FETCH.map(r);
-	//					item.getItemStructure().getItemResults().setIssue(r.into(IssueEntity.class));
-	//					return item;
-	//				});
-	//	}
-	//
+	@Override
+	public List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return commonTestItemDslSelect().where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
+				.fetch(TEST_ITEM_FETCH);
+	}
+
+	@Override
+	public List<TestItem> selectItemsInStatusByParent(Long itemId, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
+				.fetch(TEST_ITEM_FETCH);
+	}
+
+	@Override
+	public Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(dsl.selectOne()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.onKey()
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
+	}
+
+	@Override
+	public Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(parentId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
+	}
+
+	@Override
+	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+		return commonTestItemDslSelect().join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
+				.fetchInto(Long.class);
+	}
+
+	@Override
+	public List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType) {
+		return commonTestItemDslSelect().join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(ISSUE_TYPE.LOCATOR.eq(issueType))
+				.fetch(r -> {
+					TestItem item = TEST_ITEM_FETCH.map(r);
+					item.getItemResults().setIssue(r.into(IssueEntity.class));
+					return item;
+				});
+	}
+
 	@Override
 	public StatusEnum identifyStatus(Long testItemId) {
 		return dsl.fetchExists(dsl.selectOne()
@@ -171,21 +174,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetch(ISSUE_TYPE_MAPPER);
 	}
 
-	//
-	//	@Override
-	//	public void interruptInProgressItems(Long launchId) {
-	//		JTestItemResults res = TEST_ITEM_RESULTS.as("res");
-	//		JTestItem ts = TEST_ITEM.as("ts");
-	//		dsl.update(res)
-	//				.set(res.STATUS, JStatusEnum.INTERRUPTED)
-	//				.set(res.DURATION, extractEpochFrom(DSL.timestampDiff(currentTimestamp(), ts.START_TIME)))
-	//				.from(ts)
-	//				.where(TEST_ITEM_STRUCTURE.LAUNCH_ID.eq(launchId))
-	//				.and(res.RESULT_ID.eq(ts.ITEM_ID))
-	//				.and(res.STATUS.eq(JStatusEnum.IN_PROGRESS))
-	//				.execute();
-	//	}
-	//
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
 		return Optional.ofNullable(dsl.select()
@@ -199,31 +187,15 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetchOne(ISSUE_TYPE_MAPPER));
 	}
 
-	//
-	//	/**
-	//	 * Extracts duration in seconds from interval.
-	//	 *
-	//	 * @param field Interval
-	//	 * @return Duration in seconds
-	//	 */
-	//	private static Field<Double> extractEpochFrom(Field<DayToSecond> field) {
-	//		return DSL.field("extract(epoch from {0})", Double.class, field);
-	//	}
-	//
-	//	/**
-	//	 * Commons select of an item with it's results and structure
-	//	 *
-	//	 * @return Select condition step
-	//	 */
-	//
-	//	private SelectOnConditionStep<Record> commonTestItemDslSelect() {
-	//		return dsl.select()
-	//				.from(TEST_ITEM)
-	//				.join(TEST_ITEM_STRUCTURE)
-	//				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_STRUCTURE.STRUCTURE_ID))
-	//				.join(TEST_ITEM_RESULTS)
-	//				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
-	//	}
+	/**
+	 * Commons select of an item with it's results and structure
+	 *
+	 * @return Select condition step
+	 */
+	private SelectOnConditionStep<Record> commonTestItemDslSelect() {
+		return dsl.select().from(TEST_ITEM).join(TEST_ITEM_RESULTS).on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
+	}
+
 	//
 	@Override
 	public List<TestItem> findByFilter(Filter filter) {
