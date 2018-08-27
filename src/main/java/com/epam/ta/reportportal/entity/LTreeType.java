@@ -25,7 +25,7 @@ public class LTreeType implements UserType {
 
 	@Override
 	public boolean equals(Object x, Object y) throws HibernateException {
-		return x.equals(y);
+		return x == y;
 	}
 
 	@Override
