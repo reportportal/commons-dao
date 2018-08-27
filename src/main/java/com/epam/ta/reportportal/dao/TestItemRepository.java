@@ -53,6 +53,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath itemPath
 	 * @return Map of id -> name
 	 */
-	@Query(value = "SELECT item_id, name FROM test_item WHERE test_item.path @> '1.2.3'", nativeQuery = true)
-	Map<Long, String> selectPathNames(String itemPath);
+	@Query(value = "SELECT item_id, name FROM test_item WHERE test_item.path @> ::path", nativeQuery = true)
+	Map<Long, String> selectPathNames(@Param(value = "path") String itemPath);
 }
