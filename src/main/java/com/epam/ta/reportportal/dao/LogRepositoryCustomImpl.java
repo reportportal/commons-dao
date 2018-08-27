@@ -52,8 +52,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
 			r.get(JLog.LOG.LOG_LEVEL, Integer.class),
 			r.into(TestItem.class),
-			r.get(JLog.LOG.FILE_PATH, String.class),
-			r.get(JLog.LOG.THUMBNAIL_FILE_PATH, String.class),
+			r.get(JLog.LOG.ATTACHMENT, String.class),
+			r.get(JLog.LOG.ATTACHMENT_THUMBNAIL, String.class),
 			r.get(JLog.LOG.CONTENT_TYPE, String.class)
 	);
 

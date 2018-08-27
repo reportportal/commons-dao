@@ -12,6 +12,8 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
+import com.google.common.collect.Lists;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -20,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
@@ -198,8 +197,8 @@ public enum FilterTarget {
 					l.LAST_MODIFIED,
 					l.LOG_LEVEL,
 					l.ITEM_ID,
-					l.FILE_PATH,
-					l.THUMBNAIL_FILE_PATH,
+					l.ATTACHMENT,
+					l.ATTACHMENT_THUMBNAIL,
 					l.CONTENT_TYPE
 			)
 					.from(l)

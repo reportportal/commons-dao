@@ -3,31 +3,19 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -43,7 +31,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = -2119528403;
+    private static final long serialVersionUID = -515065065;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -69,6 +57,11 @@ public class JActivity extends TableImpl<JActivityRecord> {
     public final TableField<JActivityRecord, Long> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
+     * The column <code>public.activity.project_id</code>.
+     */
+    public final TableField<JActivityRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+
+    /**
      * The column <code>public.activity.entity</code>.
      */
     public final TableField<JActivityRecord, JActivityEntityEnum> ENTITY = createField("entity", org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum.class), this, "");
@@ -83,11 +76,6 @@ public class JActivity extends TableImpl<JActivityRecord> {
      */
     @java.lang.Deprecated
     public final TableField<JActivityRecord, Object> DETAILS = createField("details", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
-
-    /**
-     * The column <code>public.activity.project_id</code>.
-     */
-    public final TableField<JActivityRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.activity.creation_date</code>.

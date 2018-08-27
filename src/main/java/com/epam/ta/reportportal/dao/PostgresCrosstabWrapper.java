@@ -6,7 +6,6 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jooq.impl.DSL.field;
@@ -16,7 +15,7 @@ import static org.jooq.impl.DSL.name;
  * @author Ivan Budayeu
  */
 @Service
-public class PostgresWrapper {
+public class PostgresCrosstabWrapper {
 
 	@Autowired
 	private DSLContext context;

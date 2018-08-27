@@ -3,18 +3,15 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.tables.JLog;
-
-import java.sql.Timestamp;
-
-import javax.annotation.Generated;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record9;
 import org.jooq.Row9;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
 
 
 /**
@@ -30,7 +27,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Record9<Long, Timestamp, String, Long, Timestamp, Integer, String, String, String> {
 
-    private static final long serialVersionUID = -30531250;
+    private static final long serialVersionUID = 1018175190;
 
     /**
      * Setter for <code>public.log.id</code>.
@@ -117,30 +114,30 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
     }
 
     /**
-     * Setter for <code>public.log.file_path</code>.
+     * Setter for <code>public.log.attachment</code>.
      */
-    public void setFilePath(String value) {
+    public void setAttachment(String value) {
         set(6, value);
     }
 
     /**
-     * Getter for <code>public.log.file_path</code>.
+     * Getter for <code>public.log.attachment</code>.
      */
-    public String getFilePath() {
+    public String getAttachment() {
         return (String) get(6);
     }
 
     /**
-     * Setter for <code>public.log.thumbnail_file_path</code>.
+     * Setter for <code>public.log.attachment_thumbnail</code>.
      */
-    public void setThumbnailFilePath(String value) {
+    public void setAttachmentThumbnail(String value) {
         set(7, value);
     }
 
     /**
-     * Getter for <code>public.log.thumbnail_file_path</code>.
+     * Getter for <code>public.log.attachment_thumbnail</code>.
      */
-    public String getThumbnailFilePath() {
+    public String getAttachmentThumbnail() {
         return (String) get(7);
     }
 
@@ -243,7 +240,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public Field<String> field7() {
-        return JLog.LOG.FILE_PATH;
+        return JLog.LOG.ATTACHMENT;
     }
 
     /**
@@ -251,7 +248,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public Field<String> field8() {
-        return JLog.LOG.THUMBNAIL_FILE_PATH;
+        return JLog.LOG.ATTACHMENT_THUMBNAIL;
     }
 
     /**
@@ -315,7 +312,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public String component7() {
-        return getFilePath();
+        return getAttachment();
     }
 
     /**
@@ -323,7 +320,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public String component8() {
-        return getThumbnailFilePath();
+        return getAttachmentThumbnail();
     }
 
     /**
@@ -387,7 +384,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public String value7() {
-        return getFilePath();
+        return getAttachment();
     }
 
     /**
@@ -395,7 +392,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public String value8() {
-        return getThumbnailFilePath();
+        return getAttachmentThumbnail();
     }
 
     /**
@@ -465,7 +462,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public JLogRecord value7(String value) {
-        setFilePath(value);
+        setAttachment(value);
         return this;
     }
 
@@ -474,7 +471,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
      */
     @Override
     public JLogRecord value8(String value) {
-        setThumbnailFilePath(value);
+        setAttachmentThumbnail(value);
         return this;
     }
 
@@ -518,7 +515,7 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
     /**
      * Create a detached, initialised JLogRecord
      */
-    public JLogRecord(Long id, Timestamp logTime, String logMessage, Long itemId, Timestamp lastModified, Integer logLevel, String filePath, String thumbnailFilePath, String contentType) {
+    public JLogRecord(Long id, Timestamp logTime, String logMessage, Long itemId, Timestamp lastModified, Integer logLevel, String attachment, String attachmentThumbnail, String contentType) {
         super(JLog.LOG);
 
         set(0, id);
@@ -527,8 +524,8 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord> implements Recor
         set(3, itemId);
         set(4, lastModified);
         set(5, logLevel);
-        set(6, filePath);
-        set(7, thumbnailFilePath);
+        set(6, attachment);
+        set(7, attachmentThumbnail);
         set(8, contentType);
     }
 }
