@@ -101,6 +101,9 @@ public class TestItem implements Serializable {
 	@JoinColumn(name = "parent_id")
 	private TestItem parent;
 
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
+	private TestItemResults itemResults;
+
 	public TestItem() {
 	}
 
@@ -231,5 +234,13 @@ public class TestItem implements Serializable {
 
 	public void setParent(TestItem parent) {
 		this.parent = parent;
+	}
+
+	public TestItemResults getItemResults() {
+		return itemResults;
+	}
+
+	public void setItemResults(TestItemResults itemResults) {
+		this.itemResults = itemResults;
 	}
 }

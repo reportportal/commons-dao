@@ -65,6 +65,11 @@ public class TestItemResults implements Serializable {
 	@JoinColumn(name = "item_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics;
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@MapsId
+	@JoinColumn(name = "result_id")
+	private TestItem testItem;
+
 	public TestItemResults() {
 	}
 
@@ -114,5 +119,13 @@ public class TestItemResults implements Serializable {
 
 	public void setStatistics(Set<Statistics> statistics) {
 		this.statistics = statistics;
+	}
+
+	public TestItem getTestItem() {
+		return testItem;
+	}
+
+	public void setTestItem(TestItem testItem) {
+		this.testItem = testItem;
 	}
 }
