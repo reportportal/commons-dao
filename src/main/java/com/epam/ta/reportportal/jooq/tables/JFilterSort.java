@@ -3,29 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
+import com.epam.ta.reportportal.jooq.enums.JSortDirectionEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterSortRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,7 +30,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterSort extends TableImpl<JFilterSortRecord> {
 
-    private static final long serialVersionUID = 674542123;
+    private static final long serialVersionUID = -860245872;
 
     /**
      * The reference instance of <code>public.filter_sort</code>
@@ -72,9 +61,9 @@ public class JFilterSort extends TableImpl<JFilterSortRecord> {
     public final TableField<JFilterSortRecord, String> FIELD = createField("field", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.filter_sort.ascending</code>.
+     * The column <code>public.filter_sort.direction</code>.
      */
-    public final TableField<JFilterSortRecord, Boolean> ASCENDING = createField("ascending", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false), this, "");
+    public final TableField<JFilterSortRecord, JSortDirectionEnum> DIRECTION = createField("direction", org.jooq.impl.SQLDataType.VARCHAR.nullable(false).defaultValue(org.jooq.impl.DSL.field("'ASC'::sort_direction_enum", org.jooq.impl.SQLDataType.VARCHAR)).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JSortDirectionEnum.class), this, "");
 
     /**
      * Create a <code>public.filter_sort</code> table reference

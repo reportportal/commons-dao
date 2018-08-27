@@ -3,30 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -42,7 +30,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = -490056724;
+    private static final long serialVersionUID = 470809594;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -88,14 +76,14 @@ public class JLog extends TableImpl<JLogRecord> {
     public final TableField<JLogRecord, Integer> LOG_LEVEL = createField("log_level", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>public.log.file_path</code>.
+     * The column <code>public.log.attachment</code>.
      */
-    public final TableField<JLogRecord, String> FILE_PATH = createField("file_path", org.jooq.impl.SQLDataType.CLOB, this, "");
+    public final TableField<JLogRecord, String> ATTACHMENT = createField("attachment", org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>public.log.thumbnail_file_path</code>.
+     * The column <code>public.log.attachment_thumbnail</code>.
      */
-    public final TableField<JLogRecord, String> THUMBNAIL_FILE_PATH = createField("thumbnail_file_path", org.jooq.impl.SQLDataType.CLOB, this, "");
+    public final TableField<JLogRecord, String> ATTACHMENT_THUMBNAIL = createField("attachment_thumbnail", org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * The column <code>public.log.content_type</code>.
