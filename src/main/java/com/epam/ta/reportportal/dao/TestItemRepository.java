@@ -53,6 +53,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath itemPath
 	 * @return Map of id -> name
 	 */
-	@Query(value = "SELECT item_id, name FROM test_item WHERE test_item.path @> :path", nativeQuery = true)
+	@Query(value = "SELECT item_id, name FROM test_item WHERE test_item.path @> :path::LTREE", nativeQuery = true)
 	Map<Long, String> selectPathNames(@Param(value = "path") String itemPath);
 }
