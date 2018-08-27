@@ -54,7 +54,7 @@ public class TestItemStructure implements Serializable {
 	private TestItemResults itemResults;
 
 	@Column(name = "path", nullable = false, columnDefinition = "ltree")
-	@Type(type = "LTreeType")
+	@Type(type = "com.epam.ta.reportportal.entity.LTreeType")
 	private String path;
 
 	@Column(name = "retry_of", precision = 64)
