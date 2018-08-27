@@ -7,6 +7,7 @@ import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
@@ -29,6 +30,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,9 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @ContextConfiguration(classes = TestConfiguration.class)
 @Transactional("transactionManager")
 public class WidgetContentRepositoryTest {
+
+	public static final String FILTER_START_TIME = "start_time";
+	public static final String FILTER_CREATION_DATE = "creation_date";
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
@@ -102,7 +107,7 @@ public class WidgetContentRepositoryTest {
 	public void investigatedStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -117,7 +122,7 @@ public class WidgetContentRepositoryTest {
 
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name test", NAME));
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -130,7 +135,7 @@ public class WidgetContentRepositoryTest {
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -144,7 +149,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		String executionContentField = "statistics$executions$total";
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -160,7 +165,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalDefectsContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -182,7 +187,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -200,7 +205,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -215,7 +220,7 @@ public class WidgetContentRepositoryTest {
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -230,7 +235,7 @@ public class WidgetContentRepositoryTest {
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "start_time"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -252,7 +257,7 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultActivityFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "creation_date"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_CREATION_DATE));
 
 		Sort sort = Sort.by(orderings);
 
@@ -272,6 +277,23 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void uniqueBugStatistics() {
+
+		Filter filter = buildDefaultTestItemFilter(1L);
+
+		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, 3);
+
+		Assert.assertNotNull(uniqueBugStatistics);
+
+	}
+
+	@Test
+	public void flakyCasesStatistics() {
+
+		Filter filter = buildDefaultFilter(1L);
+
+		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 1);
+
+		Assert.assertNotNull(flakyCasesStatistics);
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
@@ -293,6 +315,16 @@ public class WidgetContentRepositoryTest {
 				"project_id"
 		));
 		return new Filter(Activity.class, conditionSet);
+	}
+
+
+	private Filter buildDefaultTestItemFilter(Long projectId) {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+				false,
+				String.valueOf(projectId),
+				"project_id"
+		));
+		return new Filter(TestItem.class, conditionSet);
 	}
 
 	private List<String> buildLaunchesTableContentFields() {

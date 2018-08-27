@@ -371,28 +371,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit) {
 
-		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID.as(TICKET_ID),
-				TICKET.SUBMIT_DATE.as(SUBMIT_DATE),
-				TICKET.URL.as(URL),
-				TEST_ITEM.ITEM_ID.as(TEST_ITEM_ID),
-				TEST_ITEM.NAME.as(TEST_ITEM_NAME),
-				USERS.LOGIN.as(SUBMITTER)
+		List<UniqueBugContent> uniqueBugContents = dsl.select(fieldName(TICKET.TICKET_ID),
+				fieldName(TICKET.SUBMIT_DATE),
+				fieldName(TICKET.URL),
+				fieldName(TEST_ITEM.ITEM_ID),
+				fieldName(TEST_ITEM.NAME),
+				fieldName(USERS.LOGIN)
 
-		)
-				.from(TICKET)
-				.join(ISSUE_TICKET)
-				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
-				.join(ISSUE)
-				.on(ISSUE_TICKET.ISSUE_ID.eq(ISSUE.ISSUE_ID))
-				.join(TEST_ITEM_RESULTS)
-				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(TEST_ITEM_STRUCTURE)
-				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM_STRUCTURE.STRUCTURE_ID))
-				.join(TEST_ITEM)
-				.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
-				.join(USERS)
-				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
-				.fetchInto(UniqueBugContent.class);
+		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(UniqueBugContent.class);
 
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
 	}
@@ -400,7 +386,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
 
-		Select commonSelect = buildCommonSelectWithLimit(LAUNCHES, limit);
+		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
+				.from(name(LAUNCHES))
+				.orderBy(field(name(LAUNCHES, "number")).desc())
+				.limit(limit);
 
 		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
@@ -408,14 +397,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
 		)
-				.from(dsl.select(TEST_ITEM.UNIQUE_ID,
-						TEST_ITEM.NAME,
-						TEST_ITEM_RESULTS.STATUS,
-						when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
-								1
-						).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
-						count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
-				)
+				.from(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select(TEST_ITEM.UNIQUE_ID,
+								TEST_ITEM.NAME,
+								TEST_ITEM_RESULTS.STATUS,
+								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
+										1
+								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
+								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
+						)
 						.from(LAUNCH)
 						.join(TEST_ITEM_STRUCTURE)
 						.on(LAUNCH.ID.eq(TEST_ITEM_STRUCTURE.LAUNCH_ID))
@@ -431,10 +422,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
 				.fetchInto(FlakyCasesTableContent.class);
-	}
-
-	private Select buildCommonSelectWithLimit(String alias, int limit) {
-		return dsl.select(field(name(alias, ID)).cast(Long.class)).from(name(alias)).limit(limit);
 	}
 
 	private static Field<?> fieldName(TableField tableField) {

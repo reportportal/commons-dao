@@ -29,6 +29,13 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
+import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
+import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -100,14 +107,26 @@ public enum FilterTarget {
 		}
 	},
 
-	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false))) {
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false),
+			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItemStructure tis = JTestItemStructure.TEST_ITEM_STRUCTURE.as("tis");
-			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
-			JStatistics s = JStatistics.STATISTICS.as("s");
+			JTestItem ti = JTestItem.TEST_ITEM;
+			JTestItemStructure tis = JTestItemStructure.TEST_ITEM_STRUCTURE;
+			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS;
+			JStatistics s = JStatistics.STATISTICS;
+			JTicket tic = JTicket.TICKET;
+			JUsers u = JUsers.USERS;
+			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
+			JIssue i = JIssue.ISSUE;
+
+			Select<?> fieldsForSelect = DSL.select(tic.TICKET_ID,
+					tic.SUBMIT_DATE,
+					tic.URL,
+					ti.NAME,
+					u.LOGIN
+			);
 
 			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
@@ -115,32 +134,22 @@ public enum FilterTarget {
 					.orderBy(s.ITEM_ID, s.S_FIELD);
 			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
 
-			return getPostgresWrapper().pivot(DSL.select(), raw, crossTabValues)
-					.join(tis)
-					.on(field(DSL.name("item_id")).eq(tis.STRUCTURE_ID))
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(ti)
-					.on(tis.STRUCTURE_ID.eq(ti.ITEM_ID))
+					.on(field(DSL.name("ct", "item_id")).eq(ti.ITEM_ID))
+					.join(tis)
+					.on(ti.ITEM_ID.eq(tis.STRUCTURE_ID))
 					.join(tir)
 					.on(tis.STRUCTURE_ID.eq(tir.RESULT_ID))
+					.join(i)
+					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
+					.join(it)
+					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
+					.join(tic)
+					.on(it.TICKET_ID.eq(tic.ID))
+					.join(u)
+					.on(tic.SUBMITTER_ID.eq(u.ID))
 					.getQuery();
-
-			//			return DSL.select()
-			//					.from(TEST_ITEM_STRUCTURE)
-			//					.join(Tables.TEST_ITEM)
-			//					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(Tables.TEST_ITEM.ITEM_ID))
-			//					.join(TEST_ITEM_RESULTS)
-			//					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-			//					.join(EXECUTION_STATISTICS)
-			//					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(EXECUTION_STATISTICS.ITEM_ID))
-			//					.join(ISSUE_STATISTICS)
-			//					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE_STATISTICS.ITEM_ID))
-			//					.join(ISSUE_TYPE)
-			//					.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-			//					.join(ISSUE_GROUP)
-			//					.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-			//					.join(ISSUE)
-			//					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
-			//					.getQuery();
 		}
 	},
 
@@ -250,9 +259,7 @@ public enum FilterTarget {
 
 		@PostConstruct
 		public void postConstruct() {
-			for (FilterTarget filterTarget : EnumSet.allOf(FilterTarget.class)) {
-				filterTarget.setPostgresWrapper(postgresWrapper);
-			}
+			Arrays.stream(FilterTarget.values()).forEach(filterTarget -> filterTarget.setPostgresWrapper(postgresWrapper));
 		}
 	}
 

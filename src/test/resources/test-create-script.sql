@@ -471,6 +471,7 @@ CREATE TABLE ticket (
   submitter_id BIGINT REFERENCES users (id)                                 NOT NULL,
   submit_date  TIMESTAMP DEFAULT now()                                       NOT NULL,
   bts_id       INTEGER REFERENCES bug_tracking_system (id) ON DELETE CASCADE NOT NULL,
+  project_id   BIGINT REFERENCES project(id)               ON DELETE CASCADE NOT NULL,
   url          VARCHAR(256)                                                  NOT NULL
 );
 

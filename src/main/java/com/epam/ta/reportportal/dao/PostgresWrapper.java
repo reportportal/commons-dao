@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import org.jooq.*;
 import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class PostgresWrapper {
 		Field<?> []rawFields = raw.fields();
 		for (int i = 0; i < rawFields.length - 2; i++)
 		{
-			resultFields.add(field(name(rawFields[i].getName()), Long.class));
+			resultFields.add(field(name("ct", rawFields[i].getName()), Long.class));
 		}
 
 		//And then one column for each cross tab value specified
