@@ -88,27 +88,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	//
-	//	public Map<Long, String> selectPathNames(Long itemId) {
-	//		JTestItemStructure tis = TEST_ITEM_STRUCTURE.as("tis");
-	//		JTestItem ti = TEST_ITEM.as("ti");
-	//		return dsl.withRecursive("p")
-	//				.as(dsl.select(TEST_ITEM_STRUCTURE.STRUCTURE_ID, TEST_ITEM_STRUCTURE.PARENT_ID, TEST_ITEM.NAME)
-	//						.from(TEST_ITEM_STRUCTURE)
-	//						.join(TEST_ITEM)
-	//						.onKey()
-	//						.where(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(itemId))
-	//						.unionAll(dsl.select(tis.STRUCTURE_ID, tis.PARENT_ID, ti.NAME)
-	//								.from(tis)
-	//								.join(ti)
-	//								.onKey()
-	//								.join(name("p"))
-	//								.on(tis.STRUCTURE_ID.eq(field(name("p", "parent_id"), Long.class)))))
-	//				.select(field(name(TEST_ITEM_STRUCTURE.STRUCTURE_ID.getName())), field(name("name")))
-	//				.from(name("p"))
-	//				.fetch()
-	//				.intoMap(field(name(TEST_ITEM_STRUCTURE.STRUCTURE_ID.getName()), Long.class), field(name("name"), String.class));
-	//	}
-	//
 	//	@Override
 	//	public List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
 	//		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());

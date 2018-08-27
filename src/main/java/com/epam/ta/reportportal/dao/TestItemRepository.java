@@ -26,6 +26,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pavel Bortnik
@@ -43,6 +44,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item WHERE test_item.path ~ :path + '.{1}' LIMIT 1);", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item WHERE test_item.path ~ :path + '.{1}' LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param(value = "path") String itemPath);
+
+	/**
+	 * Select ids and names of all items in a tree till current.
+	 *
+	 * @param itemPath itemPath
+	 * @return Map of id -> name
+	 */
+	@Query(value = "SELECT item_id, name FROM test_item WHERE test_item.path @> '1.2.3'", nativeQuery = true)
+	Map<Long, String> selectPathNames(String itemPath);
 }

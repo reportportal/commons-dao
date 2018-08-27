@@ -34,14 +34,6 @@ import java.util.Optional;
 public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>{
 
 //	/**
-//	 * Select ids and names of down to item structure tree.
-//	 *
-//	 * @param itemId Root item
-//	 * @return Map of id -> name
-//	 */
-//	Map<Long, String> selectPathNames(Long itemId);
-//
-//	/**
 //	 * Select common items object that have provided status for
 //	 * specified launch.
 //	 *
