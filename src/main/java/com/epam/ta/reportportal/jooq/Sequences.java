@@ -3,11 +3,10 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
-import javax.annotation.Generated;
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -152,11 +151,6 @@ public class Sequences {
      * The sequence <code>public.statistics_s_id_seq</code>
      */
     public static final Sequence<Long> STATISTICS_S_ID_SEQ = new SequenceImpl<Long>("statistics_s_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.test_item_structure_structure_id_seq</code>
-     */
-    public static final Sequence<Long> TEST_ITEM_STRUCTURE_STRUCTURE_ID_SEQ = new SequenceImpl<Long>("test_item_structure_structure_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.ticket_id_seq</code>

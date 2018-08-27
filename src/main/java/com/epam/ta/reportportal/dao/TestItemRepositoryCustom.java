@@ -26,21 +26,12 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
-public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>{
-
-	/**
-	 * Select ids and names of down to item structure tree.
-	 *
-	 * @param itemId Root item
-	 * @return Map of id -> name
-	 */
-	Map<Long, String> selectPathNames(Long itemId);
+public interface TestItemRepositoryCustom extends FilterableRepository<TestItem> {
 
 	/**
 	 * Select common items object that have provided status for
@@ -110,21 +101,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	StatusEnum identifyStatus(Long testItemId);
 
-	/**
-	 * Checks does test item have children.
-	 *
-	 * @param testItemId Test item
-	 * @return True if has
-	 */
-	boolean hasChildren(Long testItemId);
-
 	//TODO move to project repo
 	List<IssueType> selectIssueLocatorsByProject(Long projectId);
-
-	/**
-	 * Finishes in progress items with a interrupt status.
-	 */
-	void interruptInProgressItems(Long launchId);
 
 	/**
 	 * Selects issue type object by provided locator for specified project.

@@ -3,6 +3,7 @@
  */
 package com.epam.ta.reportportal.jooq;
 
+
 import com.epam.ta.reportportal.jooq.tables.*;
 import com.epam.ta.reportportal.jooq.tables.records.*;
 import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_2;
@@ -30,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -325473467;
+    private static final long serialVersionUID = -1941979676;
 
     /**
      * The reference instance of <code>public</code>
@@ -65,22 +66,22 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.connectby</code>.
      */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6)).fetch();
+    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, Integer __5) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5)).fetch();
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, Integer __5) {
+        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5);
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5, Field<Integer> __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<Integer> __5) {
+        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5);
     }
 
     /**
@@ -409,11 +410,6 @@ public class JPublic extends SchemaImpl {
     public final JTestItemResults TEST_ITEM_RESULTS = com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 
     /**
-     * The table <code>public.test_item_structure</code>.
-     */
-    public final JTestItemStructure TEST_ITEM_STRUCTURE = com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
-
-    /**
      * The table <code>public.ticket</code>.
      */
     public final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
@@ -494,7 +490,6 @@ public class JPublic extends SchemaImpl {
             Sequences.PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
             Sequences.STATISTICS_S_ID_SEQ,
-            Sequences.TEST_ITEM_STRUCTURE_STRUCTURE_ID_SEQ,
             Sequences.TICKET_ID_SEQ,
             Sequences.USER_CONFIG_ID_SEQ,
             Sequences.USERS_ID_SEQ,
@@ -560,7 +555,6 @@ public class JPublic extends SchemaImpl {
             JStatistics.STATISTICS,
             JTestItem.TEST_ITEM,
             JTestItemResults.TEST_ITEM_RESULTS,
-            JTestItemStructure.TEST_ITEM_STRUCTURE,
             JTicket.TICKET,
             JUserConfig.USER_CONFIG,
             JUserFilter.USER_FILTER,

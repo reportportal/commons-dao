@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.entity.item;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
@@ -65,6 +66,10 @@ public class TestItem implements Serializable {
 	@Column(name = "description")
 	private String description;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "launch_id")
+	private Launch launch;
+
 	@LastModifiedDate
 	@Column(name = "last_modified", nullable = false)
 	private LocalDateTime lastModified;
@@ -85,10 +90,19 @@ public class TestItem implements Serializable {
 	@JoinColumn(name = "item_id")
 	private Set<Log> logs = Sets.newHashSet();
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@MapsId
-	@JoinColumn(name = "item_id")
-	private TestItemStructure itemStructure;
+	@Column(name = "path", nullable = false, columnDefinition = "ltree")
+	@Type(type = "com.epam.ta.reportportal.entity.LTreeType")
+	private String path;
+
+	@Column(name = "retry_of", precision = 64)
+	private Long retryOf;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id")
+	private TestItem parent;
+
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
+	private TestItemResults itemResults;
 
 	public TestItem() {
 	}
@@ -190,11 +204,43 @@ public class TestItem implements Serializable {
 		this.uniqueId = uniqueId;
 	}
 
-	public TestItemStructure getItemStructure() {
-		return itemStructure;
+	public Launch getLaunch() {
+		return launch;
 	}
 
-	public void setItemStructure(TestItemStructure itemStructure) {
-		this.itemStructure = itemStructure;
+	public void setLaunch(Launch launch) {
+		this.launch = launch;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public Long getRetryOf() {
+		return retryOf;
+	}
+
+	public void setRetryOf(Long retryOf) {
+		this.retryOf = retryOf;
+	}
+
+	public TestItem getParent() {
+		return parent;
+	}
+
+	public void setParent(TestItem parent) {
+		this.parent = parent;
+	}
+
+	public TestItemResults getItemResults() {
+		return itemResults;
+	}
+
+	public void setItemResults(TestItemResults itemResults) {
+		this.itemResults = itemResults;
 	}
 }

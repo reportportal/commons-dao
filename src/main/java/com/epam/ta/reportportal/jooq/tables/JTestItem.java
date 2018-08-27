@@ -3,30 +3,19 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -42,7 +31,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = 102670270;
+    private static final long serialVersionUID = -224840011;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -88,9 +77,30 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     public final TableField<JTestItemRecord, Timestamp> LAST_MODIFIED = createField("last_modified", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
 
     /**
+     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     */
+    @java.lang.Deprecated
+    public final TableField<JTestItemRecord, Object> PATH = createField("path", org.jooq.impl.DefaultDataType.getDefaultDataType("\"public\".\"ltree\"").nullable(false), this, "");
+
+    /**
      * The column <code>public.test_item.unique_id</code>.
      */
     public final TableField<JTestItemRecord, String> UNIQUE_ID = createField("unique_id", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+
+    /**
+     * The column <code>public.test_item.parent_id</code>.
+     */
+    public final TableField<JTestItemRecord, Long> PARENT_ID = createField("parent_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.test_item.retry_of</code>.
+     */
+    public final TableField<JTestItemRecord, Long> RETRY_OF = createField("retry_of", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.test_item.launch_id</code>.
+     */
+    public final TableField<JTestItemRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.test_item</code> table reference
@@ -138,7 +148,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TEST_ITEM_PK);
+        return Arrays.<Index>asList(Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK);
     }
 
     /**
@@ -162,11 +172,19 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     @Override
     public List<ForeignKey<JTestItemRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JTestItemRecord, ?>>asList(Keys.TEST_ITEM__TEST_ITEM_ITEM_ID_FKEY);
+        return Arrays.<ForeignKey<JTestItemRecord, ?>>asList(Keys.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY, Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY);
     }
 
-    public JTestItemStructure testItemStructure() {
-        return new JTestItemStructure(this, Keys.TEST_ITEM__TEST_ITEM_ITEM_ID_FKEY);
+    public com.epam.ta.reportportal.jooq.tables.JTestItem testItem_TestItemParentIdFkey() {
+        return new com.epam.ta.reportportal.jooq.tables.JTestItem(this, Keys.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY);
+    }
+
+    public com.epam.ta.reportportal.jooq.tables.JTestItem testItem_TestItemRetryOfFkey() {
+        return new com.epam.ta.reportportal.jooq.tables.JTestItem(this, Keys.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY);
+    }
+
+    public JLaunch launch() {
+        return new JLaunch(this, Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY);
     }
 
     /**
