@@ -3,29 +3,17 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JStatisticsRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatistics extends TableImpl<JStatisticsRecord> {
 
-    private static final long serialVersionUID = -254745259;
+    private static final long serialVersionUID = -445985674;
 
     /**
      * The reference instance of <code>public.statistics</code>
@@ -162,8 +150,8 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
         return Arrays.<ForeignKey<JStatisticsRecord, ?>>asList(Keys.STATISTICS__STATISTICS_ITEM_ID_FKEY, Keys.STATISTICS__STATISTICS_LAUNCH_ID_FKEY);
     }
 
-    public JTestItemStructure testItemStructure() {
-        return new JTestItemStructure(this, Keys.STATISTICS__STATISTICS_ITEM_ID_FKEY);
+    public JTestItem testItem() {
+        return new JTestItem(this, Keys.STATISTICS__STATISTICS_ITEM_ID_FKEY);
     }
 
     public JLaunch launch() {

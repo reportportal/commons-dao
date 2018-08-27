@@ -118,7 +118,6 @@ public enum FilterTarget {
 		public SelectQuery<? extends Record> getQuery() {
 
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItemStructure tis = JTestItemStructure.TEST_ITEM_STRUCTURE.as("tis");
 			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
 			JStatistics s = JStatistics.STATISTICS.as("s");
 
@@ -129,12 +128,10 @@ public enum FilterTarget {
 			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(Collections.emptyList(), raw, crossTabValues)
-					.join(tis)
-					.on(field(DSL.name("item_id")).eq(tis.STRUCTURE_ID))
 					.join(ti)
-					.on(tis.STRUCTURE_ID.eq(ti.ITEM_ID))
+					.on(field(DSL.name("item_id")).eq(ti.ITEM_ID))
 					.join(tir)
-					.on(tis.STRUCTURE_ID.eq(tir.RESULT_ID))
+					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
 					.getQuery();
 
 			//			return DSL.select()

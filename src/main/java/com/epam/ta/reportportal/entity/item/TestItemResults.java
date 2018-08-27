@@ -61,11 +61,6 @@ public class TestItemResults implements Serializable {
 	@JoinColumn(name = "result_id")
 	private IssueEntity issue;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@MapsId
-	@JoinColumn(name = "result_id")
-	private TestItemStructure itemStructure;
-
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics;
@@ -111,14 +106,6 @@ public class TestItemResults implements Serializable {
 
 	public void setIssue(IssueEntity issue) {
 		this.issue = issue;
-	}
-
-	public TestItemStructure getItemStructure() {
-		return itemStructure;
-	}
-
-	public void setItemStructure(TestItemStructure itemStructure) {
-		this.itemStructure = itemStructure;
 	}
 
 	public Set<Statistics> getStatistics() {
