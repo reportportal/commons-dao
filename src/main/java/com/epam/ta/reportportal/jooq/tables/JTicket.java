@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = -414964909;
+    private static final long serialVersionUID = 553717448;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -58,7 +58,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
     /**
      * The column <code>public.ticket.submitter_id</code>.
      */
-    public final TableField<JTicketRecord, Integer> SUBMITTER_ID = createField("submitter_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<JTicketRecord, Long> SUBMITTER_ID = createField("submitter_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.submit_date</code>.
