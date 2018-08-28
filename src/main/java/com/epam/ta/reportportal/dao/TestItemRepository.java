@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.TestItem;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -62,6 +63,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 *
 	 * @param launchId Launch id
 	 */
+	@Modifying
 	@Query(value =
 			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
 					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
