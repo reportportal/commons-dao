@@ -3,30 +3,19 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemResultsRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -42,7 +31,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
 
-    private static final long serialVersionUID = -423279172;
+    private static final long serialVersionUID = -705945213;
 
     /**
      * The reference instance of <code>public.test_item_results</code>
@@ -150,8 +139,8 @@ public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
         return Arrays.<ForeignKey<JTestItemResultsRecord, ?>>asList(Keys.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY);
     }
 
-    public JTestItemStructure testItemStructure() {
-        return new JTestItemStructure(this, Keys.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY);
+    public JTestItem testItem() {
+        return new JTestItem(this, Keys.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY);
     }
 
     /**

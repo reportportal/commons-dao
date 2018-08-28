@@ -29,7 +29,6 @@ import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
-import static com.epam.ta.reportportal.jooq.tables.JTestItemStructure.TEST_ITEM_STRUCTURE;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.stream.Collectors.groupingBy;
@@ -102,12 +101,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 				)
 						.from(LAUNCH)
-						.join(TEST_ITEM_STRUCTURE)
-						.on(LAUNCH.ID.eq(TEST_ITEM_STRUCTURE.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(TEST_ITEM)
-						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
+						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
 						.and(LAUNCH.NAME.eq(launchName))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
@@ -136,12 +133,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						DSL.count(TEST_ITEM_RESULTS.RESULT_ID).as(TOTAL)
 				)
 						.from(LAUNCH)
-						.join(TEST_ITEM_STRUCTURE)
-						.on(LAUNCH.ID.eq(TEST_ITEM_STRUCTURE.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(TEST_ITEM)
-						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
+						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.leftJoin(ISSUE)
 						.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
 						.leftJoin(ISSUE_TYPE)
@@ -380,6 +375,18 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(UniqueBugContent.class);
 
+//		.from(TICKET)
+//				.join(ISSUE_TICKET)
+//				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
+//				.join(ISSUE)
+//				.on(ISSUE_TICKET.ISSUE_ID.eq(ISSUE.ISSUE_ID))
+//				.join(TEST_ITEM_RESULTS)
+//				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+//				.join(TEST_ITEM)
+//				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
+//				.join(USERS)
+//				.on(TICKET.SUBMITTER_ID.eq(USERS.ID));
+
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
 	}
 
@@ -408,12 +415,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
-						.join(TEST_ITEM_STRUCTURE)
-						.on(LAUNCH.ID.eq(TEST_ITEM_STRUCTURE.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(TEST_ITEM)
-						.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM.ITEM_ID))
+						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.where(LAUNCH.ID.in(commonSelect))
 						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)

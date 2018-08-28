@@ -78,9 +78,10 @@ public class Indexes {
     public static final Index PK_STATISTICS = Indexes0.PK_STATISTICS;
     public static final Index UNIQUE_STATUS_ITEM = Indexes0.UNIQUE_STATUS_ITEM;
     public static final Index UNIQUE_STATUS_LAUNCH = Indexes0.UNIQUE_STATUS_LAUNCH;
+    public static final Index PATH_GIST_IDX = Indexes0.PATH_GIST_IDX;
+    public static final Index PATH_IDX = Indexes0.PATH_IDX;
     public static final Index TEST_ITEM_PK = Indexes0.TEST_ITEM_PK;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
-    public static final Index TEST_ITEM_STRUCTURE_PK = Indexes0.TEST_ITEM_STRUCTURE_PK;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
     public static final Index USER_CONFIG_PK = Indexes0.USER_CONFIG_PK;
@@ -145,9 +146,10 @@ public class Indexes {
         public static Index PK_STATISTICS = Internal.createIndex("pk_statistics", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
         public static Index UNIQUE_STATUS_ITEM = Internal.createIndex("unique_status_item", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.ITEM_ID }, true);
         public static Index UNIQUE_STATUS_LAUNCH = Internal.createIndex("unique_status_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.LAUNCH_ID }, true);
+        public static Index PATH_GIST_IDX = Internal.createIndex("path_gist_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
+        public static Index PATH_IDX = Internal.createIndex("path_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index TEST_ITEM_PK = Internal.createIndex("test_item_pk", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.ITEM_ID }, true);
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
-        public static Index TEST_ITEM_STRUCTURE_PK = Internal.createIndex("test_item_structure_pk", JTestItemStructure.TEST_ITEM_STRUCTURE, new OrderField[] { JTestItemStructure.TEST_ITEM_STRUCTURE.STRUCTURE_ID }, true);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
         public static Index USER_CONFIG_PK = Internal.createIndex("user_config_pk", JUserConfig.USER_CONFIG, new OrderField[] { JUserConfig.USER_CONFIG.ID }, true);

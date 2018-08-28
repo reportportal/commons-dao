@@ -104,10 +104,9 @@ public enum FilterTarget {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 
-			JTestItem ti = JTestItem.TEST_ITEM;
-			JTestItemStructure tis = JTestItemStructure.TEST_ITEM_STRUCTURE;
-			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS;
-			JStatistics s = JStatistics.STATISTICS;
+			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
+			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
+			JStatistics s = JStatistics.STATISTICS.as("s");
 			JTicket tic = JTicket.TICKET;
 			JUsers u = JUsers.USERS;
 			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
@@ -129,21 +128,9 @@ public enum FilterTarget {
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(ti)
-					.on(field(DSL.name("ct", "item_id")).eq(ti.ITEM_ID))
-					.join(tis)
-					.on(ti.ITEM_ID.eq(tis.STRUCTURE_ID))
+					.on(field(DSL.name("item_id")).eq(ti.ITEM_ID))
 					.join(tir)
-					.on(tis.STRUCTURE_ID.eq(tir.RESULT_ID))
-					.join(l)
-					.on(tis.LAUNCH_ID.eq(l.ID))
-					.join(i)
-					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
-					.join(it)
-					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
-					.join(tic)
-					.on(it.TICKET_ID.eq(tic.ID))
-					.join(u)
-					.on(tic.SUBMITTER_ID.eq(u.ID))
+					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
 					.getQuery();
 		}
 	},
@@ -207,7 +194,7 @@ public enum FilterTarget {
 
 	private Class<?> clazz;
 	private List<CriteriaHolder> criterias;
-	private PostgresCrosstabWrapper postgresWrapper;
+	private PostgresCrosstabWrapper postgresCrosstabWrapper;
 
 	FilterTarget(Class<?> clazz, List<CriteriaHolder> criterias) {
 		this.clazz = clazz;
@@ -216,12 +203,12 @@ public enum FilterTarget {
 
 	public abstract SelectQuery<? extends Record> getQuery();
 
-	public void setPostgresWrapper(PostgresCrosstabWrapper postgresWrapper) {
-		this.postgresWrapper = postgresWrapper;
+	public void setPostgresWrapper(PostgresCrosstabWrapper postgresCrosstabWrapper) {
+		this.postgresCrosstabWrapper = postgresCrosstabWrapper;
 	}
 
 	public PostgresCrosstabWrapper getPostgresWrapper() {
-		return postgresWrapper;
+		return postgresCrosstabWrapper;
 	}
 
 	public Class<?> getClazz() {
