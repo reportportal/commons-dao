@@ -50,7 +50,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * Select ids and names of all items in a tree till current.
 	 *
 	 * @param itemPath itemPath
-	 * @return Map of id -> name
+	 * @return List of item names
 	 */
 	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
 	List<String> selectPathNames(@Param("itemPath") String itemPath);
