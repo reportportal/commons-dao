@@ -44,7 +44,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LQUERY) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
