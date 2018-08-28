@@ -338,18 +338,19 @@ public enum Condition {
 				);
 			} else if (value.contains(TIMESTAMP_SEPARATOR)) {
 				final String[] values = value.split(TIMESTAMP_SEPARATOR);
-				expect(values, countOfValues(3)).verify(errorType, formattedSupplier(
+
+				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType, formattedSupplier(
 						"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
 						value
 				));
-				expect(values[2], zoneOffset()).verify(errorType,
-						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'", values[2])
+				expect(values[ZONE_OFFSET_INDEX], zoneOffset()).verify(errorType,
+						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'", values[ZONE_OFFSET_INDEX])
 				);
-				expect(values[0], timeStamp()).verify(errorType,
-						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[0])
+				expect(values[ZERO_TIMESTAMP_INDEX], timeStamp()).verify(errorType,
+						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[ZERO_TIMESTAMP_INDEX])
 				);
-				expect(values[1], timeStamp()).verify(errorType,
-						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[1])
+				expect(values[FIRST_TIMESTAMP_INDEX], timeStamp()).verify(errorType,
+						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[FIRST_TIMESTAMP_INDEX])
 				);
 			} else {
 				fail().withError(errorType, formattedSupplier(
@@ -401,6 +402,10 @@ public enum Condition {
 	public static final String VALUES_SEPARATOR = ",";
 	public static final String TIMESTAMP_SEPARATOR = ";";
 	public static final String NEGATIVE_MARKER = "!";
+	public static final Integer BETWEEN_FILTER_VALUES_COUNT = 3;
+	public static final Integer ZERO_TIMESTAMP_INDEX = 0;
+	public static final Integer FIRST_TIMESTAMP_INDEX = 1;
+	public static final Integer ZONE_OFFSET_INDEX = 2;
 
 	private String marker;
 

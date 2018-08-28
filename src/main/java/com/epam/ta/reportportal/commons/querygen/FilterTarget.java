@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
@@ -35,7 +38,7 @@ public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder("id", "l.id", Long.class, false),
+			new CriteriaHolder(ID, "l.id", Long.class, false),
 			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
@@ -71,16 +74,16 @@ public enum FilterTarget {
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(l)
-					.on(field(DSL.name("launch_id")).eq(l.ID))
+					.on(field(DSL.name(ID)).eq(l.ID))
 					.getQuery();
 		}
 	},
 
 	ACTIVITY(Activity.class,
-			Arrays.asList(new CriteriaHolder("id", "a.id", Long.class, false),
+			Arrays.asList(new CriteriaHolder(ID, "a.id", Long.class, false),
 					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
-					new CriteriaHolder("login", "u.login", String.class, false),
-					new CriteriaHolder("action", "a.action", String.class, false)
+					new CriteriaHolder(LOGIN, "u.login", String.class, false),
+					new CriteriaHolder(ACTION, "a.action", String.class, false)
 			)
 	) {
 		@Override
@@ -133,9 +136,9 @@ public enum FilterTarget {
 					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
 					.join(l)
 					.on(ti.LAUNCH_ID.eq(l.ID))
-					.join(i)
+					.leftJoin(i)
 					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
-					.join(it)
+					.leftJoin(it)
 					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
 					.join(tic)
 					.on(it.TICKET_ID.eq(tic.ID))
