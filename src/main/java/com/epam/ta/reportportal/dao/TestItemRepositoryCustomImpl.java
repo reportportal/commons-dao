@@ -155,8 +155,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.where(TEST_ITEM.PARENT_ID.eq(testItemId)
-						.and(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.FAILED).or(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.SKIPPED))))) ?
+				.where(TEST_ITEM.PARENT_ID.eq(testItemId).and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.PASSED)))) ?
 				StatusEnum.FAILED :
 				StatusEnum.PASSED;
 	}
