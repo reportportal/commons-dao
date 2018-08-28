@@ -43,7 +43,6 @@ import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTestItemStructure;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
 import com.epam.ta.reportportal.jooq.tables.JUserConfig;
 import com.epam.ta.reportportal.jooq.tables.JUserFilter;
