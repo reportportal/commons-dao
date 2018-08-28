@@ -99,6 +99,7 @@ DROP TRIGGER IF EXISTS delete_issue_statistics
 ON issue_statistics;
 
 DROP EXTENSION IF EXISTS tablefunc;
+DROP EXTENSION IF EXISTS ltree;
 DROP FUNCTION IF EXISTS get_last_launch_number();
 DROP FUNCTION IF EXISTS check_wired_tickets();
 DROP FUNCTION IF EXISTS check_wired_widgets();

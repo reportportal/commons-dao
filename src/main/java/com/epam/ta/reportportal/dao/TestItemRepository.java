@@ -64,7 +64,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value =
 			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
-					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launch_id AND status = 'IN_PROGRESS'", nativeQuery = true)
+					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
 	void interruptInProgressItems(@Param("launchId") Long launchId);
 
 }
