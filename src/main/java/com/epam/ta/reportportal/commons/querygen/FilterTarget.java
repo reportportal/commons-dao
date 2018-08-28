@@ -128,9 +128,19 @@ public enum FilterTarget {
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(ti)
-					.on(field(DSL.name("item_id")).eq(ti.ITEM_ID))
+					.on(field(DSL.name("ct","item_id")).eq(ti.ITEM_ID))
 					.join(tir)
 					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
+					.join(l)
+					.on(ti.LAUNCH_ID.eq(l.ID))
+					.join(i)
+					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
+					.join(it)
+					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
+					.join(tic)
+					.on(it.TICKET_ID.eq(tic.ID))
+					.join(u)
+					.on(tic.SUBMITTER_ID.eq(u.ID))
 					.getQuery();
 		}
 	},
