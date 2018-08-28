@@ -12,8 +12,6 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
-import com.google.common.collect.Lists;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -22,8 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
@@ -35,7 +38,7 @@ public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder("id", "l.id", Long.class, false),
+			new CriteriaHolder(ID, "l.id", Long.class, false),
 			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
@@ -47,7 +50,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JStatistics s = JStatistics.STATISTICS;
 
-			List<Field<?>> defaultFields = Lists.newArrayList(l.ID,
+			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -69,57 +72,56 @@ public enum FilterTarget {
 			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
 					.from(s).orderBy(s.S_FIELD);
 
-			return getPostgresWrapper().pivot(defaultFields, raw, crossTabValues)
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(l)
-					.on(field(DSL.name("launch_id")).eq(l.ID))
+					.on(field(DSL.name(ID)).eq(l.ID))
 					.getQuery();
-			//			return DSL.select(l.ID,
-			//					l.UUID,
-			//					l.PROJECT_ID,
-			//					l.USER_ID,
-			//					l.NAME.as("launch_name"),
-			//					l.DESCRIPTION,
-			//					l.START_TIME,
-			//					l.END_TIME,
-			//					l.NUMBER,
-			//					l.LAST_MODIFIED,
-			//					l.MODE,
-			//					l.STATUS,
-			//					s.LAUNCH_ID.as("s_launch_id"),
-			//					s.S_ID,
-			//					s.S_FIELD,
-			//					s.S_COUNTER,
-			//					s.ITEM_ID.as("s_item_id"),
-			//					p.NAME
-			//			)
-			//					.from(l)
-			//					.join(s)
-			//					.on(l.ID.eq(s.LAUNCH_ID))
-			//					.join(p)
-			//					.on(l.PROJECT_ID.eq(p.ID))
-			//					.getQuery();
 		}
 	},
 
 	ACTIVITY(Activity.class,
-			Arrays.asList(new CriteriaHolder("id", "a.id", Long.class, false),
-					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false)
+			Arrays.asList(new CriteriaHolder(ID, "a.id", Long.class, false),
+					new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
+					new CriteriaHolder(LOGIN, "u.login", String.class, false),
+					new CriteriaHolder(ACTION, "a.action", String.class, false)
 			)
 	) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
+
 			JActivity a = JActivity.ACTIVITY.as("a");
-			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID).from(a).getQuery();
+			JUsers u = JUsers.USERS.as("u");
+			JProject p = JProject.PROJECT.as("p");
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION,a.CREATION_DATE, u.LOGIN, p.NAME)
+					.from(a)
+					.join(u)
+					.on(a.USER_ID.eq(u.ID))
+					.join(p)
+					.on(a.PROJECT_ID.eq(p.ID))
+					.getQuery();
 		}
 	},
 
-	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false))) {
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false),
+			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
 			JStatistics s = JStatistics.STATISTICS.as("s");
+			JTicket tic = JTicket.TICKET;
+			JUsers u = JUsers.USERS;
+			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
+			JIssue i = JIssue.ISSUE;
+			JLaunch l = JLaunch.LAUNCH.as("l");
+
+			Select<?> fieldsForSelect = DSL.select(tic.TICKET_ID,
+					tic.SUBMIT_DATE,
+					tic.URL,
+					ti.NAME,
+					u.LOGIN
+			);
 
 			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
@@ -127,30 +129,22 @@ public enum FilterTarget {
 					.orderBy(s.ITEM_ID, s.S_FIELD);
 			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
 
-			return getPostgresWrapper().pivot(Collections.emptyList(), raw, crossTabValues)
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.join(ti)
-					.on(field(DSL.name("item_id")).eq(ti.ITEM_ID))
+					.on(field(DSL.name("ct","item_id")).eq(ti.ITEM_ID))
 					.join(tir)
 					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
+					.join(l)
+					.on(ti.LAUNCH_ID.eq(l.ID))
+					.leftJoin(i)
+					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
+					.leftJoin(it)
+					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
+					.join(tic)
+					.on(it.TICKET_ID.eq(tic.ID))
+					.join(u)
+					.on(tic.SUBMITTER_ID.eq(u.ID))
 					.getQuery();
-
-			//			return DSL.select()
-			//					.from(TEST_ITEM_STRUCTURE)
-			//					.join(Tables.TEST_ITEM)
-			//					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(Tables.TEST_ITEM.ITEM_ID))
-			//					.join(TEST_ITEM_RESULTS)
-			//					.on(TEST_ITEM_STRUCTURE.STRUCTURE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-			//					.join(EXECUTION_STATISTICS)
-			//					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(EXECUTION_STATISTICS.ITEM_ID))
-			//					.join(ISSUE_STATISTICS)
-			//					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE_STATISTICS.ITEM_ID))
-			//					.join(ISSUE_TYPE)
-			//					.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-			//					.join(ISSUE_GROUP)
-			//					.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-			//					.join(ISSUE)
-			//					.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
-			//					.getQuery();
 		}
 	},
 
@@ -260,9 +254,7 @@ public enum FilterTarget {
 
 		@PostConstruct
 		public void postConstruct() {
-			for (FilterTarget filterTarget : EnumSet.allOf(FilterTarget.class)) {
-				filterTarget.setPostgresWrapper(postgresWrapper);
-			}
+			Arrays.stream(FilterTarget.values()).forEach(filterTarget -> filterTarget.setPostgresWrapper(postgresWrapper));
 		}
 	}
 

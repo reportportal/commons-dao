@@ -3,19 +3,31 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -31,7 +43,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = -224840011;
+    private static final long serialVersionUID = -106496612;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -49,7 +61,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.item_id</code>.
      */
-    public final TableField<JTestItemRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JTestItemRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('test_item_item_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * The column <code>public.test_item.name</code>.
@@ -80,12 +92,12 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
     @java.lang.Deprecated
-    public final TableField<JTestItemRecord, Object> PATH = createField("path", org.jooq.impl.DefaultDataType.getDefaultDataType("\"public\".\"ltree\"").nullable(false), this, "");
+    public final TableField<JTestItemRecord, Object> PATH = createField("path", org.jooq.impl.DefaultDataType.getDefaultDataType("\"public\".\"ltree\""), this, "");
 
     /**
      * The column <code>public.test_item.unique_id</code>.
      */
-    public final TableField<JTestItemRecord, String> UNIQUE_ID = createField("unique_id", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+    public final TableField<JTestItemRecord, String> UNIQUE_ID = createField("unique_id", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
 
     /**
      * The column <code>public.test_item.parent_id</code>.
@@ -149,6 +161,14 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     @Override
     public List<Index> getIndexes() {
         return Arrays.<Index>asList(Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity<JTestItemRecord, Long> getIdentity() {
+        return Keys.IDENTITY_TEST_ITEM;
     }
 
     /**

@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 
 	@JsonProperty(value = "status")
+	@Column(name = "status")
 	private String status;
 
 	@Column(name = "end_time")

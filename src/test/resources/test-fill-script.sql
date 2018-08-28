@@ -38,6 +38,8 @@ INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launc
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
 
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
+
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (6, 1, 'EQUALS', '1', 'project_id', false);
@@ -120,44 +122,44 @@ BEGIN
   WHILE counter < 20 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
     VALUES
-      ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), counter+1, 'DEFAULT',
+      ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT',
        'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
-    INSERT INTO test_item_structure (launch_id) VALUES (cur_launch_id);
-    cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item_structure', 'structure_id')));
-    INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id)
-    VALUES (cur_suite_id, 'First suite', 'SUITE', now(), 'description', now(), 'uniqueId1');
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
-
-    INSERT INTO test_item_structure (parent_id, launch_id) VALUES (cur_suite_id, cur_launch_id);
-    cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item_structure', 'structure_id')));
-    INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id)
-    VALUES (cur_item_id, 'First test', 'TEST', now(), 'description', now(), 'uniqueId2');
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
-
-    WHILE step_counter < 30 LOOP
-      rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
-
-      INSERT INTO test_item_structure (parent_id, launch_id) VALUES (cur_item_id, cur_launch_id);
-      cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item_structure', 'structure_id')));
-
-      INSERT INTO test_item (item_id, NAME, TYPE, start_time, description, last_modified, unique_id)
-      VALUES (cur_step_id, 'Step', 'STEP', now(), 'description', now(), 'uniqueId3');
-
-      INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, rand_status, 0.35, now());
-
-      UPDATE test_item_results
-      SET status = rand_status
-      WHERE result_id = cur_step_id;
-
-      IF rand_status = 'FAILED'
-      THEN
-        INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
-      END IF;
-
-      step_counter = step_counter + 1;
-    END LOOP;
+--     INSERT INTO test_item (launch_id) VALUES (cur_launch_id);
+--     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+--     INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id, launch_id)
+--     VALUES (cur_suite_id, 'First suite', 'SUITE', now(), 'description', now(), 'uniqueId1', cur_launch_id);
+--     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
+--
+--     INSERT INTO test_item (parent_id, launch_id) VALUES (cur_suite_id, cur_launch_id);
+--     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+--     INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id, launch_id)
+--     VALUES (cur_item_id, 'First test', 'TEST', now(), 'description', now(), 'uniqueId2', cur_launch_id);
+--     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
+--
+--     WHILE step_counter < 30 LOOP
+--       rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
+--
+--       INSERT INTO test_item (parent_id, launch_id) VALUES (cur_item_id, cur_launch_id);
+--       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+--
+--       INSERT INTO test_item (item_id, NAME, TYPE, start_time, description, last_modified, unique_id)
+--       VALUES (cur_step_id, 'Step', 'STEP', now(), 'description', now(), 'uniqueId3');
+--
+--       INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, rand_status, 0.35, now());
+--
+--       UPDATE test_item_results
+--       SET status = rand_status
+--       WHERE result_id = cur_step_id;
+--
+--       IF rand_status = 'FAILED'
+--       THEN
+--         INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
+--       END IF;
+--
+--       step_counter = step_counter + 1;
+--     END LOOP;
     step_counter = 0;
     counter = counter + 1;
   END LOOP;
@@ -252,6 +254,19 @@ INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defe
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$AB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$PB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
+
+
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:31:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:32:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'UPDATE_LAUNCH', 1, '2018-08-23 15:33:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'REMOVE_LAUNCH', 1, '2018-08-23 15:34:00');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:35:00');
+
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'CREATE_ITEM', 1, '2018-08-23 15:31:10');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'CREATE_ITEM', 1, '2018-08-23 15:31:12');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'UPDATE_ITEM', 1, '2018-08-23 15:31:22');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'REMOVE_ITEM', 1, '2018-08-23 15:31:25');
+INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'ITEM', 'CREATE_ITEM', 1, '2018-08-23 15:32:10');
 .;
 
 

@@ -5,6 +5,7 @@ import org.jooq.conf.ParamType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jooq.impl.DSL.field;
@@ -21,46 +22,52 @@ public class PostgresCrosstabWrapper {
 
 	//@formatter:off
 
-	public SelectJoinStep<Record> pivot(List<Field<?>> defaultFields, Select<?> raw, Select<?> crossTabValues)
+	public SelectJoinStep<Record> pivot(Select<?> fieldsForSelect, Select<?> raw, Select<?> crossTabValues)
 	{
+		List<Field<?>> resultFields = new ArrayList<>();
 
 		//The result will contain all but the last two columns for the raw fields.
 
 		Field<?> []rawFields = raw.fields();
 		for (int i = 0; i < rawFields.length - 2; i++)
 		{
-			defaultFields.add(field(name(rawFields[i].getName()), Long.class));
+			resultFields.add(field(name("ct", rawFields[i].getName()), Long.class));
 		}
 
 		//And then one column for each cross tab value specified
 		Result<?> crossTabHeadings = context.fetch(crossTabValues);
 		for (Record r : crossTabHeadings)
 		{
-			defaultFields.add
+			String value = r.getValue(0, String.class);
+			resultFields.add
 					(
 							field
 									(
-											r.getValue(0).toString(),
+											value,
 											rawFields[rawFields.length - 1].getDataType(context.configuration())
 									)
+							.as(value)
 					);
 		}
 
 		//And postgres requires that the names of the resultant fields be specified
 		// explicitly, using 'ct' <"Name of Field", type> pairs...
 		StringBuilder ctList = new StringBuilder();
-		for (int i = 0; i < defaultFields.size(); i++)
+		for (int i = 0; i < resultFields.size(); i++)
 		{
-			ctList.append(defaultFields.get(i).getName()).append(" ").append(defaultFields.get(i).getDataType(context.configuration())
+			ctList.append(resultFields.get(i).getName()).append(" ").append(resultFields.get(i).getDataType(context.configuration())
 									.getTypeName(context.configuration()));
 
-			if (i < defaultFields.size() - 1)
+			if (i < resultFields.size() - 1)
 			{
 				ctList.append(", ");
 			}
 		}
 
-		return context.select(defaultFields).from( "crosstab('"
+		List<Field<?>> select = fieldsForSelect.getSelect();
+		select.addAll(resultFields);
+
+		return context.select(select).from( "crosstab('"
 				+ raw.getSQL(ParamType.INLINED).replace("'", "''") + "', '"
 				+ crossTabValues.getSQL(ParamType.INLINED).replace("'", "''")
 				+ "') as ct(" + ctList.toString() + " )");
