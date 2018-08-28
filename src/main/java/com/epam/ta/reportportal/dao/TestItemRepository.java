@@ -44,8 +44,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path ~ cast(concat(:itemPath, '.*') AS LQUERY) LIMIT 1)", nativeQuery = true)
-	boolean hasChildren(@Param("itemPath") String itemPath);
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LQUERY) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
 	 * Select ids and names of all items in a tree till current.
@@ -53,8 +53,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath itemPath
 	 * @return List of item names
 	 */
-	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE)", nativeQuery = true)
-	List<String> selectPathNames(@Param("itemPath") String itemPath);
+	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE) AND t.item_id != :itemId", nativeQuery = true)
+	List<String> selectPathNames(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
