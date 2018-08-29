@@ -105,7 +105,7 @@ public interface WidgetContentRepository {
 	 * @param limit  Results limit
 	 * @return List of{@link LaunchesDurationContent}
 	 */
-	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, int limit);
+	List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit);
 
 	/**
 	 * Not passed cases content loading

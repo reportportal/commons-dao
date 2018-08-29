@@ -32,7 +32,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
 
@@ -209,7 +208,7 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, sort, 4);
+		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, sort, false, 4);
 
 		Assert.assertNotNull(launchesDurationContents);
 		Assert.assertEquals(4, launchesDurationContents.size());
@@ -264,10 +263,7 @@ public class WidgetContentRepositoryTest {
 		List<String> contentFields = buildActivityContentFields();
 
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "login"))
-				.withCondition(new FilterCondition(Condition.IN,
-						false, String.join(",", contentFields),
-						"action"
-				));
+				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), "action"));
 
 		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, contentFields, sort, 4);
 
@@ -316,7 +312,6 @@ public class WidgetContentRepositoryTest {
 		));
 		return new Filter(Activity.class, conditionSet);
 	}
-
 
 	private Filter buildDefaultTestItemFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
