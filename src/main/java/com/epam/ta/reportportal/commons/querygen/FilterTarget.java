@@ -26,9 +26,7 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.NAME;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static org.jooq.impl.DSL.field;
@@ -73,8 +71,8 @@ public enum FilterTarget {
 					.from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.join(l)
-					.on(field(DSL.name(ID)).eq(l.ID))
+					.rightJoin(l)
+					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
 					.getQuery();
 		}
 	},
@@ -103,7 +101,7 @@ public enum FilterTarget {
 	},
 
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false),
-			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false))) {
+			new CriteriaHolder(PROJECT_ID, JLaunch.LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 
@@ -114,7 +112,7 @@ public enum FilterTarget {
 			JUsers u = JUsers.USERS;
 			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
 			JIssue i = JIssue.ISSUE;
-			JLaunch l = JLaunch.LAUNCH.as("l");
+			JLaunch l = JLaunch.LAUNCH;
 
 			Select<?> fieldsForSelect = DSL.select(tic.TICKET_ID,
 					tic.SUBMIT_DATE,

@@ -293,7 +293,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, int limit) {
+	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
 		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
@@ -303,7 +303,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.END_TIME),
 				timestampDiff(fieldName(LAUNCH.END_TIME).cast(Timestamp.class), (fieldName(LAUNCH.START_TIME).cast(Timestamp.class))).as(
 						DURATION)
-		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(LaunchesDurationContent.class);
+		).from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build()).fetchInto(LaunchesDurationContent.class);
 	}
 
 	@Override
@@ -373,18 +373,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(USERS.LOGIN)
 
 		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(UniqueBugContent.class);
-
-//		.from(TICKET)
-//				.join(ISSUE_TICKET)
-//				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
-//				.join(ISSUE)
-//				.on(ISSUE_TICKET.ISSUE_ID.eq(ISSUE.ISSUE_ID))
-//				.join(TEST_ITEM_RESULTS)
-//				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-//				.join(TEST_ITEM)
-//				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
-//				.join(USERS)
-//				.on(TICKET.SUBMITTER_ID.eq(USERS.ID));
 
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
 	}

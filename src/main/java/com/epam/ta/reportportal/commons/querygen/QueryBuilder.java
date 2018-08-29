@@ -5,9 +5,8 @@ import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.Condition;
-import org.jooq.Record;
-import org.jooq.SelectQuery;
-import org.jooq.SortOrder;
+import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -15,8 +14,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 /**
  * MongoDB query builder. Constructs MongoDB
@@ -29,6 +30,8 @@ import static org.jooq.impl.DSL.field;
  * @author Andrei_Ramanchuk
  */
 public class QueryBuilder {
+
+	private DSLContext dsl;
 
 	/**
 	 * SQL query representation
@@ -59,6 +62,16 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder addCondition(Condition condition) {
 		query.addConditions(condition);
+		return this;
+	}
+
+	public QueryBuilder with(boolean latest) {
+		if (latest) {
+			query.addConditions(LAUNCH.ID.in(DSL.selectDistinct(LAUNCH.ID)
+					.on(LAUNCH.NAME)
+					.from(LAUNCH)
+					.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())));
+		}
 		return this;
 	}
 
@@ -93,7 +106,7 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
-				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
+				.forEach(order -> query.addOrderBy(field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
 						SortOrder.DESC :
 						SortOrder.ASC))));
 
