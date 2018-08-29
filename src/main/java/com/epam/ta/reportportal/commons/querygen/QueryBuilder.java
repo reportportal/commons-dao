@@ -1,8 +1,8 @@
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.Preconditions;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
-import com.epam.ta.reportportal.commons.Preconditions;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -97,7 +97,6 @@ public class QueryBuilder {
 						SortOrder.DESC :
 						SortOrder.ASC))));
 
-
 		return this;
 	}
 
@@ -112,10 +111,13 @@ public class QueryBuilder {
 
 	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
-			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(filterCondition.getSearchCriteria());
-			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
-					ErrorType.INCORRECT_FILTER_PARAMETERS,
-					Suppliers.formattedSupplier("Filter parameter {} is not defined", filterCondition.getSearchCriteria())
+			String searchCriteria = filterCondition.getSearchCriteria();
+			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
+			if (searchCriteria.startsWith("statistics")) {
+				criteriaHolder = Optional.of(new CriteriaHolder(searchCriteria, searchCriteria, Long.class, false));
+			}
+			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
+					Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
 			);
 
 			Condition condition = filterCondition.getCondition().toCondition(filterCondition, criteriaHolder.get());
