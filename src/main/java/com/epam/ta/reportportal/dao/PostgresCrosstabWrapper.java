@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 
@@ -46,7 +48,7 @@ public class PostgresCrosstabWrapper {
 											value,
 											rawFields[rawFields.length - 1].getDataType(context.configuration())
 									)
-							.as(value)
+
 					);
 		}
 
@@ -65,7 +67,7 @@ public class PostgresCrosstabWrapper {
 		}
 
 		List<Field<?>> select = fieldsForSelect.getSelect();
-		select.addAll(resultFields);
+		select.addAll(resultFields.stream().map(field -> coalesce(field, 0).as(field.getName())).collect(Collectors.toList()));
 
 		return context.select(select).from( "crosstab('"
 				+ raw.getSQL(ParamType.INLINED).replace("'", "''") + "', '"

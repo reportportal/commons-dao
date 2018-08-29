@@ -28,4 +28,5 @@ public class GeneralCriteriaConstant {
 	public static final String NAME = "name";
 	public static final String PROJECT = "project";
 	public static final String PROJECT_ID = "project_id";
+	public static final String LAUNCH_ID = "launch_id";
 }
