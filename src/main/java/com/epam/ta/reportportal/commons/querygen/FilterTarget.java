@@ -29,7 +29,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
-import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -63,7 +62,7 @@ public enum FilterTarget {
 					l.STATUS
 			);
 
-			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, coalesce(max(s.S_COUNTER)))
+			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
