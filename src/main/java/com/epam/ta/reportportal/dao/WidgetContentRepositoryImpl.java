@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -25,13 +24,12 @@ import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
-import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jooq.impl.DSL.*;
 
@@ -161,7 +159,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
 
 		Collections.addAll(fields,
-				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME)
@@ -183,7 +181,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL))
 						.cast(Double.class)), 2);
 
-		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -211,7 +209,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Field<Integer> executionField = field(name(executionContentField)).cast(Integer.class);
 
-		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -234,7 +232,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Collections.addAll(fields,
 				sumField,
-				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -282,7 +280,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.collect(Collectors.toList());
 
 		Collections.addAll(statisticsFields,
-				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -297,7 +295,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		return dsl.select(fieldName(STATISTICS.LAUNCH_ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.STATUS),
@@ -311,7 +309,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(fieldName(STATISTICS.LAUNCH_ID),
+		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -339,7 +337,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.collect(Collectors.toList());
 
 		Collections.addAll(fields,
-				fieldName(STATISTICS.LAUNCH_ID),
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME)
@@ -419,13 +417,29 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, String tagPrefix, int limit) {
 
-		List<SortField<Object>> sortFields = ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-				.map(order -> (field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC)))
-				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
+		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
 
-		return null;
+		Collections.addAll(fields,
+				fieldName(LAUNCH.ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME),
+				fieldName(LAUNCH_TAG.VALUE).as("value")
+		);
+
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter)
+						.addCondition(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
+								.on(LAUNCH_TAG.VALUE)
+								.from(LAUNCH_TAG)
+								.where(LAUNCH_TAG.VALUE.like(tagPrefix + "%"))
+								.orderBy(LAUNCH_TAG.VALUE.desc())
+								.limit(limit)))
+						.with(sort)
+						.build())
+				.fetch(), contentFields).stream().collect(groupingBy(LaunchesStatisticsContent::getTagValue));
 	}
 
 	private static Field<?> fieldName(TableField tableField) {

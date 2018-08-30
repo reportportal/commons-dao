@@ -11,9 +11,9 @@ import java.sql.Timestamp;
  */
 public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
-	@Column(name = "launch_id")
+	@Column(name = "id")
 	@JsonProperty(value = "id")
-	private Long launchId;
+	private Long id;
 
 	@Column(name = "number")
 	@JsonProperty(value = "number")
@@ -30,12 +30,12 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 	public AbstractLaunchStatisticsContent() {
 	}
 
-	public Long getLaunchId() {
-		return launchId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Integer getNumber() {
@@ -65,7 +65,7 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("AbstractLaunchStatisticsContent{");
-		sb.append("launchId=").append(launchId);
+		sb.append("id=").append(id);
 		sb.append(", number=").append(number);
 		sb.append(", name='").append(name).append('\'');
 		sb.append(", startTime=").append(startTime);

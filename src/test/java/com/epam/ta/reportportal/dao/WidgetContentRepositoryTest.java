@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Sets;
@@ -292,6 +293,20 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(flakyCasesStatistics);
 	}
 
+
+	@Test
+	public void cumulativeTrendChart() {
+		Filter filter = buildDefaultLaunchTagFilter(1L);
+		List<String> contentFields = buildContentFields();
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
+
+		Sort sort = Sort.by(orderings);
+		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter, contentFields, sort, "build", 2);
+
+		Assert.assertNotNull(launchesStatisticsContents);
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
@@ -304,6 +319,18 @@ public class WidgetContentRepositoryTest {
 		return new Filter(Launch.class, conditionSet);
 	}
 
+	private Filter buildDefaultLaunchTagFilter(Long projectId) {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						"project_id"
+				),
+				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+		);
+		return new Filter(LaunchTag.class, conditionSet);
+	}
+
 	private Filter buildDefaultActivityFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 				false,
@@ -312,6 +339,8 @@ public class WidgetContentRepositoryTest {
 		));
 		return new Filter(Activity.class, conditionSet);
 	}
+
+
 
 	private Filter buildDefaultTestItemFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
