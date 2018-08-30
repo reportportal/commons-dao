@@ -34,11 +34,14 @@ INSERT INTO ldap_synchronization_attributes(
 
 INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'com.epam.ta.reportportal.entity.launch.Launch', null);
 INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'com.epam.ta.reportportal.entity.Activity', null);
+INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'launch cumulative', 1, 'com.epam.ta.reportportal.entity.launch.LaunchTag', 'YAHOOOOO');
 
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
+INSERT INTO user_filter(id) VALUES (3);
 
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (3, 'statistics$defects$no_defect$ND001', 'DESC');
 
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
@@ -59,6 +62,7 @@ INSERT INTO widget (id, name, description, widget_type, items_count, project_id,
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id, filter_id) VALUES (17, 'table', null, 'activity_stream', 1000, 1, 2);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id, filter_id) VALUES (1, 'start', null, 'overall_statistics', 1000, 1, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id, filter_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1, 2);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id, filter_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1, 3);
 
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (1, 1, 'filterName', 'New_filter');
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (2, 2, 'filterName', 'New_filter');
@@ -73,6 +77,7 @@ INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (12, 12, 
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (8, 8, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (4, 4, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (17, 17, 'login', 'default');
+INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (18, 19, 'PREFIX', 'build');
 
 INSERT INTO content_field (id, field) VALUES (2, 'executions');
 INSERT INTO content_field (id, field) VALUES (2, 'defects');
@@ -88,6 +93,11 @@ INSERT INTO content_field (id, field) VALUES (12, 'defects');
 INSERT INTO content_field (id, field) VALUES (8, 'groups');
 INSERT INTO content_field (id, field) VALUES (12, 'columns');
 INSERT INTO content_field (id, field) VALUES (17, 'activity_type');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$automation_bug$AB001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$product_bug$PB001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$no_defect$ND001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$to_investigate$TI001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$system_issue$SI001');
 
 INSERT INTO issue_group(issue_group_id, issue_group) VALUES (1, 'TO_INVESTIGATE');
 INSERT INTO issue_group(issue_group_id, issue_group) VALUES (2, 'AUTOMATION_BUG');

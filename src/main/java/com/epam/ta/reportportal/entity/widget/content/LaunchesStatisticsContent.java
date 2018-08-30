@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,7 +16,7 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	@JsonProperty(value = "values")
 	private Map<String, String> values;
 
-	@JsonProperty(value = "tag_name")
+	@JsonIgnore
 	@Column(name = "value")
 	private String tagValue;
 
