@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -30,6 +31,7 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jooq.impl.DSL.*;
 
@@ -414,6 +416,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
 				.fetchInto(FlakyCasesTableContent.class);
+	}
+
+	@Override
+	public List<LaunchesStatisticsContent> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+
+		List<SortField<Object>> sortFields = ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+				.map(order -> (field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC)))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
+
+		return null;
 	}
 
 	private static Field<?> fieldName(TableField tableField) {

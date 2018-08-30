@@ -153,4 +153,7 @@ public interface WidgetContentRepository {
 	 * @return List of {@link FlakyCasesTableContent}
 	 */
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
+
+
+	List<LaunchesStatisticsContent> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 }

@@ -256,6 +256,26 @@ INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defe
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
 
 
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 1);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 1);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 1);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qwerty', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qqqqqq', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qwerty', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qqqqqq', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 4);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 4);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 4);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qwerty', 4);
+
+
+
 INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:31:00');
 INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:32:00');
 INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'UPDATE_LAUNCH', 1, '2018-08-23 15:33:00');
