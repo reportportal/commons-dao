@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -30,6 +31,7 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jooq.impl.DSL.*;
 
@@ -158,12 +160,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
 
-		Collections.addAll(fields,
-				fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME),
-				fieldName(LAUNCH.NAME)
-		);
+		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -336,12 +333,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(contentField -> fieldName(contentField).as(contentField))
 				.collect(Collectors.toList());
 
-		Collections.addAll(fields,
-				fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME),
-				fieldName(LAUNCH.NAME)
-		);
+		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -417,29 +409,42 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, String tagPrefix, int limit) {
+	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+			String tagPrefix, int limit) {
 
 		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
 
 		Collections.addAll(fields,
-				fieldName(LAUNCH.ID),
+				fieldName(LAUNCHES_SUB_QUERY, ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH_TAG.VALUE).as("value")
 		);
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter)
-						.addCondition(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
-								.on(LAUNCH_TAG.VALUE)
-								.from(LAUNCH_TAG)
-								.where(LAUNCH_TAG.VALUE.like(tagPrefix + "%"))
-								.orderBy(LAUNCH_TAG.VALUE.desc())
-								.limit(limit)))
-						.with(sort)
-						.build())
-				.fetch(), contentFields).stream().collect(groupingBy(LaunchesStatisticsContent::getTagValue));
+		Select<Record> select = dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
+				.join(LAUNCH_TAG)
+				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
+						.on(LAUNCH_TAG.VALUE)
+						.from(LAUNCH_TAG)
+						.where(LAUNCH_TAG.VALUE.like(tagPrefix + "%"))
+						.orderBy(LAUNCH_TAG.VALUE.desc())
+						.limit(limit)))
+				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
+
+		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
+				.stream()
+				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
+				.entrySet()
+				.stream()
+				.sorted(Map.Entry.comparingByKey())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 	}
 
 	private static Field<?> fieldName(TableField tableField) {
@@ -448,5 +453,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	private static Field<?> fieldName(String tableFieldName) {
 		return field(name(tableFieldName));
+	}
+
+	private static Field<?> fieldName(String... fieldQualifiers) {
+		return field(name(fieldQualifiers));
 	}
 }

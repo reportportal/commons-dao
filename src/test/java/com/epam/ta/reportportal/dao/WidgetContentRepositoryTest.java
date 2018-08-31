@@ -296,13 +296,13 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void cumulativeTrendChart() {
-		Filter filter = buildDefaultLaunchTagFilter(1L);
+		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
 		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
 
 		Sort sort = Sort.by(orderings);
-		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter, contentFields, sort, "build", 2);
+		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter, contentFields, sort, "build", 4);
 
 		Assert.assertNotNull(launchesStatisticsContents);
 	}

@@ -89,4 +89,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String SWITCH_FLAG = "switch_flag";
 	public static final String FLAKY_COUNT = "flakyCount";
 
+	/*Cumulative trend widget constants*/
+	public static final Integer LAUNCHES_COUNT = 100;
+	public static final String LAUNCHES_SUB_QUERY = "launches_sub_query";
+
 }

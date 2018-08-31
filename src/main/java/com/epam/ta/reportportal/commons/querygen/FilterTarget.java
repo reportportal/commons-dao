@@ -7,13 +7,11 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
-import com.google.common.collect.Lists;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -75,48 +73,6 @@ public enum FilterTarget {
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
 					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
-					.getQuery();
-		}
-	},
-
-	LAUNCH_TAG(LaunchTag.class, Lists.newArrayList(new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
-			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
-			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false)
-	)) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-			JLaunch l = JLaunch.LAUNCH;
-			JStatistics s = JStatistics.STATISTICS;
-			JLaunchTag lt = JLaunchTag.LAUNCH_TAG;
-
-			Select<?> fieldsForSelect = DSL.select(l.ID,
-					l.UUID,
-					l.PROJECT_ID,
-					l.USER_ID,
-					l.NAME,
-					l.DESCRIPTION,
-					l.START_TIME,
-					l.END_TIME,
-					l.NUMBER,
-					l.LAST_MODIFIED,
-					l.MODE,
-					l.STATUS,
-					lt.VALUE
-			);
-
-			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
-					.from(s)
-					.groupBy(s.LAUNCH_ID, s.S_FIELD)
-					.orderBy(s.LAUNCH_ID, s.S_FIELD);
-
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
-					.from(s).orderBy(s.S_FIELD);
-
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.rightJoin(l)
-					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
-					.join(lt)
-					.on(lt.LAUNCH_ID.eq(l.ID))
 					.getQuery();
 		}
 	},
