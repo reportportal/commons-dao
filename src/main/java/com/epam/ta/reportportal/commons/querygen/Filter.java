@@ -39,7 +39,6 @@ public class Filter implements Serializable, Queryable {
 	}
 
 	protected Filter(Long id, FilterTarget target, Set<FilterCondition> filterConditions) {
-		Assert.notNull(id, "Filter id shouldn't be null");
 		Assert.notNull(target, "Filter target shouldn't be null");
 		Assert.notNull(filterConditions, "Conditions value shouldn't be null");
 		this.id = id;
