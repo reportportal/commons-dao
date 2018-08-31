@@ -4,8 +4,8 @@ import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstan
 
 public class ProjectFilter extends Filter {
 
-	private ProjectFilter(String name, Filter filter, Long projectId) {
-		super(name, filter.getTarget(), filter.getFilterConditions());
+	private ProjectFilter(Long id, Filter filter, Long projectId) {
+		super(id, filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(
 				Condition.EQUALS,
 				false,
@@ -15,8 +15,8 @@ public class ProjectFilter extends Filter {
 
 	}
 
-	public static Filter of(String name, Filter filter, Long projectId) {
-		return new ProjectFilter(name, filter, projectId);
+	public static Filter of(Long id, Filter filter, Long projectId) {
+		return new ProjectFilter(id, filter, projectId);
 	}
 
 }

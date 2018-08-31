@@ -318,7 +318,13 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusStatistics(filters, buildContentFields(), sort, false, 10);
+		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusStatistics(
+				filters,
+				buildContentFields(),
+				sort,
+				false,
+				10
+		);
 
 		Assert.assertNotNull(result);
 	}
@@ -332,7 +338,7 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
 		);
-		return new Filter("launch_name_filter", Launch.class, conditionSet);
+		return new Filter(2L, Launch.class, conditionSet);
 	}
 
 	private Filter buildDefaultTestFilter(Long projectId) {
@@ -345,7 +351,7 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "12", "statistics$executions$total")
 		);
-		return new Filter("launch cumulative", Launch.class, conditionSet);
+		return new Filter(3L, Launch.class, conditionSet);
 	}
 
 	private Filter buildDefaultActivityFilter(Long projectId) {
@@ -354,7 +360,7 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(projectId),
 				"project_id"
 		));
-		return new Filter("test", Activity.class, conditionSet);
+		return new Filter(1L, Activity.class, conditionSet);
 	}
 
 	private Filter buildDefaultTestItemFilter(Long projectId) {
@@ -363,7 +369,7 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(projectId),
 				"project_id"
 		));
-		return new Filter("test", TestItem.class, conditionSet);
+		return new Filter(1L, TestItem.class, conditionSet);
 	}
 
 	private List<String> buildLaunchesTableContentFields() {

@@ -24,25 +24,25 @@ public class Filter implements Serializable, Queryable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String name;
+	private Long id;
 
 	private FilterTarget target;
 
 	private Set<FilterCondition> filterConditions;
 
-	public Filter(String name, Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
-		this(name, FilterTarget.findByClass(target), Sets.newHashSet(new FilterCondition(condition, negative, value, searchCriteria)));
+	public Filter(Long id, Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
+		this(id, FilterTarget.findByClass(target), Sets.newHashSet(new FilterCondition(condition, negative, value, searchCriteria)));
 	}
 
-	public Filter(String name, Class<?> target, Set<FilterCondition> filterConditions) {
-		this(name, FilterTarget.findByClass(target), filterConditions);
+	public Filter(Long id, Class<?> target, Set<FilterCondition> filterConditions) {
+		this(id, FilterTarget.findByClass(target), filterConditions);
 	}
 
-	protected Filter(String name, FilterTarget target, Set<FilterCondition> filterConditions) {
-		Assert.notNull(name, "Filter name shouldn't be null");
+	protected Filter(Long id, FilterTarget target, Set<FilterCondition> filterConditions) {
+		Assert.notNull(id, "Filter id shouldn't be null");
 		Assert.notNull(target, "Filter target shouldn't be null");
 		Assert.notNull(filterConditions, "Conditions value shouldn't be null");
-		this.name = name;
+		this.id = id;
 		this.target = target;
 		this.filterConditions = filterConditions;
 	}
@@ -55,8 +55,8 @@ public class Filter implements Serializable, Queryable {
 
 	}
 
-	public String getName() {
-		return name;
+	public Long getId() {
+		return id;
 	}
 
 	protected final FilterTarget getTarget() {
@@ -133,20 +133,20 @@ public class Filter implements Serializable, Queryable {
 		return sb.toString();
 	}
 
-	public static FilterBuilder builder(String name) {
-		return new FilterBuilder(name);
+	public static FilterBuilder builder() {
+		return new FilterBuilder();
 	}
 
 	/**
 	 * Builder for {@link Filter}
 	 */
 	public static class FilterBuilder {
-		private String name;
+		private Long id;
 		private Class<?> target;
 		private ImmutableSet.Builder<FilterCondition> conditions = ImmutableSet.builder();
 
-		private FilterBuilder(String name) {
-			this.name = name;
+		private FilterBuilder() {
+
 		}
 
 		public FilterBuilder withTarget(Class<?> target) {
@@ -159,11 +159,16 @@ public class Filter implements Serializable, Queryable {
 			return this;
 		}
 
+		public FilterBuilder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
 		public Filter build() {
 			Set<FilterCondition> filterConditions = this.conditions.build();
 			Preconditions.checkArgument(null != target, "FilterTarget should not be null");
 			Preconditions.checkArgument(!filterConditions.isEmpty(), "Filter should contain at least one condition");
-			return new Filter(name, target, filterConditions);
+			return new Filter(id, target, filterConditions);
 		}
 	}
 

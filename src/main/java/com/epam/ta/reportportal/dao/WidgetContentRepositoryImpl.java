@@ -482,7 +482,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, "project_id").cast(Long.class)))
 				.join(FILTER)
 				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
-				.where(FILTER.NAME.eq(filter.getName()));
+				.where(FILTER.ID.eq(filter.getId()));
 	}
 
 	private static Field<?> fieldName(TableField tableField) {
