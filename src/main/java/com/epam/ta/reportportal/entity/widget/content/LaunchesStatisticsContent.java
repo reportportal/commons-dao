@@ -20,6 +20,10 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	@Column(name = "value")
 	private String tagValue;
 
+	@JsonIgnore
+	@Column(name = "filter_name")
+	private String filterName;
+
 	public Map<String, String> getValues() {
 		return values;
 	}
@@ -34,5 +38,13 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	public void setTagValue(String tagValue) {
 		this.tagValue = tagValue;
+	}
+
+	public String getFilterName() {
+		return filterName;
+	}
+
+	public void setFilterName(String filterName) {
+		this.filterName = filterName;
 	}
 }

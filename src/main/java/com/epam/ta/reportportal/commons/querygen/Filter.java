@@ -24,21 +24,25 @@ public class Filter implements Serializable, Queryable {
 
 	private static final long serialVersionUID = 1L;
 
+	private String name;
+
 	private FilterTarget target;
 
 	private Set<FilterCondition> filterConditions;
 
-	public Filter(Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
-		this(FilterTarget.findByClass(target), Sets.newHashSet(new FilterCondition(condition, negative, value, searchCriteria)));
+	public Filter(String name, Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
+		this(name, FilterTarget.findByClass(target), Sets.newHashSet(new FilterCondition(condition, negative, value, searchCriteria)));
 	}
 
-	public Filter(Class<?> target, Set<FilterCondition> filterConditions) {
-		this(FilterTarget.findByClass(target), filterConditions);
+	public Filter(String name, Class<?> target, Set<FilterCondition> filterConditions) {
+		this(name, FilterTarget.findByClass(target), filterConditions);
 	}
 
-	protected Filter(FilterTarget target, Set<FilterCondition> filterConditions) {
+	protected Filter(String name, FilterTarget target, Set<FilterCondition> filterConditions) {
+		Assert.notNull(name, "Filter name shouldn't be null");
 		Assert.notNull(target, "Filter target shouldn't be null");
 		Assert.notNull(filterConditions, "Conditions value shouldn't be null");
+		this.name = name;
 		this.target = target;
 		this.filterConditions = filterConditions;
 	}
@@ -49,6 +53,10 @@ public class Filter implements Serializable, Queryable {
 	@SuppressWarnings("unused")
 	private Filter() {
 
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	protected final FilterTarget getTarget() {
@@ -72,6 +80,7 @@ public class Filter implements Serializable, Queryable {
 		this.filterConditions.stream().map(transformer).forEach(query::addCondition);
 		return query.build();
 	}
+
 
 	public Set<FilterCondition> getFilterConditions() {
 		return filterConditions;
@@ -124,19 +133,20 @@ public class Filter implements Serializable, Queryable {
 		return sb.toString();
 	}
 
-	public static FilterBuilder builder() {
-		return new FilterBuilder();
+	public static FilterBuilder builder(String name) {
+		return new FilterBuilder(name);
 	}
 
 	/**
 	 * Builder for {@link Filter}
 	 */
 	public static class FilterBuilder {
+		private String name;
 		private Class<?> target;
 		private ImmutableSet.Builder<FilterCondition> conditions = ImmutableSet.builder();
 
-		private FilterBuilder() {
-
+		private FilterBuilder(String name) {
+			this.name = name;
 		}
 
 		public FilterBuilder withTarget(Class<?> target) {
@@ -153,7 +163,7 @@ public class Filter implements Serializable, Queryable {
 			Set<FilterCondition> filterConditions = this.conditions.build();
 			Preconditions.checkArgument(null != target, "FilterTarget should not be null");
 			Preconditions.checkArgument(!filterConditions.isEmpty(), "Filter should contain at least one condition");
-			return new Filter(target, filterConditions);
+			return new Filter(name, target, filterConditions);
 		}
 	}
 

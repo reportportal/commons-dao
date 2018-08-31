@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -156,4 +157,6 @@ public interface WidgetContentRepository {
 
 
 	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, String tagPrefix, int limit);
+
+	Map<String, List<LaunchesStatisticsContent>> productStatusStatistics(Set<Filter> filters, List<String> contentFields, Sort sort, boolean isLatest, int limit);
 }

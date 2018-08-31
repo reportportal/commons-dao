@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
@@ -445,6 +446,43 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.stream()
 				.sorted(Map.Entry.comparingByKey())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+	}
+
+	@Override
+	public Map<String, List<LaunchesStatisticsContent>> productStatusStatistics(Set<Filter> filters, List<String> contentFields, Sort sort,
+			boolean isLatest, int limit) {
+
+		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
+
+		Collections.addAll(fields,
+				fieldName(LAUNCHES_SUB_QUERY, ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCHES_SUB_QUERY, NAME),
+				fieldName(LAUNCH.START_TIME),
+				FILTER.NAME.as("filter_name")
+		);
+
+		Select<? extends Record> select = filters.stream()
+				.map(f -> buildProjectStatusSelect(f, fields, sort, isLatest, limit))
+				.collect(Collectors.toList())
+				.stream()
+				.reduce((prev, curr) -> curr = prev.unionAll(curr))
+				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Query build for Product Status Widget failed"));
+
+		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
+				.stream()
+				.collect(groupingBy(LaunchesStatisticsContent::getFilterName));
+
+	}
+
+	private Select<Record> buildProjectStatusSelect(Filter filter, List<Field<?>> fields, Sort sort, boolean isLatest, int limit) {
+		return dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(isLatest).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
+				.join(PROJECT)
+				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, "project_id").cast(Long.class)))
+				.join(FILTER)
+				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
+				.where(FILTER.NAME.eq(filter.getName()));
 	}
 
 	private static Field<?> fieldName(TableField tableField) {

@@ -9,7 +9,6 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Sets;
@@ -293,7 +292,6 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(flakyCasesStatistics);
 	}
 
-
 	@Test
 	public void cumulativeTrendChart() {
 		Filter filter = buildDefaultFilter(1L);
@@ -302,9 +300,27 @@ public class WidgetContentRepositoryTest {
 		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
 
 		Sort sort = Sort.by(orderings);
-		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter, contentFields, sort, "build", 4);
+		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+				contentFields,
+				sort,
+				"build",
+				4
+		);
 
 		Assert.assertNotNull(launchesStatisticsContents);
+	}
+
+	@Test
+	public void productStatusWidget() {
+		Set<Filter> filters = Sets.newHashSet(buildDefaultFilter(1L), buildDefaultTestFilter(1L));
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+
+		Sort sort = Sort.by(orderings);
+
+		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusStatistics(filters, buildContentFields(), sort, false, 10);
+
+		Assert.assertNotNull(result);
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
@@ -316,19 +332,20 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
 		);
-		return new Filter(Launch.class, conditionSet);
+		return new Filter("launch_name_filter", Launch.class, conditionSet);
 	}
 
-	private Filter buildDefaultLaunchTagFilter(Long projectId) {
+	private Filter buildDefaultTestFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
 						String.valueOf(projectId),
 						"project_id"
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
+				new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "12", "statistics$executions$total")
 		);
-		return new Filter(LaunchTag.class, conditionSet);
+		return new Filter("launch cumulative", Launch.class, conditionSet);
 	}
 
 	private Filter buildDefaultActivityFilter(Long projectId) {
@@ -337,10 +354,8 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(projectId),
 				"project_id"
 		));
-		return new Filter(Activity.class, conditionSet);
+		return new Filter("test", Activity.class, conditionSet);
 	}
-
-
 
 	private Filter buildDefaultTestItemFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
@@ -348,7 +363,7 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(projectId),
 				"project_id"
 		));
-		return new Filter(TestItem.class, conditionSet);
+		return new Filter("test", TestItem.class, conditionSet);
 	}
 
 	private List<String> buildLaunchesTableContentFields() {
