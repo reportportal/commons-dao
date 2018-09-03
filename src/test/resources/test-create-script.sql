@@ -304,7 +304,6 @@ CREATE TABLE widget (
   description VARCHAR,
   widget_type VARCHAR NOT NULL,
   items_count SMALLINT,
-  filter_id   BIGINT REFERENCES filter (id),
   project_id  BIGINT REFERENCES project (id) ON DELETE CASCADE
 );
 
@@ -330,6 +329,12 @@ CREATE TABLE dashboard_widget (
   widget_position_y INT     NOT NULL,
   CONSTRAINT dashboard_widget_pk PRIMARY KEY (dashboard_id, widget_id),
   CONSTRAINT widget_on_dashboard_unq UNIQUE (dashboard_id, widget_name)
+);
+
+CREATE TABLE widget_filter (
+  widget_id   BIGINT REFERENCES widget (id) ON DELETE CASCADE         NOT NULL,
+  filter_id   BIGINT REFERENCES user_filter (id) ON DELETE CASCADE    NOT NULL,
+  CONSTRAINT widget_filter_pk PRIMARY KEY (widget_id, filter_id)
 );
 -----------------------------------------------------------------------------------
 

@@ -59,9 +59,9 @@ public class Widget implements Serializable {
 	@Column(name = "items_count")
 	private int itemsCount;
 
-	@ManyToOne
-	@JoinColumn(name = "filter_id")
-	private UserFilter filter;
+	@ManyToMany
+	@JoinTable(name = "widget_filter", joinColumns = @JoinColumn(name = "widget_id"), inverseJoinColumns = @JoinColumn(name = "filter_id"))
+	private Set<UserFilter> filters;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
@@ -154,11 +154,11 @@ public class Widget implements Serializable {
 		this.dashboardWidgets = dashboardWidgets;
 	}
 
-	public UserFilter getFilter() {
-		return filter;
+	public Set<UserFilter> getFilters() {
+		return filters;
 	}
 
-	public void setFilter(UserFilter filter) {
-		this.filter = filter;
+	public void setFilters(Set<UserFilter> filters) {
+		this.filters = filters;
 	}
 }
