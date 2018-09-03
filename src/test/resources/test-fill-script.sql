@@ -62,6 +62,7 @@ INSERT INTO widget (id, name, description, widget_type, items_count, project_id)
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (17, 'table', null, 'activity_stream', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (1, 'start', null, 'overall_statistics', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1);
 
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (2,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (4,1);
@@ -77,6 +78,7 @@ INSERT INTO widget_filter(widget_id, filter_id) VALUES (11,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (17,2);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (1,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,2);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (19,3);
 
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (1, 1, 'filterName', 'New_filter');
 INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (2, 2, 'filterName', 'New_filter');
