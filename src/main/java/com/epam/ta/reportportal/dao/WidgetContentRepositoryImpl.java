@@ -2,10 +2,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,13 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.ResultFetcher.LAUNCHES_STATISTICS_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetcher.NOT_PASSED_CASES_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -159,7 +162,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
+		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
 
 		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
@@ -173,7 +176,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit) {
 
 		Field<Double> toInvestigate = round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL).cast(Double.class))
-				.div(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
+				.nullif(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
 						.add(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL))
 						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL))
@@ -224,7 +227,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.collect(Collectors.toList());
 
 		Field<?> sumField = fields.stream()
-				.reduce((prev, curr) -> prev.add(curr))
+				.reduce(Field::add)
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
 				.as(TOTAL);
 
@@ -242,26 +245,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	}
 
-	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> result
-			.stream()
-			.map(record -> {
-				LaunchesStatisticsContent statisticsContent = record.into(LaunchesStatisticsContent.class);
-
-				Map<String, String> statisticsMap = new LinkedHashMap<>();
-
-				Optional.ofNullable(record.field(fieldName(TOTAL)))
-						.ifPresent(field -> statisticsMap.put(TOTAL, String.valueOf(field.getValue(record))));
-
-				contentFields.forEach(contentField -> statisticsMap.put(contentField,
-						record.getValue(fieldName(contentField), String.class)
-				));
-
-				statisticsContent.setValues(statisticsMap);
-
-				return statisticsContent;
-			})
-			.collect(Collectors.toList());
-
 	@Override
 	public List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
@@ -274,7 +257,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"));
 
 		List<Field<?>> statisticsFields = fields.stream()
-				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).div(contentFieldsSum), 2).as(field))
+				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).nullif(contentFieldsSum), 2).as(field))
 				.collect(Collectors.toList());
 
 		Collections.addAll(statisticsFields,
@@ -312,20 +295,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
 				round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED)).cast(Double.class))
-						.div(fieldName(EXECUTIONS_TOTAL).cast(Double.class)), 2).as(PERCENTAGE)
+						.nullif(fieldName(EXECUTIONS_TOTAL).cast(Double.class)), 2).as(PERCENTAGE)
 		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch());
 	}
-
-	private static final Function<Result<? extends Record>, List<NotPassedCasesContent>> NOT_PASSED_CASES_FETCHER = result -> result.stream()
-			.map(r -> {
-				NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
-
-				Map<String, String> executionMap = new LinkedHashMap<>();
-				executionMap.put(NOT_PASSED_STATISTICS_KEY, r.getValue(fieldName(PERCENTAGE), String.class));
-				res.setValues(executionMap);
-				return res;
-			})
-			.collect(Collectors.toList());
 
 	@Override
 	public List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
@@ -345,7 +317,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, List<String> activityTypes, Sort sort, int limit) {
 
-		return dsl.select(fieldName(ACTIVITY.ID).as(ACTIVITY_ID),
+		return dsl.select(fieldName(ACTIVITY.ID).as(ID),
 				fieldName(ACTIVITY.ACTION).as(ACTION_TYPE),
 				fieldName(ACTIVITY.ENTITY).as(ENTITY),
 				fieldName(ACTIVITY.CREATION_DATE).as(LAST_MODIFIED),
@@ -375,7 +347,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
 				.from(name(LAUNCHES))
-				.orderBy(field(name(LAUNCHES, "number")).desc())
+				.orderBy(field(name(LAUNCHES, NUMBER)).desc())
 				.limit(limit);
 
 		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
@@ -413,14 +385,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
 			String tagPrefix, int limit) {
 
-		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
+		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
 
 		Collections.addAll(fields,
 				fieldName(LAUNCHES_SUB_QUERY, ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
-				fieldName(LAUNCH_TAG.VALUE).as("value")
+				fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE)
 		);
 
 		Select<Record> select = dsl.select(fields)
@@ -450,20 +422,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Set<Filter> filters,
-			List<String> contentFields, Sort sort, boolean isLatest, int limit) {
+			List<String> contentFields, List<String> tags, Sort sort, boolean isLatest, int limit) {
 
-		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
+		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
 
 		Collections.addAll(fields,
 				fieldName(LAUNCHES_SUB_QUERY, ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCHES_SUB_QUERY, NAME),
 				fieldName(LAUNCH.START_TIME),
-				FILTER.NAME.as("filter_name")
+				FILTER.NAME.as(FILTER_NAME)
 		);
 
 		Select<? extends Record> select = filters.stream()
-				.map(f -> buildProjectStatusSelect(f, fields, sort, isLatest, limit))
+				.map(f -> buildProjectStatusSelect(f, fields, tags, sort, isLatest, limit))
 				.collect(Collectors.toList())
 				.stream()
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
@@ -476,36 +448,38 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, Sort sort,
-			boolean isLatest, int limit) {
-		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
+	public List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
+			List<String> tags, Sort sort, boolean isLatest, int limit) {
+		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
 
 		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build())
-				.fetch(), contentFields);
+		List<Condition> conditions = tags.stream().map(LAUNCH_TAG.VALUE::like).collect(Collectors.toList());
+
+		SelectJoinStep<Record> select = dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build());
+
+		conditions.stream().reduce((prev, curr) -> curr = prev.or(curr)).ifPresent(condition -> {
+			select.where(condition);
+			fields.add(fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE));
+		});
+
+		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields);
 	}
 
-	private Select<Record> buildProjectStatusSelect(Filter filter, List<Field<?>> fields, Sort sort, boolean isLatest, int limit) {
+	private Select<Record> buildProjectStatusSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort, boolean isLatest,
+			int limit) {
+		List<Condition> conditions = Lists.newArrayList(FILTER.ID.eq(filter.getId()));
+		List<Condition> tagConditions = tags.stream().map(LAUNCH_TAG.VALUE::like).collect(Collectors.toList());
+		tagConditions.stream().reduce((prev, curr) -> curr = prev.or(curr)).ifPresent(conditions::add);
+
 		return dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(isLatest).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
 				.join(PROJECT)
-				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, "project_id").cast(Long.class)))
+				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, PROJECT_ID).cast(Long.class)))
 				.join(FILTER)
 				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
-				.where(FILTER.ID.eq(filter.getId()));
+				.where(conditions);
 	}
 
-	private static Field<?> fieldName(TableField tableField) {
-		return field(name(tableField.getName()));
-	}
-
-	private static Field<?> fieldName(String tableFieldName) {
-		return field(name(tableFieldName));
-	}
-
-	private static Field<?> fieldName(String... fieldQualifiers) {
-		return field(name(fieldQualifiers));
-	}
 }

@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
 
@@ -311,16 +312,49 @@ public class WidgetContentRepositoryTest {
 	}
 
 	@Test
-	public void productStatusWidget() {
+	public void productStatusFilterGroupedWidget() {
 		Set<Filter> filters = Sets.newHashSet(buildDefaultFilter(1L), buildDefaultTestFilter(1L));
 
 		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
 
 		Sort sort = Sort.by(orderings);
 
-		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filters,
-				buildContentFields(),
+		List<String> tagContentFields = buildProductStatusContentFields().stream()
+				.filter(s -> s.startsWith("tag"))
+				.collect(Collectors.toList());
+		List<String> contentFields = buildProductStatusContentFields().stream()
+				.filter(s -> !s.startsWith("tag"))
+				.collect(Collectors.toList());
+
+		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filters,
+				contentFields,
+				tagContentFields,
+				sort,
+				false,
+				10
+		);
+
+		Assert.assertNotNull(result);
+	}
+
+	@Test
+	public void productStatusLaunchGroupedWidget() {
+		Filter filter = buildDefaultTestFilter(1L);
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<String> tagContentFields = buildProductStatusContentFields().stream()
+				.filter(s -> s.startsWith("tag"))
+				.collect(Collectors.toList());
+		List<String> contentFields = buildProductStatusContentFields().stream()
+				.filter(s -> !s.startsWith("tag"))
+				.collect(Collectors.toList());
+
+		List<LaunchesStatisticsContent> result = widgetContentRepository.productStatusGroupedByLaunchesStatistics(filter,
+				contentFields,
+				tagContentFields,
 				sort,
 				false,
 				10
@@ -425,6 +459,26 @@ public class WidgetContentRepositoryTest {
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
 				"statistics$executions$total"
+		);
+	}
+
+	private List<String> buildProductStatusContentFields() {
+		return Lists.newArrayList("statistics$defects$no_defect$ND001",
+				"statistics$defects$product_bug$PB001",
+				"statistics$defects$automation_bug$AB001",
+				"statistics$defects$system_issue$SI001",
+				"statistics$defects$to_investigate$TI001",
+				"statistics$executions$failed",
+				"statistics$executions$skipped",
+				"statistics$executions$total",
+				"statistics$defects$no_defect$total",
+				"statistics$defects$product_bug$total",
+				"statistics$defects$automation_bug$total",
+				"statistics$defects$system_issue$total",
+				"statistics$defects$to_investigate$total",
+				"tag$build",
+				"tag$check"
+
 		);
 	}
 

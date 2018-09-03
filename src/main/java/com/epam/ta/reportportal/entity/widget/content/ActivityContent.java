@@ -2,33 +2,43 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
+
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
 /**
  * @author Ivan Budayeu
  */
 public class ActivityContent implements Serializable {
 
-	@JsonProperty(value = "id")
+	@Column(name = ID)
+	@JsonProperty(value = ID)
 	private Long activityId;
 
-	@JsonProperty(value = "project_id")
+	@Column(name = PROJECT_ID)
+	@JsonProperty(value = PROJECT_ID)
 	private Long projectId;
 
-	@JsonProperty(value = "action_type")
+	@Column(name = ACTION_TYPE)
+	@JsonProperty(value = ACTION_TYPE)
 	private String actionType;
 
-	@JsonProperty(value = "entity")
+	@Column(name = ENTITY)
+	@JsonProperty(value = ENTITY)
 	private String entity;
 
-	@JsonProperty(value = "project_name")
+	@Column(name = PROJECT_NAME)
+	@JsonProperty(value = PROJECT_NAME)
 	private String projectName;
 
+	@Column(name = USER_LOGIN)
 	@JsonProperty(value = "user")
 	private String userLogin;
 
-	@JsonProperty(value = "last_modified")
+	@Column(name = LAST_MODIFIED)
+	@JsonProperty(value = LAST_MODIFIED)
 	private Timestamp lastModified;
 
 	public Long getActivityId() {

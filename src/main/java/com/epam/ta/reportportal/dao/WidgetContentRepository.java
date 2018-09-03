@@ -159,8 +159,8 @@ public interface WidgetContentRepository {
 			String tagPrefix, int limit);
 
 	Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Set<Filter> filters, List<String> contentFields,
-			Sort sort, boolean isLatest, int limit);
+			List<String> tags, Sort sort, boolean isLatest, int limit);
 
-	List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, Sort sort,
-			boolean isLatest, int limit);
+	List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, List<String> tags,
+			Sort sort, boolean isLatest, int limit);
 }

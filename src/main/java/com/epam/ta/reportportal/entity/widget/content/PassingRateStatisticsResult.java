@@ -5,17 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Column;
 import java.io.Serializable;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+
 /**
  * @author Ivan Budayeu
  */
 public class PassingRateStatisticsResult implements Serializable {
 
-	@Column(name = "passed")
-	@JsonProperty(value = "passed")
+	@Column(name = PASSED)
+	@JsonProperty(value = PASSED)
 	private int passed;
 
-	@Column(name = "total")
-	@JsonProperty(value = "total")
+	@Column(name = TOTAL)
+	@JsonProperty(value = TOTAL)
 	private int total;
 
 	public PassingRateStatisticsResult() {

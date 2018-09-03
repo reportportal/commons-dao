@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Column;
 import java.sql.Timestamp;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DURATION;
+
 /**
  * @author Ivan Budayeu
  */
@@ -18,8 +20,8 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 	@JsonProperty(value = "end_time")
 	private Timestamp endTime;
 
-	@Column(name = "duration")
-	@JsonProperty(value = "duration")
+	@Column(name = DURATION)
+	@JsonProperty(value = DURATION)
 	private long duration;
 
 	public String getStatus() {

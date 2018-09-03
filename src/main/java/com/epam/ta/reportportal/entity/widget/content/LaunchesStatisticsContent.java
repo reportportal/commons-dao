@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Column;
 import java.util.Map;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+
 /**
  * @author Ivan Budayeu
  */
@@ -17,11 +19,11 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	private Map<String, String> values;
 
 	@JsonIgnore
-	@Column(name = "value")
+	@Column(name = TAG_VALUE)
 	private String tagValue;
 
 	@JsonIgnore
-	@Column(name = "filter_name")
+	@Column(name = FILTER_NAME)
 	private String filterName;
 
 	public Map<String, String> getValues() {

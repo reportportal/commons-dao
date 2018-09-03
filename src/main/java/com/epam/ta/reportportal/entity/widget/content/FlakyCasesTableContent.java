@@ -1,5 +1,7 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,10 +10,19 @@ import java.util.List;
  */
 public class FlakyCasesTableContent implements Serializable {
 
+	@JsonProperty(value = "statuses")
 	private List<String> statuses;
+
+	@JsonProperty(value = "flaky_count")
 	private Long flakyCount;
+
+	@JsonProperty(value = "total")
 	private Long total;
+
+	@JsonProperty(value = "item_name")
 	private String itemName;
+
+	@JsonProperty(value = "unique_id")
 	private String uniqueId;
 
 	public FlakyCasesTableContent() {

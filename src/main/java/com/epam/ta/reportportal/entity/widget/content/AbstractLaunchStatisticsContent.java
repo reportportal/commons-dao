@@ -6,24 +6,26 @@ import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+
 /**
  * @author Ivan Budayeu
  */
 public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
-	@Column(name = "id")
+	@Column(name = ID)
 	@JsonProperty(value = "id")
 	private Long id;
 
-	@Column(name = "number")
+	@Column(name = NUMBER)
 	@JsonProperty(value = "number")
 	private Integer number;
 
-	@Column(name = "name")
+	@Column(name = NAME)
 	@JsonProperty(value = "name")
 	private String name;
 
-	@Column(name = "start_time")
+	@Column(name = START_TIME)
 	@JsonProperty(value = "start_time")
 	private Timestamp startTime;
 
