@@ -449,8 +449,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<LaunchesStatisticsContent>> productStatusStatistics(Set<Filter> filters, List<String> contentFields, Sort sort,
-			boolean isLatest, int limit) {
+	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Set<Filter> filters,
+			List<String> contentFields, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
 
@@ -473,6 +473,18 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.stream()
 				.collect(groupingBy(LaunchesStatisticsContent::getFilterName));
 
+	}
+
+	@Override
+	public List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, Sort sort,
+			boolean isLatest, int limit) {
+		List<Field<?>> fields = contentFields.stream().map(WidgetContentRepositoryImpl::fieldName).collect(Collectors.toList());
+
+		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build())
+				.fetch(), contentFields);
 	}
 
 	private Select<Record> buildProjectStatusSelect(Filter filter, List<Field<?>> fields, Sort sort, boolean isLatest, int limit) {

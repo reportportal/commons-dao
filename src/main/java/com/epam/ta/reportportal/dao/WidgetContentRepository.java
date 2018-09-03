@@ -155,8 +155,12 @@ public interface WidgetContentRepository {
 	 */
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
 
+	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+			String tagPrefix, int limit);
 
-	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, String tagPrefix, int limit);
+	Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Set<Filter> filters, List<String> contentFields,
+			Sort sort, boolean isLatest, int limit);
 
-	Map<String, List<LaunchesStatisticsContent>> productStatusStatistics(Set<Filter> filters, List<String> contentFields, Sort sort, boolean isLatest, int limit);
+	List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, Sort sort,
+			boolean isLatest, int limit);
 }

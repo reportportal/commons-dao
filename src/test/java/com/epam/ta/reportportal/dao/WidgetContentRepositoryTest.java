@@ -318,7 +318,7 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusStatistics(
+		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
 				filters,
 				buildContentFields(),
 				sort,
