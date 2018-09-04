@@ -267,7 +267,7 @@ public class WidgetContentRepositoryTest {
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "login"))
 				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), "action"));
 
-		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, contentFields, sort, 4);
+		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
 
 		Assert.assertNotNull(activityContentList);
 		Assert.assertEquals(4, activityContentList.size());

@@ -130,11 +130,10 @@ public interface WidgetContentRepository {
 	 * User activity content loading
 	 *
 	 * @param filter        Filter
-	 * @param contentFields Fields with restrictions
 	 * @param limit         Results limit
 	 * @return List of{@link ActivityContent}
 	 */
-	List<ActivityContent> activityStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
+	List<ActivityContent> activityStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Loading unique bugs content that was produced by Bug Tracking System

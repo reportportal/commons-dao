@@ -311,7 +311,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, List<String> activityTypes, Sort sort, int limit) {
+	public List<ActivityContent> activityStatistics(Filter filter, Sort sort, int limit) {
 
 		return dsl.select(fieldName(ACTIVITY.ID).as(ID),
 				fieldName(ACTIVITY.ACTION).as(ACTION_TYPE),
