@@ -34,7 +34,7 @@ INSERT INTO ldap_synchronization_attributes(
 
 INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'com.epam.ta.reportportal.entity.launch.Launch', null);
 INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'com.epam.ta.reportportal.entity.Activity', null);
-INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'launch cumulative', 1, 'com.epam.ta.reportportal.entity.launch.LaunchTag', 'YAHOOOOO');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'launch cumulative', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'YAHOOOOO');
 
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
@@ -63,6 +63,7 @@ INSERT INTO widget (id, name, description, widget_type, items_count, project_id)
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (1, 'start', null, 'overall_statistics', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (20, 'product status widget', 'description of widget', 'product_status', 2, 1);
 
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (2,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (4,1);
@@ -80,20 +81,20 @@ INSERT INTO widget_filter(widget_id, filter_id) VALUES (1,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,2);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (19,3);
 
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (1, 1, 'filterName', 'New_filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (2, 2, 'filterName', 'New_filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (3, 3, 'filterName', 'New_filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (5, 5, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (6, 6, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (7, 7, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (9, 9, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (10, 10, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (11, 11, 'launch_name_filter', 'launch name');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (12, 12, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (8, 8, 'launch_name_filter', 'launch name');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (4, 4, 'launch_name_filter', 'launch name');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (17, 17, 'login', 'default');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (18, 19, 'PREFIX', 'build');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (1, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (2, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (3, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (5, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (6, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (7, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (9, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (10, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (11, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (12, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (8, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (4, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (17, 'login', 'default');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (19, 'PREFIX', 'build');
 
 INSERT INTO content_field (id, field) VALUES (2, 'executions');
 INSERT INTO content_field (id, field) VALUES (2, 'defects');
@@ -280,6 +281,45 @@ INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defe
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$AB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$PB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
+
+
+INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'product status 1', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD1');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (5, 'product status 2', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD2');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (6, 'product status 3', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD3');
+
+INSERT INTO user_filter(id) VALUES (4);
+INSERT INTO user_filter(id) VALUES (5);
+INSERT INTO user_filter(id) VALUES (6);
+
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (4, 'statistics$defects$no_defect$ND001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defects$no_defect$AB001', 'ASC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$no_defect$SI001', 'DESC');
+
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (4, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (4, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'LOWER_THAN', '3', 'statistics$defects$to_investigate$TI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (6, 'GREATER_THAN', '11', 'statistics$executions$total', false);
+
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,4);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,5);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,6);
+
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (20, 'strategy', 'launch');
+
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$automation_bug$AB001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$product_bug$PB001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$no_defect$ND001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$to_investigate$TI001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$system_issue$SI001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$system_issue$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$no_defect$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$product_bug$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$automation_bug$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$to_investigate$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$failed');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$skipped');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$passed');
 
 
 INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 1);
