@@ -11,6 +11,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
 import org.hsqldb.cmdline.SqlToolError;
@@ -313,11 +314,16 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void productStatusFilterGroupedWidget() {
-		Set<Filter> filters = Sets.newHashSet(buildDefaultFilter(1L), buildDefaultTestFilter(1L));
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+		List<Sort.Order> firstOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+		List<Sort.Order> secondOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, "statistics$defects$automation_bug$AB001"));
 
-		Sort sort = Sort.by(orderings);
+		Sort firstSort = Sort.by(firstOrdering);
+		Sort secondSort = Sort.by(secondOrdering);
+
+		Map<Filter, Sort> filterSortMapping = Maps.newLinkedHashMap();
+		filterSortMapping.put(buildDefaultFilter(1L), firstSort);
+		filterSortMapping.put(buildDefaultTestFilter(1L), secondSort);
 
 		List<String> tagContentFields = buildProductStatusContentFields().stream()
 				.filter(s -> s.startsWith("tag"))
@@ -327,10 +333,9 @@ public class WidgetContentRepositoryTest {
 				.filter(s -> !s.startsWith("tag"))
 				.collect(Collectors.toList());
 
-		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filters,
+		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				contentFields,
 				tagContentFields,
-				sort,
 				false,
 				10
 		);

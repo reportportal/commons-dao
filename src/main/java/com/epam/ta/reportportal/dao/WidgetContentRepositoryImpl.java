@@ -417,8 +417,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Set<Filter> filters,
-			List<String> contentFields, List<String> tags, Sort sort, boolean isLatest, int limit) {
+	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
+			List<String> contentFields, List<String> tags, boolean isLatest, int limit) {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
@@ -430,8 +430,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				FILTER.NAME.as(FILTER_NAME)
 		);
 
-		Select<? extends Record> select = filters.stream()
-				.map(f -> buildProjectStatusFilterGroupedSelect(f, fields, tags, sort, isLatest, limit))
+		Select<? extends Record> select = filterSortMapping.entrySet()
+				.stream()
+				.map(f -> buildProjectStatusFilterGroupedSelect(f.getKey(), fields, tags, f.getValue(), isLatest, limit))
 				.collect(Collectors.toList())
 				.stream()
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
@@ -458,7 +459,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
 		if (combinedTagCondition.isPresent()) {
-			return fetchProductStatusLaunchGroupedStatisticsWithTags(filter, contentFields, fields, combinedTagCondition.get(), sort, isLatest, limit);
+			return fetchProductStatusLaunchGroupedStatisticsWithTags(filter,
+					contentFields,
+					fields,
+					combinedTagCondition.get(),
+					sort,
+					isLatest,
+					limit
+			);
 		}
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
@@ -489,10 +497,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetch(), contentFields);
 	}
 
-	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort, boolean isLatest,
-			int limit) {
+	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort,
+			boolean isLatest, int limit) {
 		List<Condition> conditions = Lists.newArrayList(FILTER.ID.eq(filter.getId()));
-		List<Condition> tagConditions = tags.stream().map(tag -> LAUNCH_TAG.VALUE.like(tag + LIKE_CONDITION_SYMBOL)).collect(Collectors.toList());
+		List<Condition> tagConditions = tags.stream()
+				.map(tag -> LAUNCH_TAG.VALUE.like(tag + LIKE_CONDITION_SYMBOL))
+				.collect(Collectors.toList());
 		Optional<Condition> combinedTagCondition = tagConditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
 		if (combinedTagCondition.isPresent()) {

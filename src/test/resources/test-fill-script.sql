@@ -292,8 +292,8 @@ INSERT INTO user_filter(id) VALUES (5);
 INSERT INTO user_filter(id) VALUES (6);
 
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (4, 'statistics$defects$no_defect$ND001', 'DESC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defects$no_defect$AB001', 'ASC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$no_defect$SI001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defects$automation_bug$AB001', 'ASC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$system_issue$SI001', 'DESC');
 
 INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (4, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
 INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (4, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
