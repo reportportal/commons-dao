@@ -321,6 +321,7 @@ public class WidgetContentRepositoryTest {
 
 		List<String> tagContentFields = buildProductStatusContentFields().stream()
 				.filter(s -> s.startsWith("tag"))
+				.map(tag -> tag.split("\\$")[1])
 				.collect(Collectors.toList());
 		List<String> contentFields = buildProductStatusContentFields().stream()
 				.filter(s -> !s.startsWith("tag"))
@@ -347,6 +348,7 @@ public class WidgetContentRepositoryTest {
 
 		List<String> tagContentFields = buildProductStatusContentFields().stream()
 				.filter(s -> s.startsWith("tag"))
+				.map(tag -> tag.split("\\$")[1])
 				.collect(Collectors.toList());
 		List<String> contentFields = buildProductStatusContentFields().stream()
 				.filter(s -> !s.startsWith("tag"))

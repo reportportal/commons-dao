@@ -162,7 +162,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
+		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
@@ -208,7 +208,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, Sort sort, int limit) {
 
-		Field<Integer> executionField = field(name(executionContentField)).cast(Integer.class);
+		Field<Integer> executionField = fieldName(executionContentField).cast(Integer.class);
 
 		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
@@ -222,9 +222,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = contentFields.stream()
-				.map(contentField -> fieldName(contentField).as(contentField))
-				.collect(Collectors.toList());
+		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Field<?> sumField = fields.stream()
 				.reduce(Field::add)
@@ -302,9 +300,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = contentFields.stream()
-				.map(contentField -> fieldName(contentField).as(contentField))
-				.collect(Collectors.toList());
+		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
@@ -385,7 +381,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
 			String tagPrefix, int limit) {
 
-		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
+		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Collections.addAll(fields,
 				fieldName(LAUNCHES_SUB_QUERY, ID),
@@ -402,7 +398,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
 						.on(LAUNCH_TAG.VALUE)
 						.from(LAUNCH_TAG)
-						.where(LAUNCH_TAG.VALUE.like(tagPrefix + "%"))
+						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
 						.orderBy(LAUNCH_TAG.VALUE.desc())
 						.limit(limit)))
 				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
@@ -424,7 +420,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Set<Filter> filters,
 			List<String> contentFields, List<String> tags, Sort sort, boolean isLatest, int limit) {
 
-		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
+		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Collections.addAll(fields,
 				fieldName(LAUNCHES_SUB_QUERY, ID),
@@ -435,7 +431,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		);
 
 		Select<? extends Record> select = filters.stream()
-				.map(f -> buildProjectStatusSelect(f, fields, tags, sort, isLatest, limit))
+				.map(f -> buildProjectStatusFilterGroupedSelect(f, fields, tags, sort, isLatest, limit))
 				.collect(Collectors.toList())
 				.stream()
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
@@ -450,28 +446,58 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			List<String> tags, Sort sort, boolean isLatest, int limit) {
-		List<Field<?>> fields = contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
+
+		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
-		List<Condition> conditions = tags.stream().map(LAUNCH_TAG.VALUE::like).collect(Collectors.toList());
+		List<Condition> conditions = tags.stream()
+				.map(cf -> LAUNCH_TAG.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
+				.collect(Collectors.toList());
 
-		SelectJoinStep<Record> select = dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build());
+		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
-		conditions.stream().reduce((prev, curr) -> curr = prev.or(curr)).ifPresent(condition -> {
-			select.where(condition);
-			fields.add(fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE));
-		});
+		if (combinedTagCondition.isPresent()) {
+			return fetchProductStatusLaunchGroupedStatisticsWithTags(filter, contentFields, fields, combinedTagCondition.get(), sort, isLatest, limit);
+		}
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields);
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
+				.fetch(), contentFields);
 	}
 
-	private Select<Record> buildProjectStatusSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort, boolean isLatest,
+	private List<LaunchesStatisticsContent> fetchProductStatusLaunchGroupedStatisticsWithTags(Filter filter, List<String> contentFields,
+			List<Field<?>> fields, Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
+
+		List<Field<?>> selectFields = Lists.newArrayList(fields);
+		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(fieldName(LAUNCH_TAG.VALUE)).as(TAG_VALUES));
+
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(selectFields)
+				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
+				.leftJoin(dsl.select(LAUNCH_TAG.LAUNCH_ID, LAUNCH_TAG.VALUE)
+						.from(LAUNCH_TAG)
+						.where(combinedTagCondition)
+						.orderBy(LAUNCH_TAG.VALUE)
+						.asTable(TAG_TABLE))
+				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+				.groupBy(fields)
+				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList())).orElseGet(Collections::emptyList))
+				.fetch(), contentFields);
+	}
+
+	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort, boolean isLatest,
 			int limit) {
 		List<Condition> conditions = Lists.newArrayList(FILTER.ID.eq(filter.getId()));
-		List<Condition> tagConditions = tags.stream().map(LAUNCH_TAG.VALUE::like).collect(Collectors.toList());
-		tagConditions.stream().reduce((prev, curr) -> curr = prev.or(curr)).ifPresent(conditions::add);
+		List<Condition> tagConditions = tags.stream().map(tag -> LAUNCH_TAG.VALUE.like(tag + LIKE_CONDITION_SYMBOL)).collect(Collectors.toList());
+		Optional<Condition> combinedTagCondition = tagConditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
+
+		if (combinedTagCondition.isPresent()) {
+			return buildProjectStatusFilterGroupedQuery(filter, conditions, fields, combinedTagCondition.get(), sort, isLatest, limit);
+		}
 
 		return dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(isLatest).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
@@ -480,6 +506,38 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(FILTER)
 				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
 				.where(conditions);
+	}
+
+	private Select<Record> buildProjectStatusFilterGroupedQuery(Filter filter, List<Condition> conditions, List<Field<?>> fields,
+			Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
+
+		List<Field<?>> selectFields = Lists.newArrayList(fields);
+		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(fieldName(LAUNCH_TAG.VALUE)).as(TAG_VALUES));
+
+		return dsl.select(selectFields)
+				.from(QueryBuilder.newBuilder(filter).with(sort).with(isLatest).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
+				.join(PROJECT)
+				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, PROJECT_ID).cast(Long.class)))
+				.join(FILTER)
+				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
+				.leftJoin(dsl.select(LAUNCH_TAG.LAUNCH_ID, LAUNCH_TAG.VALUE)
+						.from(LAUNCH_TAG)
+						.where(combinedTagCondition)
+						.orderBy(LAUNCH_TAG.VALUE)
+						.asTable(TAG_TABLE))
+				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+				.where(conditions)
+				.groupBy(fields)
+				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
+
+	}
+
+	private List<Field<?>> buildFieldsFromContentFields(List<String> contentFields) {
+		return contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
 	}
 
 }

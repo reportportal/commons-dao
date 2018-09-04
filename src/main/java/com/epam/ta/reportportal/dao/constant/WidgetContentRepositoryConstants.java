@@ -23,7 +23,7 @@ public class WidgetContentRepositoryConstants {
 	/*Constants for result query mapping*/
 	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;
-	public static final String LAUNCH_ID = "launchId";
+	public static final String LAUNCH_ID = "launch_id";
 	public static final String NAME = "name";
 	public static final String ID = "id";
 	public static final String NUMBER = "number";
@@ -89,9 +89,12 @@ public class WidgetContentRepositoryConstants {
 	/*Cumulative trend widget constants*/
 	public static final Integer LAUNCHES_COUNT = 100;
 	public static final String LAUNCHES_SUB_QUERY = "launches_sub_query";
+	public static final String LIKE_CONDITION_SYMBOL = "%";
 
 	/*Product status widget constants*/
 	public static final String TAG_VALUE = "tag_value";
 	public static final String FILTER_NAME = "filter_name";
+	public static final String TAG_TABLE = "tag_table";
+	public static final String TAG_VALUES = "tag_values";
 
 }
