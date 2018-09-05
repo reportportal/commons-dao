@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,10 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.commons.DbUtils;
 import com.epam.ta.reportportal.commons.MoreCollectors;
+import com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils;
+import com.epam.ta.reportportal.database.dao.aggregation.SortingOperation;
 import com.epam.ta.reportportal.database.entity.*;
+import com.epam.ta.reportportal.database.entity.history.status.DurationTestItem;
 import com.epam.ta.reportportal.database.entity.history.status.FlakyHistory;
 import com.epam.ta.reportportal.database.entity.history.status.MostFailedHistory;
 import com.epam.ta.reportportal.database.entity.history.status.RetryObject;
@@ -33,6 +36,8 @@ import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssue;
 import com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType;
 import com.epam.ta.reportportal.database.entity.statistics.StatisticSubType;
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
+import com.epam.ta.reportportal.database.search.Queryable;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -53,6 +58,7 @@ import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.database.dao.aggregation.AddFieldsOperation.addFields;
+import static com.epam.ta.reportportal.database.dao.aggregation.AggregationUtils.matchOperationFromFilter;
 import static com.epam.ta.reportportal.database.entity.item.issue.TestItemIssueType.TO_INVESTIGATE;
 import static com.epam.ta.reportportal.database.search.UpdateStatisticsQueryBuilder.*;
 import static java.util.stream.Collectors.toList;
@@ -71,6 +77,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  */
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
+	public static final int HISTORY_LIMIT = 2000;
 	private static final String ID_REFERENCE = "id";
 	private static final String ID = "_id";
 	private static final String LAUNCH_REFERENCE = "launchRef";
@@ -83,6 +90,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String ISSUE = "issue";
 	private static final String HAS_CHILD = "has_childs";
 	private static final String START_TIME = "start_time";
+	private static final String END_TIME = "end_time";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";
 	private static final String STATUS = "status";
@@ -90,8 +98,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String UNIQUE_ID = "uniqueId";
 	private static final String TOTAL = "total";
 	private static final String FAILED = "failed";
-
-	public static final int HISTORY_LIMIT = 2000;
+	private static final List<String> DURATION_FIELDS = Lists.newArrayList("$end_time", "$start_time");
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -103,7 +110,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void updateIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
+		mongoTemplate.updateMulti(getItemQuery(item),
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), 1),
 				TestItem.class
 		);
 	}
@@ -139,7 +147,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			update.set(ISSUE_DESCRIPTION, newValue.getIssueDescription());
 			update.set(ISSUE_TICKET, newValue.getExternalSystemIssues());
 			update.set(ISSUE_ANALYZED, newValue.isAutoAnalyzed());
-			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)), update,
+			mongoTemplate.updateFirst(Query.query(Criteria.where(ID).is(currentId)),
+					update,
 					mongoTemplate.getCollectionName(TestItem.class)
 			);
 		});
@@ -157,7 +166,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public void resetIssueStatistics(TestItem item, Project.Configuration settings) {
-		mongoTemplate.updateMulti(getItemQuery(item), fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
+		mongoTemplate.updateMulti(getItemQuery(item),
+				fromIssueTypeAware(settings.getByLocator(item.getIssue().getIssueType()), -1),
 				TestItem.class
 		);
 	}
@@ -238,8 +248,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<String> findDistinctValues(String launchId, String containsValue, String distinctBy) {
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId)), unwind(distinctBy),
-				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")), group(distinctBy)
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId)),
+				unwind(distinctBy),
+				match(where(distinctBy).regex("(?i).*" + Pattern.quote(containsValue) + ".*")),
+				group(distinctBy)
 		);
 		AggregationResults<Map> result = mongoTemplate.aggregate(aggregation, TestItem.class, Map.class);
 		return result.getMappedResults().stream().map(entry -> entry.get("_id").toString()).collect(toList());
@@ -249,8 +261,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<String> getUniqueTicketsCount(List<Launch> launches) {
 		List<String> launchIds = launches.stream().map(Launch::getId).collect(toList());
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)), match(where(ISSUE_TICKET).exists(true)),
-				unwind(ISSUE_TICKET), group(ISSUE_TICKET)
+		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds)),
+				match(where(ISSUE_TICKET).exists(true)),
+				unwind(ISSUE_TICKET),
+				group(ISSUE_TICKET)
 		);
 		// Count be as
 		// Aggregation.group("issue.externalSystemIssues").count().as("count");
@@ -260,7 +274,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<MostFailedHistory> getMostFailedItemHistory(List<String> launchIds, String criteria, int limit) {
+	public List<MostFailedHistory> getMostFailedItemHistory(Queryable filter, String criteria, int limit) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { "launchRef" : { "$in" : [""]}}},
@@ -284,8 +298,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		*/
 		final int MINIMUM_FOR_FAILED = 0;
 		Sort orders = new Sort(new Sort.Order(DESC, FAILED), new Sort.Order(ASC, TOTAL));
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
-				sort(Sort.Direction.ASC, START_TIME), mostFailedGroup(criteria), match(where(FAILED).gt(MINIMUM_FOR_FAILED)), sort(orders),
+		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
+				sort(Sort.Direction.ASC, START_TIME),
+				mostFailedGroup(criteria),
+				match(where(FAILED).gt(MINIMUM_FOR_FAILED)),
+				sort(orders),
 				limit(limit)
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), MostFailedHistory.class)
@@ -305,7 +322,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<FlakyHistory> getFlakyItemStatusHistory(List<String> launchIds) {
+	public List<FlakyHistory> getFlakyItemStatusHistory(Queryable filter) {
 		/*
 			db.testItem.aggregate([
 				{ "$match" : { $and: [ "launchRef" : { "$in" : [""]}, has_childs : false ]}},
@@ -326,8 +343,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			])
 	 	*/
 		final int MINIMUM_FOR_FLAKY = 1;
-		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).in(launchIds).and(HAS_CHILD).is(false)),
-				sort(Sort.Direction.ASC, START_TIME), flakyItemsGroup(), addFields("size", new BasicDBObject("$size", "$statusSet")),
+		Aggregation aggregation = newAggregation(matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
+				sort(Sort.Direction.ASC, START_TIME),
+				flakyItemsGroup(),
+				addFields("size", new BasicDBObject("$size", "$statusSet")),
 				match(where("size").gt(MINIMUM_FOR_FLAKY))
 		);
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), FlakyHistory.class).getMappedResults();
@@ -467,7 +486,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<RetryObject> findRetries(String launchId) {
 		Aggregation aggregation = newAggregation(match(where(LAUNCH_REFERENCE).is(launchId).and("retryProcessed").exists(true)),
-				sort(new Sort(Sort.Direction.ASC, "start_time")), group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
+				sort(new Sort(Sort.Direction.ASC, "start_time")),
+				group(Fields.fields("$uniqueId")).push(ROOT).as("retries")
 		);
 
 		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), RetryObject.class).getMappedResults();
@@ -484,5 +504,24 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.is(false)
 				.and(ISSUE_ANALYZED)
 				.is(status)), TestItem.class);
+	}
+
+	@Override
+	public List<DurationTestItem> findMostTimeConsumingTestItems(Queryable filter, int limit) {
+		Aggregation aggregation = newAggregation(AggregationUtils.matchOperationFromFilter(filter, mongoTemplate, TestItem.class),
+				context -> new BasicDBObject("$project",
+						new BasicDBObject("duration", new BasicDBObject("$subtract", DURATION_FIELDS)).append(ID, 1)
+								.append(NAME, 1)
+								.append(UNIQUE_ID, 1)
+								.append(STATUS, 1)
+								.append(TYPE, 1)
+								.append(START_TIME, 1)
+								.append(END_TIME, 1)
+				),
+				SortingOperation.sorting("duration", DESC),
+				limit(limit)
+		);
+		return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(TestItem.class), DurationTestItem.class)
+				.getMappedResults();
 	}
 }
