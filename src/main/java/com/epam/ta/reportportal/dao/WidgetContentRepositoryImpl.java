@@ -291,8 +291,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
-				round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED)).cast(Double.class))
-						.div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2).as(PERCENTAGE)
+				coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED)).cast(Double.class))
+						.div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2), 0).as(PERCENTAGE)
 		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch());
 	}
 
