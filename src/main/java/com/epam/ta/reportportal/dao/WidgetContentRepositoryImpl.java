@@ -176,11 +176,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit) {
 
 		Field<Double> toInvestigate = round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL).cast(Double.class))
-				.nullif(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
+				.div(nullif(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
 						.add(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL))
 						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
-						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL))
-						.cast(Double.class)), 2);
+						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL)), 0).cast(Double.class)), 2);
 
 		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
@@ -255,7 +254,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"));
 
 		List<Field<?>> statisticsFields = fields.stream()
-				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).nullif(contentFieldsSum), 2).as(field))
+				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).div(nullif(contentFieldsSum, 0).cast(Double.class)), 2).as(field))
 				.collect(Collectors.toList());
 
 		Collections.addAll(statisticsFields,
@@ -293,7 +292,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
 				round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED)).cast(Double.class))
-						.nullif(fieldName(EXECUTIONS_TOTAL).cast(Double.class)), 2).as(PERCENTAGE)
+						.div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2).as(PERCENTAGE)
 		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch());
 	}
 
