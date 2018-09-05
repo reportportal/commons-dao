@@ -186,7 +186,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
 				toInvestigate.as(TO_INVESTIGATE),
-				val(PERCENTAGE_MULTIPLIER).sub(toInvestigate).as(INVESTIGATED)
+				val(PERCENTAGE_MULTIPLIER).sub(coalesce(toInvestigate, 0)).as(INVESTIGATED)
 		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(InvestigatedStatisticsResult.class);
 
 	}
