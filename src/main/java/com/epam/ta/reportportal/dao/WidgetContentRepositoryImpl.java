@@ -563,7 +563,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.flatMap(lsc -> lsc.getValues().entrySet().stream())
 				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
 
-		Double averagePassingRate = launchesStatisticsResult.stream().collect(averagingDouble(LaunchesStatisticsContent::getPassingRate));
+		Double averagePassingRate = launchesStatisticsResult.stream()
+				.collect(averagingDouble(lsc -> ofNullable(lsc.getPassingRate()).orElse(0D)));
 
 		LaunchesStatisticsContent launchesStatisticsContent = new LaunchesStatisticsContent();
 		launchesStatisticsContent.setTotalStatistics(total);
@@ -585,7 +586,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Double averagePassingRate = launchesStatisticsResult.values()
 				.stream()
 				.flatMap(Collection::stream)
-				.collect(averagingDouble(LaunchesStatisticsContent::getPassingRate));
+				.collect(averagingDouble(lsc -> ofNullable(lsc.getPassingRate()).orElse(0D)));
 
 		LaunchesStatisticsContent launchesStatisticsContent = new LaunchesStatisticsContent();
 		launchesStatisticsContent.setTotalStatistics(total);
