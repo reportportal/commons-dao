@@ -8,8 +8,7 @@ import javax.persistence.Column;
 import java.util.List;
 import java.util.Map;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TAG_VALUE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
 /**
  * @author Ivan Budayeu
@@ -23,6 +22,21 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	@JsonProperty(value = "values")
 	private Map<String, String> values;
+
+	@Column(name = SUM)
+	@JsonProperty(value = SUM)
+	private Map<String, Integer> totalStatistics;
+
+	@Column(name = DURATION)
+	@JsonProperty(value = DURATION)
+	private long duration;
+
+	@Column(name = PASSING_RATE)
+	@JsonProperty(value = PASSING_RATE)
+	private double passingRate;
+
+	@JsonProperty(value = AVERAGE_PASSING_RATE)
+	private double averagePassingRate;
 
 	@JsonIgnore
 	@Column(name = TAG_VALUE)
@@ -46,6 +60,38 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	public void setValues(Map<String, String> values) {
 		this.values = values;
+	}
+
+	public Map<String, Integer> getTotalStatistics() {
+		return totalStatistics;
+	}
+
+	public void setTotalStatistics(Map<String, Integer> totalStatistics) {
+		this.totalStatistics = totalStatistics;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public double getPassingRate() {
+		return passingRate;
+	}
+
+	public void setPassingRate(double passingRate) {
+		this.passingRate = passingRate;
+	}
+
+	public double getAveragePassingRate() {
+		return averagePassingRate;
+	}
+
+	public void setAveragePassingRate(double averagePassingRate) {
+		this.averagePassingRate = averagePassingRate;
 	}
 
 	public String getTagValue() {

@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +38,7 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RE
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 import static org.jooq.impl.DSL.*;
 
 /**
@@ -291,8 +293,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
-				coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED)).cast(Double.class))
-						.div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2), 0).as(PERCENTAGE)
+				coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED))
+						.cast(Double.class)).div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2), 0).as(PERCENTAGE)
 		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch());
 	}
 
@@ -426,6 +428,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCHES_SUB_QUERY, NAME),
 				fieldName(LAUNCH.START_TIME),
+				coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_PASSED).cast(Double.class))
+						.div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2)).as(PASSING_RATE),
+				timestampDiff(fieldName(LAUNCH.END_TIME).cast(Timestamp.class),
+						(fieldName(LAUNCH.START_TIME).cast(Timestamp.class))
+				).as(DURATION),
 				FILTER.NAME.as(FILTER_NAME)
 		);
 
@@ -437,10 +444,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Query build for Product Status Widget failed"));
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
+		Map<String, List<LaunchesStatisticsContent>> productStatusContent = LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
 				.stream()
-				.collect(groupingBy(LaunchesStatisticsContent::getFilterName));
+				.collect(groupingBy(LaunchesStatisticsContent::getFilterName, LinkedHashMap::new, toList()));
 
+		productStatusContent.put(TOTAL, countFilterTotalStatistics(productStatusContent));
+
+		return productStatusContent;
 	}
 
 	@Override
@@ -468,9 +478,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			);
 		}
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
+		List<LaunchesStatisticsContent> productStatusStatisticsResult = LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
 				.fetch(), contentFields);
+
+		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
+		return productStatusStatisticsResult;
 	}
 
 	private List<LaunchesStatisticsContent> fetchProductStatusLaunchGroupedStatisticsWithTags(Filter filter, List<String> contentFields,
@@ -543,6 +556,44 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								SortOrder.ASC))
 						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
 
+	}
+
+	private LaunchesStatisticsContent countLaunchTotalStatistics(List<LaunchesStatisticsContent> launchesStatisticsResult) {
+		Map<String, Integer> total = launchesStatisticsResult.stream()
+				.flatMap(lsc -> lsc.getValues().entrySet().stream())
+				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
+
+		Double averagePassingRate = launchesStatisticsResult.stream().collect(averagingDouble(LaunchesStatisticsContent::getPassingRate));
+
+		LaunchesStatisticsContent launchesStatisticsContent = new LaunchesStatisticsContent();
+		launchesStatisticsContent.setTotalStatistics(total);
+
+		Double roundedAveragePassingRate = BigDecimal.valueOf(averagePassingRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		launchesStatisticsContent.setAveragePassingRate(roundedAveragePassingRate);
+
+		return launchesStatisticsContent;
+	}
+
+	private List<LaunchesStatisticsContent> countFilterTotalStatistics(
+			Map<String, List<LaunchesStatisticsContent>> launchesStatisticsResult) {
+		Map<String, Integer> total = launchesStatisticsResult.values()
+				.stream()
+				.flatMap(Collection::stream)
+				.flatMap(lsc -> lsc.getValues().entrySet().stream())
+				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
+
+		Double averagePassingRate = launchesStatisticsResult.values()
+				.stream()
+				.flatMap(Collection::stream)
+				.collect(averagingDouble(LaunchesStatisticsContent::getPassingRate));
+
+		LaunchesStatisticsContent launchesStatisticsContent = new LaunchesStatisticsContent();
+		launchesStatisticsContent.setTotalStatistics(total);
+
+		Double roundedAveragePassingRate = BigDecimal.valueOf(averagePassingRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		launchesStatisticsContent.setAveragePassingRate(roundedAveragePassingRate);
+
+		return Lists.newArrayList(launchesStatisticsContent);
 	}
 
 	private List<Field<?>> buildFieldsFromContentFields(List<String> contentFields) {

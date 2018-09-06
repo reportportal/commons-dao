@@ -96,5 +96,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String FILTER_NAME = "filter_name";
 	public static final String TAG_TABLE = "tag_table";
 	public static final String TAG_VALUES = "tag_values";
+	public static final String PASSING_RATE = "passing_rate";
+	public static final String SUM = "sum";
+	public static final String AVERAGE_PASSING_RATE = "average_passing_rate";
 
 }
