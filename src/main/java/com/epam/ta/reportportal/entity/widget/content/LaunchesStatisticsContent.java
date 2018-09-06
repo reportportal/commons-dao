@@ -29,14 +29,14 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	@Column(name = DURATION)
 	@JsonProperty(value = DURATION)
-	private long duration;
+	private Long duration;
 
 	@Column(name = PASSING_RATE)
 	@JsonProperty(value = PASSING_RATE)
-	private double passingRate;
+	private Double passingRate;
 
 	@JsonProperty(value = AVERAGE_PASSING_RATE)
-	private double averagePassingRate;
+	private Double averagePassingRate;
 
 	@JsonIgnore
 	@Column(name = TAG_VALUE)
@@ -70,27 +70,27 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 		this.totalStatistics = totalStatistics;
 	}
 
-	public long getDuration() {
+	public Long getDuration() {
 		return duration;
 	}
 
-	public void setDuration(long duration) {
+	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
 
-	public double getPassingRate() {
+	public Double getPassingRate() {
 		return passingRate;
 	}
 
-	public void setPassingRate(double passingRate) {
+	public void setPassingRate(Double passingRate) {
 		this.passingRate = passingRate;
 	}
 
-	public double getAveragePassingRate() {
+	public Double getAveragePassingRate() {
 		return averagePassingRate;
 	}
 
-	public void setAveragePassingRate(double averagePassingRate) {
+	public void setAveragePassingRate(Double averagePassingRate) {
 		this.averagePassingRate = averagePassingRate;
 	}
 
