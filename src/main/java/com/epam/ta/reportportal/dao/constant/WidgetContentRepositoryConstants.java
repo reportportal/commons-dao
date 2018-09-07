@@ -28,6 +28,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String ID = "id";
 	public static final String NUMBER = "number";
 	public static final String START_TIME = "start_time";
+	public static final String END_TIME = "end_time";
 
 	/* Most failed widget constants */
 	public static final String HISTORY = "history";
@@ -80,7 +81,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String SUBMITTER = "submitter";
 
 	/*Flaky cases table widget constants*/
-	public static final String UNIQUE_ID = "uniqueId";
+	public static final String UNIQUE_ID = "unique_id";
 	public static final String ITEM_NAME = "itemName";
 	public static final String STATUSES = "statuses";
 	public static final String SWITCH_FLAG = "switch_flag";

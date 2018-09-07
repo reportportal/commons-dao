@@ -199,4 +199,11 @@ public interface WidgetContentRepository {
 	 */
 	List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, List<String> tags,
 			Sort sort, boolean isLatest, int limit);
+
+	/**
+	 * @param filter        {@link Filter}
+	 * @param contentFields
+	 * @return
+	 */
+	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, List<String> contentFields);
 }

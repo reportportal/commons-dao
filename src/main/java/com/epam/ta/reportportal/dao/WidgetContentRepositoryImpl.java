@@ -5,6 +5,7 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
@@ -484,6 +485,25 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
 		return productStatusStatisticsResult;
+	}
+
+	@Override
+	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, List<String> contentFields) {
+		return dsl.select(fieldName(TEST_ITEM.ITEM_ID).as(ID),
+				fieldName(TEST_ITEM.UNIQUE_ID),
+				fieldName(TEST_ITEM.NAME),
+				fieldName(TEST_ITEM.TYPE),
+				fieldName(TEST_ITEM.START_TIME),
+				fieldName(TEST_ITEM_RESULTS.END_TIME),
+				fieldName(TEST_ITEM_RESULTS.DURATION),
+				fieldName(TEST_ITEM_RESULTS.STATUS)
+		)
+				.from(QueryBuilder.newBuilder(filter)
+						.addCondition(TEST_ITEM_RESULTS.STATUS.in(JStatusEnum.PASSED, JStatusEnum.FAILED))
+						.with(20)
+						.build())
+				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
+				.fetchInto(MostTimeConsumingTestCasesContent.class);
 	}
 
 	private List<LaunchesStatisticsContent> fetchProductStatusLaunchGroupedStatisticsWithTags(Filter filter, List<String> contentFields,

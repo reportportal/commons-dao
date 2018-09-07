@@ -6,10 +6,13 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -35,7 +38,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
+import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 
 /**
  * @author Ivan Budayeu
@@ -370,6 +375,17 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(result);
 	}
 
+	@Test
+	public void mostTimeConsumingTestCases() {
+		Filter filter = buildMostTimeConsumingFilter(1L);
+		filter = updateFilter(filter, "launch name", false);
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
+				buildMostTimeConsumingTestCases()
+		);
+
+		Assert.assertNotNull(mostTimeConsumingTestCasesContents);
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
@@ -410,7 +426,56 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(projectId),
 				"project_id"
 		));
+		return new Filter(1L, Ticket.class, conditionSet);
+	}
+
+	private Filter buildMostTimeConsumingFilter(Long projectId) {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+				false,
+				String.valueOf(projectId),
+				"project_id"
+		));
 		return new Filter(1L, TestItem.class, conditionSet);
+	}
+
+	private Filter updateFilter(Filter filter, String launchName, boolean includeMethodsFlag) {
+		filter = updateFilterWithLaunchName(filter, launchName);
+		filter = updateFilterWithTestItemTypes(filter, includeMethodsFlag);
+		return filter;
+	}
+
+	private Filter updateFilterWithLaunchName(Filter filter, String launchName) {
+		return filter.withCondition(new FilterCondition(Condition.EQUALS,
+				false,
+				String.valueOf(launchRepository.findLatestByNameAndFilter(launchName, filter)
+						.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
+						.getId()),
+				LAUNCH_ID
+		));
+	}
+
+	private Filter updateFilterWithTestItemTypes(Filter filter, boolean includeMethodsFlag) {
+		if (includeMethodsFlag) {
+			return updateFilterWithStepAndBeforeAfterMethods(filter);
+		} else {
+			return updateFilterWithStepTestItem(filter);
+		}
+	}
+
+	private Filter updateFilterWithStepTestItem(Filter filter) {
+		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, STEP.getLiteral(), "type"));
+	}
+
+	private Filter updateFilterWithStepAndBeforeAfterMethods(Filter filter) {
+		return filter.withCondition(new FilterCondition(Condition.IN,
+				false,
+				String.join(",", STEP.getLiteral(), BEFORE_METHOD.getLiteral(), AFTER_METHOD.getLiteral()),
+				"type"
+		));
+	}
+
+	private List<String> buildMostTimeConsumingTestCases() {
+		return Lists.newArrayList("statistics$executions$failed", "statistics$executions$passed");
 	}
 
 	private List<String> buildLaunchesTableContentFields() {

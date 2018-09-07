@@ -148,45 +148,54 @@ DECLARE   counter       INT = 0;
 BEGIN
   WHILE counter < 20 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
-    VALUES
-      ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT',
-       'FAILED');
+    VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT', 'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
---     INSERT INTO test_item (launch_id) VALUES (cur_launch_id);
---     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
---     INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id, launch_id)
---     VALUES (cur_suite_id, 'First suite', 'SUITE', now(), 'description', now(), 'uniqueId1', cur_launch_id);
---     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
---
---     INSERT INTO test_item (parent_id, launch_id) VALUES (cur_suite_id, cur_launch_id);
---     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
---     INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id, launch_id)
---     VALUES (cur_item_id, 'First test', 'TEST', now(), 'description', now(), 'uniqueId2', cur_launch_id);
---     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
---
---     WHILE step_counter < 30 LOOP
---       rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
---
---       INSERT INTO test_item (parent_id, launch_id) VALUES (cur_item_id, cur_launch_id);
---       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
---
---       INSERT INTO test_item (item_id, NAME, TYPE, start_time, description, last_modified, unique_id)
---       VALUES (cur_step_id, 'Step', 'STEP', now(), 'description', now(), 'uniqueId3');
---
---       INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, rand_status, 0.35, now());
---
---       UPDATE test_item_results
---       SET status = rand_status
---       WHERE result_id = cur_step_id;
---
---       IF rand_status = 'FAILED'
---       THEN
---         INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
---       END IF;
---
---       step_counter = step_counter + 1;
---     END LOOP;
+    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('First suite', 'SUITE', now(), 'description', now(), 'uniqueId1', 1);
+    cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
+
+    INSERT INTO test_item_results (result_id, status, duration, end_time)
+    VALUES (cur_suite_id, 'FAILED', 0.35, now());
+    --
+    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
+    VALUES ('First test', 'TEST', now(), 'description', now(), 'uniqueId2', cur_launch_id, cur_suite_id);
+    cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    UPDATE test_item
+    SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree)
+    where item_id = cur_item_id;
+
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
+    --
+    WHILE step_counter < 30 LOOP
+      rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
+      --
+      INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id)
+      VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId3', cur_item_id);
+      cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+      UPDATE test_item
+      SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
+      where item_id = cur_step_id;
+      --
+
+      --
+      INSERT INTO test_item_results (result_id, status, duration, end_time)
+      VALUES (cur_step_id, rand_status, 0.35, now());
+      --
+      UPDATE test_item_results SET status = rand_status WHERE result_id = cur_step_id;
+      --
+      IF rand_status = 'FAILED'
+      THEN
+        INSERT INTO issue (issue_id, issue_type, issue_description)
+        VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
+      END IF;
+      --
+      step_counter = step_counter + 1;
+    END LOOP;
     step_counter = 0;
     counter = counter + 1;
   END LOOP;
@@ -281,6 +290,27 @@ INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defe
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$AB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$PB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
+
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(614, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(614, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(615, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(615, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(616, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(616, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(617, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(617, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(618, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(618, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(619, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(619, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(620, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(620, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(621, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(621, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(622, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(622, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(623, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(613, 'statistics$executions$failed', 3);
 
 
 INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'product status 1', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD1');

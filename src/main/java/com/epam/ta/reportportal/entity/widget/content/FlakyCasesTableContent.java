@@ -2,8 +2,11 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
+
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
 
 /**
  * @author Ivan Budayeu
@@ -23,6 +26,7 @@ public class FlakyCasesTableContent implements Serializable {
 	private String itemName;
 
 	@JsonProperty(value = "unique_id")
+	@Column(name = UNIQUE_ID)
 	private String uniqueId;
 
 	public FlakyCasesTableContent() {
