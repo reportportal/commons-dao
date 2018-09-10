@@ -31,6 +31,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -73,8 +74,8 @@ public enum FilterTarget {
 					.from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.join(l)
-					.on(field(DSL.name(ID)).eq(l.ID))
+					.rightJoin(l)
+					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
 					.getQuery();
 		}
 	},

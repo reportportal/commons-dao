@@ -23,7 +23,7 @@ public class WidgetContentRepositoryConstants {
 	/*Constants for result query mapping*/
 	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;
-	public static final String LAUNCH_ID = "launchId";
+	public static final String LAUNCH_ID = "launch_id";
 	public static final String LAUNCH_NUMBER = "number";
 	public static final String START_TIME = "startTime";
 	public static final String NAME = "name";
