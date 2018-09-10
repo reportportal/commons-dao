@@ -1,17 +1,17 @@
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
 
 public class ProjectFilter extends Filter {
 
-	private ProjectFilter(Filter filter, String project) {
+	private ProjectFilter(Filter filter, Long projectId) {
 		super(filter.getTarget(), filter.getFilterConditions());
-		getFilterConditions().add(new FilterCondition(Condition.EQUALS, false, project, GeneralCriteriaConstant.PROJECT));
+		getFilterConditions().add(new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), PROJECT_ID));
 
 	}
 
-	public static Filter of(Filter filter, String project) {
-		return new ProjectFilter(filter, project);
+	public static Filter of(Filter filter, Long projectId) {
+		return new ProjectFilter(filter, projectId);
 	}
 
 }
