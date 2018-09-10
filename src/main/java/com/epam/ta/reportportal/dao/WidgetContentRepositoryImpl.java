@@ -488,7 +488,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, List<String> contentFields) {
+	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter) {
 		return dsl.select(fieldName(TEST_ITEM.ITEM_ID).as(ID),
 				fieldName(TEST_ITEM.UNIQUE_ID),
 				fieldName(TEST_ITEM.NAME),

@@ -379,9 +379,8 @@ public class WidgetContentRepositoryTest {
 	public void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name", false);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
-				buildMostTimeConsumingTestCases()
-		);
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
+				filter);
 
 		Assert.assertNotNull(mostTimeConsumingTestCasesContents);
 	}

@@ -202,8 +202,7 @@ public interface WidgetContentRepository {
 
 	/**
 	 * @param filter        {@link Filter}
-	 * @param contentFields
-	 * @return
+	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
-	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, List<String> contentFields);
+	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter);
 }
