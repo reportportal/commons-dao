@@ -11,6 +11,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.impl.DSL;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -94,6 +95,11 @@ public class CriteriaHolder {
 			BusinessRule.expect(parsedLong, FilterRules.numberIsPositive())
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid positive number", oneValue));
 			castedValue = parsedLong;
+		} else if(Timestamp.class.isAssignableFrom(getDataType())) {
+			/* Verify correct date */
+			BusinessRule.expect(oneValue, FilterRules.dateInMillis())
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue));
+			castedValue = new Timestamp(Long.parseLong(oneValue));
 		} else if (Date.class.isAssignableFrom(getDataType())) {
 			/* Verify correct date */
 			BusinessRule.expect(oneValue, FilterRules.dateInMillis())
