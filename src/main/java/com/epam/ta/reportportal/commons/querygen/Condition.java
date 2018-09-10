@@ -157,7 +157,27 @@ public enum Condition {
 	IN("in") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(filter.getSearchCriteria()).eq(any(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)));
+			return field(criteriaHolder.getQueryCriteria()).in(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
+		}
+
+		@Override
+		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
+			// object type validations is not required here
+		}
+
+		@Override
+		public Object[] castValue(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
+			return castArray(criteriaHolder, value, errorType);
+		}
+	},
+
+	/**
+	 * IN condition. Accepts filter value as comma-separated list
+	 */
+	EQUALS_ANY("ea") {
+		@Override
+		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
+			return field(criteriaHolder.getQueryCriteria()).eq(any(DSL.array(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))));
 		}
 
 		@Override

@@ -378,7 +378,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
-		filter = updateFilter(filter, "launch name", false);
+		filter = updateFilter(filter, "launch name", true);
 		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
 				filter);
 
@@ -466,7 +466,7 @@ public class WidgetContentRepositoryTest {
 	}
 
 	private Filter updateFilterWithStepAndBeforeAfterMethods(Filter filter) {
-		return filter.withCondition(new FilterCondition(Condition.IN,
+		return filter.withCondition(new FilterCondition(Condition.EQUALS_ANY,
 				false,
 				String.join(",", STEP.getLiteral(), BEFORE_METHOD.getLiteral(), AFTER_METHOD.getLiteral()),
 				"type"
