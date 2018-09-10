@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,8 @@ public enum FilterTarget {
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder(NAME, "name", String.class, false)
+			new CriteriaHolder(NAME, "name", String.class, false),
+			new CriteriaHolder("start_time", "l.start_time", Timestamp.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
