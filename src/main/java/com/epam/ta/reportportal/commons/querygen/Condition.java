@@ -61,7 +61,7 @@ public enum Condition {
 	NOT_EQUALS("ne") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(filter.getSearchCriteria()).ne(this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
+			return field(criteriaHolder.getQueryCriteria()).ne(this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
 		}
 
 		@Override
