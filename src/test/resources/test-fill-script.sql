@@ -98,7 +98,7 @@ INSERT INTO public.widget_option (widget_id, option, value) VALUES (12, 'filterN
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (8, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (4, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (17, 'login', 'default');
-INSERT INTO public.widget_option (widget_id, option, value) VALUES (19, 'PREFIX', 'build');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (19, 'prefix', 'build');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (21, 'launch_name_filter', 'launch name');
 
 INSERT INTO content_field (id, field) VALUES (2, 'executions');
