@@ -34,14 +34,16 @@ INSERT INTO ldap_synchronization_attributes(
 
 INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'com.epam.ta.reportportal.entity.launch.Launch', null);
 INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'com.epam.ta.reportportal.entity.Activity', null);
-INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'launch cumulative', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'YAHOOOOO');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'test item', 1, 'com.epam.ta.reportportal.entity.item.TestItem', 'YAHOOOOO');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'unique bug', 1, 'com.epam.ta.reportportal.entity.bts.Ticket', 'TICKET FILTER');
 
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
 INSERT INTO user_filter(id) VALUES (3);
+INSERT INTO user_filter(id) VALUES (4);
 
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (3, 'statistics$defects$no_defect$ND001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (1, 'statistics$defects$no_defect$ND001', 'DESC');
 
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
@@ -64,6 +66,7 @@ INSERT INTO widget (id, name, description, widget_type, items_count, project_id)
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (20, 'product status widget', 'description of widget', 'product_status', 2, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (21, 'most time consuming widget', 'description of widget', 'most_time_consuming', 20, 1);
 
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (2,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (4,1);
@@ -78,8 +81,9 @@ INSERT INTO widget_filter(widget_id, filter_id) VALUES (10,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (11,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (17,2);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (1,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,2);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (19,3);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,4);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (19,1);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (21,3);
 
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (1, 'filterName', 'New_filter');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (2, 'filterName', 'New_filter');
@@ -95,6 +99,7 @@ INSERT INTO public.widget_option (widget_id, option, value) VALUES (8, 'launch_n
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (4, 'launch_name_filter', 'launch name');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (17, 'login', 'default');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (19, 'PREFIX', 'build');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (21, 'launch_name_filter', 'launch name');
 
 INSERT INTO content_field (id, field) VALUES (2, 'executions');
 INSERT INTO content_field (id, field) VALUES (2, 'defects');
@@ -313,26 +318,26 @@ INSERT INTO statistics(item_id, s_field, s_counter) VALUES(623, 'statistics$exec
 INSERT INTO statistics(item_id, s_field, s_counter) VALUES(613, 'statistics$executions$failed', 3);
 
 
-INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'product status 1', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD1');
-INSERT INTO filter (id, name, project_id, target, description) VALUES (5, 'product status 2', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD2');
-INSERT INTO filter (id, name, project_id, target, description) VALUES (6, 'product status 3', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD3');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (5, 'product status 1', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD1');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (6, 'product status 2', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD2');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (7, 'product status 3', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD3');
 
-INSERT INTO user_filter(id) VALUES (4);
 INSERT INTO user_filter(id) VALUES (5);
 INSERT INTO user_filter(id) VALUES (6);
+INSERT INTO user_filter(id) VALUES (7);
 
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (4, 'statistics$defects$no_defect$ND001', 'DESC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defects$automation_bug$AB001', 'ASC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$system_issue$SI001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defects$no_defect$ND001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$automation_bug$AB001', 'ASC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (7, 'statistics$defects$system_issue$SI001', 'DESC');
 
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (4, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (4, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'LOWER_THAN', '3', 'statistics$defects$to_investigate$TI001', false);
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (6, 'GREATER_THAN', '11', 'statistics$executions$total', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (6, 'LOWER_THAN', '3', 'statistics$defects$to_investigate$TI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (7, 'GREATER_THAN', '11', 'statistics$executions$total', false);
 
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,4);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,5);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,6);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,7);
 
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (20, 'strategy', 'launch');
 

@@ -281,7 +281,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void uniqueBugStatistics() {
 
-		Filter filter = buildDefaultTestItemFilter(1L);
+		Filter filter = buildDefaultUniqueBugFilter(1L);
 
 		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, 3);
 
@@ -419,7 +419,7 @@ public class WidgetContentRepositoryTest {
 		return new Filter(1L, Activity.class, conditionSet);
 	}
 
-	private Filter buildDefaultTestItemFilter(Long projectId) {
+	private Filter buildDefaultUniqueBugFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
