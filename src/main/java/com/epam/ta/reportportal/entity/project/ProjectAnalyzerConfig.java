@@ -8,8 +8,6 @@ import java.io.Serializable;
 /**
  * @author Pavel Bortnik
  */
-@Entity
-@Table(name = "project_analyzer_configuration")
 public class ProjectAnalyzerConfig implements Serializable {
 
 	public static final int MIN_DOC_FREQ = 7;
@@ -17,26 +15,16 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public static final int MIN_SHOULD_MATCH = 80;
 	public static final int NUMBER_OF_LOG_LINES = 2;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(name = "min_doc_freq")
 	private int minDocFreq;
 
-	@Column(name = "min_term_freq")
 	private int minTermFreq;
 
-	@Column(name = "min_should_match")
 	private int minShouldMatch;
 
-	@Column(name = "number_of_log_lines")
 	private int numberOfLogLines;
 
-	@Column(name = "indexing_running")
 	private boolean indexingRunning;
 
-	@Column(name = "enabled")
 	private Boolean isAutoAnalyzerEnabled;
 
 	private AnalyzeMode analyzerMode;
@@ -51,12 +39,13 @@ public class ProjectAnalyzerConfig implements Serializable {
 		this.numberOfLogLines = numberOfLogLines;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines, boolean indexingRunning, Boolean isAutoAnalyzerEnabled) {
+		this.minDocFreq = minDocFreq;
+		this.minTermFreq = minTermFreq;
+		this.minShouldMatch = minShouldMatch;
+		this.numberOfLogLines = numberOfLogLines;
+		this.indexingRunning = indexingRunning;
+		this.isAutoAnalyzerEnabled = isAutoAnalyzerEnabled;
 	}
 
 	public Boolean getAutoAnalyzerEnabled() {
