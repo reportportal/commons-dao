@@ -32,13 +32,6 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public ProjectAnalyzerConfig() {
 	}
 
-	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines) {
-		this.minDocFreq = minDocFreq;
-		this.minTermFreq = minTermFreq;
-		this.minShouldMatch = minShouldMatch;
-		this.numberOfLogLines = numberOfLogLines;
-	}
-
 	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines, boolean indexingRunning, Boolean isAutoAnalyzerEnabled) {
 		this.minDocFreq = minDocFreq;
 		this.minTermFreq = minTermFreq;
