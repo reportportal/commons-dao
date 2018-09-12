@@ -17,12 +17,6 @@ public class Attribute implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "display_name")
-    private String displayName;
-
-    @Column(name = "attribute_type")
-    private String type;
-
     public Long getId() {
         return id;
     }
@@ -37,21 +31,5 @@ public class Attribute implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }
