@@ -3,4 +3,4 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: rpuser
     password: rppass
-    url: jdbc:postgresql://localhost:5432/reportportal
+    url: jdbc:postgresql://localhost:5435/reportportal

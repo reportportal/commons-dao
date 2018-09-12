@@ -47,6 +47,7 @@ public class EmailSenderCase implements Serializable {
 	@Column(name = "recipient")
 	private List<String> recipients;
 
+	@Column(name = "send_case")
 	private SendCase sendCase;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
