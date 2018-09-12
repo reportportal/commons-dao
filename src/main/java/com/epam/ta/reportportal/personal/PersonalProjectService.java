@@ -120,7 +120,6 @@ public final class PersonalProjectService {
 		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
 		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
 		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
-		project.setConfiguration(defaultConfig);
 		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
 		projectAnalyzerConfig.setMinDocFreq(ProjectAnalyzerConfig.MIN_DOC_FREQ);
 		projectAnalyzerConfig.setMinTermFreq(ProjectAnalyzerConfig.MIN_TERM_FREQ);
