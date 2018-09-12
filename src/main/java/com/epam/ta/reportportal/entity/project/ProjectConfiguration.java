@@ -49,7 +49,9 @@ public class ProjectConfiguration implements Serializable {
 																						   .indexingRunning(BooleanUtils.toBoolean(attributes.get(INDEXING_RUNNING.getValue())))
 																						   .isAutoAnalyzerEnabled(BooleanUtils.toBooleanObject(attributes.get(AUTO_ANALYZER_ENABLED.getValue())))
 																						   .build();
-			this.projectEmailConfig = new ProjectEmailConfig(BooleanUtils.toBooleanObject(attributes.get(EMAIL_ENABLED.getValue())), attributes.get(EMAIL_FROM.getValue()));
+			this.projectEmailConfig = new ProjectEmailConfig.ProjectEmailConfigBuilder().emailEnabled(BooleanUtils.toBooleanObject(attributes.get(EMAIL_ENABLED.getValue())))
+                                                                                        .from(attributes.get(EMAIL_FROM.getValue()))
+                                                                                        .build();
 		}
 	}
 

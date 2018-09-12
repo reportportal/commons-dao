@@ -61,4 +61,26 @@ public class ProjectEmailConfig implements Serializable {
 	public String toString() {
 		return "ProjectEmailConfig{emailEnabled=" + emailEnabled + ", from='" + from + '}';
 	}
+
+	public static class ProjectEmailConfigBuilder {
+
+		private Boolean emailEnabled;
+
+		private String from;
+
+		public ProjectEmailConfigBuilder emailEnabled(Boolean emailEnabled) {
+			this.emailEnabled = emailEnabled;
+			return this;
+		}
+
+		public ProjectEmailConfigBuilder from(String from) {
+			this.from = from;
+			return this;
+		}
+
+		public ProjectEmailConfig build() {
+			return new ProjectEmailConfig(emailEnabled, from);
+		}
+	}
+
 }
