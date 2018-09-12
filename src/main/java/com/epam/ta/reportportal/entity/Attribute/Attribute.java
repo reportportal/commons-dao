@@ -3,6 +3,9 @@ package com.epam.ta.reportportal.entity.Attribute;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * @author Andrey Plisunov
+ */
 @Entity
 @Table(name = "attribute")
 public class Attribute implements Serializable {
