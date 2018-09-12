@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.enums.EntryType;
-import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -28,23 +28,26 @@ public class ProjectConfiguration implements Serializable {
 
 	private ProjectAnalyzerConfig analyzerConfig;
 
+	private ProjectEmailConfig projectEmailConfig;
+
 	public ProjectConfiguration() {
 		this.analyzerConfig = new ProjectAnalyzerConfig();
 	}
 
 	public ProjectConfiguration(Set<ProjectAttribute> projectAttributes) {
 		if (CollectionUtils.isNotEmpty(projectAttributes)) {
-			Map<ProjectAttributeEnum, String> attributes = projectAttributes.stream().collect(Collectors.toMap(ProjectAttribute::getName, ProjectAttribute::getValue));
-			this.entryType = EntryType.getByName(attributes.get(ENTRY_TYPE));
-			this.interruptJobTime = attributes.get(INTERRUPT_JOB_TIME);
-			this.keepLogs = attributes.get(KEEP_LOGS);
-			this.keepScreenshots = attributes.get(KEEP_SCREENSHOTS);
-			this.analyzerConfig =  new ProjectAnalyzerConfig(getOptionValueOrDefault(attributes.get(MIN_DOC_FREQ), ProjectAnalyzerConfig.MIN_DOC_FREQ),
-															 getOptionValueOrDefault(attributes.get(MIN_TERM_FREQ), ProjectAnalyzerConfig.MIN_TERM_FREQ),
-															 getOptionValueOrDefault(attributes.get(MIN_SHOULD_MATCH), ProjectAnalyzerConfig.MIN_SHOULD_MATCH),
-															 getOptionValueOrDefault(attributes.get(NUMBER_OF_LOG_LINES), ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES),
-															 BooleanUtils.toBoolean(attributes.get(INDEXING_RUNNING)),
-															 BooleanUtils.toBooleanObject(attributes.get(AUTO_ANALYZER_ENABLED)));
+			Map<String, String> attributes = projectAttributes.stream().collect(Collectors.toMap(projectAttribute -> projectAttribute.getAttribute().getName(), ProjectAttribute::getValue));
+			this.entryType = EntryType.getByName(attributes.get(ENTRY_TYPE.getValue()));
+			this.interruptJobTime = attributes.get(INTERRUPT_JOB_TIME.getValue());
+			this.keepLogs = attributes.get(KEEP_LOGS.getValue());
+			this.keepScreenshots = attributes.get(KEEP_SCREENSHOTS.getValue());
+			this.analyzerConfig =  new ProjectAnalyzerConfig(getOptionValueOrDefault(attributes.get(MIN_DOC_FREQ.getValue()), ProjectAnalyzerConfig.MIN_DOC_FREQ),
+															 getOptionValueOrDefault(attributes.get(MIN_TERM_FREQ.getValue()), ProjectAnalyzerConfig.MIN_TERM_FREQ),
+															 getOptionValueOrDefault(attributes.get(MIN_SHOULD_MATCH.getValue()), ProjectAnalyzerConfig.MIN_SHOULD_MATCH),
+															 getOptionValueOrDefault(attributes.get(NUMBER_OF_LOG_LINES.getValue()), ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES),
+															 BooleanUtils.toBoolean(attributes.get(INDEXING_RUNNING.getValue())),
+															 BooleanUtils.toBooleanObject(attributes.get(AUTO_ANALYZER_ENABLED.getValue())));
+			this.projectEmailConfig = new ProjectEmailConfig(BooleanUtils.toBooleanObject(attributes.get(EMAIL_ENABLED.getValue())), attributes.get(EMAIL_FROM.getValue()));
 		}
 	}
 
@@ -87,6 +90,14 @@ public class ProjectConfiguration implements Serializable {
 
 	public String getKeepScreenshots() {
 		return keepScreenshots;
+	}
+
+	public ProjectEmailConfig getProjectEmailConfig() {
+		return projectEmailConfig;
+	}
+
+	public void setProjectEmailConfig(ProjectEmailConfig projectEmailConfig) {
+		this.projectEmailConfig = projectEmailConfig;
 	}
 
 	private int getOptionValueOrDefault(String optionValue, int defaultValue) {

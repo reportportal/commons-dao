@@ -4,7 +4,7 @@ import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.meta.MetaData;
-import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
+import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.User;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -60,10 +60,6 @@ public class Project implements Serializable {
 	@JsonBackReference
 	private List<DemoDataPostfix> demoDataPostfix;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "project_email_config_id")
-	private ProjectEmailConfig emailConfig;
-
 	@Column(name = "creation_date")
 	private Date creationDate;
 
@@ -72,9 +68,12 @@ public class Project implements Serializable {
 	private MetaData metadata;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name = "issue_type_project_configuration", joinColumns = { @JoinColumn(name = "configuration_id") }, inverseJoinColumns = {
+	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "issue_type_id") })
 	private List<IssueType> issueTypes;
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<EmailSenderCase> emailCases;
 
 
 	public Project(Long id, String name) {
@@ -136,14 +135,6 @@ public class Project implements Serializable {
 		this.integrations = integrations;
 	}
 
-	public void setEmailConfig(ProjectEmailConfig config) {
-		this.emailConfig = config;
-	}
-
-	public ProjectEmailConfig getEmailConfig() {
-		return emailConfig;
-	}
-
 	public Set<ProjectAttribute> getProjectAttributes() {
 		return projectAttributes;
 	}
@@ -158,6 +149,14 @@ public class Project implements Serializable {
 
 	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
 		this.projectAttributes = projectAttributes;
+	}
+
+	public Set<EmailSenderCase> getEmailCases() {
+		return emailCases;
+	}
+
+	public void setEmailCases(Set<EmailSenderCase> emailCases) {
+		this.emailCases = emailCases;
 	}
 
 	/**

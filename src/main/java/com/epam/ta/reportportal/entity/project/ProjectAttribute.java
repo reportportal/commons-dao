@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.Attribute.Attribute;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,8 +19,9 @@ public class ProjectAttribute implements Serializable {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "name")
-    private ProjectAttributeEnum name;
+    @ManyToOne
+    @JoinColumn(name = "attribute_id")
+    private Attribute attribute;
 
     @Column(name = "value")
     private String value;
@@ -37,12 +38,12 @@ public class ProjectAttribute implements Serializable {
         this.id = id;
     }
 
-    public ProjectAttributeEnum getName() {
-        return name;
+    public Attribute getAttribute() {
+        return attribute;
     }
 
-    public void setName(ProjectAttributeEnum name) {
-        this.name = name;
+    public void setAttribute(Attribute attribute) {
+        this.attribute = attribute;
     }
 
     public String getValue() {
