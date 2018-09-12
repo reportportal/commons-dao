@@ -104,4 +104,55 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public void setAnalyzerMode(AnalyzeMode analyzerMode) {
 		this.analyzerMode = analyzerMode;
 	}
+
+    public static class ProjectAnalyzerConfigBuilder {
+
+        private int minDocFreq;
+
+        private int minTermFreq;
+
+        private int minShouldMatch;
+
+        private int numberOfLogLines;
+
+        private boolean indexingRunning;
+
+        private Boolean isAutoAnalyzerEnabled;
+
+        public ProjectAnalyzerConfigBuilder minDocFreq(int minDocFreq) {
+            this.minDocFreq = minDocFreq;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder minTermFreq(int minTermFreq) {
+            this.minTermFreq = minTermFreq;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder minShouldMatch(int minShouldMatch) {
+            this.minShouldMatch = minShouldMatch;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder numberOfLogLines(int numberOfLogLines) {
+            this.numberOfLogLines = numberOfLogLines;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder indexingRunning(boolean indexingRunning) {
+            this.indexingRunning = indexingRunning;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder isAutoAnalyzerEnabled(Boolean isAutoAnalyzerEnabled) {
+            this.isAutoAnalyzerEnabled = isAutoAnalyzerEnabled;
+            return this;
+        }
+
+        public ProjectAnalyzerConfig build() {
+            return new ProjectAnalyzerConfig(minDocFreq, minTermFreq, minShouldMatch, numberOfLogLines, indexingRunning, isAutoAnalyzerEnabled);
+        }
+
+    }
+
 }

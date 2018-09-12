@@ -42,12 +42,13 @@ public class ProjectConfiguration implements Serializable {
 			this.interruptJobTime = attributes.get(INTERRUPT_JOB_TIME.getValue());
 			this.keepLogs = attributes.get(KEEP_LOGS.getValue());
 			this.keepScreenshots = attributes.get(KEEP_SCREENSHOTS.getValue());
-			this.analyzerConfig =  new ProjectAnalyzerConfig(NumberUtils.toInt(attributes.get(MIN_DOC_FREQ.getValue()), ProjectAnalyzerConfig.MIN_DOC_FREQ),
-                                                             NumberUtils.toInt(attributes.get(MIN_TERM_FREQ.getValue()), ProjectAnalyzerConfig.MIN_TERM_FREQ),
-                                                             NumberUtils.toInt(attributes.get(MIN_SHOULD_MATCH.getValue()), ProjectAnalyzerConfig.MIN_SHOULD_MATCH),
-                                                             NumberUtils.toInt(attributes.get(NUMBER_OF_LOG_LINES.getValue()), ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES),
-															 BooleanUtils.toBoolean(attributes.get(INDEXING_RUNNING.getValue())),
-															 BooleanUtils.toBooleanObject(attributes.get(AUTO_ANALYZER_ENABLED.getValue())));
+			this.analyzerConfig =  new ProjectAnalyzerConfig.ProjectAnalyzerConfigBuilder().minDocFreq(NumberUtils.toInt(attributes.get(MIN_DOC_FREQ.getValue()), ProjectAnalyzerConfig.MIN_DOC_FREQ))
+																						   .minTermFreq(NumberUtils.toInt(attributes.get(MIN_TERM_FREQ.getValue()), ProjectAnalyzerConfig.MIN_TERM_FREQ))
+																						   .minShouldMatch(NumberUtils.toInt(attributes.get(MIN_SHOULD_MATCH.getValue()), ProjectAnalyzerConfig.MIN_SHOULD_MATCH))
+																						   .numberOfLogLines(NumberUtils.toInt(attributes.get(NUMBER_OF_LOG_LINES.getValue()), ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES))
+																						   .indexingRunning(BooleanUtils.toBoolean(attributes.get(INDEXING_RUNNING.getValue())))
+																						   .isAutoAnalyzerEnabled(BooleanUtils.toBooleanObject(attributes.get(AUTO_ANALYZER_ENABLED.getValue())))
+																						   .build();
 			this.projectEmailConfig = new ProjectEmailConfig(BooleanUtils.toBooleanObject(attributes.get(EMAIL_ENABLED.getValue())), attributes.get(EMAIL_FROM.getValue()));
 		}
 	}
