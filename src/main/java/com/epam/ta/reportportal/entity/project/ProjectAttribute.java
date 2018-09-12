@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Andrey Plisunov
  */
 @Entity
-@Table(name = "project_attribute")
+@Table(name = "project_attribute", uniqueConstraints = @UniqueConstraint(columnNames = {"attribute_id", "project_id"}))
 public class ProjectAttribute implements Serializable {
 
     private static final long serialVersionUID = 1L;
