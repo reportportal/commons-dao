@@ -166,18 +166,18 @@ public interface WidgetContentRepository {
 	 */
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
 
-	/**
-	 * Loading cumulative trend statistics grouped by {@link LaunchTag#getValue()}
-	 *
-	 * @param filter        {@link Filter}
-	 * @param contentFields Custom fields for select query building
-	 * @param sort          {@link Sort}
-	 * @param tagPrefix     Prefix of the {@link LaunchTag#getValue()}
-	 * @param limit         Results limit
-	 * @return Map with {@link LaunchTag#getValue()} as key and list of {@link LaunchesStatisticsContent} as value
-	 */
-	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-			String tagPrefix, int limit);
+//	/**
+//	 * Loading cumulative trend statistics grouped by {@link LaunchTag#getValue()}
+//	 *
+//	 * @param filter        {@link Filter}
+//	 * @param contentFields Custom fields for select query building
+//	 * @param sort          {@link Sort}
+//	 * @param tagPrefix     Prefix of the {@link LaunchTag#getValue()}
+//	 * @param limit         Results limit
+//	 * @return Map with {@link LaunchTag#getValue()} as key and list of {@link LaunchesStatisticsContent} as value
+//	 */
+//	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+//			String tagPrefix, int limit);
 
 	/**
 	 * Loading the product status statistics grouped by one or more {@link Filter}

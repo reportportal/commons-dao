@@ -5,10 +5,7 @@ import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,8 +46,9 @@ public final class ResultFetcher {
 			.map(r -> {
 				NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
 
-				Map<String, String> executionMap = new LinkedHashMap<>();
-				executionMap.put(NOT_PASSED_STATISTICS_KEY, r.getValue(fieldName(PERCENTAGE), String.class));
+				Map<String, String> executionMap = Collections.singletonMap(NOT_PASSED_STATISTICS_KEY,
+						r.getValue(fieldName(PERCENTAGE), String.class)
+				);
 				res.setValues(executionMap);
 				return res;
 			})
