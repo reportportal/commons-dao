@@ -6,6 +6,9 @@ import org.jooq.TableField;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 
+/**
+ * @author Ivan Budaev
+ */
 public final class FieldNameTransformer {
 
 	public static Field<?> fieldName(TableField tableField) {

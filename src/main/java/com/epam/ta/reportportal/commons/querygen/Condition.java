@@ -136,7 +136,7 @@ public enum Condition {
 	EXISTS("ex") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(filter.getSearchCriteria()).isNotNull();
+			return field(criteriaHolder.getQueryCriteria()).isNotNull();
 		}
 
 		@Override
@@ -231,7 +231,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(filter.getSearchCriteria()).greaterThan(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria()).greaterThan(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -260,7 +260,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(filter.getSearchCriteria()).greaterOrEqual(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria()).greaterOrEqual(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -290,7 +290,7 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			return field(filter.getSearchCriteria()).lessThan(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria()).lessThan(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -320,7 +320,7 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			return field(filter.getSearchCriteria()).lessOrEqual(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria()).lessOrEqual(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));

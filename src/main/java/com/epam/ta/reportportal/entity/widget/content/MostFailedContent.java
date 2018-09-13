@@ -7,6 +7,9 @@ import java.util.List;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
+/**
+ * @author Ivan Budaev
+ */
 public class MostFailedContent implements Serializable {
 
 	@Column(name = "unique_id")

@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
 
+/**
+ * @author Ivan Budaev
+ */
 public final class ResultFetcher {
 
 	private ResultFetcher() {

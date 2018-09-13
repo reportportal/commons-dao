@@ -26,6 +26,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.ResultFetcher.LAUNCHES_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetcher.NOT_PASSED_CASES_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultSorter.TAG_SORT;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -398,10 +399,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(LAUNCH_TAG)
 				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
-						.on(LAUNCH_TAG.VALUE)
+						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
 						.from(LAUNCH_TAG)
 						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
-						.orderBy(LAUNCH_TAG.VALUE.desc())
+						.orderBy(charLength(LAUNCH_TAG.VALUE).desc(), LAUNCH_TAG.VALUE.desc())
 						.limit(limit)))
 				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
 						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
@@ -414,7 +415,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
 				.entrySet()
 				.stream()
-				.sorted(Map.Entry.comparingByKey())
+				.sorted(TAG_SORT)
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 	}
 
@@ -510,14 +511,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			List<Field<?>> fields, Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> selectFields = Lists.newArrayList(fields);
-		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(fieldName(LAUNCH_TAG.VALUE)).as(TAG_VALUES));
+		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
+				fieldName(LAUNCH_TAG.VALUE)
+		).as(TAG_VALUES));
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(selectFields)
 				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
 				.leftJoin(dsl.select(LAUNCH_TAG.LAUNCH_ID, LAUNCH_TAG.VALUE)
 						.from(LAUNCH_TAG)
 						.where(combinedTagCondition)
-						.orderBy(LAUNCH_TAG.VALUE)
+						.orderBy(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
 						.asTable(TAG_TABLE))
 				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.groupBy(fields)
@@ -554,7 +557,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> selectFields = Lists.newArrayList(fields);
-		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(fieldName(LAUNCH_TAG.VALUE)).as(TAG_VALUES));
+		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(
+				charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
+				fieldName(LAUNCH_TAG.VALUE)
+		).as(TAG_VALUES));
 
 		return dsl.select(selectFields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(isLatest).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
@@ -565,7 +571,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.leftJoin(dsl.select(LAUNCH_TAG.LAUNCH_ID, LAUNCH_TAG.VALUE)
 						.from(LAUNCH_TAG)
 						.where(combinedTagCondition)
-						.orderBy(LAUNCH_TAG.VALUE)
+						.orderBy(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
 						.asTable(TAG_TABLE))
 				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.where(conditions)

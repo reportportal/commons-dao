@@ -167,6 +167,8 @@ public interface WidgetContentRepository {
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
 
 	/**
+	 * Loading cumulative trend statistics grouped by {@link LaunchTag#getValue()}
+	 *
 	 * @param filter        {@link Filter}
 	 * @param contentFields Custom fields for select query building
 	 * @param sort          {@link Sort}
@@ -178,6 +180,8 @@ public interface WidgetContentRepository {
 			String tagPrefix, int limit);
 
 	/**
+	 * Loading the product status statistics grouped by one or more {@link Filter}
+	 *
 	 * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic with own sorting
 	 * @param contentFields     Custom fields for select query building
 	 * @param tags              List of the prefixes of the {@link LaunchTag#getValue()}
@@ -189,6 +193,8 @@ public interface WidgetContentRepository {
 			List<String> contentFields, List<String> tags, boolean isLatest, int limit);
 
 	/**
+	 * Loading the product status statistics grouped by {@link com.epam.ta.reportportal.entity.launch.Launch} with combined {@link Filter}
+	 *
 	 * @param filter        {@link Filter}
 	 * @param contentFields Custom fields for select query building
 	 * @param tags          List of the prefixes of the {@link LaunchTag#getValue()}
@@ -201,6 +207,8 @@ public interface WidgetContentRepository {
 			Sort sort, boolean isLatest, int limit);
 
 	/**
+	 * Loading the TOP-20 most time consuming test cases
+	 *
 	 * @param filter        {@link Filter}
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */

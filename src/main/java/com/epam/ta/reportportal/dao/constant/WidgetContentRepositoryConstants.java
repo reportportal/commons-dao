@@ -1,5 +1,8 @@
 package com.epam.ta.reportportal.dao.constant;
 
+/**
+ * @author Ivan Budaev
+ */
 public class WidgetContentRepositoryConstants {
 
 	public static final String EXECUTIONS_TOTAL = "statistics$executions$total";
