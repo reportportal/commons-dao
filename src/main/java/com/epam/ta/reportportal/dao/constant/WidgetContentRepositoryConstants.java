@@ -1,5 +1,8 @@
 package com.epam.ta.reportportal.dao.constant;
 
+/**
+ * @author Ivan Budaev
+ */
 public class WidgetContentRepositoryConstants {
 
 	public static final String EXECUTIONS_TOTAL = "statistics$executions$total";
@@ -23,13 +26,12 @@ public class WidgetContentRepositoryConstants {
 	/*Constants for result query mapping*/
 	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;
-	public static final String LAUNCH_ID = "launchId";
-	public static final String LAUNCH_NUMBER = "number";
-	public static final String START_TIME = "startTime";
+	public static final String LAUNCH_ID = "launch_id";
 	public static final String NAME = "name";
 	public static final String ID = "id";
-	public static final String ISSUE_NAME = "issueName";
-	public static final String ISSUE_COUNT = "issueCount";
+	public static final String NUMBER = "number";
+	public static final String START_TIME = "start_time";
+	public static final String END_TIME = "end_time";
 
 	/* Most failed widget constants */
 	public static final String HISTORY = "history";
@@ -45,12 +47,11 @@ public class WidgetContentRepositoryConstants {
 
 	/*Activity table widget constants*/
 	public static final String ACTIVITIES = "activities";
-	public static final String ACTIVITY_ID = "activityId";
-	public static final String ACTION_TYPE = "actionType";
+	public static final String ACTION_TYPE = "action_type";
 	public static final String ENTITY = "entity";
-	public static final String LAST_MODIFIED = "lastModified";
-	public static final String USER_LOGIN = "userLogin";
-	public static final String PROJECT_ID = "projectId";
+	public static final String LAST_MODIFIED = "last_modified";
+	public static final String USER_LOGIN = "user_login";
+	public static final String PROJECT_ID = "project_id";
 	public static final String PROJECT_NAME = "project_name";
 	public static final String ACTIVITY_TYPE = "activity_type";
 
@@ -83,10 +84,24 @@ public class WidgetContentRepositoryConstants {
 	public static final String SUBMITTER = "submitter";
 
 	/*Flaky cases table widget constants*/
-	public static final String UNIQUE_ID = "uniqueId";
+	public static final String UNIQUE_ID = "unique_id";
 	public static final String ITEM_NAME = "itemName";
 	public static final String STATUSES = "statuses";
 	public static final String SWITCH_FLAG = "switch_flag";
 	public static final String FLAKY_COUNT = "flakyCount";
+
+	/*Cumulative trend widget constants*/
+	public static final Integer LAUNCHES_COUNT = 100;
+	public static final String LAUNCHES_SUB_QUERY = "launches_sub_query";
+	public static final String LIKE_CONDITION_SYMBOL = "%";
+
+	/*Product status widget constants*/
+	public static final String TAG_VALUE = "tag_value";
+	public static final String FILTER_NAME = "filter_name";
+	public static final String TAG_TABLE = "tag_table";
+	public static final String TAG_VALUES = "tag_values";
+	public static final String PASSING_RATE = "passing_rate";
+	public static final String SUM = "sum";
+	public static final String AVERAGE_PASSING_RATE = "average_passing_rate";
 
 }

@@ -4,17 +4,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+
 /**
  * @author Ivan Budayeu
  */
 public class InvestigatedStatisticsResult extends AbstractLaunchStatisticsContent {
 
-	@Column(name = "to_investigate")
-	@JsonProperty(value = "to_investigate")
+	@Column(name = TO_INVESTIGATE)
+	@JsonProperty(value = TO_INVESTIGATE)
 	private double notInvestigatedPercentage;
 
-	@Column(name = "investigated")
-	@JsonProperty(value = "investigated")
+	@Column(name = INVESTIGATED)
+	@JsonProperty(value = INVESTIGATED)
 	private double investigatedPercentage;
 
 	public InvestigatedStatisticsResult() {

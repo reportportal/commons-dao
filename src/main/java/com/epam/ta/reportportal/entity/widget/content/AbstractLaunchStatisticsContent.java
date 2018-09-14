@@ -6,36 +6,38 @@ import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+
 /**
  * @author Ivan Budayeu
  */
 public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
-	@Column(name = "launch_id")
+	@Column(name = ID)
 	@JsonProperty(value = "id")
-	private Long launchId;
+	private Long id;
 
-	@Column(name = "number")
+	@Column(name = NUMBER)
 	@JsonProperty(value = "number")
 	private Integer number;
 
-	@Column(name = "name")
+	@Column(name = NAME)
 	@JsonProperty(value = "name")
 	private String name;
 
-	@Column(name = "start_time")
+	@Column(name = START_TIME)
 	@JsonProperty(value = "start_time")
 	private Timestamp startTime;
 
 	public AbstractLaunchStatisticsContent() {
 	}
 
-	public Long getLaunchId() {
-		return launchId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Integer getNumber() {
@@ -65,7 +67,7 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("AbstractLaunchStatisticsContent{");
-		sb.append("launchId=").append(launchId);
+		sb.append("id=").append(id);
 		sb.append(", number=").append(number);
 		sb.append(", name='").append(name).append('\'');
 		sb.append(", startTime=").append(startTime);

@@ -24,6 +24,8 @@ public class Filter implements Serializable, Queryable {
 
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
+
 	private FilterTarget target;
 
 	private Set<FilterCondition> filterConditions;
@@ -34,6 +36,23 @@ public class Filter implements Serializable, Queryable {
 
 	public Filter(Class<?> target, Set<FilterCondition> filterConditions) {
 		this(FilterTarget.findByClass(target), filterConditions);
+	}
+
+	public Filter(Long filterId, Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
+		this(filterId, FilterTarget.findByClass(target), Sets.newHashSet(new FilterCondition(condition, negative, value, searchCriteria)));
+	}
+
+	public Filter(Long filterId, Class<?> target, Set<FilterCondition> filterConditions) {
+		this(filterId, FilterTarget.findByClass(target), filterConditions);
+	}
+
+	protected Filter(Long id, FilterTarget target, Set<FilterCondition> filterConditions) {
+		Assert.notNull(id, "Filter id shouldn't be null");
+		Assert.notNull(target, "Filter target shouldn't be null");
+		Assert.notNull(filterConditions, "Conditions value shouldn't be null");
+		this.id = id;
+		this.target = target;
+		this.filterConditions = filterConditions;
 	}
 
 	protected Filter(FilterTarget target, Set<FilterCondition> filterConditions) {
@@ -49,6 +68,10 @@ public class Filter implements Serializable, Queryable {
 	@SuppressWarnings("unused")
 	private Filter() {
 
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	protected final FilterTarget getTarget() {
@@ -153,7 +176,7 @@ public class Filter implements Serializable, Queryable {
 			Set<FilterCondition> filterConditions = this.conditions.build();
 			Preconditions.checkArgument(null != target, "FilterTarget should not be null");
 			Preconditions.checkArgument(!filterConditions.isEmpty(), "Filter should contain at least one condition");
-			return new Filter(target, filterConditions);
+			return new Filter(FilterTarget.findByClass(target), filterConditions);
 		}
 	}
 

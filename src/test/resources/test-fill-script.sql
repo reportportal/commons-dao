@@ -34,11 +34,16 @@ INSERT INTO ldap_synchronization_attributes(
 
 INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'com.epam.ta.reportportal.entity.launch.Launch', null);
 INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'com.epam.ta.reportportal.entity.Activity', null);
+INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'test item', 1, 'com.epam.ta.reportportal.entity.item.TestItem', 'YAHOOOOO');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'unique bug', 1, 'com.epam.ta.reportportal.entity.bts.Ticket', 'TICKET FILTER');
 
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
+INSERT INTO user_filter(id) VALUES (3);
+INSERT INTO user_filter(id) VALUES (4);
 
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (1, 'statistics$defects$no_defect$ND001', 'DESC');
 
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
@@ -59,6 +64,9 @@ INSERT INTO widget (id, name, description, widget_type, items_count, project_id)
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (17, 'table', null, 'activity_stream', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (1, 'start', null, 'overall_statistics', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (20, 'product status widget', 'description of widget', 'product_status', 2, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (21, 'most time consuming widget', 'description of widget', 'most_time_consuming', 20, 1);
 
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (2,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (4,1);
@@ -73,21 +81,25 @@ INSERT INTO widget_filter(widget_id, filter_id) VALUES (10,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (11,1);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (17,2);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (1,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,2);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,4);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (19,1);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (21,3);
 
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (1, 1, 'filterName', 'New_filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (2, 2, 'filterName', 'New_filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (3, 3, 'filterName', 'New_filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (5, 5, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (6, 6, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (7, 7, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (9, 9, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (10, 10, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (11, 11, 'launch_name_filter', 'launch name');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (12, 12, 'filterName', 'New filter');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (8, 8, 'launch_name_filter', 'launch name');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (4, 4, 'launch_name_filter', 'launch name');
-INSERT INTO public.widget_option (id, widget_id, option, value) VALUES (17, 17, 'login', 'default');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (1, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (2, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (3, 'filterName', 'New_filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (5, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (6, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (7, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (9, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (10, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (11, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (12, 'filterName', 'New filter');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (8, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (4, 'launch_name_filter', 'launch name');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (17, 'login', 'default');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (19, 'prefix', 'build');
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (21, 'launch_name_filter', 'launch name');
 
 INSERT INTO content_field (id, field) VALUES (2, 'executions');
 INSERT INTO content_field (id, field) VALUES (2, 'defects');
@@ -103,6 +115,11 @@ INSERT INTO content_field (id, field) VALUES (12, 'defects');
 INSERT INTO content_field (id, field) VALUES (8, 'groups');
 INSERT INTO content_field (id, field) VALUES (12, 'columns');
 INSERT INTO content_field (id, field) VALUES (17, 'activity_type');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$automation_bug$AB001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$product_bug$PB001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$no_defect$ND001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$to_investigate$TI001');
+INSERT INTO content_field (id, field) VALUES (19, 'statistics$defects$system_issue$SI001');
 
 INSERT INTO issue_group(issue_group_id, issue_group) VALUES (1, 'TO_INVESTIGATE');
 INSERT INTO issue_group(issue_group_id, issue_group) VALUES (2, 'AUTOMATION_BUG');
@@ -136,45 +153,54 @@ DECLARE   counter       INT = 0;
 BEGIN
   WHILE counter < 20 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
-    VALUES
-      ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT',
-       'FAILED');
+    VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT', 'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
---     INSERT INTO test_item (launch_id) VALUES (cur_launch_id);
---     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
---     INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id, launch_id)
---     VALUES (cur_suite_id, 'First suite', 'SUITE', now(), 'description', now(), 'uniqueId1', cur_launch_id);
---     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
---
---     INSERT INTO test_item (parent_id, launch_id) VALUES (cur_suite_id, cur_launch_id);
---     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
---     INSERT INTO test_item (item_id, name, type, start_time, description, last_modified, unique_id, launch_id)
---     VALUES (cur_item_id, 'First test', 'TEST', now(), 'description', now(), 'uniqueId2', cur_launch_id);
---     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
---
---     WHILE step_counter < 30 LOOP
---       rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
---
---       INSERT INTO test_item (parent_id, launch_id) VALUES (cur_item_id, cur_launch_id);
---       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
---
---       INSERT INTO test_item (item_id, NAME, TYPE, start_time, description, last_modified, unique_id)
---       VALUES (cur_step_id, 'Step', 'STEP', now(), 'description', now(), 'uniqueId3');
---
---       INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, rand_status, 0.35, now());
---
---       UPDATE test_item_results
---       SET status = rand_status
---       WHERE result_id = cur_step_id;
---
---       IF rand_status = 'FAILED'
---       THEN
---         INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
---       END IF;
---
---       step_counter = step_counter + 1;
---     END LOOP;
+    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('First suite', 'SUITE', now(), 'description', now(), 'uniqueId1', 1);
+    cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
+
+    INSERT INTO test_item_results (result_id, status, duration, end_time)
+    VALUES (cur_suite_id, 'FAILED', 0.35, now());
+    --
+    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
+    VALUES ('First test', 'TEST', now(), 'description', now(), 'uniqueId2', cur_launch_id, cur_suite_id);
+    cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    UPDATE test_item
+    SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree)
+    where item_id = cur_item_id;
+
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
+    --
+    WHILE step_counter < 30 LOOP
+      rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
+      --
+      INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id)
+      VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId3', cur_item_id);
+      cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+      UPDATE test_item
+      SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
+      where item_id = cur_step_id;
+      --
+
+      --
+      INSERT INTO test_item_results (result_id, status, duration, end_time)
+      VALUES (cur_step_id, rand_status, 0.35, now());
+      --
+      UPDATE test_item_results SET status = rand_status WHERE result_id = cur_step_id;
+      --
+      IF rand_status = 'FAILED'
+      THEN
+        INSERT INTO issue (issue_id, issue_type, issue_description)
+        VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
+      END IF;
+      --
+      step_counter = step_counter + 1;
+    END LOOP;
     step_counter = 0;
     counter = counter + 1;
   END LOOP;
@@ -269,6 +295,86 @@ INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defe
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$AB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$PB001', 2);
 INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
+
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(614, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(614, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(615, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(615, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(616, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(616, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(617, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(617, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(618, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(618, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(619, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(619, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(620, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(620, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(621, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(621, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(622, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(622, 'statistics$executions$failed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(623, 'statistics$executions$passed', 3);
+INSERT INTO statistics(item_id, s_field, s_counter) VALUES(613, 'statistics$executions$failed', 3);
+
+
+INSERT INTO filter (id, name, project_id, target, description) VALUES (5, 'product status 1', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD1');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (6, 'product status 2', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD2');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (7, 'product status 3', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD3');
+
+INSERT INTO user_filter(id) VALUES (5);
+INSERT INTO user_filter(id) VALUES (6);
+INSERT INTO user_filter(id) VALUES (7);
+
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defects$no_defect$ND001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$automation_bug$AB001', 'ASC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (7, 'statistics$defects$system_issue$SI001', 'DESC');
+
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (6, 'LOWER_THAN', '3', 'statistics$defects$to_investigate$TI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (7, 'GREATER_THAN', '11', 'statistics$executions$total', false);
+
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,5);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,6);
+INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,7);
+
+INSERT INTO public.widget_option (widget_id, option, value) VALUES (20, 'strategy', 'launch');
+
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$automation_bug$AB001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$product_bug$PB001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$no_defect$ND001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$to_investigate$TI001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$system_issue$SI001');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$system_issue$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$no_defect$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$product_bug$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$automation_bug$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$defects$to_investigate$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$total');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$failed');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$skipped');
+INSERT INTO content_field (id, field) VALUES (20, 'statistics$executions$passed');
+
+
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 1);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 1);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 1);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qwerty', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qqqqqq', 2);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qwerty', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qqqqqq', 3);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.1', 4);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.2', 4);
+INSERT INTO launch_tag(value, launch_id) VALUES('build:3.10.3', 4);
+INSERT INTO launch_tag(value, launch_id) VALUES('type:qwerty', 4);
+
 
 
 INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES (1, 'LAUNCH', 'CREATE_LAUNCH', 1, '2018-08-23 15:31:00');

@@ -4,17 +4,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+
 /**
  * @author Ivan Budayeu
  */
 public class CasesTrendContent extends AbstractLaunchStatisticsContent {
 
-	@Column(name = "delta")
-	@JsonProperty(value = "delta")
+	@Column(name = DELTA)
+	@JsonProperty(value = DELTA)
 	private int delta;
 
-	@Column(name = "statistics$executions$total")
-	@JsonProperty(value = "statistics$executions$total")
+	@Column(name = EXECUTIONS_TOTAL)
+	@JsonProperty(value = EXECUTIONS_TOTAL)
 	private int total;
 
 	public CasesTrendContent() {

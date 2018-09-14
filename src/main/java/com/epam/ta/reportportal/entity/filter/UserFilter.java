@@ -39,11 +39,11 @@ import java.util.Set;
 @Table(name = "user_filter", schema = "public")
 public class UserFilter extends Queryable implements Serializable {
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")
 	private Set<FilterCondition> filterCondition = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")
 	private Set<FilterSort> filterSorts = Sets.newLinkedHashSet();
 

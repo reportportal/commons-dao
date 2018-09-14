@@ -6,17 +6,19 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
 import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
+import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 
 /**
  * @author Ivan Budayeu
@@ -52,18 +57,18 @@ public class WidgetContentRepositoryTest {
 	@Autowired
 	private LaunchRepository launchRepository;
 
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
-	}
+//	@BeforeClass
+//	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
+//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+//		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-create-script.sql");
+//		runSqlScript("/test-fill-script.sql");
+//	}
+//
+//	@AfterClass
+//	public static void destroy() throws SQLException, IOException, SqlToolError {
+//		runSqlScript("/test-dropall-script.sql");
+//	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
 		try (Connection connection = getConnection()) {
@@ -265,7 +270,7 @@ public class WidgetContentRepositoryTest {
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "login"))
 				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), "action"));
 
-		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, contentFields, sort, 4);
+		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
 
 		Assert.assertNotNull(activityContentList);
 		Assert.assertEquals(4, activityContentList.size());
@@ -274,7 +279,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void uniqueBugStatistics() {
 
-		Filter filter = buildDefaultTestItemFilter(1L);
+		Filter filter = buildDefaultUniqueBugFilter(1L);
 
 		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, 3);
 
@@ -292,6 +297,92 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(flakyCasesStatistics);
 	}
 
+//	@Test
+//	public void cumulativeTrendChart() {
+//		Filter filter = buildDefaultFilter(1L);
+//		List<String> contentFields = buildContentFields();
+//
+//		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
+//
+//		Sort sort = Sort.by(orderings);
+//		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+//				contentFields,
+//				sort,
+//				"build",
+//				4
+//		);
+//
+//		Assert.assertNotNull(launchesStatisticsContents);
+//	}
+
+	@Test
+	public void productStatusFilterGroupedWidget() {
+
+		List<Sort.Order> firstOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+		List<Sort.Order> secondOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, "statistics$defects$automation_bug$AB001"));
+
+		Sort firstSort = Sort.by(firstOrdering);
+		Sort secondSort = Sort.by(secondOrdering);
+
+		Map<Filter, Sort> filterSortMapping = Maps.newLinkedHashMap();
+		filterSortMapping.put(buildDefaultFilter(1L), firstSort);
+		filterSortMapping.put(buildDefaultTestFilter(1L), secondSort);
+
+		List<String> tagContentFields = buildProductStatusContentFields().stream()
+				.filter(s -> s.startsWith("tag"))
+				.map(tag -> tag.split("\\$")[1])
+				.collect(Collectors.toList());
+		List<String> contentFields = buildProductStatusContentFields().stream()
+				.filter(s -> !s.startsWith("tag"))
+				.collect(Collectors.toList());
+
+		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+				contentFields,
+				tagContentFields,
+				false,
+				10
+		);
+
+		Assert.assertNotNull(result);
+	}
+
+	@Test
+	public void productStatusLaunchGroupedWidget() {
+		Filter filter = buildDefaultTestFilter(1L);
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+
+		Sort sort = Sort.by(orderings);
+
+		List<String> tagContentFields = buildProductStatusContentFields().stream()
+				.filter(s -> s.startsWith("tag"))
+				.map(tag -> tag.split("\\$")[1])
+				.collect(Collectors.toList());
+		List<String> contentFields = buildProductStatusContentFields().stream()
+				.filter(s -> !s.startsWith("tag"))
+				.collect(Collectors.toList());
+
+		List<LaunchesStatisticsContent> result = widgetContentRepository.productStatusGroupedByLaunchesStatistics(filter,
+				contentFields,
+				tagContentFields,
+				sort,
+				false,
+				10
+		);
+
+		Assert.assertNotNull(result);
+	}
+
+	@Test
+	public void mostTimeConsumingTestCases() {
+		Filter filter = buildMostTimeConsumingFilter(1L);
+		filter = updateFilter(filter, "launch name", true);
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
+				filter);
+
+		Assert.assertNotNull(mostTimeConsumingTestCasesContents);
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
@@ -301,7 +392,20 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
 		);
-		return new Filter(Launch.class, conditionSet);
+		return new Filter(2L, Launch.class, conditionSet);
+	}
+
+	private Filter buildDefaultTestFilter(Long projectId) {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						"project_id"
+				),
+				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
+				new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "12", "statistics$executions$total")
+		);
+		return new Filter(3L, Launch.class, conditionSet);
 	}
 
 	private Filter buildDefaultActivityFilter(Long projectId) {
@@ -310,16 +414,65 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(projectId),
 				"project_id"
 		));
-		return new Filter(Activity.class, conditionSet);
+		return new Filter(1L, Activity.class, conditionSet);
 	}
 
-	private Filter buildDefaultTestItemFilter(Long projectId) {
+	private Filter buildDefaultUniqueBugFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
 				"project_id"
 		));
-		return new Filter(TestItem.class, conditionSet);
+		return new Filter(1L, Ticket.class, conditionSet);
+	}
+
+	private Filter buildMostTimeConsumingFilter(Long projectId) {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+				false,
+				String.valueOf(projectId),
+				"project_id"
+		));
+		return new Filter(1L, TestItem.class, conditionSet);
+	}
+
+	private Filter updateFilter(Filter filter, String launchName, boolean includeMethodsFlag) {
+		filter = updateFilterWithLaunchName(filter, launchName);
+		filter = updateFilterWithTestItemTypes(filter, includeMethodsFlag);
+		return filter;
+	}
+
+	private Filter updateFilterWithLaunchName(Filter filter, String launchName) {
+		return filter.withCondition(new FilterCondition(Condition.EQUALS,
+				false,
+				String.valueOf(launchRepository.findLatestByNameAndFilter(launchName, filter)
+						.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
+						.getId()),
+				LAUNCH_ID
+		));
+	}
+
+	private Filter updateFilterWithTestItemTypes(Filter filter, boolean includeMethodsFlag) {
+		if (includeMethodsFlag) {
+			return updateFilterWithStepAndBeforeAfterMethods(filter);
+		} else {
+			return updateFilterWithStepTestItem(filter);
+		}
+	}
+
+	private Filter updateFilterWithStepTestItem(Filter filter) {
+		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, STEP.getLiteral(), "type"));
+	}
+
+	private Filter updateFilterWithStepAndBeforeAfterMethods(Filter filter) {
+		return filter.withCondition(new FilterCondition(Condition.EQUALS_ANY,
+				false,
+				String.join(",", STEP.getLiteral(), BEFORE_METHOD.getLiteral(), AFTER_METHOD.getLiteral()),
+				"type"
+		));
+	}
+
+	private List<String> buildMostTimeConsumingTestCases() {
+		return Lists.newArrayList("statistics$executions$failed", "statistics$executions$passed");
 	}
 
 	private List<String> buildLaunchesTableContentFields() {
@@ -375,6 +528,26 @@ public class WidgetContentRepositoryTest {
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
 				"statistics$executions$total"
+		);
+	}
+
+	private List<String> buildProductStatusContentFields() {
+		return Lists.newArrayList("statistics$defects$no_defect$ND001",
+				"statistics$defects$product_bug$PB001",
+				"statistics$defects$automation_bug$AB001",
+				"statistics$defects$system_issue$SI001",
+				"statistics$defects$to_investigate$TI001",
+				"statistics$executions$failed",
+				"statistics$executions$skipped",
+				"statistics$executions$total",
+				"statistics$defects$no_defect$total",
+				"statistics$defects$product_bug$total",
+				"statistics$defects$automation_bug$total",
+				"statistics$defects$system_issue$total",
+				"statistics$defects$to_investigate$total",
+				"tag$build",
+				"tag$check"
+
 		);
 	}
 

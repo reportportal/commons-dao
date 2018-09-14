@@ -48,6 +48,7 @@ public enum WidgetType {
 	PASSING_RATE_SUMMARY("passing_rate_summary"),
 	PASSING_RATE_PER_LAUNCH("passing_rate_per_launch"),
 	PRODUCT_STATUS("product_status"),
+	MOST_TIME_CONSUMING("most_time_consuming"),
 	CUMULATIVE("cumulative");
 
 	private final String type;
