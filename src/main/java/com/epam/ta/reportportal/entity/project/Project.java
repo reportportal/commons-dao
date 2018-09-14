@@ -2,10 +2,12 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.meta.MetaData;
+import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -42,8 +44,13 @@ public class Project implements Serializable {
 	@Column(name = "additional_info")
 	private String addInfo;
 
-	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
+	@Transient
+	@JsonSerialize
 	private ProjectConfiguration configuration;
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Set<ProjectAttribute> projectAttributes;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonBackReference
@@ -60,16 +67,21 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private MetaData metadata;
 
+	@ManyToMany(cascade = { CascadeType.ALL })
+	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "issue_type_id") })
+	private List<IssueType> issueTypes;
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<EmailSenderCase> emailCases;
+
+
 	public Project(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 
 	public Project() {
-	}
-
-	public static long getSerialVersionUID() {
-		return serialVersionUID;
 	}
 
 	public Date getCreationDate() {
@@ -123,13 +135,37 @@ public class Project implements Serializable {
 		this.integrations = integrations;
 	}
 
+	public Set<ProjectAttribute> getProjectAttributes() {
+		return projectAttributes;
+	}
+
+	public List<IssueType> getIssueTypes() {
+		return issueTypes;
+	}
+
+	public void setIssueTypes(List<IssueType> issueTypes) {
+		this.issueTypes = issueTypes;
+	}
+
+	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
+		this.projectAttributes = projectAttributes;
+	}
+
+	public Set<EmailSenderCase> getEmailCases() {
+		return emailCases;
+	}
+
+	public void setEmailCases(Set<EmailSenderCase> emailCases) {
+		this.emailCases = emailCases;
+	}
+
 	/**
 	 * NULL-safe getter
 	 *
 	 * @return the configuration
 	 */
 	public ProjectConfiguration getConfiguration() {
-		return configuration == null ? configuration = new ProjectConfiguration() : configuration;
+		return new ProjectConfiguration(this.projectAttributes);
 	}
 
 	/**

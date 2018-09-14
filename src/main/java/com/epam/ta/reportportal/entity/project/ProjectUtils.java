@@ -62,9 +62,9 @@ public class ProjectUtils {
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
 		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
-		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM, Sets.newHashSet(defaultOne));
-		defaultOne.setProjectEmailConfig(config);
-		project.getConfiguration().setEmailConfig(config);
+		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM);
+		defaultOne.setProject(project);
+		project.getConfiguration().setProjectEmailConfig(config);
 		return project;
 	}
 
@@ -80,14 +80,14 @@ public class ProjectUtils {
 			Set<String> toExclude = stream(users.spliterator(), false).map(
 					user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
-			Set<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+			Set<EmailSenderCase> cases = project.getEmailCases();
 			if (null != cases) {
 				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
 					List<String> saved = c.getRecipients();
 					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(toList()));
 				});
-				project.getConfiguration().getEmailConfig().setEmailCases(cases);
+				project.setEmailCases(cases);
 			}
 		}
 		return project;
@@ -102,7 +102,7 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
-		Set<EmailSenderCase> cases = project.getConfiguration().getEmailConfig().getEmailCases();
+		Set<EmailSenderCase> cases = project.getEmailCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.stream().forEach(c -> {
 				List<String> saved = c.getRecipients();
@@ -111,7 +111,7 @@ public class ProjectUtils {
 					c.getRecipients().add(newEmail);
 				}
 			});
-			project.getConfiguration().getEmailConfig().setEmailCases(cases);
+			project.setEmailCases(cases);
 		}
 		return project;
 	}

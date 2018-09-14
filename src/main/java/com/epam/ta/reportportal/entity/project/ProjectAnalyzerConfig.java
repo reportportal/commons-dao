@@ -8,8 +8,6 @@ import java.io.Serializable;
 /**
  * @author Pavel Bortnik
  */
-@Entity
-@Table(name = "project_analyzer_configuration")
 public class ProjectAnalyzerConfig implements Serializable {
 
 	public static final int MIN_DOC_FREQ = 7;
@@ -17,26 +15,16 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public static final int MIN_SHOULD_MATCH = 80;
 	public static final int NUMBER_OF_LOG_LINES = 2;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(name = "min_doc_freq")
 	private int minDocFreq;
 
-	@Column(name = "min_term_freq")
 	private int minTermFreq;
 
-	@Column(name = "min_should_match")
 	private int minShouldMatch;
 
-	@Column(name = "number_of_log_lines")
 	private int numberOfLogLines;
 
-	@Column(name = "indexing_running")
 	private boolean indexingRunning;
 
-	@Column(name = "enabled")
 	private Boolean isAutoAnalyzerEnabled;
 
 	private AnalyzeMode analyzerMode;
@@ -44,19 +32,13 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public ProjectAnalyzerConfig() {
 	}
 
-	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines) {
+	public ProjectAnalyzerConfig(int minDocFreq, int minTermFreq, int minShouldMatch, int numberOfLogLines, boolean indexingRunning, Boolean isAutoAnalyzerEnabled) {
 		this.minDocFreq = minDocFreq;
 		this.minTermFreq = minTermFreq;
 		this.minShouldMatch = minShouldMatch;
 		this.numberOfLogLines = numberOfLogLines;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+		this.indexingRunning = indexingRunning;
+		this.isAutoAnalyzerEnabled = isAutoAnalyzerEnabled;
 	}
 
 	public Boolean getAutoAnalyzerEnabled() {
@@ -122,4 +104,55 @@ public class ProjectAnalyzerConfig implements Serializable {
 	public void setAnalyzerMode(AnalyzeMode analyzerMode) {
 		this.analyzerMode = analyzerMode;
 	}
+
+    public static class ProjectAnalyzerConfigBuilder {
+
+        private int minDocFreq;
+
+        private int minTermFreq;
+
+        private int minShouldMatch;
+
+        private int numberOfLogLines;
+
+        private boolean indexingRunning;
+
+        private Boolean isAutoAnalyzerEnabled;
+
+        public ProjectAnalyzerConfigBuilder minDocFreq(int minDocFreq) {
+            this.minDocFreq = minDocFreq;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder minTermFreq(int minTermFreq) {
+            this.minTermFreq = minTermFreq;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder minShouldMatch(int minShouldMatch) {
+            this.minShouldMatch = minShouldMatch;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder numberOfLogLines(int numberOfLogLines) {
+            this.numberOfLogLines = numberOfLogLines;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder indexingRunning(boolean indexingRunning) {
+            this.indexingRunning = indexingRunning;
+            return this;
+        }
+
+        public ProjectAnalyzerConfigBuilder isAutoAnalyzerEnabled(Boolean isAutoAnalyzerEnabled) {
+            this.isAutoAnalyzerEnabled = isAutoAnalyzerEnabled;
+            return this;
+        }
+
+        public ProjectAnalyzerConfig build() {
+            return new ProjectAnalyzerConfig(minDocFreq, minTermFreq, minShouldMatch, numberOfLogLines, indexingRunning, isAutoAnalyzerEnabled);
+        }
+
+    }
+
 }

@@ -21,45 +21,24 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @author Ivan Budayeu
  */
-@Entity
-@Table(name = "project_email_configuration")
 public class ProjectEmailConfig implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@Column(name = "enabled")
 	private Boolean emailEnabled;
 
-	@Column(name = "email_from")
 	private String from;
-
-	@OneToMany(mappedBy = "projectEmailConfig", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<EmailSenderCase> emailCases;
 
 	public ProjectEmailConfig() {
 	}
 
-	public ProjectEmailConfig(Boolean emailEnabled, String from, Set<EmailSenderCase> emailCases) {
+	public ProjectEmailConfig(Boolean emailEnabled, String from) {
 		this.emailEnabled = emailEnabled;
 		this.from = from;
-		this.emailCases = emailCases;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Boolean getEmailEnabled() {
@@ -78,17 +57,30 @@ public class ProjectEmailConfig implements Serializable {
 		this.from = from;
 	}
 
-	public Set<EmailSenderCase> getEmailCases() {
-		return emailCases;
-	}
-
-	public void setEmailCases(Set<EmailSenderCase> emailCases) {
-		this.emailCases = emailCases;
-	}
-
 	@Override
 	public String toString() {
-		return "ProjectEmailConfig{" + "id=" + id + ", emailEnabled=" + emailEnabled + ", from='" + from + '\'' + ", emailCases="
-				+ emailCases + '}';
+		return "ProjectEmailConfig{emailEnabled=" + emailEnabled + ", from='" + from + '}';
 	}
+
+	public static class ProjectEmailConfigBuilder {
+
+		private Boolean emailEnabled;
+
+		private String from;
+
+		public ProjectEmailConfigBuilder emailEnabled(Boolean emailEnabled) {
+			this.emailEnabled = emailEnabled;
+			return this;
+		}
+
+		public ProjectEmailConfigBuilder from(String from) {
+			this.from = from;
+			return this;
+		}
+
+		public ProjectEmailConfig build() {
+			return new ProjectEmailConfig(emailEnabled, from);
+		}
+	}
+
 }

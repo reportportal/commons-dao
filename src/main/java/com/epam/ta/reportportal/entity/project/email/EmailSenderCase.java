@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.entity.project.email;
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
+import com.epam.ta.reportportal.entity.project.Project;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,6 +47,7 @@ public class EmailSenderCase implements Serializable {
 	@Column(name = "recipient")
 	private List<String> recipients;
 
+	@Column(name = "send_case")
 	private SendCase sendCase;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -56,8 +58,8 @@ public class EmailSenderCase implements Serializable {
 	private Set<LaunchTag> tags;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_email_config_id", nullable = false)
-	private ProjectEmailConfig projectEmailConfig;
+	@JoinColumn(name = "project_id", nullable = false)
+	private Project project;
 
 	public EmailSenderCase() {
 	}
@@ -85,12 +87,12 @@ public class EmailSenderCase implements Serializable {
 		this.recipients = recipients;
 	}
 
-	public ProjectEmailConfig getProjectEmailConfig() {
-		return projectEmailConfig;
+	public Project getProject() {
+		return project;
 	}
 
-	public void setProjectEmailConfig(ProjectEmailConfig projectEmailConfig) {
-		this.projectEmailConfig = projectEmailConfig;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public Set<Launch> getLaunches() {

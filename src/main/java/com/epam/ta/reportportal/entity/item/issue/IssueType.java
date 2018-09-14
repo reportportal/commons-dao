@@ -22,7 +22,7 @@
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.project.ProjectConfiguration;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -59,7 +59,7 @@ public class IssueType implements Serializable {
 	private String hexColor;
 
 	@ManyToMany(mappedBy = "issueTypes")
-	private List<ProjectConfiguration> projectConfigurations;
+	private List<Project> projects;
 
 	public IssueType() {
 	}
@@ -120,11 +120,11 @@ public class IssueType implements Serializable {
 		this.hexColor = hexColor;
 	}
 
-	public List<ProjectConfiguration> getProjectConfigurations() {
-		return projectConfigurations;
+	public List<Project> getProjects() {
+		return projects;
 	}
 
-	public void setProjectConfigurations(List<ProjectConfiguration> projectConfigurations) {
-		this.projectConfigurations = projectConfigurations;
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
 	}
 }
