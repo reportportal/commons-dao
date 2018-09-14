@@ -33,11 +33,13 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -89,6 +91,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Autowired
 	public void setDsl(DSLContext dsl) {
 		this.dsl = dsl;
+	}
+
+	@Override
+	public List<TestItem> selectAllDescendants(Long itemId) {
+		return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId)).fetch(TEST_ITEM_FETCH);
+	}
+
+	@Override
+	public List<TestItem> selectAllDescendantsWithChildren(Long itemId) {
+		JTestItem childTestItem = JTestItem.TEST_ITEM.as("cti");
+		return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId))
+				.and(DSL.exists(DSL.selectOne()
+						.from(TEST_ITEM)
+						.join(childTestItem)
+						.on(TEST_ITEM.ITEM_ID.eq(childTestItem.PARENT_ID))
+						.where(TEST_ITEM.PARENT_ID.eq(itemId))))
+				.fetch(TEST_ITEM_FETCH);
 	}
 
 	@Override
