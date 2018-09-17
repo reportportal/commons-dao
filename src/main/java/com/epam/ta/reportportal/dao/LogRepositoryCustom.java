@@ -21,7 +21,10 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.log.Log;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -49,4 +52,13 @@ public interface LogRepositoryCustom  extends FilterableRepository<Log>{
 	 * @return
 	 */
 	List<Log> findByTestItemId(Long itemId, int limit, boolean isLoadBinaryData);
+
+	/**
+	 * Load logs page with specified filter
+	 *
+	 * @param filter
+	 * @param pageable
+	 * @return
+	 */
+	Page<Log> findByFilter(Filter filter, Pageable pageable);
 }

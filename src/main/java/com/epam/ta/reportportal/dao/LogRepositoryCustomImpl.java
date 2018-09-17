@@ -30,6 +30,9 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -45,7 +48,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
-	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
+	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
 			r.get(JLog.LOG.ID, Long.class),
 			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 			r.get(JLog.LOG.LOG_MESSAGE, String.class),
@@ -75,20 +78,21 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			return new ArrayList<>();
 		}
 
-		Long id = Long.valueOf(itemId);
-
-		return dsl.select()
-				.from(LOG)
-				.where(TEST_ITEM.ITEM_ID.eq(id))
-				.orderBy(LOG.LOG_TIME.asc())
-				.limit(limit)
-				.fetch()
-				.map(LOG_MAPPER);
+		return dsl.select().from(LOG).where(TEST_ITEM.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).limit(limit).fetch().map(LOG_MAPPER);
 	}
 
 	@Override
 	public List<Log> findByFilter(Filter filter) {
 
 		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(LOG_MAPPER);
+	}
+
+	@Override
+	public Page<Log> findByFilter(Filter filter, Pageable pageable) {
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LOG_MAPPER),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 }
