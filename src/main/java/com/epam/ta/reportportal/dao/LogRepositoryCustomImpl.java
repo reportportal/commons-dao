@@ -45,7 +45,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
+	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
 			r.get(JLog.LOG.ID, Long.class),
 			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 			r.get(JLog.LOG.LOG_MESSAGE, String.class),
