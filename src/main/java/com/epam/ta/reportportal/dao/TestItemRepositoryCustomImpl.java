@@ -80,7 +80,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	/**
 	 * Fetching record results into Test item object.
 	 */
-	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
+	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setItemResults(r.into(TestItemResults.class));
 		return testItem;
