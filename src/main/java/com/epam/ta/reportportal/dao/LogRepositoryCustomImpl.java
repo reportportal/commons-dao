@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
+import org.jooq.SelectQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +49,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
-			r.get(JLog.LOG.ID, Long.class),
+	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(r.get(JLog.LOG.ID, Long.class),
 			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 			r.get(JLog.LOG.LOG_MESSAGE, String.class),
 			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
@@ -89,10 +89,19 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public Page<Log> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LOG_MAPPER),
+		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LOG_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
+	}
+
+	@Override
+	public Integer getPageNumber(Long id, Filter filter, Pageable pageable) {
+		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(pageable).build();
+		build.addConditions(LOG.ID.eq(id));
+		return PageableExecutionUtils.getPage(dsl.fetch(build).map(LOG_MAPPER),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		).getNumber();
 	}
 }

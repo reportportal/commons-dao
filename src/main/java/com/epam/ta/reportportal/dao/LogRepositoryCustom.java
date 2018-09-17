@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author Pavel Bortnik
  */
-public interface LogRepositoryCustom  extends FilterableRepository<Log>{
+public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	/**
 	 * Checks if the test item has any logs.
@@ -61,4 +61,14 @@ public interface LogRepositoryCustom  extends FilterableRepository<Log>{
 	 * @return
 	 */
 	Page<Log> findByFilter(Filter filter, Pageable pageable);
+
+	/**
+	 * Get the specified log's page number
+	 *
+	 * @param id
+	 * @param filter
+	 * @param pageable
+	 * @return
+	 */
+	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
 }
