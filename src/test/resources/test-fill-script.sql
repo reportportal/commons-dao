@@ -166,8 +166,10 @@ BEGIN
     VALUES (cur_suite_id, 'FAILED', 0.35, now());
     --
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
-    VALUES ('First test', 'TEST', now(), 'description', now(), 'uniqueId2', cur_launch_id, cur_suite_id);
+    VALUES ('First test', 'TEST', now(), 'description', now(), 'uniqueId2', 1, cur_suite_id);
     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    INSERT INTO statistics (s_field, item_id, s_counter) VALUES ('statistics$defects$automation_bug$AB001', cur_item_id, 1);
 
     UPDATE test_item
     SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree)
@@ -178,8 +180,8 @@ BEGIN
     WHILE step_counter < 30 LOOP
       rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
       --
-      INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id)
-      VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId3', cur_item_id);
+      INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id, launch_id)
+      VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId3', cur_item_id, 1);
       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
       UPDATE test_item
