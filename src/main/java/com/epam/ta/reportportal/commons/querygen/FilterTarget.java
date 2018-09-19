@@ -38,8 +38,8 @@ public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder(ID, "l.id", Long.class, false),
-			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
+			new CriteriaHolder(ID, "launch.id", Long.class, false),
+			new CriteriaHolder(DESCRIPTION, "launch.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
