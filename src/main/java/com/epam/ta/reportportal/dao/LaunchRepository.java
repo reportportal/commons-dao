@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -34,5 +35,8 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	void deleteByProjectId(Long projectId);
 
 	List<Launch> findAllByName(String name);
+
+	@Query(value = "SELECT merge_launch(?1)", nativeQuery = true)
+	void mergeLaunchTestItems(Long launchId);
 
 }

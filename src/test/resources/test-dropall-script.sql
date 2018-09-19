@@ -108,4 +108,4 @@ DROP FUNCTION IF EXISTS increment_issue_statistics();
 DROP FUNCTION IF EXISTS delete_item_statistics();
 DROP FUNCTION IF EXISTS decrease_execution_statistics();
 DROP FUNCTION IF EXISTS decrease_issue_statistics();
-DROP FUNCTION IF EXISTS merge_launch();
+DROP FUNCTION IF EXISTS merge_launch(LaunchId BIGINT);

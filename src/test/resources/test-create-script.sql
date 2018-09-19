@@ -508,7 +508,7 @@ $$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION merge_launch(LaunchId BIGINT)
-  RETURNS TIMESTAMP
+  RETURNS INTEGER
 AS $$
 DECLARE TargetTestItemCursor CURSOR (id BIGINT, lvl int) FOR
   select distinct on (unique_id) unique_id, item_id
@@ -640,7 +640,7 @@ BEGIN
                               SET
                                 s_counter = EXCLUDED.s_counter;
 
-  return null;
+  return 0;
 END;
 $$
 LANGUAGE plpgsql;
