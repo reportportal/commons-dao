@@ -393,6 +393,8 @@ INSERT INTO activity(user_id, entity, action, project_id, creation_date) VALUES 
 
 INSERT INTO item_tag(value, item_id) VALUES ('qwerty', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
+INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
+INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('eeeeee', 1);
 .;
 

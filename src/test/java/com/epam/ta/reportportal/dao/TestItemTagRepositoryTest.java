@@ -2,7 +2,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
-import com.epam.ta.reportportal.entity.item.TestItemTag;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -55,10 +54,10 @@ public class TestItemTagRepositoryTest {
 	}
 
 	@Test
-	public void findAllByItemId() {
-		List<TestItemTag> testItemTags = testItemTagRepository.findAllByItemId(1L);
+	public void findDistinctByValueAndItemId() {
+		List<String> tags = testItemTagRepository.findDistinctByLaunchIdAndValue(1L, "qqqqqq");
 
-		Assert.assertNotNull(testItemTags);
-		Assert.assertEquals(3, testItemTags.size());
+		Assert.assertNotNull(tags);
+		Assert.assertEquals(1, tags.size());
 	}
 }
