@@ -52,8 +52,9 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void mergeLaunchTestItems() {
+		long time = System.nanoTime() / 1000000;
 		launchRepository.mergeLaunchTestItems(1L);
-
+		System.out.println(System.nanoTime() / 1000000 - time);
 		System.out.println("OK");
 	}
 }

@@ -151,7 +151,7 @@ DECLARE   counter       INT = 0;
   DECLARE cur_step_id   BIGINT;
   DECLARE rand_status   STATUS_ENUM;
 BEGIN
-  WHILE counter < 20 LOOP
+  WHILE counter < 50 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
     VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT', 'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
