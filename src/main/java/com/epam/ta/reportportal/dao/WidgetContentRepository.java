@@ -23,24 +23,19 @@ public interface WidgetContentRepository {
 	List<StatisticsContent> overallStatisticsContent(Filter filter, List<String> contentFields, boolean latestMode, int limit);
 
 	/**
-	 * Most failed content loading by execution status criteria.
+	 * Loads top limit history of items sorted in descending order by provided criteria
+	 * for specified launch. Criteria could be one of statistics fields.
+	 * For example if criteria is 'statistics$execution$failed' and launchName is 'DefaultLaunch'
+	 * that is specified in the filter and limit is 20 the result will be top 20 grouped steps
+	 * by uniqueId of the whole launch history with 'DefaultLaunch' name
+	 * sorted by count of steps with existed statistics of 'statistics$execution$failed'
 	 *
-	 * @param launchName Launch name
-	 * @param criteria   Execution criteria
-	 * @param limit      Results limit
-	 * @return List of {@link MostFailedContent}
+	 * @param filter   Launches filter
+	 * @param criteria Criteria for example 'statistics$execution$failed'
+	 * @param limit    Limit of items
+	 * @return List of items, one represents history of concrete step
 	 */
-	List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria, int limit);
-
-	/**
-	 * Most failed content loading by defect status criteria.
-	 *
-	 * @param launchName Launch name
-	 * @param criteria   Defect criteria
-	 * @param limit      Results limit
-	 * @return List of {@link MostFailedContent}
-	 */
-	List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria, int limit);
+	List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit);
 
 	/**
 	 * Launch statistics content loading
@@ -166,18 +161,18 @@ public interface WidgetContentRepository {
 	 */
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
 
-//	/**
-//	 * Loading cumulative trend statistics grouped by {@link LaunchTag#getValue()}
-//	 *
-//	 * @param filter        {@link Filter}
-//	 * @param contentFields Custom fields for select query building
-//	 * @param sort          {@link Sort}
-//	 * @param tagPrefix     Prefix of the {@link LaunchTag#getValue()}
-//	 * @param limit         Results limit
-//	 * @return Map with {@link LaunchTag#getValue()} as key and list of {@link LaunchesStatisticsContent} as value
-//	 */
-//	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-//			String tagPrefix, int limit);
+	//	/**
+	//	 * Loading cumulative trend statistics grouped by {@link LaunchTag#getValue()}
+	//	 *
+	//	 * @param filter        {@link Filter}
+	//	 * @param contentFields Custom fields for select query building
+	//	 * @param sort          {@link Sort}
+	//	 * @param tagPrefix     Prefix of the {@link LaunchTag#getValue()}
+	//	 * @param limit         Results limit
+	//	 * @return Map with {@link LaunchTag#getValue()} as key and list of {@link LaunchesStatisticsContent} as value
+	//	 */
+	//	Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+	//			String tagPrefix, int limit);
 
 	/**
 	 * Loading the product status statistics grouped by one or more {@link Filter}
@@ -209,7 +204,7 @@ public interface WidgetContentRepository {
 	/**
 	 * Loading the TOP-20 most time consuming test cases
 	 *
-	 * @param filter        {@link Filter}
+	 * @param filter {@link Filter}
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
 	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter);

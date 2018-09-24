@@ -10,7 +10,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 /**
  * @author Ivan Budaev
  */
-public class MostFailedContent implements Serializable {
+public class CriteraHistoryItem implements Serializable {
 
 	@Column(name = "unique_id")
 	private String uniqueId;
