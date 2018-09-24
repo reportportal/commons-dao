@@ -22,7 +22,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * @author Anton Machulski
  */
 public class LaunchCriteriaConstant {
-	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	public static final String MODE = "mode";
 	public static final String STATUS = "status";
