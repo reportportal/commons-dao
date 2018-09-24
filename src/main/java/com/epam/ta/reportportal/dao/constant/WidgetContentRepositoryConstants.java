@@ -18,7 +18,7 @@ public class WidgetContentRepositoryConstants {
 
 	public static final String EXECUTION_STATS = "execution_stats";
 	public static final String TOTAL = "total";
-	public static final String EXECUTIONS_KEY = "executions";
+	public static final String EXECUTIONS_KEY = "execution";
 	public static final String DEFECTS_KEY = "defects";
 	public static final String TABLE_COLUMN_KEY = "columns";
 	public static final String ISSUE_GROUP_KEY = "groups";
