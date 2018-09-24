@@ -52,10 +52,7 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 @Repository
 public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
-		Launch launch = r.into(Launch.class);
-		return launch;
-	};
+	private static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> r.into(Launch.class);
 
 	private static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
 		Map<Long, Launch> res = new HashMap<>();
