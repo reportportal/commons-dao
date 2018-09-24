@@ -87,6 +87,9 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.6'
     compile 'org.reflections:reflections:0.9.11'
 
+    compile 'org.apache.tika:tika-core:1.17'
+    compile 'org.apache.tika:tika-parsers:1.17'
+
     /* just for password encoder. To make sure Guava and Spring's Crypto generate the same  hash functions */
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
