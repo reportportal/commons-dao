@@ -112,6 +112,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
 						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
 						.and(STATISTICS.S_FIELD.eq(criteria))
+						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
