@@ -4,6 +4,7 @@ import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class LaunchTagRepositoryCustomImpl implements LaunchTagRepositoryCustom 
 
 	private final DSLContext dslContext;
 
+	@Autowired
 	public LaunchTagRepositoryCustomImpl(DSLContext dslContext) {
 
 		this.dslContext = dslContext;
@@ -35,7 +37,7 @@ public class LaunchTagRepositoryCustomImpl implements LaunchTagRepositoryCustom 
 				.leftJoin(l).on(lt.LAUNCH_ID.eq(l.ID))
 				.leftJoin(p).on(l.PROJECT_ID.eq(p.ID))
 				.where(p.ID.eq(projectId))
-				.and(p.NAME.like("%" + value + "%"))
+				.and(lt.VALUE.like("%" + value + "%"))
 				.fetch(LAUNCH_TAG.VALUE);
 	}
 }

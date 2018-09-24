@@ -493,6 +493,157 @@ CREATE TABLE issue_ticket (
 CREATE EXTENSION IF NOT EXISTS tablefunc;
 ------- Functions and triggers -----------------------
 
+CREATE OR REPLACE FUNCTION has_child(path_value ltree)
+  RETURNS BOOLEAN
+AS $$
+DECLARE
+  hasChilds BOOLEAN;
+BEGIN
+  SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ path_value
+                                            AND t.path != path_value LIMIT 1) INTO hasChilds;
+
+  RETURN hasChilds;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION merge_launch(LaunchId BIGINT)
+  RETURNS INTEGER
+AS $$
+DECLARE TargetTestItemCursor CURSOR (id BIGINT, lvl int) FOR
+  select distinct on (unique_id) unique_id, item_id
+  from test_item
+  where test_item.launch_id = id
+    and nlevel(test_item.path) = lvl
+    and has_child(test_item.path);
+
+  DECLARE MergingTestItemCursor CURSOR (uniqueId VARCHAR, lvl int, launchId BIGINT) FOR
+  select item_id, path as path_value
+  from test_item
+  where test_item.unique_id = uniqueId
+    and nlevel(test_item.path) = lvl
+    and test_item.launch_id = launchId;
+
+  DECLARE TargetTestItemField  RECORD;
+  DECLARE MergingTestItemField RECORD;
+  DECLARE maxLevel             BIGINT;
+  DECLARE firstItemId          VARCHAR;
+  DECLARE parentItemId         BIGINT;
+  DECLARE concatenated_descr   TEXT;
+BEGIN
+  maxLevel := (SELECT MAX(nlevel(path)) FROM test_item WHERE launch_id = LaunchId);
+
+  FOR i IN 1..maxLevel
+  loop
+
+    OPEN TargetTestItemCursor(LaunchId, i);
+
+    LOOP
+      FETCH TargetTestItemCursor INTO TargetTestItemField;
+
+      EXIT WHEN NOT FOUND;
+
+      firstItemId := TargetTestItemField.unique_id;
+      parentItemId := TargetTestItemField.item_id;
+
+      EXIT WHEN firstItemId ISNULL;
+
+      SELECT string_agg(description, chr(10)) INTO concatenated_descr
+      FROM test_item
+      WHERE test_item.unique_id = firstItemId
+        AND nlevel(test_item.path) = i
+        AND test_item.launch_id = LaunchId;
+
+      UPDATE test_item SET description = concatenated_descr WHERE test_item.item_id = parentItemId;
+
+      UPDATE test_item
+      SET start_time = (SELECT min(start_time)
+                        from test_item
+                        WHERE test_item.unique_id = firstItemId
+                          AND nlevel(test_item.path) = i
+                          AND test_item.launch_id = LaunchId)
+      WHERE test_item.item_id = parentItemId;
+
+      UPDATE test_item_results
+      SET end_time = (SELECT max(end_time)
+                      from test_item
+                             JOIN test_item_results result on test_item.item_id = result.result_id
+                      WHERE test_item.unique_id = firstItemId
+                        AND nlevel(test_item.path) = i
+                        AND test_item.launch_id = LaunchId)
+      WHERE test_item_results.result_id = parentItemId;
+
+      INSERT INTO statistics (s_field, item_id, launch_id, s_counter)
+      select s_field, parentItemId, null, sum(s_counter)
+      from statistics
+             join test_item ti on statistics.item_id = ti.item_id
+      where ti.unique_id = firstItemId
+      group by s_field
+      ON CONFLICT ON CONSTRAINT unique_status_item
+                                DO UPDATE
+                                  SET
+                                    s_counter = EXCLUDED.s_counter;
+
+      IF exists(select 1
+                from test_item_results
+                       join test_item t on test_item_results.result_id = t.item_id
+                where test_item_results.status != 'PASSED'
+                  and t.unique_id = firstItemId
+                  and nlevel(t.path) = i
+                  and t.launch_id = LaunchId
+                limit 1)
+      then
+        UPDATE test_item_results SET status = 'FAILED' WHERE test_item_results.result_id = parentItemId;
+      end if;
+
+      OPEN MergingTestItemCursor(TargetTestItemField.unique_id, i, LaunchId);
+
+      LOOP
+
+        FETCH MergingTestItemCursor INTO MergingTestItemField;
+
+        EXIT WHEN NOT FOUND;
+
+        IF has_child(MergingTestItemField.path_value)
+        THEN
+
+          UPDATE test_item
+          SET parent_id = parentItemId
+          WHERE test_item.path <@ MergingTestItemField.path_value
+            AND test_item.path != MergingTestItemField.path_value
+            AND nlevel(test_item.path) = i + 1;
+          DELETE
+          from test_item
+          where test_item.path = MergingTestItemField.path_value
+            and test_item.item_id != parentItemId;
+
+        end if;
+
+      end loop;
+
+      CLOSE MergingTestItemCursor;
+
+    end loop;
+
+    CLOSE TargetTestItemCursor;
+
+  end loop;
+
+  INSERT INTO statistics (s_field, launch_id, s_counter)
+  select s_field, LaunchId, sum(s_counter)
+  from statistics
+         join test_item ti on statistics.item_id = ti.item_id
+  where ti.launch_id = LaunchId
+  group by s_field
+  ON CONFLICT ON CONSTRAINT unique_status_launch
+                            DO UPDATE
+                              SET
+                                s_counter = EXCLUDED.s_counter;
+
+  return 0;
+END;
+$$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_last_launch_number()
   RETURNS TRIGGER AS
