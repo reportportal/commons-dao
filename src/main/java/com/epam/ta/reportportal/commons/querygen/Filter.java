@@ -8,11 +8,14 @@ import org.jooq.SelectQuery;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.filterConverter;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Filter for building queries to database. Contains CriteriaHolder which is mapping between request
@@ -29,6 +32,17 @@ public class Filter implements Serializable, Queryable {
 	private FilterTarget target;
 
 	private Set<FilterCondition> filterConditions;
+
+	public Filter(Collection<Filter> filters) {
+		checkArgument(null != filters && !filters.isEmpty(), "Empty filter list");
+		checkArgument(1 == filters.stream().map(Filter::getTarget).distinct().count(), "Different targets");
+		this.target = filters.iterator().next().getTarget();
+		this.filterConditions = filters.stream().flatMap(f -> f.getFilterConditions().stream()).collect(Collectors.toSet());
+	}
+
+	public Filter(Filter... filters) {
+		this(Arrays.asList(filters));
+	}
 
 	public Filter(Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
 		this(FilterTarget.findByClass(target), Sets.newHashSet(new FilterCondition(condition, negative, value, searchCriteria)));
@@ -74,7 +88,7 @@ public class Filter implements Serializable, Queryable {
 		return id;
 	}
 
-	protected final FilterTarget getTarget() {
+	public final FilterTarget getTarget() {
 		return target;
 	}
 

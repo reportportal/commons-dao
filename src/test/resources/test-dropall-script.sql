@@ -99,7 +99,7 @@ DROP TRIGGER IF EXISTS delete_issue_statistics
 ON issue_statistics;
 
 DROP EXTENSION IF EXISTS tablefunc;
-DROP EXTENSION IF EXISTS ltree;
+DROP EXTENSION IF EXISTS ltree CASCADE;
 DROP FUNCTION IF EXISTS get_last_launch_number();
 DROP FUNCTION IF EXISTS check_wired_tickets();
 DROP FUNCTION IF EXISTS check_wired_widgets();
@@ -108,3 +108,4 @@ DROP FUNCTION IF EXISTS increment_issue_statistics();
 DROP FUNCTION IF EXISTS delete_item_statistics();
 DROP FUNCTION IF EXISTS decrease_execution_statistics();
 DROP FUNCTION IF EXISTS decrease_issue_statistics();
+DROP FUNCTION IF EXISTS merge_launch(LaunchId BIGINT);
