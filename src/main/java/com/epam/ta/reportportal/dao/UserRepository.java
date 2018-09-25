@@ -34,8 +34,8 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
 	List<User> findAllByRole(UserRole role);
 
-	@Query(value = "SELECT u FROM User u WHERE u.expired = :expired AND u.userType = :userType")
-	Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("expired") boolean expired, Pageable pageable);
+	@Query(value = "SELECT u FROM User u WHERE u.userType = :userType AND u.isExpired = :isExpired")
+	Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("isExpired") boolean isExpired, Pageable pageable);
 
 	@Query(value = "UPDATE users SET users.expired = TRUE WHERE CAST(metadata->>'last_login' AS DATE) < :lastLogin", nativeQuery = true)
 	void expireUsersLoggedOlderThan(@Param("lastLogin") Date lastLogin);
