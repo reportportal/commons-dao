@@ -3,7 +3,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
-import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -52,7 +51,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Autowired
 	private DSLContext dsl;
 
-	private static final Collection<TestItemTypeEnum> HAS_METHOD_OR_CLASS = Arrays.stream(TestItemTypeEnum.values()).filter(it -> {
+	private static final Collection<JTestItemTypeEnum> HAS_METHOD_OR_CLASS = Arrays.stream(JTestItemTypeEnum.values()).filter(it -> {
 		String name = it.name();
 		return name.contains("METHOD") || name.contains("CLASS");
 	}).collect(Collectors.toList());
