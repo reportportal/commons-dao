@@ -28,9 +28,9 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -69,9 +69,6 @@ public enum FilterTarget {
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
-
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
-					.from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
