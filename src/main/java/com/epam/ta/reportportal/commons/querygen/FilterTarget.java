@@ -31,6 +31,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -65,12 +67,19 @@ public enum FilterTarget {
 					l.STATUS
 			);
 
+			Select<?> crossTabValues = DSL.select(DSL.concat(
+					DSL.field("statistics$defects$", String.class),
+					DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+					DSL.field("$", String.class),
+					ISSUE_TYPE.LOCATOR
+			)).unionAll(DSL.select(DSL.field(EXECUTIONS_TOTAL, String.class)));
+
 			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
 
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, null)
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
 					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
 					.getQuery();

@@ -69,9 +69,7 @@ public class PostgresCrosstabWrapper {
 
 		return context.select(select).from( "crosstab('"
 				+ raw.getSQL(ParamType.INLINED).replace("'", "''") + "', '"
-				+ "SELECT concat('statistics$defects$', lower(issue_group.issue_group:: VARCHAR), '$', it.locator)"
-				+ "FROM issue_group JOIN issue_type it ON issue_group.issue_group_id = it.issue_group_id "
-				+ "UNION ALL SELECT 'statistics$executions$total', 'statistics$executions$passed', 'statistics$executions$skipped', 'statistics$executions$failed'"
+				+ crossTabValues.getSQL(ParamType.INLINED).replace("'", "''")
 				+ "') as ct(" + ctList.toString() + " )");
 	}
 }
