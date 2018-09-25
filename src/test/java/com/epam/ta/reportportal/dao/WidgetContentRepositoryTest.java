@@ -294,7 +294,7 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 1);
+		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 100);
 
 		Assert.assertNotNull(flakyCasesStatistics);
 	}
