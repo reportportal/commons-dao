@@ -64,7 +64,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		if (latest) {
 			return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 					.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-					.select(fields)
+					.select()
 					.distinctOn(Tables.LAUNCH.NAME)
 					.from(DSL.table(DSL.name(LAUNCHES)))
 					.orderBy(Tables.LAUNCH.NAME, Tables.LAUNCH.NUMBER.desc())
@@ -73,7 +73,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.select(fields)
+				.select()
 				.from(DSL.table(DSL.name(LAUNCHES)))
 				.fetch(), contentFields);
 	}
