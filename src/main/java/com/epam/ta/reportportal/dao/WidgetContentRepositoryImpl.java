@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -51,6 +52,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Autowired
 	private DSLContext dsl;
 
+	private static final Collection<TestItemTypeEnum> HAS_METHOD_OR_CLASS = Arrays.stream(TestItemTypeEnum.values()).filter(it -> {
+		String name = it.name();
+		return name.contains("METHOD") || name.contains("CLASS");
+	}).collect(Collectors.toList());
+
 	@Override
 	public List<StatisticsContent> overallStatisticsContent(Filter filter, List<String> contentFields, boolean latest, int limit) {
 		//		Select commonSelect;
@@ -90,7 +96,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return null;
 	}
 
-	public List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit) {
+	public List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
@@ -110,7 +116,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(STATISTICS)
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
-						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+						.where(TEST_ITEM.TYPE.in(includeMethods ?
+								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
+								Collections.singletonList(JTestItemTypeEnum.STEP)))
 						.and(STATISTICS.S_FIELD.eq(criteria))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))

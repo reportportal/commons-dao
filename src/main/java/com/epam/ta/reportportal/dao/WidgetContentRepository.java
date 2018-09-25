@@ -30,12 +30,13 @@ public interface WidgetContentRepository {
 	 * by uniqueId of the whole launch history with 'DefaultLaunch' name
 	 * sorted by count of steps with existed statistics of 'statistics$execution$failed'
 	 *
-	 * @param filter   Launches filter
-	 * @param criteria Criteria for example 'statistics$execution$failed'
-	 * @param limit    Limit of items
+	 * @param filter         Launches filter
+	 * @param criteria       Criteria for example 'statistics$execution$failed'
+	 * @param limit          Limit of items
+	 * @param includeMethods Include or not test item types that have 'METHOD' or 'CLASS'
 	 * @return List of items, one represents history of concrete step
 	 */
-	List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit);
+	List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods);
 
 	/**
 	 * Launch statistics content loading
