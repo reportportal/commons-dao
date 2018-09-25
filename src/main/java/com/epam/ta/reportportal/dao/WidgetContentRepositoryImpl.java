@@ -60,13 +60,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest,
 			int limit) {
-		List<Field<?>> fields = contentFields.stream().map(it -> sum(field(name(it)).cast(Long.class).as(it))).collect(Collectors.toList());
+		List<Field<?>> fields = contentFields.stream()
+				.map(it -> sum(field(name(LAUNCHES, it)).cast(Long.class).as(it)))
+				.collect(Collectors.toList());
 		if (latest) {
 			return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 					.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
 					.select(fields)
 					.distinctOn(Tables.LAUNCH.NAME)
 					.from(DSL.table(DSL.name(LAUNCHES)))
+					.groupBy(field(name(LAUNCHES, LAUNCH.NAME.getName())))
 					.orderBy(Tables.LAUNCH.NAME, Tables.LAUNCH.NUMBER.desc())
 					.fetch(), contentFields);
 		}
@@ -75,6 +78,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
 				.select(fields)
 				.from(DSL.table(DSL.name(LAUNCHES)))
+				.groupBy(field(name(LAUNCHES, LAUNCH.NAME.getName())))
 				.fetch(), contentFields);
 	}
 
