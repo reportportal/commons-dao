@@ -61,7 +61,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<LaunchesStatisticsContent> overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest,
 			int limit) {
 		List<Field<?>> fields = contentFields.stream()
-				.map(it -> sum(field(name(LAUNCHES, it)).cast(Long.class).as(it)))
+				.map(it -> sum(field(name(LAUNCHES, it)).cast(Long.class)).as(it))
 				.collect(Collectors.toList());
 		if (latest) {
 			return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
