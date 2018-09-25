@@ -70,7 +70,7 @@ public enum FilterTarget {
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
 
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, null)
 					.rightJoin(l)
 					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
 					.getQuery();
