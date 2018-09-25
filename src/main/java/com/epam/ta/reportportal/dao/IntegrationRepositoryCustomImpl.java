@@ -13,6 +13,9 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +48,15 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	public List<Integration> findByFilter(Filter filter) {
 
 		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(INTEGRATION_MAPPER);
+	}
+
+	@Override
+	public Page<Integration> findByFilter(Filter filter, Pageable pageable) {
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(INTEGRATION_MAPPER),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 
 	private final EntityManager entityManager;

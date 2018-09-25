@@ -41,6 +41,9 @@ import org.jooq.RecordMapper;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -80,7 +83,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	/**
 	 * Fetching record results into Test item object.
 	 */
-	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
+	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setItemResults(r.into(TestItemResults.class));
 		return testItem;
@@ -224,5 +227,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		testItemListMap.forEach(TestItem::setParameters);
 
 		return Lists.newArrayList(testItemListMap.keySet());
+	}
+
+	@Override
+	public Page<TestItem> findByFilter(Filter filter, Pageable pageable) {
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(TEST_ITEM_FETCH),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 }

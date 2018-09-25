@@ -22,15 +22,10 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Pavel Bortnik
@@ -39,18 +34,6 @@ import java.util.List;
 public interface ReportPortalRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
 	void refresh(T t);
-
-	/**
-	 * Executes query built for given filter and maps result set by given mapper
-	 *
-	 * @param filter Filter to build a query
-	 * @param mapper Result set mapper
-	 * @param <R>    Type of Results
-	 * @return List of mapped entries found
-	 */
-	<R> List<R> findByFilter(Filter filter, RecordMapper<? super Record, R> mapper);
-
-	<R> Page<R> findByFilter(Filter filter, Pageable pageable, RecordMapper<? super Record, R> mapper);
 
 	boolean exists(Filter filter);
 
