@@ -37,8 +37,6 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	@Query(value = "SELECT u FROM User u WHERE u.expired = :expired AND u.userType = :userType")
 	Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("expired") boolean expired, Pageable pageable);
 
-	//TODO find user photo
-
 	@Query(value = "UPDATE users SET users.expired = TRUE WHERE CAST(metadata->>'last_login' AS DATE) < :lastLogin", nativeQuery = true)
 	void expireUsersLoggedOlderThan(@Param("lastLogin") Date lastLogin);
 
