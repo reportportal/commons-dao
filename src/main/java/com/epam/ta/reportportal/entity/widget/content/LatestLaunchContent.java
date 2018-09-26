@@ -1,13 +1,12 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NUMBER;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
 /**
  * @author Ivan Budaev
@@ -22,10 +21,19 @@ public class LatestLaunchContent implements Serializable {
 	private String name;
 
 	@JsonProperty(NUMBER)
-	private Integer number;
+	private Long number;
 
 	public Long getId() {
 		return id;
+	}
+
+	public LatestLaunchContent() {
+	}
+
+	public LatestLaunchContent(Launch launch) {
+		this.id = launch.getId();
+		this.name = launch.getName();
+		this.number = launch.getNumber();
 	}
 
 	public void setId(Long id) {
@@ -40,11 +48,11 @@ public class LatestLaunchContent implements Serializable {
 		this.name = name;
 	}
 
-	public Integer getNumber() {
+	public Long getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(Long number) {
 		this.number = number;
 	}
 }
