@@ -3,29 +3,17 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JEmailSenderCaseRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JEmailSenderCase extends TableImpl<JEmailSenderCaseRecord> {
 
-    private static final long serialVersionUID = -1939126276;
+    private static final long serialVersionUID = -1645354098;
 
     /**
      * The reference instance of <code>public.email_sender_case</code>
@@ -62,14 +50,14 @@ public class JEmailSenderCase extends TableImpl<JEmailSenderCaseRecord> {
     public final TableField<JEmailSenderCaseRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('email_sender_case_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>public.email_sender_case.sendcase</code>.
+     * The column <code>public.email_sender_case.send_case</code>.
      */
-    public final TableField<JEmailSenderCaseRecord, String> SENDCASE = createField("sendcase", org.jooq.impl.SQLDataType.VARCHAR(64), this, "");
+    public final TableField<JEmailSenderCaseRecord, String> SEND_CASE = createField("send_case", org.jooq.impl.SQLDataType.VARCHAR(64), this, "");
 
     /**
-     * The column <code>public.email_sender_case.project_email_config_id</code>.
+     * The column <code>public.email_sender_case.project_id</code>.
      */
-    public final TableField<JEmailSenderCaseRecord, Long> PROJECT_EMAIL_CONFIG_ID = createField("project_email_config_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JEmailSenderCaseRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('email_sender_case_project_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * Create a <code>public.email_sender_case</code> table reference
@@ -149,11 +137,11 @@ public class JEmailSenderCase extends TableImpl<JEmailSenderCaseRecord> {
      */
     @Override
     public List<ForeignKey<JEmailSenderCaseRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JEmailSenderCaseRecord, ?>>asList(Keys.EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_EMAIL_CONFIG_ID_FKEY);
+        return Arrays.<ForeignKey<JEmailSenderCaseRecord, ?>>asList(Keys.EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY);
     }
 
-    public JProjectEmailConfiguration projectEmailConfiguration() {
-        return new JProjectEmailConfiguration(this, Keys.EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_EMAIL_CONFIG_ID_FKEY);
+    public JProject project() {
+        return new JProject(this, Keys.EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY);
     }
 
     /**

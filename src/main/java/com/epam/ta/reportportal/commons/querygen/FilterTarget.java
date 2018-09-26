@@ -28,9 +28,11 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -50,8 +52,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JStatistics s = JStatistics.STATISTICS;
 
-			Select<?> fieldsForSelect = DSL.select(
-					l.ID,
+			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -65,13 +66,28 @@ public enum FilterTarget {
 					l.STATUS
 			);
 
+			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+					DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+					DSL.val("$"),
+					ISSUE_TYPE.LOCATOR
+			))
+					.from(ISSUE_GROUP)
+					.join(ISSUE_TYPE)
+					.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
+					.unionAll(DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+							DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+							DSL.val("$total")
+					))
+							.from(ISSUE_GROUP))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_TOTAL)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_PASSED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
+
 			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
-
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
-					.from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
@@ -80,8 +96,7 @@ public enum FilterTarget {
 		}
 	},
 
-	ACTIVITY(Activity.class, Arrays.asList(
-			new CriteriaHolder(ID, "a.id", Long.class, false),
+	ACTIVITY(Activity.class, Arrays.asList(new CriteriaHolder(ID, "a.id", Long.class, false),
 			new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
 			new CriteriaHolder(LOGIN, "u.login", String.class, false),
 			new CriteriaHolder(ACTION, "a.action", String.class, false)
@@ -102,8 +117,7 @@ public enum FilterTarget {
 		}
 	},
 
-	TEST_ITEM(TestItem.class, Arrays.asList(
-			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
 			new CriteriaHolder("type", "ti.type", JTestItemTypeEnum.class, false),
 			new CriteriaHolder(LAUNCH_ID, "tis.launch_id", Long.class, false),
 			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
@@ -128,8 +142,7 @@ public enum FilterTarget {
 		}
 	},
 
-	TICKET(Ticket.class, Arrays.asList(
-			new CriteriaHolder(NAME, "ti.name", String.class, false),
+	TICKET(Ticket.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false),
 			new CriteriaHolder(PROJECT_ID, JLaunch.LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class, false)
 	)) {
 		@Override
@@ -210,8 +223,7 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,

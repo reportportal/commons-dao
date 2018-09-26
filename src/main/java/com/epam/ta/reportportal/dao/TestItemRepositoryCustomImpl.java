@@ -31,7 +31,6 @@ import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
@@ -186,24 +185,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public List<IssueType> selectIssueLocatorsByProject(Long projectId) {
 		return dsl.select()
 				.from(PROJECT)
-				.join(PROJECT_CONFIGURATION)
-				.on(PROJECT_CONFIGURATION.ID.eq(PROJECT.ID))
-				.join(ISSUE_TYPE_PROJECT_CONFIGURATION)
-				.on(PROJECT_CONFIGURATION.ID.eq(ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID))
-				.join(Tables.ISSUE_TYPE)
-				.on(ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID.eq(Tables.ISSUE_TYPE.ID))
+				.join(ISSUE_TYPE_PROJECT)
+				.on(PROJECT.ID.eq(ISSUE_TYPE_PROJECT.PROJECT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+				.where(PROJECT.ID.eq(projectId))
 				.fetch(ISSUE_TYPE_MAPPER);
 	}
 
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
 		return Optional.ofNullable(dsl.select()
-				.from(ISSUE_TYPE)
-				.join(ISSUE_GROUP)
-				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.join(ISSUE_TYPE_PROJECT_CONFIGURATION)
-				.on(ISSUE_TYPE.ID.eq(ISSUE_TYPE_PROJECT_CONFIGURATION.ISSUE_TYPE_ID))
-				.where(ISSUE_TYPE_PROJECT_CONFIGURATION.CONFIGURATION_ID.eq(projectId))
+				.from(PROJECT)
+				.join(ISSUE_TYPE_PROJECT)
+				.on(PROJECT.ID.eq(ISSUE_TYPE_PROJECT.PROJECT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+				.where(PROJECT.ID.eq(projectId))
 				.and(ISSUE_TYPE.LOCATOR.eq(locator))
 				.fetchOne(ISSUE_TYPE_MAPPER));
 	}

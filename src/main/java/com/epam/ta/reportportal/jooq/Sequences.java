@@ -3,11 +3,10 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
-import javax.annotation.Generated;
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -27,6 +26,11 @@ public class Sequences {
      * The sequence <code>public.activity_id_seq</code>
      */
     public static final Sequence<Long> ACTIVITY_ID_SEQ = new SequenceImpl<Long>("activity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.attribute_id_seq</code>
+     */
+    public static final Sequence<Long> ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.bug_tracking_system_id_seq</code>
@@ -57,6 +61,11 @@ public class Sequences {
      * The sequence <code>public.email_sender_case_id_seq</code>
      */
     public static final Sequence<Long> EMAIL_SENDER_CASE_ID_SEQ = new SequenceImpl<Long>("email_sender_case_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.email_sender_case_project_id_seq</code>
+     */
+    public static final Sequence<Long> EMAIL_SENDER_CASE_PROJECT_ID_SEQ = new SequenceImpl<Long>("email_sender_case_project_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.filter_condition_id_seq</code>
@@ -129,14 +138,14 @@ public class Sequences {
     public static final Sequence<Integer> OAUTH_REGISTRATION_SCOPE_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_scope_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
-     * The sequence <code>public.project_analyzer_configuration_id_seq</code>
+     * The sequence <code>public.project_attribute_attribute_id_seq</code>
      */
-    public static final Sequence<Long> PROJECT_ANALYZER_CONFIGURATION_ID_SEQ = new SequenceImpl<Long>("project_analyzer_configuration_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Long> PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("project_attribute_attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.project_email_configuration_id_seq</code>
+     * The sequence <code>public.project_attribute_project_id_seq</code>
      */
-    public static final Sequence<Long> PROJECT_EMAIL_CONFIGURATION_ID_SEQ = new SequenceImpl<Long>("project_email_configuration_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Long> PROJECT_ATTRIBUTE_PROJECT_ID_SEQ = new SequenceImpl<Long>("project_attribute_project_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.project_id_seq</code>

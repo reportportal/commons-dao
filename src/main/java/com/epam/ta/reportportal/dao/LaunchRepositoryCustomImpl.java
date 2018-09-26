@@ -152,7 +152,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.from(LAUNCH)
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
-				.fetchOne()
-				.into(Launch.class));
+				.fetchOneInto(Launch.class));
 	}
 }

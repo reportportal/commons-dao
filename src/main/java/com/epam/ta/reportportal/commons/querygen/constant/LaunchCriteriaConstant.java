@@ -20,7 +20,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * Search criteria fields for Launch.
  *
  * @author Anton Machulski
- *
  */
 public class LaunchCriteriaConstant {
 	public static final String DESCRIPTION = "description";

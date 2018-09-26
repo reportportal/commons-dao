@@ -43,7 +43,7 @@ public enum WidgetType {
 	LAUNCHES_COMPARISON_CHART("launches_comparison_chart"),
 	LAUNCHES_DURATION_CHART("launches_duration_chart"),
 	LAUNCHES_TABLE("launches_table"),
-	MOST_FAILED_TEST_CASES("most_failed_test_cases"),
+	TOP_TEST_CASES("top_test_cases"),
 	FLAKY_TEST_CASES("flaky_test_cases"),
 	PASSING_RATE_SUMMARY("passing_rate_summary"),
 	PASSING_RATE_PER_LAUNCH("passing_rate_per_launch"),
