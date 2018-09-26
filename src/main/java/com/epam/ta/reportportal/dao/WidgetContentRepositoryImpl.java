@@ -66,7 +66,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
 				.select(fields)
 				.from(DSL.table(DSL.name(LAUNCHES)))
-				.groupBy(field(name(LAUNCHES, LAUNCH.NAME.getName())))
 				.fetch(), contentFields);
 	}
 
