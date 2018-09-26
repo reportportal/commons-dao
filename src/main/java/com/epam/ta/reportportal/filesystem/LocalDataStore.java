@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 /**
  * @author Dzianis_Shybeka
@@ -56,7 +57,7 @@ public class LocalDataStore implements DataStore {
 
 			logger.debug("Saving to: {} ", targetPath.toAbsolutePath());
 
-			Files.copy(inputStream, targetPath);
+			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
 			return targetPath.toString();
 		} catch (IOException e) {
