@@ -65,20 +65,6 @@ public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends Simp
 	}
 
 	@Override
-	public <R> List<R> findByFilter(Filter filter, RecordMapper<? super Record, R> mapper) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(mapper);
-	}
-
-	@Override
-	public <R> Page<R> findByFilter(Filter filter, Pageable pageable, RecordMapper<? super Record, R> mapper) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(mapper),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
-	}
-
-	@Override
 	public boolean exists(Filter filter) {
 		return dsl.fetchExists(filter.toQuery());
 	}
