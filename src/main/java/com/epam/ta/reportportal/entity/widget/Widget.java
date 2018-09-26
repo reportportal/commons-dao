@@ -24,7 +24,6 @@ package com.epam.ta.reportportal.entity.widget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -32,7 +31,6 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,7 +64,7 @@ public class Widget implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
 	@Column(name = "field")
-	private List<String> contentFields = Lists.newArrayList();
+	private Set<String> contentFields = Sets.newHashSet();
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))
@@ -122,11 +120,11 @@ public class Widget implements Serializable {
 		this.itemsCount = itemsCount;
 	}
 
-	public List<String> getContentFields() {
+	public Set<String> getContentFields() {
 		return contentFields;
 	}
 
-	public void setContentFields(List<String> contentFields) {
+	public void setContentFields(Set<String> contentFields) {
 		this.contentFields = contentFields;
 	}
 

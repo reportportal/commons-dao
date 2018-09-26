@@ -26,6 +26,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.ResultFetcher.LAUNCHES_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetcher.NOT_PASSED_CASES_FETCHER;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -54,113 +55,96 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Autowired
 	private DSLContext dsl;
 
+	private static final List<JTestItemTypeEnum> HAS_METHOD_OR_CLASS = Arrays.stream(JTestItemTypeEnum.values()).filter(it -> {
+		String name = it.name();
+		return name.contains("METHOD") || name.contains("CLASS");
+	}).collect(Collectors.toList());
+
 	@Override
-	public List<StatisticsContent> overallStatisticsContent(Filter filter, List<String> contentFields, boolean latest, int limit) {
-		//		Select commonSelect;
-		//		if (latest) {
-		//			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class))
-		//					.distinctOn(field(name(LAUNCHES, "launch_name")).cast(String.class))
-		//					.from(name(LAUNCHES))
-		//					.orderBy(
-		//							field(name(LAUNCHES, "launch_name")).cast(String.class),
-		//							field(name(LAUNCHES, "number")).cast(Integer.class).desc()
-		//					);
-		//		} else {
-		//			commonSelect = dsl.select(field(name(LAUNCHES, "id")).cast(Long.class)).from(name(LAUNCHES));
-		//		}
-		//
-		//		return dsl.with(LAUNCHES)
-		//				.as(QueryBuilder.newBuilder(filter).build())
-		//				.select(EXECUTION_STATISTICS.ES_STATUS.as("field"), DSL.sumDistinct(EXECUTION_STATISTICS.ES_COUNTER))
-		//				.from(LAUNCH)
-		//				.join(EXECUTION_STATISTICS)
-		//				.on(LAUNCH.ID.eq(EXECUTION_STATISTICS.LAUNCH_ID))
-		//				.where(EXECUTION_STATISTICS.LAUNCH_ID.in(commonSelect))
-		//				.and(EXECUTION_STATISTICS.ES_STATUS.in(Optional.ofNullable(contentFields.get(EXECUTIONS_KEY))
-		//						.orElse(Collections.emptyList())))
-		//				.groupBy(EXECUTION_STATISTICS.ES_STATUS)
-		//				.unionAll(dsl.select(ISSUE_TYPE.LOCATOR.as("field"), DSL.sumDistinct(ISSUE_STATISTICS.IS_COUNTER))
-		//						.from(LAUNCH)
-		//						.join(ISSUE_STATISTICS)
-		//						.on(LAUNCH.ID.eq(ISSUE_STATISTICS.LAUNCH_ID))
-		//						.join(ISSUE_TYPE)
-		//						.on(ISSUE_STATISTICS.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-		//						.where(ISSUE_STATISTICS.LAUNCH_ID.in(commonSelect))
-		//						.and(ISSUE_TYPE.LOCATOR.in(Optional.ofNullable(contentFields.get(DEFECTS_KEY)).orElse(Collections.emptyList())))
-		//						.groupBy(ISSUE_TYPE.LOCATOR))
-		//				.limit(limit)
-		//				.fetchInto(StatisticsContent.class);
-		return null;
+	public List<LaunchesStatisticsContent> overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest,
+			int limit) {
+		List<Field<?>> fields = contentFields.stream()
+				.map(it -> sum(field(name(LAUNCHES, it)).cast(Long.class)).as(it))
+				.collect(Collectors.toList());
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
+				.select(fields)
+				.from(DSL.table(DSL.name(LAUNCHES)))
+				.fetch(), contentFields);
 	}
 
 	@Override
-	public List<MostFailedContent> mostFailedByExecutionCriteria(String launchName, String criteria, int limit) {
+	public List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
 		return dsl.with(HISTORY)
-				.as(dsl.select(TEST_ITEM.UNIQUE_ID,
-						TEST_ITEM.NAME,
-						DSL.arrayAgg(DSL.when(TEST_ITEM_RESULTS.STATUS.eq(DSL.cast(criteria.toUpperCase(), TEST_ITEM_RESULTS.STATUS)),
-								"true"
+				.as(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select(TEST_ITEM.UNIQUE_ID,
+								TEST_ITEM.NAME,
+								DSL.arrayAgg(DSL.when(STATISTICS.S_FIELD.eq(criteria), "true").otherwise("false"))
+										.orderBy(LAUNCH.NUMBER.asc())
+										.as(STATUS_HISTORY),
+								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
+								DSL.sum(DSL.when(STATISTICS.S_FIELD.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
+								DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
-								.otherwise("false"))
-								.orderBy(LAUNCH.NUMBER.asc())
-								.as(STATUS_HISTORY),
-						DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
-						DSL.sum(DSL.when(TEST_ITEM_RESULTS.STATUS.eq(DSL.cast(criteria.toUpperCase(), TEST_ITEM_RESULTS.STATUS)), 1)
-								.otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
-						DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
-				)
 						.from(LAUNCH)
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.and(LAUNCH.NAME.eq(launchName))
+						.join(STATISTICS)
+						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
+						.where(TEST_ITEM.TYPE.in(includeMethods ?
+								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
+								Collections.singletonList(JTestItemTypeEnum.STEP)))
+						.and(STATISTICS.S_FIELD.eq(criteria))
+						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
 				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(ZERO_QUERY_VALUE))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(limit)
-				.fetchInto(MostFailedContent.class);
+				.fetchInto(CriteraHistoryItem.class);
 	}
 
 	@Override
-	public List<MostFailedContent> mostFailedByDefectCriteria(String launchName, String criteria, int limit) {
-		return dsl.with(HISTORY)
-				.as(dsl.select(TEST_ITEM.UNIQUE_ID,
-						TEST_ITEM.NAME,
-						DSL.arrayAgg(DSL.when(ISSUE_GROUP.ISSUE_GROUP_.eq(DSL.cast(criteria.toUpperCase(), ISSUE_GROUP.ISSUE_GROUP_)),
-								"true"
+	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
+
+		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
+				.from(name(LAUNCHES))
+				.orderBy(field(name(LAUNCHES, NUMBER)).desc())
+				.limit(limit);
+
+		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
+				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
+				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
+				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
+				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
+		)
+				.from(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select(TEST_ITEM.UNIQUE_ID,
+								TEST_ITEM.NAME,
+								TEST_ITEM_RESULTS.STATUS,
+								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
+										1
+								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
+								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
-								.otherwise("false"))
-								.orderBy(LAUNCH.NUMBER.asc())
-								.as(STATUS_HISTORY),
-						DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
-						DSL.sum(DSL.when(ISSUE_GROUP.ISSUE_GROUP_.eq(DSL.cast(criteria.toUpperCase(), ISSUE_GROUP.ISSUE_GROUP_)), 1)
-								.otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
-						DSL.count(TEST_ITEM_RESULTS.RESULT_ID).as(TOTAL)
-				)
 						.from(LAUNCH)
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.leftJoin(ISSUE)
-						.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
-						.leftJoin(ISSUE_TYPE)
-						.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-						.leftJoin(ISSUE_GROUP)
-						.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-						.where(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.and(LAUNCH.NAME.eq(launchName))
-						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
-				.select()
-				.from(DSL.table(DSL.name(HISTORY)))
-				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(ZERO_QUERY_VALUE))
-				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
-				.limit(limit)
-				.fetchInto(MostFailedContent.class);
+						.where(LAUNCH.ID.in(commonSelect))
+						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
+						.asTable(FLAKY_TABLE_RESULTS))
+				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
+						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
+				)
+				.fetchInto(FlakyCasesTableContent.class);
 	}
 
 	@Override
@@ -228,7 +212,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Field<?> sumField = fields.stream()
-				.reduce(Field::add)
+				.reduce((field, value) -> field.add(value))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
 				.as(TOTAL);
 
@@ -355,45 +339,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(UniqueBugContent.class);
 
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
-	}
-
-	@Override
-	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
-
-		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
-				.from(name(LAUNCHES))
-				.orderBy(field(name(LAUNCHES, NUMBER)).desc())
-				.limit(limit);
-
-		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
-				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
-				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
-				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
-		)
-				.from(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).build())
-						.select(TEST_ITEM.UNIQUE_ID,
-								TEST_ITEM.NAME,
-								TEST_ITEM_RESULTS.STATUS,
-								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
-										1
-								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
-								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
-						)
-						.from(LAUNCH)
-						.join(TEST_ITEM)
-						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.where(LAUNCH.ID.in(commonSelect))
-						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
-						.asTable(FLAKY_TABLE_RESULTS))
-				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
-						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
-				)
-				.fetchInto(FlakyCasesTableContent.class);
 	}
 
 	//	@Override
