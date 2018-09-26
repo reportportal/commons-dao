@@ -5,10 +5,12 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -37,10 +39,13 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	@Query(value = "SELECT u FROM User u WHERE u.userType = :userType AND u.isExpired = :isExpired")
 	Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("isExpired") boolean isExpired, Pageable pageable);
 
-	@Query(value = "UPDATE users SET users.expired = TRUE WHERE CAST(metadata->>'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
-	void expireUsersLoggedOlderThan(@Param("lastLogin") Date lastLogin);
+	@Modifying
+	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata->>'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
+	void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
 
-	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{last_login}', to_jsonb(:lastLogin::text), true ) WHERE users.login = :username;", nativeQuery = true)
-	void updateLastLoginDate(@Param("username") String username, @Param("lastLogin") Date date);
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{last_login}', to_jsonb(CAST (:lastLogin AS TEXT)), true ) WHERE login = :username", nativeQuery = true)
+	void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin, @Param("username") String username);
 
 }
