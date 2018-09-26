@@ -336,12 +336,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				TEST_ITEM.NAME,
 				TEST_ITEM.DESCRIPTION,
 				USERS.LOGIN,
-				fieldName("TICKETS_TABLE", LAUNCH_ID)
+				fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID)
 
 		)
-				.from(QueryBuilder.newBuilder(filter).with(limit).with(isLatest).build().asTable("TICKETS_TABLE"))
+				.from(QueryBuilder.newBuilder(filter).with(limit).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
 				.join(TEST_ITEM)
-				.on(fieldName("TICKETS_TABLE", LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+				.on(fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.leftJoin(ISSUE)
