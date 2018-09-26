@@ -152,10 +152,11 @@ public interface WidgetContentRepository {
 	 * Loading unique bugs content that was produced by Bug Tracking System
 	 *
 	 * @param filter {@link Filter}
+	 * @param isLatest Flag for retrieving only latest launches
 	 * @param limit  Results limit
 	 * @return Map grouped by ticket id as key and List of {@link UniqueBugContent} as value
 	 */
-	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit);
+	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, boolean isLatest, int limit);
 
 	/**
 	 * Loading the most "flaky" test cases content

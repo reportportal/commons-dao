@@ -30,6 +30,7 @@ import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
+import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
@@ -326,16 +327,32 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit) {
+	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, boolean isLatest, int limit) {
 
-		List<UniqueBugContent> uniqueBugContents = dsl.select(fieldName(TICKET.TICKET_ID),
-				fieldName(TICKET.SUBMIT_DATE),
-				fieldName(TICKET.URL),
-				fieldName(TEST_ITEM.ITEM_ID),
-				fieldName(TEST_ITEM.NAME),
-				fieldName(USERS.LOGIN)
+		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID,
+				TICKET.SUBMIT_DATE,
+				TICKET.URL,
+				TEST_ITEM.ITEM_ID,
+				TEST_ITEM.NAME,
+				TEST_ITEM.DESCRIPTION,
+				USERS.LOGIN,
+				fieldName("TICKETS_TABLE", LAUNCH_ID)
 
-		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(UniqueBugContent.class);
+		)
+				.from(QueryBuilder.newBuilder(filter).with(limit).with(isLatest).build().asTable("TICKETS_TABLE"))
+				.join(TEST_ITEM)
+				.on(fieldName("TICKETS_TABLE", LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.leftJoin(ISSUE)
+				.on(TEST_ITEM.ITEM_ID.eq(ISSUE.ISSUE_ID))
+				.leftJoin(ISSUE_TICKET)
+				.on(ISSUE.ISSUE_ID.eq(ISSUE_TICKET.ISSUE_ID))
+				.join(TICKET)
+				.on(ISSUE_TICKET.TICKET_ID.eq(TICKET.ID))
+				.join(USERS)
+				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
+				.fetchInto(UniqueBugContent.class);
 
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
 	}
@@ -379,44 +396,44 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
-//	@Override
-//	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-//			String tagPrefix, int limit) {
-//
-//		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
-//
-//		Collections.addAll(fields,
-//				fieldName(LAUNCHES_SUB_QUERY, ID),
-//				fieldName(LAUNCH.NUMBER),
-//				fieldName(LAUNCH.START_TIME),
-//				fieldName(LAUNCH.NAME),
-//				fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE)
-//		);
-//
-//		Select<Record> select = dsl.select(fields)
-//				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
-//				.join(LAUNCH_TAG)
-//				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
-//				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
-//						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
-//						.from(LAUNCH_TAG)
-//						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
-//						.orderBy(charLength(LAUNCH_TAG.VALUE).desc(), LAUNCH_TAG.VALUE.desc())
-//						.limit(limit)))
-//				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-//						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
-//								SortOrder.DESC :
-//								SortOrder.ASC))
-//						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
-//
-//		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
-//				.stream()
-//				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
-//				.entrySet()
-//				.stream()
-//				.sorted(TAG_SORT_COMPARATOR)
-//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-//	}
+	//	@Override
+	//	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+	//			String tagPrefix, int limit) {
+	//
+	//		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
+	//
+	//		Collections.addAll(fields,
+	//				fieldName(LAUNCHES_SUB_QUERY, ID),
+	//				fieldName(LAUNCH.NUMBER),
+	//				fieldName(LAUNCH.START_TIME),
+	//				fieldName(LAUNCH.NAME),
+	//				fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE)
+	//		);
+	//
+	//		Select<Record> select = dsl.select(fields)
+	//				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
+	//				.join(LAUNCH_TAG)
+	//				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+	//				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
+	//						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
+	//						.from(LAUNCH_TAG)
+	//						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
+	//						.orderBy(charLength(LAUNCH_TAG.VALUE).desc(), LAUNCH_TAG.VALUE.desc())
+	//						.limit(limit)))
+	//				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+	//						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
+	//								SortOrder.DESC :
+	//								SortOrder.ASC))
+	//						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
+	//
+	//		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
+	//				.stream()
+	//				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
+	//				.entrySet()
+	//				.stream()
+	//				.sorted(TAG_SORT_COMPARATOR)
+	//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+	//	}
 
 	@Override
 	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
@@ -556,8 +573,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> selectFields = Lists.newArrayList(fields);
-		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(
-				charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
+		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
 				fieldName(LAUNCH_TAG.VALUE)
 		).as(TAG_VALUES));
 

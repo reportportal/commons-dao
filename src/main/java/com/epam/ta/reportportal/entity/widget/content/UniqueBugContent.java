@@ -1,15 +1,19 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
+
 /**
  * @author Ivan Budayeu
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UniqueBugContent implements Serializable {
 
 	@Column(name = "item_id")
@@ -35,6 +39,10 @@ public class UniqueBugContent implements Serializable {
 	@Column(name = "submit_date")
 	@JsonProperty(value = "submit_date")
 	private Timestamp submitDate;
+
+	@Column(name = LAUNCH_ID)
+	@JsonProperty(value = LAUNCH_ID)
+	private Long launchId;
 
 	public UniqueBugContent() {
 	}
@@ -85,5 +93,13 @@ public class UniqueBugContent implements Serializable {
 
 	public void setSubmitDate(Timestamp submitDate) {
 		this.submitDate = submitDate;
+	}
+
+	public Long getLaunchId() {
+		return launchId;
+	}
+
+	public void setLaunchId(Long launchId) {
+		this.launchId = launchId;
 	}
 }
