@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -72,5 +73,22 @@ public class FilterSort implements Serializable {
 
 	public void setDirection(Sort.Direction direction) {
 		this.direction = direction;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		FilterSort that = (FilterSort) o;
+		return Objects.equals(id, that.id) && Objects.equals(field, that.field) && direction == that.direction;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, field, direction);
 	}
 }
