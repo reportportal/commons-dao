@@ -6,6 +6,8 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -29,8 +31,8 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 	private static final Function<Result<? extends Record>, List<UserFilter>> USER_FILTER_FETCHER = result -> {
 		Map<Long, UserFilter> userFilterMap = new HashMap<>();
 		result.forEach(r -> {
-			Long userFilterID = r.get("id", Long.class);
-			UserFilter userFilter = null;
+			Long userFilterID = r.get(ID, Long.class);
+			UserFilter userFilter;
 			if (userFilterMap.containsKey(userFilterID)) {
 				userFilter = userFilterMap.get(userFilterID);
 			} else {
@@ -38,7 +40,11 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 				userFilter.setId(userFilterID);
 				userFilter.setName(r.get(NAME, String.class));
 				userFilter.setDescription(r.get(DESCRIPTION, String.class));
-				userFilter.setTargetClass(r.get(TARGET, Class.class));
+				try {
+					userFilter.setTargetClass(Class.forName(r.get(TARGET, String.class)));
+				} catch (ClassNotFoundException e) {
+					throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
+				}
 				Project project = new Project();
 				project.setId(r.get(PROJECT_ID, Long.class));
 				userFilter.setProject(project);
