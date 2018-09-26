@@ -26,5 +26,5 @@ import com.epam.ta.reportportal.entity.filter.UserFilter;
 /**
  * @author Pavel Bortnik
  */
-public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long> {
+public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long>, UserFilterRepositoryCustom {
 }
