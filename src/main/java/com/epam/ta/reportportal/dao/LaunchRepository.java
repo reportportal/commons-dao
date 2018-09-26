@@ -22,7 +22,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.launch.Launch;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.List;
 /**
  * @author Pavel Bortnik
  */
-public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, JpaRepository<Launch, Long>, LaunchRepositoryCustom {
+public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, LaunchRepositoryCustom {
 
 	void deleteByProjectId(Long projectId);
 
