@@ -29,6 +29,10 @@ import static com.epam.ta.reportportal.dao.util.ResultFetcher.NOT_PASSED_CASES_F
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
+import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
+import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
+import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
+import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -307,16 +311,32 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, int limit) {
+	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, boolean isLatest, int limit) {
 
-		List<UniqueBugContent> uniqueBugContents = dsl.select(fieldName(TICKET.TICKET_ID),
-				fieldName(TICKET.SUBMIT_DATE),
-				fieldName(TICKET.URL),
-				fieldName(TEST_ITEM.ITEM_ID),
-				fieldName(TEST_ITEM.NAME),
-				fieldName(USERS.LOGIN)
+		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID,
+				TICKET.SUBMIT_DATE,
+				TICKET.URL,
+				TEST_ITEM.ITEM_ID,
+				TEST_ITEM.NAME,
+				TEST_ITEM.DESCRIPTION,
+				USERS.LOGIN,
+				fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID)
 
-		).from(QueryBuilder.newBuilder(filter).with(limit).build()).fetchInto(UniqueBugContent.class);
+		)
+				.from(QueryBuilder.newBuilder(filter).with(limit).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
+				.join(TEST_ITEM)
+				.on(fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.leftJoin(ISSUE)
+				.on(TEST_ITEM.ITEM_ID.eq(ISSUE.ISSUE_ID))
+				.leftJoin(ISSUE_TICKET)
+				.on(ISSUE.ISSUE_ID.eq(ISSUE_TICKET.ISSUE_ID))
+				.join(TICKET)
+				.on(ISSUE_TICKET.TICKET_ID.eq(TICKET.ID))
+				.join(USERS)
+				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
+				.fetchInto(UniqueBugContent.class);
 
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
 	}

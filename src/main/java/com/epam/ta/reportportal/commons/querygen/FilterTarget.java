@@ -4,7 +4,6 @@ import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstan
 import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.dao.PostgresCrosstabWrapper;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -138,48 +137,6 @@ public enum FilterTarget {
 					.on(l.ID.eq(tis.LAUNCH_ID))
 					.join(tir)
 					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
-					.getQuery();
-		}
-	},
-
-	TICKET(Ticket.class, Arrays.asList(new CriteriaHolder(NAME, "ti.name", String.class, false),
-			new CriteriaHolder(PROJECT_ID, JLaunch.LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class, false)
-	)) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
-			JStatistics s = JStatistics.STATISTICS.as("s");
-			JTicket tic = JTicket.TICKET;
-			JUsers u = JUsers.USERS;
-			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
-			JIssue i = JIssue.ISSUE;
-			JLaunch l = JLaunch.LAUNCH;
-
-			Select<?> fieldsForSelect = DSL.select(tic.TICKET_ID, tic.SUBMIT_DATE, tic.URL, ti.NAME, u.LOGIN);
-
-			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
-					.from(s)
-					.groupBy(s.ITEM_ID, s.S_FIELD)
-					.orderBy(s.ITEM_ID, s.S_FIELD);
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
-
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.join(ti)
-					.on(field(DSL.name("ct", "item_id")).eq(ti.ITEM_ID))
-					.join(tir)
-					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
-					.join(l)
-					.on(ti.LAUNCH_ID.eq(l.ID))
-					.leftJoin(i)
-					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
-					.leftJoin(it)
-					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
-					.join(tic)
-					.on(it.TICKET_ID.eq(tic.ID))
-					.join(u)
-					.on(tic.SUBMITTER_ID.eq(u.ID))
 					.getQuery();
 		}
 	},
