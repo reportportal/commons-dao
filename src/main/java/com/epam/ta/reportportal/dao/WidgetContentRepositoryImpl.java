@@ -359,7 +359,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
-								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
+								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
+										TEST_ITEM.ITEM_ID
+										)))
+												.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
+														TEST_ITEM.ITEM_ID
+												)))),
 										1
 								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
@@ -379,44 +384,44 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
-//	@Override
-//	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-//			String tagPrefix, int limit) {
-//
-//		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
-//
-//		Collections.addAll(fields,
-//				fieldName(LAUNCHES_SUB_QUERY, ID),
-//				fieldName(LAUNCH.NUMBER),
-//				fieldName(LAUNCH.START_TIME),
-//				fieldName(LAUNCH.NAME),
-//				fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE)
-//		);
-//
-//		Select<Record> select = dsl.select(fields)
-//				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
-//				.join(LAUNCH_TAG)
-//				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
-//				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
-//						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
-//						.from(LAUNCH_TAG)
-//						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
-//						.orderBy(charLength(LAUNCH_TAG.VALUE).desc(), LAUNCH_TAG.VALUE.desc())
-//						.limit(limit)))
-//				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-//						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
-//								SortOrder.DESC :
-//								SortOrder.ASC))
-//						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
-//
-//		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
-//				.stream()
-//				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
-//				.entrySet()
-//				.stream()
-//				.sorted(TAG_SORT_COMPARATOR)
-//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-//	}
+	//	@Override
+	//	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+	//			String tagPrefix, int limit) {
+	//
+	//		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
+	//
+	//		Collections.addAll(fields,
+	//				fieldName(LAUNCHES_SUB_QUERY, ID),
+	//				fieldName(LAUNCH.NUMBER),
+	//				fieldName(LAUNCH.START_TIME),
+	//				fieldName(LAUNCH.NAME),
+	//				fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE)
+	//		);
+	//
+	//		Select<Record> select = dsl.select(fields)
+	//				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
+	//				.join(LAUNCH_TAG)
+	//				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+	//				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
+	//						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
+	//						.from(LAUNCH_TAG)
+	//						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
+	//						.orderBy(charLength(LAUNCH_TAG.VALUE).desc(), LAUNCH_TAG.VALUE.desc())
+	//						.limit(limit)))
+	//				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+	//						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
+	//								SortOrder.DESC :
+	//								SortOrder.ASC))
+	//						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
+	//
+	//		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
+	//				.stream()
+	//				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
+	//				.entrySet()
+	//				.stream()
+	//				.sorted(TAG_SORT_COMPARATOR)
+	//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+	//	}
 
 	@Override
 	public Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
@@ -556,8 +561,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> selectFields = Lists.newArrayList(fields);
-		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(
-				charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
+		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
 				fieldName(LAUNCH_TAG.VALUE)
 		).as(TAG_VALUES));
 

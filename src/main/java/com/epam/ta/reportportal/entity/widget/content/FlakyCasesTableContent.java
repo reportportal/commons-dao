@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
 /**
  * @author Ivan Budayeu
@@ -14,15 +14,19 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 public class FlakyCasesTableContent implements Serializable {
 
 	@JsonProperty(value = "statuses")
+	@Column(name = STATUSES)
 	private List<String> statuses;
 
 	@JsonProperty(value = "flaky_count")
+	@Column(name = FLAKY_COUNT)
 	private Long flakyCount;
 
 	@JsonProperty(value = "total")
+	@Column(name = TOTAL)
 	private Long total;
 
 	@JsonProperty(value = "item_name")
+	@Column(name = ITEM_NAME)
 	private String itemName;
 
 	@JsonProperty(value = "unique_id")
