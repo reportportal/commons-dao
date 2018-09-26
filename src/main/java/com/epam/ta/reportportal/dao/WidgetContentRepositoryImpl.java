@@ -5,7 +5,6 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -63,19 +62,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<Field<?>> fields = contentFields.stream()
 				.map(it -> sum(field(name(LAUNCHES, it)).cast(Long.class)).as(it))
 				.collect(Collectors.toList());
-		if (latest) {
-			return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
-					.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-					.select(fields)
-					.distinctOn(Tables.LAUNCH.NAME)
-					.from(DSL.table(DSL.name(LAUNCHES)))
-					.groupBy(field(name(LAUNCHES, LAUNCH.NAME.getName())))
-					.orderBy(Tables.LAUNCH.NAME, Tables.LAUNCH.NUMBER.desc())
-					.fetch(), contentFields);
-		}
-
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
 				.select(fields)
 				.from(DSL.table(DSL.name(LAUNCHES)))
 				.groupBy(field(name(LAUNCHES, LAUNCH.NAME.getName())))
