@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,7 +42,6 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata->>'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
 	void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
 
-	@Transactional
 	@Modifying
 	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{last_login}', to_jsonb(CAST (:lastLogin AS TEXT)), true ) WHERE login = :username", nativeQuery = true)
 	void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin, @Param("username") String username);
