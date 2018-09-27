@@ -21,10 +21,17 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * @author Pavel Bortnik
  */
 public enum LaunchModeEnum {
 	DEFAULT,
-	DEBUG
+	DEBUG;
+
+	public static Optional<LaunchModeEnum> findByName(String name) {
+		return Arrays.stream(LaunchModeEnum.values()).filter(type -> type.name().equals(name)).findAny();
+	}
 }
