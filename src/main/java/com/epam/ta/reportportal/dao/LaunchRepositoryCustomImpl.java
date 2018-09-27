@@ -30,10 +30,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.Result;
+import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -150,5 +147,25 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOneInto(Launch.class));
+	}
+
+	@Override
+	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
+
+		return PageableExecutionUtils.getPage(
+				LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+						.select()
+						.distinctOn(LAUNCH.NAME)
+						.from(LAUNCH)
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))),
+				pageable,
+				() -> dsl.fetchCount(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select()
+						.distinctOn(LAUNCH.NAME)
+						.from(LAUNCH)
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
+		);
 	}
 }

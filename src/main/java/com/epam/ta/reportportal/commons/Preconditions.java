@@ -21,9 +21,11 @@
 
 package com.epam.ta.reportportal.commons;
 
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.launch.Mode;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
 
 /**
  * Several validation checks
@@ -63,6 +66,13 @@ public class Preconditions {
 
 	public static Predicate<StatusEnum> statusIn(final StatusEnum... statuses) {
 		return input -> ArrayUtils.contains(statuses, input);
+	}
+
+	public static final Predicate<FilterCondition> HAS_ANY_MODE = hasMode(null);
+
+	public static Predicate<FilterCondition> hasMode(final Mode mode) {
+		return condition -> (MODE.equalsIgnoreCase(condition.getSearchCriteria())) && (mode == null || mode.name()
+				.equalsIgnoreCase(condition.getValue()));
 	}
 
 	/**

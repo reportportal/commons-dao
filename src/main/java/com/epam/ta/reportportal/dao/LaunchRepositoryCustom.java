@@ -24,6 +24,8 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -43,4 +45,6 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Map<String, String> getStatuses(Long projectId, Long[] ids);
 
 	Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter);
+
+	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
 }
