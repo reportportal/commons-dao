@@ -1,4 +1,4 @@
-package com.epam.ta.reportportal.entity.Attribute;
+package com.epam.ta.reportportal.entity.attribute;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -23,8 +23,13 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 
+import java.util.List;
+
 /**
  * @author Pavel Bortnik
  */
 public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long> {
+
+	List<Dashboard> findAllByProjectId(Long projectId);
+
 }
