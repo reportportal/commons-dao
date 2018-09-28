@@ -12,6 +12,11 @@ VALUES ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval
 INSERT INTO project (name, additional_info, creation_date) VALUES ('superadmin_personal', 'another additional info', '2018-07-19 14:25:00');
 INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
 VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 14:25:00');
+INSERT INTO bug_tracking_system (url, type, bts_project, project_id) VALUES ('test.com', 'TEST TYPE', 'TEST PROJECT', (SELECT currval(pg_get_serial_sequence('project', 'id'))));
+
+INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url) VALUES (1, 'EPMRPP-322', (SELECT currval(pg_get_serial_sequence('users', 'id'))), '2018-09-28 12:38:24.374555', (SELECT currval(pg_get_serial_sequence('bug_tracking_system', 'id'))), 'epam.com');
+INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url) VALUES (2, 'EPMRPP-123', (SELECT currval(pg_get_serial_sequence('users', 'id'))), '2018-09-28 12:38:24.374555', (SELECT currval(pg_get_serial_sequence('bug_tracking_system', 'id'))), 'epam.com');
+INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url) VALUES (3, 'QWERTY-100', (SELECT currval(pg_get_serial_sequence('users', 'id'))), '2018-09-28 12:38:24.374555', (SELECT currval(pg_get_serial_sequence('bug_tracking_system', 'id'))), 'epam.com');
 
 INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
 VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL',
@@ -153,11 +158,11 @@ DECLARE   counter       INT = 0;
 BEGIN
   WHILE counter < 50 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
-    VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now(), 1, 'DEFAULT', 'FAILED');
+    VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now() + '3 hours', 1, 'DEFAULT', 'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('First suite', 'SUITE', now(), 'description', now(), 'uniqueId1', 1);
+    VALUES ('First suite', 'SUITE', now(), 'description', now(), 'uniqueId' || cur_launch_id, cur_launch_id);
     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
@@ -166,7 +171,7 @@ BEGIN
     VALUES (cur_suite_id, 'FAILED', 0.35, now());
     --
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
-    VALUES ('First test', 'TEST', now(), 'description', now(), 'uniqueId2', 1, cur_suite_id);
+    VALUES ('First test', 'TEST', now(), 'description', now(), 'uniqueId' || cur_launch_id || cur_launch_id , cur_launch_id, cur_suite_id);
     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     INSERT INTO statistics (s_field, item_id, s_counter) VALUES ('statistics$defects$automation_bug$AB001', cur_item_id, 1);
@@ -181,7 +186,7 @@ BEGIN
       rand_status = (ARRAY ['PASSED' :: STATUS_ENUM, 'SKIPPED' :: STATUS_ENUM, 'FAILED' :: STATUS_ENUM]) [floor(random() * 3) + 1];
       --
       INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id, launch_id)
-      VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId3', cur_item_id, 1);
+      VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId' || cur_launch_id || cur_launch_id || cur_launch_id , cur_item_id, cur_launch_id);
       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
       UPDATE test_item
@@ -199,6 +204,8 @@ BEGIN
       THEN
         INSERT INTO issue (issue_id, issue_type, issue_description)
         VALUES (cur_step_id, floor(random() * 6 + 1), 'issue description');
+         INSERT INTO issue_ticket (issue_id, ticket_id)
+        VALUES (cur_step_id, floor(random() * 3 + 1));
       END IF;
       --
       step_counter = step_counter + 1;
@@ -221,104 +228,6 @@ INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) V
 SELECT initSteps();
 
 UPDATE launch SET name = 'launch name test' WHERE id = 4;
-
---
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$executions$total', 10);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$executions$passed', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$executions$skipped', 4);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$executions$failed', 3);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$to_investigate$total', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$system_issue$total', 8);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$automation_bug$total', 7);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$product_bug$total', 13);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$no_defect$total', 2);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$to_investigate$TI001', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$system_issue$SI001', 8);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$automation_bug$AB001', 7);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$product_bug$PB001', 13);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statistics$defects$no_defect$ND001', 2);
-
---
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$executions$total', 11);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$executions$passed', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$executions$skipped', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$executions$failed', 6);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$to_investigate$total', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$system_issue$total', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$automation_bug$total', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$product_bug$total', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$no_defect$total', 2);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$to_investigate$TI001', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$system_issue$SI001', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$automation_bug$AB001', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$product_bug$PB001', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statistics$defects$no_defect$ND001', 2);
-
---
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$executions$total', 15);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$executions$passed', 5);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$executions$skipped', 5);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$executions$failed', 5);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$to_investigate$total', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$system_issue$total', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$automation_bug$total', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$product_bug$total', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$no_defect$total', 1);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$to_investigate$TI001', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$system_issue$SI001', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$automation_bug$AB001', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$product_bug$PB001', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statistics$defects$no_defect$ND001', 1);
-
---
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$executions$total', 12);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$executions$passed', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$executions$skipped', 1);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$executions$failed', 8);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$to_investigate$total', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$system_issue$total', 4);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$total', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$total', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$total', 6);
-
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$to_investigate$TI001', 3);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$system_issue$SI001', 4);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$automation_bug$AB001', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$product_bug$PB001', 2);
-INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statistics$defects$no_defect$ND001', 6);
-
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(614, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(614, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(615, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(615, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(616, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(616, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(617, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(617, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(618, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(618, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(619, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(619, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(620, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(620, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(621, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(621, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(622, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(622, 'statistics$executions$failed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(623, 'statistics$executions$passed', 3);
-INSERT INTO statistics(item_id, s_field, s_counter) VALUES(613, 'statistics$executions$failed', 3);
-
 
 INSERT INTO filter (id, name, project_id, target, description) VALUES (5, 'product status 1', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD1');
 INSERT INTO filter (id, name, project_id, target, description) VALUES (6, 'product status 2', 1, 'com.epam.ta.reportportal.entity.launch.Launch', 'PROD2');

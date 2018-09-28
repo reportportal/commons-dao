@@ -13,11 +13,14 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
 import org.hsqldb.cmdline.SqlToolError;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +30,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 
 /**
@@ -56,18 +61,19 @@ public class WidgetContentRepositoryTest {
 	@Autowired
 	private LaunchRepository launchRepository;
 
-//	@BeforeClass
-//	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-//		runSqlScript("/test-dropall-script.sql");
-//		runSqlScript("/test-create-script.sql");
-//		runSqlScript("/test-fill-script.sql");
-//	}
-//
-//	@AfterClass
-//	public static void destroy() throws SQLException, IOException, SqlToolError {
-//		runSqlScript("/test-dropall-script.sql");
-//	}
+	@BeforeClass
+	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
+		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-create-script.sql");
+		runSqlScript("/test-fill-script.sql");
+		runSqlScript("/statistics-filling-script.sql");
+	}
+
+	@AfterClass
+	public static void destroy() throws SQLException, IOException, SqlToolError {
+		runSqlScript("/test-dropall-script.sql");
+	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
 		try (Connection connection = getConnection()) {
@@ -94,29 +100,54 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void launchStatistics() {
+
+		String sortingColumn = "statistics$defects$no_defect$ND001";
+
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn));
 
 		Sort sort = Sort.by(orderings);
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort, 3);
+		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort, 4);
 		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(3, launchStatisticsContents.size());
+		Assert.assertEquals(4, launchStatisticsContents.size());
+
+		Assert.assertEquals(launchStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
+		Assert.assertEquals(launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn),
+				String.valueOf(1)
+		);
 	}
 
 	@Test
 	public void investigatedStatistics() {
+
+		Map<Long, Map<String, Integer>> statistics = buildTotalDefectsMap();
+
+		String sortingColumn = "statistics$defects$no_defect$ND001";
+
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn));
 
 		Sort sort = Sort.by(orderings);
 
-		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, sort, 2);
+		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, sort, 4);
 		Assert.assertNotNull(investigatedStatisticsResults);
-		Assert.assertEquals(2, investigatedStatisticsResults.size());
+		Assert.assertEquals(4, investigatedStatisticsResults.size());
+
+		investigatedStatisticsResults.forEach(res -> {
+			Map<String, Integer> stats = statistics.get(res.getId());
+			int sum = stats.values().stream().mapToInt(Integer::intValue).sum();
+			Assert.assertEquals(res.getNotInvestigatedPercentage() + res.getInvestigatedPercentage(), 100.0, 0.01);
+			Assert.assertEquals(res.getNotInvestigatedPercentage(),
+					BigDecimal.valueOf((double) 100 * stats.get("statistics$defects$to_investigate$total") / sum)
+							.setScale(2, RoundingMode.HALF_UP)
+							.doubleValue(),
+					0.01
+			);
+		});
 	}
 
 	@Test
@@ -129,22 +160,27 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 12);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 1);
 
 		Assert.assertNotNull(passStatisticsResult);
+		Assert.assertEquals(3, passStatisticsResult.getPassed());
+		Assert.assertEquals(12, passStatisticsResult.getTotal());
 	}
 
 	@Test
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 10);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 4);
 
 		Assert.assertNotNull(passStatisticsResult);
+
+		Assert.assertEquals(13, passStatisticsResult.getPassed());
+		Assert.assertEquals(48, passStatisticsResult.getTotal());
 	}
 
 	@Test
@@ -152,35 +188,58 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		String executionContentField = "statistics$executions$total";
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
-		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, executionContentField, sort, 2);
+		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, executionContentField, sort, 4);
 
 		Assert.assertNotNull(casesTrendContents);
-		Assert.assertEquals(2, casesTrendContents.size());
+		Assert.assertEquals(4, casesTrendContents.size());
+
+		int firstElementDelta = casesTrendContents.get(0).getDelta();
+		int secondElementDelta = casesTrendContents.get(1).getTotal() - casesTrendContents.get(0).getTotal();
+		int thirdElementDelta = casesTrendContents.get(2).getTotal() - casesTrendContents.get(1).getTotal();
+		int fourthElementDelta = casesTrendContents.get(3).getTotal() - casesTrendContents.get(2).getTotal();
+
+		Assert.assertEquals(0, firstElementDelta);
+		Assert.assertEquals(1, secondElementDelta);
+		Assert.assertEquals(4, thirdElementDelta);
+		Assert.assertEquals(-3, fourthElementDelta);
 
 	}
 
 	@Test
 	public void bugTrendStatistics() {
+
+		Map<Long, Map<String, Integer>> statistics = buildTotalDefectsMap();
+
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalDefectsContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
 		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter,
 				contentFields,
 				sort,
-				3
+				4
 		);
 
 		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(3, launchStatisticsContents.size());
+		Assert.assertEquals(4, launchStatisticsContents.size());
 
+		launchStatisticsContents.forEach(res -> {
+			Map<String, Integer> stats = statistics.get(res.getId());
+			Map<String, String> resStatistics = res.getValues();
+
+			long total = stats.values().stream().mapToInt(Integer::intValue).sum();
+
+			stats.keySet().forEach(key -> Assert.assertEquals((long) stats.get(key), (long) Integer.parseInt(resStatistics.get(key))));
+
+			Assert.assertEquals(Long.parseLong(resStatistics.get(TOTAL)), total);
+		});
 	}
 
 	@Test
@@ -190,7 +249,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -203,12 +262,48 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(comparisonStatisticsContents);
 		Assert.assertEquals(2, comparisonStatisticsContents.size());
 
+		comparisonStatisticsContents.forEach(res -> {
+			Map<String, String> currStatistics = res.getValues();
+			Map<Long, Map<String, Integer>> preDefinedStatistics = buildLaunchesComparisonStatistics();
+
+			Map<String, Integer> testStatistics = preDefinedStatistics.get(res.getId());
+			int executionsSum = testStatistics.entrySet()
+					.stream()
+					.filter(entry -> entry.getKey().contains(EXECUTIONS_KEY))
+					.mapToInt(Map.Entry::getValue)
+					.sum();
+			int defectsSum = testStatistics.entrySet()
+					.stream()
+					.filter(entry -> entry.getKey().contains(DEFECTS_KEY))
+					.mapToInt(Map.Entry::getValue)
+					.sum();
+
+			currStatistics.keySet()
+					.stream()
+					.filter(key -> key.contains(EXECUTIONS_KEY))
+					.forEach(key -> Assert.assertEquals(Double.parseDouble(currStatistics.get(key)),
+							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
+									.setScale(2, RoundingMode.HALF_UP)
+									.doubleValue(),
+							0.01
+					));
+			currStatistics.keySet()
+					.stream()
+					.filter(key -> key.contains(DEFECTS_KEY))
+					.forEach(key -> Assert.assertEquals(Double.parseDouble(currStatistics.get(key)),
+							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / defectsSum)
+									.setScale(2, RoundingMode.HALF_UP)
+									.doubleValue(),
+							0.01
+					));
+		});
+
 	}
 
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -217,13 +312,22 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(launchesDurationContents);
 		Assert.assertEquals(4, launchesDurationContents.size());
 
+		launchesDurationContents.forEach(content -> {
+			Timestamp endTime = content.getEndTime();
+			Timestamp startTime = content.getStartTime();
+			if (startTime.before(endTime)) {
+				long duration = content.getDuration();
+				Assert.assertTrue(duration > 0 && duration == endTime.getTime() - startTime.getTime());
+			}
+		});
+
 	}
 
 	@Test
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -232,13 +336,28 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(notPassedCasesContents);
 		Assert.assertEquals(3, notPassedCasesContents.size());
 
+		notPassedCasesContents.forEach(content -> {
+			Map<String, String> currentStatistics = content.getValues();
+			Map<Long, Map<String, Integer>> preDefinedStatistics = buildNotPassedCasesStatistics();
+
+			Map<String, Integer> testStatistics = preDefinedStatistics.get(content.getId());
+			int executionsSum = testStatistics.entrySet().stream().mapToInt(Map.Entry::getValue).sum();
+
+			Assert.assertEquals(Double.parseDouble(currentStatistics.get(NOT_PASSED_STATISTICS_KEY)),
+					BigDecimal.valueOf((double) 100 * (testStatistics.get("statistics$executions$skipped") + testStatistics.get(
+							"statistics$executions$failed")) / executionsSum).setScale(2, RoundingMode.HALF_UP).doubleValue(),
+					0.01
+			);
+
+		});
+
 	}
 
 	@Test
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -252,6 +371,17 @@ public class WidgetContentRepositoryTest {
 
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(3, launchStatisticsContents.size());
+
+		List<String> tableContentFields = contentFields.stream().filter(cf -> !cf.startsWith("statistics$")).collect(Collectors.toList());
+
+		launchStatisticsContents.forEach(content -> {
+
+			Map<String, String> values = content.getValues();
+			tableContentFields.forEach(tcf -> {
+				Assert.assertTrue(values.containsKey(tcf));
+				Assert.assertNotNull(values.get(tcf));
+			});
+		});
 
 	}
 
@@ -280,9 +410,18 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, false, 100);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+
+		Sort sort = Sort.by(orderings);
+
+		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, false, 2);
 
 		Assert.assertNotNull(uniqueBugStatistics);
+		Assert.assertEquals(3, uniqueBugStatistics.size());
+
+		Assert.assertTrue(uniqueBugStatistics.containsKey("EPMRPP-123"));
+		Assert.assertTrue(uniqueBugStatistics.containsKey("EPMRPP-322"));
+		Assert.assertTrue(uniqueBugStatistics.containsKey("QWERTY-100"));
 
 	}
 
@@ -291,28 +430,51 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 100);
+		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 5);
 
 		Assert.assertNotNull(flakyCasesStatistics);
+
+		flakyCasesStatistics.forEach(content -> {
+			long counter = 0;
+			List<String> statuses = content.getStatuses();
+
+			for (int i = 0; i < statuses.size() - 1; i++) {
+				if (!statuses.get(i).equalsIgnoreCase(statuses.get(i + 1))) {
+					counter++;
+				}
+			}
+
+			Assert.assertEquals(counter, (long) content.getFlakyCount());
+			Assert.assertTrue(content.getFlakyCount() < content.getTotal());
+
+		});
+
+		Assert.assertEquals((long) flakyCasesStatistics.get(0).getFlakyCount(),
+				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).max().orElse(Long.MAX_VALUE)
+		);
+
+		Assert.assertEquals((long) flakyCasesStatistics.get(flakyCasesStatistics.size() - 1).getFlakyCount(),
+				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).min().orElse(Long.MIN_VALUE)
+		);
 	}
 
-//	@Test
-//	public void cumulativeTrendChart() {
-//		Filter filter = buildDefaultFilter(1L);
-//		List<String> contentFields = buildContentFields();
-//
-//		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
-//
-//		Sort sort = Sort.by(orderings);
-//		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
-//				contentFields,
-//				sort,
-//				"build",
-//				4
-//		);
-//
-//		Assert.assertNotNull(launchesStatisticsContents);
-//	}
+	//	@Test
+	//	public void cumulativeTrendChart() {
+	//		Filter filter = buildDefaultFilter(1L);
+	//		List<String> contentFields = buildContentFields();
+	//
+	//		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
+	//
+	//		Sort sort = Sort.by(orderings);
+	//		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+	//				contentFields,
+	//				sort,
+	//				"build",
+	//				4
+	//		);
+	//
+	//		Assert.assertNotNull(launchesStatisticsContents);
+	//	}
 
 	@Test
 	public void productStatusFilterGroupedWidget() {
@@ -517,7 +679,7 @@ public class WidgetContentRepositoryTest {
 				"statistics$defects$to_investigate$total",
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
-				"statistics$executions$total"
+				"statistics$executions$passed"
 		);
 	}
 
@@ -543,6 +705,102 @@ public class WidgetContentRepositoryTest {
 
 	private List<String> buildActivityContentFields() {
 		return Lists.newArrayList("CREATE_LAUNCH", "CREATE_ITEM");
+	}
+
+	private Map<Long, Map<String, Integer>> buildTotalDefectsMap() {
+		Map<Long, Map<String, Integer>> investigatedTrendMap = Maps.newLinkedHashMap();
+
+		investigatedTrendMap.put(1L,
+				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 2)
+						.put("statistics$defects$system_issue$total", 8)
+						.put("statistics$defects$automation_bug$total", 7)
+						.put("statistics$defects$product_bug$total", 13)
+						.put("statistics$defects$no_defect$total", 2)
+						.build()
+		);
+		investigatedTrendMap.put(2L,
+				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
+						.put("statistics$defects$system_issue$total", 3)
+						.put("statistics$defects$automation_bug$total", 1)
+						.put("statistics$defects$product_bug$total", 1)
+						.put("statistics$defects$no_defect$total", 2)
+						.build()
+		);
+		investigatedTrendMap.put(3L,
+				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 1)
+						.put("statistics$defects$system_issue$total", 1)
+						.put("statistics$defects$automation_bug$total", 1)
+						.put("statistics$defects$product_bug$total", 1)
+						.put("statistics$defects$no_defect$total", 1)
+						.build()
+		);
+		investigatedTrendMap.put(4L,
+				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
+						.put("statistics$defects$system_issue$total", 4)
+						.put("statistics$defects$automation_bug$total", 2)
+						.put("statistics$defects$product_bug$total", 2)
+						.put("statistics$defects$no_defect$total", 6)
+						.build()
+		);
+
+		return investigatedTrendMap;
+
+	}
+
+	private Map<Long, Map<String, Integer>> buildLaunchesComparisonStatistics() {
+		Map<Long, Map<String, Integer>> investigatedTrendMap = Maps.newLinkedHashMap();
+
+		investigatedTrendMap.put(1L,
+				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 2)
+						.put("statistics$defects$system_issue$total", 8)
+						.put("statistics$defects$automation_bug$total", 7)
+						.put("statistics$defects$product_bug$total", 13)
+						.put("statistics$defects$no_defect$total", 2)
+						.put("statistics$executions$passed", 3)
+						.put("statistics$executions$skipped", 4)
+						.put("statistics$executions$failed", 3)
+						.build()
+		);
+		investigatedTrendMap.put(2L,
+				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
+						.put("statistics$defects$system_issue$total", 3)
+						.put("statistics$defects$automation_bug$total", 1)
+						.put("statistics$defects$product_bug$total", 1)
+						.put("statistics$defects$no_defect$total", 2)
+						.put("statistics$executions$passed", 2)
+						.put("statistics$executions$skipped", 3)
+						.put("statistics$executions$failed", 6)
+						.build()
+		);
+
+		return investigatedTrendMap;
+
+	}
+
+	private Map<Long, Map<String, Integer>> buildNotPassedCasesStatistics() {
+		Map<Long, Map<String, Integer>> investigatedTrendMap = Maps.newLinkedHashMap();
+
+		investigatedTrendMap.put(1L,
+				ImmutableMap.<String, Integer>builder().put("statistics$executions$passed", 3)
+						.put("statistics$executions$skipped", 4)
+						.put("statistics$executions$failed", 3)
+						.build()
+		);
+		investigatedTrendMap.put(2L,
+				ImmutableMap.<String, Integer>builder().put("statistics$executions$passed", 2)
+						.put("statistics$executions$skipped", 3)
+						.put("statistics$executions$failed", 6)
+						.build()
+		);
+		investigatedTrendMap.put(3L,
+				ImmutableMap.<String, Integer>builder().put("statistics$executions$passed", 5)
+						.put("statistics$executions$skipped", 5)
+						.put("statistics$executions$failed", 5)
+						.build()
+		);
+
+		return investigatedTrendMap;
+
 	}
 
 }

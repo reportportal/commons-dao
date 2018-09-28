@@ -20,6 +20,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
@@ -30,9 +31,7 @@ import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
-import static com.epam.ta.reportportal.jooq.tables.JIssueGroup.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
-import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -124,12 +123,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		)
 				.from(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
-						.select(TEST_ITEM.UNIQUE_ID,
+						.select(
+								TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
-								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.ITEM_ID))),
-										1
-								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
+								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
+										TEST_ITEM.UNIQUE_ID
+								)))
+										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
+												TEST_ITEM.ITEM_ID
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
@@ -144,6 +147,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
+				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
@@ -197,12 +201,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Field<Integer> executionField = fieldName(executionContentField).cast(Integer.class);
 
+		List<SortField<Object>> deltaCounterSort = ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+				.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
+
 		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
 				executionField.as(executionContentField),
-				executionField.sub(lag(executionField).over().orderBy(executionField)).as(DELTA)
+				executionField.sub(lag(executionField).over().orderBy(deltaCounterSort)).as(DELTA)
 		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(CasesTrendContent.class);
 	}
 
@@ -233,17 +241,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<Double>> fields = contentFields.stream()
-				.map(contentField -> fieldName(contentField).cast(Double.class).as(contentField))
-				.collect(Collectors.toList());
+		List<Field<?>> executionStatisticsFields = buildComparisonStatisticsFields(contentFields.stream()
+				.filter(cf -> cf.contains(EXECUTIONS_KEY))
+				.collect(toList()));
+		List<Field<?>> defectStatisticsFields = buildComparisonStatisticsFields(contentFields.stream()
+				.filter(cf -> cf.contains(DEFECTS_KEY))
+				.collect(toList()));
 
-		Field<Double> contentFieldsSum = fields.stream()
-				.reduce(Field::add)
-				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"));
-
-		List<Field<?>> statisticsFields = fields.stream()
-				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).div(nullif(contentFieldsSum, 0).cast(Double.class)), 2).as(field))
-				.collect(Collectors.toList());
+		List<Field<?>> statisticsFields = Stream.of(defectStatisticsFields, executionStatisticsFields)
+				.flatMap(List::stream)
+				.collect(toList());
 
 		Collections.addAll(statisticsFields,
 				fieldName(LAUNCH.ID),
@@ -311,7 +318,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, boolean isLatest, int limit) {
+	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
 		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID,
 				TICKET.SUBMIT_DATE,
@@ -323,7 +330,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID)
 
 		)
-				.from(QueryBuilder.newBuilder(filter).with(limit).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
+				.from(QueryBuilder.newBuilder(filter).with(limit).with(sort).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
 				.join(TEST_ITEM)
 				.on(fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
 				.join(TEST_ITEM_RESULTS)
@@ -338,7 +345,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
 				.fetchInto(UniqueBugContent.class);
 
-		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId));
+		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId, LinkedHashMap::new, toList()));
 	}
 
 	//	@Override
@@ -466,6 +473,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.build())
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
+	}
+
+	private List<Field<?>> buildComparisonStatisticsFields(List<String> contentFields) {
+		List<Field<Double>> fields = contentFields.stream()
+				.map(contentField -> fieldName(contentField).cast(Double.class).as(contentField))
+				.collect(Collectors.toList());
+
+		Field<Double> contentFieldsSum = fields.stream()
+				.reduce(Field::add)
+				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"));
+
+		return fields.stream()
+				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).div(nullif(contentFieldsSum, 0).cast(Double.class)), 2).as(field))
+				.collect(Collectors.toList());
 	}
 
 	private List<LaunchesStatisticsContent> fetchProductStatusLaunchGroupedStatisticsWithTags(Filter filter, List<String> contentFields,
