@@ -2,9 +2,9 @@ INSERT INTO project (name, additional_info, creation_date) VALUES ('default_pers
 INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
 VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 13:25:00');
 
-INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
+INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired, metadata)
 VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', 'USER', 'INTERNAL',
-        (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'tester', false);
+        (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'tester', false, '{"last_login":"2018-03-05 15:30:22"}');
 
 INSERT INTO project_user (user_id, project_id, project_role)
 VALUES ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'MEMBER');
