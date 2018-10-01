@@ -202,7 +202,8 @@ public enum FilterTarget {
 		}
 	},
 
-	USER(User.class, Arrays.asList(new CriteriaHolder(UserCriteriaConstant.LOGIN, UserCriteriaConstant.LOGIN, String.class, false),
+	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false),
+			new CriteriaHolder(UserCriteriaConstant.LOGIN, UserCriteriaConstant.LOGIN, String.class, false),
 			new CriteriaHolder(EMAIL, EMAIL, String.class, false),
 			new CriteriaHolder(FULL_NAME, FULL_NAME, String.class, false),
 			new CriteriaHolder(ROLE, ROLE, String.class, false),

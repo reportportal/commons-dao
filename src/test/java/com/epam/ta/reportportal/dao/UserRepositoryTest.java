@@ -1,5 +1,8 @@
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Condition;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.user.User;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -138,6 +142,15 @@ public class UserRepositoryTest {
 		Assert.assertEquals(login, user.get().getLogin());
 	}
 
+	@Test
+	public void findByFilterExcludingTest() {
+		Page<User> users = userRepository.findByFilterExcluding(buildDefaultUserFilter(), PageRequest.of(0,5), "email");
+
+		Assert.assertNotNull(users);
+
+		users.forEach(u -> Assert.assertNull(u.getEmail()));
+	}
+
 	@Rollback(false)
 	@Test
 	public void expireUsersLoggedOlderThan() {
@@ -152,5 +165,12 @@ public class UserRepositoryTest {
 		LocalDateTime now = LocalDateTime.now();
 		userRepository.updateLastLoginDate(now, "superadmin");
 
+	}
+
+	private Filter buildDefaultUserFilter() {
+		return Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "10", "id"))
+				.build();
 	}
 }

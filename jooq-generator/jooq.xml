@@ -36,6 +36,22 @@
                  (A Java regular expression. Use the pipe to separate several expressions).
                  Excludes match before includes, i.e. excludes have a higher priority -->
             <excludes>schema_migrations</excludes>
+            <forcedTypes>
+                <forcedType>
+                    <userType>
+                        java.util.Map
+                    </userType>
+                    <binding>
+                        com.epam.ta.reportportal.dao.util.PostgresJSONGsonBinding
+                    </binding>
+                    <expression>
+                        .*metadata*.
+                    </expression>
+                    <types>
+                        jsonb
+                    </types>
+                </forcedType>
+            </forcedTypes>
         </database>
 
         <generate>
