@@ -49,6 +49,14 @@ CREATE TABLE demo_data_postfix (
   project_id BIGINT REFERENCES project (id) ON DELETE CASCADE
 );
 
+CREATE TABLE user_creation_bid (
+  id BIGSERIAL CONSTRAINT user_creation_bid_pk PRIMARY KEY,
+  last_modified TIMESTAMP DEFAULT now(),
+  email VARCHAR NOT NULL UNIQUE,
+  default_project_id BIGINT REFERENCES project(id) ON DELETE CASCADE,
+  role VARCHAR NOT NULL
+);
+
 CREATE TABLE users (
   id                   BIGSERIAL CONSTRAINT users_pk PRIMARY KEY,
   login                VARCHAR NOT NULL UNIQUE,
