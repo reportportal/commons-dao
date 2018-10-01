@@ -45,11 +45,8 @@
                         com.epam.ta.reportportal.dao.util.PostgresJSONGsonBinding
                     </binding>
                     <expression>
-                        .*metadata*.
+                        metadata
                     </expression>
-                    <types>
-                        jsonb
-                    </types>
                 </forcedType>
             </forcedTypes>
         </database>

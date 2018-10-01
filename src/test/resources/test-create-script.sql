@@ -467,10 +467,10 @@ CREATE TABLE statistics (
   CHECK (statistics.s_counter >= 0)
 );
 
-CREATE TABLE issue_type_project_configuration (
-  configuration_id BIGINT REFERENCES project_configuration,
-  issue_type_id    BIGINT REFERENCES issue_type,
-  CONSTRAINT issue_type_project_configuration_pk PRIMARY KEY (configuration_id, issue_type_id)
+CREATE TABLE issue_type_project (
+  project_id BIGINT REFERENCES project(id),
+  issue_type_id    BIGINT REFERENCES issue_type(id),
+  CONSTRAINT issue_type_project_pk PRIMARY KEY (project_id, issue_type_id)
 );
 ----------------------------------------------------------------------------------------
 

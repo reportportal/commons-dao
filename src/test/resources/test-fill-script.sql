@@ -218,12 +218,12 @@ END;
 $BODY$
 LANGUAGE plpgsql;
 
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 1);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 2);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 3);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 4);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 5);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 6);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 1);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 2);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 3);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 4);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 5);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 6);
 
 SELECT initSteps();
 
