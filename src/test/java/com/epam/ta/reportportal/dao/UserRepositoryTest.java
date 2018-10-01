@@ -131,7 +131,11 @@ public class UserRepositoryTest {
 
 	@Test
 	public void findByLoginTest() {
-		Optional<User> user = userRepository.findByLogin("default");
+		String login = "default";
+		Optional<User> user = userRepository.findByLogin(login);
+
+		Assert.assertTrue(user.isPresent());
+		Assert.assertEquals(login, user.get().getLogin());
 	}
 
 	@Rollback(false)
@@ -140,8 +144,6 @@ public class UserRepositoryTest {
 
 		userRepository.expireUsersLoggedOlderThan(LocalDateTime.now());
 
-		//TODO to solve troubles with JSONB parsing
-		//		System.out.println(userRepository.findByLogin("default").get().isExpired());
 	}
 
 	@Rollback(false)

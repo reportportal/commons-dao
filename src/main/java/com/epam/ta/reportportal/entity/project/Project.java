@@ -1,12 +1,13 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
+import com.epam.ta.reportportal.commons.MetaDataType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.User;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
@@ -23,7 +24,7 @@ import java.util.*;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "MetaDataType", typeClass = MetaDataType.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -63,9 +64,9 @@ public class Project implements Serializable {
 	@Column(name = "creation_date")
 	private Date creationDate;
 
-	@Type(type = "jsonb")
+	@Type(type = "MetaDataType")
 	@Column(name = "metadata")
-	private MetaData metadata;
+	private Map<String, String> metadata;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
@@ -188,11 +189,11 @@ public class Project implements Serializable {
 		this.demoDataPostfix = demoDataPostfix;
 	}
 
-	public MetaData getMetadata() {
+	public Map<String, String> getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(MetaData metadata) {
+	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 	}
 
