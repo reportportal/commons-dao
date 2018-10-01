@@ -129,6 +129,11 @@ public class UserRepositoryTest {
 		Assert.assertEquals(2, users.getNumberOfElements());
 	}
 
+	@Test
+	public void findByLoginTest() {
+		Optional<User> user = userRepository.findByLogin("default");
+	}
+
 	@Rollback(false)
 	@Test
 	public void expireUsersLoggedOlderThan() {
