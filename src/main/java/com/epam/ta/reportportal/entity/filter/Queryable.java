@@ -44,8 +44,9 @@ public abstract class Queryable {
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "target")
+	@Enumerated(EnumType.STRING)
 	@Type(type = "pqsql_enum")
+	@Column(name = "target")
 	private ObjectType targetClass;
 
 	@Column(name = "description")
