@@ -5,11 +5,10 @@ DROP TABLE IF EXISTS defect_form_field CASCADE;
 DROP TABLE IF EXISTS defect_field_allowed_value CASCADE;
 DROP TABLE IF EXISTS bug_tracking_system_auth CASCADE;
 
-DROP TABLE IF EXISTS project_analyzer_configuration CASCADE;
 DROP TABLE IF EXISTS recipients CASCADE;
 DROP TABLE IF EXISTS email_sender_case CASCADE;
-DROP TABLE IF EXISTS project_email_configuration CASCADE;
-DROP TABLE IF EXISTS project_configuration CASCADE;
+DROP TABLE IF EXISTS attribute CASCADE;
+DROP TABLE IF EXISTS project_attribute CASCADE;
 DROP TABLE IF EXISTS issue_type_project CASCADE;
 DROP TABLE IF EXISTS issue_type CASCADE;
 

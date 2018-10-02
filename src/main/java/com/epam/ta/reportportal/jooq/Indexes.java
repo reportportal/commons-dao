@@ -3,12 +3,58 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
+
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix;
+import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserConfig;
+import com.epam.ta.reportportal.jooq.tables.JUserFilter;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+
+import javax.annotation.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -50,6 +96,7 @@ public class Indexes {
     public static final Index ISSUE_PK = Indexes0.ISSUE_PK;
     public static final Index ISSUE_GROUP_PK = Indexes0.ISSUE_GROUP_PK;
     public static final Index ISSUE_TICKET_PK = Indexes0.ISSUE_TICKET_PK;
+    public static final Index ISSUE_TYPE_LOCATOR_KEY = Indexes0.ISSUE_TYPE_LOCATOR_KEY;
     public static final Index ISSUE_TYPE_PK = Indexes0.ISSUE_TYPE_PK;
     public static final Index ISSUE_TYPE_PROJECT_PK = Indexes0.ISSUE_TYPE_PROJECT_PK;
     public static final Index ITEM_TAG_PK = Indexes0.ITEM_TAG_PK;
@@ -117,6 +164,7 @@ public class Indexes {
         public static Index ISSUE_PK = Internal.createIndex("issue_pk", JIssue.ISSUE, new OrderField[] { JIssue.ISSUE.ISSUE_ID }, true);
         public static Index ISSUE_GROUP_PK = Internal.createIndex("issue_group_pk", JIssueGroup.ISSUE_GROUP, new OrderField[] { JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID }, true);
         public static Index ISSUE_TICKET_PK = Internal.createIndex("issue_ticket_pk", JIssueTicket.ISSUE_TICKET, new OrderField[] { JIssueTicket.ISSUE_TICKET.ISSUE_ID, JIssueTicket.ISSUE_TICKET.TICKET_ID }, true);
+        public static Index ISSUE_TYPE_LOCATOR_KEY = Internal.createIndex("issue_type_locator_key", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.LOCATOR }, true);
         public static Index ISSUE_TYPE_PK = Internal.createIndex("issue_type_pk", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.ID }, true);
         public static Index ISSUE_TYPE_PROJECT_PK = Internal.createIndex("issue_type_project_pk", JIssueTypeProject.ISSUE_TYPE_PROJECT, new OrderField[] { JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID, JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID }, true);
         public static Index ITEM_TAG_PK = Internal.createIndex("item_tag_pk", JItemTag.ITEM_TAG, new OrderField[] { JItemTag.ITEM_TAG.ID }, true);

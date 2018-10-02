@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = 1038470458;
+    private static final long serialVersionUID = -1772843525;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -81,7 +81,7 @@ public class JProject extends TableImpl<JProjectRecord> {
      * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
      */
     @java.lang.Deprecated
-    public final TableField<JProjectRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
+    public final TableField<JProjectRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\"").defaultValue(org.jooq.impl.DSL.field("'{}'::jsonb", org.jooq.impl.SQLDataType.OTHER)), this, "");
 
     /**
      * Create a <code>public.project</code> table reference
