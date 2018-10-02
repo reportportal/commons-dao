@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 
-public class MetaDataType implements UserType {
+public class JsonbMetaDataType implements UserType {
 
 	private final Gson gson = new GsonBuilder().serializeNulls().create();
 

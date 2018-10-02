@@ -4,7 +4,11 @@ import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
+import com.epam.ta.reportportal.dao.util.JsonbConverter;
+import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserRole;
+import com.epam.ta.reportportal.entity.user.UserType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
@@ -33,6 +37,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
+import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
@@ -42,11 +47,42 @@ import static java.util.Optional.ofNullable;
 @Repository
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = record -> record.into(User.class);
+	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
+		User user = new User();
+		Project defaultProject = new Project();
+		r.into(USERS.ID,
+				USERS.LOGIN,
+				USERS.PASSWORD,
+				USERS.EMAIL,
+				USERS.EXPIRED,
+				USERS.FULL_NAME,
+				USERS.DEFAULT_PROJECT_ID,
+				USERS.ATTACHMENT,
+				USERS.ATTACHMENT_THUMBNAIL,
+				USERS.TYPE,
+				USERS.ROLE
+		);
+		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
+		user.setId(r.get(USERS.ID));
+		user.setAttachment(r.get(USERS.ATTACHMENT));
+		user.setAttachmentThumbnail(r.get(USERS.ATTACHMENT_THUMBNAIL));
+		user.setDefaultProject(defaultProject);
+		user.setEmail(r.get(USERS.EMAIL));
+		user.setExpired(r.get(USERS.EXPIRED));
+		user.setFullName(r.get(USERS.FULL_NAME));
+		user.setLogin(r.get(USERS.LOGIN));
+		user.setPassword(r.get(USERS.PASSWORD));
+		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
+		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
+				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+
+		Map<String, String> metaData = r.get(fieldName(USERS.METADATA), new JsonbConverter());
+		user.setMetadata(metaData);
+		return user;
+	};
 
 	public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = result -> {
 		Map<Long, User> userMap = Maps.newHashMap();
-		//		List<Map> values = result.getValues(USERS.METADATA, new PostgresJSONGsonBinding().converter());
 		result.forEach(res -> {
 			Long userId = res.get(USERS.ID);
 			if (!userMap.containsKey(userId)) {

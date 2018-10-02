@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.MetaDataType;
+import com.epam.ta.reportportal.commons.JsonbMetaDataType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
@@ -24,7 +24,7 @@ import java.util.*;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "MetaDataType", typeClass = MetaDataType.class)
+@TypeDef(name = "JsonbMetaDataType", typeClass = JsonbMetaDataType.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -64,7 +64,7 @@ public class Project implements Serializable {
 	@Column(name = "creation_date")
 	private Date creationDate;
 
-	@Type(type = "MetaDataType")
+	@Type(type = "JsonbMetaDataType")
 	@Column(name = "metadata")
 	private Map<String, String> metadata;
 

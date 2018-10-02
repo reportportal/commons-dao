@@ -55,7 +55,7 @@ public class UserRepositoryTest {
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {

@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.commons.MetaDataType;
+import com.epam.ta.reportportal.commons.JsonbMetaDataType;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "MetaDataType", typeClass = MetaDataType.class)
+@TypeDef(name = "JsonbMetaDataType", typeClass = JsonbMetaDataType.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
@@ -53,7 +53,7 @@ public class User implements Serializable {
 	@Column(name = "expired")
 	private boolean isExpired;
 
-	@Type(type = "MetaDataType")
+	@Type(type = "JsonbMetaDataType")
 	@Column(name = "metadata")
 	private Map<String,String> metadata;
 
