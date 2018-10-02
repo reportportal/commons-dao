@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BinaryData;
+import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
@@ -166,5 +167,18 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		} catch (IOException e) {
 			return MediaType.OCTET_STREAM.toString();
 		}
+	}
+
+	@Override
+	public List<User> findByFilter(Filter filter) {
+		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public Page<User> findByFilter(Filter filter, Pageable pageable) {
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 }

@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 /**
  * @author Pavel Bortnik
  */
-public interface UserRepositoryCustom {
+public interface UserRepositoryCustom extends FilterableRepository<User>{
 
 	String uploadUserPhoto(String login, BinaryData binaryData);
 
