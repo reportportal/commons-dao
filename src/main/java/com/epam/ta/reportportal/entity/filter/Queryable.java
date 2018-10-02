@@ -21,7 +21,10 @@
 
 package com.epam.ta.reportportal.entity.filter;
 
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 
@@ -30,6 +33,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "filter")
+@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Queryable {
 
@@ -41,6 +45,7 @@ public abstract class Queryable {
 	private String name;
 
 	@Column(name = "target")
+	@Type(type = "pqsql_enum")
 	private ObjectType targetClass;
 
 	@Column(name = "description")
