@@ -38,4 +38,8 @@ public enum ObjectType {
 		);
 		return objectType.get().classObject;
 	}
+
+	public Class<?> getClassObject() {
+		return classObject;
+	}
 }
