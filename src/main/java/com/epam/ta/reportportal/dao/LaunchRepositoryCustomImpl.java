@@ -23,7 +23,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -95,12 +94,19 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<String> getLaunchNames(Long projectId, String value, LaunchModeEnum mode) {
+	public List<String> getLaunchNames(Long projectId, String value, String mode) {
 
 		JLaunch l = LAUNCH.as("l");
 		JProject p = PROJECT.as("p");
 
-		return dsl.select().from(l).leftJoin(p).on(l.PROJECT_ID.eq(p.ID)).where(p.ID.eq(projectId)).and(l.NAME.like(value)).fetch(l.NAME);
+		return dsl.select()
+				.from(l)
+				.leftJoin(p)
+				.on(l.PROJECT_ID.eq(p.ID))
+				.where(p.ID.eq(projectId))
+				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.and(l.NAME.like("%" + value + "%"))
+				.fetch(l.NAME);
 	}
 
 	@Override
@@ -150,5 +156,25 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOneInto(Launch.class));
+	}
+
+	@Override
+	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
+
+		return PageableExecutionUtils.getPage(
+				LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+						.select()
+						.distinctOn(LAUNCH.NAME)
+						.from(LAUNCH)
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))),
+				pageable,
+				() -> dsl.fetchCount(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select()
+						.distinctOn(LAUNCH.NAME)
+						.from(LAUNCH)
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
+		);
 	}
 }

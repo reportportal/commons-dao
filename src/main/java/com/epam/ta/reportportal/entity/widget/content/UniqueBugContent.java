@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DESCRIPTION;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
 
 /**
@@ -43,6 +44,10 @@ public class UniqueBugContent implements Serializable {
 	@Column(name = LAUNCH_ID)
 	@JsonProperty(value = LAUNCH_ID)
 	private Long launchId;
+
+	@Column(name = DESCRIPTION)
+	@JsonProperty(value = DESCRIPTION)
+	private String description;
 
 	public UniqueBugContent() {
 	}
@@ -101,5 +106,13 @@ public class UniqueBugContent implements Serializable {
 
 	public void setLaunchId(Long launchId) {
 		this.launchId = launchId;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

@@ -61,7 +61,7 @@ CREATE TABLE users (
   expired              BOOLEAN NOT NULL,
   default_project_id   BIGINT REFERENCES project (id) ON DELETE CASCADE,
   full_name            VARCHAR NOT NULL,
-  metadata             JSONB   NULL
+  metadata             JSONB   NULL DEFAULT '{}'
 );
 
 CREATE TABLE user_config (
