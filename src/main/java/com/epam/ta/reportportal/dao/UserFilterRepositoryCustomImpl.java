@@ -4,10 +4,9 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
+import com.epam.ta.reportportal.entity.filter.ObjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -40,11 +39,7 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 				userFilter.setId(userFilterID);
 				userFilter.setName(r.get(NAME, String.class));
 				userFilter.setDescription(r.get(DESCRIPTION, String.class));
-				try {
-					userFilter.setTargetClass(Class.forName(r.get(TARGET, String.class)));
-				} catch (ClassNotFoundException e) {
-					throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
-				}
+				userFilter.setTargetClass(ObjectType.valueOf(r.get(TARGET, String.class)));
 				Project project = new Project();
 				project.setId(r.get(PROJECT_ID, Long.class));
 				userFilter.setProject(project);
