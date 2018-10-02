@@ -41,7 +41,7 @@ public abstract class Queryable {
 	private String name;
 
 	@Column(name = "target")
-	private Class<?> targetClass;
+	private ObjectType targetClass;
 
 	@Column(name = "description")
 	private String description;
@@ -66,11 +66,11 @@ public abstract class Queryable {
 		this.name = name;
 	}
 
-	public Class<?> getTargetClass() {
+	public ObjectType getTargetClass() {
 		return targetClass;
 	}
 
-	public void setTargetClass(Class<?> targetClass) {
+	public void setTargetClass(ObjectType targetClass) {
 		this.targetClass = targetClass;
 	}
 
