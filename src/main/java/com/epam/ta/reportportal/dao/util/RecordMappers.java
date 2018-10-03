@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.PARENT_ID;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 
 /**
@@ -69,9 +70,12 @@ public class RecordMappers {
 	 * Maps record into {@link IssueEntity} object
 	 */
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-		IssueEntity issueEntity = r.into(IssueEntity.class);
-		issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
-		return issueEntity;
+		if (r.get(ISSUE.ISSUE_ID) != null) {
+			IssueEntity issueEntity = r.into(IssueEntity.class);
+			issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+			return issueEntity;
+		}
+		return null;
 	};
 
 	/**
