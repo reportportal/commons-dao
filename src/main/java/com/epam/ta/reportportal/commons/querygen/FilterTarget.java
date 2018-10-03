@@ -181,8 +181,8 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Field<Long> crossTabId = field(DSL.name("ct.id")).cast(Long.class);
-			Select<?> raw = DSL.select(s.ITEM_ID.as("ct.id"), s.S_FIELD, max(s.S_COUNTER))
+			Field<Long> crossTabId = field(DSL.name("crosstab_id")).cast(Long.class);
+			Select<?> raw = DSL.select(s.ITEM_ID.as("crosstab_id"), s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(crossTabId, s.S_FIELD)
 					.orderBy(crossTabId, s.S_FIELD);
