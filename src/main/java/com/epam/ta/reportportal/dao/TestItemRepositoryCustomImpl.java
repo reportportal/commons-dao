@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
@@ -85,6 +86,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setItemResults(r.into(TestItemResults.class));
+		Launch launch = new Launch();
+		launch.setId(r.get(TEST_ITEM.LAUNCH_ID.getName(), Long.class));
+		testItem.setLaunch(launch);
 		return testItem;
 	};
 

@@ -14,6 +14,7 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -126,29 +127,79 @@ public enum FilterTarget {
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItem tis = JTestItem.TEST_ITEM.as("tis");
-			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS;
 			JLaunch l = JLaunch.LAUNCH.as("l");
+			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
+			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
+			JIssue is = JIssue.ISSUE.as("is");
+			JIssueGroup gr = JIssueGroup.ISSUE_GROUP.as("gr");
+			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
 
-			return DSL.select(
-					ti.ITEM_ID,
+			JStatistics s = JStatistics.STATISTICS;
+
+			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
+					l.STATUS,
+					l.MODE,
+					ti.ITEM_ID.as("id"),
 					ti.NAME,
-					ti.START_TIME,
 					ti.TYPE,
+					ti.START_TIME,
+					ti.DESCRIPTION,
+					ti.LAST_MODIFIED,
+					ti.PATH,
 					ti.UNIQUE_ID,
+					ti.PARENT_ID,
 					ti.LAUNCH_ID,
 					tir.STATUS,
 					tir.END_TIME,
-					tir.DURATION
-			)
-					.from(ti)
-					.leftJoin(tis)
-					.on(tis.ITEM_ID.eq(ti.PARENT_ID))
-					.join(l)
-					.on(l.ID.eq(ti.LAUNCH_ID))
-					.join(tir)
-					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
+					tir.DURATION,
+					is.ISSUE_TYPE,
+					is.AUTO_ANALYZED,
+					is.IGNORE_ANALYZER,
+					is.ISSUE_DESCRIPTION,
+					it.ISSUE_NAME,
+					it.HEX_COLOR,
+					it.ABBREVIATION,
+					it.LOCATOR,
+					gr.ISSUE_GROUP_
+			);
+
+			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+					DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+					DSL.val("$"),
+					ISSUE_TYPE.LOCATOR
+			))
+					.from(ISSUE_GROUP)
+					.join(ISSUE_TYPE)
+					.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
+					.unionAll(DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+							DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+							DSL.val("$total")
+					))
+							.from(ISSUE_GROUP))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_TOTAL)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_PASSED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
+
+			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
+					.from(s)
+					.groupBy(s.ITEM_ID, s.S_FIELD)
+					.orderBy(s.ITEM_ID, s.S_FIELD);
+
+			Field<Long> itemId = field(DSL.name("id")).cast(Long.class);
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
+					.rightJoin(ti)
+					.on(field(DSL.name(ti.ITEM_ID.getName())).eq(itemId))
+					.leftJoin(tir)
+					.on(tir.RESULT_ID.eq(itemId))
+					.leftJoin(l)
+					.on(ti.LAUNCH_ID.eq(l.ID))
+					.leftJoin(is)
+					.on(itemId.eq(is.ISSUE_ID))
+					.leftJoin(it)
+					.on(is.ISSUE_TYPE.eq(it.ID))
+					.leftJoin(gr)
+					.on(it.ISSUE_GROUP_ID.eq(gr.ISSUE_GROUP_ID))
 					.getQuery();
 		}
 	},
