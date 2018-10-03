@@ -81,6 +81,7 @@ public enum FilterTarget {
 					l.LAST_MODIFIED,
 					l.MODE,
 					l.STATUS,
+					u.ID,
 					u.LOGIN
 			);
 
