@@ -5,12 +5,13 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
-import org.apache.catalina.startup.UserConfig;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -75,6 +76,7 @@ public class Project implements Serializable {
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
+
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -207,15 +209,108 @@ public class Project implements Serializable {
 		Project project = (Project) o;
 		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(configuration,
 				project.configuration
-		) && Objects.equals(users, project.users) && Objects.equals(
-				creationDate,
-				project.creationDate
-		) && Objects.equals(metadata, project.metadata);
+		) && Objects.equals(users, project.users) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
+				metadata, project.metadata);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, addInfo, configuration, users, creationDate);
+	}
+
+	@Entity
+	@Table(name = "user_config")
+	public static class UserConfig implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		@Id
+		@GeneratedValue(strategy = GenerationType.IDENTITY)
+		private Long id;
+
+		@ManyToOne(cascade = CascadeType.ALL)
+		@JoinColumn(name = "user_id")
+		private User user;
+
+		@ManyToOne(cascade = CascadeType.ALL)
+		@JoinColumn(name = "project_id")
+		@JsonManagedReference
+		private Project project;
+
+		private ProjectRole proposedRole;
+		private ProjectRole projectRole;
+
+		public static UserConfig newOne() {
+			return new UserConfig();
+		}
+
+		public UserConfig() {
+
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public User getUser() {
+			return user;
+		}
+
+		public void setUser(User user) {
+			this.user = user;
+		}
+
+		public void setProjectRole(ProjectRole projectRole) {
+			this.projectRole = projectRole;
+		}
+
+		public void setProposedRole(ProjectRole proposedRole) {
+			this.proposedRole = proposedRole;
+		}
+
+		public ProjectRole getProjectRole() {
+			return projectRole;
+		}
+
+		public ProjectRole getProposedRole() {
+			return proposedRole;
+		}
+
+		public Project getProject() {
+			return project;
+		}
+
+		public void setProject(Project project) {
+			this.project = project;
+		}
+
+		public UserConfig withProposedRole(ProjectRole proposedRole) {
+			this.proposedRole = proposedRole;
+			return this;
+		}
+
+		public UserConfig withProjectRole(ProjectRole projectRole) {
+			this.projectRole = projectRole;
+			return this;
+		}
+
+		public UserConfig withUser(User user) {
+			this.user = user;
+			return this;
+		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this)
+					.add("user login", user.getLogin())
+					.add("proposedRole", proposedRole)
+					.add("projectRole", projectRole)
+					.toString();
+		}
 	}
 
 	@Override
