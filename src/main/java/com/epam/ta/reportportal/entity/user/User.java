@@ -2,8 +2,6 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.commons.JsonbMetaDataType;
 import com.epam.ta.reportportal.entity.project.Project;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -66,8 +64,7 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private UserType userType;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
-	@Fetch(value = FetchMode.JOIN)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<ProjectUser> projects;
 
 	public User() {

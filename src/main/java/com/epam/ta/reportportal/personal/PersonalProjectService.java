@@ -28,11 +28,12 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.project.ProjectUtils;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.sun.javafx.binding.StringFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,12 +97,11 @@ public final class PersonalProjectService {
 		project.setName(generatePersonalProjectName(user.getLogin()));
 		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
-		Project.UserConfig userConfig = new Project.UserConfig();
-		userConfig.setUser(user);
-		userConfig.setProjectRole(ProjectRole.PROJECT_MANAGER);
-		userConfig.setProposedRole(ProjectRole.PROJECT_MANAGER);
-		userConfig.setProject(project);
-		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
+		ProjectUser projectUser = new ProjectUser();
+		projectUser.setUser(user);
+		projectUser.setRole(ProjectRole.PROJECT_MANAGER);
+		projectUser.setProject(project);
+		project.setUsers(ImmutableSet.<ProjectUser>builder().add(projectUser).build());
 
 		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
 

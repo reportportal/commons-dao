@@ -51,7 +51,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
 		User user = new User();
 		Project defaultProject = new Project();
-		r.into(USERS.ID,
+		Map<String, String> metaData = r.get(fieldName(USERS.METADATA), new JsonbConverter());
+		user.setMetadata(metaData);
+
+		r = r.into(USERS.ID,
 				USERS.LOGIN,
 				USERS.PASSWORD,
 				USERS.EMAIL,
@@ -76,9 +79,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
 		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
-
-		Map<String, String> metaData = r.get(fieldName(USERS.METADATA), new JsonbConverter());
-		user.setMetadata(metaData);
 		return user;
 	};
 

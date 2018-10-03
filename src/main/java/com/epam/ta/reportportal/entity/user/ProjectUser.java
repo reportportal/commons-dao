@@ -18,9 +18,13 @@ public class ProjectUser implements Serializable {
 	@EmbeddedId
 	private ProjectUserId id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@MapsId("project_id")
 	private Project project;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@MapsId("user_id")
+	private User user;
 
 	@Column(name = "project_role")
 	@Enumerated(EnumType.STRING)
@@ -40,6 +44,14 @@ public class ProjectUser implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public ProjectRole getRole() {

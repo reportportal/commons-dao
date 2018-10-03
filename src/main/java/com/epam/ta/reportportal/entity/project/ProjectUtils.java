@@ -24,6 +24,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.statistics.IssueCounter;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -62,6 +63,7 @@ public class ProjectUtils {
 	public static Project setDefaultEmailConfiguration(Project project) {
 		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
 		defaultOne.setProject(project);
+		project.setEmailCases(Sets.newHashSet(defaultOne));
 		return project;
 	}
 
@@ -74,8 +76,10 @@ public class ProjectUtils {
 	 */
 	public static Project excludeProjectRecipients(Iterable<User> users, Project project) {
 		if (users != null) {
-			Set<String> toExclude = stream(users.spliterator(), false).map(
-					user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream).collect(toSet());
+			Set<String> toExclude = stream(users.spliterator(), false).map(user -> asList(
+					user.getEmail().toLowerCase(),
+					user.getLogin().toLowerCase()
+			)).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
 			Set<EmailSenderCase> cases = project.getEmailCases();
 			if (null != cases) {
@@ -132,7 +136,7 @@ public class ProjectUtils {
 	 * @return UserConfig for specified login
 	 */
 	@Nullable
-	public static Project.UserConfig findUserConfigByLogin(Project project, String user) {
+	public static ProjectUser findUserConfigByLogin(Project project, String user) {
 		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
 	}
 
