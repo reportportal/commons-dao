@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -59,8 +60,9 @@ public class Launch implements Serializable {
 	@Column(name = "project_id", nullable = false, precision = 32)
 	private Long projectId;
 
-	@Column(name = "user_id", nullable = false, precision = 32)
-	private Long userId;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Column(name = "name", nullable = false, length = 256)
 	private String name;
@@ -113,22 +115,6 @@ public class Launch implements Serializable {
 		this.tags.addAll(tags);
 	}
 
-	public Launch(Long id, String uuid, Long projectId, Long userId, String name, String description, LocalDateTime startTime,
-			LocalDateTime endTime, Long number, LocalDateTime lastModified, LaunchModeEnum mode, StatusEnum status) {
-		this.id = id;
-		this.uuid = uuid;
-		this.projectId = projectId;
-		this.userId = userId;
-		this.name = name;
-		this.description = description;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.number = number;
-		this.lastModified = lastModified;
-		this.mode = mode;
-		this.status = status;
-	}
-
 	public Launch() {
 	}
 
@@ -160,12 +146,12 @@ public class Launch implements Serializable {
 		this.projectId = projectId;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getName() {
@@ -250,10 +236,10 @@ public class Launch implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", userId=" + userId + ", name='" + name
-				+ '\'' + ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
+		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", user=" + user + ", name='" + name + '\''
+				+ ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
 				+ ", emailSenderCaseId=" + emailSenderCaseId + ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status
-				+ ", tags=" + tags + '}';
+				+ ", tags=" + tags + ", statistics=" + statistics + '}';
 	}
 
 	@Override
@@ -266,13 +252,13 @@ public class Launch implements Serializable {
 		}
 		Launch launch = (Launch) o;
 		return Objects.equals(id, launch.id) && Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId)
-				&& Objects.equals(userId, launch.userId) && Objects.equals(name, launch.name) && Objects.equals(description,
-				launch.description
-		) && Objects.equals(startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number)
-				&& Objects.equals(emailSenderCaseId, launch.emailSenderCaseId) && Objects.equals(
-				lastModified,
-				launch.lastModified
-		) && mode == launch.mode && status == launch.status && Objects.equals(tags, launch.tags);
+				&& Objects.equals(user, launch.user) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
+				&& Objects.equals(startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(number,
+				launch.number
+		) && Objects.equals(emailSenderCaseId, launch.emailSenderCaseId) && Objects.equals(lastModified, launch.lastModified)
+				&& mode == launch.mode && status == launch.status && Objects.equals(tags, launch.tags) && Objects.equals(statistics,
+				launch.statistics
+		);
 	}
 
 	@Override
@@ -281,7 +267,7 @@ public class Launch implements Serializable {
 		return Objects.hash(id,
 				uuid,
 				projectId,
-				userId,
+				user,
 				name,
 				description,
 				startTime,
@@ -291,7 +277,8 @@ public class Launch implements Serializable {
 				lastModified,
 				mode,
 				status,
-				tags
+				tags,
+				statistics
 		);
 	}
 }

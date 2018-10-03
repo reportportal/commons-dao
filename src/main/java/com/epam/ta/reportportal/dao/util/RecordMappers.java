@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.entity.user.User;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -104,6 +105,7 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
 		Launch launch = r.into(Launch.class);
+		launch.setUser(r.into(User.class));
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		return launch;
 	};
