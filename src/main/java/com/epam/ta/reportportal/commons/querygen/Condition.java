@@ -61,7 +61,10 @@ public enum Condition {
 	NOT_EQUALS("ne") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getQueryCriteria()).ne(this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
+			return field(criteriaHolder.getQueryCriteria()).ne(this.castValue(criteriaHolder,
+					filter.getValue(),
+					INCORRECT_FILTER_PARAMETERS
+			));
 		}
 
 		@Override
@@ -99,6 +102,26 @@ public enum Condition {
 		@Override
 		public Object castValue(CriteriaHolder criteriaHolder, String values, ErrorType errorType) {
 			// values cast is not required here
+			return values;
+		}
+	},
+
+	LEVEL("level") {
+		@Override
+		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
+			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
+			return field("CAST(? as ltree)", criteriaHolder.getQueryCriteria()).eq(field(("nlevel(?)"), filter.getValue()));
+		}
+
+		@Override
+		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
+			expect(criteriaHolder, it -> it.getFilterCriteria().equalsIgnoreCase("path")).verify(errorType,
+					"Applied only to 'path' parameter"
+			);
+		}
+
+		@Override
+		public Object castValue(CriteriaHolder criteriaHolder, String values, ErrorType errorType) {
 			return values;
 		}
 	},
@@ -177,7 +200,10 @@ public enum Condition {
 	EQUALS_ANY("ea") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getQueryCriteria()).eq(any(DSL.array(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))));
+			return field(criteriaHolder.getQueryCriteria()).eq(any(DSL.array(castValue(criteriaHolder,
+					filter.getValue(),
+					INCORRECT_FILTER_PARAMETERS
+			))));
 		}
 
 		@Override
@@ -364,7 +390,9 @@ public enum Condition {
 						value
 				));
 				expect(values[ZONE_OFFSET_INDEX], zoneOffset()).verify(errorType,
-						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'", values[ZONE_OFFSET_INDEX])
+						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'",
+								values[ZONE_OFFSET_INDEX]
+						)
 				);
 				expect(values[ZERO_TIMESTAMP_INDEX], timeStamp()).verify(errorType,
 						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[ZERO_TIMESTAMP_INDEX])
