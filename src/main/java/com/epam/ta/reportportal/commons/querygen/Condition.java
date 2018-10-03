@@ -19,8 +19,7 @@ import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSup
 import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAMETERS;
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
-import static org.jooq.impl.DSL.any;
-import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.*;
 
 /**
  * Types of supported filtering
@@ -109,7 +108,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field("nlevel(?)", criteriaHolder.getQueryCriteria()).eq(this.castValue(
+			return val("nlevel(?)", field(criteriaHolder.getQueryCriteria())).eq(this.castValue(
 					criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
