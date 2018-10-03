@@ -133,10 +133,10 @@ public enum FilterTarget {
 
 			return DSL.select(ti.ITEM_ID, ti.NAME, ti.START_TIME, ti.TYPE, ti.UNIQUE_ID, tir.STATUS, tir.END_TIME, tir.DURATION)
 					.from(ti)
-					.join(tis)
+					.leftJoin(tis)
 					.on(tis.ITEM_ID.eq(ti.PARENT_ID))
 					.join(l)
-					.on(l.ID.eq(tis.LAUNCH_ID))
+					.on(l.ID.eq(ti.LAUNCH_ID))
 					.join(tir)
 					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
 					.getQuery();
