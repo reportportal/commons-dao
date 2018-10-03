@@ -57,7 +57,7 @@ public class RecordMappers {
 			.collect(Collectors.toSet());
 
 	/**
-	 * Maps issue type into {@link IssueType} object
+	 * Maps record into {@link IssueType} object
 	 */
 	public static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_RECORD_MAPPER = r -> {
 		IssueType type = r.into(IssueType.class);
@@ -66,7 +66,7 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps issue into {@link IssueEntity} object
+	 * Maps record into {@link IssueEntity} object
 	 */
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
 		IssueEntity issueEntity = r.into(IssueEntity.class);
@@ -75,7 +75,7 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps issue into {@link TestItemResults} object
+	 * Maps record into {@link TestItemResults} object
 	 */
 	public static final RecordMapper<? super Record, TestItemResults> TEST_ITEM_RESULTS_RECORD_MAPPER = r -> {
 		TestItemResults results = r.into(TestItemResults.class);
@@ -85,7 +85,7 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps issue into {@link TestItem} object
+	 * Maps record with crosstab into {@link TestItem} object
 	 */
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
@@ -93,6 +93,15 @@ public class RecordMappers {
 		testItem.setLaunch(new Launch(r.get(LAUNCH_ID, Long.class)));
 		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
 		return testItem;
+	};
+
+	/**
+	 * Maps record with crosstab into {@link Launch} object
+	 */
+	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
+		Launch launch = r.into(Launch.class);
+		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
+		return launch;
 	};
 
 	/**
