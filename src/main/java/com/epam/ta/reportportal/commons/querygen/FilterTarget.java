@@ -14,7 +14,6 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -181,15 +180,14 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Field<Long> crossTabId = field(DSL.name("crosstab_id")).cast(Long.class);
-			Select<?> raw = DSL.select(s.ITEM_ID.as("crosstab_id"), s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(crossTabId, s.S_FIELD)
-					.orderBy(crossTabId, s.S_FIELD);
+					.groupBy(s.ITEM_ID, s.S_FIELD)
+					.orderBy(s.ITEM_ID, s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(ti)
-					.on(crossTabId.eq(ti.ITEM_ID))
+					.on(field("ct.item_id").eq(ti.ITEM_ID))
 					.leftJoin(tir)
 					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
 					.leftJoin(l)
