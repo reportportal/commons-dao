@@ -139,7 +139,7 @@ public enum FilterTarget {
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
 					l.STATUS,
 					l.MODE,
-					ti.ITEM_ID.as("id"),
+					ti.ITEM_ID,
 					ti.NAME,
 					ti.TYPE,
 					ti.START_TIME,
@@ -181,21 +181,21 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
+			Field<Long> crossTabId = field(DSL.name("ct.id")).cast(Long.class);
+			Select<?> raw = DSL.select(s.ITEM_ID.as("ct.id"), s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.ITEM_ID, s.S_FIELD)
-					.orderBy(s.ITEM_ID, s.S_FIELD);
+					.groupBy(crossTabId, s.S_FIELD)
+					.orderBy(crossTabId, s.S_FIELD);
 
-			Field<Long> itemId = field(DSL.name("id")).cast(Long.class);
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(ti)
-					.on(field(DSL.name(ti.ITEM_ID.getName())).eq(itemId))
+					.on(crossTabId.eq(ti.ITEM_ID))
 					.leftJoin(tir)
-					.on(tir.RESULT_ID.eq(itemId))
+					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
 					.leftJoin(l)
 					.on(ti.LAUNCH_ID.eq(l.ID))
 					.leftJoin(is)
-					.on(itemId.eq(is.ISSUE_ID))
+					.on(ti.ITEM_ID.eq(is.ISSUE_ID))
 					.leftJoin(it)
 					.on(is.ISSUE_TYPE.eq(it.ID))
 					.leftJoin(gr)
