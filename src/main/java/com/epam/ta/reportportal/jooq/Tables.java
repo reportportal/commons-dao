@@ -397,11 +397,6 @@ public class Tables {
     public static final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 
     /**
-     * The table <code>public.user_config</code>.
-     */
-    public static final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
-
-    /**
      * The table <code>public.user_filter</code>.
      */
     public static final JUserFilter USER_FILTER = com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;

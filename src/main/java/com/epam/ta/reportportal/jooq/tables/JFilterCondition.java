@@ -3,30 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JFilterConditionEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterConditionRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -42,7 +30,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
 
-    private static final long serialVersionUID = -1733543543;
+    private static final long serialVersionUID = 618341509;
 
     /**
      * The reference instance of <code>public.filter_condition</code>
@@ -78,9 +66,9 @@ public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
     public final TableField<JFilterConditionRecord, String> VALUE = createField("value", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.filter_condition.field</code>.
+     * The column <code>public.filter_condition.search_criteria</code>.
      */
-    public final TableField<JFilterConditionRecord, String> FIELD = createField("field", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<JFilterConditionRecord, String> SEARCH_CRITERIA = createField("search_criteria", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.filter_condition.negative</code>.

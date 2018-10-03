@@ -59,7 +59,6 @@ public class Keys {
     public static final Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Identities0.IDENTITY_STATISTICS;
     public static final Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Identities0.IDENTITY_TEST_ITEM;
     public static final Identity<JTicketRecord, Long> IDENTITY_TICKET = Identities0.IDENTITY_TICKET;
-    public static final Identity<JUserConfigRecord, Long> IDENTITY_USER_CONFIG = Identities0.IDENTITY_USER_CONFIG;
     public static final Identity<JUsersRecord, Long> IDENTITY_USERS = Identities0.IDENTITY_USERS;
     public static final Identity<JWidgetRecord, Long> IDENTITY_WIDGET = Identities0.IDENTITY_WIDGET;
     public static final Identity<JWidgetOptionRecord, Long> IDENTITY_WIDGET_OPTION = Identities0.IDENTITY_WIDGET_OPTION;
@@ -91,6 +90,7 @@ public class Keys {
     public static final UniqueKey<JIssueGroupRecord> ISSUE_GROUP_PK = UniqueKeys0.ISSUE_GROUP_PK;
     public static final UniqueKey<JIssueTicketRecord> ISSUE_TICKET_PK = UniqueKeys0.ISSUE_TICKET_PK;
     public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_PK = UniqueKeys0.ISSUE_TYPE_PK;
+    public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_LOCATOR_KEY = UniqueKeys0.ISSUE_TYPE_LOCATOR_KEY;
     public static final UniqueKey<JIssueTypeProjectRecord> ISSUE_TYPE_PROJECT_PK = UniqueKeys0.ISSUE_TYPE_PROJECT_PK;
     public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = UniqueKeys0.ITEM_TAG_PK;
     public static final UniqueKey<JLaunchRecord> LAUNCH_PK = UniqueKeys0.LAUNCH_PK;
@@ -120,7 +120,6 @@ public class Keys {
     public static final UniqueKey<JTestItemResultsRecord> TEST_ITEM_RESULTS_PK = UniqueKeys0.TEST_ITEM_RESULTS_PK;
     public static final UniqueKey<JTicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
     public static final UniqueKey<JTicketRecord> TICKET_TICKET_ID_KEY = UniqueKeys0.TICKET_TICKET_ID_KEY;
-    public static final UniqueKey<JUserConfigRecord> USER_CONFIG_PK = UniqueKeys0.USER_CONFIG_PK;
     public static final UniqueKey<JUserFilterRecord> USER_FILTER_PK = UniqueKeys0.USER_FILTER_PK;
     public static final UniqueKey<JUsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
     public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = UniqueKeys0.USERS_LOGIN_KEY;
@@ -186,8 +185,6 @@ public class Keys {
     public static final ForeignKey<JTestItemResultsRecord, JTestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY = ForeignKeys0.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY;
     public static final ForeignKey<JTicketRecord, JUsersRecord> TICKET__TICKET_SUBMITTER_ID_FKEY = ForeignKeys0.TICKET__TICKET_SUBMITTER_ID_FKEY;
     public static final ForeignKey<JTicketRecord, JBugTrackingSystemRecord> TICKET__TICKET_BTS_ID_FKEY = ForeignKeys0.TICKET__TICKET_BTS_ID_FKEY;
-    public static final ForeignKey<JUserConfigRecord, JUsersRecord> USER_CONFIG__USER_CONFIG_USER_ID_FKEY = ForeignKeys0.USER_CONFIG__USER_CONFIG_USER_ID_FKEY;
-    public static final ForeignKey<JUserConfigRecord, JProjectRecord> USER_CONFIG__USER_CONFIG_PROJECT_ID_FKEY = ForeignKeys0.USER_CONFIG__USER_CONFIG_PROJECT_ID_FKEY;
     public static final ForeignKey<JUserFilterRecord, JFilterRecord> USER_FILTER__USER_FILTER_ID_FK = ForeignKeys0.USER_FILTER__USER_FILTER_ID_FK;
     public static final ForeignKey<JUsersRecord, JProjectRecord> USERS__USERS_DEFAULT_PROJECT_ID_FKEY = ForeignKeys0.USERS__USERS_DEFAULT_PROJECT_ID_FKEY;
     public static final ForeignKey<JWidgetRecord, JProjectRecord> WIDGET__WIDGET_PROJECT_ID_FKEY = ForeignKeys0.WIDGET__WIDGET_PROJECT_ID_FKEY;
@@ -228,7 +225,6 @@ public class Keys {
         public static Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Internal.createIdentity(JStatistics.STATISTICS, JStatistics.STATISTICS.S_ID);
         public static Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Internal.createIdentity(JTestItem.TEST_ITEM, JTestItem.TEST_ITEM.ITEM_ID);
         public static Identity<JTicketRecord, Long> IDENTITY_TICKET = Internal.createIdentity(JTicket.TICKET, JTicket.TICKET.ID);
-        public static Identity<JUserConfigRecord, Long> IDENTITY_USER_CONFIG = Internal.createIdentity(JUserConfig.USER_CONFIG, JUserConfig.USER_CONFIG.ID);
         public static Identity<JUsersRecord, Long> IDENTITY_USERS = Internal.createIdentity(JUsers.USERS, JUsers.USERS.ID);
         public static Identity<JWidgetRecord, Long> IDENTITY_WIDGET = Internal.createIdentity(JWidget.WIDGET, JWidget.WIDGET.ID);
         public static Identity<JWidgetOptionRecord, Long> IDENTITY_WIDGET_OPTION = Internal.createIdentity(JWidgetOption.WIDGET_OPTION, JWidgetOption.WIDGET_OPTION.ID);
@@ -258,6 +254,7 @@ public class Keys {
         public static final UniqueKey<JIssueGroupRecord> ISSUE_GROUP_PK = Internal.createUniqueKey(JIssueGroup.ISSUE_GROUP, "issue_group_pk", JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID);
         public static final UniqueKey<JIssueTicketRecord> ISSUE_TICKET_PK = Internal.createUniqueKey(JIssueTicket.ISSUE_TICKET, "issue_ticket_pk", JIssueTicket.ISSUE_TICKET.ISSUE_ID, JIssueTicket.ISSUE_TICKET.TICKET_ID);
         public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_PK = Internal.createUniqueKey(JIssueType.ISSUE_TYPE, "issue_type_pk", JIssueType.ISSUE_TYPE.ID);
+        public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_LOCATOR_KEY = Internal.createUniqueKey(JIssueType.ISSUE_TYPE, "issue_type_locator_key", JIssueType.ISSUE_TYPE.LOCATOR);
         public static final UniqueKey<JIssueTypeProjectRecord> ISSUE_TYPE_PROJECT_PK = Internal.createUniqueKey(JIssueTypeProject.ISSUE_TYPE_PROJECT, "issue_type_project_pk", JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID, JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID);
         public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = Internal.createUniqueKey(JItemTag.ITEM_TAG, "item_tag_pk", JItemTag.ITEM_TAG.ID);
         public static final UniqueKey<JLaunchRecord> LAUNCH_PK = Internal.createUniqueKey(JLaunch.LAUNCH, "launch_pk", JLaunch.LAUNCH.ID);
@@ -287,7 +284,6 @@ public class Keys {
         public static final UniqueKey<JTestItemResultsRecord> TEST_ITEM_RESULTS_PK = Internal.createUniqueKey(JTestItemResults.TEST_ITEM_RESULTS, "test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID);
         public static final UniqueKey<JTicketRecord> TICKET_PK = Internal.createUniqueKey(JTicket.TICKET, "ticket_pk", JTicket.TICKET.ID);
         public static final UniqueKey<JTicketRecord> TICKET_TICKET_ID_KEY = Internal.createUniqueKey(JTicket.TICKET, "ticket_ticket_id_key", JTicket.TICKET.TICKET_ID);
-        public static final UniqueKey<JUserConfigRecord> USER_CONFIG_PK = Internal.createUniqueKey(JUserConfig.USER_CONFIG, "user_config_pk", JUserConfig.USER_CONFIG.ID);
         public static final UniqueKey<JUserFilterRecord> USER_FILTER_PK = Internal.createUniqueKey(JUserFilter.USER_FILTER, "user_filter_pk", JUserFilter.USER_FILTER.ID);
         public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, "users_pk", JUsers.USERS.ID);
         public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = Internal.createUniqueKey(JUsers.USERS, "users_login_key", JUsers.USERS.LOGIN);
@@ -351,8 +347,6 @@ public class Keys {
         public static final ForeignKey<JTestItemResultsRecord, JTestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JTestItemResults.TEST_ITEM_RESULTS, "test_item_results__test_item_results_result_id_fkey", JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID);
         public static final ForeignKey<JTicketRecord, JUsersRecord> TICKET__TICKET_SUBMITTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JTicket.TICKET, "ticket__ticket_submitter_id_fkey", JTicket.TICKET.SUBMITTER_ID);
         public static final ForeignKey<JTicketRecord, JBugTrackingSystemRecord> TICKET__TICKET_BTS_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, JTicket.TICKET, "ticket__ticket_bts_id_fkey", JTicket.TICKET.BTS_ID);
-        public static final ForeignKey<JUserConfigRecord, JUsersRecord> USER_CONFIG__USER_CONFIG_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JUserConfig.USER_CONFIG, "user_config__user_config_user_id_fkey", JUserConfig.USER_CONFIG.USER_ID);
-        public static final ForeignKey<JUserConfigRecord, JProjectRecord> USER_CONFIG__USER_CONFIG_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUserConfig.USER_CONFIG, "user_config__user_config_project_id_fkey", JUserConfig.USER_CONFIG.PROJECT_ID);
         public static final ForeignKey<JUserFilterRecord, JFilterRecord> USER_FILTER__USER_FILTER_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PK, JUserFilter.USER_FILTER, "user_filter__user_filter_id_fk", JUserFilter.USER_FILTER.ID);
         public static final ForeignKey<JUsersRecord, JProjectRecord> USERS__USERS_DEFAULT_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUsers.USERS, "users__users_default_project_id_fkey", JUsers.USERS.DEFAULT_PROJECT_ID);
         public static final ForeignKey<JWidgetRecord, JProjectRecord> WIDGET__WIDGET_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JWidget.WIDGET, "widget__widget_project_id_fkey", JWidget.WIDGET.PROJECT_ID);

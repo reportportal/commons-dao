@@ -50,6 +50,7 @@ public class Indexes {
     public static final Index ISSUE_PK = Indexes0.ISSUE_PK;
     public static final Index ISSUE_GROUP_PK = Indexes0.ISSUE_GROUP_PK;
     public static final Index ISSUE_TICKET_PK = Indexes0.ISSUE_TICKET_PK;
+    public static final Index ISSUE_TYPE_LOCATOR_KEY = Indexes0.ISSUE_TYPE_LOCATOR_KEY;
     public static final Index ISSUE_TYPE_PK = Indexes0.ISSUE_TYPE_PK;
     public static final Index ISSUE_TYPE_PROJECT_PK = Indexes0.ISSUE_TYPE_PROJECT_PK;
     public static final Index ITEM_TAG_PK = Indexes0.ITEM_TAG_PK;
@@ -82,7 +83,6 @@ public class Indexes {
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
-    public static final Index USER_CONFIG_PK = Indexes0.USER_CONFIG_PK;
     public static final Index USER_FILTER_PK = Indexes0.USER_FILTER_PK;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
@@ -117,6 +117,7 @@ public class Indexes {
         public static Index ISSUE_PK = Internal.createIndex("issue_pk", JIssue.ISSUE, new OrderField[] { JIssue.ISSUE.ISSUE_ID }, true);
         public static Index ISSUE_GROUP_PK = Internal.createIndex("issue_group_pk", JIssueGroup.ISSUE_GROUP, new OrderField[] { JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID }, true);
         public static Index ISSUE_TICKET_PK = Internal.createIndex("issue_ticket_pk", JIssueTicket.ISSUE_TICKET, new OrderField[] { JIssueTicket.ISSUE_TICKET.ISSUE_ID, JIssueTicket.ISSUE_TICKET.TICKET_ID }, true);
+        public static Index ISSUE_TYPE_LOCATOR_KEY = Internal.createIndex("issue_type_locator_key", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.LOCATOR }, true);
         public static Index ISSUE_TYPE_PK = Internal.createIndex("issue_type_pk", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.ID }, true);
         public static Index ISSUE_TYPE_PROJECT_PK = Internal.createIndex("issue_type_project_pk", JIssueTypeProject.ISSUE_TYPE_PROJECT, new OrderField[] { JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID, JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID }, true);
         public static Index ITEM_TAG_PK = Internal.createIndex("item_tag_pk", JItemTag.ITEM_TAG, new OrderField[] { JItemTag.ITEM_TAG.ID }, true);
@@ -149,7 +150,6 @@ public class Indexes {
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
-        public static Index USER_CONFIG_PK = Internal.createIndex("user_config_pk", JUserConfig.USER_CONFIG, new OrderField[] { JUserConfig.USER_CONFIG.ID }, true);
         public static Index USER_FILTER_PK = Internal.createIndex("user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);

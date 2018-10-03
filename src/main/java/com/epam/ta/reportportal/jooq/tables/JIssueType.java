@@ -3,29 +3,17 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssueType extends TableImpl<JIssueTypeRecord> {
 
-    private static final long serialVersionUID = -605140748;
+    private static final long serialVersionUID = -1343090572;
 
     /**
      * The reference instance of <code>public.issue_type</code>
@@ -69,22 +57,22 @@ public class JIssueType extends TableImpl<JIssueTypeRecord> {
     /**
      * The column <code>public.issue_type.locator</code>.
      */
-    public final TableField<JIssueTypeRecord, String> LOCATOR = createField("locator", org.jooq.impl.SQLDataType.VARCHAR(64), this, "");
+    public final TableField<JIssueTypeRecord, String> LOCATOR = createField("locator", org.jooq.impl.SQLDataType.VARCHAR(64).nullable(false), this, "");
 
     /**
      * The column <code>public.issue_type.issue_name</code>.
      */
-    public final TableField<JIssueTypeRecord, String> ISSUE_NAME = createField("issue_name", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+    public final TableField<JIssueTypeRecord, String> ISSUE_NAME = createField("issue_name", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
 
     /**
      * The column <code>public.issue_type.abbreviation</code>.
      */
-    public final TableField<JIssueTypeRecord, String> ABBREVIATION = createField("abbreviation", org.jooq.impl.SQLDataType.VARCHAR(64), this, "");
+    public final TableField<JIssueTypeRecord, String> ABBREVIATION = createField("abbreviation", org.jooq.impl.SQLDataType.VARCHAR(64).nullable(false), this, "");
 
     /**
      * The column <code>public.issue_type.hex_color</code>.
      */
-    public final TableField<JIssueTypeRecord, String> HEX_COLOR = createField("hex_color", org.jooq.impl.SQLDataType.VARCHAR(7), this, "");
+    public final TableField<JIssueTypeRecord, String> HEX_COLOR = createField("hex_color", org.jooq.impl.SQLDataType.VARCHAR(7).nullable(false), this, "");
 
     /**
      * Create a <code>public.issue_type</code> table reference
@@ -132,7 +120,7 @@ public class JIssueType extends TableImpl<JIssueTypeRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ISSUE_TYPE_PK);
+        return Arrays.<Index>asList(Indexes.ISSUE_TYPE_LOCATOR_KEY, Indexes.ISSUE_TYPE_PK);
     }
 
     /**
@@ -156,7 +144,7 @@ public class JIssueType extends TableImpl<JIssueTypeRecord> {
      */
     @Override
     public List<UniqueKey<JIssueTypeRecord>> getKeys() {
-        return Arrays.<UniqueKey<JIssueTypeRecord>>asList(Keys.ISSUE_TYPE_PK);
+        return Arrays.<UniqueKey<JIssueTypeRecord>>asList(Keys.ISSUE_TYPE_PK, Keys.ISSUE_TYPE_LOCATOR_KEY);
     }
 
     /**
