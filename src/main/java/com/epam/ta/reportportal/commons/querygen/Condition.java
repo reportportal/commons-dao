@@ -108,8 +108,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return val("nlevel(?)", field(criteriaHolder.getQueryCriteria())).eq(this.castValue(
-					criteriaHolder,
+			return function("nlevel", Long.class, field(criteriaHolder.getQueryCriteria())).eq((Long) this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
