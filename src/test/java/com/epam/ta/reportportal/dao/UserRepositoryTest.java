@@ -167,6 +167,15 @@ public class UserRepositoryTest {
 
 	}
 
+	@Test
+	public void searchForUserTest() {
+
+		Page<User> users = userRepository.searchForUser("tes", PageRequest.of(0, 5));
+
+		Assert.assertNull(users);
+		Assert.assertTrue(users.getSize() >= 1);
+	}
+
 	private Filter buildDefaultUserFilter() {
 		return Filter.builder()
 				.withTarget(User.class)

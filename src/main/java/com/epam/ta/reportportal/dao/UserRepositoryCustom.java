@@ -21,6 +21,8 @@ public interface UserRepositoryCustom extends FilterableRepository<User>{
 
 	void deleteUserPhoto(User user);
 
+	Page<User> searchForUser(String term, Pageable pageable);
+
 	/**
 	 * Finds entities list according provided filter
 	 *
@@ -30,5 +32,7 @@ public interface UserRepositoryCustom extends FilterableRepository<User>{
 	 * @return Found Paged objects
 	 */
 	Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
+
+
 
 }

@@ -145,6 +145,17 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
+	public Page<User> searchForUser(String term, Pageable pageable) {
+
+		SelectConditionStep<Record> select = dsl.select()
+				.from(USERS)
+				.where(USERS.LOGIN.like("%" + term + "%")
+						.or(USERS.FULL_NAME.like("%" + term + "%"))
+						.or(USERS.EMAIL.like("%" + term + "%")));
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(select.fetch()), pageable, () -> dsl.fetchCount(select));
+	}
+
+	@Override
 	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
 
 		List<Field<?>> fieldsForSelect = JUsers.USERS.fieldStream()
