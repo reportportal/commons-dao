@@ -131,7 +131,17 @@ public enum FilterTarget {
 			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS;
 			JLaunch l = JLaunch.LAUNCH.as("l");
 
-			return DSL.select(ti.ITEM_ID, ti.NAME, ti.START_TIME, ti.TYPE, ti.UNIQUE_ID, tir.STATUS, tir.END_TIME, tir.DURATION)
+			return DSL.select(
+					ti.ITEM_ID,
+					ti.NAME,
+					ti.START_TIME,
+					ti.TYPE,
+					ti.UNIQUE_ID,
+					ti.LAUNCH_ID,
+					tir.STATUS,
+					tir.END_TIME,
+					tir.DURATION
+			)
 					.from(ti)
 					.leftJoin(tis)
 					.on(tis.ITEM_ID.eq(ti.PARENT_ID))
