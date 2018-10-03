@@ -18,6 +18,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Ivan Budayeu
@@ -47,7 +50,7 @@ public class Project implements Serializable {
 
 	@Transient
 	@JsonSerialize
-	private ProjectConfiguration configuration;
+	private Map<String, String> configuration;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -75,7 +78,6 @@ public class Project implements Serializable {
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
-
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -165,14 +167,15 @@ public class Project implements Serializable {
 	 *
 	 * @return the configuration
 	 */
-	public ProjectConfiguration getConfiguration() {
-		return new ProjectConfiguration(this.projectAttributes);
+	public Map<String, String> getConfiguration() {
+		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
+				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
 
 	/**
 	 * @param configuration the configuration to set
 	 */
-	public void setConfiguration(ProjectConfiguration configuration) {
+	public void setConfiguration(Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 
@@ -209,7 +212,9 @@ public class Project implements Serializable {
 		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(configuration,
 				project.configuration
 		) && Objects.equals(users, project.users) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
-				metadata, project.metadata);
+				metadata,
+				project.metadata
+		);
 	}
 
 	@Override

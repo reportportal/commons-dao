@@ -20,23 +20,33 @@
  */
 package com.epam.ta.reportportal.personal;
 
+import com.epam.ta.reportportal.dao.AttributeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
-import com.epam.ta.reportportal.entity.AnalyzeMode;
-import com.epam.ta.reportportal.entity.enums.EntryType;
-import com.epam.ta.reportportal.entity.enums.InterruptionJobDelay;
-import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
-import com.epam.ta.reportportal.entity.enums.KeepScreenshotsDelay;
-import com.epam.ta.reportportal.entity.project.*;
+import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.project.ProjectUtils;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.sun.javafx.binding.StringFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Optional.ofNullable;
 
 /**
  * Generates Personal project for provided user
@@ -47,11 +57,13 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class PersonalProjectService {
 
 	public static final String PERSONAL_PROJECT_POSTFIX = "_personal";
-	private ProjectRepository projectRepository;
+	private final ProjectRepository projectRepository;
+	private final AttributeRepository attributeRepository;
 
 	@Autowired
-	public PersonalProjectService(ProjectRepository projectRepository) {
+	public PersonalProjectService(ProjectRepository projectRepository, AttributeRepository attributeRepository) {
 		this.projectRepository = projectRepository;
+		this.attributeRepository = attributeRepository;
 	}
 
 	/**
@@ -92,7 +104,10 @@ public final class PersonalProjectService {
 		project.setUsers(ImmutableList.<Project.UserConfig>builder().add(userConfig).build());
 
 		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
-		project.setConfiguration(defaultConfiguration(project));
+
+		Set<Attribute> defaultAttributes = attributeRepository.getDefaultProjectAttributes();
+
+		project.setProjectAttributes(defaultProjectAttributes(project, defaultAttributes));
 
 		/* Default email configuration */
 		ProjectUtils.setDefaultEmailConfiguration(project);
@@ -114,21 +129,29 @@ public final class PersonalProjectService {
 	/**
 	 * @return Generated default project configuration
 	 */
-	public static ProjectConfiguration defaultConfiguration(Project project) {
-		ProjectConfiguration defaultConfig = new ProjectConfiguration();
-		defaultConfig.setEntryType(EntryType.PERSONAL);
-		defaultConfig.setInterruptJobTime(InterruptionJobDelay.ONE_DAY.getValue());
-		defaultConfig.setKeepLogs(KeepLogsDelay.THREE_MONTHS.getValue());
-		defaultConfig.setKeepScreenshots(KeepScreenshotsDelay.TWO_WEEKS.getValue());
-		ProjectAnalyzerConfig projectAnalyzerConfig = new ProjectAnalyzerConfig();
-		projectAnalyzerConfig.setMinDocFreq(ProjectAnalyzerConfig.MIN_DOC_FREQ);
-		projectAnalyzerConfig.setMinTermFreq(ProjectAnalyzerConfig.MIN_TERM_FREQ);
-		projectAnalyzerConfig.setMinShouldMatch(ProjectAnalyzerConfig.MIN_SHOULD_MATCH);
-		projectAnalyzerConfig.setNumberOfLogLines(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES);
-		projectAnalyzerConfig.setAnalyzerMode(AnalyzeMode.BY_LAUNCH_NAME);
-		projectAnalyzerConfig.setIsAutoAnalyzerEnabled(false);
-		defaultConfig.setAnalyzerConfig(projectAnalyzerConfig);
-		return defaultConfig;
+	public static Set<ProjectAttribute> defaultProjectAttributes(Project project, Set<Attribute> defaultAttributes) {
+
+		Map<String, Attribute> attributes = defaultAttributes.stream().collect(Collectors.toMap(Attribute::getName, a -> a));
+
+		Set<ProjectAttribute> projectAttributes = new HashSet<>(defaultAttributes.size());
+
+		Arrays.stream(ProjectAttributeEnum.values())
+				.map(ProjectAttributeEnum::getAttribute)
+				.forEach(pa -> ofNullable(attributes.get(pa)).ifPresent(attr -> {
+					ProjectAttribute projectAttribute = new ProjectAttribute();
+					projectAttribute.setAttribute(attr);
+					projectAttribute.setProject(project);
+
+					projectAttribute.setValue(ProjectAttributeEnum.findByAttributeName(pa)
+							.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
+									StringFormatter.format("Attribute - {} was not found", pa)
+							))
+							.getDefaultValue());
+
+					projectAttributes.add(projectAttribute);
+				}));
+
+		return projectAttributes;
 
 	}
 }

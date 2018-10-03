@@ -23,7 +23,6 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
 import com.epam.ta.reportportal.entity.statistics.IssueCounter;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Lists;
@@ -47,7 +46,7 @@ import static java.util.stream.StreamSupport.stream;
  * @author Andrei_Ramanchuk
  */
 public class ProjectUtils {
-	private static final String INIT_FROM = "reportportal@example.com";
+	public static final String INIT_FROM = "reportportal@example.com";
 	private static final String OWNER = "OWNER";
 
 	private ProjectUtils() {
@@ -62,9 +61,7 @@ public class ProjectUtils {
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
 		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
-		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM);
 		defaultOne.setProject(project);
-		project.getConfiguration().setProjectEmailConfig(config);
 		return project;
 	}
 

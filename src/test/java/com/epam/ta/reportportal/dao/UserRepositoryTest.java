@@ -172,7 +172,7 @@ public class UserRepositoryTest {
 
 		Page<User> users = userRepository.searchForUser("tes", PageRequest.of(0, 5));
 
-		Assert.assertNull(users);
+		Assert.assertNotNull(users);
 		Assert.assertTrue(users.getSize() >= 1);
 	}
 
