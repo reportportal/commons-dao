@@ -122,7 +122,7 @@ public enum FilterTarget {
 			new CriteriaHolder(LAUNCH_ID, "tis.launch_id", Long.class, false),
 			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder("path", "ti.path", String.class, false)
+			new CriteriaHolder("path", "ti.path", Long.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {

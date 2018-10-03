@@ -110,7 +110,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field("CAST(? as ltree)", criteriaHolder.getQueryCriteria()).eq(field(("nlevel(?)"), filter.getValue()));
+			return field(criteriaHolder.getQueryCriteria()).eq(field(("nlevel(?)"), filter.getValue()));
 		}
 
 		@Override
@@ -121,8 +121,8 @@ public enum Condition {
 		}
 
 		@Override
-		public Object castValue(CriteriaHolder criteriaHolder, String values, ErrorType errorType) {
-			return values;
+		public Object castValue(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
+			return criteriaHolder.castValue(value, errorType);
 		}
 	},
 
