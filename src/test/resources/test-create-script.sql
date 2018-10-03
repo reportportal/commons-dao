@@ -50,7 +50,7 @@ CREATE TABLE demo_data_postfix (
 );
 
 CREATE TABLE user_creation_bid (
-  id               BIGSERIAL CONSTRAINT user_creation_bid_pk PRIMARY KEY,
+  uuid               VARCHAR CONSTRAINT user_creation_bid_pk PRIMARY KEY,
   last_modified      TIMESTAMP DEFAULT now(),
   email              VARCHAR NOT NULL UNIQUE,
   default_project_id BIGINT REFERENCES project (id) ON DELETE CASCADE,
@@ -58,7 +58,7 @@ CREATE TABLE user_creation_bid (
 );
 
 CREATE TABLE restore_password_bid (
-  id          BIGSERIAL CONSTRAINT restore_password_bid_pk PRIMARY KEY,
+  uuid          VARCHAR CONSTRAINT restore_password_bid_pk PRIMARY KEY,
   last_modified TIMESTAMP DEFAULT now(),
   email         VARCHAR NOT NULL UNIQUE
 );
