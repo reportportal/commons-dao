@@ -1,3 +1,19 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
@@ -50,6 +66,7 @@ public enum FilterTarget {
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
 			JLaunch l = JLaunch.LAUNCH;
+			JUsers u = JUsers.USERS;
 			JStatistics s = JStatistics.STATISTICS;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
@@ -63,7 +80,8 @@ public enum FilterTarget {
 					l.NUMBER,
 					l.LAST_MODIFIED,
 					l.MODE,
-					l.STATUS
+					l.STATUS,
+					u.LOGIN
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
@@ -92,6 +110,8 @@ public enum FilterTarget {
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
 					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
+					.leftJoin(u)
+					.on(l.USER_ID.eq(u.ID))
 					.getQuery();
 		}
 	},

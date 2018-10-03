@@ -1,22 +1,17 @@
 /*
- * Copyright 2017 EPAM Systems
+ *  Copyright (C) 2018 EPAM Systems
  *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/service-api
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Report Portal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Report Portal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
@@ -24,21 +19,15 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
-import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
-import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.RecordMapper;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +36,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -63,45 +55,6 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
-	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_MAPPER = r -> new TestItem(
-			r.get(TEST_ITEM.ITEM_ID, Long.class),
-			r.get(TEST_ITEM.NAME, String.class),
-			r.get(TEST_ITEM.TYPE, TestItemTypeEnum.class),
-			r.get(TEST_ITEM.START_TIME, LocalDateTime.class),
-			r.get(TEST_ITEM.DESCRIPTION, String.class),
-			r.get(TEST_ITEM.LAST_MODIFIED, LocalDateTime.class),
-			r.get(TEST_ITEM.UNIQUE_ID, String.class)
-	);
-
-	private static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_MAPPER = r -> {
-		IssueType type = r.into(IssueType.class);
-		type.setIssueGroup(r.into(IssueGroup.class));
-		return type;
-	};
-
-	private static final RecordMapper<? super Record, Set<Statistics>> STATISTICS_MAPPER = r -> Arrays.stream(r.fields())
-			.filter(f -> f.getName().startsWith("statistics"))
-			.map(f -> {
-				Statistics statistics = new Statistics();
-				statistics.setField(f.getName());
-				statistics.setCounter(r.get(f.getName(), Integer.class));
-				return statistics;
-			})
-			.collect(Collectors.toSet());
-
-	/**
-	 * Fetching record results into Test item object.
-	 */
-	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
-		TestItem testItem = r.into(TestItem.class);
-		TestItemResults tir = r.into(TestItemResults.class);
-		tir.setStatistics(STATISTICS_MAPPER.map(r));
-		testItem.setItemResults(tir);
-		testItem.setLaunch(r.into(Launch.class));
-		testItem.setParent(r.into(TestItem.class));
-		return testItem;
-	};
-
 	private DSLContext dsl;
 
 	@Autowired
@@ -111,7 +64,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> selectAllDescendants(Long itemId) {
-		return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId)).fetch(TEST_ITEM_FETCH);
+		return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId)).fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
@@ -123,21 +76,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.join(childTestItem)
 						.on(TEST_ITEM.ITEM_ID.eq(childTestItem.PARENT_ID))
 						.where(TEST_ITEM.PARENT_ID.eq(itemId))))
-				.fetch(TEST_ITEM_FETCH);
+				.fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
 	public List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
 		return commonTestItemDslSelect().where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
-				.fetch(TEST_ITEM_FETCH);
+				.fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
 	public List<TestItem> selectItemsInStatusByParent(Long itemId, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
 		return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
-				.fetch(TEST_ITEM_FETCH);
+				.fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
@@ -178,7 +131,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.eq(issueType))
 				.fetch(r -> {
-					TestItem item = TEST_ITEM_FETCH.map(r);
+					TestItem item = TEST_ITEM_RECORD_MAPPER.map(r);
 					item.getItemResults().setIssue(r.into(IssueEntity.class));
 					return item;
 				});
@@ -204,7 +157,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(ISSUE_TYPE)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.fetch(ISSUE_TYPE_MAPPER);
+				.fetch(ISSUE_TYPE_RECORD_MAPPER);
 	}
 
 	@Override
@@ -217,7 +170,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
 				.where(PROJECT.ID.eq(projectId))
 				.and(ISSUE_TYPE.LOCATOR.eq(locator))
-				.fetchOne(ISSUE_TYPE_MAPPER));
+				.fetchOne(ISSUE_TYPE_RECORD_MAPPER));
 	}
 
 	/**
@@ -232,19 +185,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	//
 	@Override
 	public List<TestItem> findByFilter(Filter filter) {
-
 		Map<TestItem, List<Parameter>> testItemListMap = dsl.fetch(QueryBuilder.newBuilder(filter).build())
-				.intoGroups(TEST_ITEM_MAPPER, Parameter.class);
-
+				.intoGroups(TEST_ITEM_RECORD_MAPPER, Parameter.class);
 		testItemListMap.forEach(TestItem::setParameters);
-
 		return Lists.newArrayList(testItemListMap.keySet());
 	}
 
 	@Override
 	public Page<TestItem> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(TEST_ITEM_FETCH),
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(TEST_ITEM_RECORD_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);

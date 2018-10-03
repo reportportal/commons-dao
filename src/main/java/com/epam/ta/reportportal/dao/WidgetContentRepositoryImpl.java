@@ -1,8 +1,24 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
+import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -24,9 +40,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
-import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.ResultFetcher.LAUNCHES_STATISTICS_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetcher.NOT_PASSED_CASES_FETCHER;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.LAUNCHES_STATISTICS_FETCHER;
+import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.NOT_PASSED_CASES_CONTENT_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
@@ -123,16 +139,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		)
 				.from(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
-						.select(
-								TEST_ITEM.UNIQUE_ID,
+						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
 								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
 										TEST_ITEM.UNIQUE_ID
-								)))
-										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
-												TEST_ITEM.ITEM_ID
-										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
+										)))
+												.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
+														TEST_ITEM.ITEM_ID
+												)))),
+										1
+								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
@@ -282,13 +299,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return NOT_PASSED_CASES_FETCHER.apply(dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
 				coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED))
 						.cast(Double.class)).div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2), 0).as(PERCENTAGE)
-		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch());
+		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch(NOT_PASSED_CASES_CONTENT_RECORD_MAPPER);
 	}
 
 	@Override
@@ -605,7 +622,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	private List<Field<?>> buildFieldsFromContentFields(List<String> contentFields) {
-		return contentFields.stream().map(FieldNameTransformer::fieldName).collect(Collectors.toList());
+		return contentFields.stream().map(JooqFieldNameTransformer::fieldName).collect(Collectors.toList());
 	}
 
 }
