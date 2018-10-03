@@ -97,10 +97,7 @@ public final class PersonalProjectService {
 		project.setName(generatePersonalProjectName(user.getLogin()));
 		project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
 
-		ProjectUser projectUser = new ProjectUser();
-		projectUser.setUser(user);
-		projectUser.setRole(ProjectRole.PROJECT_MANAGER);
-		projectUser.setProject(project);
+		ProjectUser projectUser = new ProjectUser().withUser(user).withProjectRole(ProjectRole.PROJECT_MANAGER).withProject(project);
 		project.setUsers(ImmutableSet.<ProjectUser>builder().add(projectUser).build());
 
 		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));

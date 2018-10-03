@@ -28,7 +28,7 @@ public class ProjectUser implements Serializable {
 
 	@Column(name = "project_role")
 	@Enumerated(EnumType.STRING)
-	private ProjectRole role;
+	private ProjectRole projectRole;
 
 	public ProjectUserId getId() {
 		return id;
@@ -54,11 +54,26 @@ public class ProjectUser implements Serializable {
 		this.user = user;
 	}
 
-	public ProjectRole getRole() {
-		return role;
+	public ProjectRole getProjectRole() {
+		return projectRole;
 	}
 
-	public void setRole(ProjectRole role) {
-		this.role = role;
+	public void setProjectRole(ProjectRole projectRole) {
+		this.projectRole = projectRole;
+	}
+
+	public ProjectUser withUser(User user) {
+		this.user = user;
+		return this;
+	}
+
+	public ProjectUser withProject(Project project) {
+		this.project = project;
+		return this;
+	}
+
+	public ProjectUser withProjectRole(ProjectRole projectRole) {
+		this.projectRole = projectRole;
+		return this;
 	}
 }
