@@ -16,8 +16,8 @@ import java.util.Date;
 public class UserCreationBid implements Serializable, Modifiable {
 
 	@Id
-	@Column(name = "uuid")
-	private String uuid;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@LastModifiedDate
 	@Column(name = LAST_MODIFIED)
@@ -33,12 +33,12 @@ public class UserCreationBid implements Serializable, Modifiable {
 	@Column(name = "role")
 	private String role;
 
-	public String getUuid() {
-		return uuid;
+	public Long getId() {
+		return id;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getEmail() {
