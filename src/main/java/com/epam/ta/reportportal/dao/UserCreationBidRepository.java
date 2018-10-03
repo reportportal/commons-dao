@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * @author Ivan Budaev
  */
-public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, Long> {
+public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String> {
 
 	Optional<UserCreationBid> findByEmail(String email);
 
