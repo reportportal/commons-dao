@@ -32,6 +32,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
@@ -47,10 +48,8 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
@@ -80,15 +79,26 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return type;
 	};
 
+	private static final RecordMapper<? super Record, Set<Statistics>> STATISTICS_MAPPER = r -> Arrays.stream(r.fields())
+			.filter(f -> f.getName().startsWith("statistics"))
+			.map(f -> {
+				Statistics statistics = new Statistics();
+				statistics.setField(f.getName());
+				statistics.setCounter(r.get(f.getName(), Integer.class));
+				return statistics;
+			})
+			.collect(Collectors.toSet());
+
 	/**
 	 * Fetching record results into Test item object.
 	 */
 	private static final RecordMapper<? super Record, TestItem> TEST_ITEM_FETCH = r -> {
 		TestItem testItem = r.into(TestItem.class);
-		testItem.setItemResults(r.into(TestItemResults.class));
-		Launch launch = new Launch();
-		launch.setId(r.get(TEST_ITEM.LAUNCH_ID.getName(), Long.class));
-		testItem.setLaunch(launch);
+		TestItemResults tir = r.into(TestItemResults.class);
+		tir.setStatistics(STATISTICS_MAPPER.map(r));
+		testItem.setItemResults(tir);
+		testItem.setLaunch(r.into(Launch.class));
+		testItem.setParent(r.into(TestItem.class));
 		return testItem;
 	};
 
