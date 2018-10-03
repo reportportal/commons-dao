@@ -78,14 +78,6 @@ CREATE TABLE users (
   metadata             JSONB   NULL DEFAULT '{}'
 );
 
-CREATE TABLE user_config (
-  id           BIGSERIAL CONSTRAINT user_config_pk PRIMARY KEY,
-  user_id      BIGINT REFERENCES users (id) ON DELETE CASCADE,
-  project_id   BIGINT REFERENCES project (id) ON DELETE CASCADE,
-  proposedRole VARCHAR,
-  projectRole  VARCHAR
-);
-
 CREATE TABLE project_user (
   user_id      BIGINT REFERENCES users (id) ON DELETE CASCADE,
   project_id   BIGINT REFERENCES project (id) ON DELETE CASCADE,
