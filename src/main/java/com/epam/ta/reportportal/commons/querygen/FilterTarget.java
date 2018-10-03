@@ -1,3 +1,19 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
@@ -50,6 +66,7 @@ public enum FilterTarget {
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
 			JLaunch l = JLaunch.LAUNCH;
+			JUsers u = JUsers.USERS;
 			JStatistics s = JStatistics.STATISTICS;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
@@ -63,7 +80,9 @@ public enum FilterTarget {
 					l.NUMBER,
 					l.LAST_MODIFIED,
 					l.MODE,
-					l.STATUS
+					l.STATUS,
+					u.ID,
+					u.LOGIN
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
@@ -92,6 +111,8 @@ public enum FilterTarget {
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
 					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
+					.leftJoin(u)
+					.on(l.USER_ID.eq(u.ID))
 					.getQuery();
 		}
 	},
@@ -121,23 +142,85 @@ public enum FilterTarget {
 			new CriteriaHolder("type", "ti.type", JTestItemTypeEnum.class, false),
 			new CriteriaHolder(LAUNCH_ID, "tis.launch_id", Long.class, false),
 			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
-			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false)
+			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder("path", "ti.path", Long.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItem tis = JTestItem.TEST_ITEM.as("tis");
-			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS;
 			JLaunch l = JLaunch.LAUNCH.as("l");
+			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
+			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
+			JIssue is = JIssue.ISSUE.as("is");
+			JIssueGroup gr = JIssueGroup.ISSUE_GROUP.as("gr");
+			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
 
-			return DSL.select(ti.ITEM_ID, ti.NAME, ti.START_TIME, ti.TYPE, ti.UNIQUE_ID, tir.STATUS, tir.END_TIME, tir.DURATION)
-					.from(ti)
-					.join(tis)
-					.on(tis.ITEM_ID.eq(ti.PARENT_ID))
-					.join(l)
-					.on(l.ID.eq(tis.LAUNCH_ID))
-					.join(tir)
+			JStatistics s = JStatistics.STATISTICS;
+
+			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
+					l.STATUS,
+					l.MODE,
+					ti.ITEM_ID,
+					ti.NAME,
+					ti.TYPE,
+					ti.START_TIME,
+					ti.DESCRIPTION,
+					ti.LAST_MODIFIED,
+					ti.PATH,
+					ti.UNIQUE_ID,
+					ti.PARENT_ID,
+					ti.LAUNCH_ID,
+					tir.RESULT_ID,
+					tir.STATUS,
+					tir.END_TIME,
+					tir.DURATION,
+					is.ISSUE_ID,
+					is.ISSUE_TYPE,
+					is.AUTO_ANALYZED,
+					is.IGNORE_ANALYZER,
+					is.ISSUE_DESCRIPTION,
+					it.ISSUE_NAME,
+					it.HEX_COLOR,
+					it.ABBREVIATION,
+					it.LOCATOR,
+					gr.ISSUE_GROUP_
+			);
+
+			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+					DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+					DSL.val("$"),
+					ISSUE_TYPE.LOCATOR
+			))
+					.from(ISSUE_GROUP)
+					.join(ISSUE_TYPE)
+					.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
+					.unionAll(DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+							DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+							DSL.val("$total")
+					))
+							.from(ISSUE_GROUP))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_TOTAL)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_PASSED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
+
+			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
+					.from(s)
+					.groupBy(s.ITEM_ID, s.S_FIELD)
+					.orderBy(s.ITEM_ID, s.S_FIELD);
+
+			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
+					.rightJoin(ti)
+					.on(field("ct.item_id").eq(ti.ITEM_ID))
+					.leftJoin(tir)
 					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
+					.leftJoin(l)
+					.on(ti.LAUNCH_ID.eq(l.ID))
+					.leftJoin(is)
+					.on(ti.ITEM_ID.eq(is.ISSUE_ID))
+					.leftJoin(it)
+					.on(is.ISSUE_TYPE.eq(it.ID))
+					.leftJoin(gr)
+					.on(it.ISSUE_GROUP_ID.eq(gr.ISSUE_GROUP_ID))
 					.getQuery();
 		}
 	},
