@@ -28,25 +28,9 @@ CREATE TYPE SORT_DIRECTION_ENUM AS ENUM ('ASC', 'DESC');
 
 CREATE EXTENSION ltree;
 
-
-CREATE TABLE server_email_details (
-  id                   BIGSERIAL CONSTRAINT server_email_details_pk PRIMARY KEY,
-  enabled              BOOLEAN NOT NULL,
-  host                 VARCHAR NOT NULL,
-  port                 INTEGER NOT NULL,
-  protocol             VARCHAR NOT NULL,
-  auth_enabled         BOOLEAN NOT NULL,
-  star_tls_enabled     BOOLEAN NOT NULL,
-  ssl_enabled          BOOLEAN NOT NULL,
-  username             VARCHAR NOT NULL,
-  password             VARCHAR NOT NULL,
-  recieved_from        VARCHAR NOT NULL
-);
-
 CREATE TABLE server_settings (
   id    SMALLSERIAL CONSTRAINT server_settings_id PRIMARY KEY,
   key   VARCHAR NOT NULL UNIQUE,
-  server_email_details_id BIGINT REFERENCES server_email_details (id),
   value VARCHAR
 );
 
