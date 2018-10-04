@@ -29,8 +29,8 @@ public class ServerEmailDetails implements Serializable {
 	@Column(name = "auth_enabled")
 	private Boolean authEnabled;
 
-	@Column(name = "start_tls_enabled")
-	private Boolean startTlsEnabled;
+	@Column(name = "star_tls_enabled")
+	private Boolean starTlsEnabled;
 
 	@Column(name = "ssl_enabled")
 	private Boolean sslEnabled;
@@ -95,12 +95,12 @@ public class ServerEmailDetails implements Serializable {
 		this.authEnabled = authEnabled;
 	}
 
-	public Boolean getStartTlsEnabled() {
-		return startTlsEnabled;
+	public Boolean getStarTlsEnabled() {
+		return starTlsEnabled;
 	}
 
-	public void setStartTlsEnabled(Boolean startTlsEnabled) {
-		this.startTlsEnabled = startTlsEnabled;
+	public void setStarTlsEnabled(Boolean starTlsEnabled) {
+		this.starTlsEnabled = starTlsEnabled;
 	}
 
 	public Boolean getSslEnabled() {
