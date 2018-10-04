@@ -55,7 +55,7 @@ public class UserRepositoryTest {
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -144,7 +144,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void findByFilterExcludingTest() {
-		Page<User> users = userRepository.findByFilterExcluding(buildDefaultUserFilter(), PageRequest.of(0,5), "email");
+		Page<User> users = userRepository.findByFilterExcluding(buildDefaultUserFilter(), PageRequest.of(0, 5), "email");
 
 		Assert.assertNotNull(users);
 
@@ -174,6 +174,15 @@ public class UserRepositoryTest {
 
 		Assert.assertNotNull(users);
 		Assert.assertTrue(users.getSize() >= 1);
+	}
+
+	@Rollback(false)
+	@Test
+	public void removeUserFromProjectTest() {
+
+		User user = userRepository.findByLogin("default").get();
+
+		userRepository.delete(user);
 	}
 
 	private Filter buildDefaultUserFilter() {

@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.entity;
 
+import com.epam.ta.reportportal.entity.email.ServerEmailDetails;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -21,6 +22,10 @@ public class ServerSettings implements Serializable {
 
 	@Column(name = "value")
 	private String value;
+
+	@ManyToOne
+	@JoinColumn(name = "server_email_details_id")
+	private ServerEmailDetails serverEmailDetails;
 
 	public ServerSettings() {
 	}
@@ -52,6 +57,14 @@ public class ServerSettings implements Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public ServerEmailDetails getServerEmailDetails() {
+		return serverEmailDetails;
+	}
+
+	public void setServerEmailDetails(ServerEmailDetails serverEmailDetails) {
+		this.serverEmailDetails = serverEmailDetails;
 	}
 
 	@Override

@@ -305,6 +305,32 @@ INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('eeeeee', 1);
+
+
+INSERT INTO project (name, additional_info, creation_date) VALUES ('test', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
+INSERT INTO project (name, additional_info, creation_date) VALUES ('test1', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
+INSERT INTO project (name, additional_info, creation_date) VALUES ('test2', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
+
+
+  INSERT INTO server_email_details (enabled,
+                                  host,
+                                  port,
+                                  protocol,
+                                  auth_enabled,
+                                  star_tls_enabled,
+                                  ssl_enabled,
+                                  username,
+                                  password,
+                                  recieved_from)
+VALUES (true, 'localhost', '8080', 'udp', 'false', 'false', 'false', 'default', 'qwerty', 'exapmle@epam.com');
+
+INSERT INTO server_settings(key, value, server_email_details_id) VALUES ('email', 'config', 1);
 .;
 
 

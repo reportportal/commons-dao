@@ -30,5 +30,4 @@ public class JsonbConverter implements Converter<Object, Map> {
 	public Class<Map> toType() {
 		return Map.class;
 	}
-};
-
+}
