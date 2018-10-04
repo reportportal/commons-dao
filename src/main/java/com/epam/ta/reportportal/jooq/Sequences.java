@@ -174,11 +174,6 @@ public class Sequences {
     public static final Sequence<Long> TICKET_ID_SEQ = new SequenceImpl<Long>("ticket_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.user_config_id_seq</code>
-     */
-    public static final Sequence<Long> USER_CONFIG_ID_SEQ = new SequenceImpl<Long>("user_config_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.users_id_seq</code>
      */
     public static final Sequence<Long> USERS_ID_SEQ = new SequenceImpl<Long>("users_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));

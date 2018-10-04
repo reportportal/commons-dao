@@ -53,7 +53,7 @@ public class FilterCondition implements Serializable {
 	/**
 	 * API Model Search Criteria
 	 */
-	@Column(name = "field")
+	@Column(name = "search_criteria")
 	private String searchCriteria;
 
 	/**

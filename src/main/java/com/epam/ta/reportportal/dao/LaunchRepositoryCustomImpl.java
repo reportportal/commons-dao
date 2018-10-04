@@ -1,29 +1,23 @@
 /*
- * Copyright 2017 EPAM Systems
+ *  Copyright (C) 2018 EPAM Systems
  *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/service-api
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Report Portal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Report Portal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -31,19 +25,19 @@ import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -51,23 +45,6 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
  */
 @Repository
 public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
-
-	private static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> r.into(Launch.class);
-
-	private static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
-		Map<Long, Launch> res = new HashMap<>();
-		result.forEach(r -> {
-			Long launchId = r.get(LAUNCH.ID);
-			if (res.containsKey(launchId)) {
-				Launch launch = res.get(launchId);
-				res.replace(launchId, launch);
-			} else {
-				Launch launch = LAUNCH_RECORD_MAPPER.map(r);
-				res.put(launchId, launch);
-			}
-		});
-		return new ArrayList<>(res.values());
-	};
 
 	@Autowired
 	private DSLContext dsl;
@@ -83,24 +60,31 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	public List<Launch> findByFilter(Filter filter) {
-		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
+		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(LAUNCH_RECORD_MAPPER);
 	}
 
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
-				LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LAUNCH_RECORD_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
 
 	@Override
-	public List<String> getLaunchNames(Long projectId, String value, LaunchModeEnum mode) {
+	public List<String> getLaunchNames(Long projectId, String value, String mode) {
 
 		JLaunch l = LAUNCH.as("l");
 		JProject p = PROJECT.as("p");
 
-		return dsl.select().from(l).leftJoin(p).on(l.PROJECT_ID.eq(p.ID)).where(p.ID.eq(projectId)).and(l.NAME.like(value)).fetch(l.NAME);
+		return dsl.select()
+				.from(l)
+				.leftJoin(p)
+				.on(l.PROJECT_ID.eq(p.ID))
+				.where(p.ID.eq(projectId))
+				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.and(l.NAME.like("%" + value + "%"))
+				.fetch(l.NAME);
 	}
 
 	@Override
@@ -150,5 +134,25 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOneInto(Launch.class));
+	}
+
+	@Override
+	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
+
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+						.select()
+						.distinctOn(LAUNCH.NAME)
+						.from(LAUNCH)
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())).map(LAUNCH_RECORD_MAPPER),
+				pageable,
+				() -> dsl.fetchCount(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select()
+						.distinctOn(LAUNCH.NAME)
+						.from(LAUNCH)
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
+		);
 	}
 }

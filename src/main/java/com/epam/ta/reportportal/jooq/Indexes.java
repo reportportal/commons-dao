@@ -129,7 +129,6 @@ public class Indexes {
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
-    public static final Index USER_CONFIG_PK = Indexes0.USER_CONFIG_PK;
     public static final Index USER_FILTER_PK = Indexes0.USER_FILTER_PK;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
@@ -197,7 +196,6 @@ public class Indexes {
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
-        public static Index USER_CONFIG_PK = Internal.createIndex("user_config_pk", JUserConfig.USER_CONFIG, new OrderField[] { JUserConfig.USER_CONFIG.ID }, true);
         public static Index USER_FILTER_PK = Internal.createIndex("user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);

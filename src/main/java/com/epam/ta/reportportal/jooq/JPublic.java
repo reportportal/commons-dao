@@ -53,7 +53,6 @@ import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserConfig;
 import com.epam.ta.reportportal.jooq.tables.JUserFilter;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
@@ -477,11 +476,6 @@ public class JPublic extends SchemaImpl {
     public final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 
     /**
-     * The table <code>public.user_config</code>.
-     */
-    public final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
-
-    /**
      * The table <code>public.user_filter</code>.
      */
     public final JUserFilter USER_FILTER = com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
@@ -561,7 +555,6 @@ public class JPublic extends SchemaImpl {
             Sequences.STATISTICS_S_ID_SEQ,
             Sequences.TEST_ITEM_ITEM_ID_SEQ,
             Sequences.TICKET_ID_SEQ,
-            Sequences.USER_CONFIG_ID_SEQ,
             Sequences.USERS_ID_SEQ,
             Sequences.WIDGET_ID_SEQ,
             Sequences.WIDGET_OPTION_ID_SEQ);
@@ -625,7 +618,6 @@ public class JPublic extends SchemaImpl {
             JTestItem.TEST_ITEM,
             JTestItemResults.TEST_ITEM_RESULTS,
             JTicket.TICKET,
-            JUserConfig.USER_CONFIG,
             JUserFilter.USER_FILTER,
             JUsers.USERS,
             JWidget.WIDGET,
