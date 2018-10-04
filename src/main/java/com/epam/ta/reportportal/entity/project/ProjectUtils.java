@@ -136,7 +136,7 @@ public class ProjectUtils {
 		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
 	}
 
-	public Map<String, String> createConfigurationFromProjectAttributes(Set<ProjectAttribute> projectAttributes) {
+	public static Map<String, String> createConfigurationFromProjectAttributes(Set<ProjectAttribute> projectAttributes) {
 		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
 				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
