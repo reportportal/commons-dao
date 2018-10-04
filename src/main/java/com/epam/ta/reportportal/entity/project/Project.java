@@ -7,7 +7,6 @@ import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -17,9 +16,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * @author Ivan Budayeu
@@ -46,10 +42,6 @@ public class Project implements Serializable {
 
 	@Column(name = "additional_info")
 	private String addInfo;
-
-	@Transient
-	@JsonSerialize
-	private Map<String, String> configuration;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -161,23 +153,6 @@ public class Project implements Serializable {
 	/**
 	 * NULL-safe getter
 	 *
-	 * @return the configuration
-	 */
-	public Map<String, String> getConfiguration() {
-		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
-				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
-	}
-
-	/**
-	 * @param configuration the configuration to set
-	 */
-	public void setConfiguration(Map<String, String> configuration) {
-		this.configuration = configuration;
-	}
-
-	/**
-	 * NULL-safe getter
-	 *
 	 * @return the list of demo-data postfix
 	 */
 	public List<DemoDataPostfix> getDemoDataPostfix() {
@@ -205,17 +180,13 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(configuration,
-				project.configuration
-		) && Objects.equals(users, project.users) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
-				metadata,
-				project.metadata
-		);
+		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(users, project.users)
+				&& Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata, project.metadata);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, addInfo, configuration, users, creationDate);
+		return Objects.hash(name, addInfo, users, creationDate);
 	}
 
 	@Override
@@ -223,7 +194,6 @@ public class Project implements Serializable {
 		return MoreObjects.toStringHelper(this)
 				.add("name", name)
 				.add("addInfo", addInfo)
-				.add("configuration", configuration)
 				.add("users", users)
 				.add("creationDate", creationDate)
 				.toString();

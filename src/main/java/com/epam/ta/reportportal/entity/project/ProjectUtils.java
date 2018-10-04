@@ -24,11 +24,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -130,6 +134,11 @@ public class ProjectUtils {
 	@Nullable
 	public static ProjectUser findUserConfigByLogin(Project project, String user) {
 		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
+	}
+
+	public Map<String, String> createConfigurationFromProjectAttributes(Set<ProjectAttribute> projectAttributes) {
+		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
+				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {
