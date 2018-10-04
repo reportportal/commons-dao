@@ -4,7 +4,7 @@ import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.ta.reportportal.dao.util.FieldNameTransformer;
+import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.dao.util.JsonbConverter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
@@ -38,7 +38,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
-import static com.epam.ta.reportportal.dao.util.FieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
@@ -161,7 +161,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		List<Field<?>> fieldsForSelect = JUsers.USERS.fieldStream()
 				.map(Field::getName)
 				.filter(f -> Arrays.stream(exclude).noneMatch(exf -> exf.equalsIgnoreCase(f)))
-				.map(FieldNameTransformer::fieldName)
+				.map(JooqFieldNameTransformer::fieldName)
 				.collect(Collectors.toList());
 
 		return PageableExecutionUtils.getPage(
