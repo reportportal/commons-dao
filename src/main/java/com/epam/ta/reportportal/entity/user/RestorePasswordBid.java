@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Modifiable;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "restore_password_bid")
+@EntityListeners(AuditingEntityListener.class)
 public class RestorePasswordBid implements Serializable, Modifiable {
 
 	/**

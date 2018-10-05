@@ -49,6 +49,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.ofNullable;
 
 /**
  * Set of record mappers that helps to convert the result of jooq queries into
@@ -144,13 +145,14 @@ public class RecordMappers {
 		User user = new User();
 		Project defaultProject = new Project();
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
-
-		try {
-			JsonbObject metaData = new ObjectMapper().readValue(metaDataString, JsonbObject.class);
-			user.setMetadata(metaData);
-		} catch (IOException e) {
-			throw new ReportPortalException("Error during parsing user metadata");
-		}
+		ofNullable(metaDataString).ifPresent(md -> {
+			try {
+				JsonbObject metaData = new ObjectMapper().readValue(metaDataString, JsonbObject.class);
+				user.setMetadata(metaData);
+			} catch (IOException e) {
+				throw new ReportPortalException("Error during parsing user metadata");
+			}
+		});
 
 		r = r.into(
 				USERS.ID,

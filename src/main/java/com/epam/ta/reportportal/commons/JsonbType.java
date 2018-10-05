@@ -25,15 +25,16 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.SerializationException;
 import org.hibernate.usertype.UserType;
 import org.postgresql.util.PGobject;
+import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -54,16 +55,6 @@ abstract public class JsonbType implements UserType {
 
 	@Override
 	abstract public Class<?> returnedClass();
-
-	@Override
-	public boolean equals(Object x, Object y) throws HibernateException {
-		return Objects.equals(x, y);
-	}
-
-	@Override
-	public int hashCode(Object x) throws HibernateException {
-		return Objects.hashCode(x);
-	}
 
 	@Override
 	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
@@ -115,22 +106,39 @@ abstract public class JsonbType implements UserType {
 	}
 
 	@Override
-	public boolean isMutable() {
-		return false;
-	}
-
-	@Override
 	public Serializable disassemble(Object value) throws HibernateException {
-		return null;
+		Object copy = deepCopy(value);
+		if (copy instanceof Serializable) {
+			return (Serializable) copy;
+		}
+		throw new SerializationException(String.format("Cannot serialize '%s', %s is not Serializable.", value, value.getClass()), null);
 	}
 
 	@Override
 	public Object assemble(Serializable cached, Object owner) throws HibernateException {
-		return null;
+		return deepCopy(cached);
 	}
 
 	@Override
 	public Object replace(Object original, Object target, Object owner) throws HibernateException {
-		return null;
+		return deepCopy(original);
+	}
+
+	@Override
+	public boolean isMutable() {
+		return true;
+	}
+
+	@Override
+	public int hashCode(Object x) throws HibernateException {
+		if (x == null) {
+			return 0;
+		}
+		return x.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object x, Object y) throws HibernateException {
+		return ObjectUtils.nullSafeEquals(x, y);
 	}
 }

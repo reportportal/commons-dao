@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.Modifiable;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "user_creation_bid")
+@EntityListeners(AuditingEntityListener.class)
 public class UserCreationBid implements Serializable, Modifiable {
 
 	@Id

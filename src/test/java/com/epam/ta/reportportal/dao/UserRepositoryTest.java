@@ -76,7 +76,7 @@ public class UserRepositoryTest {
 	@Test
 	public void findByDefaultProjectId() {
 
-		Optional<User> user = userRepository.findByDefaultProjectId(1L);
+		Optional<User> user = userRepository.findByDefaultProjectId(2L);
 
 		Assert.assertTrue(user.isPresent());
 
@@ -169,16 +169,11 @@ public class UserRepositoryTest {
 	public void saveUserTest() throws JsonProcessingException {
 		User user = userRepository.findByLogin("default").get();
 		Map<String, Object> hashMap = new HashMap<>();
-		user.setLogin("new");
 		hashMap.put("asd", "qwe");
 		JsonbObject metaData = new MetaData(hashMap);
 		user.setMetadata(metaData);
 
 		userRepository.save(user);
-
-		User user1 = userRepository.findByLogin("new").get();
-
-		System.out.println(user1);
 	}
 
 	@Rollback(false)

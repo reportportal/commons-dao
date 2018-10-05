@@ -57,9 +57,9 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
-		defaultOne.setProject(project);
-		project.setEmailCases(Sets.newHashSet(defaultOne));
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
+		defaultEmailSenderCase.setProject(project);
+		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
 	}
 
@@ -136,7 +136,7 @@ public class ProjectUtils {
 		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
 	}
 
-	public static Map<String, String> createConfigurationFromProjectAttributes(Set<ProjectAttribute> projectAttributes) {
+	public static Map<String, String> getConfigParameters(Set<ProjectAttribute> projectAttributes) {
 		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
 				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
