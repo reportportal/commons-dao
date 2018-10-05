@@ -40,7 +40,7 @@ CREATE TABLE project (
   name            VARCHAR                 NOT NULL UNIQUE,
   additional_info VARCHAR,
   creation_date   TIMESTAMP DEFAULT now() NOT NULL,
-  metadata        JSONB   NULL DEFAULT '{}'
+  metadata        JSONB   NULL
 );
 
 CREATE TABLE demo_data_postfix (
@@ -75,7 +75,7 @@ CREATE TABLE users (
   expired              BOOLEAN NOT NULL,
   default_project_id   BIGINT REFERENCES project (id) ON DELETE CASCADE,
   full_name            VARCHAR NOT NULL,
-  metadata             JSONB   NULL DEFAULT '{}'
+  metadata             JSONB   NULL
 );
 
 CREATE TABLE project_user (

@@ -5,6 +5,9 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
@@ -24,15 +27,14 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Ivan Budaev
@@ -44,6 +46,9 @@ public class UserRepositoryTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	ActivityRepository activityRepository;
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
@@ -161,6 +166,23 @@ public class UserRepositoryTest {
 
 	@Rollback(false)
 	@Test
+	public void saveUserTest() throws JsonProcessingException {
+		User user = userRepository.findByLogin("default").get();
+		Map<String, Object> hashMap = new HashMap<>();
+		user.setLogin("new");
+		hashMap.put("asd", "qwe");
+		JsonbObject metaData = new MetaData(hashMap);
+		user.setMetadata(metaData);
+
+		userRepository.save(user);
+
+		User user1 = userRepository.findByLogin("new").get();
+
+		System.out.println(user1);
+	}
+
+	@Rollback(false)
+	@Test
 	public void updateLastLoginDate() {
 		LocalDateTime now = LocalDateTime.now();
 		userRepository.updateLastLoginDate(now, "superadmin");
@@ -183,6 +205,23 @@ public class UserRepositoryTest {
 		User user = userRepository.findByLogin("default").get();
 
 		userRepository.delete(user);
+	}
+
+	@Rollback(false)
+	@Test
+	public void test() {
+		Activity activity = new Activity();
+		activity.setProjectId(1L);
+		activity.setUserId(1L);
+		activity.setAction("asd");
+		activity.setEntity(Activity.Entity.LAUNCH);
+		activity.setCreatedAt(LocalDateTime.now());
+		Map<String, Object> hashMap = new HashMap<>();
+		hashMap.put("asd", "qwe");
+		MetaData metaData = new MetaData(hashMap);
+		activity.setDetails(metaData);
+
+		activityRepository.save(activity);
 	}
 
 	private Filter buildDefaultUserFilter() {

@@ -4,8 +4,6 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +13,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
-
-	private static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> r.into(Project.class);
 
 	@Autowired
 	private DSLContext dsl;
