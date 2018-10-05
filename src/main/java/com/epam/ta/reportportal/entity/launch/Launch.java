@@ -60,7 +60,7 @@ public class Launch implements Serializable {
 	@Column(name = "project_id", nullable = false, precision = 32)
 	private Long projectId;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
