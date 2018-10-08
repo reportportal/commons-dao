@@ -1,7 +1,10 @@
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,19 +15,25 @@ import java.io.Serializable;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "project_user", schema = "public")
 public class ProjectUser implements Serializable {
 
 	@EmbeddedId
-	private ProjectUserId id;
+	private ProjectUserId id = new ProjectUserId();
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("project_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@MapsId("projectId")
 	private Project project;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@MapsId("userId")
+	private User user;
 
 	@Column(name = "project_role")
 	@Enumerated(EnumType.STRING)
-	private ProjectRole role;
+	@Type(type = "pqsql_enum")
+	private ProjectRole projectRole;
 
 	public ProjectUserId getId() {
 		return id;
@@ -42,11 +51,34 @@ public class ProjectUser implements Serializable {
 		this.project = project;
 	}
 
-	public ProjectRole getRole() {
-		return role;
+	public User getUser() {
+		return user;
 	}
 
-	public void setRole(ProjectRole role) {
-		this.role = role;
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public ProjectRole getProjectRole() {
+		return projectRole;
+	}
+
+	public void setProjectRole(ProjectRole projectRole) {
+		this.projectRole = projectRole;
+	}
+
+	public ProjectUser withUser(User user) {
+		this.user = user;
+		return this;
+	}
+
+	public ProjectUser withProject(Project project) {
+		this.project = project;
+		return this;
+	}
+
+	public ProjectUser withProjectRole(ProjectRole projectRole) {
+		this.projectRole = projectRole;
+		return this;
 	}
 }

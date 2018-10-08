@@ -1,17 +1,17 @@
 INSERT INTO project (name, additional_info, creation_date) VALUES ('default_personal', 'additional info', '2018-07-19 13:25:00');
-INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
-VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 13:25:00');
+-- INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
+-- VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 13:25:00');
 
-INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired, metadata)
+INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
 VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', 'USER', 'INTERNAL',
-        (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'tester', false, '{"last_login":"2018-03-05 15:30:22"}');
+        (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'tester', false);
 
 INSERT INTO project_user (user_id, project_id, project_role)
 VALUES ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'MEMBER');
 
 INSERT INTO project (name, additional_info, creation_date) VALUES ('superadmin_personal', 'another additional info', '2018-07-19 14:25:00');
-INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
-VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 14:25:00');
+-- INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
+-- VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 14:25:00');
 INSERT INTO bug_tracking_system (url, type, bts_project, project_id) VALUES ('test.com', 'TEST TYPE', 'TEST PROJECT', (SELECT currval(pg_get_serial_sequence('project', 'id'))));
 
 INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url) VALUES (1, 'EPMRPP-322', (SELECT currval(pg_get_serial_sequence('users', 'id'))), '2018-09-28 12:38:24.374555', (SELECT currval(pg_get_serial_sequence('bug_tracking_system', 'id'))), 'epam.com');
@@ -218,12 +218,12 @@ END;
 $BODY$
 LANGUAGE plpgsql;
 
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 1);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 2);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 3);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 4);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 5);
-INSERT INTO issue_type_project_configuration (configuration_id, issue_type_id) VALUES (1, 6);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 1);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 2);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 3);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 4);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 5);
+INSERT INTO issue_type_project (project_id, issue_type_id) VALUES (1, 6);
 
 SELECT initSteps();
 
@@ -305,6 +305,20 @@ INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('qqqqqq', 1);
 INSERT INTO item_tag(value, item_id) VALUES ('eeeeee', 1);
+
+
+INSERT INTO project (name, additional_info, creation_date) VALUES ('test', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
+INSERT INTO project (name, additional_info, creation_date) VALUES ('test1', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
+INSERT INTO project (name, additional_info, creation_date) VALUES ('test2', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
+
+
+INSERT INTO server_settings(key, value) VALUES ('email', 'config');
 .;
 
 

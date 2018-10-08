@@ -18,17 +18,21 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.entity.project.email.ProjectEmailConfig;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -39,7 +43,7 @@ import static java.util.stream.StreamSupport.stream;
  * @author Andrei_Ramanchuk
  */
 public class ProjectUtils {
-	private static final String INIT_FROM = "reportportal@example.com";
+	public static final String INIT_FROM = "reportportal@example.com";
 	private static final String OWNER = "OWNER";
 
 	private ProjectUtils() {
@@ -53,10 +57,9 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultOne = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
-		ProjectEmailConfig config = new ProjectEmailConfig(false, INIT_FROM);
-		defaultOne.setProject(project);
-		project.getConfiguration().setProjectEmailConfig(config);
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
+		defaultEmailSenderCase.setProject(project);
+		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
 	}
 
@@ -69,8 +72,10 @@ public class ProjectUtils {
 	 */
 	public static Project excludeProjectRecipients(Iterable<User> users, Project project) {
 		if (users != null) {
-			Set<String> toExclude = stream(users.spliterator(), false).map(
-					user -> asList(user.getEmail().toLowerCase(), user.getLogin().toLowerCase())).flatMap(List::stream).collect(toSet());
+			Set<String> toExclude = stream(users.spliterator(), false).map(user -> asList(
+					user.getEmail().toLowerCase(),
+					user.getLogin().toLowerCase()
+			)).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
 			Set<EmailSenderCase> cases = project.getEmailCases();
 			if (null != cases) {
@@ -127,8 +132,13 @@ public class ProjectUtils {
 	 * @return UserConfig for specified login
 	 */
 	@Nullable
-	public static Project.UserConfig findUserConfigByLogin(Project project, String user) {
+	public static ProjectUser findUserConfigByLogin(Project project, String user) {
 		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
+	}
+
+	public static Map<String, String> getConfigParameters(Set<ProjectAttribute> projectAttributes) {
+		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
+				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {

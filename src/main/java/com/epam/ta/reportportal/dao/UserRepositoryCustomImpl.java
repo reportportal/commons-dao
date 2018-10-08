@@ -1,33 +1,40 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BinaryData;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.image.ImageParser;
+import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static java.util.Optional.ofNullable;
 
 /**
  * @author Pavel Bortnik
@@ -37,33 +44,22 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	private final DataStore dataStore;
 
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = record -> record.into(User.class);
-
-	public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = result -> {
-		Map<Long, User> userMap = Maps.newHashMap();
-		result.forEach(res -> {
-			Long userId = res.get(USERS.ID);
-			if (!userMap.containsKey(userId)) {
-				userMap.put(userId, USER_RECORD_MAPPER.map(res));
-			}
-		});
-
-		return Lists.newArrayList(userMap.values());
-	};
+	private final DSLContext dsl;
 
 	@Autowired
-	public UserRepositoryCustomImpl(DataStore dataStore) {
+	public UserRepositoryCustomImpl(DataStore dataStore, DSLContext dsl) {
 		this.dataStore = dataStore;
+		this.dsl = dsl;
 	}
 
 	@Override
-	public String uploadUserPhoto(String login, BinaryData binaryData) {
-		return dataStore.save(login, binaryData.getInputStream());
+	public String uploadUserPhoto(String username, BinaryData binaryData) {
+		return dataStore.save(username, binaryData.getInputStream());
 	}
 
 	@Override
-	public String replaceUserPhoto(String login, BinaryData binaryData) {
-		return dataStore.save(login, binaryData.getInputStream());
+	public String replaceUserPhoto(String username, BinaryData binaryData) {
+		return dataStore.save(username, binaryData.getInputStream());
 	}
 
 	@Override
@@ -72,10 +68,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public BinaryData findUserPhoto(User user) {
-		String path = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
-		));
+	public BinaryData findUserPhoto(String path) {
 		InputStream inputStream = dataStore.load(path);
 		try {
 			byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -89,11 +82,35 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public void deleteUserPhoto(User user) {
-		String path = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
-		));
+	public void deleteUserPhoto(String path) {
 		dataStore.delete(path);
+	}
+
+	@Override
+	public Page<User> searchForUser(String term, Pageable pageable) {
+
+		SelectConditionStep<Record> select = dsl.select()
+				.from(USERS)
+				.where(USERS.LOGIN.like("%" + term + "%")
+						.or(USERS.FULL_NAME.like("%" + term + "%"))
+						.or(USERS.EMAIL.like("%" + term + "%")));
+		return PageableExecutionUtils.getPage(dsl.fetch(select).map(USER_RECORD_MAPPER), pageable, () -> dsl.fetchCount(select));
+	}
+
+	@Override
+	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
+
+		List<Field<?>> fieldsForSelect = JUsers.USERS.fieldStream()
+				.map(Field::getName)
+				.filter(f -> Arrays.stream(exclude).noneMatch(exf -> exf.equalsIgnoreCase(f)))
+				.map(JooqFieldNameTransformer::fieldName)
+				.collect(Collectors.toList());
+
+		return PageableExecutionUtils.getPage(
+				USER_FETCHER.apply(dsl.select(fieldsForSelect).from(QueryBuilder.newBuilder(filter).with(pageable).build()).fetch()),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 
 	private String resolveContentType(byte[] data) {
@@ -103,5 +120,18 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		} catch (IOException e) {
 			return MediaType.OCTET_STREAM.toString();
 		}
+	}
+
+	@Override
+	public List<User> findByFilter(Filter filter) {
+		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public Page<User> findByFilter(Filter filter, Pageable pageable) {
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 }

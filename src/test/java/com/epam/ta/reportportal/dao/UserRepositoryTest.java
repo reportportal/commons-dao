@@ -1,7 +1,16 @@
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Condition;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.meta.MetaData;
+import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
@@ -15,20 +24,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Ivan Budaev
@@ -40,6 +48,12 @@ public class UserRepositoryTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
+
+	@Autowired
+	private ActivityRepository activityRepository;
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
@@ -67,7 +81,7 @@ public class UserRepositoryTest {
 	@Test
 	public void findByDefaultProjectId() {
 
-		Optional<User> user = userRepository.findByDefaultProjectId(1L);
+		Optional<User> user = userRepository.findByDefaultProjectId(2L);
 
 		Assert.assertTrue(user.isPresent());
 
@@ -84,7 +98,7 @@ public class UserRepositoryTest {
 	@Test
 	public void findByLogin() {
 
-		Optional<User> user = userRepository.findByLogin("default");
+		Optional<User> user = userRepository.findByLogin("superadmin");
 
 		Assert.assertTrue(user.isPresent());
 	}
@@ -129,21 +143,116 @@ public class UserRepositoryTest {
 		Assert.assertEquals(2, users.getNumberOfElements());
 	}
 
-	@Rollback(false)
+	@Test
+	public void findByLoginTest() {
+		String login = "default";
+		Optional<User> user = userRepository.findByLogin(login);
+
+		Assert.assertTrue(user.isPresent());
+		Assert.assertEquals(login, user.get().getLogin());
+	}
+
+	@Test
+	public void findByFilterExcludingTest() {
+		Page<User> users = userRepository.findByFilterExcluding(buildDefaultUserFilter(), PageRequest.of(0, 5), "email");
+
+		Assert.assertNotNull(users);
+
+		users.forEach(u -> Assert.assertNull(u.getEmail()));
+	}
+
 	@Test
 	public void expireUsersLoggedOlderThan() {
 
 		userRepository.expireUsersLoggedOlderThan(LocalDateTime.now());
 
-		//TODO to solve troubles with JSONB parsing
-		//		System.out.println(userRepository.findByLogin("default").get().isExpired());
 	}
 
-	@Rollback(false)
+	@Test
+	public void saveUserTest() throws JsonProcessingException {
+		User user = userRepository.findByLogin("default").get();
+		Map<String, Object> hashMap = new HashMap<>();
+		hashMap.put("asd", "qwe");
+		JsonbObject metaData = new MetaData(hashMap);
+		user.setMetadata(metaData);
+
+		userRepository.save(user);
+	}
+
 	@Test
 	public void updateLastLoginDate() {
 		LocalDateTime now = LocalDateTime.now();
 		userRepository.updateLastLoginDate(now, "superadmin");
 
+	}
+
+	@Test
+	public void searchForUserTest() {
+
+		Page<User> users = userRepository.searchForUser("tes", PageRequest.of(0, 5));
+
+		Assert.assertNotNull(users);
+		Assert.assertTrue(users.getSize() >= 1);
+	}
+
+	@Test
+	public void removeUserFromProjectTest() {
+
+		User user = userRepository.findByLogin("default").get();
+
+		userRepository.delete(user);
+	}
+
+	@Test
+	public void test() {
+		Activity activity = new Activity();
+		activity.setProjectId(1L);
+		activity.setUserId(1L);
+		activity.setAction("asd");
+		activity.setEntity(Activity.Entity.LAUNCH);
+		activity.setCreatedAt(LocalDateTime.now());
+		Map<String, Object> hashMap = new HashMap<>();
+		hashMap.put("asd", "qwe");
+		MetaData metaData = new MetaData(hashMap);
+		activity.setDetails(metaData);
+
+		activityRepository.save(activity);
+	}
+
+	@Test
+	public void createUserTest() {
+
+		Project defaultProject = projectRepository.findByName("superadmin_personal").get();
+
+		User reg = new User();
+
+		reg.setEmail("email1.com");
+		reg.setFullName("test");
+		reg.setLogin("new1");
+		reg.setPassword("new");
+		reg.setUserType(UserType.INTERNAL);
+		reg.setRole(UserRole.USER);
+
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("last_login", new Date());
+
+		reg.setMetadata(new MetaData(map));
+
+		Set<ProjectUser> projectUsers = defaultProject.getUsers();
+		//noinspection ConstantConditions
+		projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.CUSTOMER).withUser(reg).withProject(defaultProject));
+		defaultProject.setUsers(projectUsers);
+
+		userRepository.save(reg);
+
+		projectRepository.existsByName("superadmin_personal");
+	}
+
+	private Filter buildDefaultUserFilter() {
+		return Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "10", "id"))
+				.build();
 	}
 }

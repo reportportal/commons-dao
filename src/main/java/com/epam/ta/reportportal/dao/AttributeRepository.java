@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 
-public interface AttributeRepository extends ReportPortalRepository<Attribute, Long> {
+public interface AttributeRepository extends ReportPortalRepository<Attribute, Long>, AttributeRepositoryCustom {
 
     Attribute findByName(String attributeName);
 

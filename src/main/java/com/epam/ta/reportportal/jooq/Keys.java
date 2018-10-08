@@ -3,6 +3,7 @@
  */
 package com.epam.ta.reportportal.jooq;
 
+
 import com.epam.ta.reportportal.jooq.tables.*;
 import com.epam.ta.reportportal.jooq.tables.records.*;
 import org.jooq.ForeignKey;
