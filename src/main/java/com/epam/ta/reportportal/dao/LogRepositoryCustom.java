@@ -45,20 +45,29 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * field will be loaded if it specified in appropriate input parameter, all
 	 * other fields will be fully loaded.
 	 *
-	 * @param itemId
-	 * @param limit
-	 * @param isLoadBinaryData
-	 * @return
+	 * @param limit  Max count of logs to be loaded
+	 * @param itemId Test Item log belongs to
+	 * @return Found logs
 	 */
-	List<Log> findByTestItemId(Long itemId, int limit, boolean isLoadBinaryData);
+	List<Log> findByTestItemId(Long itemId, int limit);
+
+	/**
+	 * Load specified number of last logs for specified test item. binaryData
+	 * field will be loaded if it specified in appropriate input parameter, all
+	 * other fields will be fully loaded.
+	 *
+	 * @param itemId Test Item log belongs to
+	 * @return Found logs
+	 */
+	List<Log> findByTestItemId(Long itemId);
 
 	/**
 	 * Get the specified log's page number
 	 *
-	 * @param id
-	 * @param filter
-	 * @param pageable
-	 * @return
+	 * @param id       ID of log page should be found of
+	 * @param filter   Filter
+	 * @param pageable Page details
+	 * @return Page number log found using specified filter
 	 */
 	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
 }
