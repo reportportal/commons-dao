@@ -11,15 +11,15 @@ import org.springframework.data.domain.Pageable;
  */
 public interface UserRepositoryCustom extends FilterableRepository<User>{
 
-	String uploadUserPhoto(String login, BinaryData binaryData);
+	String uploadUserPhoto(String username, BinaryData binaryData);
 
-	String replaceUserPhoto(String login, BinaryData binaryData);
+	String replaceUserPhoto(String username, BinaryData binaryData);
 
 	String replaceUserPhoto(User user, BinaryData binaryData);
 
-	BinaryData findUserPhoto(User user);
+	BinaryData findUserPhoto(String path);
 
-	void deleteUserPhoto(User user);
+	void deleteUserPhoto(String path);
 
 	Page<User> searchForUser(String term, Pageable pageable);
 

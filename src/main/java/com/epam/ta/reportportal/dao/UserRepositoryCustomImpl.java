@@ -32,10 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static java.util.Optional.ofNullable;
 
 /**
  * @author Pavel Bortnik
@@ -54,13 +52,13 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public String uploadUserPhoto(String login, BinaryData binaryData) {
-		return dataStore.save(login, binaryData.getInputStream());
+	public String uploadUserPhoto(String username, BinaryData binaryData) {
+		return dataStore.save(username, binaryData.getInputStream());
 	}
 
 	@Override
-	public String replaceUserPhoto(String login, BinaryData binaryData) {
-		return dataStore.save(login, binaryData.getInputStream());
+	public String replaceUserPhoto(String username, BinaryData binaryData) {
+		return dataStore.save(username, binaryData.getInputStream());
 	}
 
 	@Override
@@ -69,10 +67,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public BinaryData findUserPhoto(User user) {
-		String path = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
-		));
+	public BinaryData findUserPhoto(String path) {
 		InputStream inputStream = dataStore.load(path);
 		try {
 			byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -86,10 +81,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public void deleteUserPhoto(User user) {
-		String path = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
-		));
+	public void deleteUserPhoto(String path) {
 		dataStore.delete(path);
 	}
 
