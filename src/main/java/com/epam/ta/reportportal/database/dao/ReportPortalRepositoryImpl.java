@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,6 +54,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -276,7 +277,7 @@ class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleMongo
         final AggregationResults<Map> aggregate =
                 mongoOperations.aggregate( a, getEntityInformation().getCollectionName(), Map.class);
 
-        if (!aggregate.getUniqueMappedResult().containsKey("ind")) {
+        if (CollectionUtils.isEmpty(aggregate.getMappedResults()) || !aggregate.getUniqueMappedResult().containsKey("ind")) {
             throw new ReportPortalException(ErrorType.INCORRECT_FILTER_PARAMETERS, "Unable to calculate page number. Check your input parameters");
         }
 
