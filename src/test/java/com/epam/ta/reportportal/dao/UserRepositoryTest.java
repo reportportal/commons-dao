@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,19 +53,19 @@ public class UserRepositoryTest {
 	private ProjectRepository projectRepository;
 
 	@Autowired
-	ActivityRepository activityRepository;
+	private ActivityRepository activityRepository;
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-//		runSqlScript("/test-dropall-script.sql");
-//		runSqlScript("/test-create-script.sql");
-//		runSqlScript("/test-fill-script.sql");
+		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-create-script.sql");
+		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -99,7 +98,7 @@ public class UserRepositoryTest {
 	@Test
 	public void findByLogin() {
 
-		Optional<User> user = userRepository.findByLogin("default");
+		Optional<User> user = userRepository.findByLogin("superadmin");
 
 		Assert.assertTrue(user.isPresent());
 	}
@@ -162,7 +161,6 @@ public class UserRepositoryTest {
 		users.forEach(u -> Assert.assertNull(u.getEmail()));
 	}
 
-	@Rollback(false)
 	@Test
 	public void expireUsersLoggedOlderThan() {
 
@@ -170,7 +168,6 @@ public class UserRepositoryTest {
 
 	}
 
-	@Rollback(false)
 	@Test
 	public void saveUserTest() throws JsonProcessingException {
 		User user = userRepository.findByLogin("default").get();
@@ -182,7 +179,6 @@ public class UserRepositoryTest {
 		userRepository.save(user);
 	}
 
-	@Rollback(false)
 	@Test
 	public void updateLastLoginDate() {
 		LocalDateTime now = LocalDateTime.now();
@@ -199,7 +195,6 @@ public class UserRepositoryTest {
 		Assert.assertTrue(users.getSize() >= 1);
 	}
 
-	@Rollback(false)
 	@Test
 	public void removeUserFromProjectTest() {
 
@@ -208,7 +203,6 @@ public class UserRepositoryTest {
 		userRepository.delete(user);
 	}
 
-	@Rollback(false)
 	@Test
 	public void test() {
 		Activity activity = new Activity();
@@ -226,19 +220,24 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	@Rollback(false)
 	public void createUserTest() {
 
 		Project defaultProject = projectRepository.findByName("superadmin_personal").get();
 
 		User reg = new User();
 
-		reg.setEmail("email.com");
+		reg.setEmail("email1.com");
 		reg.setFullName("test");
-		reg.setLogin("new");
+		reg.setLogin("new1");
 		reg.setPassword("new");
 		reg.setUserType(UserType.INTERNAL);
 		reg.setRole(UserRole.USER);
+
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("last_login", new Date());
+
+		reg.setMetadata(new MetaData(map));
 
 		Set<ProjectUser> projectUsers = defaultProject.getUsers();
 		//noinspection ConstantConditions
