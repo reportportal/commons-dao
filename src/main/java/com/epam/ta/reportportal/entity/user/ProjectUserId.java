@@ -17,6 +17,9 @@ public class ProjectUserId implements Serializable {
 	@Column(name = "project_id")
 	private Long projectId;
 
+	public ProjectUserId() {
+	}
+
 	public Long getUserId() {
 		return userId;
 	}

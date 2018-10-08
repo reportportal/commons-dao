@@ -8,6 +8,9 @@ import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.meta.MetaData;
+import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
@@ -48,14 +51,17 @@ public class UserRepositoryTest {
 	private UserRepository userRepository;
 
 	@Autowired
+	private ProjectRepository projectRepository;
+
+	@Autowired
 	ActivityRepository activityRepository;
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+//		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-create-script.sql");
+//		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
@@ -217,6 +223,31 @@ public class UserRepositoryTest {
 		activity.setDetails(metaData);
 
 		activityRepository.save(activity);
+	}
+
+	@Test
+	@Rollback(false)
+	public void createUserTest() {
+
+		Project defaultProject = projectRepository.findByName("superadmin_personal").get();
+
+		User reg = new User();
+
+		reg.setEmail("email.com");
+		reg.setFullName("test");
+		reg.setLogin("new");
+		reg.setPassword("new");
+		reg.setUserType(UserType.INTERNAL);
+		reg.setRole(UserRole.USER);
+
+		Set<ProjectUser> projectUsers = defaultProject.getUsers();
+		//noinspection ConstantConditions
+		projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.CUSTOMER).withUser(reg).withProject(defaultProject));
+		defaultProject.setUsers(projectUsers);
+
+		userRepository.save(reg);
+
+		projectRepository.existsByName("superadmin_personal");
 	}
 
 	private Filter buildDefaultUserFilter() {
