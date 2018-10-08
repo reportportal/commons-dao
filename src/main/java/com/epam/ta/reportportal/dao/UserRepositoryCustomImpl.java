@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 
 /**
@@ -93,7 +94,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				.where(USERS.LOGIN.like("%" + term + "%")
 						.or(USERS.FULL_NAME.like("%" + term + "%"))
 						.or(USERS.EMAIL.like("%" + term + "%")));
-		return PageableExecutionUtils.getPage(USER_FETCHER.apply(select.fetch()), pageable, () -> dsl.fetchCount(select));
+		return PageableExecutionUtils.getPage(dsl.fetch(select).map(USER_RECORD_MAPPER), pageable, () -> dsl.fetchCount(select));
 	}
 
 	@Override

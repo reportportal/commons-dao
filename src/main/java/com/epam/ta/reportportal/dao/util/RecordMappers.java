@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -37,8 +38,12 @@ import com.google.common.collect.Maps;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,6 +53,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
@@ -60,6 +66,8 @@ import static java.util.Optional.ofNullable;
 public class RecordMappers {
 
 	private static final String STATISTICS = "statistics";
+
+	private static ObjectMapper objectMapper;
 
 	/**
 	 * Maps record into {@link Attribute} object
@@ -147,26 +155,14 @@ public class RecordMappers {
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
-				JsonbObject metaData = new ObjectMapper().readValue(metaDataString, JsonbObject.class);
+				JsonbObject metaData = objectMapper.readValue(metaDataString, JsonbObject.class);
 				user.setMetadata(metaData);
 			} catch (IOException e) {
 				throw new ReportPortalException("Error during parsing user metadata");
 			}
 		});
 
-		r = r.into(
-				USERS.ID,
-				USERS.LOGIN,
-				USERS.PASSWORD,
-				USERS.EMAIL,
-				USERS.EXPIRED,
-				USERS.FULL_NAME,
-				USERS.DEFAULT_PROJECT_ID,
-				USERS.ATTACHMENT,
-				USERS.ATTACHMENT_THUMBNAIL,
-				USERS.TYPE,
-				USERS.ROLE
-		);
+		r = r.into(USERS.fields());
 		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
 		user.setId(r.get(USERS.ID));
 		user.setAttachment(r.get(USERS.ATTACHMENT));
@@ -197,4 +193,47 @@ public class RecordMappers {
 
 		return Lists.newArrayList(userMap.values());
 	};
+
+	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
+		Activity activity = new Activity();
+		activity.setId(r.get(ACTIVITY.ID));
+		activity.setUserId(r.get(ACTIVITY.USER_ID));
+		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
+		activity.setAction(r.get(ACTIVITY.ACTION));
+		activity.setEntity(r.get(ACTIVITY.ENTITY, Activity.Entity.class));
+		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
+		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
+		ofNullable(detailsJson).ifPresent(s -> {
+			try {
+				JsonbObject details = objectMapper.readValue(s, JsonbObject.class);
+				activity.setDetails(details);
+			} catch (IOException e) {
+				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
+			}
+		});
+		return activity;
+	};
+	public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = r -> {
+		Map<Long, Activity> activityMap = Maps.newHashMap();
+		r.forEach(res -> {
+			Long activityId = res.get(ACTIVITY.ID);
+			if (!activityMap.containsKey(activityId)) {
+				activityMap.put(activityId, ACTIVITY_MAPPER.map(res));
+			}
+		});
+		return Lists.newArrayList(activityMap.values());
+	};
+
+	@Component
+	private static class MapperInjector {
+
+		@Autowired
+		private ObjectMapper objectMapper;
+
+		@PostConstruct
+		private void injectMapper() {
+			RecordMappers.objectMapper = objectMapper;
+		}
+
+	}
 }
