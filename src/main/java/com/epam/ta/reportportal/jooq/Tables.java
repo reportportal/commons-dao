@@ -3,7 +3,6 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
 import com.epam.ta.reportportal.jooq.tables.*;
 import com.epam.ta.reportportal.jooq.tables.records.*;
 import org.jooq.Configuration;
@@ -90,22 +89,22 @@ public class Tables {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
+    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1, Integer __2) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
+    public static JCrosstab CROSSTAB(String __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
+    public static JCrosstab CROSSTAB(Field<String> __1) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
     }
 
     /**
