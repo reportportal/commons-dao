@@ -33,7 +33,7 @@ public class ProjectIssueTypeKey {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "issue_type_id", nullable = false, insertable = false, updatable = false)
-	private IssueType attribute;
+	private IssueType issueType;
 
 	public Project getProject() {
 		return project;
@@ -43,11 +43,11 @@ public class ProjectIssueTypeKey {
 		this.project = project;
 	}
 
-	public IssueType getAttribute() {
-		return attribute;
+	public IssueType getIssueType() {
+		return issueType;
 	}
 
-	public void setAttribute(IssueType attribute) {
-		this.attribute = attribute;
+	public void setIssueType(IssueType issueType) {
+		this.issueType = issueType;
 	}
 }
