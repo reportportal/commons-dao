@@ -11,4 +11,5 @@ public class ActivityCriteriaConstant {
 
 	public static final String LOGIN = "login";
 	public static final String ACTION = "action";
+	public static final String OBJECT_ID = "object_id";
 }

@@ -202,6 +202,7 @@ public class RecordMappers {
 		activity.setAction(r.get(ACTIVITY.ACTION));
 		activity.setEntity(r.get(ACTIVITY.ENTITY, Activity.Entity.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
+		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
 			try {

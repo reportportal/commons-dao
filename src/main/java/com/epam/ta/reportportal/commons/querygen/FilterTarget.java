@@ -44,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
@@ -123,7 +123,8 @@ public enum FilterTarget {
 	ACTIVITY(Activity.class, Arrays.asList(new CriteriaHolder(ID, "a.id", Long.class, false),
 			new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
 			new CriteriaHolder(LOGIN, "u.login", String.class, false),
-			new CriteriaHolder(ACTION, "a.action", String.class, false)
+			new CriteriaHolder(ACTION, "a.action", String.class, false),
+			new CriteriaHolder(OBJECT_ID, "a.object_id", Long.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
@@ -131,7 +132,7 @@ public enum FilterTarget {
 			JActivity a = JActivity.ACTIVITY.as("a");
 			JUsers u = JUsers.USERS.as("u");
 			JProject p = JProject.PROJECT.as("p");
-			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, u.LOGIN, p.NAME)
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, a.DETAILS, a.OBJECT_ID, u.LOGIN, p.NAME)
 					.from(a)
 					.join(u)
 					.on(a.USER_ID.eq(u.ID))
