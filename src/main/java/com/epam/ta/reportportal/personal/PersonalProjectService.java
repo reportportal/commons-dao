@@ -23,31 +23,22 @@ package com.epam.ta.reportportal.personal;
 import com.epam.ta.reportportal.dao.AttributeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.epam.ta.reportportal.entity.project.ProjectUtils;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
-import com.sun.javafx.binding.StringFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.entity.project.ProjectUtils.defaultProjectAttributes;
+import static com.epam.ta.reportportal.entity.project.ProjectUtils.setDefaultEmailConfiguration;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Optional.ofNullable;
 
 /**
  * Generates Personal project for provided user
@@ -107,7 +98,7 @@ public final class PersonalProjectService {
 		project.setProjectAttributes(defaultProjectAttributes(project, defaultAttributes));
 
 		/* Default email configuration */
-		ProjectUtils.setDefaultEmailConfiguration(project);
+		setDefaultEmailConfiguration(project);
 
 		return project;
 	}
@@ -121,34 +112,5 @@ public final class PersonalProjectService {
 	public String getProjectPrefix(String username) {
 		String projectName = username.replaceAll("\\.", "_");
 		return (projectName + PERSONAL_PROJECT_POSTFIX).toLowerCase();
-	}
-
-	/**
-	 * @return Generated default project configuration
-	 */
-	public static Set<ProjectAttribute> defaultProjectAttributes(Project project, Set<Attribute> defaultAttributes) {
-
-		Map<String, Attribute> attributes = defaultAttributes.stream().collect(Collectors.toMap(Attribute::getName, a -> a));
-
-		Set<ProjectAttribute> projectAttributes = new HashSet<>(defaultAttributes.size());
-
-		Arrays.stream(ProjectAttributeEnum.values())
-				.map(ProjectAttributeEnum::getAttribute)
-				.forEach(pa -> ofNullable(attributes.get(pa)).ifPresent(attr -> {
-					ProjectAttribute projectAttribute = new ProjectAttribute();
-					projectAttribute.setAttribute(attr);
-					projectAttribute.setProject(project);
-
-					projectAttribute.setValue(ProjectAttributeEnum.findByAttributeName(pa)
-							.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-									StringFormatter.format("Attribute - {} was not found", pa)
-							))
-							.getDefaultValue());
-
-					projectAttributes.add(projectAttribute);
-				}));
-
-		return projectAttributes;
-
 	}
 }
