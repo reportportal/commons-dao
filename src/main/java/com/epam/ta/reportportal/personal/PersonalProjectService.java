@@ -23,7 +23,6 @@ package com.epam.ta.reportportal.personal;
 import com.epam.ta.reportportal.dao.AttributeRepository;
 import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
-import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -35,10 +34,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
-import java.util.Set;
 
-import static com.epam.ta.reportportal.entity.project.ProjectUtils.defaultProjectAttributes;
-import static com.epam.ta.reportportal.entity.project.ProjectUtils.setDefaultEmailConfiguration;
+import static com.epam.ta.reportportal.entity.project.ProjectUtils.*;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -61,7 +58,6 @@ public final class PersonalProjectService {
 		this.attributeRepository = attributeRepository;
 		this.issueTypeRepository = issueTypeRepository;
 	}
-
 
 	/**
 	 * Prefix from username with replaced dots as underscores
@@ -98,10 +94,8 @@ public final class PersonalProjectService {
 
 		project.setAddInfo("Personal project of " + (isNullOrEmpty(user.getFullName()) ? user.getLogin() : user.getFullName()));
 
-		Set<Attribute> defaultAttributes = attributeRepository.getDefaultProjectAttributes();
-
-		project.setProjectAttributes(defaultProjectAttributes(project, defaultAttributes));
-		project.setIssueTypes(issueTypeRepository.getDefaultIssueTypes());
+		project.setProjectAttributes(defaultProjectAttributes(project, attributeRepository.getDefaultProjectAttributes()));
+		project.setProjectIssueTypes(defaultIssueTypes(project, issueTypeRepository.getDefaultIssueTypes()));
 
 		/* Default email configuration */
 		setDefaultEmailConfiguration(project);

@@ -19,6 +19,8 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
@@ -59,8 +61,7 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(
-				Lists.newArrayList(OWNER),
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER),
 				SendCase.ALWAYS,
 				Sets.newHashSet(),
 				Sets.newHashSet()
@@ -97,6 +98,20 @@ public class ProjectUtils {
 
 		return projectAttributes;
 
+	}
+
+	public static Set<ProjectIssueType> defaultIssueTypes(Project project, List<IssueType> defaultIssueTypes) {
+		Map<String, IssueType> issueTypes = defaultIssueTypes.stream().collect(Collectors.toMap(IssueType::getLocator, i -> i));
+		Set<ProjectIssueType> projectIssueTypes = new HashSet<>(defaultIssueTypes.size());
+		Arrays.stream(TestItemIssueGroup.values())
+				.map(TestItemIssueGroup::getLocator)
+				.forEach(loc -> ofNullable(issueTypes.get(loc)).ifPresent(it -> {
+					ProjectIssueType projectIssueType = new ProjectIssueType();
+					projectIssueType.setIssueType(it);
+					projectIssueType.setProject(project);
+					projectIssueTypes.add(projectIssueType);
+				}));
+		return projectIssueTypes;
 	}
 
 	/**
