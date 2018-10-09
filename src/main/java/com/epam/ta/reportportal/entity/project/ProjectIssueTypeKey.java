@@ -21,11 +21,12 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
  */
-public class ProjectIssueTypeKey {
+public class ProjectIssueTypeKey implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id", nullable = false, insertable = false, updatable = false)
