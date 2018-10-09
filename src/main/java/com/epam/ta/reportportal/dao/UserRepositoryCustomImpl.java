@@ -21,11 +21,13 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -42,6 +44,7 @@ import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 @Repository
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
+	@Qualifier("localDataStore")
 	private final DataStore dataStore;
 
 	private final DSLContext dsl;
@@ -74,7 +77,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			byte[] bytes = IOUtils.toByteArray(inputStream);
 			String contentType = resolveContentType(bytes);
 
-			return new BinaryData(contentType, (long) bytes.length, inputStream);
+			return new BinaryData(contentType, (long) bytes.length, new ByteArrayInputStream(bytes));
 		} catch (IOException e) {
 			//TODO add new exception type
 			throw new ReportPortalException(ErrorType.BAD_REQUEST_ERROR);
@@ -113,15 +116,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		);
 	}
 
-	private String resolveContentType(byte[] data) {
-		AutoDetectParser parser = new AutoDetectParser(new ImageParser());
-		try {
-			return parser.getDetector().detect(TikaInputStream.get(data), new Metadata()).toString();
-		} catch (IOException e) {
-			return MediaType.OCTET_STREAM.toString();
-		}
-	}
-
 	@Override
 	public List<User> findByFilter(Filter filter) {
 		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
@@ -133,5 +127,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
+	}
+
+	private String resolveContentType(byte[] data) {
+		AutoDetectParser parser = new AutoDetectParser(new ImageParser());
+		try {
+			return parser.getDetector().detect(TikaInputStream.get(data), new Metadata()).toString();
+		} catch (IOException e) {
+			return MediaType.OCTET_STREAM.toString();
+		}
 	}
 }
