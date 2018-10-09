@@ -18,13 +18,13 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author Pavel Bortnik
  */
 public interface IssueTypeRepositoryCustom {
 
-	Set<IssueType> getDefaultIssueTypes();
+	List<IssueType> getDefaultIssueTypes();
 
 }

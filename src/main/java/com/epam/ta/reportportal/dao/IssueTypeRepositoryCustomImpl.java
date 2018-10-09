@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
@@ -43,7 +43,7 @@ public class IssueTypeRepositoryCustomImpl implements IssueTypeRepositoryCustom 
 	}
 
 	@Override
-	public Set<IssueType> getDefaultIssueTypes() {
+	public List<IssueType> getDefaultIssueTypes() {
 		return dsl.select()
 				.from(ISSUE_TYPE)
 				.join(ISSUE_GROUP)
@@ -51,6 +51,6 @@ public class IssueTypeRepositoryCustomImpl implements IssueTypeRepositoryCustom 
 				.where(ISSUE_TYPE.LOCATOR.in(Arrays.stream(TestItemIssueGroup.values())
 						.map(TestItemIssueGroup::getLocator)
 						.toArray(String[]::new)))
-				.fetchSet(ISSUE_TYPE_RECORD_MAPPER);
+				.fetch(ISSUE_TYPE_RECORD_MAPPER);
 	}
 }

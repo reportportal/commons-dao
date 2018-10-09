@@ -21,6 +21,7 @@
 package com.epam.ta.reportportal.personal;
 
 import com.epam.ta.reportportal.dao.AttributeRepository;
+import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -51,12 +52,16 @@ public final class PersonalProjectService {
 	public static final String PERSONAL_PROJECT_POSTFIX = "_personal";
 	private final ProjectRepository projectRepository;
 	private final AttributeRepository attributeRepository;
+	private final IssueTypeRepository issueTypeRepository;
 
 	@Autowired
-	public PersonalProjectService(ProjectRepository projectRepository, AttributeRepository attributeRepository) {
+	public PersonalProjectService(ProjectRepository projectRepository, AttributeRepository attributeRepository,
+			IssueTypeRepository issueTypeRepository) {
 		this.projectRepository = projectRepository;
 		this.attributeRepository = attributeRepository;
+		this.issueTypeRepository = issueTypeRepository;
 	}
+
 
 	/**
 	 * Prefix from username with replaced dots as underscores
@@ -96,6 +101,7 @@ public final class PersonalProjectService {
 		Set<Attribute> defaultAttributes = attributeRepository.getDefaultProjectAttributes();
 
 		project.setProjectAttributes(defaultProjectAttributes(project, defaultAttributes));
+		project.setIssueTypes(issueTypeRepository.getDefaultIssueTypes());
 
 		/* Default email configuration */
 		setDefaultEmailConfiguration(project);
