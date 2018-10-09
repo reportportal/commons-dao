@@ -3,7 +3,6 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -48,6 +47,10 @@ public class Project implements Serializable {
 	@JsonIgnore
 	private Set<ProjectAttribute> projectAttributes;
 
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Set<ProjectIssueType> projectIssueTypes;
+
 	@OneToMany(mappedBy = "project")
 	@JsonBackReference
 	private List<DemoDataPostfix> demoDataPostfix;
@@ -58,12 +61,6 @@ public class Project implements Serializable {
 	@Type(type = "jsonb")
 	@Column(name = "metadata")
 	private JsonbObject metadata;
-
-	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "issue_type_id") })
-	@JsonBackReference
-	private List<IssueType> issueTypes;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
@@ -132,12 +129,12 @@ public class Project implements Serializable {
 		return projectAttributes;
 	}
 
-	public List<IssueType> getIssueTypes() {
-		return issueTypes;
+	public Set<ProjectIssueType> getProjectIssueTypes() {
+		return projectIssueTypes;
 	}
 
-	public void setIssueTypes(List<IssueType> issueTypes) {
-		this.issueTypes = issueTypes;
+	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
+		this.projectIssueTypes = projectIssueTypes;
 	}
 
 	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {

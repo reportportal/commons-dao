@@ -22,12 +22,10 @@
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Pavel Bortnik
@@ -57,9 +55,6 @@ public class IssueType implements Serializable {
 
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
-
-	@ManyToMany(mappedBy = "issueTypes")
-	private List<Project> projects;
 
 	public IssueType() {
 	}
@@ -118,13 +113,5 @@ public class IssueType implements Serializable {
 
 	public void setHexColor(String hexColor) {
 		this.hexColor = hexColor;
-	}
-
-	public List<Project> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<Project> projects) {
-		this.projects = projects;
 	}
 }
