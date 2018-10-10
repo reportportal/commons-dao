@@ -5,16 +5,17 @@ package com.epam.ta.reportportal.entity;
  */
 public enum  ServerSettingsEnum {
 
-	ENABLED("server.enabled"),
-	HOST("server.host"),
-	PORT("server.port"),
-	PROTOCOL("server.protocol"),
-	AUTH_ENABLED("server.auth_enabled"),
-	START_TLS_ENABLED("server.star_tls_enabled"),
-	SSL_ENABLED("server.ssl_enabled"),
-	USERNAME("server.username"),
-	PASSWORD("server.password"),
-	FROM("server.from");
+	ENABLED("server.email.enabled"),
+	HOST("server.email.host"),
+	PORT("server.email.port"),
+	PROTOCOL("server.email.protocol"),
+	AUTH_ENABLED("server.email.auth_enabled"),
+	STAR_TLS_ENABLED("server.email.star_tls_enabled"),
+	SSL_ENABLED("server.email.ssl_enabled"),
+	USERNAME("server.email.username"),
+	PASSWORD("server.email.password"),
+	FROM("server.email.from"),
+	ANALYTICS("server.analytics.all");
 
 	private String attribute;
 
