@@ -30,7 +30,7 @@ public enum ServerSettingsEnum {
 		return attribute;
 	}
 
-	public Optional<ServerSettingsEnum> findByAttribute(String attribute) {
+	public static Optional<ServerSettingsEnum> findByAttribute(String attribute) {
 		return Optional.ofNullable(attribute)
 				.flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr)).findAny());
 	}
