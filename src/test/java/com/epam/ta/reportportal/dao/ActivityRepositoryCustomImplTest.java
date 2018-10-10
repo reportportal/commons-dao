@@ -64,6 +64,7 @@ public class ActivityRepositoryCustomImplTest {
 				new Sort(Sort.Direction.DESC, "creation_date"),
 				2
 		);
+
 		assertEquals(2, activities.size());
 		activities.forEach(a -> assertTrue(a.getCreatedAt().toLocalDate().isEqual(LocalDate.of(2018, 10, 5))));
 	}
