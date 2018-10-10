@@ -9,9 +9,11 @@ public class ActivityDetails extends JsonbObject {
 	private String objectName;
 
 	public ActivityDetails() {
+		history = new ArrayList<>();
 	}
 
 	public ActivityDetails(String objectName) {
+		history = new ArrayList<>();
 		this.objectName = objectName;
 	}
 

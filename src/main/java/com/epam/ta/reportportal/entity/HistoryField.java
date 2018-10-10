@@ -1,7 +1,5 @@
 package com.epam.ta.reportportal.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
 
 public class HistoryField implements Serializable {
@@ -15,7 +13,7 @@ public class HistoryField implements Serializable {
 		this.newValue = newValue;
 	}
 
-	public HistoryField() {
+	private HistoryField() {
 	}
 
 	public String getField() {
@@ -40,11 +38,6 @@ public class HistoryField implements Serializable {
 
 	public void setNewValue(String newValue) {
 		this.newValue = newValue;
-	}
-
-	@JsonIgnore
-	public boolean isEmpty() {
-		return null == oldValue || null == newValue;
 	}
 
 	public static HistoryField of(String field, String oldValue, String newValue) {
