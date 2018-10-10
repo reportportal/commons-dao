@@ -32,9 +32,9 @@ public enum ProjectAttributeEnum {
 	private String attribute;
 	private String defaultValue;
 
-	ProjectAttributeEnum(String attribute, String object) {
+	ProjectAttributeEnum(String attribute, String defaultValue) {
 		this.attribute = attribute;
-		this.defaultValue = String.valueOf(object);
+		this.defaultValue = String.valueOf(defaultValue);
 	}
 
 	public String getAttribute() {
