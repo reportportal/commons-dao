@@ -1,9 +1,12 @@
 package com.epam.ta.reportportal.entity;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * @author Ivan Budaev
  */
-public enum  ServerSettingsEnum {
+public enum ServerSettingsEnum {
 
 	ENABLED("server.email.enabled"),
 	HOST("server.email.host"),
@@ -25,5 +28,10 @@ public enum  ServerSettingsEnum {
 
 	public String getAttribute() {
 		return attribute;
+	}
+
+	public Optional<ServerSettingsEnum> findByAttribute(String attribute) {
+		return Optional.ofNullable(attribute)
+				.flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr)).findAny());
 	}
 }
