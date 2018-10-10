@@ -62,7 +62,7 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private JsonbObject metadata;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<EmailSenderCase> emailCases;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
