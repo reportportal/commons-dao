@@ -3,22 +3,25 @@ package com.epam.ta.reportportal.entity;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
+import static com.epam.ta.reportportal.entity.ServerSettingsConstants.EMAIL_CONFIG_PREFIX;
+
 /**
  * @author Ivan Budaev
  */
 public enum ServerSettingsEnum {
 
-	ENABLED("server.email.enabled"),
-	HOST("server.email.host"),
-	PORT("server.email.port"),
-	PROTOCOL("server.email.protocol"),
-	AUTH_ENABLED("server.email.auth_enabled"),
-	STAR_TLS_ENABLED("server.email.star_tls_enabled"),
-	SSL_ENABLED("server.email.ssl_enabled"),
-	USERNAME("server.email.username"),
-	PASSWORD("server.email.password"),
-	FROM("server.email.from"),
-	ANALYTICS("server.analytics.all");
+	ENABLED(EMAIL_CONFIG_PREFIX + "enabled"),
+	HOST(EMAIL_CONFIG_PREFIX + "host"),
+	PORT(EMAIL_CONFIG_PREFIX + "port"),
+	PROTOCOL(EMAIL_CONFIG_PREFIX + "protocol"),
+	AUTH_ENABLED(EMAIL_CONFIG_PREFIX + "auth_enabled"),
+	STAR_TLS_ENABLED(EMAIL_CONFIG_PREFIX + "star_tls_enabled"),
+	SSL_ENABLED(EMAIL_CONFIG_PREFIX + "ssl_enabled"),
+	USERNAME(EMAIL_CONFIG_PREFIX + "username"),
+	PASSWORD(EMAIL_CONFIG_PREFIX + "password"),
+	FROM(EMAIL_CONFIG_PREFIX + "from"),
+	ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all");
 
 	private String attribute;
 
