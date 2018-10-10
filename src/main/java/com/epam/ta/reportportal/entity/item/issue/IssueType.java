@@ -59,7 +59,7 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
-	@JsonBackReference
+	@JsonBackReference(value = "issueTypes")
 	@ManyToMany(mappedBy = "issueTypes")
 	private List<Project> projects;
 

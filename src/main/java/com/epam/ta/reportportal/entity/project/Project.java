@@ -63,14 +63,14 @@ public class Project implements Serializable {
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "issue_type_id") })
-	@JsonManagedReference
+	@JsonManagedReference(value = "issueTypes")
 	private List<IssueType> issueTypes;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonManagedReference(value = "users")
 	private Set<ProjectUser> users;
 
 	public Project(Long id, String name) {
