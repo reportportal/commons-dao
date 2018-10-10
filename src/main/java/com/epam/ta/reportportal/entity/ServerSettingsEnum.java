@@ -34,4 +34,8 @@ public enum ServerSettingsEnum {
 		return Optional.ofNullable(attribute)
 				.flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr)).findAny());
 	}
+
+	public static boolean isPresent(String attribute) {
+		return findByAttribute(attribute).isPresent();
+	}
 }
