@@ -29,8 +29,8 @@ public enum ProjectAttributeEnum {
 	AUTO_ANALYZER_ENABLED("analyzer.isAutoAnalyzerEnabled", String.valueOf(false)),
 	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue()),
 
-	EMAIL_ENABLED("email.emailEnabled", String.valueOf(false)),
-	EMAIL_FROM("email.emailFrom", INIT_FROM);
+	EMAIL_ENABLED("email.enabled", String.valueOf(false)),
+	EMAIL_FROM("email.from", INIT_FROM);
 
 	private String attribute;
 	private String defaultValue;
