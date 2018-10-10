@@ -29,7 +29,7 @@ public class Integration implements Serializable{
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "project_id")
-	@JsonManagedReference
+	@JsonManagedReference(value = "integration")
 	private Project project;
 
 	@ManyToOne(cascade = CascadeType.ALL)

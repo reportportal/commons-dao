@@ -39,7 +39,7 @@ public class Project implements Serializable {
 	private String name;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonBackReference
+	@JsonBackReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	@Column(name = "additional_info")
@@ -50,7 +50,7 @@ public class Project implements Serializable {
 	private Set<ProjectAttribute> projectAttributes;
 
 	@OneToMany(mappedBy = "project")
-	@JsonBackReference
+	@JsonBackReference(value = "demoDataPostfix")
 	private List<DemoDataPostfix> demoDataPostfix;
 
 	@Column(name = "creation_date")

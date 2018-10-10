@@ -24,7 +24,7 @@ public class DemoDataPostfix implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "project_id")
-	@JsonManagedReference
+	@JsonManagedReference(value = "demoDataPostfix")
 	private Project project;
 
 	public Long getId() {
