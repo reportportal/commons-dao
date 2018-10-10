@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,10 +25,12 @@ public class ProjectUser implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("projectId")
+	@JsonBackReference
 	private Project project;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("userId")
+	@JsonBackReference
 	private User user;
 
 	@Column(name = "project_role")

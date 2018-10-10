@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -58,6 +59,7 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
+	@JsonBackReference
 	@ManyToMany(mappedBy = "issueTypes")
 	private List<Project> projects;
 
