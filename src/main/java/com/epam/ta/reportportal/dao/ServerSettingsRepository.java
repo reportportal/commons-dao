@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 /**
  * @author Ivan Budaev
  */
-public interface ServerSettingsRepository extends ReportPortalRepository<ServerSettings, Long> {
+public interface ServerSettingsRepository extends ReportPortalRepository<ServerSettings, Long>, ServerSettingsRepositoryCustom {
 
 	@Query("from ServerSettings ss")
 	Stream<ServerSettings> streamAll();
