@@ -25,12 +25,12 @@ public class ProjectUser implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("projectId")
-	@JsonBackReference(value = "projects")
+	@JsonBackReference(value = "users")
 	private Project project;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("userId")
-	@JsonBackReference(value = "users")
+	@JsonBackReference(value = "projects")
 	private User user;
 
 	@Column(name = "project_role")
