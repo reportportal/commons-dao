@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -37,6 +38,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
+@Transactional("transactionManager")
 public class LaunchRepositoryTest {
 
 	@Autowired

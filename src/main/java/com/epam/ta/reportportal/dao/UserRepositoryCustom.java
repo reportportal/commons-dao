@@ -17,8 +17,6 @@ public interface UserRepositoryCustom extends FilterableRepository<User>{
 
 	String replaceUserPhoto(User user, BinaryData binaryData);
 
-	BinaryData findUserPhoto(String path);
-
 	void deleteUserPhoto(String path);
 
 	Page<User> searchForUser(String term, Pageable pageable);
