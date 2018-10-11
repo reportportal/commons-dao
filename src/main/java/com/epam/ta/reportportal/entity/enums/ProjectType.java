@@ -31,20 +31,14 @@ import java.util.Optional;
  * @author Andrei_Ramanchuk
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-public enum EntryType {
+public enum ProjectType {
 
-	//@formatter:off
-    PERSONAL,
-    INTERNAL,
-    UPSA;
+	PERSONAL,
+	INTERNAL,
+	UPSA;
 
-    //@formatter:on
-	public static EntryType getByName(String type) {
-		return EntryType.valueOf(type);
-	}
-
-	public static Optional<EntryType> findByName(String name) {
-		return Arrays.stream(EntryType.values()).filter(type -> type.name().equals(name)).findAny();
+	public static Optional<ProjectType> findByName(String name) {
+		return Arrays.stream(ProjectType.values()).filter(type -> type.name().equals(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {

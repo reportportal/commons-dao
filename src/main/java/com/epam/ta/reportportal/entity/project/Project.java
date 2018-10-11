@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -35,6 +36,9 @@ public class Project implements Serializable {
 
 	@Column(name = "name")
 	private String name;
+
+	@Column(name = "project_type")
+	private ProjectType projectType;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonBackReference
@@ -91,6 +95,14 @@ public class Project implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+
+	public void setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
 	}
 
 	public String getAddInfo() {

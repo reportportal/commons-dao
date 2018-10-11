@@ -15,8 +15,6 @@ import static com.epam.ta.reportportal.entity.project.ProjectUtils.INIT_FROM;
  */
 public enum ProjectAttributeEnum {
 
-	ENTRY_TYPE("project.entryType", EntryType.INTERNAL.name()),
-
 	INTERRUPT_JOB_TIME("job.interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
 	KEEP_LOGS("job.keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
 	KEEP_SCREENSHOTS("job.keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),

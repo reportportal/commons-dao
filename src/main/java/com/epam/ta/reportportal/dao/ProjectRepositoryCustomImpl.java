@@ -17,6 +17,7 @@ import java.util.Optional;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 
 @Repository
@@ -33,7 +34,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public Page<Project> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(PROJECT_MAPPER),
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(PROJECT_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
@@ -43,20 +45,18 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	public Page<Project> findProjectInfoByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.with("filtered_project")
 				.as(QueryBuilder.newBuilder(filter).with(pageable).build())
-				.select(PROJECT.ID,
-						PROJECT.ADDITIONAL_INFO,
+				.select(
+						PROJECT.ID,
 						PROJECT.CREATION_DATE,
 						PROJECT.NAME,
-						PROJECT.METADATA,
-						PROJECT_ATTRIBUTE.VALUE,
-						ATTRIBUTE.ID,
-						ATTRIBUTE.NAME
+						DSL.countDistinct(PROJECT_USER.USER_ID).as("users"),
+						DSL.countDistinct(LAUNCH.ID).as("launches")
 				)
 				.from(DSL.table(name("filtered_project"))
-						.join(PROJECT_ATTRIBUTE)
-						.on(DSL.field(name(PROJECT.ID.getName()), Long.class).eq(PROJECT_ATTRIBUTE.PROJECT_ID))
-						.join(ATTRIBUTE)
-						.on(PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID)))
+						.join(PROJECT_USER)
+						.on(field(name(PROJECT.ID.getName()), Long.class).eq(PROJECT_USER.PROJECT_ID))
+						.join(LAUNCH)
+						.on(field(name(PROJECT.ID.getName()), Long.class).eq(LAUNCH.PROJECT_ID)))
 				.fetch()), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
