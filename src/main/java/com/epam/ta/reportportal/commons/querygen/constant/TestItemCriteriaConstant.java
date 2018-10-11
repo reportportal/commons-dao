@@ -19,5 +19,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 public class TestItemCriteriaConstant {
 
 	public static final String PARENT_ID = "parent_id";
+	public static final String TI_STATUS = "ti_status";
 
 }
