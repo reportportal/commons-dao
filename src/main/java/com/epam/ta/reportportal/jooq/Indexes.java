@@ -3,7 +3,6 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Index;
 import org.jooq.OrderField;

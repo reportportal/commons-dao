@@ -3,18 +3,15 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
-
-import java.sql.Timestamp;
-
-import javax.annotation.Generated;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record6;
 import org.jooq.Row6;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
 
 
 /**
@@ -30,7 +27,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> implements Record6<Integer, Long, Integer, Boolean, Object, Timestamp> {
 
-    private static final long serialVersionUID = -1403092344;
+    private static final long serialVersionUID = -2017732024;
 
     /**
      * Setter for <code>public.integration.id</code>.
@@ -89,17 +86,15 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> 
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Setter for <code>public.integration.params</code>.
      */
-    @java.lang.Deprecated
     public void setParams(Object value) {
         set(4, value);
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Getter for <code>public.integration.params</code>.
      */
-    @java.lang.Deprecated
     public Object getParams() {
         return get(4);
     }
@@ -183,9 +178,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> 
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Field<Object> field5() {
         return JIntegration.INTEGRATION.PARAMS;
@@ -232,9 +226,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> 
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object component5() {
         return getParams();
@@ -281,9 +274,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> 
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object value5() {
         return getParams();
@@ -334,9 +326,8 @@ public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> 
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public JIntegrationRecord value5(Object value) {
         setParams(value);

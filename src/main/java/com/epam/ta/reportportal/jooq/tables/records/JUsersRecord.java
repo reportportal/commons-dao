@@ -3,16 +3,14 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.tables.JUsers;
-
-import javax.annotation.Generated;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record12;
 import org.jooq.Row12;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -28,7 +26,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements Record12<Long, String, String, String, String, String, String, String, Boolean, Long, String, Object> {
 
-    private static final long serialVersionUID = 1214702189;
+    private static final long serialVersionUID = -113982075;
 
     /**
      * Setter for <code>public.users.id</code>.
@@ -185,17 +183,15 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements R
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Setter for <code>public.users.metadata</code>.
      */
-    @java.lang.Deprecated
     public void setMetadata(Object value) {
         set(11, value);
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Getter for <code>public.users.metadata</code>.
      */
-    @java.lang.Deprecated
     public Object getMetadata() {
         return get(11);
     }
@@ -321,9 +317,8 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements R
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Field<Object> field12() {
         return JUsers.USERS.METADATA;
@@ -418,9 +413,8 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements R
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object component12() {
         return getMetadata();
@@ -515,9 +509,8 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements R
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object value12() {
         return getMetadata();
@@ -623,9 +616,8 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements R
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public JUsersRecord value12(Object value) {
         setMetadata(value);

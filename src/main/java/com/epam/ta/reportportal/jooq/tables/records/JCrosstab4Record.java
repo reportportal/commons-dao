@@ -3,15 +3,13 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.tables.JCrosstab4;
-
-import javax.annotation.Generated;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Row1;
 import org.jooq.impl.TableRecordImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -27,20 +25,18 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JCrosstab4Record extends TableRecordImpl<JCrosstab4Record> implements Record1<Object> {
 
-    private static final long serialVersionUID = 1885767536;
+    private static final long serialVersionUID = -1433146998;
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Setter for <code>public.crosstab4.crosstab4</code>.
      */
-    @java.lang.Deprecated
     public void setCrosstab4(Object value) {
         set(0, value);
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Getter for <code>public.crosstab4.crosstab4</code>.
      */
-    @java.lang.Deprecated
     public Object getCrosstab4() {
         return get(0);
     }
@@ -66,36 +62,32 @@ public class JCrosstab4Record extends TableRecordImpl<JCrosstab4Record> implemen
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Field<Object> field1() {
         return JCrosstab4.CROSSTAB4.CROSSTAB4_;
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object component1() {
         return getCrosstab4();
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object value1() {
         return getCrosstab4();
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public JCrosstab4Record value1(Object value) {
         setCrosstab4(value);

@@ -3,19 +3,16 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
-
-import java.sql.Timestamp;
-
-import javax.annotation.Generated;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record11;
 import org.jooq.Row11;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
 
 
 /**
@@ -31,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implements Record11<Long, String, JTestItemTypeEnum, Timestamp, String, Timestamp, Object, String, Long, Long, Long> {
 
-    private static final long serialVersionUID = 1973396281;
+    private static final long serialVersionUID = 2015104051;
 
     /**
      * Setter for <code>public.test_item.item_id</code>.
@@ -118,17 +115,15 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Setter for <code>public.test_item.path</code>.
      */
-    @java.lang.Deprecated
     public void setPath(Object value) {
         set(6, value);
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Getter for <code>public.test_item.path</code>.
      */
-    @java.lang.Deprecated
     public Object getPath() {
         return get(6);
     }
@@ -270,9 +265,8 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Field<Object> field7() {
         return JTestItem.TEST_ITEM.PATH;
@@ -359,9 +353,8 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object component7() {
         return getPath();
@@ -448,9 +441,8 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object value7() {
         return getPath();
@@ -543,9 +535,8 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public JTestItemRecord value7(Object value) {
         setPath(value);

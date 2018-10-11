@@ -3,21 +3,13 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.tables.records.JCrosstab2Record;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -33,7 +25,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JCrosstab2 extends TableImpl<JCrosstab2Record> {
 
-    private static final long serialVersionUID = -1988507110;
+    private static final long serialVersionUID = 387160818;
 
     /**
      * The reference instance of <code>public.crosstab2</code>
@@ -49,9 +41,8 @@ public class JCrosstab2 extends TableImpl<JCrosstab2Record> {
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * The column <code>public.crosstab2.crosstab2</code>.
      */
-    @java.lang.Deprecated
     public final TableField<JCrosstab2Record, Object> CROSSTAB2_ = createField("crosstab2", org.jooq.impl.DefaultDataType.getDefaultDataType("\"tablefunc_crosstab_2\""), this, "");
 
     /**

@@ -3,29 +3,17 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-    private static final long serialVersionUID = -1684393747;
+    private static final long serialVersionUID = -743225293;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -112,10 +100,9 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, String> FULL_NAME = createField("full_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * The column <code>public.users.metadata</code>.
      */
-    @java.lang.Deprecated
-    public final TableField<JUsersRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\"").defaultValue(org.jooq.impl.DSL.field("'{}'::jsonb", org.jooq.impl.SQLDataType.OTHER)), this, "");
+    public final TableField<JUsersRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
 
     /**
      * Create a <code>public.users</code> table reference

@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 
-	Page<Project> findProjectInfoByFilter(Filter filter, Pageable pageable);
+	Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable);
 
 	Optional<String> findPersonalProjectName(String username);
 
