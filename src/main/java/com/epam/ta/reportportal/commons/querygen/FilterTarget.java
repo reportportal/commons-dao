@@ -49,6 +49,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -84,7 +86,7 @@ public enum FilterTarget {
 					l.LAST_MODIFIED,
 					l.MODE,
 					l.STATUS,
-					u.ID,
+					u.ID.as(SUBQUERY_USER_ID),
 					u.LOGIN
 			);
 
@@ -143,8 +145,9 @@ public enum FilterTarget {
 
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
 			new CriteriaHolder("type", "ti.type", JTestItemTypeEnum.class, false),
-			new CriteriaHolder("launch", "tis.launch_id", Long.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_ID, "ti.launch_id", Long.class, false),
 			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
+			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder("path", "ti.path", Long.class, false)
 	)) {
@@ -162,7 +165,7 @@ public enum FilterTarget {
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
 					l.STATUS,
 					l.MODE,
-					ti.ITEM_ID,
+					ti.ITEM_ID.as(SUBQUERY_TEST_ITEM_ID),
 					ti.NAME,
 					ti.TYPE,
 					ti.START_TIME,
@@ -173,7 +176,7 @@ public enum FilterTarget {
 					ti.PARENT_ID,
 					ti.LAUNCH_ID,
 					tir.RESULT_ID,
-					tir.STATUS,
+					tir.STATUS.as(SUBQUERY_TEST_ITEM_STATUS),
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,
