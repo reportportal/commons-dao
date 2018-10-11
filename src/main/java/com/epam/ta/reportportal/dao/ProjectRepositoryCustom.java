@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 
-	Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable);
+	Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable, String mode);
 
 	Optional<String> findPersonalProjectName(String username);
 

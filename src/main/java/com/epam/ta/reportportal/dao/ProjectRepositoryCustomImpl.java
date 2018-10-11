@@ -4,6 +4,8 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
-import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.*;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
@@ -41,23 +43,25 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
-	public Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable) {
+	public Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable, String mode) {
 		return PageableExecutionUtils.getPage(dsl.with("filtered_project")
 				.as(QueryBuilder.newBuilder(filter).with(pageable).build())
 				.select(
+						DSL.countDistinct(PROJECT_USER.USER_ID).as("usersQuantity"),
+						DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
+								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as("launchesQuantity"),
+						DSL.max(LAUNCH.START_TIME).as("lastRun"),
 						PROJECT.ID,
 						PROJECT.CREATION_DATE,
 						PROJECT.NAME,
-						PROJECT.PROJECT_TYPE,
-						DSL.countDistinct(PROJECT_USER.USER_ID).as("usersQuantity"),
-						DSL.countDistinct(LAUNCH.ID).as("launchesQuantity"),
-						DSL.max(LAUNCH.START_TIME).as("lastRun")
+						PROJECT.PROJECT_TYPE
 				)
 				.from(DSL.table(name("filtered_project"))
-						.join(PROJECT_USER)
-						.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
-						.join(LAUNCH)
-						.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))).groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
+						.leftJoin(PROJECT_USER)
+						.on(field(name(PROJECT.ID.getName()), Long.class).eq(PROJECT_USER.PROJECT_ID))
+						.leftJoin(LAUNCH)
+						.on(field(name(PROJECT.ID.getName()), Long.class).eq(LAUNCH.PROJECT_ID)))
+				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
 				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
