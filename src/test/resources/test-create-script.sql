@@ -267,7 +267,7 @@ CREATE TABLE filter_condition (
   filter_id BIGINT REFERENCES user_filter (id) ON DELETE CASCADE,
   condition FILTER_CONDITION_ENUM NOT NULL,
   value     VARCHAR               NOT NULL,
-  field     VARCHAR               NOT NULL,
+  search_criteria     VARCHAR               NOT NULL,
   negative  BOOLEAN               NOT NULL
 );
 
