@@ -23,14 +23,13 @@ public class TestConfiguration {
 	}
 
 	@Bean
-	public DataEncoder dataEncoder() {
-		return new DataEncoder();
-	}
-
-	@Bean
 	public ContentTypeResolver contentTypeResolver() {
 		return new TikaContentTypeResolver();
 	}
 
+	@Bean
+	public DataEncoder dataEncoder() {
+		return new DataEncoder();
+	}
 
 }
