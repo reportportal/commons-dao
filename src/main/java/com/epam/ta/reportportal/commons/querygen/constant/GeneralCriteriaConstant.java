@@ -20,7 +20,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * General search criteria fields.
  *
  * @author Anton Machulski
- *
  */
 public class GeneralCriteriaConstant {
 	public static final String ES_STATUS = "es_status";
@@ -30,4 +29,5 @@ public class GeneralCriteriaConstant {
 	public static final String PROJECT = "project";
 	public static final String PROJECT_ID = "project_id";
 	public static final String LAUNCH_ID = "launch_id";
+	public static final String PARENT_ID = "parent_id";
 }
