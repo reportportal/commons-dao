@@ -22,6 +22,10 @@
 package com.epam.ta.reportportal.jooq;
 
 
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
 import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -124,6 +128,26 @@ public class JPublic extends SchemaImpl {
      * The reference instance of <code>public</code>
      */
     public static final JPublic PUBLIC = new JPublic();
+
+    /**
+     * The table <code>public.acl_class</code>.
+     */
+    public final JAclClass ACL_CLASS = com.epam.ta.reportportal.jooq.tables.JAclClass.ACL_CLASS;
+
+    /**
+     * The table <code>public.acl_entry</code>.
+     */
+    public final JAclEntry ACL_ENTRY = com.epam.ta.reportportal.jooq.tables.JAclEntry.ACL_ENTRY;
+
+    /**
+     * The table <code>public.acl_object_identity</code>.
+     */
+    public final JAclObjectIdentity ACL_OBJECT_IDENTITY = com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity.ACL_OBJECT_IDENTITY;
+
+    /**
+     * The table <code>public.acl_sid</code>.
+     */
+    public final JAclSid ACL_SID = com.epam.ta.reportportal.jooq.tables.JAclSid.ACL_SID;
 
     /**
      * The table <code>public.active_directory_config</code>.
@@ -561,6 +585,10 @@ public class JPublic extends SchemaImpl {
 
     private final List<Sequence<?>> getSequences0() {
         return Arrays.<Sequence<?>>asList(
+            Sequences.ACL_CLASS_ID_SEQ,
+            Sequences.ACL_ENTRY_ID_SEQ,
+            Sequences.ACL_OBJECT_IDENTITY_ID_SEQ,
+            Sequences.ACL_SID_ID_SEQ,
             Sequences.ACTIVITY_ID_SEQ,
             Sequences.ATTRIBUTE_ID_SEQ,
             Sequences.BUG_TRACKING_SYSTEM_ID_SEQ,
@@ -606,6 +634,10 @@ public class JPublic extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
+            JAclClass.ACL_CLASS,
+            JAclEntry.ACL_ENTRY,
+            JAclObjectIdentity.ACL_OBJECT_IDENTITY,
+            JAclSid.ACL_SID,
             JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG,
             JActivity.ACTIVITY,
             JAttribute.ATTRIBUTE,
