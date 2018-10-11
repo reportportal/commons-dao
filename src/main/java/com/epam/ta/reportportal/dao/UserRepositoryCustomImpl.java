@@ -13,7 +13,6 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
@@ -33,7 +32,6 @@ import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 @Repository
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
-	@Qualifier("localDataStore")
 	private final DataStore dataStore;
 
 	private final DSLContext dsl;
