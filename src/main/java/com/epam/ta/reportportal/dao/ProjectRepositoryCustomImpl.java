@@ -58,9 +58,9 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				)
 				.from(DSL.table(name("filtered_project"))
 						.leftJoin(PROJECT_USER)
-						.on(field(name(PROJECT.ID.getName()), Long.class).eq(PROJECT_USER.PROJECT_ID))
+						.on(table("filtered_project").field(PROJECT.ID.getName(), Long.class).eq(PROJECT_USER.PROJECT_ID))
 						.leftJoin(LAUNCH)
-						.on(field(name(PROJECT.ID.getName()), Long.class).eq(LAUNCH.PROJECT_ID)))
+						.on(table("filtered_project").field(PROJECT.ID.getName(), Long.class).eq(LAUNCH.PROJECT_ID)))
 				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
 				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
