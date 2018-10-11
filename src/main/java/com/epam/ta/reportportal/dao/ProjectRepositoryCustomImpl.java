@@ -63,7 +63,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT_USER.PROJECT_ID))
 						.leftJoin(LAUNCH)
 						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(LAUNCH.PROJECT_ID)))
-				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
+				.groupBy(
+						fieldName(FILTERED_PROJECT, PROJECT.ID.getName()),
+						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
+						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
+						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
+				)
 				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
