@@ -20,9 +20,8 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * Search criteria fields for Log.
  *
  * @author Anton Machulski
- *
  */
 public class LogCriteriaConstant {
-	public static final String LOG_MESSAGE = "log_message";
-	public static final String TEST_ITEM_ID = "item_id";
+	public static final String CRITERIA_LOG_MESSAGE = "log_message";
+	public static final String CRITERIA_TEST_ITEM_ID = "item";
 }

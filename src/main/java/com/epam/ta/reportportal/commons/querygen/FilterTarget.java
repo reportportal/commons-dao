@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant;
-import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant;
 import com.epam.ta.reportportal.dao.PostgresCrosstabWrapper;
 import com.epam.ta.reportportal.entity.Activity;
@@ -49,6 +48,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
@@ -268,7 +269,9 @@ public enum FilterTarget {
 				}
 			},
 
-	LOG(Log.class, Arrays.asList(new CriteriaHolder(LogCriteriaConstant.LOG_MESSAGE, "l.log_message", String.class, false)))
+	LOG(Log.class, Arrays.asList(new CriteriaHolder(CRITERIA_LOG_MESSAGE, "l.log_message", String.class, false),
+			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class, false)
+	))
 
 			{
 				@Override
