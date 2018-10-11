@@ -17,27 +17,88 @@
 package com.epam.ta.reportportal.entity.project;
 
 import javax.persistence.Column;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * @author Pavel Bortnik
  */
-public interface ProjectInfo {
+public class ProjectInfo implements Serializable {
 
-	Long getId();
+	@Column(name = "id")
+	private Long id;
 
 	@Column(name = "creation_date")
-	LocalDateTime getCreateionDate();
+	private LocalDateTime creationDate;
 
-	String getName();
+	@Column(name = "name")
+	private String name;
 
 	@Column(name = "project_type")
-	String getProjectType();
+	private String projectType;
 
-	Long getUsersQuantity();
+	@Column(name = "usersQuantity")
+	private Integer usersQuantity;
 
-	Long getLaunchesQuantity();
+	@Column(name = "launchesQuantity")
+	private Integer launchesQuantity;
 
-	LocalDateTime getLastRun();
+	@Column(name = "lastRun")
+	private LocalDateTime lastRun;
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getProjectType() {
+		return projectType;
+	}
+
+	public void setProjectType(String projectType) {
+		this.projectType = projectType;
+	}
+
+	public Integer getUsersQuantity() {
+		return usersQuantity;
+	}
+
+	public void setUsersQuantity(Integer usersQuantity) {
+		this.usersQuantity = usersQuantity;
+	}
+
+	public Integer getLaunchesQuantity() {
+		return launchesQuantity;
+	}
+
+	public void setLaunchesQuantity(Integer launchesQuantity) {
+		this.launchesQuantity = launchesQuantity;
+	}
+
+	public LocalDateTime getLastRun() {
+		return lastRun;
+	}
+
+	public void setLastRun(LocalDateTime lastRun) {
+		this.lastRun = lastRun;
+	}
 }

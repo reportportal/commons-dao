@@ -68,8 +68,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
 						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
 						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
-				)
-				.fetch()
+				).fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 

@@ -1,8 +1,11 @@
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.google.common.collect.Sets;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -10,6 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,14 +40,14 @@ public class ProjectRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-create-script.sql");
+		//		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -60,5 +66,13 @@ public class ProjectRepositoryTest {
 
 		Assert.assertNotNull(projects);
 		Assert.assertTrue(projects.size() >= 1);
+	}
+
+	@Test
+	public void testProject() {
+		Filter filter = new Filter(Project.class, Sets.newHashSet());
+		Pageable pageable = PageRequest.of(0, 20);
+		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable, "DEFAULT");
+		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
 	}
 }
