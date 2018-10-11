@@ -46,4 +46,12 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter);
 
 	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
+
+	/**
+	 * Finds the last valid launch in project.
+	 *
+	 * @param projectId Project id
+	 * @return {@link Optional} of {@link Launch}
+	 */
+	Optional<Launch> findLastLaunch(Long projectId);
 }

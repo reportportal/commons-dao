@@ -155,4 +155,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
 		);
 	}
+
+	@Override
+	public Optional<Launch> findLastLaunch(Long projectId) {
+		return Optional.ofNullable(dsl.select()
+				.from(LAUNCH)
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
+				.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
+				.limit(1)
+				.fetchOne()
+				.into(Launch.class));
+	}
 }
