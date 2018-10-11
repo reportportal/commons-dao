@@ -45,11 +45,11 @@ public class Project implements Serializable {
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private Set<ProjectAttribute> projectAttributes;
+	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private Set<ProjectIssueType> projectIssueTypes;
+	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project")
 	@JsonBackReference
@@ -63,11 +63,11 @@ public class Project implements Serializable {
 	private JsonbObject metadata;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<EmailSenderCase> emailCases;
+	private Set<EmailSenderCase> emailCases = Sets.newHashSet();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonBackReference
-	private Set<ProjectUser> users;
+	private Set<ProjectUser> users = Sets.newHashSet();
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -179,13 +179,15 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(users, project.users)
-				&& Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata, project.metadata);
+		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(creationDate,
+				project.creationDate
+		) && Objects.equals(metadata, project.metadata);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, addInfo, users, creationDate);
+
+		return Objects.hash(name, addInfo, creationDate, metadata);
 	}
 
 	@Override

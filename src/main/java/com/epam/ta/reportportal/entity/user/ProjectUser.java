@@ -67,6 +67,11 @@ public class ProjectUser implements Serializable {
 		this.projectRole = projectRole;
 	}
 
+	public ProjectUser withProjectUserId(ProjectUserId id) {
+		this.id = id;
+		return this;
+	}
+
 	public ProjectUser withUser(User user) {
 		this.user = user;
 		return this;

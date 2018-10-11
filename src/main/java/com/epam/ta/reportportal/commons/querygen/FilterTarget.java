@@ -253,13 +253,18 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT(Project.class, Arrays.asList(
-
-			new CriteriaHolder(NAME, "p.name", String.class, false))) {
+	PROJECT(Project.class, Arrays.asList(new CriteriaHolder(NAME, "p.name", String.class, false))) {
 		public SelectQuery<? extends Record> getQuery() {
-			JProject p = JProject.PROJECT.as("p");
-
-			return DSL.select(p.ID, p.NAME).from(p).getQuery();
+			JProject p = JProject.PROJECT;
+			return DSL.select(p.ID, p.NAME, p.CREATION_DATE, p.METADATA)
+					.from(p)
+					.join(PROJECT_ATTRIBUTE)
+					.on(p.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID))
+					.join(ATTRIBUTE)
+					.on(PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID))
+					.join(PROJECT_USER)
+					.on(p.ID.eq(PROJECT_USER.PROJECT_ID))
+					.getQuery();
 
 		}
 	},

@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -62,5 +63,23 @@ public class ProjectIssueType {
 	public ProjectIssueType withProject(Project project) {
 		this.project = project;
 		return this;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ProjectIssueType that = (ProjectIssueType) o;
+		return Objects.equals(issueType, that.issueType) && Objects.equals(project, that.project);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(issueType, project);
 	}
 }

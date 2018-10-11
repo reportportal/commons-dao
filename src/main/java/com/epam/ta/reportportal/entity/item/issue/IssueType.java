@@ -26,6 +26,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -113,5 +114,26 @@ public class IssueType implements Serializable {
 
 	public void setHexColor(String hexColor) {
 		this.hexColor = hexColor;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		IssueType issueType = (IssueType) o;
+		return Objects.equals(issueGroup, issueType.issueGroup) && Objects.equals(locator, issueType.locator) && Objects.equals(
+				longName,
+				issueType.longName
+		) && Objects.equals(shortName, issueType.shortName) && Objects.equals(hexColor, issueType.hexColor);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(issueGroup, locator, longName, shortName, hexColor);
 	}
 }
