@@ -21,6 +21,7 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.commons.JsonbMapType;
 import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -82,6 +83,7 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private UserType userType;
 
+	@JsonManagedReference(value = "projects")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<ProjectUser> projects;
 
