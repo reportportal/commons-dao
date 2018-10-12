@@ -271,7 +271,7 @@ public enum FilterTarget {
 
 	LOG(Log.class, Arrays.asList(new CriteriaHolder(CRITERIA_LOG_MESSAGE, "l.log_message", String.class, false),
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.level", LogLevel.class, false)
+			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.log_level", LogLevel.class, false)
 	))
 
 			{
