@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstan
 import com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant;
 import com.epam.ta.reportportal.dao.PostgresCrosstabWrapper;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -270,7 +271,7 @@ public enum FilterTarget {
 
 	LOG(Log.class, Arrays.asList(new CriteriaHolder(CRITERIA_LOG_MESSAGE, "l.log_message", String.class, false),
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.level", Integer.class, false)
+			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.level", LogLevel.class, false)
 	))
 
 			{
