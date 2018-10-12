@@ -57,12 +57,11 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public Optional<String> findPersonalProjectName(String username) {
-		Optional<Project> projectOptional = Optional.ofNullable(dsl.select()
+		return Optional.ofNullable(dsl.select()
 				.from(USERS)
 				.join(PROJECT)
 				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID))
 				.where(USERS.LOGIN.eq(username))
-				.fetchOne(PROJECT_MAPPER));
-		return projectOptional.map(Project::getName);
+				.fetchOne(PROJECT.NAME));
 	}
 }
