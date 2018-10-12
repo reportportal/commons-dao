@@ -1,4 +1,5 @@
 /*
+ *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 package com.epam.ta.reportportal.dao;
 
@@ -24,6 +26,8 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hsqldb.cmdline.SqlToolError;
@@ -105,6 +109,13 @@ public class LaunchRepositoryTest {
 
 		Assert.assertNotNull(launchNames);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(launchNames));
+	}
+
+	@Test
+	public void jsonParsingTest() throws JsonProcessingException {
+		Launch launch = launchRepository.findById(2L).get();
+
+		String string = new ObjectMapper().writeValueAsString(launch);
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

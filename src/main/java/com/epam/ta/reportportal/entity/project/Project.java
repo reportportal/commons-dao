@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
@@ -8,6 +26,7 @@ import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -62,14 +81,14 @@ public class Project implements Serializable {
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "issue_type_id") })
-	@JsonBackReference
+	@JsonManagedReference(value = "issueTypes")
 	private List<IssueType> issueTypes;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
-	@JsonBackReference
+	@JsonManagedReference("users")
 	private Set<ProjectUser> users;
 
 	public Project(Long id, String name) {
