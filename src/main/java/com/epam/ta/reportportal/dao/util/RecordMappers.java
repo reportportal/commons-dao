@@ -1,4 +1,5 @@
 /*
+ *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,11 +13,13 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -155,7 +158,7 @@ public class RecordMappers {
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
-				JsonbObject metaData = objectMapper.readValue(metaDataString, JsonbObject.class);
+				JsonMap<Object, Object> metaData = objectMapper.readValue(metaDataString, JsonMap.class);
 				user.setMetadata(metaData);
 			} catch (IOException e) {
 				throw new ReportPortalException("Error during parsing user metadata");
