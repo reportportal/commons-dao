@@ -23,9 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
-import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.JsonMap;
-import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -221,22 +219,6 @@ public class UserRepositoryTest {
 		User user = userRepository.findByLogin("default").get();
 
 		userRepository.delete(user);
-	}
-
-	@Test
-	public void test() {
-		Activity activity = new Activity();
-		activity.setProjectId(1L);
-		activity.setUserId(1L);
-		activity.setAction("asd");
-		activity.setEntity(Activity.Entity.LAUNCH);
-		activity.setCreatedAt(LocalDateTime.now());
-		Map<String, Object> hashMap = new HashMap<>();
-		hashMap.put("asd", "qwe");
-		MetaData metaData = new MetaData(hashMap);
-		activity.setDetails(metaData);
-
-		activityRepository.save(activity);
 	}
 
 	@Test
