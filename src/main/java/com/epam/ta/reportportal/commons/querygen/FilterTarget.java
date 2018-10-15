@@ -1,4 +1,5 @@
 /*
+ *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.epam.ta.reportportal.commons.querygen;
@@ -271,7 +273,8 @@ public enum FilterTarget {
 
 	LOG(Log.class, Arrays.asList(new CriteriaHolder(CRITERIA_LOG_MESSAGE, "l.log_message", String.class, false),
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.log_level", LogLevel.class, false)
+			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.log_level", LogLevel.class, false),
+			new CriteriaHolder(CRITERIA_LOG_ID, "l.id", Long.class, false)
 	))
 
 			{
