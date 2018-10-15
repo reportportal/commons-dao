@@ -61,9 +61,10 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	/**
 	 * Get the specified log's page number
 	 *
+	 * @param id       ID of log page should be found of
 	 * @param filter   Filter
 	 * @param pageable Page details
 	 * @return Page number log found using specified filter
 	 */
-	Integer getPageNumber(Filter filter, Pageable pageable);
+	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
 }
