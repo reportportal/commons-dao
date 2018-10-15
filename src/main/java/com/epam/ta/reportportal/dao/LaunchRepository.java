@@ -31,9 +31,10 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 
 	List<Launch> findAllByName(String name);
 
-	@Query(value = "SELECT * FROM launch l WHERE l.name = :launchName AND l.project_id = :projectId ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
-	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("launchName") String launchName,
-			@Param("projectId") Long projectId);
+	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
+			+ "AND l.project_id = :projectId ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
+	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
+			@Param("launchName") String launchName, @Param("projectId") Long projectId);
 
 	@Query(value = "SELECT merge_launch(?1)", nativeQuery = true)
 	void mergeLaunchTestItems(Long launchId);
