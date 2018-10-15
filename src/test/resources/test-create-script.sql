@@ -364,6 +364,7 @@ CREATE TABLE test_item (
   last_modified TIMESTAMP           NOT NULL,
   path          LTREE,
   unique_id     VARCHAR(256),
+  has_children  BOOLEAN DEFAULT FALSE, 
   parent_id     BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
   retry_of      BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
   launch_id     BIGINT REFERENCES launch (id) ON DELETE CASCADE
