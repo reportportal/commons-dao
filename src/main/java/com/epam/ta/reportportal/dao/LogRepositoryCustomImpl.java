@@ -18,29 +18,32 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_ID;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Pavel Bortnik
@@ -48,7 +51,8 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(r.get(JLog.LOG.ID, Long.class),
+	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
+			r.get(JLog.LOG.ID, Long.class),
 			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 			r.get(JLog.LOG.LOG_MESSAGE, String.class),
 			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
@@ -97,7 +101,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public Page<Log> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LOG_MAPPER),
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LOG_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
@@ -105,14 +110,28 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public Integer getPageNumber(Long id, Filter filter, Pageable pageable) {
-		Filter fetchLogFilter = new Filter(filter).withCondition(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(id),
-				CRITERIA_LOG_ID
-		));
-		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(fetchLogFilter).with(pageable).build()).map(LOG_MAPPER),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		).getNumber();
+		Table<? extends Record> logSubquery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build().asTable("log_subquery");
+
+		Sort.Order order = ofNullable(pageable.getSort().getOrderFor(LOG.LOG_TIME.getName())).orElseThrow(() -> new ReportPortalException(
+				ErrorType.INCORRECT_SORTING_PARAMETERS));
+
+		OrderField<?> sortField;
+
+		if (order.getDirection().isAscending()) {
+			sortField = fieldName(LOG.getName(), order.getProperty()).asc();
+		} else {
+			sortField = fieldName(LOG.getName(), order.getProperty()).desc();
+		}
+
+		Long rowNumber = dsl.select(fieldName("row_number"))
+				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as("row_number"))
+						.from(LOG)
+						.join(logSubquery)
+						.on(LOG.ID.eq(fieldName("log_subquery", "id").cast(Long.class))))
+				.where(fieldName("id").cast(Long.class).eq(id))
+				.fetchOne()
+				.into(Long.class);
+
+		return BigDecimal.valueOf(rowNumber).divide(BigDecimal.valueOf(pageable.getPageSize()), RoundingMode.CEILING).intValue();
 	}
 }
