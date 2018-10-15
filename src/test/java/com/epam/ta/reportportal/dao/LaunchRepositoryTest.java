@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 package com.epam.ta.reportportal.dao;
 
@@ -30,8 +28,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,15 +64,15 @@ public class LaunchRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-create-script.sql");
+		//		runSqlScript("/test-fill-script.sql");
 	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
-	}
+	//
+	//	@AfterClass
+	//	public static void destroy() throws SQLException, IOException, SqlToolError {
+	//		runSqlScript("/test-dropall-script.sql");
+	//	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
 		try (Connection connection = getConnection()) {
@@ -84,6 +82,13 @@ public class LaunchRepositoryTest {
 
 	private static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+	}
+
+	@Test
+	public void testLoadLaunchesHistory() {
+		List<Launch> demoLaunchS = launchRepository.findLaunchesHistory(2, "Demo launch s", 2L);
+		Assert.assertThat(demoLaunchS.size(), Matchers.equalTo(2));
+		demoLaunchS.forEach(it -> Assert.assertThat(it.getName(), Matchers.equalToIgnoringCase("Demo launch s")));
 	}
 
 	@Test
