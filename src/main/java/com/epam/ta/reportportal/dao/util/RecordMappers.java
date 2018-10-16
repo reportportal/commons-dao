@@ -200,7 +200,7 @@ public class RecordMappers {
 		activity.setUserId(r.get(ACTIVITY.USER_ID));
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setAction(r.get(ACTIVITY.ACTION));
-		activity.setEntity(r.get(ACTIVITY.ENTITY, Activity.Entity.class));
+		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
 		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
@@ -213,16 +213,6 @@ public class RecordMappers {
 			}
 		});
 		return activity;
-	};
-	public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = r -> {
-		Map<Long, Activity> activityMap = Maps.newHashMap();
-		r.forEach(res -> {
-			Long activityId = res.get(ACTIVITY.ID);
-			if (!activityMap.containsKey(activityId)) {
-				activityMap.put(activityId, ACTIVITY_MAPPER.map(res));
-			}
-		});
-		return Lists.newArrayList(activityMap.values());
 	};
 
 	@Component
