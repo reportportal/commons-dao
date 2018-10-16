@@ -73,7 +73,7 @@ public class Launch implements Serializable {
 	@Column(name = "start_time", nullable = false, updatable = false)
 	private LocalDateTime startTime;
 
-	@Column(name = "end_time", nullable = false, updatable = false)
+	@Column(name = "end_time", nullable = false)
 	private LocalDateTime endTime;
 
 	@Column(name = "number", nullable = false, precision = 32)
