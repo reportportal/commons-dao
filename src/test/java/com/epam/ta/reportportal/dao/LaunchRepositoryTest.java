@@ -1,4 +1,5 @@
 /*
+ *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 package com.epam.ta.reportportal.dao;
 
@@ -86,7 +88,7 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void testLoadLaunchesHistory() {
-		List<Launch> demoLaunchS = launchRepository.findLaunchesHistory(2, "Demo launch s", 2L);
+		List<Launch> demoLaunchS = launchRepository.findLaunchesHistory(2, 2L, "Demo launch s", 1L);
 		Assert.assertThat(demoLaunchS.size(), Matchers.equalTo(2));
 		demoLaunchS.forEach(it -> Assert.assertThat(it.getName(), Matchers.equalToIgnoringCase("Demo launch s")));
 	}
