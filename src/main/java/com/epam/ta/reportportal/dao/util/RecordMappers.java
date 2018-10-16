@@ -133,26 +133,9 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps record with crosstab into {@link Launch} object
-	 */
-	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
-		Launch launch = r.into(Launch.class);
-		launch.setUser(r.into(User.class));
-		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
-		return launch;
-	};
-
-	/**
-	 * Maps result of records without crosstab into list of launches
-	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> new ArrayList<>(result.stream()
-			.collect(Collectors.toMap(r -> r.get(LAUNCH.ID), r -> r.into(Launch.class)))
-			.values());
-
-	/**
 	 * Maps record into {@link User} object
 	 */
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
+	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
 		User user = new User();
 		Project defaultProject = new Project();
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
@@ -196,6 +179,23 @@ public class RecordMappers {
 
 		return Lists.newArrayList(userMap.values());
 	};
+
+	/**
+	 * Maps record with crosstab into {@link Launch} object
+	 */
+	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
+		Launch launch = r.into(Launch.class);
+		launch.setUser(r.map(USER_RECORD_MAPPER));
+		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
+		return launch;
+	};
+
+	/**
+	 * Maps result of records without crosstab into list of launches
+	 */
+	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> new ArrayList<>(result.stream()
+			.collect(Collectors.toMap(r -> r.get(LAUNCH.ID), r -> r.into(Launch.class)))
+			.values());
 
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();
