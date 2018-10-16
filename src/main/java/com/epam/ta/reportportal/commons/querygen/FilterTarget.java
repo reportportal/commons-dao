@@ -88,7 +88,8 @@ public enum FilterTarget {
 					l.MODE,
 					l.STATUS,
 					u.ID.as(SUBQUERY_USER_ID),
-					u.LOGIN
+					u.LOGIN,
+					launchTag.VALUE
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
