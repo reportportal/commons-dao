@@ -1,4 +1,5 @@
 /*
+ *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.epam.ta.reportportal.commons.querygen.constant;
@@ -25,4 +27,5 @@ public class LogCriteriaConstant {
 	public static final String CRITERIA_LOG_MESSAGE = "log_message";
 	public static final String CRITERIA_TEST_ITEM_ID = "item";
 	public static final String CRITERIA_LOG_LEVEL = "level";
+	public static final String CRITERIA_LOG_ID = "log_id";
 }

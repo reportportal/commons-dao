@@ -163,7 +163,7 @@ public class RecordMappers {
 	/**
 	 * Maps record into {@link User} object
 	 */
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
+	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
 		User user = new User();
 		Project defaultProject = new Project();
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
