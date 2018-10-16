@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.epam.ta.reportportal.dao.util;
@@ -28,6 +26,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.user.User;
@@ -145,14 +144,26 @@ public class RecordMappers {
 	/**
 	 * Maps result of records without crosstab into list of launches
 	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> new ArrayList<>(result.stream()
-			.collect(Collectors.toMap(r -> r.get(LAUNCH.ID), r -> r.into(Launch.class)))
-			.values());
+	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
+		Map<Long, Launch> res = new HashMap<>();
+		result.forEach(r -> {
+			Long launchId = r.get(LAUNCH.ID.getName(), Long.class);
+			Launch launch;
+			if (!res.containsKey(launchId)) {
+				launch = LAUNCH_RECORD_MAPPER.map(r);
+			} else {
+				launch = res.get(launchId);
+			}
+			launch.getTags().add(r.into(LaunchTag.class));
+			res.put(launchId, launch);
+		});
+		return new ArrayList<>(res.values());
+	};
 
 	/**
 	 * Maps record into {@link User} object
 	 */
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
+	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
 		User user = new User();
 		Project defaultProject = new Project();
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);

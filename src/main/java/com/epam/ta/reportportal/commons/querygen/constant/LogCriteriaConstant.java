@@ -25,4 +25,5 @@ public class LogCriteriaConstant {
 	public static final String CRITERIA_LOG_MESSAGE = "log_message";
 	public static final String CRITERIA_TEST_ITEM_ID = "item";
 	public static final String CRITERIA_LOG_LEVEL = "level";
+	public static final String CRITERIA_LOG_ID = "log_id";
 }

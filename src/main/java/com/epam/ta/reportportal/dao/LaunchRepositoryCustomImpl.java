@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -60,12 +60,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	public List<Launch> findByFilter(Filter filter) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(LAUNCH_RECORD_MAPPER);
+		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LAUNCH_RECORD_MAPPER),
+				LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
@@ -140,12 +140,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(
-				dsl.fetch(dsl.with(LAUNCHES)
+				LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
 						.select()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
-						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())).map(LAUNCH_RECORD_MAPPER),
+						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
