@@ -209,7 +209,7 @@ public class UserRepositoryTest {
 		activity.setProjectId(1L);
 		activity.setUserId(1L);
 		activity.setAction("asd");
-		activity.setEntity(Activity.Entity.LAUNCH);
+		activity.setActivityEntityType(Activity.ActivityEntityType.LAUNCH);
 		activity.setCreatedAt(LocalDateTime.now());
 		Map<String, Object> hashMap = new HashMap<>();
 		hashMap.put("asd", "qwe");
