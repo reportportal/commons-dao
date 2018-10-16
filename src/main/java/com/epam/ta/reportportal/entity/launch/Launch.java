@@ -32,7 +32,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -104,7 +103,7 @@ public class Launch implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
-	private Set<Statistics> statistics = new HashSet<>();
+	private Set<Statistics> statistics = Sets.newHashSet();
 
 	public Set<LaunchTag> getTags() {
 		return tags;

@@ -73,6 +73,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JUsers u = JUsers.USERS;
 			JStatistics s = JStatistics.STATISTICS;
+			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
@@ -118,6 +119,8 @@ public enum FilterTarget {
 					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
 					.leftJoin(u)
 					.on(l.USER_ID.eq(u.ID))
+					.leftJoin(launchTag)
+					.on(l.ID.eq(launchTag.LAUNCH_ID))
 					.getQuery();
 		}
 	},
