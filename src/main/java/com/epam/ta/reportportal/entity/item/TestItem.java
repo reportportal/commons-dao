@@ -1,4 +1,5 @@
 /*
+ *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.epam.ta.reportportal.entity.item;
@@ -99,6 +101,9 @@ public class TestItem implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
 
+	@Column(name = "has_children")
+	private Boolean hasChildren;
+
 	public TestItem() {
 	}
 
@@ -107,7 +112,7 @@ public class TestItem implements Serializable {
 	}
 
 	public TestItem(Long itemId, String name, TestItemTypeEnum type, LocalDateTime startTime, String description,
-			LocalDateTime lastModified, String uniqueId) {
+			LocalDateTime lastModified, String uniqueId, Boolean hasChildren) {
 		this.itemId = itemId;
 		this.name = name;
 		this.type = type;
@@ -115,6 +120,7 @@ public class TestItem implements Serializable {
 		this.description = description;
 		this.lastModified = lastModified;
 		this.uniqueId = uniqueId;
+		this.hasChildren = hasChildren;
 	}
 
 	public Set<TestItemTag> getTags() {
@@ -241,5 +247,13 @@ public class TestItem implements Serializable {
 
 	public void setItemResults(TestItemResults itemResults) {
 		this.itemResults = itemResults;
+	}
+
+	public Boolean getHasChildren() {
+		return hasChildren;
+	}
+
+	public void setHasChildren(Boolean hasChildren) {
+		this.hasChildren = hasChildren;
 	}
 }

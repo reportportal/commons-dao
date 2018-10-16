@@ -154,7 +154,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
-			new CriteriaHolder("path", "ti.path", Long.class, false)
+			new CriteriaHolder("path", "ti.path", Long.class, false),
+			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
@@ -178,6 +179,7 @@ public enum FilterTarget {
 					ti.LAST_MODIFIED,
 					ti.PATH,
 					ti.UNIQUE_ID,
+					ti.HAS_CHILDREN,
 					ti.PARENT_ID,
 					ti.LAUNCH_ID,
 					tir.RESULT_ID,
@@ -241,37 +243,33 @@ public enum FilterTarget {
 			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
 			new CriteriaHolder(TYPE, "it.name", String.class, false)
 			//@formatter:on
-	))
+	)) {
+		public SelectQuery<? extends Record> getQuery() {
+			JIntegration i = JIntegration.INTEGRATION.as("i");
+			JIntegrationType it = JIntegrationType.INTEGRATION_TYPE.as("it");
+			JProject p = JProject.PROJECT.as("p");
 
-			{
-				public SelectQuery<? extends Record> getQuery() {
-					JIntegration i = JIntegration.INTEGRATION.as("i");
-					JIntegrationType it = JIntegrationType.INTEGRATION_TYPE.as("it");
-					JProject p = JProject.PROJECT.as("p");
-
-					return DSL.select(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
-							.from(i)
-							.leftJoin(it)
-							.on(i.TYPE.eq(it.ID))
-							.leftJoin(p)
-							.on(i.PROJECT_ID.eq(p.ID))
-							.groupBy(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
-							.getQuery();
-				}
-			},
+			return DSL.select(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
+					.from(i)
+					.leftJoin(it)
+					.on(i.TYPE.eq(it.ID))
+					.leftJoin(p)
+					.on(i.PROJECT_ID.eq(p.ID))
+					.groupBy(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
+					.getQuery();
+		}
+	},
 
 	PROJECT(Project.class, Arrays.asList(
 
-			new CriteriaHolder(NAME, "p.name", String.class, false)))
+			new CriteriaHolder(NAME, "p.name", String.class, false))) {
+		public SelectQuery<? extends Record> getQuery() {
+			JProject p = JProject.PROJECT.as("p");
 
-			{
-				public SelectQuery<? extends Record> getQuery() {
-					JProject p = JProject.PROJECT.as("p");
+			return DSL.select(p.ID, p.NAME).from(p).getQuery();
 
-					return DSL.select(p.ID, p.NAME).from(p).getQuery();
-
-				}
-			},
+		}
+	},
 
 	LOG(Log.class, Arrays.asList(new CriteriaHolder(CRITERIA_LOG_MESSAGE, "l.log_message", String.class, false),
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class, false),
