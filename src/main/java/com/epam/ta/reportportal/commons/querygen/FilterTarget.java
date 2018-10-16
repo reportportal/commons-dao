@@ -44,8 +44,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.OBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
