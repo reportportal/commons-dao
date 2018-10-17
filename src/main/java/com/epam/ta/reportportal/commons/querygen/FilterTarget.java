@@ -49,8 +49,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
@@ -69,7 +68,7 @@ public enum FilterTarget {
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(NAME, "name", String.class, false),
-			new CriteriaHolder("tag", "launch_tag.value", String.class,false)
+			new CriteriaHolder(CRITERIA_LAUNCH_TAG, "launch_tag.value", String.class,false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -78,7 +77,7 @@ public enum FilterTarget {
 			JStatistics s = JStatistics.STATISTICS;
 			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
 
-			Select<?> fieldsForSelect = DSL.select(l.ID,
+			Select<?> fieldsForSelect = DSL.select(l.ID.as(SUBQUERY_LAUNCH_ID),
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -113,7 +112,7 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.LAUNCH_ID.as("l_id"), s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.LAUNCH_ID.as(CROSSTAB_LAUNCH_ID), s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
@@ -121,7 +120,7 @@ public enum FilterTarget {
 			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
 
 			return joinStep.rightJoin(l)
-					.on(field(DSL.name("l_id")).eq(l.ID))
+					.on(field(DSL.name(CROSSTAB_LAUNCH_ID)).eq(l.ID))
 					.leftJoin(u)
 					.on(l.USER_ID.eq(u.ID))
 					.leftJoin(launchTag)
@@ -160,7 +159,8 @@ public enum FilterTarget {
 			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
 			new CriteriaHolder("path", "ti.path", Long.class, false),
-			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false)
+			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
+			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
@@ -170,7 +170,7 @@ public enum FilterTarget {
 			JIssue is = JIssue.ISSUE.as("is");
 			JIssueGroup gr = JIssueGroup.ISSUE_GROUP.as("gr");
 			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
-
+			JItemTag tag = JItemTag.ITEM_TAG;
 			JStatistics s = JStatistics.STATISTICS;
 
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
@@ -200,7 +200,8 @@ public enum FilterTarget {
 					it.HEX_COLOR,
 					it.ABBREVIATION,
 					it.LOCATOR,
-					gr.ISSUE_GROUP_
+					gr.ISSUE_GROUP_,
+					DSL.arrayAgg(tag.VALUE).as("tags")
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
@@ -221,14 +222,14 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.ITEM_ID.as(CROSSTAB_TEST_ITEM_ID), s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.ITEM_ID, s.S_FIELD)
 					.orderBy(s.ITEM_ID, s.S_FIELD);
 
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.rightJoin(ti)
-					.on(field("ct.item_id").eq(ti.ITEM_ID))
+			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
+			return joinStep.rightJoin(ti)
+					.on(field(CROSSTAB_TEST_ITEM_ID).eq(ti.ITEM_ID))
 					.leftJoin(tir)
 					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
 					.leftJoin(l)
@@ -239,6 +240,9 @@ public enum FilterTarget {
 					.on(is.ISSUE_TYPE.eq(it.ID))
 					.leftJoin(gr)
 					.on(it.ISSUE_GROUP_ID.eq(gr.ISSUE_GROUP_ID))
+					.leftJoin(tag)
+					.on(ti.ITEM_ID.eq(tag.ITEM_ID))
+					.groupBy(joinStep.getSelect().stream().filter(f -> !"tags".equalsIgnoreCase(f.getName())).collect(Collectors.toList()))
 					.getQuery();
 		}
 	},
