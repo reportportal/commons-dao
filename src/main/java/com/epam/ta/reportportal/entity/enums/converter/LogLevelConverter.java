@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +12,28 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.entity.enums.converter;
 
-import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 
-import java.util.Optional;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
-public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
+/**
+ * @author Pavel Bortnik
+ */
+@Converter(autoApply = true)
+public class LogLevelConverter implements AttributeConverter<LogLevel, Integer> {
 
-	Optional<String> findPersonalProjectName(String username);
+	@Override
+	public Integer convertToDatabaseColumn(LogLevel attribute) {
+		return attribute.toInt();
+	}
+
+	@Override
+	public LogLevel convertToEntityAttribute(Integer dbData) {
+		return LogLevel.toLevel(dbData);
+	}
 }

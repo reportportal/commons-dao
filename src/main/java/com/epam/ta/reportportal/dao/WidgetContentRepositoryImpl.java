@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
@@ -126,7 +125,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
+		Select commonSelect = dsl.select(field(name(LAUNCHES, SUBQUERY_LAUNCH_ID)).cast(Long.class))
 				.from(name(LAUNCHES))
 				.orderBy(field(name(LAUNCHES, NUMBER)).desc())
 				.limit(limit);
@@ -173,7 +172,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		Collections.addAll(fields, fieldName(SUBQUERY_LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -190,7 +189,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL)), 0).cast(Double.class)), 2);
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -222,7 +221,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -243,7 +242,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Collections.addAll(fields,
 				sumField,
-				fieldName(LAUNCH.ID),
+				fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -270,7 +269,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.collect(toList());
 
 		Collections.addAll(statisticsFields,
-				fieldName(LAUNCH.ID),
+				fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -285,7 +284,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.STATUS),
@@ -299,7 +298,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -313,7 +312,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		Collections.addAll(fields, fieldName(SUBQUERY_LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -344,12 +343,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				TEST_ITEM.NAME,
 				TEST_ITEM.DESCRIPTION,
 				USERS.LOGIN,
-				fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID)
+				fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID)
 
 		)
 				.from(QueryBuilder.newBuilder(filter).with(limit).with(sort).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
 				.join(TEST_ITEM)
-				.on(fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+				.on(fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.leftJoin(ISSUE)
@@ -411,7 +410,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
 		Collections.addAll(fields,
-				fieldName(LAUNCHES_SUB_QUERY, ID),
+				fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCHES_SUB_QUERY, NAME),
 				fieldName(LAUNCH.START_TIME),
@@ -446,7 +445,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		Collections.addAll(fields, fieldName(SUBQUERY_LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
 		List<Condition> conditions = tags.stream()
 				.map(cf -> LAUNCH_TAG.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
@@ -475,17 +474,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter) {
-		return dsl.select(fieldName(TEST_ITEM.ITEM_ID).as(ID),
+		return dsl.select(fieldName(SUBQUERY_TEST_ITEM_ID).as(ID),
 				fieldName(TEST_ITEM.UNIQUE_ID),
 				fieldName(TEST_ITEM.NAME),
 				fieldName(TEST_ITEM.TYPE),
 				fieldName(TEST_ITEM.START_TIME),
 				fieldName(TEST_ITEM_RESULTS.END_TIME),
 				fieldName(TEST_ITEM_RESULTS.DURATION),
-				fieldName(TEST_ITEM_RESULTS.STATUS)
+				fieldName(SUBQUERY_TEST_ITEM_STATUS)
 		)
 				.from(QueryBuilder.newBuilder(filter)
-						.addCondition(TEST_ITEM_RESULTS.STATUS.in(JStatusEnum.PASSED, JStatusEnum.FAILED))
 						.with(20)
 						.build())
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
@@ -521,7 +519,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(combinedTagCondition)
 						.orderBy(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
 						.asTable(TAG_TABLE))
-				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID).cast(Long.class)))
 				.groupBy(fields)
 				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
 						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
@@ -571,7 +569,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(combinedTagCondition)
 						.orderBy(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
 						.asTable(TAG_TABLE))
-				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID).cast(Long.class)))
 				.where(conditions)
 				.groupBy(fields)
 				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)

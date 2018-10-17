@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Condition;
@@ -5,9 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
-import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.JsonbObject;
-import com.epam.ta.reportportal.entity.meta.MetaData;
+import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -26,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,7 +115,7 @@ public class UserRepositoryTest {
 	@Test
 	public void findByLogin() {
 
-		Optional<User> user = userRepository.findByLogin("superadmin");
+		Optional<User> user = userRepository.findByLogin("default");
 
 		Assert.assertTrue(user.isPresent());
 	}
@@ -169,11 +186,12 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	@Rollback(false)
 	public void saveUserTest() throws JsonProcessingException {
 		User user = userRepository.findByLogin("default").get();
 		Map<String, Object> hashMap = new HashMap<>();
 		hashMap.put("asd", "qwe");
-		JsonbObject metaData = new MetaData(hashMap);
+		JsonMap<Object, Object> metaData = new JsonMap<>(hashMap);
 		user.setMetadata(metaData);
 
 		userRepository.save(user);
@@ -204,22 +222,6 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void test() {
-		Activity activity = new Activity();
-		activity.setProjectId(1L);
-		activity.setUserId(1L);
-		activity.setAction("asd");
-		activity.setActivityEntityType(Activity.ActivityEntityType.LAUNCH);
-		activity.setCreatedAt(LocalDateTime.now());
-		Map<String, Object> hashMap = new HashMap<>();
-		hashMap.put("asd", "qwe");
-		MetaData metaData = new MetaData(hashMap);
-		activity.setDetails(metaData);
-
-		activityRepository.save(activity);
-	}
-
-	@Test
 	public void createUserTest() {
 
 		Project defaultProject = projectRepository.findByName("superadmin_personal").get();
@@ -237,7 +239,7 @@ public class UserRepositoryTest {
 
 		map.put("last_login", new Date());
 
-		reg.setMetadata(new MetaData(map));
+		reg.setMetadata(new JsonMap<>(map));
 
 		Set<ProjectUser> projectUsers = defaultProject.getUsers();
 		//noinspection ConstantConditions

@@ -17,14 +17,17 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
+import com.epam.ta.reportportal.entity.item.TestItemTag;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.user.User;
@@ -49,7 +52,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.PARENT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
@@ -95,7 +98,7 @@ public class RecordMappers {
 	 * Maps record into {@link IssueEntity} object
 	 */
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-		if (r.get(ISSUE.ISSUE_ID) != null) {
+		if (ofNullable(r.field(ISSUE.ISSUE_ID)).isPresent()) {
 			IssueEntity issueEntity = r.into(IssueEntity.class);
 			issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
 			return issueEntity;
@@ -126,6 +129,10 @@ public class RecordMappers {
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
 		testItem.setLaunch(new Launch(r.get(LAUNCH_ID, Long.class)));
 		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
+		ofNullable(r.field("tags")).ifPresent(f -> {
+			String[] tags = r.getValue(f, String[].class);
+			testItem.setTags(Arrays.stream(tags).map(TestItemTag::new).collect(Collectors.toSet()));
+		});
 		return testItem;
 	};
 
@@ -136,26 +143,45 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setUser(r.into(User.class));
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
+		ofNullable(r.field("tags")).ifPresent(f -> {
+			String[] tags = r.getValue(f, String[].class);
+			launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
+		});
 		return launch;
 	};
 
 	/**
 	 * Maps result of records without crosstab into list of launches
 	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> new ArrayList<>(result.stream()
-			.collect(Collectors.toMap(r -> r.get(LAUNCH.ID), r -> r.into(Launch.class)))
-			.values());
+	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
+		Map<Long, Launch> res = new HashMap<>();
+		result.forEach(r -> {
+			Long launchId = r.get(LAUNCH.ID.getName(), Long.class);
+			Launch launch;
+			if (!res.containsKey(launchId)) {
+				launch = LAUNCH_RECORD_MAPPER.map(r);
+			} else {
+				launch = res.get(launchId);
+			}
+			ofNullable(r.field("tags")).ifPresent(f -> {
+				String[] tags = r.getValue(f, String[].class);
+				launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
+			});
+			res.put(launchId, launch);
+		});
+		return new ArrayList<>(res.values());
+	};
 
 	/**
 	 * Maps record into {@link User} object
 	 */
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
+	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
 		User user = new User();
 		Project defaultProject = new Project();
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
-				JsonbObject metaData = objectMapper.readValue(metaDataString, JsonbObject.class);
+				JsonMap<Object, Object> metaData = objectMapper.readValue(metaDataString, JsonMap.class);
 				user.setMetadata(metaData);
 			} catch (IOException e) {
 				throw new ReportPortalException("Error during parsing user metadata");

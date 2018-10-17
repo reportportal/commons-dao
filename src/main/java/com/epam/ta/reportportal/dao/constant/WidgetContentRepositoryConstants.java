@@ -106,4 +106,10 @@ public class WidgetContentRepositoryConstants {
 	public static final String SUM = "sum";
 	public static final String AVERAGE_PASSING_RATE = "average_passing_rate";
 
+	/*Sub-query fields*/
+	public static final String SUBQUERY_LAUNCH_ID = "l_id";
+	public static final String SUBQUERY_USER_ID = "u_id";
+	public static final String SUBQUERY_TEST_ITEM_STATUS = "ti_status";
+	public static final String SUBQUERY_TEST_ITEM_ID = "ti_id";
+
 }

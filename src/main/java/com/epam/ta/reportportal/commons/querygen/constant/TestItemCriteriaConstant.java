@@ -18,6 +18,11 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 
 public class TestItemCriteriaConstant {
 
-	public static final String PARENT_ID = "parent_id";
+	public static final String CRITERIA_LAUNCH_ID = "launch";
+	public static final String CRITERIA_PARENT_ID = "parent";
+	public static final String CRITERIA_TI_STATUS = "ti_status";
+	public static final String CRITERIA_HAS_CHILDREN = "has_children";
+	public static final String CRITERIA_ITEM_TAG = "tag";
+	public static final String CROSSTAB_TEST_ITEM_ID = "ct_ti_id";
 
 }

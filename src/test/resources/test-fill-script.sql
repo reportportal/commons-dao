@@ -50,10 +50,10 @@ INSERT INTO user_filter(id) VALUES (4);
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (1, 'statistics$defects$no_defect$ND001', 'DESC');
 
-INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
-INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
-INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (6, 1, 'EQUALS', '1', 'project_id', false);
-INSERT INTO filter_condition (id, filter_id, condition, value, field, negative) VALUES (10, 2, 'EQUALS', '1', 'project_id', false);
+INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
+INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
+INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (6, 1, 'EQUALS', '1', 'project_id', false);
+INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (10, 2, 'EQUALS', '1', 'project_id', false);
 
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (2, 'start', null, 'launch_statistics', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (4, 'start', null, 'passing_rate_per_launch', 1000, 1);
@@ -241,10 +241,10 @@ INSERT INTO filter_sort(filter_id, field, direction) VALUES (5, 'statistics$defe
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (6, 'statistics$defects$automation_bug$AB001', 'ASC');
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (7, 'statistics$defects$system_issue$SI001', 'DESC');
 
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (5, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (6, 'LOWER_THAN', '3', 'statistics$defects$to_investigate$TI001', false);
-INSERT INTO filter_condition (filter_id, condition, value, field, negative) VALUES (7, 'GREATER_THAN', '11', 'statistics$executions$total', false);
+INSERT INTO filter_condition (filter_id, condition, value, search_criteria, negative) VALUES (5, 'LOWER_THAN_OR_EQUALS', '2', 'statistics$defects$automation_bug$AB001', false);
+INSERT INTO filter_condition (filter_id, condition, value, search_criteria, negative) VALUES (5, 'GREATER_THAN_OR_EQUALS', '3', 'statistics$defects$system_issue$SI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, search_criteria, negative) VALUES (6, 'LOWER_THAN', '3', 'statistics$defects$to_investigate$TI001', false);
+INSERT INTO filter_condition (filter_id, condition, value, search_criteria, negative) VALUES (7, 'GREATER_THAN', '11', 'statistics$executions$total', false);
 
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,5);
 INSERT INTO widget_filter(widget_id, filter_id) VALUES (20,6);
@@ -317,6 +317,49 @@ INSERT INTO project (name, additional_info, creation_date) VALUES ('test2', 'add
 INSERT INTO project_user (user_id, project_id, project_role) VALUES
   (1, (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
 
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$executions$total', 10);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$executions$passed', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$executions$skipped', 4);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$executions$failed', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$defects$total', 32);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$defects$to_investigate$TI001', 2);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$defects$system_issue$SI001', 8);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$defects$automation_bug$AB001', 7);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$defects$product_bug$PB001', 13);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(1, 'statisitcs$defects$no_defect$ND001', 2);
+
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$executions$total', 11);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$executions$passed', 2);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$executions$skipped', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$executions$failed', 6);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$defects$total', 10);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$defects$to_investigate$TI001', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$defects$system_issue$SI001', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$defects$automation_bug$AB001', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$defects$product_bug$PB001', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(2, 'statisitcs$defects$no_defect$ND001', 2);
+
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$executions$total', 15);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$executions$passed', 5);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$executions$skipped', 5);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$executions$failed', 5);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$defects$total', 5);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$defects$to_investigate$TI001', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$defects$system_issue$SI001', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$defects$automation_bug$AB001', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$defects$product_bug$PB001', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(3, 'statisitcs$defects$no_defect$ND001', 1);
+
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$executions$total', 12);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$executions$passed', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$executions$skipped', 1);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$executions$failed', 8);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$defects$total', 17);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$defects$to_investigate$TI001', 3);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$defects$system_issue$SI001', 4);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$defects$automation_bug$AB001', 2);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$defects$product_bug$PB001', 2);
+INSERT INTO statistics(launch_id, s_field, s_counter) VALUES(4, 'statisitcs$defects$no_defect$ND001', 6);
 
 INSERT INTO server_settings(key, value) VALUES ('email', 'config');
 .;

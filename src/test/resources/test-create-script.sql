@@ -267,7 +267,7 @@ CREATE TABLE filter_condition (
   filter_id BIGINT REFERENCES user_filter (id) ON DELETE CASCADE,
   condition FILTER_CONDITION_ENUM NOT NULL,
   value     VARCHAR               NOT NULL,
-  field     VARCHAR               NOT NULL,
+  search_criteria     VARCHAR               NOT NULL,
   negative  BOOLEAN               NOT NULL
 );
 
@@ -364,6 +364,7 @@ CREATE TABLE test_item (
   last_modified TIMESTAMP           NOT NULL,
   path          LTREE,
   unique_id     VARCHAR(256),
+  has_children  BOOLEAN DEFAULT FALSE, 
   parent_id     BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
   retry_of      BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
   launch_id     BIGINT REFERENCES launch (id) ON DELETE CASCADE
@@ -475,7 +476,7 @@ CREATE TABLE ticket (
 );
 
 CREATE TABLE issue_ticket (
-  issue_id  BIGINT REFERENCES issue (issue_id) NOT NULL,
+  issue_id  BIGINT REFERENCES issue (issue_id) ON DELETE CASCADE NOT NULL,
   ticket_id BIGINT REFERENCES ticket (id) ON DELETE CASCADE NOT NULL,
   CONSTRAINT issue_ticket_pk PRIMARY KEY (issue_id, ticket_id)
 );
