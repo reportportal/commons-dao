@@ -16,9 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.Activity;
 import org.jooq.DSLContext;
@@ -43,10 +41,6 @@ import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 @Repository
 public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
-	private static final String PROJECT_ID_COLUMN = "project_id";
-	private static final String CREATION_DATE_COLUMN = "creation_date";
-	private static final String OBJECT_ID_COLUMN = "object_id";
-
 	private DSLContext dsl;
 
 	@Autowired
@@ -55,24 +49,13 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	}
 
 	@Override
-	public List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Pageable pageable) {
-		Sort sort = new Sort(Sort.Direction.DESC, CREATION_DATE_COLUMN);
-		FilterCondition testItemIdCondition = FilterCondition.builder()
-				.withCondition(Condition.EQUALS)
-				.withSearchCriteria(OBJECT_ID_COLUMN)
-				.withValue(testItemId.toString())
-				.build();
-		return dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(testItemIdCondition)).with(sort).build()).map(ACTIVITY_MAPPER);
+	public List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Sort sort, Pageable pageable) {
+		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
 	public List<Activity> findActivitiesByProjectId(Long projectId, Filter filter, Pageable pageable) {
-		FilterCondition projectIdCondition = FilterCondition.builder()
-				.withCondition(Condition.EQUALS)
-				.withSearchCriteria(PROJECT_ID_COLUMN)
-				.withValue(projectId.toString())
-				.build();
-		return dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(projectIdCondition)).with(pageable).build()).map(ACTIVITY_MAPPER);
+		return dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
