@@ -99,8 +99,8 @@ public class TestItem implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
 
-	@Column(name = "has_children", nullable = false, columnDefinition = ("boolean default false"))
-	private Boolean hasChildren;
+	@Column(name = "has_children")
+	private boolean hasChildren;
 
 	public TestItem() {
 	}
@@ -247,11 +247,11 @@ public class TestItem implements Serializable {
 		this.itemResults = itemResults;
 	}
 
-	public Boolean getHasChildren() {
+	public boolean isHasChildren() {
 		return hasChildren;
 	}
 
-	public void setHasChildren(Boolean hasChildren) {
+	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
 	}
 }

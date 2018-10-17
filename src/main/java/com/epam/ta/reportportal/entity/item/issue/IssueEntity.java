@@ -44,10 +44,10 @@ public class IssueEntity implements Serializable {
 	private String issueDescription;
 
 	@Column(name = "auto_analyzed")
-	private Boolean autoAnalyzed;
+	private boolean autoAnalyzed;
 
 	@Column(name = "ignore_analyzer")
-	private Boolean ignoreAnalyzer;
+	private boolean ignoreAnalyzer;
 
 	@OneToOne(mappedBy = "issue")
 	private TestItemResults testItemResults;
