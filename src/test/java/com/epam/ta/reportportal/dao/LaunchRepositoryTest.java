@@ -86,7 +86,7 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void testLoadLaunchesHistory() {
-		List<Launch> demoLaunchS = launchRepository.findLaunchesHistory(2, 2L,"Demo launch s", 2L);
+		List<Launch> demoLaunchS = launchRepository.findLaunchesHistory(2, 2L, "Demo launch s", 2L);
 		Assert.assertThat(demoLaunchS.size(), Matchers.equalTo(2));
 		demoLaunchS.forEach(it -> Assert.assertThat(it.getName(), Matchers.equalToIgnoringCase("Demo launch s")));
 	}
@@ -121,6 +121,17 @@ public class LaunchRepositoryTest {
 		Launch launch = launchRepository.findById(2L).get();
 
 		String string = new ObjectMapper().writeValueAsString(launch);
+	}
+
+	@Test
+	public void findLaunchByFilterTest() {
+		List<Launch> launches = launchRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
+				false,
+				"build",
+				"tag"
+		)));
+
+		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

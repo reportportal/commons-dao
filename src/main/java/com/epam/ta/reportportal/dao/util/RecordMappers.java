@@ -154,7 +154,8 @@ public class RecordMappers {
 			} else {
 				launch = res.get(launchId);
 			}
-			launch.getTags().add(r.into(LaunchTag.class));
+			String[] tags = r.getValue("tags", String[].class);
+			Arrays.stream(tags).forEach(t -> launch.getTags().add(new LaunchTag(t)));
 			res.put(launchId, launch);
 		});
 		return new ArrayList<>(res.values());
