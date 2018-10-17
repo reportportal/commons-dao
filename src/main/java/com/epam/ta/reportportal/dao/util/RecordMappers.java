@@ -47,10 +47,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -133,7 +130,7 @@ public class RecordMappers {
 		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
-			testItem.setTags(Arrays.stream(tags).map(TestItemTag::new).collect(Collectors.toSet()));
+			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(TestItemTag::new).collect(Collectors.toSet()));
 		});
 		return testItem;
 	};
@@ -147,7 +144,7 @@ public class RecordMappers {
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
-			launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
+			launch.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(LaunchTag::new).collect(Collectors.toSet()));
 		});
 		return launch;
 	};
