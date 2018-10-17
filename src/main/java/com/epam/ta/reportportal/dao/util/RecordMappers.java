@@ -47,7 +47,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,7 +58,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
@@ -148,28 +150,6 @@ public class RecordMappers {
 			launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
 		});
 		return launch;
-	};
-
-	/**
-	 * Maps result of records without crosstab into list of launches
-	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
-		Map<Long, Launch> res = new HashMap<>();
-		result.forEach(r -> {
-			Long launchId = r.get(LAUNCH.ID.getName(), Long.class);
-			Launch launch;
-			if (!res.containsKey(launchId)) {
-				launch = LAUNCH_RECORD_MAPPER.map(r);
-			} else {
-				launch = res.get(launchId);
-			}
-			ofNullable(r.field("tags")).ifPresent(f -> {
-				String[] tags = r.getValue(f, String[].class);
-				launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
-			});
-			res.put(launchId, launch);
-		});
-		return new ArrayList<>(res.values());
 	};
 
 	/**

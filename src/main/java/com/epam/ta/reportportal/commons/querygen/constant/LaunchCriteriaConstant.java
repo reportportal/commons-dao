@@ -19,11 +19,12 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 /**
  * Search criteria fields for Launch.
  *
- * @author Anton Machulski
+ * @author Pavel Bortnik
  */
 public class LaunchCriteriaConstant {
-	public static final String MODE = "mode";
-	public static final String STATUS = "status";
-	public static final String CRITERIA_LAUNCH_TAG = "tag";
 	public static final String CROSSTAB_LAUNCH_ID = "ct_l_id";
+	public static final String CRITERIA_LAUNCH_TAG = "tag";
+	public static final String CRITERIA_LAUNCH_MODE = "mode";
+	public static final String CRITERIA_LAUNCH_STATUS = "status";
+	public static final String CRITERIA_LAUNCH_NAME = "name";
 }

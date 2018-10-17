@@ -65,9 +65,9 @@ public enum FilterTarget {
 			new CriteriaHolder(ID, "launch.id", Long.class, false),
 			new CriteriaHolder(DESCRIPTION, "launch.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
-			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
-			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder(NAME, "name", String.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, "status", JStatusEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_NAME, "name", String.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_TAG, "launch_tag.value", String.class,false)
 			//@formatter:on
 	)) {
@@ -152,14 +152,15 @@ public enum FilterTarget {
 	},
 
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
-			new CriteriaHolder("type", "ti.type", JTestItemTypeEnum.class, false),
+			new CriteriaHolder(CRITERIA_TYPE, "ti.type", JTestItemTypeEnum.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_ID, "ti.launch_id", Long.class, false),
-			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, "l.status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
-			new CriteriaHolder(MODE, "l.mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
-			new CriteriaHolder("path", "ti.path", Long.class, false),
+			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
+			new CriteriaHolder(CRITERIA_NAME, "ti.name", String.class, false),
 			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false)
 	)) {
 		@Override

@@ -24,5 +24,8 @@ public class TestItemCriteriaConstant {
 	public static final String CRITERIA_HAS_CHILDREN = "has_children";
 	public static final String CRITERIA_ITEM_TAG = "tag";
 	public static final String CROSSTAB_TEST_ITEM_ID = "ct_ti_id";
+	public static final String CRITERIA_NAME = "name";
+	public static final String CRITERIA_TYPE = "type";
+	public static final String CRITERIA_PATH = "path";
 
 }
