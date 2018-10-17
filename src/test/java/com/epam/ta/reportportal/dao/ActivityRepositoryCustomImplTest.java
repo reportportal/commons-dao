@@ -34,28 +34,13 @@ public class ActivityRepositoryCustomImplTest {
 	private ActivityRepository repository;
 
 	@Test
-	public void findActivitiesByTestItemId() {
-		List<Activity> activities = repository.findActivitiesByTestItemId(1L, defaultFilter(), PageRequest.of(0, 10));
-
-		assertEquals(4, activities.size());
-		activities.forEach(a -> assertEquals(1L, (long) a.getObjectId()));
-	}
-
-	@Test
-	public void findActivitiesByProjectId() {
-		List<Activity> activities = repository.findActivitiesByProjectId(1L, defaultFilter(), PageRequest.of(0, 10));
-		assertEquals(3, activities.size());
-		activities.forEach(a -> assertEquals(Long.valueOf(1L), a.getProjectId()));
-	}
-
-	@Test
 	public void deleteModifiedLaterAgo() {
 		Duration period = Duration.ofDays(10);
 		LocalDateTime bound = LocalDateTime.now().minus(period);
 
 		repository.deleteModifiedLaterAgo(1L, period);
 		List<Activity> all = repository.findAll();
-		all.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
+		all.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound) && a.getProjectId() == 1L));
 	}
 
 	@Test

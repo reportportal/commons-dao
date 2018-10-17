@@ -49,16 +49,6 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	}
 
 	@Override
-	public List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Sort sort, Pageable pageable) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).build()).map(ACTIVITY_MAPPER);
-	}
-
-	@Override
-	public List<Activity> findActivitiesByProjectId(Long projectId, Filter filter, Pageable pageable) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(ACTIVITY_MAPPER);
-	}
-
-	@Override
 	public void deleteModifiedLaterAgo(Long projectId, Duration period) {
 		LocalDateTime bound = LocalDateTime.now().minus(period);
 		dsl.delete(ACTIVITY).where(ACTIVITY.PROJECT_ID.eq(projectId)).and(ACTIVITY.CREATION_DATE.lt(Timestamp.valueOf(bound))).execute();

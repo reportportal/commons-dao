@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.Activity;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.Duration;
@@ -28,29 +27,6 @@ import java.util.List;
  * @author Ihar Kahadouski
  */
 public interface ActivityRepositoryCustom extends FilterableRepository<Activity> {
-
-	/**
-	 * Find list of {@link com.epam.ta.reportportal.entity.Activity}
-	 * for specified {@link com.epam.ta.reportportal.entity.item.TestItem}
-	 *
-	 * @param testItemId ID of {@link com.epam.ta.reportportal.entity.item.TestItem}
-	 * @param filter     Filter
-	 * @param sort       Sorting details
-	 * @param pageable   Page Details
-	 * @return Found activities
-	 */
-	List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Sort sort, Pageable pageable);
-
-	/**
-	 * Find list of {@link com.epam.ta.reportportal.entity.Activity}
-	 * for specified {@link com.epam.ta.reportportal.entity.project.Project}
-	 *
-	 * @param projectId ID of {@link com.epam.ta.reportportal.entity.project.Project}
-	 * @param filter    Filter
-	 * @param pageable  Page Details
-	 * @return Found activities
-	 */
-	List<Activity> findActivitiesByProjectId(Long projectId, Filter filter, Pageable pageable);
 
 	/**
 	 * Delete outdated activities
