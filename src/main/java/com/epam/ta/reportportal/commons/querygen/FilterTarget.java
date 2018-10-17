@@ -176,7 +176,7 @@ public enum FilterTarget {
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
 					l.STATUS,
 					l.MODE,
-					ti.ITEM_ID.as(SUBQUERY_TEST_ITEM_ID),
+					ti.ITEM_ID,
 					ti.NAME,
 					ti.TYPE,
 					ti.START_TIME,
