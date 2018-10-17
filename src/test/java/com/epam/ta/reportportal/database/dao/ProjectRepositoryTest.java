@@ -22,12 +22,14 @@ package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.BaseDaoTest;
 import com.epam.ta.reportportal.database.entity.Project;
+import com.epam.ta.reportportal.database.entity.project.EntryType;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Andrei Varabyeu
@@ -50,6 +52,16 @@ public class ProjectRepositoryTest extends BaseDaoTest {
 
 		List<String> postfixes = projectRepository.findOne(projectName).getMetadata().getDemoDataPostfix();
 		Assert.assertThat("Exception during saving demo data postfix", postfixes, CoreMatchers.hasItem("metadataPostfix"));
+	}
+
+	@Test
+	public void testFindPersonalProjectByUserName() {
+		Project project = new Project();
+		project.getConfiguration().setEntryType(EntryType.PERSONAL);
+		project.setName("default_personal");
+		projectRepository.save(project);
+		Optional<String> defaultPersonal = projectRepository.findPersonalProjectName("default");
+		Assert.assertTrue(defaultPersonal.isPresent());
 	}
 
 }
