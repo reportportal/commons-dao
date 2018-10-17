@@ -66,10 +66,8 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public Page<Activity> findByFilter(Filter filter, Pageable pageable) {
-		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter);
-		return PageableExecutionUtils.getPage(dsl.fetch(queryBuilder.with(pageable).build()).map(ACTIVITY_MAPPER),
-				pageable,
-				() -> dsl.fetchCount(queryBuilder.build())
+		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(ACTIVITY_MAPPER),
+				pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
 }
