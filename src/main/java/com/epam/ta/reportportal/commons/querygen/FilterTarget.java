@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 import org.jooq.SelectQuery;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
@@ -66,7 +68,8 @@ public enum FilterTarget {
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder(NAME, "name", String.class, false)
+			new CriteriaHolder(NAME, "name", String.class, false),
+			new CriteriaHolder("tag", "launch_tag.value", String.class,false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -89,7 +92,7 @@ public enum FilterTarget {
 					l.STATUS,
 					u.ID.as(SUBQUERY_USER_ID),
 					u.LOGIN,
-					launchTag.VALUE
+					DSL.arrayAgg(launchTag.VALUE).as("tags")
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
@@ -110,18 +113,20 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.LAUNCH_ID.as("l_id"), s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
 
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.rightJoin(l)
-					.on(field(DSL.name(LAUNCH_ID)).eq(l.ID))
+			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
+
+			return joinStep.rightJoin(l)
+					.on(field(DSL.name("l_id")).eq(l.ID))
 					.leftJoin(u)
 					.on(l.USER_ID.eq(u.ID))
 					.leftJoin(launchTag)
 					.on(l.ID.eq(launchTag.LAUNCH_ID))
+					.groupBy(joinStep.getSelect().stream().filter(f -> !"tags".equalsIgnoreCase(f.getName())).collect(Collectors.toList()))
 					.getQuery();
 		}
 	},
@@ -275,31 +280,29 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class, false),
 			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.log_level", LogLevel.class, false),
 			new CriteriaHolder(CRITERIA_LOG_ID, "l.id", Long.class, false)
-	))
+	)) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			JLog l = JLog.LOG.as("l");
+			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			{
-				@Override
-				public SelectQuery<? extends Record> getQuery() {
-					JLog l = JLog.LOG.as("l");
-					JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-
-					return DSL.select(l.ID,
-							l.LOG_TIME,
-							l.LOG_MESSAGE,
-							l.LAST_MODIFIED,
-							l.LOG_LEVEL,
-							l.ITEM_ID,
-							l.ATTACHMENT,
-							l.ATTACHMENT_THUMBNAIL,
-							l.CONTENT_TYPE
-					)
-							.from(l)
-							.leftJoin(ti)
-							.on(l.ITEM_ID.eq(ti.ITEM_ID))
-							.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
-							.getQuery();
-				}
-			},
+			return DSL.select(l.ID,
+					l.LOG_TIME,
+					l.LOG_MESSAGE,
+					l.LAST_MODIFIED,
+					l.LOG_LEVEL,
+					l.ITEM_ID,
+					l.ATTACHMENT,
+					l.ATTACHMENT_THUMBNAIL,
+					l.CONTENT_TYPE
+			)
+					.from(l)
+					.leftJoin(ti)
+					.on(l.ITEM_ID.eq(ti.ITEM_ID))
+					.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
+					.getQuery();
+		}
+	},
 
 	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false), new
 
@@ -313,55 +316,51 @@ public enum FilterTarget {
 
 			CriteriaHolder(UserCriteriaConstant.TYPE, UserCriteriaConstant.TYPE, String.class, false), new
 
-			CriteriaHolder(EXPIRED, EXPIRED, Boolean.class, false)))
+			CriteriaHolder(EXPIRED, EXPIRED, Boolean.class, false))) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			JUsers u = JUsers.USERS;
+			return DSL.select(u.ID,
+					u.LOGIN,
+					u.DEFAULT_PROJECT_ID,
+					u.FULL_NAME,
+					u.ATTACHMENT,
+					u.ATTACHMENT_THUMBNAIL,
+					u.EMAIL,
+					u.EXPIRED,
+					u.PASSWORD,
+					u.ROLE,
+					u.TYPE,
+					u.METADATA
+			).from(u).getQuery();
+		}
+	},
 
-			{
-				@Override
-				public SelectQuery<? extends Record> getQuery() {
-					JUsers u = JUsers.USERS;
-					return DSL.select(u.ID,
-							u.LOGIN,
-							u.DEFAULT_PROJECT_ID,
-							u.FULL_NAME,
-							u.ATTACHMENT,
-							u.ATTACHMENT_THUMBNAIL,
-							u.EMAIL,
-							u.EXPIRED,
-							u.PASSWORD,
-							u.ROLE,
-							u.TYPE,
-							u.METADATA
-					).from(u).getQuery();
-				}
-			},
-
-	USER_FILTER(UserFilter.class, Arrays.asList(new CriteriaHolder(NAME, NAME, String.class, false)))
-
-			{
-				@Override
-				public SelectQuery<? extends Record> getQuery() {
-					return DSL.select(JUserFilter.USER_FILTER.ID,
-							FILTER.NAME,
-							FILTER.PROJECT_ID,
-							FILTER.TARGET,
-							FILTER.DESCRIPTION,
-							FILTER_CONDITION.SEARCH_CRITERIA,
-							FILTER_CONDITION.CONDITION,
-							FILTER_CONDITION.VALUE,
-							FILTER_CONDITION.NEGATIVE,
-							FILTER_SORT.FIELD,
-							FILTER_SORT.DIRECTION
-					)
-							.from(JUserFilter.USER_FILTER)
-							.join(FILTER)
-							.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
-							.join(FILTER_CONDITION)
-							.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))
-							.join(FILTER_SORT)
-							.on(FILTER.ID.eq(FILTER_SORT.FILTER_ID))
-							.getQuery();
-				}
-			};
+	USER_FILTER(UserFilter.class, Arrays.asList(new CriteriaHolder(NAME, NAME, String.class, false))) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			return DSL.select(JUserFilter.USER_FILTER.ID,
+					FILTER.NAME,
+					FILTER.PROJECT_ID,
+					FILTER.TARGET,
+					FILTER.DESCRIPTION,
+					FILTER_CONDITION.SEARCH_CRITERIA,
+					FILTER_CONDITION.CONDITION,
+					FILTER_CONDITION.VALUE,
+					FILTER_CONDITION.NEGATIVE,
+					FILTER_SORT.FIELD,
+					FILTER_SORT.DIRECTION
+			)
+					.from(JUserFilter.USER_FILTER)
+					.join(FILTER)
+					.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
+					.join(FILTER_CONDITION)
+					.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))
+					.join(FILTER_SORT)
+					.on(FILTER.ID.eq(FILTER_SORT.FILTER_ID))
+					.getQuery();
+		}
+	};
 
 	private Class<?> clazz;
 	private List<CriteriaHolder> criterias;
