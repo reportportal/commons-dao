@@ -189,7 +189,7 @@ public class WidgetContentRepositoryTest {
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -206,7 +206,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		String executionContentField = "statistics$executions$total";
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -235,7 +235,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalDefectsContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -267,7 +267,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
 		filter = filter.withConditions(defaultConditions);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -321,7 +321,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -345,7 +345,7 @@ public class WidgetContentRepositoryTest {
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -375,7 +375,7 @@ public class WidgetContentRepositoryTest {
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 
@@ -428,7 +428,7 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, SUBQUERY_LAUNCH_ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
 
 		Sort sort = Sort.by(orderings);
 

@@ -29,8 +29,8 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
  */
 public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
-	@Column(name = SUBQUERY_LAUNCH_ID)
-	@JsonProperty(value = "id")
+	@Column(name = ID)
+	@JsonProperty(value = ID)
 	private Long id;
 
 	@Column(name = NUMBER)
