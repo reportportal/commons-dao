@@ -29,11 +29,44 @@ import java.util.List;
  */
 public interface ActivityRepositoryCustom extends FilterableRepository<Activity> {
 
-	List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Pageable pageable);
+	/**
+	 * Find list of {@link com.epam.ta.reportportal.entity.Activity}
+	 * for specified {@link com.epam.ta.reportportal.entity.item.TestItem}
+	 *
+	 * @param testItemId ID of {@link com.epam.ta.reportportal.entity.item.TestItem}
+	 * @param filter     Filter
+	 * @param sort       Sorting details
+	 * @param pageable   Page Details
+	 * @return Found activities
+	 */
+	List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Sort sort, Pageable pageable);
 
+	/**
+	 * Find list of {@link com.epam.ta.reportportal.entity.Activity}
+	 * for specified {@link com.epam.ta.reportportal.entity.project.Project}
+	 *
+	 * @param projectId ID of {@link com.epam.ta.reportportal.entity.project.Project}
+	 * @param filter    Filter
+	 * @param pageable  Page Details
+	 * @return Found activities
+	 */
 	List<Activity> findActivitiesByProjectId(Long projectId, Filter filter, Pageable pageable);
 
+	/**
+	 * Delete outdated activities
+	 *
+	 * @param projectId ID of project
+	 * @param period    Time period
+	 */
 	void deleteModifiedLaterAgo(Long projectId, Duration period);
 
+	/**
+	 * Find limiting count of results
+	 *
+	 * @param filter    Filter
+	 * @param sort        Sorting details
+	 * @param limit    Maximum number of returning items
+	 * @return Found activities
+	 */
 	List<Activity> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit);
 }
