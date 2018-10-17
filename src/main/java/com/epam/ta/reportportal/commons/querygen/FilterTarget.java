@@ -77,7 +77,7 @@ public enum FilterTarget {
 			JStatistics s = JStatistics.STATISTICS;
 			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
 
-			Select<?> fieldsForSelect = DSL.select(l.ID.as(SUBQUERY_LAUNCH_ID),
+			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
