@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
+import com.epam.ta.reportportal.entity.item.TestItemTag;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -97,7 +98,7 @@ public class RecordMappers {
 	 * Maps record into {@link IssueEntity} object
 	 */
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-		if (r.get(ISSUE.ISSUE_ID) != null) {
+		if (ofNullable(r.field(ISSUE.ISSUE_ID)).isPresent()) {
 			IssueEntity issueEntity = r.into(IssueEntity.class);
 			issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
 			return issueEntity;
@@ -128,6 +129,10 @@ public class RecordMappers {
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
 		testItem.setLaunch(new Launch(r.get(LAUNCH_ID, Long.class)));
 		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
+		ofNullable(r.field("tags")).ifPresent(f -> {
+			String[] tags = r.getValue(f, String[].class);
+			testItem.setTags(Arrays.stream(tags).map(TestItemTag::new).collect(Collectors.toSet()));
+		});
 		return testItem;
 	};
 
@@ -138,6 +143,10 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setUser(r.into(User.class));
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
+		ofNullable(r.field("tags")).ifPresent(f -> {
+			String[] tags = r.getValue(f, String[].class);
+			launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
+		});
 		return launch;
 	};
 
@@ -154,8 +163,10 @@ public class RecordMappers {
 			} else {
 				launch = res.get(launchId);
 			}
-			String[] tags = r.getValue("tags", String[].class);
-			Arrays.stream(tags).forEach(t -> launch.getTags().add(new LaunchTag(t)));
+			ofNullable(r.field("tags")).ifPresent(f -> {
+				String[] tags = r.getValue(f, String[].class);
+				launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
+			});
 			res.put(launchId, launch);
 		});
 		return new ArrayList<>(res.values());
