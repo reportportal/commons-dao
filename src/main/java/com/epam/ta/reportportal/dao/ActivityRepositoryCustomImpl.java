@@ -1,3 +1,19 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Condition;
@@ -5,11 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.Activity;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +33,13 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVITY_MAPPER;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 
+/**
+ * @author Ihar Kahadouski
+ */
 @Repository
 public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
@@ -41,18 +54,6 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 		this.dsl = dsl;
 	}
 
-	private final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = r -> {
-		Map<Long, Activity> activityMap = Maps.newHashMap();
-		r.forEach(res -> {
-			Long activityId = res.get(ACTIVITY.ID);
-			if (!activityMap.containsKey(activityId)) {
-				activityMap.put(activityId, ACTIVITY_MAPPER.map(res));
-			}
-		});
-
-		return Lists.newArrayList(activityMap.values());
-	};
-
 	@Override
 	public List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Pageable pageable) {
 		Sort sort = new Sort(Sort.Direction.DESC, CREATION_DATE_COLUMN);
@@ -61,7 +62,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 				.withSearchCriteria(OBJECT_ID_COLUMN)
 				.withValue(testItemId.toString())
 				.build();
-		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(testItemIdCondition)).with(sort).build()));
+		return dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(testItemIdCondition)).with(sort).build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 				.withSearchCriteria(PROJECT_ID_COLUMN)
 				.withValue(projectId.toString())
 				.build();
-		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(projectIdCondition)).with(pageable).build()));
+		return dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(projectIdCondition)).with(pageable).build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
@@ -82,12 +83,12 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public List<Activity> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit) {
-		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()));
+		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
 	public List<Activity> findByFilter(Filter filter) {
-		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
+		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
