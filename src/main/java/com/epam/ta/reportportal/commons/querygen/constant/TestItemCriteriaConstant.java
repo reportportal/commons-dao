@@ -27,5 +27,6 @@ public class TestItemCriteriaConstant {
 	public static final String CRITERIA_NAME = "name";
 	public static final String CRITERIA_TYPE = "type";
 	public static final String CRITERIA_PATH = "path";
+	public static final String CRITERIA_ISSUE_TYPE = "issue$issue_type";
 
 }

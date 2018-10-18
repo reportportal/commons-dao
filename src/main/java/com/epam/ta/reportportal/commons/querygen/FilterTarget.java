@@ -161,7 +161,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
 			new CriteriaHolder(CRITERIA_NAME, "ti.name", String.class, false),
-			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false)
+			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false),
+			new CriteriaHolder(CRITERIA_ISSUE_TYPE, "it.locator", String.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
