@@ -36,14 +36,26 @@ public class Statistics implements Serializable {
 	private String field;
 
 	@Column(name = "s_counter")
-	private Integer counter;
+	private int counter;
+
+	@Column(name = "launch_id")
+	private Long launchId;
+
+	@Column(name = "item_id")
+	private Long itemId;
 
 	public Statistics() {
 	}
 
-	public Statistics(String field, Integer counter) {
+	public Statistics(String field, int counter) {
 		this.field = field;
 		this.counter = counter;
+	}
+
+	public Statistics(String field, int counter, Long launchId) {
+		this.field = field;
+		this.counter = counter;
+		this.launchId = launchId;
 	}
 
 	public Long getId() {
@@ -62,12 +74,28 @@ public class Statistics implements Serializable {
 		this.field = field;
 	}
 
-	public Integer getCounter() {
+	public int getCounter() {
 		return counter;
 	}
 
-	public void setCounter(Integer counter) {
+	public void setCounter(int counter) {
 		this.counter = counter;
+	}
+
+	public Long getLaunchId() {
+		return launchId;
+	}
+
+	public void setLaunchId(Long launchId) {
+		this.launchId = launchId;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
 	}
 
 	@Override
@@ -79,12 +107,14 @@ public class Statistics implements Serializable {
 			return false;
 		}
 		Statistics that = (Statistics) o;
-		return Objects.equals(id, that.id) && Objects.equals(field, that.field) && Objects.equals(counter, that.counter);
+		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(field, that.field) && Objects.equals(
+				launchId,
+				that.launchId
+		) && Objects.equals(itemId, that.itemId);
 	}
 
 	@Override
 	public int hashCode() {
-
-		return Objects.hash(id, field, counter);
+		return Objects.hash(id, field, counter, launchId, itemId);
 	}
 }
