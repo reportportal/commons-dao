@@ -24,21 +24,22 @@ import java.util.Objects;
  * @author Ivan Budaev
  */
 @Entity
-@Table(name = "statistics_attribute")
-public class StatisticsAttribute implements Serializable {
+@Table(name = "statistics_field")
+public class StatisticsField implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "sf_id")
 	private Long id;
 
 	@Column(name = "name")
 	private String name;
 
-	public StatisticsAttribute() {
+	public StatisticsField() {
 
 	}
 
-	public StatisticsAttribute(String name) {
+	public StatisticsField(String name) {
 		this.name = name;
 	}
 
@@ -66,7 +67,7 @@ public class StatisticsAttribute implements Serializable {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		StatisticsAttribute that = (StatisticsAttribute) o;
+		StatisticsField that = (StatisticsField) o;
 		return Objects.equals(id, that.id) && Objects.equals(name, that.name);
 	}
 

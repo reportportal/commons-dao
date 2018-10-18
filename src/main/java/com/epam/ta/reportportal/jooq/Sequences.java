@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 /*
@@ -172,14 +170,14 @@ public class Sequences {
     public static final Sequence<Long> PROJECT_ID_SEQ = new SequenceImpl<Long>("project_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.server_email_details_id_seq</code>
-     */
-    public static final Sequence<Long> SERVER_EMAIL_DETAILS_ID_SEQ = new SequenceImpl<Long>("server_email_details_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.server_settings_id_seq</code>
      */
     public static final Sequence<Short> SERVER_SETTINGS_ID_SEQ = new SequenceImpl<Short>("server_settings_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
+
+    /**
+     * The sequence <code>public.statistics_field_sf_id_seq</code>
+     */
+    public static final Sequence<Long> STATISTICS_FIELD_SF_ID_SEQ = new SequenceImpl<Long>("statistics_field_sf_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.statistics_s_id_seq</code>

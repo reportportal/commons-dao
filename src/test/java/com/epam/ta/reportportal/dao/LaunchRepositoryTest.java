@@ -38,6 +38,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +93,7 @@ public class LaunchRepositoryTest {
 		demoLaunchS.forEach(it -> Assert.assertThat(it.getName(), Matchers.equalToIgnoringCase("Demo launch s")));
 	}
 
+	@Rollback(false)
 	@Test
 	public void mergeLaunchTestItems() {
 		long time = System.nanoTime() / 1000000;
@@ -129,7 +131,7 @@ public class LaunchRepositoryTest {
 		List<Launch> launches = launchRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
 				false,
 				"build",
-				"tag"
+				"tags"
 		)));
 
 		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));

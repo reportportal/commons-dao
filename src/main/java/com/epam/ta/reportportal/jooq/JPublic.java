@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 /*
@@ -67,9 +65,9 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JServerEmailDetails;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
@@ -118,7 +116,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 209874569;
+    private static final long serialVersionUID = -467712901;
 
     /**
      * The reference instance of <code>public</code>
@@ -158,22 +156,22 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.connectby</code>.
      */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, String __5, Integer __6, String __7) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7)).fetch();
+    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, Integer __5) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5)).fetch();
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6, String __7) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
+    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, Integer __5) {
+        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5);
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5, Field<Integer> __6, Field<String> __7) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
+    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<Integer> __5) {
+        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5);
     }
 
     /**
@@ -189,21 +187,21 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, String __2) {
         return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1, Integer __2) {
+    public static JCrosstab CROSSTAB(String __1, String __2) {
         return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+    public static JCrosstab CROSSTAB(Field<String> __1, Field<String> __2) {
         return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
@@ -477,11 +475,6 @@ public class JPublic extends SchemaImpl {
     public final JRestorePasswordBid RESTORE_PASSWORD_BID = com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid.RESTORE_PASSWORD_BID;
 
     /**
-     * The table <code>public.server_email_details</code>.
-     */
-    public final JServerEmailDetails SERVER_EMAIL_DETAILS = com.epam.ta.reportportal.jooq.tables.JServerEmailDetails.SERVER_EMAIL_DETAILS;
-
-    /**
      * The table <code>public.server_settings</code>.
      */
     public final JServerSettings SERVER_SETTINGS = com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
@@ -490,6 +483,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.statistics</code>.
      */
     public final JStatistics STATISTICS = com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
+
+    /**
+     * The table <code>public.statistics_field</code>.
+     */
+    public final JStatisticsField STATISTICS_FIELD = com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
 
     /**
      * The table <code>public.test_item</code>.
@@ -587,8 +585,8 @@ public class JPublic extends SchemaImpl {
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
             Sequences.PROJECT_ID_SEQ,
-            Sequences.SERVER_EMAIL_DETAILS_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
+            Sequences.STATISTICS_FIELD_SF_ID_SEQ,
             Sequences.STATISTICS_S_ID_SEQ,
             Sequences.TEST_ITEM_ITEM_ID_SEQ,
             Sequences.TICKET_ID_SEQ,
@@ -651,9 +649,9 @@ public class JPublic extends SchemaImpl {
             JProjectUser.PROJECT_USER,
             JRecipients.RECIPIENTS,
             JRestorePasswordBid.RESTORE_PASSWORD_BID,
-            JServerEmailDetails.SERVER_EMAIL_DETAILS,
             JServerSettings.SERVER_SETTINGS,
             JStatistics.STATISTICS,
+            JStatisticsField.STATISTICS_FIELD,
             JTestItem.TEST_ITEM,
             JTestItemResults.TEST_ITEM_RESULTS,
             JTicket.TICKET,

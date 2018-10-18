@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS test_item_structure CASCADE;
 DROP TABLE IF EXISTS test_item_results CASCADE;
 
 DROP TABLE IF EXISTS statistics CASCADE;
-DROP TABLE IF EXISTS statistics_attribute CASCADE;
+DROP TABLE IF EXISTS statistics_field CASCADE;
 
 DROP TABLE IF EXISTS issue_group CASCADE;
 DROP TABLE IF EXISTS issue_type_project_configuration CASCADE;
