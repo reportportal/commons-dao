@@ -36,12 +36,12 @@ public class Statistics implements Serializable {
 	private String field;
 
 	@Column(name = "s_counter")
-	private Integer counter;
+	private int counter;
 
 	public Statistics() {
 	}
 
-	public Statistics(String field, Integer counter) {
+	public Statistics(String field, int counter) {
 		this.field = field;
 		this.counter = counter;
 	}
@@ -62,11 +62,11 @@ public class Statistics implements Serializable {
 		this.field = field;
 	}
 
-	public Integer getCounter() {
+	public int getCounter() {
 		return counter;
 	}
 
-	public void setCounter(Integer counter) {
+	public void setCounter(int counter) {
 		this.counter = counter;
 	}
 
@@ -79,12 +79,11 @@ public class Statistics implements Serializable {
 			return false;
 		}
 		Statistics that = (Statistics) o;
-		return Objects.equals(id, that.id) && Objects.equals(field, that.field) && Objects.equals(counter, that.counter);
+		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(field, that.field);
 	}
 
 	@Override
 	public int hashCode() {
-
 		return Objects.hash(id, field, counter);
 	}
 }
