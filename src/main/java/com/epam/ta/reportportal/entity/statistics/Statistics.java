@@ -38,12 +38,21 @@ public class Statistics implements Serializable {
 	@Column(name = "s_counter")
 	private int counter;
 
+	@Column(name = "launch_id")
+	private Long launchId;
+
 	public Statistics() {
 	}
 
 	public Statistics(String field, int counter) {
 		this.field = field;
 		this.counter = counter;
+	}
+
+	public Statistics(String field, int counter, Long launchId) {
+		this.field = field;
+		this.counter = counter;
+		this.launchId = launchId;
 	}
 
 	public Long getId() {
@@ -70,6 +79,14 @@ public class Statistics implements Serializable {
 		this.counter = counter;
 	}
 
+	public Long getLaunchId() {
+		return launchId;
+	}
+
+	public void setLaunchId(Long launchId) {
+		this.launchId = launchId;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -79,11 +96,13 @@ public class Statistics implements Serializable {
 			return false;
 		}
 		Statistics that = (Statistics) o;
-		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(field, that.field);
+		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(field, that.field) && Objects.equals(launchId,
+				that.launchId
+		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, field, counter);
+		return Objects.hash(id, field, counter, launchId);
 	}
 }
