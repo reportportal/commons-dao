@@ -154,9 +154,8 @@ public enum FilterTarget {
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
 			new CriteriaHolder(CRITERIA_TYPE, "ti.type", JTestItemTypeEnum.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_ID, "ti.launch_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, "l.status", JStatusEnum.class, false),
-			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "l.mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
 			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
@@ -175,7 +174,6 @@ public enum FilterTarget {
 			JStatistics s = JStatistics.STATISTICS;
 
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
-					l.STATUS,
 					l.MODE,
 					ti.ITEM_ID,
 					ti.NAME,
@@ -189,7 +187,7 @@ public enum FilterTarget {
 					ti.PARENT_ID,
 					ti.LAUNCH_ID,
 					tir.RESULT_ID,
-					tir.STATUS.as(SUBQUERY_TEST_ITEM_STATUS),
+					tir.STATUS,
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,

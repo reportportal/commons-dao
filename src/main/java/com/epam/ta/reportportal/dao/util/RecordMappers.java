@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.TestItemTag;
@@ -54,7 +53,6 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PARENT_ID;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SUBQUERY_TEST_ITEM_STATUS;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -117,7 +115,6 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, TestItemResults> TEST_ITEM_RESULTS_RECORD_MAPPER = r -> {
 		TestItemResults results = r.into(TestItemResults.class);
-		results.setStatus(r.get(SUBQUERY_TEST_ITEM_STATUS, StatusEnum.class));
 		results.setIssue(ISSUE_RECORD_MAPPER.map(r));
 		results.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		return results;

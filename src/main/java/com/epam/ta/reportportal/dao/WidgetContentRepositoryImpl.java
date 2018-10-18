@@ -481,7 +481,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(TEST_ITEM.START_TIME),
 				fieldName(TEST_ITEM_RESULTS.END_TIME),
 				fieldName(TEST_ITEM_RESULTS.DURATION),
-				fieldName(SUBQUERY_TEST_ITEM_STATUS)
+				fieldName(TEST_ITEM_RESULTS.STATUS)
 		)
 				.from(QueryBuilder.newBuilder(filter).with(20).build())
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
