@@ -601,7 +601,8 @@ public class WidgetContentRepositoryTest {
 				false,
 				String.valueOf(projectId),
 				"project_id"
-		), new FilterCondition(Condition.EQUALS_ANY,
+		), new FilterCondition(
+				Condition.EQUALS_ANY,
 				false,
 				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
 				CRITERIA_TI_STATUS

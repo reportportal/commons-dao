@@ -8,8 +8,7 @@ public class ProjectFilter extends Filter {
 		super(id, filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
 				false,
-				String.valueOf(projectId),
-				GeneralCriteriaConstant.PROJECT_ID
+				String.valueOf(projectId), GeneralCriteriaConstant.CRITERIA_PROJECT_ID
 		));
 
 	}
@@ -18,8 +17,7 @@ public class ProjectFilter extends Filter {
 		super(filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
 				false,
-				String.valueOf(projectId),
-				GeneralCriteriaConstant.PROJECT_ID
+				String.valueOf(projectId), GeneralCriteriaConstant.CRITERIA_PROJECT_ID
 		));
 
 	}

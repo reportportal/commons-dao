@@ -49,7 +49,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 
 /**
  * @author Ivan Budaev
@@ -137,9 +137,7 @@ public class LaunchRepositoryTest {
 
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						PROJECT_ID
+						false, String.valueOf(projectId), CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")

@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.MODE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_MODE;
 
 /**
  * Several validation checks
@@ -71,7 +71,7 @@ public class Preconditions {
 	public static final Predicate<FilterCondition> HAS_ANY_MODE = hasMode(null);
 
 	public static Predicate<FilterCondition> hasMode(final Mode mode) {
-		return condition -> (MODE.equalsIgnoreCase(condition.getSearchCriteria())) && (mode == null || mode.name()
+		return condition -> (CRITERIA_MODE.equalsIgnoreCase(condition.getSearchCriteria())) && (mode == null || mode.name()
 				.equalsIgnoreCase(condition.getValue()));
 	}
 

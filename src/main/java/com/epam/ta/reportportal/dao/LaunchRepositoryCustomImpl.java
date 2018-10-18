@@ -143,9 +143,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
 						.select()
-						.distinctOn(LAUNCH.NAME)
-						.from(LAUNCH)
-						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))),
+						.distinctOn(LAUNCH.NAME).from(LAUNCH).orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())

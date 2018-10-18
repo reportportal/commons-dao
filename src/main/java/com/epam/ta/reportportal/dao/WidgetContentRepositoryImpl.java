@@ -172,7 +172,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(SUBQUERY_LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		Collections.addAll(fields,
+				fieldName(SUBQUERY_LAUNCH_ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME)
+		);
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -189,7 +194,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL)), 0).cast(Double.class)), 2);
 
-		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
+		return dsl.select(
+				fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -221,7 +227,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 
-		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
+		return dsl.select(
+				fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -240,9 +247,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
 				.as(TOTAL);
 
-		Collections.addAll(fields,
-				sumField,
-				fieldName(SUBQUERY_LAUNCH_ID),
+		Collections.addAll(fields, sumField, fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -268,8 +273,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.flatMap(List::stream)
 				.collect(toList());
 
-		Collections.addAll(statisticsFields,
-				fieldName(SUBQUERY_LAUNCH_ID),
+		Collections.addAll(statisticsFields, fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -284,7 +288,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
+		return dsl.select(
+				fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.STATUS),
@@ -298,7 +303,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(fieldName(SUBQUERY_LAUNCH_ID),
+		return dsl.select(
+				fieldName(SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -312,7 +318,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(SUBQUERY_LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		Collections.addAll(fields,
+				fieldName(SUBQUERY_LAUNCH_ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME)
+		);
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -341,9 +352,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				TICKET.URL,
 				TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
-				TEST_ITEM.DESCRIPTION,
-				USERS.LOGIN,
-				fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID)
+				TEST_ITEM.DESCRIPTION, USERS.LOGIN, fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID)
 
 		)
 				.from(QueryBuilder.newBuilder(filter).with(limit).with(sort).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
@@ -381,7 +390,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	//		Select<Record> select = dsl.select(fields)
 	//				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
 	//				.join(LAUNCH_TAG)
-	//				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
+	//				.on(LAUNCH_TAG.CRITERIA_LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 	//				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
 	//						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
 	//						.from(LAUNCH_TAG)
@@ -409,8 +418,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields,
-				fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID),
+		Collections.addAll(fields, fieldName(LAUNCHES_SUB_QUERY, SUBQUERY_LAUNCH_ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCHES_SUB_QUERY, NAME),
 				fieldName(LAUNCH.START_TIME),
@@ -445,7 +453,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(SUBQUERY_LAUNCH_ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		Collections.addAll(fields,
+				fieldName(SUBQUERY_LAUNCH_ID),
+				fieldName(LAUNCH.NUMBER),
+				fieldName(LAUNCH.START_TIME),
+				fieldName(LAUNCH.NAME)
+		);
 
 		List<Condition> conditions = tags.stream()
 				.map(cf -> LAUNCH_TAG.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
@@ -479,9 +492,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(TEST_ITEM.NAME),
 				fieldName(TEST_ITEM.TYPE),
 				fieldName(TEST_ITEM.START_TIME),
-				fieldName(TEST_ITEM_RESULTS.END_TIME),
-				fieldName(TEST_ITEM_RESULTS.DURATION),
-				fieldName(SUBQUERY_TEST_ITEM_STATUS)
+				fieldName(TEST_ITEM_RESULTS.END_TIME), fieldName(TEST_ITEM_RESULTS.DURATION), fieldName(SUBQUERY_TEST_ITEM_STATUS)
 		)
 				.from(QueryBuilder.newBuilder(filter)
 						.with(20)

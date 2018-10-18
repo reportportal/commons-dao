@@ -51,8 +51,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PARENT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
@@ -127,8 +127,8 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(LAUNCH_ID, Long.class)));
-		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
+		testItem.setLaunch(new Launch(r.get(CRITERIA_LAUNCH_ID, Long.class)));
+		testItem.setParent(new TestItem(r.get(CRITERIA_PARENT_ID, Long.class)));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
 			testItem.setTags(Arrays.stream(tags).map(TestItemTag::new).collect(Collectors.toSet()));

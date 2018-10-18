@@ -32,7 +32,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
-import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
+import static com.epam.ta.reportportal.jooq.Tables.USERS;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
