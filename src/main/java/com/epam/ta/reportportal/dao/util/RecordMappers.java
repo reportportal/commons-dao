@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.TestItemTag;
@@ -55,7 +56,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
@@ -116,6 +116,7 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, TestItemResults> TEST_ITEM_RESULTS_RECORD_MAPPER = r -> {
 		TestItemResults results = r.into(TestItemResults.class);
+		results.setStatus(r.get(SUBQUERY_TEST_ITEM_STATUS, StatusEnum.class));
 		results.setIssue(ISSUE_RECORD_MAPPER.map(r));
 		results.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		return results;
@@ -131,7 +132,7 @@ public class RecordMappers {
 		testItem.setParent(new TestItem(r.get(CRITERIA_PARENT_ID, Long.class)));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
-			testItem.setTags(Arrays.stream(tags).map(TestItemTag::new).collect(Collectors.toSet()));
+			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(TestItemTag::new).collect(Collectors.toSet()));
 		});
 		return testItem;
 	};
@@ -145,31 +146,9 @@ public class RecordMappers {
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
-			launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
+			launch.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(LaunchTag::new).collect(Collectors.toSet()));
 		});
 		return launch;
-	};
-
-	/**
-	 * Maps result of records without crosstab into list of launches
-	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> {
-		Map<Long, Launch> res = new HashMap<>();
-		result.forEach(r -> {
-			Long launchId = r.get(LAUNCH.ID.getName(), Long.class);
-			Launch launch;
-			if (!res.containsKey(launchId)) {
-				launch = LAUNCH_RECORD_MAPPER.map(r);
-			} else {
-				launch = res.get(launchId);
-			}
-			ofNullable(r.field("tags")).ifPresent(f -> {
-				String[] tags = r.getValue(f, String[].class);
-				launch.setTags(Arrays.stream(tags).map(LaunchTag::new).collect(Collectors.toSet()));
-			});
-			res.put(launchId, launch);
-		});
-		return new ArrayList<>(res.values());
 	};
 
 	/**

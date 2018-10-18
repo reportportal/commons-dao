@@ -46,9 +46,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
+import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
@@ -65,9 +65,9 @@ public enum FilterTarget {
 			new CriteriaHolder(ID, "launch.id", Long.class, false),
 			new CriteriaHolder(DESCRIPTION, "launch.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_STATUS, "status", JStatusEnum.class, false),
-			new CriteriaHolder(CRITERIA_MODE, "mode", JLaunchModeEnum.class, false),
-			new CriteriaHolder(NAME, "name", String.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, "status", JStatusEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_NAME, "name", String.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_TAG, "launch_tag.value", String.class,false)
 			//@formatter:on
 	)) {
@@ -77,7 +77,7 @@ public enum FilterTarget {
 			JStatistics s = JStatistics.STATISTICS;
 			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
 
-			Select<?> fieldsForSelect = DSL.select(l.ID.as(SUBQUERY_LAUNCH_ID),
+			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -87,7 +87,11 @@ public enum FilterTarget {
 					l.END_TIME,
 					l.NUMBER,
 					l.LAST_MODIFIED,
-					l.MODE, l.STATUS, u.ID.as(SUBQUERY_USER_ID), u.LOGIN, DSL.arrayAgg(launchTag.VALUE).as("tags")
+					l.MODE,
+					l.STATUS,
+					u.ID.as(SUBQUERY_USER_ID),
+					u.LOGIN,
+					DSL.arrayAgg(launchTag.VALUE).as("tags")
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
@@ -149,14 +153,15 @@ public enum FilterTarget {
 	},
 
 	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
-			new CriteriaHolder("type", "ti.type", JTestItemTypeEnum.class, false),
+			new CriteriaHolder(CRITERIA_TYPE, "ti.type", JTestItemTypeEnum.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_ID, "ti.launch_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_STATUS, "l.status", JStatusEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, "l.status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
-			new CriteriaHolder(CRITERIA_MODE, "l.mode", JLaunchModeEnum.class, false),
+			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
-			new CriteriaHolder("path", "ti.path", Long.class, false),
+			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
+			new CriteriaHolder(CRITERIA_NAME, "ti.name", String.class, false),
 			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false)
 	)) {
 		@Override
@@ -171,15 +176,21 @@ public enum FilterTarget {
 			JStatistics s = JStatistics.STATISTICS;
 
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
-					l.STATUS, l.MODE, ti.ITEM_ID.as(SUBQUERY_TEST_ITEM_ID),
+					l.STATUS,
+					l.MODE,
+					ti.ITEM_ID,
 					ti.NAME,
 					ti.TYPE,
 					ti.START_TIME,
 					ti.DESCRIPTION,
 					ti.LAST_MODIFIED,
-					ti.PATH, ti.UNIQUE_ID, ti.HAS_CHILDREN,
+					ti.PATH,
+					ti.UNIQUE_ID,
+					ti.HAS_CHILDREN,
 					ti.PARENT_ID,
-					ti.LAUNCH_ID, tir.RESULT_ID, tir.STATUS.as(SUBQUERY_TEST_ITEM_STATUS),
+					ti.LAUNCH_ID,
+					tir.RESULT_ID,
+					tir.STATUS.as(SUBQUERY_TEST_ITEM_STATUS),
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,
@@ -189,7 +200,10 @@ public enum FilterTarget {
 					is.ISSUE_DESCRIPTION,
 					it.ISSUE_NAME,
 					it.HEX_COLOR,
-					it.ABBREVIATION, it.LOCATOR, gr.ISSUE_GROUP_, DSL.arrayAgg(tag.VALUE).as("tags")
+					it.ABBREVIATION,
+					it.LOCATOR,
+					gr.ISSUE_GROUP_,
+					DSL.arrayAgg(tag.VALUE).as("tags")
 			);
 
 			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
