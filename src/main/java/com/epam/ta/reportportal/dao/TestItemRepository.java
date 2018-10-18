@@ -45,12 +45,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
-	 * Select ids and names of all items in a tree till current.
+	 * Select names of all items in a tree till current.
 	 *
 	 * @param itemPath itemPath
+	 * @param itemId   Current item id
 	 * @return List of item names
 	 */
-	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE) AND t.item_id != :itemId", nativeQuery = true)
+	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE) AND t.item_id != :itemId ORDER BY t.name", nativeQuery = true)
 	List<String> selectPathNames(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
