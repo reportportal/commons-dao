@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -171,6 +172,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(PROJECT.ID.eq(projectId))
 				.and(ISSUE_TYPE.LOCATOR.eq(locator))
 				.fetchOne(ISSUE_TYPE_RECORD_MAPPER));
+	}
+
+	@Override
+	public Map<Long, String> selectPathNames(String path) {
+		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.NAME)
+				.from(TEST_ITEM)
+				.where(DSL.sql(TEST_ITEM.PATH + " @> cast(? AS LTREE)", path))
+				.orderBy(TEST_ITEM.ITEM_ID)
+				.fetch()
+				.stream()
+				.collect(MoreCollectors.toLinkedMap(r -> r.get(TEST_ITEM.ITEM_ID), r -> r.get(TEST_ITEM.NAME)));
 	}
 
 	/**

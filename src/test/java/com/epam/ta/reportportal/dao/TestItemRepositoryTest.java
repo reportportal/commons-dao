@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import org.assertj.core.util.Lists;
+import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -34,7 +35,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Ivan Budaev
@@ -68,6 +71,14 @@ public class TestItemRepositoryTest {
 
 	private static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+	}
+
+	@Test
+	public void selectPathNames() {
+		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
+		Assert.assertThat(results.getClass(), Matchers.theInstance(LinkedHashMap.class));
+		Assert.assertThat(results.size(), Matchers.equalTo(3));
+		System.out.println();
 	}
 
 	@Test
