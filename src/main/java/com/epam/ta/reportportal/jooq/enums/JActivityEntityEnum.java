@@ -3,12 +3,14 @@
  */
 package com.epam.ta.reportportal.jooq.enums;
 
+
 import com.epam.ta.reportportal.jooq.JPublic;
+
+import javax.annotation.Generated;
+
 import org.jooq.Catalog;
 import org.jooq.EnumType;
 import org.jooq.Schema;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,31 +28,7 @@ public enum JActivityEntityEnum implements EnumType {
 
     LAUNCH("LAUNCH"),
 
-	ITEM("ITEM"),
-
-	DASHBOARD("DASHBOARD"),
-
-	DEFECT_TYPE("DEFECT_TYPE"),
-
-	EMAIL_CONFIG("EMAIL_CONFIG"),
-
-	FILTER("FILTER"),
-
-	IMPORT("IMPORT"),
-
-	INTEGRATION("INTEGRATION"),
-
-	ITEM_ISSUE("ITEM_ISSUE"),
-
-	PROJECT("PROJECT"),
-
-	SHARING("SHARING"),
-
-	TICKET("TICKET"),
-
-	USER("USER"),
-
-	WIDGET("WIDGET");
+    ITEM("ITEM");
 
     private final String literal;
 
