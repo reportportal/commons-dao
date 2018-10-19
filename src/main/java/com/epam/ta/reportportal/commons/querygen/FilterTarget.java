@@ -160,7 +160,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_PATH, "ti.path", String.class, false),
+			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
 			new CriteriaHolder(CRITERIA_NAME, "ti.name", String.class, false),
 			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false),
