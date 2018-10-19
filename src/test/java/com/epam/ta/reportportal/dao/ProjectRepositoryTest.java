@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.epam.ta.reportportal.dao;
@@ -51,15 +49,15 @@ public class ProjectRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		//		runSqlScript("/test-dropall-script.sql");
-		//		runSqlScript("/test-create-script.sql");
-		//		runSqlScript("/test-fill-script.sql");
+		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-create-script.sql");
+		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {

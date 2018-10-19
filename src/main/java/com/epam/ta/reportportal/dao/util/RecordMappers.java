@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
@@ -81,7 +82,7 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, Set<Statistics>> CROSSTAB_RECORD_STATISTICS_MAPPER = r -> Arrays.stream(r.fields())
 			.filter(f -> f.getName().startsWith(STATISTICS))
-			.map(f -> new Statistics(f.getName(), r.get(f.getName(), Integer.class)))
+			.map(f -> new Statistics(new StatisticsField(f.getName()), r.get(f.getName(), Integer.class)))
 			.collect(Collectors.toSet());
 
 	/**

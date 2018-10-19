@@ -45,16 +45,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
-	 * Select names of all items in a tree till current.
-	 *
-	 * @param itemPath itemPath
-	 * @param itemId   Current item id
-	 * @return List of item names
-	 */
-	@Query(value = "SELECT t.name FROM test_item t WHERE t.path @> cast(:itemPath AS LTREE) AND t.item_id != :itemId ORDER BY t.name", nativeQuery = true)
-	List<String> selectPathNames(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
-
-	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
 	 * launch with provided launchId.
 	 * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status

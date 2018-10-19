@@ -75,6 +75,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JUsers u = JUsers.USERS;
 			JStatistics s = JStatistics.STATISTICS;
+			JStatisticsField sf = JStatisticsField.STATISTICS_FIELD;
 			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
@@ -112,10 +113,12 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.LAUNCH_ID.as(CROSSTAB_LAUNCH_ID), s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.LAUNCH_ID.as(CROSSTAB_LAUNCH_ID), sf.NAME, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.LAUNCH_ID, s.S_FIELD)
-					.orderBy(s.LAUNCH_ID, s.S_FIELD);
+					.join(sf)
+					.on(s.STATISTICS_FIELD_ID.eq(sf.SF_ID))
+					.groupBy(s.LAUNCH_ID, sf.NAME)
+					.orderBy(s.LAUNCH_ID, sf.NAME);
 
 			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
 
@@ -161,7 +164,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
 			new CriteriaHolder(CRITERIA_NAME, "ti.name", String.class, false),
-			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false)
+			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false),
+			new CriteriaHolder(CRITERIA_ISSUE_TYPE, "it.locator", String.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
@@ -173,6 +177,7 @@ public enum FilterTarget {
 			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
 			JItemTag tag = JItemTag.ITEM_TAG;
 			JStatistics s = JStatistics.STATISTICS;
+			JStatisticsField sf = JStatisticsField.STATISTICS_FIELD;
 
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
 					l.MODE,
@@ -220,10 +225,12 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.ITEM_ID.as(CROSSTAB_TEST_ITEM_ID), s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.ITEM_ID.as(CROSSTAB_TEST_ITEM_ID), sf.NAME, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.ITEM_ID, s.S_FIELD)
-					.orderBy(s.ITEM_ID, s.S_FIELD);
+					.join(sf)
+					.on(s.STATISTICS_FIELD_ID.eq(sf.SF_ID))
+					.groupBy(s.ITEM_ID, sf.NAME)
+					.orderBy(s.ITEM_ID, sf.NAME);
 
 			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
 			return joinStep.rightJoin(ti)
@@ -354,7 +361,13 @@ public enum FilterTarget {
 					FILTER_SORT.DIRECTION
 			)
 					.from(JUserFilter.USER_FILTER)
-					.join(FILTER)
+					.join(ACL_OBJECT_IDENTITY)
+					.on(JUserFilter.USER_FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY))
+					.join(ACL_CLASS)
+					.on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS))
+					.join(ACL_ENTRY)
+					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID))
+                    .join(FILTER)
 					.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
 					.join(FILTER_CONDITION)
 					.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))
