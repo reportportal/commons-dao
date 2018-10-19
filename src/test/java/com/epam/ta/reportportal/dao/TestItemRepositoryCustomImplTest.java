@@ -58,14 +58,14 @@ public class TestItemRepositoryCustomImplTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-/*		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");*/
+		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
