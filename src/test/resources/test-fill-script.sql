@@ -10,6 +10,13 @@ INSERT INTO project_user (user_id, project_id, project_role)
 VALUES ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'MEMBER');
 
 INSERT INTO project (name, additional_info, creation_date) VALUES ('superadmin_personal', 'another additional info', '2018-07-19 14:25:00');
+
+INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
+VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL',
+        (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'tester', false);
+
+INSERT INTO project_user (user_id, project_id, project_role) VALUES
+  ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
 -- INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
 -- VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 14:25:00');
 INSERT INTO bug_tracking_system (url, type, bts_project, project_id) VALUES ('test.com', 'TEST TYPE', 'TEST PROJECT', (SELECT currval(pg_get_serial_sequence('project', 'id'))));
@@ -18,12 +25,7 @@ INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url
 INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url) VALUES (2, 'EPMRPP-123', (SELECT currval(pg_get_serial_sequence('users', 'id'))), '2018-09-28 12:38:24.374555', (SELECT currval(pg_get_serial_sequence('bug_tracking_system', 'id'))), 'epam.com');
 INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url) VALUES (3, 'QWERTY-100', (SELECT currval(pg_get_serial_sequence('users', 'id'))), '2018-09-28 12:38:24.374555', (SELECT currval(pg_get_serial_sequence('bug_tracking_system', 'id'))), 'epam.com');
 
-INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
-VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL',
-        (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'tester', false);
 
-INSERT INTO project_user (user_id, project_id, project_role) VALUES
-  ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PROJECT_MANAGER');
 
 INSERT INTO integration_type(
 	name, auth_flow, creation_date, group_type)
