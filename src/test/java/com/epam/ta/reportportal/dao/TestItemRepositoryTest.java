@@ -57,6 +57,7 @@ public class TestItemRepositoryTest {
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
 		runSqlScript("/test-fill-script.sql");
+
 	}
 
 	@AfterClass
