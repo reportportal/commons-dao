@@ -49,15 +49,26 @@ public class ProjectRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
+<<<<<<<HEAD
+				//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+				//		runSqlScript("/test-dropall-script.sql");
+				//		runSqlScript("/test-create-script.sql");
+				//		runSqlScript("/test-fill-script.sql");
+				=======
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
 		runSqlScript("/test-fill-script.sql");
+>>>>>>>9 c6515a7c2cfa88bd1503e11364810bbc3828e80
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
+<<<<<<<HEAD
+				//		runSqlScript("/test-dropall-script.sql");
+				=======
 		runSqlScript("/test-dropall-script.sql");
+>>>>>>>9 c6515a7c2cfa88bd1503e11364810bbc3828e80
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {

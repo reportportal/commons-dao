@@ -36,8 +36,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Ivan Budaev
  */

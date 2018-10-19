@@ -127,9 +127,7 @@ public class LaunchRepositoryTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		List<Launch> launches = launchRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
-				false,
-				"build",
-				"tags"
+				false, "build", "tags"
 		)));
 
 		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
