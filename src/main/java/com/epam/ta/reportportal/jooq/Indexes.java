@@ -22,6 +22,10 @@
 package com.epam.ta.reportportal.jooq;
 
 
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
 import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -94,6 +98,14 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
+    public static final Index ACL_CLASS_PKEY = Indexes0.ACL_CLASS_PKEY;
+    public static final Index UNIQUE_UK_2 = Indexes0.UNIQUE_UK_2;
+    public static final Index ACL_ENTRY_PKEY = Indexes0.ACL_ENTRY_PKEY;
+    public static final Index UNIQUE_UK_4 = Indexes0.UNIQUE_UK_4;
+    public static final Index ACL_OBJECT_IDENTITY_PKEY = Indexes0.ACL_OBJECT_IDENTITY_PKEY;
+    public static final Index UNIQUE_UK_3 = Indexes0.UNIQUE_UK_3;
+    public static final Index ACL_SID_PKEY = Indexes0.ACL_SID_PKEY;
+    public static final Index UNIQUE_UK_1 = Indexes0.UNIQUE_UK_1;
     public static final Index ACTIVE_DIRECTORY_CONFIG_PK = Indexes0.ACTIVE_DIRECTORY_CONFIG_PK;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
@@ -166,6 +178,14 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     private static class Indexes0 {
+        public static Index ACL_CLASS_PKEY = Internal.createIndex("acl_class_pkey", JAclClass.ACL_CLASS, new OrderField[] { JAclClass.ACL_CLASS.ID }, true);
+        public static Index UNIQUE_UK_2 = Internal.createIndex("unique_uk_2", JAclClass.ACL_CLASS, new OrderField[] { JAclClass.ACL_CLASS.CLASS }, true);
+        public static Index ACL_ENTRY_PKEY = Internal.createIndex("acl_entry_pkey", JAclEntry.ACL_ENTRY, new OrderField[] { JAclEntry.ACL_ENTRY.ID }, true);
+        public static Index UNIQUE_UK_4 = Internal.createIndex("unique_uk_4", JAclEntry.ACL_ENTRY, new OrderField[] { JAclEntry.ACL_ENTRY.ACL_OBJECT_IDENTITY, JAclEntry.ACL_ENTRY.ACE_ORDER }, true);
+        public static Index ACL_OBJECT_IDENTITY_PKEY = Internal.createIndex("acl_object_identity_pkey", JAclObjectIdentity.ACL_OBJECT_IDENTITY, new OrderField[] { JAclObjectIdentity.ACL_OBJECT_IDENTITY.ID }, true);
+        public static Index UNIQUE_UK_3 = Internal.createIndex("unique_uk_3", JAclObjectIdentity.ACL_OBJECT_IDENTITY, new OrderField[] { JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS, JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY }, true);
+        public static Index ACL_SID_PKEY = Internal.createIndex("acl_sid_pkey", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.ID }, true);
+        public static Index UNIQUE_UK_1 = Internal.createIndex("unique_uk_1", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL }, true);
         public static Index ACTIVE_DIRECTORY_CONFIG_PK = Internal.createIndex("active_directory_config_pk", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, new OrderField[] { JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.ID }, true);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
