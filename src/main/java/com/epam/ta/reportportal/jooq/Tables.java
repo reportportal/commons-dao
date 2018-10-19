@@ -22,6 +22,10 @@
 package com.epam.ta.reportportal.jooq;
 
 
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
 import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -105,6 +109,26 @@ import org.jooq.Result;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
+
+    /**
+     * The table <code>public.acl_class</code>.
+     */
+    public static final JAclClass ACL_CLASS = com.epam.ta.reportportal.jooq.tables.JAclClass.ACL_CLASS;
+
+    /**
+     * The table <code>public.acl_entry</code>.
+     */
+    public static final JAclEntry ACL_ENTRY = com.epam.ta.reportportal.jooq.tables.JAclEntry.ACL_ENTRY;
+
+    /**
+     * The table <code>public.acl_object_identity</code>.
+     */
+    public static final JAclObjectIdentity ACL_OBJECT_IDENTITY = com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity.ACL_OBJECT_IDENTITY;
+
+    /**
+     * The table <code>public.acl_sid</code>.
+     */
+    public static final JAclSid ACL_SID = com.epam.ta.reportportal.jooq.tables.JAclSid.ACL_SID;
 
     /**
      * The table <code>public.active_directory_config</code>.
