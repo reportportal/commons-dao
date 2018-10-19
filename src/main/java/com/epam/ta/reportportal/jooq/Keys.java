@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 /*
@@ -65,9 +63,9 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JServerEmailDetails;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
@@ -120,8 +118,8 @@ import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JRecipientsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JRestorePasswordBidRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JServerEmailDetailsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JServerSettingsRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JStatisticsFieldRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JStatisticsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemResultsRecord;
@@ -187,9 +185,9 @@ public class Keys {
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Identities0.IDENTITY_PROJECT_ATTRIBUTE;
-    public static final Identity<JServerEmailDetailsRecord, Long> IDENTITY_SERVER_EMAIL_DETAILS = Identities0.IDENTITY_SERVER_EMAIL_DETAILS;
     public static final Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Identities0.IDENTITY_SERVER_SETTINGS;
     public static final Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Identities0.IDENTITY_STATISTICS;
+    public static final Identity<JStatisticsFieldRecord, Long> IDENTITY_STATISTICS_FIELD = Identities0.IDENTITY_STATISTICS_FIELD;
     public static final Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Identities0.IDENTITY_TEST_ITEM;
     public static final Identity<JTicketRecord, Long> IDENTITY_TICKET = Identities0.IDENTITY_TICKET;
     public static final Identity<JUsersRecord, Long> IDENTITY_USERS = Identities0.IDENTITY_USERS;
@@ -254,12 +252,12 @@ public class Keys {
     public static final UniqueKey<JProjectUserRecord> USERS_PROJECT_PK = UniqueKeys0.USERS_PROJECT_PK;
     public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_PK = UniqueKeys0.RESTORE_PASSWORD_BID_PK;
     public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_EMAIL_KEY = UniqueKeys0.RESTORE_PASSWORD_BID_EMAIL_KEY;
-    public static final UniqueKey<JServerEmailDetailsRecord> SERVER_EMAIL_DETAILS_PK = UniqueKeys0.SERVER_EMAIL_DETAILS_PK;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = UniqueKeys0.SERVER_SETTINGS_KEY_KEY;
-    public static final UniqueKey<JStatisticsRecord> PK_STATISTICS = UniqueKeys0.PK_STATISTICS;
-    public static final UniqueKey<JStatisticsRecord> UNIQUE_STATUS_ITEM = UniqueKeys0.UNIQUE_STATUS_ITEM;
-    public static final UniqueKey<JStatisticsRecord> UNIQUE_STATUS_LAUNCH = UniqueKeys0.UNIQUE_STATUS_LAUNCH;
+    public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = UniqueKeys0.STATISTICS_PK;
+    public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = UniqueKeys0.UNIQUE_STATS_LAUNCH;
+    public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = UniqueKeys0.UNIQUE_STATS_ITEM;
+    public static final UniqueKey<JStatisticsFieldRecord> STATISTICS_FIELD_PK = UniqueKeys0.STATISTICS_FIELD_PK;
     public static final UniqueKey<JTestItemRecord> TEST_ITEM_PK = UniqueKeys0.TEST_ITEM_PK;
     public static final UniqueKey<JTestItemResultsRecord> TEST_ITEM_RESULTS_PK = UniqueKeys0.TEST_ITEM_RESULTS_PK;
     public static final UniqueKey<JTicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
@@ -328,8 +326,9 @@ public class Keys {
     public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_USER_ID_FKEY;
     public static final ForeignKey<JProjectUserRecord, JProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY;
     public static final ForeignKey<JRecipientsRecord, JEmailSenderCaseRecord> RECIPIENTS__RECIPIENTS_EMAIL_SENDER_CASE_ID_FKEY = ForeignKeys0.RECIPIENTS__RECIPIENTS_EMAIL_SENDER_CASE_ID_FKEY;
-    public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_ITEM_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JLaunchRecord> STATISTICS__STATISTICS_LAUNCH_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_LAUNCH_ID_FKEY;
+    public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_ITEM_ID_FKEY;
+    public static final ForeignKey<JStatisticsRecord, JStatisticsFieldRecord> STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY;
     public static final ForeignKey<JTestItemRecord, JTestItemRecord> TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY = ForeignKeys0.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY;
     public static final ForeignKey<JTestItemRecord, JTestItemRecord> TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY = ForeignKeys0.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY;
     public static final ForeignKey<JTestItemRecord, JLaunchRecord> TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY = ForeignKeys0.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY;
@@ -377,9 +376,9 @@ public class Keys {
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Internal.createIdentity(JProjectAttribute.PROJECT_ATTRIBUTE, JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
-        public static Identity<JServerEmailDetailsRecord, Long> IDENTITY_SERVER_EMAIL_DETAILS = Internal.createIdentity(JServerEmailDetails.SERVER_EMAIL_DETAILS, JServerEmailDetails.SERVER_EMAIL_DETAILS.ID);
         public static Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Internal.createIdentity(JServerSettings.SERVER_SETTINGS, JServerSettings.SERVER_SETTINGS.ID);
         public static Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Internal.createIdentity(JStatistics.STATISTICS, JStatistics.STATISTICS.S_ID);
+        public static Identity<JStatisticsFieldRecord, Long> IDENTITY_STATISTICS_FIELD = Internal.createIdentity(JStatisticsField.STATISTICS_FIELD, JStatisticsField.STATISTICS_FIELD.SF_ID);
         public static Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Internal.createIdentity(JTestItem.TEST_ITEM, JTestItem.TEST_ITEM.ITEM_ID);
         public static Identity<JTicketRecord, Long> IDENTITY_TICKET = Internal.createIdentity(JTicket.TICKET, JTicket.TICKET.ID);
         public static Identity<JUsersRecord, Long> IDENTITY_USERS = Internal.createIdentity(JUsers.USERS, JUsers.USERS.ID);
@@ -442,12 +441,12 @@ public class Keys {
         public static final UniqueKey<JProjectUserRecord> USERS_PROJECT_PK = Internal.createUniqueKey(JProjectUser.PROJECT_USER, "users_project_pk", JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID);
         public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_PK = Internal.createUniqueKey(JRestorePasswordBid.RESTORE_PASSWORD_BID, "restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID);
         public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createUniqueKey(JRestorePasswordBid.RESTORE_PASSWORD_BID, "restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL);
-        public static final UniqueKey<JServerEmailDetailsRecord> SERVER_EMAIL_DETAILS_PK = Internal.createUniqueKey(JServerEmailDetails.SERVER_EMAIL_DETAILS, "server_email_details_pk", JServerEmailDetails.SERVER_EMAIL_DETAILS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_id", JServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_key_key", JServerSettings.SERVER_SETTINGS.KEY);
-        public static final UniqueKey<JStatisticsRecord> PK_STATISTICS = Internal.createUniqueKey(JStatistics.STATISTICS, "pk_statistics", JStatistics.STATISTICS.S_ID);
-        public static final UniqueKey<JStatisticsRecord> UNIQUE_STATUS_ITEM = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_status_item", JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.ITEM_ID);
-        public static final UniqueKey<JStatisticsRecord> UNIQUE_STATUS_LAUNCH = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_status_launch", JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.LAUNCH_ID);
+        public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = Internal.createUniqueKey(JStatistics.STATISTICS, "statistics_pk", JStatistics.STATISTICS.S_ID);
+        public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_launch", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID);
+        public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_item", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID);
+        public static final UniqueKey<JStatisticsFieldRecord> STATISTICS_FIELD_PK = Internal.createUniqueKey(JStatisticsField.STATISTICS_FIELD, "statistics_field_pk", JStatisticsField.STATISTICS_FIELD.SF_ID);
         public static final UniqueKey<JTestItemRecord> TEST_ITEM_PK = Internal.createUniqueKey(JTestItem.TEST_ITEM, "test_item_pk", JTestItem.TEST_ITEM.ITEM_ID);
         public static final UniqueKey<JTestItemResultsRecord> TEST_ITEM_RESULTS_PK = Internal.createUniqueKey(JTestItemResults.TEST_ITEM_RESULTS, "test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID);
         public static final UniqueKey<JTicketRecord> TICKET_PK = Internal.createUniqueKey(JTicket.TICKET, "ticket_pk", JTicket.TICKET.ID);
@@ -514,8 +513,9 @@ public class Keys {
         public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JProjectUser.PROJECT_USER, "project_user__project_user_user_id_fkey", JProjectUser.PROJECT_USER.USER_ID);
         public static final ForeignKey<JProjectUserRecord, JProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JProjectUser.PROJECT_USER, "project_user__project_user_project_id_fkey", JProjectUser.PROJECT_USER.PROJECT_ID);
         public static final ForeignKey<JRecipientsRecord, JEmailSenderCaseRecord> RECIPIENTS__RECIPIENTS_EMAIL_SENDER_CASE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.EMAIL_SENDER_CASE_PK, JRecipients.RECIPIENTS, "recipients__recipients_email_sender_case_id_fkey", JRecipients.RECIPIENTS.EMAIL_SENDER_CASE_ID);
-        public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JStatistics.STATISTICS, "statistics__statistics_item_id_fkey", JStatistics.STATISTICS.ITEM_ID);
         public static final ForeignKey<JStatisticsRecord, JLaunchRecord> STATISTICS__STATISTICS_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JStatistics.STATISTICS, "statistics__statistics_launch_id_fkey", JStatistics.STATISTICS.LAUNCH_ID);
+        public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JStatistics.STATISTICS, "statistics__statistics_item_id_fkey", JStatistics.STATISTICS.ITEM_ID);
+        public static final ForeignKey<JStatisticsRecord, JStatisticsFieldRecord> STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.STATISTICS_FIELD_PK, JStatistics.STATISTICS, "statistics__statistics_statistics_field_id_fkey", JStatistics.STATISTICS.STATISTICS_FIELD_ID);
         public static final ForeignKey<JTestItemRecord, JTestItemRecord> TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JTestItem.TEST_ITEM, "test_item__test_item_parent_id_fkey", JTestItem.TEST_ITEM.PARENT_ID);
         public static final ForeignKey<JTestItemRecord, JTestItemRecord> TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JTestItem.TEST_ITEM, "test_item__test_item_retry_of_fkey", JTestItem.TEST_ITEM.RETRY_OF);
         public static final ForeignKey<JTestItemRecord, JLaunchRecord> TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JTestItem.TEST_ITEM, "test_item__test_item_launch_id_fkey", JTestItem.TEST_ITEM.LAUNCH_ID);

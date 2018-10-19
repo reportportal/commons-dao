@@ -75,6 +75,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JUsers u = JUsers.USERS;
 			JStatistics s = JStatistics.STATISTICS;
+			JStatisticsField sf = JStatisticsField.STATISTICS_FIELD;
 			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
@@ -112,10 +113,12 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.LAUNCH_ID.as(CROSSTAB_LAUNCH_ID), s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.LAUNCH_ID.as(CROSSTAB_LAUNCH_ID), sf.NAME, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.LAUNCH_ID, s.S_FIELD)
-					.orderBy(s.LAUNCH_ID, s.S_FIELD);
+					.join(sf)
+					.on(s.STATISTICS_FIELD_ID.eq(sf.SF_ID))
+					.groupBy(s.LAUNCH_ID, sf.NAME)
+					.orderBy(s.LAUNCH_ID, sf.NAME);
 
 			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
 
@@ -157,7 +160,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "l.mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_TI_STATUS, "tir.status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_PARENT_ID, "ti.parent_id", Long.class, false),
-			new CriteriaHolder(CRITERIA_PATH, "ti.path", Long.class, false),
+			new CriteriaHolder(CRITERIA_PATH, "ti.path", String.class, false),
 			new CriteriaHolder(CRITERIA_HAS_CHILDREN, "ti.has_children", Boolean.class, false),
 			new CriteriaHolder(CRITERIA_NAME, "ti.name", String.class, false),
 			new CriteriaHolder(CRITERIA_ITEM_TAG, "item_tag.value", String.class, false),
@@ -173,6 +176,7 @@ public enum FilterTarget {
 			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
 			JItemTag tag = JItemTag.ITEM_TAG;
 			JStatistics s = JStatistics.STATISTICS;
+			JStatisticsField sf = JStatisticsField.STATISTICS_FIELD;
 
 			Select<?> fieldsForSelect = DSL.select(l.PROJECT_ID,
 					l.MODE,
@@ -222,10 +226,12 @@ public enum FilterTarget {
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
 					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
 
-			Select<?> raw = DSL.select(s.ITEM_ID.as(CROSSTAB_TEST_ITEM_ID), s.S_FIELD, max(s.S_COUNTER))
+			Select<?> raw = DSL.select(s.ITEM_ID.as(CROSSTAB_TEST_ITEM_ID), sf.NAME, max(s.S_COUNTER))
 					.from(s)
-					.groupBy(s.ITEM_ID, s.S_FIELD)
-					.orderBy(s.ITEM_ID, s.S_FIELD);
+					.join(sf)
+					.on(s.STATISTICS_FIELD_ID.eq(sf.SF_ID))
+					.groupBy(s.ITEM_ID, sf.NAME)
+					.orderBy(s.ITEM_ID, sf.NAME);
 
 			SelectJoinStep<Record> joinStep = getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues);
 			return joinStep.rightJoin(ti)

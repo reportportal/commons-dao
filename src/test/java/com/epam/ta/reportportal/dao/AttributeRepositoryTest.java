@@ -16,14 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
-import com.epam.ta.reportportal.entity.item.TestItem;
-import com.google.common.collect.Sets;
-import org.apache.commons.collections.CollectionUtils;
+import com.epam.ta.reportportal.entity.attribute.Attribute;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -39,10 +34,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
+import static org.junit.Assert.*;
 
 /**
  * @author Ivan Budaev
@@ -50,14 +44,13 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
 @Transactional("transactionManager")
-public class TestItemRepositoryCustomImplTest {
+public class AttributeRepositoryTest {
 
 	@Autowired
-	private TestItemRepository testItemRepository;
+	private AttributeRepository attributeRepository;
 
 	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+	public static void init() throws SQLException, IOException, SqlToolError {
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
 		runSqlScript("/test-fill-script.sql");
@@ -79,30 +72,33 @@ public class TestItemRepositoryCustomImplTest {
 	}
 
 	@Test
-	public void selectAllDescendantsWithChildren() {
+	public void shouldFindWhenNameIsPresent() {
 
-		List<TestItem> testItems = testItemRepository.selectAllDescendantsWithChildren(65L);
+		//given
+		String name = "present";
 
-		Assert.assertNotNull(testItems);
+		//when
+		Optional<Attribute> attribute = attributeRepository.findByName(name);
+
+		//then
+		Assert.assertTrue(attribute.isPresent());
 	}
 
 	@Test
-	public void findLaunchByFilterTest() {
-		List<TestItem> testItems = testItemRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
-				false,
-				"qqqq",
-				"tag"
-		)));
+	public void shouldNotFindWhenNameIsNotPresent() {
 
-		testItems.forEach(ti -> Assert.assertTrue(CollectionUtils.isNotEmpty(ti.getTags())));
+		//given
+		String name = "not present";
+
+		//when
+		Optional<Attribute> attribute = attributeRepository.findByName(name);
+
+		//then
+		Assert.assertFalse(attribute.isPresent());
 	}
 
-	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				PROJECT_ID
-		));
-		return new Filter(TestItem.class, conditionSet);
+	@Test
+	public void getDefaultProjectAttributesTest() {
+		attributeRepository.getDefaultProjectAttributes();
 	}
 }

@@ -43,6 +43,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.LAUNCHES_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.NOT_PASSED_CASES_CONTENT_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -94,11 +95,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.as(QueryBuilder.newBuilder(filter).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
-								DSL.arrayAgg(DSL.when(STATISTICS.S_FIELD.eq(criteria), "true").otherwise("false"))
+								DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), "true").otherwise("false"))
 										.orderBy(LAUNCH.NUMBER.asc())
 										.as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
-								DSL.sum(DSL.when(STATISTICS.S_FIELD.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
+								DSL.sum(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
 								DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
@@ -108,10 +109,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(STATISTICS)
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(TEST_ITEM.TYPE.in(includeMethods ?
 								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
 								Collections.singletonList(JTestItemTypeEnum.STEP)))
-						.and(STATISTICS.S_FIELD.eq(criteria))
+						.and(STATISTICS_FIELD.NAME.eq(criteria))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()

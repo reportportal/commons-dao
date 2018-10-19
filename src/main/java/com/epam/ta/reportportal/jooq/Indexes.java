@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 /*
@@ -61,9 +59,9 @@ import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JServerEmailDetails;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
@@ -152,12 +150,12 @@ public class Indexes {
     public static final Index USERS_PROJECT_PK = Indexes0.USERS_PROJECT_PK;
     public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
-    public static final Index SERVER_EMAIL_DETAILS_PK = Indexes0.SERVER_EMAIL_DETAILS_PK;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
     public static final Index SERVER_SETTINGS_KEY_KEY = Indexes0.SERVER_SETTINGS_KEY_KEY;
-    public static final Index PK_STATISTICS = Indexes0.PK_STATISTICS;
-    public static final Index UNIQUE_STATUS_ITEM = Indexes0.UNIQUE_STATUS_ITEM;
-    public static final Index UNIQUE_STATUS_LAUNCH = Indexes0.UNIQUE_STATUS_LAUNCH;
+    public static final Index STATISTICS_PK = Indexes0.STATISTICS_PK;
+    public static final Index UNIQUE_STATS_ITEM = Indexes0.UNIQUE_STATS_ITEM;
+    public static final Index UNIQUE_STATS_LAUNCH = Indexes0.UNIQUE_STATS_LAUNCH;
+    public static final Index STATISTICS_FIELD_PK = Indexes0.STATISTICS_FIELD_PK;
     public static final Index PATH_GIST_IDX = Indexes0.PATH_GIST_IDX;
     public static final Index PATH_IDX = Indexes0.PATH_IDX;
     public static final Index TEST_ITEM_PK = Indexes0.TEST_ITEM_PK;
@@ -232,12 +230,12 @@ public class Indexes {
         public static Index USERS_PROJECT_PK = Internal.createIndex("users_project_pk", JProjectUser.PROJECT_USER, new OrderField[] { JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID }, true);
         public static Index RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createIndex("restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL }, true);
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
-        public static Index SERVER_EMAIL_DETAILS_PK = Internal.createIndex("server_email_details_pk", JServerEmailDetails.SERVER_EMAIL_DETAILS, new OrderField[] { JServerEmailDetails.SERVER_EMAIL_DETAILS.ID }, true);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
         public static Index SERVER_SETTINGS_KEY_KEY = Internal.createIndex("server_settings_key_key", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.KEY }, true);
-        public static Index PK_STATISTICS = Internal.createIndex("pk_statistics", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
-        public static Index UNIQUE_STATUS_ITEM = Internal.createIndex("unique_status_item", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.ITEM_ID }, true);
-        public static Index UNIQUE_STATUS_LAUNCH = Internal.createIndex("unique_status_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.LAUNCH_ID }, true);
+        public static Index STATISTICS_PK = Internal.createIndex("statistics_pk", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
+        public static Index UNIQUE_STATS_ITEM = Internal.createIndex("unique_stats_item", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID }, true);
+        public static Index UNIQUE_STATS_LAUNCH = Internal.createIndex("unique_stats_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID }, true);
+        public static Index STATISTICS_FIELD_PK = Internal.createIndex("statistics_field_pk", JStatisticsField.STATISTICS_FIELD, new OrderField[] { JStatisticsField.STATISTICS_FIELD.SF_ID }, true);
         public static Index PATH_GIST_IDX = Internal.createIndex("path_gist_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index PATH_IDX = Internal.createIndex("path_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index TEST_ITEM_PK = Internal.createIndex("test_item_pk", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.ITEM_ID }, true);
