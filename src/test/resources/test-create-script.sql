@@ -26,7 +26,7 @@ CREATE TYPE PASSWORD_ENCODER_TYPE AS ENUM ('PLAIN', 'SHA', 'LDAP_SHA', 'MD4', 'M
 
 CREATE TYPE SORT_DIRECTION_ENUM AS ENUM ('ASC', 'DESC');
 
-CREATE EXTENSION ltree;
+CREATE EXTENSION IF NOT EXISTS ltree;
 
 CREATE TABLE server_settings (
   id    SMALLSERIAL CONSTRAINT server_settings_id PRIMARY KEY,
@@ -438,16 +438,21 @@ CREATE TABLE issue_type (
   hex_color      VARCHAR(7)         NOT NULL
 );
 
-CREATE TABLE statistics (
-  s_id      BIGSERIAL NOT NULL CONSTRAINT pk_statistics PRIMARY KEY,
-  s_field   VARCHAR   NOT NULL,
-  s_counter INT DEFAULT 0,
-  item_id   BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
-  launch_id BIGINT REFERENCES launch (id) ON DELETE CASCADE,
+CREATE TABLE statistics_field (
+  sf_id   BIGSERIAL CONSTRAINT statistics_field_pk PRIMARY KEY,
+  name VARCHAR(256)
+);
 
-  CONSTRAINT unique_status_item UNIQUE (s_field, item_id),
-  CONSTRAINT unique_status_launch UNIQUE (s_field, launch_id),
-  CHECK (statistics.s_counter >= 0)
+CREATE TABLE statistics (
+  s_id BIGSERIAL CONSTRAINT statistics_pk PRIMARY KEY,
+  s_counter        INT DEFAULT 0,
+  launch_id    BIGINT REFERENCES launch (id) ON DELETE CASCADE ,
+  item_id      BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
+  statistics_field_id BIGINT REFERENCES statistics_field(sf_id) ON DELETE CASCADE,
+  CONSTRAINT unique_stats_item UNIQUE (statistics_field_id, item_id),
+  CONSTRAINT unique_stats_launch UNIQUE (statistics_field_id, launch_id),
+  CHECK (statistics.s_counter >= 0 AND ((item_id IS NOT NULL AND launch_id IS NULL) OR (launch_id IS NOT NULL AND item_id IS NULL))
+  )
 );
 
 CREATE TABLE issue_type_project (
@@ -564,13 +569,13 @@ BEGIN
                         AND test_item.launch_id = LaunchId)
       WHERE test_item_results.result_id = parentItemId;
 
-      INSERT INTO statistics (s_field, item_id, launch_id, s_counter)
-      select s_field, parentItemId, null, sum(s_counter)
+      INSERT INTO statistics (statistics_field_id, item_id, launch_id, s_counter)
+      select statistics_field_id, parentItemId, null, sum(s_counter)
       from statistics
              join test_item ti on statistics.item_id = ti.item_id
       where ti.unique_id = firstItemId
-      group by s_field
-      ON CONFLICT ON CONSTRAINT unique_status_item
+      group by statistics_field_id
+      ON CONFLICT ON CONSTRAINT unique_stats_item
                                 DO UPDATE
                                   SET
                                     s_counter = EXCLUDED.s_counter;
@@ -620,13 +625,13 @@ BEGIN
 
   end loop;
 
-  INSERT INTO statistics (s_field, launch_id, s_counter)
-  select s_field, LaunchId, sum(s_counter)
+  INSERT INTO statistics (statistics_field_id, launch_id, s_counter)
+  select statistics_field_id, LaunchId, sum(s_counter)
   from statistics
          join test_item ti on statistics.item_id = ti.item_id
   where ti.launch_id = LaunchId
-  group by s_field
-  ON CONFLICT ON CONSTRAINT unique_status_launch
+  group by statistics_field_id
+  ON CONFLICT ON CONSTRAINT unique_stats_launch
                             DO UPDATE
                               SET
                                 s_counter = EXCLUDED.s_counter;
@@ -653,7 +658,7 @@ END;
 $BODY$
 LANGUAGE plpgsql;
 
-CREATE FUNCTION check_wired_tickets()
+CREATE OR REPLACE FUNCTION check_wired_tickets()
   RETURNS TRIGGER AS
 $BODY$
 BEGIN
@@ -667,7 +672,7 @@ $BODY$
 LANGUAGE plpgsql;
 
 
-CREATE FUNCTION check_wired_widgets()
+CREATE OR REPLACE FUNCTION check_wired_widgets()
   RETURNS TRIGGER AS
 $BODY$
 BEGIN

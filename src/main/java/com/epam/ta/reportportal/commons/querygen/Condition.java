@@ -120,6 +120,27 @@ public enum Condition {
 		}
 	},
 
+	UNDER("under") {
+		@Override
+		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
+			validate(criteriaHolder, filter.getValue(), false, INCORRECT_FILTER_PARAMETERS);
+			return DSL.condition("\'" + filter.getValue() + "\'" + " @> " + criteriaHolder.getQueryCriteria());
+		}
+
+		@Override
+		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
+			expect(criteriaHolder, filterForLtree()).verify(errorType, formattedSupplier(
+					"'Under' condition is applyable only for 'path' filter condition. Type of field is '{}'",
+					criteriaHolder.getFilterCriteria()
+			));
+		}
+
+		@Override
+		public Object castValue(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
+			return value;
+		}
+	},
+
 	LEVEL("level") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {

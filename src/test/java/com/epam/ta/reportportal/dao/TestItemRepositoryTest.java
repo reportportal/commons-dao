@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,15 +54,16 @@ public class TestItemRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		//		runSqlScript("/test-dropall-script.sql");
-		//		runSqlScript("/test-create-script.sql");
-		//		runSqlScript("/test-fill-script.sql");
+		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-create-script.sql");
+		runSqlScript("/test-fill-script.sql");
+
 	}
 
-	//	@AfterClass
-	//	public static void destroy() throws SQLException, IOException, SqlToolError {
-	//		runSqlScript("/test-dropall-script.sql");
-	//	}
+	@AfterClass
+	public static void destroy() throws SQLException, IOException, SqlToolError {
+		runSqlScript("/test-dropall-script.sql");
+	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
 		try (Connection connection = getConnection()) {

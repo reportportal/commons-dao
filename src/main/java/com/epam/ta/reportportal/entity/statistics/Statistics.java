@@ -32,8 +32,9 @@ public class Statistics implements Serializable {
 	@Column(name = "s_id")
 	private Long id;
 
-	@Column(name = "s_field")
-	private String field;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "statistics_field_id")
+	private StatisticsField statisticsField;
 
 	@Column(name = "s_counter")
 	private int counter;
@@ -47,13 +48,13 @@ public class Statistics implements Serializable {
 	public Statistics() {
 	}
 
-	public Statistics(String field, int counter) {
-		this.field = field;
+	public Statistics(StatisticsField statisticsField, int counter) {
+		this.statisticsField = statisticsField;
 		this.counter = counter;
 	}
 
-	public Statistics(String field, int counter, Long launchId) {
-		this.field = field;
+	public Statistics(StatisticsField statisticsField, int counter, Long launchId) {
+		this.statisticsField = statisticsField;
 		this.counter = counter;
 		this.launchId = launchId;
 	}
@@ -66,12 +67,12 @@ public class Statistics implements Serializable {
 		this.id = id;
 	}
 
-	public String getField() {
-		return field;
+	public StatisticsField getStatisticsField() {
+		return statisticsField;
 	}
 
-	public void setField(String field) {
-		this.field = field;
+	public void setStatisticsField(StatisticsField statisticsField) {
+		this.statisticsField = statisticsField;
 	}
 
 	public int getCounter() {
@@ -107,14 +108,12 @@ public class Statistics implements Serializable {
 			return false;
 		}
 		Statistics that = (Statistics) o;
-		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(field, that.field) && Objects.equals(
-				launchId,
-				that.launchId
-		) && Objects.equals(itemId, that.itemId);
+		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(statisticsField, that.statisticsField)
+				&& Objects.equals(launchId, that.launchId) && Objects.equals(itemId, that.itemId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, field, counter, launchId, itemId);
+		return Objects.hash(id, statisticsField, counter, launchId, itemId);
 	}
 }
