@@ -206,7 +206,8 @@ public class User implements Serializable {
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
 		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
-				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
+				attachment,
 				user.attachment
 		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}

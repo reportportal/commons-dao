@@ -1,3 +1,19 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
@@ -31,9 +47,10 @@ public class Activity {
 	@Column(name = "project_id", nullable = false)
 	private Long projectId;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "entity", unique = true, nullable = false)
 	@Type(type = "pqsql_enum")
-	private Entity entity;
+	private ActivityEntityType activityEntityType;
 
 	@Column(name = "action", nullable = false)
 	private String action;
@@ -44,6 +61,9 @@ public class Activity {
 
 	@Column(name = "creation_date")
 	private LocalDateTime createdAt;
+
+	@Column(name = "object_id")
+	private Long objectId;
 
 	public Long getId() {
 		return id;
@@ -69,12 +89,12 @@ public class Activity {
 		this.projectId = projectId;
 	}
 
-	public Entity getEntity() {
-		return entity;
+	public ActivityEntityType getActivityEntityType() {
+		return activityEntityType;
 	}
 
-	public void setEntity(Entity entity) {
-		this.entity = entity;
+	public void setActivityEntityType(ActivityEntityType activityEntityType) {
+		this.activityEntityType = activityEntityType;
 	}
 
 	public String getAction() {
@@ -101,8 +121,28 @@ public class Activity {
 		this.createdAt = createdAt;
 	}
 
-	public enum Entity {
+	public Long getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(Long objectId) {
+		this.objectId = objectId;
+	}
+
+	public enum ActivityEntityType {
 		LAUNCH,
-		ITEM
+		ITEM,
+		DASHBOARD,
+		DEFECT_TYPE,
+		EMAIL_CONFIG,
+		FILTER,
+		IMPORT,
+		INTEGRATION,
+		ITEM_ISSUE,
+		PROJECT,
+		SHARING,
+		TICKET,
+		USER,
+		WIDGET
 	}
 }

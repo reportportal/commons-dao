@@ -17,6 +17,10 @@
 
 package com.epam.ta.reportportal.config;
 
+import com.epam.reportportal.commons.ContentTypeResolver;
+import com.epam.reportportal.commons.Thumbnailator;
+import com.epam.reportportal.commons.ThumbnailatorImpl;
+import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
@@ -75,5 +79,15 @@ public class DataStoreConfiguration {
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
 
 		return new LocalDataStore(storagePath);
+	}
+
+	@Bean
+	public Thumbnailator thumbnailator() {
+		return new ThumbnailatorImpl();
+	}
+
+	@Bean
+	public ContentTypeResolver contentTypeResolver() {
+		return new TikaContentTypeResolver();
 	}
 }

@@ -46,12 +46,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
-import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -135,8 +135,9 @@ public enum FilterTarget {
 
 	ACTIVITY(Activity.class, Arrays.asList(new CriteriaHolder(ID, "a.id", Long.class, false),
 			new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
-			new CriteriaHolder(LOGIN, "u.login", String.class, false),
-			new CriteriaHolder(ACTION, "a.action", String.class, false)
+			new CriteriaHolder(CRITERIA_LOGIN, "u.login", String.class, false),
+			new CriteriaHolder(CRITERIA_ACTION, "a.action", String.class, false),
+			new CriteriaHolder(CRITERIA_OBJECT_ID, "a.object_id", Long.class, false)
 	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
@@ -144,7 +145,7 @@ public enum FilterTarget {
 			JActivity a = JActivity.ACTIVITY.as("a");
 			JUsers u = JUsers.USERS.as("u");
 			JProject p = JProject.PROJECT.as("p");
-			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, u.LOGIN, p.NAME)
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, a.DETAILS, a.OBJECT_ID, u.LOGIN, p.NAME)
 					.from(a)
 					.join(u)
 					.on(a.USER_ID.eq(u.ID))
@@ -190,9 +191,7 @@ public enum FilterTarget {
 					ti.UNIQUE_ID,
 					ti.HAS_CHILDREN,
 					ti.PARENT_ID,
-					ti.LAUNCH_ID,
-					tir.RESULT_ID,
-					tir.STATUS,
+					ti.LAUNCH_ID, tir.RESULT_ID, tir.STATUS,
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,
@@ -255,8 +254,8 @@ public enum FilterTarget {
 
 	INTEGRATION(Integration.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder(GeneralCriteriaConstant.PROJECT, "p.name", String.class, false),
-			new CriteriaHolder(TYPE, "it.name", String.class, false)
+			new CriteriaHolder(GeneralCriteriaConstant.CRITERIA_PROJECT, "p.name", String.class, false),
+			new CriteriaHolder(CRITERIA_TYPE, "it.name", String.class, false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -316,17 +315,17 @@ public enum FilterTarget {
 
 	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false), new
 
-			CriteriaHolder(UserCriteriaConstant.LOGIN, UserCriteriaConstant.LOGIN, String.class, false), new
+			CriteriaHolder(UserCriteriaConstant.CRITERIA_LOGIN, UserCriteriaConstant.CRITERIA_LOGIN, String.class, false), new
 
-			CriteriaHolder(EMAIL, EMAIL, String.class, false), new
+			CriteriaHolder(CRITERIA_EMAIL, CRITERIA_EMAIL, String.class, false), new
 
-			CriteriaHolder(FULL_NAME, FULL_NAME, String.class, false), new
+			CriteriaHolder(CRITERIA_FULL_NAME, CRITERIA_FULL_NAME, String.class, false), new
 
-			CriteriaHolder(ROLE, ROLE, String.class, false), new
+			CriteriaHolder(CRITERIA_ROLE, CRITERIA_ROLE, String.class, false), new
 
-			CriteriaHolder(UserCriteriaConstant.TYPE, UserCriteriaConstant.TYPE, String.class, false), new
+			CriteriaHolder(UserCriteriaConstant.CRITERIA_TYPE, UserCriteriaConstant.CRITERIA_TYPE, String.class, false), new
 
-			CriteriaHolder(EXPIRED, EXPIRED, Boolean.class, false))) {
+			CriteriaHolder(CRITERIA_EXPIRED, CRITERIA_EXPIRED, Boolean.class, false))) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			JUsers u = JUsers.USERS;
@@ -367,8 +366,7 @@ public enum FilterTarget {
 					.join(ACL_CLASS)
 					.on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS))
 					.join(ACL_ENTRY)
-					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID))
-                    .join(FILTER)
+					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID)).join(FILTER)
 					.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
 					.join(FILTER_CONDITION)
 					.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))

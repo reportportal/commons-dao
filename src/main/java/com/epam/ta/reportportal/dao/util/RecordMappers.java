@@ -52,9 +52,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PARENT_ID;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PARENT_ID;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -127,8 +126,8 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(LAUNCH_ID, Long.class)));
-		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
+		testItem.setLaunch(new Launch(r.get(CRITERIA_LAUNCH_ID, Long.class)));
+		testItem.setParent(new TestItem(r.get(CRITERIA_PARENT_ID, Long.class)));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
 			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(TestItemTag::new).collect(Collectors.toSet()));
@@ -204,8 +203,9 @@ public class RecordMappers {
 		activity.setUserId(r.get(ACTIVITY.USER_ID));
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setAction(r.get(ACTIVITY.ACTION));
-		activity.setEntity(r.get(ACTIVITY.ENTITY, Activity.Entity.class));
+		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
+		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
 			try {
@@ -216,16 +216,6 @@ public class RecordMappers {
 			}
 		});
 		return activity;
-	};
-	public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = r -> {
-		Map<Long, Activity> activityMap = Maps.newHashMap();
-		r.forEach(res -> {
-			Long activityId = res.get(ACTIVITY.ID);
-			if (!activityMap.containsKey(activityId)) {
-				activityMap.put(activityId, ACTIVITY_MAPPER.map(res));
-			}
-		});
-		return Lists.newArrayList(activityMap.values());
 	};
 
 	@Component

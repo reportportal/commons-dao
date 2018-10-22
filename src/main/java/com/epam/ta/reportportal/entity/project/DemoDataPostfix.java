@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,7 +24,7 @@ public class DemoDataPostfix implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "project_id")
-	@JsonManagedReference
+	@JsonBackReference(value = "demoDataPostfix")
 	private Project project;
 
 	public Long getId() {

@@ -1,0 +1,2 @@
+DELETE
+FROM activity CASCADE

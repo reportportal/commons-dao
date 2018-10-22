@@ -26,6 +26,6 @@ import java.util.Optional;
 
 public interface AttributeRepository extends ReportPortalRepository<Attribute, Long>, AttributeRepositoryCustom {
 
-    Optional<Attribute> findByName(String attributeName);
+	Optional<Attribute> findByName(String attributeName);
 
 }

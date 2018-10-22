@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.MoreObjects;
@@ -57,7 +56,7 @@ public class Project implements Serializable {
 	private String name;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonBackReference
+	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	@Column(name = "additional_info")
@@ -68,7 +67,7 @@ public class Project implements Serializable {
 	private Set<ProjectAttribute> projectAttributes;
 
 	@OneToMany(mappedBy = "project")
-	@JsonBackReference
+	@JsonManagedReference(value = "demoDataPostfix")
 	private List<DemoDataPostfix> demoDataPostfix;
 
 	@Column(name = "creation_date")
