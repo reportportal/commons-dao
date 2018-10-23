@@ -16,12 +16,15 @@
 
 package com.epam.ta.reportportal.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
  * @author Ihar Kahadouski
  */
-public class HistoryField implements Serializable {
+public final class HistoryField implements Serializable {
 	private String field;
 	private String oldValue;
 	private String newValue;
@@ -30,9 +33,6 @@ public class HistoryField implements Serializable {
 		this.field = field;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
-	}
-
-	private HistoryField() {
 	}
 
 	public String getField() {
@@ -47,7 +47,9 @@ public class HistoryField implements Serializable {
 		return newValue;
 	}
 
-	public static HistoryField of(String field, String oldValue, String newValue) {
+	@JsonCreator
+	public static HistoryField of(@JsonProperty("field") String field, @JsonProperty("oldValue") String oldValue,
+			@JsonProperty("newValue") String newValue) {
 		return new HistoryField(field, oldValue, newValue);
 	}
 }

@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
@@ -34,7 +35,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -66,10 +70,6 @@ public class Project implements Serializable {
 	@JsonIgnore
 	private Set<ProjectAttribute> projectAttributes;
 
-	@OneToMany(mappedBy = "project")
-	@JsonManagedReference(value = "demoDataPostfix")
-	private List<DemoDataPostfix> demoDataPostfix;
-
 	@Column(name = "creation_date")
 	private Date creationDate;
 
@@ -80,7 +80,7 @@ public class Project implements Serializable {
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "issue_type_id") })
-	@JsonManagedReference(value = "issueTypes")
+	@JsonIgnoreProperties(value = "projects")
 	private List<IssueType> issueTypes;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -168,19 +168,6 @@ public class Project implements Serializable {
 
 	public void setEmailCases(Set<EmailSenderCase> emailCases) {
 		this.emailCases = emailCases;
-	}
-
-	/**
-	 * NULL-safe getter
-	 *
-	 * @return the list of demo-data postfix
-	 */
-	public List<DemoDataPostfix> getDemoDataPostfix() {
-		return demoDataPostfix == null ? demoDataPostfix = Collections.emptyList() : demoDataPostfix;
-	}
-
-	public void setDemoDataPostfix(List<DemoDataPostfix> demoDataPostfix) {
-		this.demoDataPostfix = demoDataPostfix;
 	}
 
 	public JsonbObject getMetadata() {
