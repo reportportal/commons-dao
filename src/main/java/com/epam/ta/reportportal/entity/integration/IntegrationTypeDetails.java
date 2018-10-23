@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
-import com.epam.ta.reportportal.entity.JsonMap;
+import com.epam.ta.reportportal.entity.JsonbObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Yauheni_Martynau
  */
 @JsonTypeName("details")
-public class IntegrationTypeDetails extends JsonMap<String, Object> {
+public class IntegrationTypeDetails extends JsonbObject {
 
 	private Map<String, Object> details;
 
