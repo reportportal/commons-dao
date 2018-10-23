@@ -32,19 +32,31 @@ public class HistoryField implements Serializable {
 		this.newValue = newValue;
 	}
 
-	private HistoryField() {
+	public HistoryField() {
 	}
 
 	public String getField() {
 		return field;
 	}
 
+	public void setField(String field) {
+		this.field = field;
+	}
+
 	public String getOldValue() {
 		return oldValue;
 	}
 
+	public void setOldValue(String oldValue) {
+		this.oldValue = oldValue;
+	}
+
 	public String getNewValue() {
 		return newValue;
+	}
+
+	public void setNewValue(String newValue) {
+		this.newValue = newValue;
 	}
 
 	public static HistoryField of(String field, String oldValue, String newValue) {
