@@ -36,7 +36,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "integration_details", typeClass = JsonbUserType.class)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "integration_type", schema = "public")
 public class IntegrationType implements Serializable {
@@ -63,7 +63,7 @@ public class IntegrationType implements Serializable {
 	@Column(name = "group_type", nullable = false)
 	private IntegrationGroupEnum integrationGroup;
 
-	@Type(type = "jsonb")
+	@Type(type = "integration_details")
 	@Column(name = "details")
 	private IntegrationTypeDetails details;
 
