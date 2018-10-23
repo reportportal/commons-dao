@@ -16,13 +16,14 @@
 
 package com.epam.ta.reportportal.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Ihar Kahadouski
  */
-public class ActivityDetails extends JsonbObject {
+public class ActivityDetails extends JsonbObject implements Serializable {
 
 	private List<HistoryField> history;
 
