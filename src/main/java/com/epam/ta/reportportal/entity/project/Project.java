@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
@@ -80,7 +81,7 @@ public class Project implements Serializable {
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "issue_type_id") })
-	@JsonManagedReference(value = "issueTypes")
+	@JsonIgnoreProperties(value = "projects")
 	private List<IssueType> issueTypes;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
