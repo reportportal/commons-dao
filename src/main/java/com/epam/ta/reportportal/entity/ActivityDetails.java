@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class ActivityDetails extends JsonbObject implements Serializable {
 
-	private ArrayList<HistoryField> history;
+	private List<HistoryField> history;
 
 	private String objectName;
 
@@ -34,11 +34,10 @@ public class ActivityDetails extends JsonbObject implements Serializable {
 	}
 
 	public ActivityDetails(String objectName) {
-		history = new ArrayList<>();
 		this.objectName = objectName;
 	}
 
-	public ActivityDetails(ArrayList<HistoryField> history, String objectName) {
+	public ActivityDetails(List<HistoryField> history, String objectName) {
 		this.history = history;
 		this.objectName = objectName;
 	}
@@ -47,7 +46,7 @@ public class ActivityDetails extends JsonbObject implements Serializable {
 		return history;
 	}
 
-	public void setHistory(ArrayList<HistoryField> history) {
+	public void setHistory(List<HistoryField> history) {
 		this.history = history;
 	}
 
