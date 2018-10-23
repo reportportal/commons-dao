@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "activity", schema = "public")
-@TypeDef(name = "jsonb", typeClass = JsonMap.class)
+@TypeDef(name = "jsonb", typeClass = JsonbObject.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 public class Activity {
 
