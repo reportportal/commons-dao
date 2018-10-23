@@ -27,11 +27,11 @@ public enum IntegrationAuthFlowEnum {
 	FORM,
 	LDAP;
 
-	public Optional<IntegrationAuthFlowEnum> findByName(String name) {
+	public static Optional<IntegrationAuthFlowEnum> findByName(String name) {
 		return Arrays.stream(IntegrationAuthFlowEnum.values()).filter(i -> i.name().equalsIgnoreCase(name)).findAny();
 	}
 
-	public boolean isPresent(String name) {
+	public static boolean isPresent(String name) {
 		return findByName(name).isPresent();
 	}
 }
