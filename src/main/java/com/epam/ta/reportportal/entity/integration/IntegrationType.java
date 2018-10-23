@@ -1,7 +1,24 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.entity.integration;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -41,8 +58,10 @@ public class IntegrationType implements Serializable {
 	@Column(name = "creation_date", nullable = false)
 	private LocalDateTime creationDate;
 
+	@Enumerated(EnumType.STRING)
+	@Type(type = "pqsql_enum")
 	@Column(name = "group_type", nullable = false)
-	private String groupType;
+	private IntegrationGroupEnum integrationGroup;
 
 	@Type(type = "jsonb")
 	@Column(name = "details")
@@ -83,12 +102,12 @@ public class IntegrationType implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public String getGroupType() {
-		return groupType;
+	public IntegrationGroupEnum getIntegrationGroup() {
+		return integrationGroup;
 	}
 
-	public void setGroupType(String groupType) {
-		this.groupType = groupType;
+	public void setIntegrationGroup(IntegrationGroupEnum integrationGroup) {
+		this.integrationGroup = integrationGroup;
 	}
 
 	public IntegrationTypeDetails getDetails() {
