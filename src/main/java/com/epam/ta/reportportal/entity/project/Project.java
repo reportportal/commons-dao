@@ -35,7 +35,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -66,10 +69,6 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Set<ProjectAttribute> projectAttributes;
-
-	@OneToMany(mappedBy = "project")
-	@JsonManagedReference(value = "demoDataPostfix")
-	private List<DemoDataPostfix> demoDataPostfix;
 
 	@Column(name = "creation_date")
 	private Date creationDate;
@@ -169,19 +168,6 @@ public class Project implements Serializable {
 
 	public void setEmailCases(Set<EmailSenderCase> emailCases) {
 		this.emailCases = emailCases;
-	}
-
-	/**
-	 * NULL-safe getter
-	 *
-	 * @return the list of demo-data postfix
-	 */
-	public List<DemoDataPostfix> getDemoDataPostfix() {
-		return demoDataPostfix == null ? demoDataPostfix = Collections.emptyList() : demoDataPostfix;
-	}
-
-	public void setDemoDataPostfix(List<DemoDataPostfix> demoDataPostfix) {
-		this.demoDataPostfix = demoDataPostfix;
 	}
 
 	public JsonbObject getMetadata() {
