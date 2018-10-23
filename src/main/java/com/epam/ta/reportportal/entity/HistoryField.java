@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * @author Ihar Kahadouski
  */
-public class HistoryField implements Serializable {
+public class HistoryField extends JsonbObject implements Serializable {
 	private String field;
 	private String oldValue;
 	private String newValue;
