@@ -48,7 +48,7 @@ public class Integration implements Serializable {
 	@JsonBackReference(value = "integration")
 	private Project project;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "type")
 	private IntegrationType type;
 
