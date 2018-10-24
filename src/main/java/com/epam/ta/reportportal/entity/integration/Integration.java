@@ -43,7 +43,7 @@ public class Integration implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "project_id")
 	@JsonBackReference(value = "integration")
 	private Project project;
