@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.JsonbMapType;
 import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -83,7 +84,7 @@ public class User implements Serializable {
 
 	@JsonManagedReference(value = "projects")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<ProjectUser> projects;
+	private Set<ProjectUser> projects = Sets.newHashSet();
 
 	public User() {
 	}
@@ -203,9 +204,10 @@ public class User implements Serializable {
 		User user = (User) o;
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
-				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
-				attachment,
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(
+				defaultProject,
+				user.defaultProject
+		) && Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
 				user.attachment
 		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}
@@ -213,8 +215,7 @@ public class User implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(
-				id,
+		return Objects.hash(id,
 				login,
 				password,
 				email,

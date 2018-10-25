@@ -180,6 +180,7 @@ public class RecordMappers {
 		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
 		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		user.getProjects().add(r.into(ProjectUser.class));
 		return user;
 	};
 
@@ -190,9 +191,13 @@ public class RecordMappers {
 		Map<Long, User> userMap = Maps.newHashMap();
 		result.forEach(res -> {
 			Long userId = res.get(USERS.ID);
-			if (!userMap.containsKey(userId)) {
-				userMap.put(userId, USER_RECORD_MAPPER.map(res));
+			User user;
+			if (userMap.containsKey(userId)) {
+				user = userMap.get(userId);
+			} else {
+				user = USER_RECORD_MAPPER.map(res);
 			}
+			userMap.put(userId, user);
 		});
 
 		return Lists.newArrayList(userMap.values());

@@ -52,6 +52,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_PROJECT_ID;
+
 /**
  * @author Ivan Budaev
  */
@@ -74,7 +76,7 @@ public class UserRepositoryTest {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		runSqlScript("/user/users-fill.sql");
 	}
 
 	@AfterClass
@@ -90,6 +92,15 @@ public class UserRepositoryTest {
 
 	private static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+	}
+
+	@Test
+	public void loadUsersByFilterForProject() {
+		Filter filter = buildDefaultUserFilter();
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_PROJECT_ID));
+		List<User> users = userRepository.findByFilterExcluding(filter, PageRequest.of(0, 5), "email").getContent();
+		Assert.assertEquals(users.size(), 2);
+		System.out.println();
 	}
 
 	@Test
