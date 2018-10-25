@@ -24,8 +24,11 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -46,7 +49,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 
 /**
  * @author Ivan Budaev
@@ -83,6 +86,13 @@ public class LaunchRepositoryTest {
 	}
 
 	@Test
+	public void testLoadLaunchesHistory() {
+		List<Launch> demoLaunchS = launchRepository.findLaunchesHistory(2, 2L, "Demo launch s", 2L);
+		Assert.assertThat(demoLaunchS.size(), Matchers.equalTo(2));
+		demoLaunchS.forEach(it -> Assert.assertThat(it.getName(), Matchers.equalToIgnoringCase("Demo launch s")));
+	}
+
+	@Test
 	public void mergeLaunchTestItems() {
 		long time = System.nanoTime() / 1000000;
 		launchRepository.mergeLaunchTestItems(1L);
@@ -107,11 +117,25 @@ public class LaunchRepositoryTest {
 		Assert.assertTrue(CollectionUtils.isNotEmpty(launchNames));
 	}
 
+	@Test
+	public void jsonParsingTest() throws JsonProcessingException {
+		Launch launch = launchRepository.findById(2L).get();
+
+		String string = new ObjectMapper().writeValueAsString(launch);
+	}
+
+	@Test
+	public void findLaunchByFilterTest() {
+		List<Launch> launches = launchRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
+				false, "build", "tags"
+		)));
+
+		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						PROJECT_ID
+						false, String.valueOf(projectId), CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")

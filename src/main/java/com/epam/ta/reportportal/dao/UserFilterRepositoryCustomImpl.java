@@ -7,6 +7,7 @@ import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.ObjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.jooq.tables.*;
 import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -70,5 +71,43 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
+	}
+
+	@Override
+	public Page<UserFilter> getPermittedFilters(Long projectId, Filter filter, Pageable pageable, String userName) {
+		return PageableExecutionUtils.getPage(USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.addCondition(JAclClass.ACL_CLASS.CLASS.eq(UserFilter.class.getName()))
+				.addCondition(JAclEntry.ACL_ENTRY.SID.in(dsl.select(JAclSid.ACL_SID.ID)
+						.from(JAclSid.ACL_SID)
+						.where(JAclSid.ACL_SID.SID.eq(userName))))
+				.addCondition(JFilter.FILTER.PROJECT_ID.eq(projectId))
+				.with(pageable)
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public Page<UserFilter> getOwnFilters(Long projectId, Filter filter, Pageable pageable, String userName) {
+		return PageableExecutionUtils.getPage(USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.addCondition(JAclObjectIdentity.ACL_OBJECT_IDENTITY.OWNER_SID.in(dsl.select(JAclSid.ACL_SID.ID)
+						.from(JAclSid.ACL_SID)
+						.where(JAclSid.ACL_SID.SID.eq(userName))))
+				.addCondition(JFilter.FILTER.PROJECT_ID.eq(projectId))
+				.with(pageable)
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public Page<UserFilter> getSharedFilters(Long projectId, Filter filter, Pageable pageable, String userName) {
+		return PageableExecutionUtils.getPage(USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.addCondition(JAclClass.ACL_CLASS.CLASS.eq(UserFilter.class.getName()))
+				.addCondition(JAclEntry.ACL_ENTRY.SID.in(dsl.select(JAclSid.ACL_SID.ID)
+						.from(JAclSid.ACL_SID)
+						.where(JAclSid.ACL_SID.SID.eq(userName))))
+				.addCondition(JAclObjectIdentity.ACL_OBJECT_IDENTITY.OWNER_SID.notIn(dsl.select(JAclSid.ACL_SID.ID)
+						.from(JAclSid.ACL_SID)
+						.where(JAclSid.ACL_SID.SID.eq(userName))))
+				.addCondition(JFilter.FILTER.PROJECT_ID.eq(projectId))
+				.with(pageable)
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 }

@@ -32,18 +32,31 @@ public class Statistics implements Serializable {
 	@Column(name = "s_id")
 	private Long id;
 
-	@Column(name = "s_field")
-	private String field;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "statistics_field_id")
+	private StatisticsField statisticsField;
 
 	@Column(name = "s_counter")
-	private Integer counter;
+	private int counter;
+
+	@Column(name = "launch_id")
+	private Long launchId;
+
+	@Column(name = "item_id")
+	private Long itemId;
 
 	public Statistics() {
 	}
 
-	public Statistics(String field, Integer counter) {
-		this.field = field;
+	public Statistics(StatisticsField statisticsField, int counter) {
+		this.statisticsField = statisticsField;
 		this.counter = counter;
+	}
+
+	public Statistics(StatisticsField statisticsField, int counter, Long launchId) {
+		this.statisticsField = statisticsField;
+		this.counter = counter;
+		this.launchId = launchId;
 	}
 
 	public Long getId() {
@@ -54,20 +67,36 @@ public class Statistics implements Serializable {
 		this.id = id;
 	}
 
-	public String getField() {
-		return field;
+	public StatisticsField getStatisticsField() {
+		return statisticsField;
 	}
 
-	public void setField(String field) {
-		this.field = field;
+	public void setStatisticsField(StatisticsField statisticsField) {
+		this.statisticsField = statisticsField;
 	}
 
-	public Integer getCounter() {
+	public int getCounter() {
 		return counter;
 	}
 
-	public void setCounter(Integer counter) {
+	public void setCounter(int counter) {
 		this.counter = counter;
+	}
+
+	public Long getLaunchId() {
+		return launchId;
+	}
+
+	public void setLaunchId(Long launchId) {
+		this.launchId = launchId;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
 	}
 
 	@Override
@@ -79,12 +108,12 @@ public class Statistics implements Serializable {
 			return false;
 		}
 		Statistics that = (Statistics) o;
-		return Objects.equals(id, that.id) && Objects.equals(field, that.field) && Objects.equals(counter, that.counter);
+		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(statisticsField, that.statisticsField)
+				&& Objects.equals(launchId, that.launchId) && Objects.equals(itemId, that.itemId);
 	}
 
 	@Override
 	public int hashCode() {
-
-		return Objects.hash(id, field, counter);
+		return Objects.hash(id, statisticsField, counter, launchId, itemId);
 	}
 }

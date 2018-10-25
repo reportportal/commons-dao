@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
@@ -600,7 +601,8 @@ public class WidgetContentRepositoryTest {
 				false,
 				String.valueOf(projectId),
 				"project_id"
-		), new FilterCondition(Condition.EQUALS_ANY,
+		), new FilterCondition(
+				Condition.EQUALS_ANY,
 				false,
 				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
 				CRITERIA_TI_STATUS
@@ -621,7 +623,7 @@ public class WidgetContentRepositoryTest {
 				String.valueOf(launchRepository.findLatestByNameAndFilter(launchName, filter)
 						.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
 						.getId()),
-				LAUNCH_ID
+				CRITERIA_LAUNCH_ID
 		));
 	}
 

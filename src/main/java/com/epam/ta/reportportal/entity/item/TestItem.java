@@ -99,6 +99,9 @@ public class TestItem implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
 
+	@Column(name = "has_children")
+	private boolean hasChildren;
+
 	public TestItem() {
 	}
 
@@ -107,7 +110,7 @@ public class TestItem implements Serializable {
 	}
 
 	public TestItem(Long itemId, String name, TestItemTypeEnum type, LocalDateTime startTime, String description,
-			LocalDateTime lastModified, String uniqueId) {
+			LocalDateTime lastModified, String uniqueId, Boolean hasChildren) {
 		this.itemId = itemId;
 		this.name = name;
 		this.type = type;
@@ -115,6 +118,7 @@ public class TestItem implements Serializable {
 		this.description = description;
 		this.lastModified = lastModified;
 		this.uniqueId = uniqueId;
+		this.hasChildren = hasChildren;
 	}
 
 	public Set<TestItemTag> getTags() {
@@ -241,5 +245,13 @@ public class TestItem implements Serializable {
 
 	public void setItemResults(TestItemResults itemResults) {
 		this.itemResults = itemResults;
+	}
+
+	public boolean isHasChildren() {
+		return hasChildren;
+	}
+
+	public void setHasChildren(boolean hasChildren) {
+		this.hasChildren = hasChildren;
 	}
 }

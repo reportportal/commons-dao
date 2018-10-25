@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.entity.integration;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
 @Table(name = "integration", schema = "public")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Integration implements Serializable{
+public class Integration implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Integration implements Serializable{
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "project_id")
-	@JsonManagedReference
+	@JsonBackReference(value = "integration")
 	private Project project;
 
 	@ManyToOne(cascade = CascadeType.ALL)

@@ -1,8 +1,29 @@
+/*
+ *
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.commons.JsonbMapType;
+import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -15,6 +36,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@TypeDef(name = "jsonb", typeClass = JsonbMapType.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
@@ -50,7 +72,7 @@ public class User implements Serializable {
 
 	@Column(name = "metadata")
 	@Type(type = "jsonb")
-	private JsonbObject metadata;
+	private JsonMap<Object, Object> metadata;
 
 	@Column(name = "attachment")
 	private String attachment;
@@ -61,6 +83,7 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private UserType userType;
 
+	@JsonManagedReference(value = "projects")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<ProjectUser> projects;
 
@@ -163,11 +186,11 @@ public class User implements Serializable {
 		this.userType = userType;
 	}
 
-	public JsonbObject getMetadata() {
+	public JsonMap<Object, Object> getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(JsonbObject metadata) {
+	public void setMetadata(JsonMap<Object, Object> metadata) {
 		this.metadata = metadata;
 	}
 
@@ -183,7 +206,8 @@ public class User implements Serializable {
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
 		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
-				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
+				attachment,
 				user.attachment
 		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}

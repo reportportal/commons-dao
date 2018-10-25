@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatistics extends TableImpl<JStatisticsRecord> {
 
-    private static final long serialVersionUID = -445985674;
+    private static final long serialVersionUID = 1129965131;
 
     /**
      * The reference instance of <code>public.statistics</code>
@@ -62,14 +62,14 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
     public final TableField<JStatisticsRecord, Long> S_ID = createField("s_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('statistics_s_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>public.statistics.s_field</code>.
-     */
-    public final TableField<JStatisticsRecord, String> S_FIELD = createField("s_field", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
      * The column <code>public.statistics.s_counter</code>.
      */
     public final TableField<JStatisticsRecord, Integer> S_COUNTER = createField("s_counter", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>public.statistics.launch_id</code>.
+     */
+    public final TableField<JStatisticsRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.statistics.item_id</code>.
@@ -77,9 +77,9 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
     public final TableField<JStatisticsRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
-     * The column <code>public.statistics.launch_id</code>.
+     * The column <code>public.statistics.statistics_field_id</code>.
      */
-    public final TableField<JStatisticsRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JStatisticsRecord, Long> STATISTICS_FIELD_ID = createField("statistics_field_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.statistics</code> table reference
@@ -127,7 +127,7 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PK_STATISTICS, Indexes.UNIQUE_STATUS_ITEM, Indexes.UNIQUE_STATUS_LAUNCH);
+        return Arrays.<Index>asList(Indexes.STATISTICS_PK, Indexes.UNIQUE_STATS_ITEM, Indexes.UNIQUE_STATS_LAUNCH);
     }
 
     /**
@@ -143,7 +143,7 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public UniqueKey<JStatisticsRecord> getPrimaryKey() {
-        return Keys.PK_STATISTICS;
+        return Keys.STATISTICS_PK;
     }
 
     /**
@@ -151,7 +151,7 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public List<UniqueKey<JStatisticsRecord>> getKeys() {
-        return Arrays.<UniqueKey<JStatisticsRecord>>asList(Keys.PK_STATISTICS, Keys.UNIQUE_STATUS_ITEM, Keys.UNIQUE_STATUS_LAUNCH);
+        return Arrays.<UniqueKey<JStatisticsRecord>>asList(Keys.STATISTICS_PK, Keys.UNIQUE_STATS_LAUNCH, Keys.UNIQUE_STATS_ITEM);
     }
 
     /**
@@ -159,15 +159,19 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public List<ForeignKey<JStatisticsRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JStatisticsRecord, ?>>asList(Keys.STATISTICS__STATISTICS_ITEM_ID_FKEY, Keys.STATISTICS__STATISTICS_LAUNCH_ID_FKEY);
+        return Arrays.<ForeignKey<JStatisticsRecord, ?>>asList(Keys.STATISTICS__STATISTICS_LAUNCH_ID_FKEY, Keys.STATISTICS__STATISTICS_ITEM_ID_FKEY, Keys.STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY);
+    }
+
+    public JLaunch launch() {
+        return new JLaunch(this, Keys.STATISTICS__STATISTICS_LAUNCH_ID_FKEY);
     }
 
     public JTestItem testItem() {
         return new JTestItem(this, Keys.STATISTICS__STATISTICS_ITEM_ID_FKEY);
     }
 
-    public JLaunch launch() {
-        return new JLaunch(this, Keys.STATISTICS__STATISTICS_LAUNCH_ID_FKEY);
+    public JStatisticsField statisticsField() {
+        return new JStatisticsField(this, Keys.STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY);
     }
 
     /**

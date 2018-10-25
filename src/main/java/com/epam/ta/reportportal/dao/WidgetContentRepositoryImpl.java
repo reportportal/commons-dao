@@ -43,6 +43,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.LAUNCHES_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.NOT_PASSED_CASES_CONTENT_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -94,11 +95,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.as(QueryBuilder.newBuilder(filter).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
-								DSL.arrayAgg(DSL.when(STATISTICS.S_FIELD.eq(criteria), "true").otherwise("false"))
+								DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), "true").otherwise("false"))
 										.orderBy(LAUNCH.NUMBER.asc())
 										.as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
-								DSL.sum(DSL.when(STATISTICS.S_FIELD.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
+								DSL.sum(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
 								DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
@@ -108,10 +109,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(STATISTICS)
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(TEST_ITEM.TYPE.in(includeMethods ?
 								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
 								Collections.singletonList(JTestItemTypeEnum.STEP)))
-						.and(STATISTICS.S_FIELD.eq(criteria))
+						.and(STATISTICS_FIELD.NAME.eq(criteria))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
@@ -189,7 +192,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL)), 0).cast(Double.class)), 2);
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -221,7 +225,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -240,9 +245,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
 				.as(TOTAL);
 
-		Collections.addAll(fields,
-				sumField,
-				fieldName(LAUNCH.ID),
+		Collections.addAll(fields, sumField, fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -268,8 +271,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.flatMap(List::stream)
 				.collect(toList());
 
-		Collections.addAll(statisticsFields,
-				fieldName(LAUNCH.ID),
+		Collections.addAll(statisticsFields, fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -284,7 +286,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.STATUS),
@@ -298,7 +301,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(fieldName(LAUNCH.ID),
+		return dsl.select(
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -343,12 +347,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				TEST_ITEM.NAME,
 				TEST_ITEM.DESCRIPTION,
 				USERS.LOGIN,
-				fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID)
+				fieldName(LAUNCHES_SUB_QUERY, ID)
 
 		)
 				.from(QueryBuilder.newBuilder(filter).with(limit).with(sort).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
 				.join(TEST_ITEM)
-				.on(fieldName(LAUNCHES_SUB_QUERY, LAUNCH_ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+				.on(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.leftJoin(ISSUE)
@@ -409,8 +413,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields,
-				fieldName(LAUNCHES_SUB_QUERY, ID),
+		Collections.addAll(fields, fieldName(LAUNCHES_SUB_QUERY, ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCHES_SUB_QUERY, NAME),
 				fieldName(LAUNCH.START_TIME),
@@ -474,18 +477,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter) {
-		return dsl.select(fieldName(SUBQUERY_TEST_ITEM_ID).as(ID),
+		return dsl.select(fieldName(TEST_ITEM.ITEM_ID).as(ID),
 				fieldName(TEST_ITEM.UNIQUE_ID),
 				fieldName(TEST_ITEM.NAME),
 				fieldName(TEST_ITEM.TYPE),
 				fieldName(TEST_ITEM.START_TIME),
-				fieldName(TEST_ITEM_RESULTS.END_TIME),
-				fieldName(TEST_ITEM_RESULTS.DURATION),
-				fieldName(SUBQUERY_TEST_ITEM_STATUS)
-		)
-				.from(QueryBuilder.newBuilder(filter)
-						.with(20)
-						.build())
+				fieldName(TEST_ITEM_RESULTS.END_TIME), fieldName(TEST_ITEM_RESULTS.DURATION), fieldName(TEST_ITEM_RESULTS.STATUS)
+		).from(QueryBuilder.newBuilder(filter).with(20).build())
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
 	}

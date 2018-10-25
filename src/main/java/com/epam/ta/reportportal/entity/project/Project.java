@@ -1,13 +1,31 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -16,7 +34,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -41,7 +62,7 @@ public class Project implements Serializable {
 	private ProjectType projectType;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonBackReference
+	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	@Column(name = "additional_info")
@@ -55,10 +76,6 @@ public class Project implements Serializable {
 	@JsonIgnore
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project")
-	@JsonBackReference
-	private List<DemoDataPostfix> demoDataPostfix;
-
 	@Column(name = "creation_date")
 	private Date creationDate;
 
@@ -66,12 +83,18 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private JsonbObject metadata;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<EmailSenderCase> emailCases = Sets.newHashSet();
+	@ManyToMany(cascade = { CascadeType.ALL })
+	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "issue_type_id") })
+	@JsonIgnoreProperties(value = "projects")
+	private List<IssueType> issueTypes;
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<EmailSenderCase> emailCases;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
-	@JsonBackReference
-	private Set<ProjectUser> users = Sets.newHashSet();
+	@JsonManagedReference("users")
+	private Set<ProjectUser> users;
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -159,19 +182,6 @@ public class Project implements Serializable {
 
 	public void setEmailCases(Set<EmailSenderCase> emailCases) {
 		this.emailCases = emailCases;
-	}
-
-	/**
-	 * NULL-safe getter
-	 *
-	 * @return the list of demo-data postfix
-	 */
-	public List<DemoDataPostfix> getDemoDataPostfix() {
-		return demoDataPostfix == null ? demoDataPostfix = Collections.emptyList() : demoDataPostfix;
-	}
-
-	public void setDemoDataPostfix(List<DemoDataPostfix> demoDataPostfix) {
-		this.demoDataPostfix = demoDataPostfix;
 	}
 
 	public JsonbObject getMetadata() {

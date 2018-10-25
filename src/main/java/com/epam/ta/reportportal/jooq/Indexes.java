@@ -3,12 +3,63 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
+
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserFilter;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+
+import javax.annotation.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -28,6 +79,14 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
+    public static final Index ACL_CLASS_PKEY = Indexes0.ACL_CLASS_PKEY;
+    public static final Index UNIQUE_UK_2 = Indexes0.UNIQUE_UK_2;
+    public static final Index ACL_ENTRY_PKEY = Indexes0.ACL_ENTRY_PKEY;
+    public static final Index UNIQUE_UK_4 = Indexes0.UNIQUE_UK_4;
+    public static final Index ACL_OBJECT_IDENTITY_PKEY = Indexes0.ACL_OBJECT_IDENTITY_PKEY;
+    public static final Index UNIQUE_UK_3 = Indexes0.UNIQUE_UK_3;
+    public static final Index ACL_SID_PKEY = Indexes0.ACL_SID_PKEY;
+    public static final Index UNIQUE_UK_1 = Indexes0.UNIQUE_UK_1;
     public static final Index ACTIVE_DIRECTORY_CONFIG_PK = Indexes0.ACTIVE_DIRECTORY_CONFIG_PK;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
@@ -40,7 +99,6 @@ public class Indexes {
     public static final Index WIDGET_ON_DASHBOARD_UNQ = Indexes0.WIDGET_ON_DASHBOARD_UNQ;
     public static final Index DEFECT_FIELD_ALLOWED_VALUE_PK = Indexes0.DEFECT_FIELD_ALLOWED_VALUE_PK;
     public static final Index DEFECT_FORM_FIELD_PK = Indexes0.DEFECT_FORM_FIELD_PK;
-    public static final Index DEMO_DATA_POSTFIX_PK = Indexes0.DEMO_DATA_POSTFIX_PK;
     public static final Index EMAIL_SENDER_CASE_PK = Indexes0.EMAIL_SENDER_CASE_PK;
     public static final Index FILTER_PK = Indexes0.FILTER_PK;
     public static final Index FILTER_CONDITION_PK = Indexes0.FILTER_CONDITION_PK;
@@ -72,17 +130,23 @@ public class Indexes {
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
     public static final Index UNIQUE_ATTRIBUTE_PER_PROJECT = Indexes0.UNIQUE_ATTRIBUTE_PER_PROJECT;
     public static final Index USERS_PROJECT_PK = Indexes0.USERS_PROJECT_PK;
+    public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
+    public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
     public static final Index SERVER_SETTINGS_KEY_KEY = Indexes0.SERVER_SETTINGS_KEY_KEY;
-    public static final Index PK_STATISTICS = Indexes0.PK_STATISTICS;
-    public static final Index UNIQUE_STATUS_ITEM = Indexes0.UNIQUE_STATUS_ITEM;
-    public static final Index UNIQUE_STATUS_LAUNCH = Indexes0.UNIQUE_STATUS_LAUNCH;
+    public static final Index STATISTICS_PK = Indexes0.STATISTICS_PK;
+    public static final Index UNIQUE_STATS_ITEM = Indexes0.UNIQUE_STATS_ITEM;
+    public static final Index UNIQUE_STATS_LAUNCH = Indexes0.UNIQUE_STATS_LAUNCH;
+    public static final Index STATISTICS_FIELD_NAME_KEY = Indexes0.STATISTICS_FIELD_NAME_KEY;
+    public static final Index STATISTICS_FIELD_PK = Indexes0.STATISTICS_FIELD_PK;
     public static final Index PATH_GIST_IDX = Indexes0.PATH_GIST_IDX;
     public static final Index PATH_IDX = Indexes0.PATH_IDX;
     public static final Index TEST_ITEM_PK = Indexes0.TEST_ITEM_PK;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
+    public static final Index USER_CREATION_BID_EMAIL_KEY = Indexes0.USER_CREATION_BID_EMAIL_KEY;
+    public static final Index USER_CREATION_BID_PK = Indexes0.USER_CREATION_BID_PK;
     public static final Index USER_FILTER_PK = Indexes0.USER_FILTER_PK;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
@@ -95,6 +159,14 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     private static class Indexes0 {
+        public static Index ACL_CLASS_PKEY = Internal.createIndex("acl_class_pkey", JAclClass.ACL_CLASS, new OrderField[] { JAclClass.ACL_CLASS.ID }, true);
+        public static Index UNIQUE_UK_2 = Internal.createIndex("unique_uk_2", JAclClass.ACL_CLASS, new OrderField[] { JAclClass.ACL_CLASS.CLASS }, true);
+        public static Index ACL_ENTRY_PKEY = Internal.createIndex("acl_entry_pkey", JAclEntry.ACL_ENTRY, new OrderField[] { JAclEntry.ACL_ENTRY.ID }, true);
+        public static Index UNIQUE_UK_4 = Internal.createIndex("unique_uk_4", JAclEntry.ACL_ENTRY, new OrderField[] { JAclEntry.ACL_ENTRY.ACL_OBJECT_IDENTITY, JAclEntry.ACL_ENTRY.ACE_ORDER }, true);
+        public static Index ACL_OBJECT_IDENTITY_PKEY = Internal.createIndex("acl_object_identity_pkey", JAclObjectIdentity.ACL_OBJECT_IDENTITY, new OrderField[] { JAclObjectIdentity.ACL_OBJECT_IDENTITY.ID }, true);
+        public static Index UNIQUE_UK_3 = Internal.createIndex("unique_uk_3", JAclObjectIdentity.ACL_OBJECT_IDENTITY, new OrderField[] { JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS, JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY }, true);
+        public static Index ACL_SID_PKEY = Internal.createIndex("acl_sid_pkey", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.ID }, true);
+        public static Index UNIQUE_UK_1 = Internal.createIndex("unique_uk_1", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL }, true);
         public static Index ACTIVE_DIRECTORY_CONFIG_PK = Internal.createIndex("active_directory_config_pk", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, new OrderField[] { JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.ID }, true);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
@@ -107,7 +179,6 @@ public class Indexes {
         public static Index WIDGET_ON_DASHBOARD_UNQ = Internal.createIndex("widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME }, true);
         public static Index DEFECT_FIELD_ALLOWED_VALUE_PK = Internal.createIndex("defect_field_allowed_value_pk", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, new OrderField[] { JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID }, true);
         public static Index DEFECT_FORM_FIELD_PK = Internal.createIndex("defect_form_field_pk", JDefectFormField.DEFECT_FORM_FIELD, new OrderField[] { JDefectFormField.DEFECT_FORM_FIELD.ID }, true);
-        public static Index DEMO_DATA_POSTFIX_PK = Internal.createIndex("demo_data_postfix_pk", JDemoDataPostfix.DEMO_DATA_POSTFIX, new OrderField[] { JDemoDataPostfix.DEMO_DATA_POSTFIX.ID }, true);
         public static Index EMAIL_SENDER_CASE_PK = Internal.createIndex("email_sender_case_pk", JEmailSenderCase.EMAIL_SENDER_CASE, new OrderField[] { JEmailSenderCase.EMAIL_SENDER_CASE.ID }, true);
         public static Index FILTER_PK = Internal.createIndex("filter_pk", JFilter.FILTER, new OrderField[] { JFilter.FILTER.ID }, true);
         public static Index FILTER_CONDITION_PK = Internal.createIndex("filter_condition_pk", JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.ID }, true);
@@ -139,17 +210,23 @@ public class Indexes {
         public static Index PROJECT_PK = Internal.createIndex("project_pk", JProject.PROJECT, new OrderField[] { JProject.PROJECT.ID }, true);
         public static Index UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createIndex("unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE, new OrderField[] { JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID }, true);
         public static Index USERS_PROJECT_PK = Internal.createIndex("users_project_pk", JProjectUser.PROJECT_USER, new OrderField[] { JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID }, true);
+        public static Index RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createIndex("restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL }, true);
+        public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
         public static Index SERVER_SETTINGS_KEY_KEY = Internal.createIndex("server_settings_key_key", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.KEY }, true);
-        public static Index PK_STATISTICS = Internal.createIndex("pk_statistics", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
-        public static Index UNIQUE_STATUS_ITEM = Internal.createIndex("unique_status_item", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.ITEM_ID }, true);
-        public static Index UNIQUE_STATUS_LAUNCH = Internal.createIndex("unique_status_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_FIELD, JStatistics.STATISTICS.LAUNCH_ID }, true);
+        public static Index STATISTICS_PK = Internal.createIndex("statistics_pk", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
+        public static Index UNIQUE_STATS_ITEM = Internal.createIndex("unique_stats_item", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID }, true);
+        public static Index UNIQUE_STATS_LAUNCH = Internal.createIndex("unique_stats_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID }, true);
+        public static Index STATISTICS_FIELD_NAME_KEY = Internal.createIndex("statistics_field_name_key", JStatisticsField.STATISTICS_FIELD, new OrderField[] { JStatisticsField.STATISTICS_FIELD.NAME }, true);
+        public static Index STATISTICS_FIELD_PK = Internal.createIndex("statistics_field_pk", JStatisticsField.STATISTICS_FIELD, new OrderField[] { JStatisticsField.STATISTICS_FIELD.SF_ID }, true);
         public static Index PATH_GIST_IDX = Internal.createIndex("path_gist_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index PATH_IDX = Internal.createIndex("path_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index TEST_ITEM_PK = Internal.createIndex("test_item_pk", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.ITEM_ID }, true);
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
+        public static Index USER_CREATION_BID_EMAIL_KEY = Internal.createIndex("user_creation_bid_email_key", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.EMAIL }, true);
+        public static Index USER_CREATION_BID_PK = Internal.createIndex("user_creation_bid_pk", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.UUID }, true);
         public static Index USER_FILTER_PK = Internal.createIndex("user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);

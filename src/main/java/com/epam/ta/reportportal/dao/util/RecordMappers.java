@@ -17,18 +17,25 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
+import com.epam.ta.reportportal.entity.item.TestItemTag;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserRole;
+import com.epam.ta.reportportal.entity.user.UserType;
 import com.epam.ta.reportportal.entity.user.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -48,9 +55,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.PARENT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -78,7 +86,7 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, Set<Statistics>> CROSSTAB_RECORD_STATISTICS_MAPPER = r -> Arrays.stream(r.fields())
 			.filter(f -> f.getName().startsWith(STATISTICS))
-			.map(f -> new Statistics(f.getName(), r.get(f.getName(), Integer.class)))
+			.map(f -> new Statistics(new StatisticsField(f.getName()), r.get(f.getName(), Integer.class)))
 			.collect(Collectors.toSet());
 
 	/**
@@ -94,7 +102,7 @@ public class RecordMappers {
 	 * Maps record into {@link IssueEntity} object
 	 */
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-		if (r.get(ISSUE.ISSUE_ID) != null) {
+		if (ofNullable(r.field(ISSUE.ISSUE_ID)).isPresent()) {
 			IssueEntity issueEntity = r.into(IssueEntity.class);
 			issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
 			return issueEntity;
@@ -123,8 +131,12 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(LAUNCH_ID, Long.class)));
-		testItem.setParent(new TestItem(r.get(PARENT_ID, Long.class)));
+		testItem.setLaunch(new Launch(r.get(CRITERIA_LAUNCH_ID, Long.class)));
+		testItem.setParent(new TestItem(r.get(CRITERIA_PARENT_ID, Long.class)));
+		ofNullable(r.field("tags")).ifPresent(f -> {
+			String[] tags = r.getValue(f, String[].class);
+			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(TestItemTag::new).collect(Collectors.toSet()));
+		});
 		return testItem;
 	};
 
@@ -135,26 +147,23 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setUser(r.into(User.class));
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
+		ofNullable(r.field("tags")).ifPresent(f -> {
+			String[] tags = r.getValue(f, String[].class);
+			launch.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(LaunchTag::new).collect(Collectors.toSet()));
+		});
 		return launch;
 	};
 
 	/**
-	 * Maps result of records without crosstab into list of launches
-	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = result -> new ArrayList<>(result.stream()
-			.collect(Collectors.toMap(r -> r.get(LAUNCH.ID), r -> r.into(Launch.class)))
-			.values());
-
-	/**
 	 * Maps record into {@link User} object
 	 */
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
+	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
 		User user = new User();
 		Project defaultProject = new Project();
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
-				JsonbObject metaData = objectMapper.readValue(metaDataString, JsonbObject.class);
+				JsonMap<Object, Object> metaData = objectMapper.readValue(metaDataString, JsonMap.class);
 				user.setMetadata(metaData);
 			} catch (IOException e) {
 				throw new ReportPortalException("Error during parsing user metadata");
@@ -223,8 +232,9 @@ public class RecordMappers {
 		activity.setUserId(r.get(ACTIVITY.USER_ID));
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setAction(r.get(ACTIVITY.ACTION));
-		activity.setEntity(r.get(ACTIVITY.ENTITY, Activity.Entity.class));
+		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
+		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
 			try {
@@ -235,16 +245,6 @@ public class RecordMappers {
 			}
 		});
 		return activity;
-	};
-	public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = r -> {
-		Map<Long, Activity> activityMap = Maps.newHashMap();
-		r.forEach(res -> {
-			Long activityId = res.get(ACTIVITY.ID);
-			if (!activityMap.containsKey(activityId)) {
-				activityMap.put(activityId, ACTIVITY_MAPPER.map(res));
-			}
-		});
-		return Lists.newArrayList(activityMap.values());
 	};
 
 	@Component

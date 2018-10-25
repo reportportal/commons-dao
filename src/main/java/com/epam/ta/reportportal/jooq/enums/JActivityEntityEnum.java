@@ -28,7 +28,31 @@ public enum JActivityEntityEnum implements EnumType {
 
     LAUNCH("LAUNCH"),
 
-    ITEM("ITEM");
+    ITEM("ITEM"),
+
+    DASHBOARD("DASHBOARD"),
+
+    DEFECT_TYPE("DEFECT_TYPE"),
+
+    EMAIL_CONFIG("EMAIL_CONFIG"),
+
+    FILTER("FILTER"),
+
+    IMPORT("IMPORT"),
+
+    INTEGRATION("INTEGRATION"),
+
+    ITEM_ISSUE("ITEM_ISSUE"),
+
+    PROJECT("PROJECT"),
+
+    SHARING("SHARING"),
+
+    TICKET("TICKET"),
+
+    USER("USER"),
+
+    WIDGET("WIDGET");
 
     private final String literal;
 
