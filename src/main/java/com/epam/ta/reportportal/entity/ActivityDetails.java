@@ -16,13 +16,14 @@
 
 package com.epam.ta.reportportal.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Ihar Kahadouski
  */
-public class ActivityDetails extends JsonbObject {
+public class ActivityDetails extends JsonbObject implements Serializable {
 
 	private List<HistoryField> history;
 
@@ -33,11 +34,10 @@ public class ActivityDetails extends JsonbObject {
 	}
 
 	public ActivityDetails(String objectName) {
-		history = new ArrayList<>();
 		this.objectName = objectName;
 	}
 
-	public ActivityDetails(String objectName, List<HistoryField> history) {
+	public ActivityDetails(List<HistoryField> history, String objectName) {
 		this.history = history;
 		this.objectName = objectName;
 	}

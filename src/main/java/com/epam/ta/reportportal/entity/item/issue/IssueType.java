@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +12,13 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -57,7 +55,7 @@ public class IssueType implements Serializable {
 	private String hexColor;
 
 	@ManyToMany(mappedBy = "issueTypes")
-	@JsonBackReference(value = "issueTypes")
+	@JsonIgnoreProperties(value = "issueTypes")
 	private List<Project> projects;
 
 	public IssueType() {

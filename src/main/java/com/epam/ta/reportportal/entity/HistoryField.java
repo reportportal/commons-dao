@@ -21,30 +21,42 @@ import java.io.Serializable;
 /**
  * @author Ihar Kahadouski
  */
-public class HistoryField implements Serializable {
+public class HistoryField extends JsonbObject implements Serializable {
 	private String field;
 	private String oldValue;
 	private String newValue;
 
-	private HistoryField(String field, String oldValue, String newValue) {
+	public HistoryField() {
+	}
+
+	public HistoryField(String field, String oldValue, String newValue) {
 		this.field = field;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
-	}
-
-	private HistoryField() {
 	}
 
 	public String getField() {
 		return field;
 	}
 
+	public void setField(String field) {
+		this.field = field;
+	}
+
 	public String getOldValue() {
 		return oldValue;
 	}
 
+	public void setOldValue(String oldValue) {
+		this.oldValue = oldValue;
+	}
+
 	public String getNewValue() {
 		return newValue;
+	}
+
+	public void setNewValue(String newValue) {
+		this.newValue = newValue;
 	}
 
 	public static HistoryField of(String field, String oldValue, String newValue) {
