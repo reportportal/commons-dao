@@ -40,7 +40,6 @@ import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -79,7 +78,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			return new ArrayList<>();
 		}
 
-		return dsl.select().from(LOG).where(TEST_ITEM.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).limit(limit).fetch().map(LOG_MAPPER);
+		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).limit(limit).fetch().map(LOG_MAPPER);
 	}
 
 	@Override
@@ -88,7 +87,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			return new ArrayList<>();
 		}
 
-		return dsl.select().from(LOG).where(TEST_ITEM.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).fetch().map(LOG_MAPPER);
+		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).fetch().map(LOG_MAPPER);
 	}
 
 	@Override
