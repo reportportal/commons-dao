@@ -127,7 +127,9 @@ public class LaunchRepositoryTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		List<Launch> launches = launchRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
-				false, "build", "tags"
+				false,
+				"build",
+				"tags"
 		)));
 
 		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
@@ -135,7 +137,9 @@ public class LaunchRepositoryTest {
 
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false, String.valueOf(projectId), CRITERIA_PROJECT_ID
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
