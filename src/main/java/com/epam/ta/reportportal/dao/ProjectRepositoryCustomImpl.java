@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.epam.ta.reportportal.dao;
@@ -40,8 +38,6 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.name;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
-import static com.epam.ta.reportportal.jooq.Tables.USERS;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
