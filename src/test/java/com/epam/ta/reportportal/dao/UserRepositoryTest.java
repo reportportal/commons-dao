@@ -96,6 +96,43 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void loadUserNameByProject() {
+		//given
+		long projectId = 3L;
+		String term = "2";
+		//when
+		List<String> userNames = userRepository.findNamesByProject(projectId, term);
+		//then
+		Assert.assertThat("User names not found", userNames, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of user names", userNames, Matchers.hasSize(1));
+		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified '2' term", name, Matchers.containsString(term)));
+	}
+
+	@Test
+	public void loadUserNamesByProject() {
+		//given
+		long projectId = 3L;
+		String term = "test";
+		//when
+		List<String> userNames = userRepository.findNamesByProject(projectId, term);
+		//then
+		Assert.assertThat("User names not found", userNames, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of user names", userNames, Matchers.hasSize(2));
+		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified 'test' term", name, Matchers.containsString(term)));
+	}
+
+	@Test
+	public void negativeLoadUserNamesByProject() {
+		//given
+		long projectId = 3L;
+		String term = "negative";
+		//when
+		List<String> userNames = userRepository.findNamesByProject(projectId, term);
+		//then
+		Assert.assertThat("Result contains user names", userNames, Matchers.empty());
+	}
+
+	@Test
 	public void loadUsersByFilterForProject() {
 		//given
 		Filter filter = buildDefaultUserFilter();
