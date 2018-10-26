@@ -23,8 +23,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
 
+import java.util.List;
+
 /**
  * @author Pavel Bortnik
  */
 public interface WidgetRepository extends ReportPortalRepository<Widget, Long> {
+
+	List<Widget> findAllByProjectId(Long projectId);
 }
