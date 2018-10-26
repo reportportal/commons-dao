@@ -58,8 +58,8 @@ public class Project implements Serializable {
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "project_type")
-	private ProjectType projectType;
+//	@Column(name = "project_type")
+//	private ProjectType projectType;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference(value = "integration")
@@ -120,13 +120,13 @@ public class Project implements Serializable {
 		this.id = id;
 	}
 
-	public ProjectType getProjectType() {
-		return projectType;
-	}
-
-	public void setProjectType(ProjectType projectType) {
-		this.projectType = projectType;
-	}
+//	public ProjectType getProjectType() {
+//		return projectType;
+//	}
+//
+//	public void setProjectType(ProjectType projectType) {
+//		this.projectType = projectType;
+//	}
 
 	public String getAddInfo() {
 		return addInfo;
