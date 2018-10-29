@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
  */
 public interface StatisticsFieldRepository extends ReportPortalRepository<StatisticsField, Long> {
 
-	@Query("DELETE FROM statistics_field WHERE name=:name")
+	@Query(value = "DELETE FROM statistics_field WHERE name=:name", nativeQuery = true)
 	void deleteByName(@Param("name") String name);
 }
