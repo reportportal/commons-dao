@@ -60,6 +60,10 @@ public enum TestItemIssueGroup /*implements StatisticsAwareness*/ {
 		return locator;
 	}
 
+	public String getIssueCounterField() {
+		return issueCounterField;
+	}
+
 	/**
 	 * Retrieves TestItemIssueType value by it's string value
 	 *
