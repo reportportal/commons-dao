@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 
 import java.util.Optional;
@@ -42,5 +43,5 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 * @param groupType Integration group
 	 * @return Optional of integration
 	 */
-	Optional<IntegrationType> findByNameAndGroupType(String name, String groupType);
+	Optional<IntegrationType> findByNameAndIntegrationGroup(String name, IntegrationGroupEnum groupType);
 }

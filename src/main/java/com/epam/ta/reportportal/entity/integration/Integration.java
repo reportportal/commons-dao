@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "integration_params", typeClass = JsonbUserType.class)
 @Table(name = "integration", schema = "public")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Integration implements Serializable {
@@ -43,16 +43,16 @@ public class Integration implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "project_id")
 	@JsonBackReference(value = "integration")
 	private Project project;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "type")
 	private IntegrationType type;
 
-	@Type(type = "jsonb")
+	@Type(type = "integration_params")
 	@Column(name = "params")
 	private IntegrationParams params;
 
