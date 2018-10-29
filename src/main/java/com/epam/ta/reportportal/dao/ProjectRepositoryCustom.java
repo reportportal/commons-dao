@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -46,4 +47,11 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 * @return Optional of String
 	 */
 	Optional<String> findPersonalProjectName(String username);
+
+	/**
+	 * Find all project names
+	 *
+	 * @return List of project names
+	 */
+	List<String> findAllProjectNames();
 }

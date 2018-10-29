@@ -84,7 +84,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
 						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
 						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
-				).fetch()
+				)
+				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
@@ -96,5 +97,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID))
 				.where(USERS.LOGIN.eq(username))
 				.fetchOne(PROJECT.NAME));
+	}
+
+	@Override
+	public List<String> findAllProjectNames() {
+		return dsl.select(PROJECT.NAME).from(PROJECT).fetchInto(String.class);
 	}
 }
