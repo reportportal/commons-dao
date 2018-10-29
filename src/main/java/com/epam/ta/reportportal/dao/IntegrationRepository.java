@@ -47,7 +47,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 
 	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i"
 			+ " WHERE (params->'params'->>'url' = :url AND params->'params'->>'project' = :btsProject"
-			+ " AND i.project_id = :projectId)", nativeQuery = true)
+			+ " AND i.project_id = :projectId) LIMIT 1", nativeQuery = true)
 	Optional<Integration> findByUrlAndBtsProjectAndProjectId(@Param("url") String url, @Param("btsProject") String btsProject,
 			@Param("projectId") Long projectId);
 }
