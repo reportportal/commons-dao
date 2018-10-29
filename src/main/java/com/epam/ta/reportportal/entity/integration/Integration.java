@@ -57,7 +57,7 @@ public class Integration implements Serializable {
 	private IntegrationParams params;
 
 	@Column(name = "enabled")
-	private Boolean enabled;
+	private boolean enabled;
 
 	@CreatedDate
 	@Column(name = "creation_date", nullable = false)
@@ -114,11 +114,11 @@ public class Integration implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public Boolean isEnabled() {
+	public boolean isEnabled() {
 		return enabled;
 	}
 
-	public void setEnabled(Boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 }
