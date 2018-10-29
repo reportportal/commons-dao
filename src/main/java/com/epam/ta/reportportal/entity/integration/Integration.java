@@ -34,6 +34,7 @@ public class Integration implements Serializable {
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "type")
+	@JsonBackReference(value = "integrationTypes")
 	private IntegrationType type;
 
 	@Type(type = "jsonb")
