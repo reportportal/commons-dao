@@ -24,9 +24,26 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
+/**
+ * @author Pavel Bortnik
+ */
 public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 
+	/**
+	 * Find projects info by filter with paging
+	 *
+	 * @param filter   Filter
+	 * @param pageable Paging
+	 * @param mode     Launch mode
+	 * @return Page of project info objects
+	 */
 	Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable, String mode);
 
+	/**
+	 * Find personal project name by user
+	 *
+	 * @param username Login
+	 * @return Optional of String
+	 */
 	Optional<String> findPersonalProjectName(String username);
 }
