@@ -27,5 +27,4 @@ public class LaunchCriteriaConstant {
 	public static final String CRITERIA_LAUNCH_MODE = "mode";
 	public static final String CRITERIA_LAUNCH_STATUS = "status";
 	public static final String CRITERIA_LAUNCH_NAME = "name";
-	public static final String CRITERIA_LAUNCH_STASTISTICS_FIELD_NAME = "name";
 }
