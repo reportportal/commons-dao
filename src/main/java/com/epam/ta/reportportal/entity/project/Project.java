@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
@@ -58,6 +59,9 @@ public class Project implements Serializable {
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "project_type")
+	private ProjectType projectType;
+
 	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
@@ -67,7 +71,11 @@ public class Project implements Serializable {
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private Set<ProjectAttribute> projectAttributes;
+	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	@Column(name = "creation_date")
 	private Date creationDate;
@@ -113,6 +121,14 @@ public class Project implements Serializable {
 		this.id = id;
 	}
 
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+
+	public void setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
+	}
+
 	public String getAddInfo() {
 		return addInfo;
 	}
@@ -149,12 +165,12 @@ public class Project implements Serializable {
 		return projectAttributes;
 	}
 
-	public List<IssueType> getIssueTypes() {
-		return issueTypes;
+	public Set<ProjectIssueType> getProjectIssueTypes() {
+		return projectIssueTypes;
 	}
 
-	public void setIssueTypes(List<IssueType> issueTypes) {
-		this.issueTypes = issueTypes;
+	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
+		this.projectIssueTypes = projectIssueTypes;
 	}
 
 	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
@@ -186,13 +202,15 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(users, project.users)
-				&& Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata, project.metadata);
+		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(creationDate,
+				project.creationDate
+		) && Objects.equals(metadata, project.metadata);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, addInfo, users, creationDate);
+
+		return Objects.hash(name, addInfo, creationDate, metadata);
 	}
 
 	@Override

@@ -64,7 +64,6 @@ public class Indexes {
     public static final Index WIDGET_ON_DASHBOARD_UNQ = Indexes0.WIDGET_ON_DASHBOARD_UNQ;
     public static final Index DEFECT_FIELD_ALLOWED_VALUE_PK = Indexes0.DEFECT_FIELD_ALLOWED_VALUE_PK;
     public static final Index DEFECT_FORM_FIELD_PK = Indexes0.DEFECT_FORM_FIELD_PK;
-    public static final Index DEMO_DATA_POSTFIX_PK = Indexes0.DEMO_DATA_POSTFIX_PK;
     public static final Index EMAIL_SENDER_CASE_PK = Indexes0.EMAIL_SENDER_CASE_PK;
     public static final Index FILTER_PK = Indexes0.FILTER_PK;
     public static final Index FILTER_CONDITION_PK = Indexes0.FILTER_CONDITION_PK;
@@ -145,7 +144,6 @@ public class Indexes {
         public static Index WIDGET_ON_DASHBOARD_UNQ = Internal.createIndex("widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME }, true);
         public static Index DEFECT_FIELD_ALLOWED_VALUE_PK = Internal.createIndex("defect_field_allowed_value_pk", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, new OrderField[] { JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID }, true);
         public static Index DEFECT_FORM_FIELD_PK = Internal.createIndex("defect_form_field_pk", JDefectFormField.DEFECT_FORM_FIELD, new OrderField[] { JDefectFormField.DEFECT_FORM_FIELD.ID }, true);
-        public static Index DEMO_DATA_POSTFIX_PK = Internal.createIndex("demo_data_postfix_pk", JDemoDataPostfix.DEMO_DATA_POSTFIX, new OrderField[] { JDemoDataPostfix.DEMO_DATA_POSTFIX.ID }, true);
         public static Index EMAIL_SENDER_CASE_PK = Internal.createIndex("email_sender_case_pk", JEmailSenderCase.EMAIL_SENDER_CASE, new OrderField[] { JEmailSenderCase.EMAIL_SENDER_CASE.ID }, true);
         public static Index FILTER_PK = Internal.createIndex("filter_pk", JFilter.FILTER, new OrderField[] { JFilter.FILTER.ID }, true);
         public static Index FILTER_CONDITION_PK = Internal.createIndex("filter_condition_pk", JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.ID }, true);

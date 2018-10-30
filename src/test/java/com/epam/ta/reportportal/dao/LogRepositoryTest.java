@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,9 @@ public class LogRepositoryTest {
 
 	@Autowired
 	private LogRepository logRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Test
 	public void getPageNumberTest() {

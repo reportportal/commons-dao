@@ -47,7 +47,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = -462335374;
+    private static final long serialVersionUID = 1266876167;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -88,9 +88,8 @@ public class JActivity extends TableImpl<JActivityRecord> {
     public final TableField<JActivityRecord, String> ACTION = createField("action", org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * The column <code>public.activity.details</code>.
      */
-    @java.lang.Deprecated
     public final TableField<JActivityRecord, Object> DETAILS = createField("details", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
 
     /**

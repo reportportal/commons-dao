@@ -26,6 +26,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -65,5 +66,23 @@ public class IssueGroup implements Serializable {
 
 	public void setTestItemIssueGroup(TestItemIssueGroup testItemIssueGroup) {
 		this.testItemIssueGroup = testItemIssueGroup;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		IssueGroup that = (IssueGroup) o;
+		return testItemIssueGroup == that.testItemIssueGroup;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(testItemIssueGroup);
 	}
 }

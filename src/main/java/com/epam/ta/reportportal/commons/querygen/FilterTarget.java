@@ -191,7 +191,9 @@ public enum FilterTarget {
 					ti.UNIQUE_ID,
 					ti.HAS_CHILDREN,
 					ti.PARENT_ID,
-					ti.LAUNCH_ID, tir.RESULT_ID, tir.STATUS,
+					ti.LAUNCH_ID,
+					tir.RESULT_ID,
+					tir.STATUS,
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,
@@ -274,14 +276,12 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT(Project.class, Arrays.asList(
-
-			new CriteriaHolder(NAME, "p.name", String.class, false))) {
+	PROJECT(Project.class, Arrays.asList(new CriteriaHolder(NAME, "name", String.class, false),
+			new CriteriaHolder("projectType", "project_type", String.class, false)
+	)) {
 		public SelectQuery<? extends Record> getQuery() {
-			JProject p = JProject.PROJECT.as("p");
-
-			return DSL.select(p.ID, p.NAME).from(p).getQuery();
-
+			JProject p = JProject.PROJECT;
+			return DSL.select(p.ID, p.NAME, p.ADDITIONAL_INFO, p.PROJECT_TYPE, p.CREATION_DATE, p.METADATA).from(p).getQuery();
 		}
 	},
 
@@ -313,22 +313,19 @@ public enum FilterTarget {
 		}
 	},
 
-	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false), new
-
-			CriteriaHolder(UserCriteriaConstant.CRITERIA_LOGIN, UserCriteriaConstant.CRITERIA_LOGIN, String.class, false), new
-
-			CriteriaHolder(CRITERIA_EMAIL, CRITERIA_EMAIL, String.class, false), new
-
-			CriteriaHolder(CRITERIA_FULL_NAME, CRITERIA_FULL_NAME, String.class, false), new
-
-			CriteriaHolder(CRITERIA_ROLE, CRITERIA_ROLE, String.class, false), new
-
-			CriteriaHolder(UserCriteriaConstant.CRITERIA_TYPE, UserCriteriaConstant.CRITERIA_TYPE, String.class, false), new
-
-			CriteriaHolder(CRITERIA_EXPIRED, CRITERIA_EXPIRED, Boolean.class, false))) {
+	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false),
+			new CriteriaHolder(UserCriteriaConstant.CRITERIA_LOGIN, UserCriteriaConstant.CRITERIA_LOGIN, String.class, false),
+			new CriteriaHolder(CRITERIA_EMAIL, CRITERIA_EMAIL, String.class, false),
+			new CriteriaHolder(CRITERIA_FULL_NAME, CRITERIA_FULL_NAME, String.class, false),
+			new CriteriaHolder(CRITERIA_ROLE, CRITERIA_ROLE, String.class, false),
+			new CriteriaHolder(UserCriteriaConstant.CRITERIA_TYPE, UserCriteriaConstant.CRITERIA_TYPE, String.class, false),
+			new CriteriaHolder(CRITERIA_EXPIRED, CRITERIA_EXPIRED, Boolean.class, false),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, CRITERIA_PROJECT_ID, Long.class, false)
+	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			JUsers u = JUsers.USERS;
+			JProjectUser pu = JProjectUser.PROJECT_USER;
 			return DSL.select(u.ID,
 					u.LOGIN,
 					u.DEFAULT_PROJECT_ID,
@@ -340,8 +337,10 @@ public enum FilterTarget {
 					u.PASSWORD,
 					u.ROLE,
 					u.TYPE,
-					u.METADATA
-			).from(u).getQuery();
+					u.METADATA,
+					pu.PROJECT_ID,
+					pu.PROJECT_ROLE
+			).from(u).leftJoin(pu).on(u.ID.eq(pu.USER_ID)).getQuery();
 		}
 	},
 
@@ -366,7 +365,8 @@ public enum FilterTarget {
 					.join(ACL_CLASS)
 					.on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS))
 					.join(ACL_ENTRY)
-					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID)).join(FILTER)
+					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID))
+					.join(FILTER)
 					.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
 					.join(FILTER_CONDITION)
 					.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))

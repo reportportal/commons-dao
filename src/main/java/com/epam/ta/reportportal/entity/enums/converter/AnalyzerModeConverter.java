@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.ta.reportportal.entity.AnalyzeMode;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -17,6 +18,7 @@ public class AnalyzerModeConverter implements AttributeConverter<AnalyzeMode, St
 
 	@Override
 	public AnalyzeMode convertToEntityAttribute(String dbAnalyzerModeName) {
-		return AnalyzeMode.fromString(dbAnalyzerModeName);
+		return AnalyzeMode.fromString(dbAnalyzerModeName)
+				.orElseThrow(() -> new ReportPortalException("Can not convert user type name from database."));
 	}
 }

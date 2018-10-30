@@ -57,7 +57,6 @@ public class Keys {
     public static final Identity<JDashboardRecord, Integer> IDENTITY_DASHBOARD = Identities0.IDENTITY_DASHBOARD;
     public static final Identity<JDefectFieldAllowedValueRecord, Long> IDENTITY_DEFECT_FIELD_ALLOWED_VALUE = Identities0.IDENTITY_DEFECT_FIELD_ALLOWED_VALUE;
     public static final Identity<JDefectFormFieldRecord, Long> IDENTITY_DEFECT_FORM_FIELD = Identities0.IDENTITY_DEFECT_FORM_FIELD;
-    public static final Identity<JDemoDataPostfixRecord, Long> IDENTITY_DEMO_DATA_POSTFIX = Identities0.IDENTITY_DEMO_DATA_POSTFIX;
     public static final Identity<JEmailSenderCaseRecord, Long> IDENTITY_EMAIL_SENDER_CASE = Identities0.IDENTITY_EMAIL_SENDER_CASE;
     public static final Identity<JFilterRecord, Long> IDENTITY_FILTER = Identities0.IDENTITY_FILTER;
     public static final Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Identities0.IDENTITY_FILTER_CONDITION;
@@ -108,7 +107,6 @@ public class Keys {
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
     public static final UniqueKey<JDefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = UniqueKeys0.DEFECT_FIELD_ALLOWED_VALUE_PK;
     public static final UniqueKey<JDefectFormFieldRecord> DEFECT_FORM_FIELD_PK = UniqueKeys0.DEFECT_FORM_FIELD_PK;
-    public static final UniqueKey<JDemoDataPostfixRecord> DEMO_DATA_POSTFIX_PK = UniqueKeys0.DEMO_DATA_POSTFIX_PK;
     public static final UniqueKey<JEmailSenderCaseRecord> EMAIL_SENDER_CASE_PK = UniqueKeys0.EMAIL_SENDER_CASE_PK;
     public static final UniqueKey<JFilterRecord> FILTER_PK = UniqueKeys0.FILTER_PK;
     public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = UniqueKeys0.FILTER_CONDITION_PK;
@@ -185,7 +183,6 @@ public class Keys {
     public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = ForeignKeys0.DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY;
     public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY;
     public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY;
-    public static final ForeignKey<JDemoDataPostfixRecord, JProjectRecord> DEMO_DATA_POSTFIX__DEMO_DATA_POSTFIX_PROJECT_ID_FKEY = ForeignKeys0.DEMO_DATA_POSTFIX__DEMO_DATA_POSTFIX_PROJECT_ID_FKEY;
     public static final ForeignKey<JEmailSenderCaseRecord, JProjectRecord> EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY = ForeignKeys0.EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY;
     public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = ForeignKeys0.FILTER__FILTER_PROJECT_ID_FKEY;
     public static final ForeignKey<JFilterConditionRecord, JUserFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = ForeignKeys0.FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY;
@@ -249,7 +246,6 @@ public class Keys {
         public static Identity<JDashboardRecord, Integer> IDENTITY_DASHBOARD = Internal.createIdentity(JDashboard.DASHBOARD, JDashboard.DASHBOARD.ID);
         public static Identity<JDefectFieldAllowedValueRecord, Long> IDENTITY_DEFECT_FIELD_ALLOWED_VALUE = Internal.createIdentity(JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
         public static Identity<JDefectFormFieldRecord, Long> IDENTITY_DEFECT_FORM_FIELD = Internal.createIdentity(JDefectFormField.DEFECT_FORM_FIELD, JDefectFormField.DEFECT_FORM_FIELD.ID);
-        public static Identity<JDemoDataPostfixRecord, Long> IDENTITY_DEMO_DATA_POSTFIX = Internal.createIdentity(JDemoDataPostfix.DEMO_DATA_POSTFIX, JDemoDataPostfix.DEMO_DATA_POSTFIX.ID);
         public static Identity<JEmailSenderCaseRecord, Long> IDENTITY_EMAIL_SENDER_CASE = Internal.createIdentity(JEmailSenderCase.EMAIL_SENDER_CASE, JEmailSenderCase.EMAIL_SENDER_CASE.ID);
         public static Identity<JFilterRecord, Long> IDENTITY_FILTER = Internal.createIdentity(JFilter.FILTER, JFilter.FILTER.ID);
         public static Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Internal.createIdentity(JFilterCondition.FILTER_CONDITION, JFilterCondition.FILTER_CONDITION.ID);
@@ -298,7 +294,6 @@ public class Keys {
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME);
         public static final UniqueKey<JDefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = Internal.createUniqueKey(JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value_pk", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
         public static final UniqueKey<JDefectFormFieldRecord> DEFECT_FORM_FIELD_PK = Internal.createUniqueKey(JDefectFormField.DEFECT_FORM_FIELD, "defect_form_field_pk", JDefectFormField.DEFECT_FORM_FIELD.ID);
-        public static final UniqueKey<JDemoDataPostfixRecord> DEMO_DATA_POSTFIX_PK = Internal.createUniqueKey(JDemoDataPostfix.DEMO_DATA_POSTFIX, "demo_data_postfix_pk", JDemoDataPostfix.DEMO_DATA_POSTFIX.ID);
         public static final UniqueKey<JEmailSenderCaseRecord> EMAIL_SENDER_CASE_PK = Internal.createUniqueKey(JEmailSenderCase.EMAIL_SENDER_CASE, "email_sender_case_pk", JEmailSenderCase.EMAIL_SENDER_CASE.ID);
         public static final UniqueKey<JFilterRecord> FILTER_PK = Internal.createUniqueKey(JFilter.FILTER, "filter_pk", JFilter.FILTER.ID);
         public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = Internal.createUniqueKey(JFilterCondition.FILTER_CONDITION, "filter_condition_pk", JFilterCondition.FILTER_CONDITION.ID);
@@ -373,7 +368,6 @@ public class Keys {
         public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value__defect_field_allowed_value_defect_form_field_fkey", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.DEFECT_FORM_FIELD);
         public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, JDefectFormField.DEFECT_FORM_FIELD, "defect_form_field__defect_form_field_bug_tracking_system_id_fkey", JDefectFormField.DEFECT_FORM_FIELD.BUG_TRACKING_SYSTEM_ID);
         public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE, "defect_form_field_value__defect_form_field_value_id_fkey", JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE.ID);
-        public static final ForeignKey<JDemoDataPostfixRecord, JProjectRecord> DEMO_DATA_POSTFIX__DEMO_DATA_POSTFIX_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JDemoDataPostfix.DEMO_DATA_POSTFIX, "demo_data_postfix__demo_data_postfix_project_id_fkey", JDemoDataPostfix.DEMO_DATA_POSTFIX.PROJECT_ID);
         public static final ForeignKey<JEmailSenderCaseRecord, JProjectRecord> EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JEmailSenderCase.EMAIL_SENDER_CASE, "email_sender_case__email_sender_case_project_id_fkey", JEmailSenderCase.EMAIL_SENDER_CASE.PROJECT_ID);
         public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JFilter.FILTER, "filter__filter_project_id_fkey", JFilter.FILTER.PROJECT_ID);
         public static final ForeignKey<JFilterConditionRecord, JUserFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USER_FILTER_PK, JFilterCondition.FILTER_CONDITION, "filter_condition__filter_condition_filter_id_fkey", JFilterCondition.FILTER_CONDITION.FILTER_ID);
