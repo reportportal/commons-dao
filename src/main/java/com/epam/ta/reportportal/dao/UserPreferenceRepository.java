@@ -16,11 +16,15 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.user.ProjectUser;
-import com.epam.ta.reportportal.entity.user.ProjectUserId;
+import com.epam.ta.reportportal.entity.preference.UserPreference;
+
+import java.util.List;
 
 /**
  * @author Pavel Bortnik
  */
-public interface ProjectUserRepository extends ReportPortalRepository<ProjectUser, ProjectUserId> {
+public interface UserPreferenceRepository extends ReportPortalRepository<UserPreference, Long> {
+
+	List<UserPreference> findByProjectIdAndUserId(Long projectId, Long userId);
+
 }
