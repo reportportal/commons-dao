@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,4 +47,33 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter);
 
 	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
+
+	/**
+	 * Finds the last valid launch in project
+	 *
+	 * @param projectId Project id
+	 * @param mode      Launch mode
+	 * @return {@link Optional} of {@link Launch}
+	 */
+	Optional<Launch> findLastRun(Long projectId, String mode);
+
+	/**
+	 * Counts launches with mode for specified project from provided date
+	 *
+	 * @param projectId Project id
+	 * @param mode      Launch mode
+	 * @param fromDate  From Date to count
+	 * @return Launches count
+	 */
+	Integer countLaunches(Long projectId, String mode, LocalDateTime fromDate);
+
+	/**
+	 * Counts quantity of launches with mode per user for specified project.
+	 *
+	 * @param projectId Project id
+	 * @param mode      Launch mode
+	 * @param from      From Date to count
+	 * @return Map of username -> launches count
+	 */
+	Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 }

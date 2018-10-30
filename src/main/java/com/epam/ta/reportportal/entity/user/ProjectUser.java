@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (C) 2018 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.epam.ta.reportportal.entity.user;
@@ -86,6 +84,11 @@ public class ProjectUser implements Serializable {
 
 	public void setProjectRole(ProjectRole projectRole) {
 		this.projectRole = projectRole;
+	}
+
+	public ProjectUser withProjectUserId(ProjectUserId id) {
+		this.id = id;
+		return this;
 	}
 
 	public ProjectUser withUser(User user) {

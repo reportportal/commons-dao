@@ -14,22 +14,12 @@
  *  limitations under the License.
  */
 
-package com.epam.ta.reportportal.commons.querygen.constant;
+package com.epam.ta.reportportal.dao;
+
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
 /**
- * @author Ivan Budaev
+ * @author Pavel Bortnik
  */
-public final class UserCriteriaConstant {
-
-	public static final String CRITERIA_LOGIN = "login";
-	public static final String CRITERIA_ROLE = "role";
-	public static final String CRITERIA_TYPE = "type";
-	public static final String CRITERIA_FULL_NAME = "full_name";
-	public static final String CRITERIA_EMAIL = "email";
-	public static final String CRITERIA_EXPIRED = "expired";
-	public static final String CRITERIA_PROJECT_ID = "project_id";
-
-	private UserCriteriaConstant() {
-		//static only
-	}
+public interface IssueTypeRepository extends ReportPortalRepository<IssueType, Long>, IssueTypeRepositoryCustom {
 }

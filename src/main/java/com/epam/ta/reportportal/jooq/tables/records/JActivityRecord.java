@@ -44,7 +44,7 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implements Record8<Long, Long, Long, JActivityEntityEnum, String, Object, Timestamp, Long> {
 
-    private static final long serialVersionUID = -1899640985;
+    private static final long serialVersionUID = -1767017815;
 
     /**
      * Setter for <code>public.activity.id</code>.
@@ -117,17 +117,15 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Setter for <code>public.activity.details</code>.
      */
-    @java.lang.Deprecated
     public void setDetails(Object value) {
         set(5, value);
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * Getter for <code>public.activity.details</code>.
      */
-    @java.lang.Deprecated
     public Object getDetails() {
         return get(5);
     }
@@ -233,9 +231,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Field<Object> field6() {
         return JActivity.ACTIVITY.DETAILS;
@@ -298,9 +295,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object component6() {
         return getDetails();
@@ -363,9 +359,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public Object value6() {
         return getDetails();
@@ -433,9 +428,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+     * {@inheritDoc}
      */
-    @java.lang.Deprecated
     @Override
     public JActivityRecord value6(Object value) {
         setDetails(value);
