@@ -47,7 +47,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = 1266876167;
+	private static final long serialVersionUID = 1266876167;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -88,7 +88,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
     public final TableField<JActivityRecord, String> ACTION = createField("action", org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
-     * The column <code>public.activity.details</code>.
+	 * The column <code>public.activity.details</code>.
      */
     public final TableField<JActivityRecord, Object> DETAILS = createField("details", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
 

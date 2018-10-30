@@ -44,7 +44,7 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implements Record8<Long, Long, Long, JActivityEntityEnum, String, Object, Timestamp, Long> {
 
-    private static final long serialVersionUID = -1767017815;
+	private static final long serialVersionUID = -1767017815;
 
     /**
      * Setter for <code>public.activity.id</code>.
@@ -117,14 +117,14 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * Setter for <code>public.activity.details</code>.
+	 * Setter for <code>public.activity.details</code>.
      */
     public void setDetails(Object value) {
         set(5, value);
     }
 
     /**
-     * Getter for <code>public.activity.details</code>.
+	 * Getter for <code>public.activity.details</code>.
      */
     public Object getDetails() {
         return get(5);
@@ -231,7 +231,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * {@inheritDoc}
+	 * {@inheritDoc}
      */
     @Override
     public Field<Object> field6() {
@@ -295,7 +295,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * {@inheritDoc}
+	 * {@inheritDoc}
      */
     @Override
     public Object component6() {
@@ -359,7 +359,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * {@inheritDoc}
+	 * {@inheritDoc}
      */
     @Override
     public Object value6() {
@@ -428,7 +428,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     }
 
     /**
-     * {@inheritDoc}
+	 * {@inheritDoc}
      */
     @Override
     public JActivityRecord value6(Object value) {

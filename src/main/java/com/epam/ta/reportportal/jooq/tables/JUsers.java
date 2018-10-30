@@ -45,7 +45,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-    private static final long serialVersionUID = -743225293;
+	private static final long serialVersionUID = -743225293;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -116,9 +116,13 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, String> FULL_NAME = createField("full_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.users.metadata</code>.
+	 * The column <code>public.users.metadata</code>.
      */
-    public final TableField<JUsersRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
+	public final TableField<JUsersRecord, Object> METADATA = createField("metadata",
+			org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""),
+			this,
+			""
+	);
 
     /**
      * Create a <code>public.users</code> table reference

@@ -204,10 +204,9 @@ public class User implements Serializable {
 		User user = (User) o;
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(
-				defaultProject,
-				user.defaultProject
-		) && Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
+				attachment,
 				user.attachment
 		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}
@@ -215,7 +214,8 @@ public class User implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id,
+		return Objects.hash(
+				id,
 				login,
 				password,
 				email,

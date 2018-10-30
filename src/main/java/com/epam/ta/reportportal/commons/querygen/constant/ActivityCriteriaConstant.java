@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.commons.querygen.constant;
 
-
 /**
  * Activity search criteria fields.
  *
