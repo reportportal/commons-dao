@@ -189,11 +189,7 @@ public enum FilterTarget {
 					ti.LAST_MODIFIED,
 					ti.PATH,
 					ti.UNIQUE_ID,
-					ti.HAS_CHILDREN,
-					ti.PARENT_ID,
-					ti.LAUNCH_ID,
-					tir.RESULT_ID,
-					tir.STATUS,
+					ti.HAS_CHILDREN, ti.PARENT_ID, ti.LAUNCH_ID, tir.RESULT_ID, tir.STATUS,
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,
@@ -276,7 +272,8 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT(Project.class, Arrays.asList(new CriteriaHolder(NAME, "name", String.class, false),
+	PROJECT(Project.class, Arrays.asList(
+			new CriteriaHolder(NAME, "name", String.class, false),
 			new CriteriaHolder("projectType", "project_type", String.class, false)
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -313,7 +310,8 @@ public enum FilterTarget {
 		}
 	},
 
-	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false),
+	USER(User.class, Arrays.asList(
+			new CriteriaHolder(ID, ID, Long.class, false),
 			new CriteriaHolder(UserCriteriaConstant.CRITERIA_LOGIN, UserCriteriaConstant.CRITERIA_LOGIN, String.class, false),
 			new CriteriaHolder(CRITERIA_EMAIL, CRITERIA_EMAIL, String.class, false),
 			new CriteriaHolder(CRITERIA_FULL_NAME, CRITERIA_FULL_NAME, String.class, false),
@@ -335,11 +333,7 @@ public enum FilterTarget {
 					u.EMAIL,
 					u.EXPIRED,
 					u.PASSWORD,
-					u.ROLE,
-					u.TYPE,
-					u.METADATA,
-					pu.PROJECT_ID,
-					pu.PROJECT_ROLE
+					u.ROLE, u.TYPE, u.METADATA, pu.PROJECT_ID, pu.PROJECT_ROLE
 			).from(u).leftJoin(pu).on(u.ID.eq(pu.USER_ID)).getQuery();
 		}
 	},

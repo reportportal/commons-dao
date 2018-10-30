@@ -18,8 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
-/**
- * @author Pavel Bortnik
- */
-public interface IssueTypeRepository extends ReportPortalRepository<IssueType, Long>, IssueTypeRepositoryCustom {
+public interface IssueTypeRepository extends ReportPortalRepository<IssueType, Long> {
+
+	IssueType findByLocator(String locator);
 }
