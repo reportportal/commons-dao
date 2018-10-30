@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.preference;
 
-import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
 
@@ -35,7 +35,7 @@ public class UserPreference implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Filter filter;
+	private UserFilter filter;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Project project;
@@ -51,11 +51,11 @@ public class UserPreference implements Serializable {
 		this.id = id;
 	}
 
-	public Filter getFilter() {
+	public UserFilter getFilter() {
 		return filter;
 	}
 
-	public void setFilter(Filter filter) {
+	public void setFilter(UserFilter filter) {
 		this.filter = filter;
 	}
 
