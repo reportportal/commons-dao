@@ -92,7 +92,7 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonManagedReference("users")
 	private Set<ProjectUser> users;
 
@@ -164,16 +164,16 @@ public class Project implements Serializable {
 		return projectAttributes;
 	}
 
-	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
-		this.projectAttributes = projectAttributes;
-	}
-
 	public Set<ProjectIssueType> getProjectIssueTypes() {
 		return projectIssueTypes;
 	}
 
 	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
 		this.projectIssueTypes = projectIssueTypes;
+	}
+
+	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
+		this.projectAttributes = projectAttributes;
 	}
 
 	public Set<EmailSenderCase> getEmailCases() {
