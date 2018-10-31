@@ -55,6 +55,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JAclEntry.ACL_ENTRY;
+import static com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity.ACL_OBJECT_IDENTITY;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -191,7 +193,9 @@ public enum FilterTarget {
 					ti.UNIQUE_ID,
 					ti.HAS_CHILDREN,
 					ti.PARENT_ID,
-					ti.LAUNCH_ID, tir.RESULT_ID, tir.STATUS,
+					ti.LAUNCH_ID,
+					tir.RESULT_ID,
+					tir.STATUS,
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,
@@ -366,7 +370,8 @@ public enum FilterTarget {
 					.join(ACL_CLASS)
 					.on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS))
 					.join(ACL_ENTRY)
-					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID)).join(FILTER)
+					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID))
+					.join(FILTER)
 					.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
 					.join(FILTER_CONDITION)
 					.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))

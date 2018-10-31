@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.TestItemTag;
@@ -34,8 +35,10 @@ import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
+import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -49,13 +52,14 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
@@ -217,6 +221,54 @@ public class RecordMappers {
 			}
 		});
 		return activity;
+	};
+
+	public static final RecordMapper<? super Record, SharedEntity> SHARED_ENTITY_MAPPER = r -> r.into(SharedEntity.class);
+
+	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(USER_FILTER.ID))
+			.ifPresent(id -> ofNullable(widget.getFilters()).ifPresent(filters -> {
+				if (filters.stream().noneMatch(f -> Objects.equals(f.getId(), id))) {
+					UserFilter filter = new UserFilter();
+					filter.setId(res.get(USER_FILTER.ID));
+					filters.add(filter);
+					widget.setFilters(filters);
+				}
+			}));
+
+	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTION_MAPPER = (widget, res) -> {
+		ofNullable(widget.getWidgetOptions()).ifPresent(options -> {
+			options.put(res.get(WIDGET_OPTION.OPTION), res.get(WIDGET_OPTION.VALUE));
+			widget.setWidgetOptions(options);
+		});
+	};
+
+	public static final RecordMapper<? super Record, Widget> WIDGET_RECORD_MAPPER = r -> {
+		Widget widget = new Widget();
+		widget.setDescription(r.get(WIDGET.DESCRIPTION));
+		widget.setId(r.get(WIDGET.ID));
+		widget.setName(r.get(WIDGET.NAME));
+		widget.setItemsCount(r.get(WIDGET.ITEMS_COUNT));
+
+		WIDGET_USER_FILTER_MAPPER.accept(widget, r);
+		WIDGET_OPTION_MAPPER.accept(widget, r);
+
+		return widget;
+	};
+
+	public static final Function<Result<? extends Record>, List<Widget>> WIDGET_FETCHER = result -> {
+		Map<Long, Widget> widgetMap = Maps.newLinkedHashMap();
+		result.forEach(res -> {
+			Long widgetId = res.get(WIDGET.ID);
+			Widget widget = widgetMap.get(widgetId);
+			if (ofNullable(widget).isPresent()) {
+				WIDGET_USER_FILTER_MAPPER.accept(widget, res);
+				WIDGET_OPTION_MAPPER.accept(widget, res);
+			} else {
+				widgetMap.put(widgetId, WIDGET_RECORD_MAPPER.map(res));
+			}
+		});
+
+		return Lists.newArrayList(widgetMap.values());
 	};
 
 	@Component
