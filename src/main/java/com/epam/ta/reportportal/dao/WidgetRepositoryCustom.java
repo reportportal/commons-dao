@@ -16,15 +16,12 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
-import com.epam.ta.reportportal.ws.model.widget.WidgetPreviewRQ;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -36,27 +33,27 @@ public interface WidgetRepositoryCustom {
 	/**
 	 * Get list of shared widget for specified project
 	 *
-	 * @param userName
-	 * @param projectName
-	 * @return
+	 * @param username  Username to filter widgets that are shared with the user
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
+	 * @return Page of widget
 	 */
 	Page<Widget> getSharedWidgetsList(String username, Long projectId, Pageable pageable);
 
 	/**
 	 * Get list of widget names for specified user
 	 *
-	 * @param userName
-	 * @param projectName
-	 * @return
+	 * @param username  Username to filter widgets that are shared with the user
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
+	 * @return List of widgets' names
 	 */
 	List<String> getWidgetNames(String username, Long projectId);
 
 	/**
 	 * Get list of widgets that contains search criteria
 	 *
-	 * @param term        Search criteria
-	 * @param projectName Project name
-	 * @return List of widgets
+	 * @param term      Search criteria
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
+	 * @return Page of widgets
 	 */
 	Page<Widget> searchSharedWidgets(String term, Long projectId, Pageable pageable);
 }
