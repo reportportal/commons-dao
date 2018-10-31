@@ -17,17 +17,21 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.sun.javafx.binding.StringFormatter;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -57,10 +61,57 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS, Sets.newHashSet(), Sets.newHashSet());
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER),
+				SendCase.ALWAYS,
+				Sets.newHashSet(),
+				Sets.newHashSet()
+		);
 		defaultEmailSenderCase.setProject(project);
 		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
+	}
+
+	/**
+	 * @return Generated default project configuration
+	 */
+	public static Set<ProjectAttribute> defaultProjectAttributes(Project project, Set<Attribute> defaultAttributes) {
+
+		Map<String, Attribute> attributes = defaultAttributes.stream().collect(Collectors.toMap(Attribute::getName, a -> a));
+
+		Set<ProjectAttribute> projectAttributes = new HashSet<>(defaultAttributes.size());
+
+		Arrays.stream(ProjectAttributeEnum.values())
+				.map(ProjectAttributeEnum::getAttribute)
+				.forEach(pa -> ofNullable(attributes.get(pa)).ifPresent(attr -> {
+					ProjectAttribute projectAttribute = new ProjectAttribute();
+					projectAttribute.setAttribute(attr);
+					projectAttribute.setProject(project);
+
+					projectAttribute.setValue(ProjectAttributeEnum.findByAttributeName(pa)
+							.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
+									StringFormatter.format("Attribute - {} was not found", pa)
+							))
+							.getDefaultValue());
+
+					projectAttributes.add(projectAttribute);
+				}));
+
+		return projectAttributes;
+
+	}
+
+	public static Set<ProjectIssueType> defaultIssueTypes(Project project, List<IssueType> defaultIssueTypes) {
+		Map<String, IssueType> issueTypes = defaultIssueTypes.stream().collect(Collectors.toMap(IssueType::getLocator, i -> i));
+		Set<ProjectIssueType> projectIssueTypes = new HashSet<>(defaultIssueTypes.size());
+		Arrays.stream(TestItemIssueGroup.values())
+				.map(TestItemIssueGroup::getLocator)
+				.forEach(loc -> ofNullable(issueTypes.get(loc)).ifPresent(it -> {
+					ProjectIssueType projectIssueType = new ProjectIssueType();
+					projectIssueType.setIssueType(it);
+					projectIssueType.setProject(project);
+					projectIssueTypes.add(projectIssueType);
+				}));
+		return projectIssueTypes;
 	}
 
 	/**

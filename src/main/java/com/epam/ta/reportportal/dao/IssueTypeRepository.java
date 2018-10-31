@@ -16,14 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
-import java.util.List;
+public interface IssueTypeRepository extends ReportPortalRepository<IssueType, Long>, IssueTypeRepositoryCustom {
 
-/**
- * @author Pavel Bortnik
- */
-public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, WidgetRepositoryCustom {
-
-	List<Widget> findAllByProjectId(Long projectId);
+	IssueType findByLocator(String locator);
 }

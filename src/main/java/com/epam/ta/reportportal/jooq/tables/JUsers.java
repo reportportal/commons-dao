@@ -45,7 +45,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-    private static final long serialVersionUID = -1684393747;
+	private static final long serialVersionUID = -743225293;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -116,10 +116,13 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, String> FULL_NAME = createField("full_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * @deprecated Unknown data type. Please define an explicit {@link org.jooq.Binding} to specify how this type should be handled. Deprecation can be turned off using <deprecationOnUnknownTypes/> in your code generator configuration.
+	 * The column <code>public.users.metadata</code>.
      */
-    @java.lang.Deprecated
-    public final TableField<JUsersRecord, Object> METADATA = createField("metadata", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\"").defaultValue(org.jooq.impl.DSL.field("'{}'::jsonb", org.jooq.impl.SQLDataType.OTHER)), this, "");
+	public final TableField<JUsersRecord, Object> METADATA = createField("metadata",
+			org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""),
+			this,
+			""
+	);
 
     /**
      * Create a <code>public.users</code> table reference

@@ -50,6 +50,7 @@ public class Integration implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "type")
+	@JsonBackReference(value = "integrationTypes")
 	private IntegrationType type;
 
 	@Type(type = "integration_params")

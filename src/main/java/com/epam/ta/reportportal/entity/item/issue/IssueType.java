@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.item.issue;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.Lists;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -35,7 +36,7 @@ public class IssueType implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 32)
+	@Column(name = "id", unique = true, nullable = false)
 	private Long id;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -56,7 +57,7 @@ public class IssueType implements Serializable {
 
 	@ManyToMany(mappedBy = "issueTypes")
 	@JsonIgnoreProperties(value = "issueTypes")
-	private List<Project> projects;
+	private List<Project> projects = Lists.newArrayList();
 
 	public IssueType() {
 	}

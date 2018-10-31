@@ -25,12 +25,15 @@ import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -154,5 +157,41 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.from(LAUNCH)
 						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
 		);
+	}
+
+	@Override
+	public Optional<Launch> findLastRun(Long projectId, String mode) {
+		return Optional.ofNullable(dsl.select()
+				.from(LAUNCH)
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
+				.limit(1)
+				.fetchOne()
+				.into(Launch.class));
+	}
+
+	@Override
+	public Integer countLaunches(Long projectId, String mode, LocalDateTime from) {
+		return dsl.fetchCount(
+				LAUNCH,
+				LAUNCH.PROJECT_ID.eq(projectId)
+						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS).and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from))))
+		);
+	}
+
+	@Override
+	public Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from) {
+		return dsl.select(USERS.LOGIN, DSL.count().as("count"))
+				.from(LAUNCH)
+				.join(USERS)
+				.on(LAUNCH.USER_ID.eq(USERS.ID))
+				.where(LAUNCH.PROJECT_ID.eq(projectId)
+						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
+								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
+								.and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
+				.groupBy(USERS.LOGIN)
+				.fetchMap(USERS.LOGIN, DSL.field("count", Integer.class));
 	}
 }

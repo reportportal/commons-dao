@@ -46,4 +46,6 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{last_login}', to_jsonb(CAST (:lastLogin AS TEXT)), true ) WHERE login = :username", nativeQuery = true)
 	void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin, @Param("username") String username);
 
+	@Query(value = "SELECT u.login FROM users u join project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId and u.login LIKE %:term%", nativeQuery = true)
+	List<String> findNamesByProject(@Param("projectId") Long projectId, @Param("term") String term);
 }

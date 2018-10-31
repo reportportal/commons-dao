@@ -42,7 +42,7 @@ public class EmailSenderCase implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "email_sender_case_id"))
 	@Column(name = "recipient")
 	private List<String> recipients;

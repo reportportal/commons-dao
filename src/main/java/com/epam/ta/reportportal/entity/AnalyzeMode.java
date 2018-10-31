@@ -21,10 +21,8 @@
 
 package com.epam.ta.reportportal.entity;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
@@ -41,11 +39,8 @@ public enum AnalyzeMode {
 		this.value = value;
 	}
 
-	public static AnalyzeMode fromString(String mode) {
-		return Arrays.stream(AnalyzeMode.values())
-				.filter(it -> it.getValue().equalsIgnoreCase(mode))
-				.findFirst()
-				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Incorrect analyze mode."));
+	public static Optional<AnalyzeMode> fromString(String mode) {
+		return Arrays.stream(AnalyzeMode.values()).filter(it -> it.getValue().equalsIgnoreCase(mode)).findFirst();
 	}
 
 	public String getValue() {

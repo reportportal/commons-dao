@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
+import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -51,6 +52,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_PROJECT_ID;
 
 /**
  * @author Ivan Budaev
@@ -74,7 +77,7 @@ public class UserRepositoryTest {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		runSqlScript("/user/users-projects-fill.sql");
 	}
 
 	@AfterClass
@@ -93,51 +96,115 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void loadUserNameByProject() {
+		//given
+		long projectId = 3L;
+		String term = "2";
+		//when
+		List<String> userNames = userRepository.findNamesByProject(projectId, term);
+		//then
+		Assert.assertThat("User names not found", userNames, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of user names", userNames, Matchers.hasSize(1));
+		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified '2' term", name, Matchers.containsString(term)));
+	}
+
+	@Test
+	public void loadUserNamesByProject() {
+		//given
+		long projectId = 3L;
+		String term = "test";
+		//when
+		List<String> userNames = userRepository.findNamesByProject(projectId, term);
+		//then
+		Assert.assertThat("User names not found", userNames, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of user names", userNames, Matchers.hasSize(2));
+		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified 'test' term", name, Matchers.containsString(term)));
+	}
+
+	@Test
+	public void negativeLoadUserNamesByProject() {
+		//given
+		long projectId = 3L;
+		String term = "negative";
+		//when
+		List<String> userNames = userRepository.findNamesByProject(projectId, term);
+		//then
+		Assert.assertThat("Result contains user names", userNames, Matchers.empty());
+	}
+
+	@Test
+	public void loadUsersByFilterForProject() {
+		//given
+		Filter filter = buildDefaultUserFilter();
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_PROJECT_ID));
+		//when
+		List<User> users = userRepository.findByFilterExcluding(filter, PageRequest.of(0, 5), "email").getContent();
+		//then
+		Assert.assertThat("Users not found", users, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of founded users", users, Matchers.hasSize(2));
+	}
+
+	@Test
 	public void findByDefaultProjectId() {
-
-		Optional<User> user = userRepository.findByDefaultProjectId(2L);
-
-		Assert.assertTrue(user.isPresent());
-
+		//given
+		long projectId = 1L;
+		//when
+		Optional<User> user = userRepository.findByDefaultProjectId(projectId);
+		//then
+		Assert.assertTrue("User is not present", user.isPresent());
+		Assert.assertThat("Incorrect default project id", user.get().getDefaultProject().getId(), Matchers.equalTo(projectId));
 	}
 
 	@Test
 	public void findByEmail() {
-
-		Optional<User> user = userRepository.findByEmail("defaultemail@domain.com");
-
-		Assert.assertTrue(user.isPresent());
+		//given
+		String email = "testemail@domain.com";
+		//when
+		Optional<User> user = userRepository.findByEmail(email);
+		//then
+		Assert.assertTrue("User not found", user.isPresent());
+		Assert.assertThat("Emails are not equal", user.get().getEmail(), Matchers.equalTo(email));
 	}
 
 	@Test
 	public void findByLogin() {
-
-		Optional<User> user = userRepository.findByLogin("default");
-
+		//given
+		String login = "test_user_1";
+		//when
+		Optional<User> user = userRepository.findByLogin(login);
+		//then
 		Assert.assertTrue(user.isPresent());
+		Assert.assertThat("Emails are not equal", user.get().getEmail(), Matchers.equalTo(login));
 	}
 
 	@Test
 	public void findAllByEmailIn() {
-
-		List<String> emails = Lists.newArrayList("defaultemail@domain.com", "superadminemail@domain.com");
-
+		//given
+		String firstEmail = "testemail@domain.com";
+		String secondEmail = "testemail2@domain.com";
+		//when
+		List<String> emails = Lists.newArrayList(firstEmail, secondEmail);
 		List<User> users = userRepository.findAllByEmailIn(emails);
-
-		Assert.assertNotNull(users);
-		Assert.assertEquals(2, users.size());
-
+		//then
+		Assert.assertThat("Users not found", users, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of users", users, Matchers.hasSize(2));
+		Assert.assertTrue("Incorrect user email", users.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(firstEmail)));
+		Assert.assertTrue("Incorrect user email", users.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(secondEmail)));
 	}
 
 	@Test
 	public void findAllByLoginIn() {
-
-		Set<String> loginSet = Sets.newLinkedHashSet("default", "superadmin", "test");
-
+		//given
+		String loginFirst = "test_user_1";
+		String loginSecond = "test_user_2";
+		//when
+		Set<String> loginSet = Sets.newLinkedHashSet(loginFirst, loginSecond);
 		List<User> users = userRepository.findAllByLoginIn(loginSet);
-
-		Assert.assertNotNull(users);
-		Assert.assertEquals(2, users.size());
+		//then
+		Assert.assertThat("Users not found", users, Matchers.notNullValue());
+		Assert.assertThat("Incorrect size of users", users, Matchers.hasSize(2));
+		Assert.assertTrue("Incorrect user login", users.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(loginFirst)));
+		Assert.assertTrue("Incorrect user login", users.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(loginSecond)));
 	}
 
 	@Test

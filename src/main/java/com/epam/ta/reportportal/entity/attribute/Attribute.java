@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.attribute;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Andrey Plisunov
@@ -32,4 +33,22 @@ public class Attribute implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Attribute attribute = (Attribute) o;
+		return Objects.equals(name, attribute.name);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(name);
+	}
 }

@@ -89,11 +89,6 @@ public class Sequences {
     public static final Sequence<Long> DEFECT_FORM_FIELD_ID_SEQ = new SequenceImpl<Long>("defect_form_field_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.demo_data_postfix_id_seq</code>
-     */
-    public static final Sequence<Long> DEMO_DATA_POSTFIX_ID_SEQ = new SequenceImpl<Long>("demo_data_postfix_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.email_sender_case_id_seq</code>
      */
     public static final Sequence<Long> EMAIL_SENDER_CASE_ID_SEQ = new SequenceImpl<Long>("email_sender_case_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));

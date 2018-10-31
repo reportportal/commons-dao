@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -46,15 +47,13 @@ public class EntityUtils {
 
 	}
 
-	public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> {
-		Preconditions.checkNotNull(date, "Provided value shouldn't be null");
-		return LocalDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC);
-	};
+	public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> Optional.ofNullable(date)
+			.map(d -> LocalDateTime.ofInstant(d.toInstant(), ZoneOffset.UTC))
+			.orElse(null);
 
-	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> {
-		Preconditions.checkNotNull(localDateTime, "Provided value shouldn't be null");
-		return Date.from(localDateTime.atZone(ZoneOffset.UTC).toInstant());
-	};
+	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> Optional.ofNullable(localDateTime)
+			.map(l -> Date.from(l.atZone(ZoneOffset.UTC).toInstant()))
+			.orElse(null);
 
 	/**
 	 * Remove leading and trailing spaces from list of string

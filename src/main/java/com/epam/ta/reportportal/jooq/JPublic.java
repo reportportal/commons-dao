@@ -46,7 +46,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 1841529817;
+	private static final long serialVersionUID = 532694657;
 
     /**
      * The reference instance of <code>public</code>
@@ -106,22 +106,26 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.connectby</code>.
      */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, Integer __5, String __6) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6)).fetch();
+	public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4,
+			String __5, Integer __6, String __7) {
+		return configuration.dsl()
+				.selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7))
+				.fetch();
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, Integer __5, String __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+	public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6, String __7) {
+		return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<Integer> __5, Field<String> __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+	public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5,
+			Field<Integer> __6, Field<String> __7) {
+		return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
     }
 
     /**
@@ -137,22 +141,22 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1)).fetch();
+	public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, String __2) {
+		return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+	public static JCrosstab CROSSTAB(String __1, String __2) {
+		return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+	public static JCrosstab CROSSTAB(Field<String> __1, Field<String> __2) {
+		return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
@@ -257,11 +261,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.defect_form_field_value</code>.
      */
     public final JDefectFormFieldValue DEFECT_FORM_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE;
-
-    /**
-     * The table <code>public.demo_data_postfix</code>.
-     */
-    public final JDemoDataPostfix DEMO_DATA_POSTFIX = com.epam.ta.reportportal.jooq.tables.JDemoDataPostfix.DEMO_DATA_POSTFIX;
 
     /**
      * The table <code>public.email_sender_case</code>.
@@ -519,7 +518,6 @@ public class JPublic extends SchemaImpl {
             Sequences.DASHBOARD_ID_SEQ,
             Sequences.DEFECT_FIELD_ALLOWED_VALUE_ID_SEQ,
             Sequences.DEFECT_FORM_FIELD_ID_SEQ,
-            Sequences.DEMO_DATA_POSTFIX_ID_SEQ,
             Sequences.EMAIL_SENDER_CASE_ID_SEQ,
             Sequences.EMAIL_SENDER_CASE_PROJECT_ID_SEQ,
             Sequences.FILTER_CONDITION_ID_SEQ,
@@ -578,7 +576,6 @@ public class JPublic extends SchemaImpl {
             JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE,
             JDefectFormField.DEFECT_FORM_FIELD,
             JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE,
-            JDemoDataPostfix.DEMO_DATA_POSTFIX,
             JEmailSenderCase.EMAIL_SENDER_CASE,
             JFilter.FILTER,
             JFilterCondition.FILTER_CONDITION,

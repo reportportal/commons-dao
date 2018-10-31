@@ -42,6 +42,7 @@
             <pojos>false</pojos>
             <jpaAnnotations>false</jpaAnnotations>
             <routines>false</routines>
+            <deprecationOnUnknownTypes>false</deprecationOnUnknownTypes>
         </generate>
 
         <target>

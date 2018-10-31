@@ -30,8 +30,11 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
@@ -184,6 +187,7 @@ public class RecordMappers {
 		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
 		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		user.getProjects().add(r.into(ProjectUser.class));
 		return user;
 	};
 
@@ -194,12 +198,40 @@ public class RecordMappers {
 		Map<Long, User> userMap = Maps.newHashMap();
 		result.forEach(res -> {
 			Long userId = res.get(USERS.ID);
-			if (!userMap.containsKey(userId)) {
-				userMap.put(userId, USER_RECORD_MAPPER.map(res));
+			User user;
+			if (userMap.containsKey(userId)) {
+				user = userMap.get(userId);
+			} else {
+				user = USER_RECORD_MAPPER.map(res);
 			}
+			userMap.put(userId, user);
 		});
 
 		return Lists.newArrayList(userMap.values());
+	};
+
+	/**
+	 * Map results of records into list of {@link Project}
+	 */
+	public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = result -> {
+		Map<Long, Project> projectMap = Maps.newHashMap();
+		result.forEach(r -> {
+			Long projectId = r.get(PROJECT.ID);
+			Project project;
+			if (projectMap.containsKey(projectId)) {
+				project = projectMap.get(projectId);
+			} else {
+				project = r.into(Project.class);
+			}
+			project.getProjectAttributes()
+					.add(new ProjectAttribute().withProject(project)
+							.withAttribute(ATTRIBUTE_MAPPER.map(r))
+							.withValue(r.get(PROJECT_ATTRIBUTE.VALUE)));
+			project.getUsers()
+					.add(new ProjectUser().withProjectUserId(r.into(ProjectUserId.class))
+							.withProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).getName())));
+		});
+		return Lists.newArrayList(projectMap.values());
 	};
 
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
