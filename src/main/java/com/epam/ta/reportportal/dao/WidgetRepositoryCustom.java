@@ -49,17 +49,7 @@ public interface WidgetRepositoryCustom {
 	 * @param projectName
 	 * @return
 	 */
-	List<String> getWidgetNames(String userName, Filter filter);
-
-	/**
-	 * Get content for building preview while creating widget
-	 *
-	 * @param previewRQ   Widget parameters
-	 * @param projectName Project name
-	 * @param userName    Username
-	 * @return Widget content
-	 */
-	Map<String, ?> getWidgetPreview(String userName, Filter filter, WidgetPreviewRQ previewRQ);
+	List<String> getWidgetNames(String username, Long projectId);
 
 	/**
 	 * Get list of widgets that contains search criteria
@@ -68,5 +58,5 @@ public interface WidgetRepositoryCustom {
 	 * @param projectName Project name
 	 * @return List of widgets
 	 */
-	Page<Widget> searchSharedWidgets(String term, Filter filter, Pageable pageable);
+	Page<Widget> searchSharedWidgets(String term, Long projectId, Pageable pageable);
 }

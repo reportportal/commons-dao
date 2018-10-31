@@ -16,10 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
-import com.epam.ta.reportportal.ws.model.widget.WidgetPreviewRQ;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -80,6 +77,30 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 				.and(fieldName(OWNER, SID).cast(String.class).ne(username))
 				.and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
 
+		return getWidgetPage(condition, pageable);
+	}
+
+	@Override
+	public List<String> getWidgetNames(String username, Long projectId) {
+
+		Condition condition = fieldName(OWNER, SID).cast(String.class).eq(username).and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+
+		return dsl.fetch(dsl.with(WIDGET_SUBQUERY)
+				.as(buildDistinctSubQuery(condition))
+				.select(WIDGET.NAME)
+				.from(WIDGET)
+				.join(WIDGET_SUBQUERY)
+				.on(fieldName(WIDGET_SUBQUERY, ID).cast(Long.class).eq(WIDGET.ID))).into(String.class);
+
+	}
+
+	@Override
+	public Page<Widget> searchSharedWidgets(String term, Long projectId, Pageable pageable) {
+		Condition condition = WIDGET.NAME.like("%" + term + "%").and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+		return getWidgetPage(condition, pageable);
+	}
+
+	private Page<Widget> getWidgetPage(Condition condition, Pageable pageable) {
 		return PageableExecutionUtils.getPage(WIDGET_FETCHER.apply(dsl.with(WIDGET_SUBQUERY)
 				.as(buildDistinctSubQuery(condition, pageable))
 				.select(
@@ -104,30 +125,15 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 				.fetch()), pageable, () -> dsl.fetchCount(buildDistinctSubQuery(condition)));
 	}
 
-	@Override
-	public List<String> getWidgetNames(String userName, Filter filter) {
-		return null;
-	}
-
-	@Override
-	public Map<String, ?> getWidgetPreview(String userName, Filter filter, WidgetPreviewRQ previewRQ) {
-		return null;
-	}
-
-	@Override
-	public Page<Widget> searchSharedWidgets(String term, Filter filter, Pageable pageable) {
-		return null;
-	}
-
 	private SelectLimitStep<? extends Record> buildDistinctSubQuery(Condition condition) {
 		return DSL.select(WIDGET.ID, fieldName(OWNER, SID))
 				.distinctOn(WIDGET.ID, fieldName(OWNER, SID))
 				.from(WIDGET)
 				.join(ACL_OBJECT_IDENTITY)
 				.on(WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY))
-				.join(ACL_ENTRY)
+				.leftJoin(ACL_ENTRY)
 				.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID))
-				.join(ACL_SID.asTable(SHARED))
+				.leftJoin(ACL_SID.asTable(SHARED))
 				.on(ACL_ENTRY.SID.eq(fieldName(SHARED, ID).cast(Long.class)))
 				.join(ACL_SID.asTable(OWNER))
 				.on(ACL_OBJECT_IDENTITY.OWNER_SID.eq(fieldName(OWNER, ID).cast(Long.class)))
