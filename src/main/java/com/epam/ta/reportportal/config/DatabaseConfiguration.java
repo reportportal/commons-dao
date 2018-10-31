@@ -13,8 +13,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
+import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -24,10 +26,12 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.io.Serializable;
 import java.util.Properties;
 
 /**
@@ -68,40 +72,6 @@ public class DatabaseConfiguration {
 		return factory.getObject();
 	}
 
-	public static class RpRepoFactoryBean<T extends Repository<S, ID>, S, ID> extends JpaRepositoryFactoryBean {
-
-		@Autowired
-		private AutowireCapableBeanFactory beanFactory;
-
-		/**
-		 * Creates a new {@link JpaRepositoryFactoryBean} for the given repository interface.
-		 *
-		 * @param repositoryInterface must not be {@literal null}.
-		 */
-		public RpRepoFactoryBean(Class repositoryInterface) {
-			super(repositoryInterface);
-		}
-
-		@Override
-		protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
-			return new JpaRepositoryFactory(entityManager) {
-				@Override
-				public <T> T getRepository(Class<T> repositoryInterface) {
-					T repo = super.getRepository(repositoryInterface);
-					beanFactory.autowireBean(repo);
-					return repo;
-				}
-
-				@Override
-				protected Object getTargetRepository(RepositoryInformation information) {
-					Object repo = super.getTargetRepository(information);
-					beanFactory.autowireBean(repo);
-					return repo;
-				}
-			};
-		}
-	}
-
 	@Bean
 	@Primary
 	public PlatformTransactionManager transactionManager() {
@@ -131,5 +101,43 @@ public class DatabaseConfiguration {
 	@Bean
 	public DefaultDSLContext dsl() {
 		return new DefaultDSLContext(configuration());
+	}
+
+	public static class RpRepoFactoryBean<T extends Repository<S, ID>, S, ID> extends JpaRepositoryFactoryBean {
+
+		@Autowired
+		private AutowireCapableBeanFactory beanFactory;
+
+		/**
+		 * Creates a new {@link JpaRepositoryFactoryBean} for the given repository interface.
+		 *
+		 * @param repositoryInterface must not be {@literal null}.
+		 */
+		public RpRepoFactoryBean(Class repositoryInterface) {
+			super(repositoryInterface);
+		}
+
+		@Override
+		protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
+			return new JpaRepositoryFactory(entityManager) {
+				@Override
+				public <T> T getRepository(Class<T> repositoryInterface) {
+					T repo = super.getRepository(repositoryInterface);
+					beanFactory.autowireBean(repo);
+					return repo;
+				}
+
+				@Override
+				protected JpaRepositoryImplementation<?, ?> getTargetRepository(RepositoryInformation information, EntityManager em) {
+
+					JpaEntityInformation<?, Serializable> entityInformation = getEntityInformation(information.getDomainType());
+					Object repository = getTargetRepositoryViaReflection(information, entityInformation, em);
+
+					Assert.isInstanceOf(JpaRepositoryImplementation.class, repository);
+					beanFactory.autowireBean(repository);
+					return (JpaRepositoryImplementation<?, ?>) repository;
+				}
+			};
+		}
 	}
 }
