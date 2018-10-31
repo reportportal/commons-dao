@@ -72,6 +72,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 
 	@Override
 	public Page<Widget> getSharedWidgetsList(String username, Long projectId, Pageable pageable) {
+
 		Condition condition = fieldName(SHARED, SID).cast(String.class)
 				.eq(username)
 				.and(fieldName(OWNER, SID).cast(String.class).ne(username))
@@ -96,11 +97,14 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 
 	@Override
 	public Page<Widget> searchSharedWidgets(String term, Long projectId, Pageable pageable) {
+
 		Condition condition = WIDGET.NAME.like("%" + term + "%").and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+
 		return getWidgetPage(condition, pageable);
 	}
 
 	private Page<Widget> getWidgetPage(Condition condition, Pageable pageable) {
+
 		return PageableExecutionUtils.getPage(WIDGET_FETCHER.apply(dsl.with(WIDGET_SUBQUERY)
 				.as(buildDistinctSubQuery(condition, pageable))
 				.select(
@@ -126,6 +130,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 	}
 
 	private SelectLimitStep<? extends Record> buildDistinctSubQuery(Condition condition) {
+
 		return DSL.select(WIDGET.ID, fieldName(OWNER, SID))
 				.distinctOn(WIDGET.ID, fieldName(OWNER, SID))
 				.from(WIDGET)
@@ -142,6 +147,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 	}
 
 	private Select<? extends Record> buildDistinctSubQuery(Condition condition, Pageable pageable) {
+
 		return buildDistinctSubQuery(condition).limit(pageable.getPageSize()).offset(Long.valueOf(pageable.getOffset()).intValue());
 	}
 }
