@@ -177,6 +177,14 @@ public class Project implements Serializable {
 		this.projectAttributes = projectAttributes;
 	}
 
+	public List<IssueType> getIssueTypes() {
+		return issueTypes;
+	}
+
+	public void setIssueTypes(List<IssueType> issueTypes) {
+		this.issueTypes = issueTypes;
+	}
+
 	public Set<EmailSenderCase> getEmailCases() {
 		return emailCases;
 	}

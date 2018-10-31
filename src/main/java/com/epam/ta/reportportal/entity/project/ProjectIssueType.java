@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -27,7 +28,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "issue_type_project")
 @IdClass(ProjectIssueTypeKey.class)
-public class ProjectIssueType {
+public class ProjectIssueType implements Serializable {
 
 	@Id
 	@ManyToOne
