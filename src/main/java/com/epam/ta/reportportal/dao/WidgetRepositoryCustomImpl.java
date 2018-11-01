@@ -35,6 +35,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.WIDGET_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JAclEntry.ACL_ENTRY;
 import static com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity.ACL_OBJECT_IDENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JAclSid.ACL_SID;
+import static com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
 import static com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
@@ -119,7 +120,8 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 						WIDGET_OPTION.OPTION,
 						WIDGET_OPTION.VALUE,
 						WIDGET.ITEMS_COUNT,
-						USER_FILTER.ID
+						USER_FILTER.ID,
+						CONTENT_FIELD.FIELD
 				)
 				.from(WIDGET)
 				.join(WIDGET_SUBQUERY)
@@ -130,6 +132,8 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 				.on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
 				.leftJoin(USER_FILTER)
 				.on(WIDGET_FILTER.FILTER_ID.eq(USER_FILTER.ID))
+				.leftJoin(CONTENT_FIELD)
+				.on(WIDGET.ID.eq(CONTENT_FIELD.ID))
 				.fetch()), pageable, () -> dsl.fetchCount(buildDistinctSubQuery(condition)));
 	}
 
