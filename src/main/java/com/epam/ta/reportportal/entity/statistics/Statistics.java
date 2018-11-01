@@ -32,7 +32,7 @@ public class Statistics implements Serializable {
 	@Column(name = "s_id")
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JoinColumn(name = "statistics_field_id")
 	private StatisticsField statisticsField;
 
