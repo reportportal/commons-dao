@@ -288,6 +288,7 @@ public class RecordMappers {
 		widget.setId(r.get(WIDGET.ID));
 		widget.setName(r.get(WIDGET.NAME));
 		widget.setItemsCount(r.get(WIDGET.ITEMS_COUNT));
+		widget.setWidgetType(r.get(WIDGET.WIDGET_TYPE));
 
 		WIDGET_USER_FILTER_MAPPER.accept(widget, r);
 		WIDGET_OPTION_MAPPER.accept(widget, r);
