@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -77,9 +77,6 @@ public class Launch implements Serializable {
 
 	@Column(name = "number", nullable = false, precision = 32)
 	private Long number;
-
-	@Column(name = "email_sender_case_id")
-	private Long emailSenderCaseId;
 
 	@Column(name = "last_modified", nullable = false)
 	@LastModifiedDate
@@ -193,14 +190,6 @@ public class Launch implements Serializable {
 		this.endTime = endTime;
 	}
 
-	public Long getEmailSenderCaseId() {
-		return emailSenderCaseId;
-	}
-
-	public void setEmailSenderCaseId(Long emailSenderCaseId) {
-		this.emailSenderCaseId = emailSenderCaseId;
-	}
-
 	public Long getNumber() {
 		return number;
 	}
@@ -234,14 +223,6 @@ public class Launch implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", user=" + user + ", name='" + name + '\''
-				+ ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
-				+ ", emailSenderCaseId=" + emailSenderCaseId + ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status
-				+ ", tags=" + tags + ", statistics=" + statistics + '}';
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
@@ -254,15 +235,13 @@ public class Launch implements Serializable {
 				&& Objects.equals(user, launch.user) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
 				&& Objects.equals(startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(number,
 				launch.number
-		) && Objects.equals(emailSenderCaseId, launch.emailSenderCaseId) && Objects.equals(lastModified, launch.lastModified)
-				&& mode == launch.mode && status == launch.status && Objects.equals(tags, launch.tags) && Objects.equals(statistics,
-				launch.statistics
-		);
+		) && Objects.equals(lastModified, launch.lastModified) && mode == launch.mode && status == launch.status && Objects.equals(tags,
+				launch.tags
+		) && Objects.equals(statistics, launch.statistics);
 	}
 
 	@Override
 	public int hashCode() {
-
 		return Objects.hash(id,
 				uuid,
 				projectId,
@@ -272,12 +251,19 @@ public class Launch implements Serializable {
 				startTime,
 				endTime,
 				number,
-				emailSenderCaseId,
 				lastModified,
 				mode,
 				status,
 				tags,
 				statistics
 		);
+	}
+
+	@Override
+	public String toString() {
+		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", user=" + user + ", name='" + name + '\''
+				+ ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
+				+ ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status + ", tags=" + tags + ", statistics="
+				+ statistics + '}';
 	}
 }

@@ -1,35 +1,27 @@
 /*
- * Copyright 2017 EPAM Systems
+ *  Copyright (C) 2018 EPAM Systems
  *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/commons-dao
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Report Portal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Report Portal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.epam.ta.reportportal.entity.project.email;
 
 import com.epam.ta.reportportal.commons.SendCase;
-import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -50,13 +42,6 @@ public class EmailSenderCase implements Serializable {
 	@Column(name = "send_case")
 	private SendCase sendCase;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "email_sender_case_id")
-	private Set<Launch> launches;
-
-	@OneToMany(mappedBy = "emailSenderCase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<LaunchTag> tags;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
@@ -64,11 +49,9 @@ public class EmailSenderCase implements Serializable {
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(List<String> recipients, SendCase sendCase, Set<Launch> launches, Set<LaunchTag> tags) {
+	public EmailSenderCase(List<String> recipients, SendCase sendCase) {
 		this.recipients = recipients;
 		this.sendCase = sendCase;
-		this.launches = launches;
-		this.tags = tags;
 	}
 
 	public Long getId() {
@@ -95,14 +78,6 @@ public class EmailSenderCase implements Serializable {
 		this.project = project;
 	}
 
-	public Set<Launch> getLaunches() {
-		return launches;
-	}
-
-	public void setLaunches(Set<Launch> launches) {
-		this.launches = launches;
-	}
-
 	public SendCase getSendCase() {
 		return sendCase;
 	}
@@ -111,11 +86,4 @@ public class EmailSenderCase implements Serializable {
 		this.sendCase = sendCase;
 	}
 
-	public Set<LaunchTag> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<LaunchTag> tags) {
-		this.tags = tags;
-	}
 }

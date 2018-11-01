@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,11 +61,7 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER),
-				SendCase.ALWAYS,
-				Sets.newHashSet(),
-				Sets.newHashSet()
-		);
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS);
 		defaultEmailSenderCase.setProject(project);
 		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
@@ -123,8 +119,7 @@ public class ProjectUtils {
 	 */
 	public static Project excludeProjectRecipients(Iterable<User> users, Project project) {
 		if (users != null) {
-			Set<String> toExclude = stream(users.spliterator(), false).map(user -> asList(
-					user.getEmail().toLowerCase(),
+			Set<String> toExclude = stream(users.spliterator(), false).map(user -> asList(user.getEmail().toLowerCase(),
 					user.getLogin().toLowerCase()
 			)).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
