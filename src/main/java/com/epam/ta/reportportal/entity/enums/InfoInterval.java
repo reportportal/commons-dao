@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Get project information intervals<br>
@@ -62,10 +63,7 @@ public enum InfoInterval {
 		return InfoInterval.valueOf(name);
 	}
 
-	public static InfoInterval findByName(String name) {
-		return Arrays.stream(InfoInterval.values())
-				.filter(interval -> interval.getInterval().equalsIgnoreCase(name))
-				.findAny()
-				.orElse(null);
+	public static Optional<InfoInterval> findByInterval(String interval) {
+		return Arrays.stream(InfoInterval.values()).filter(value -> value.getInterval().equalsIgnoreCase(interval)).findAny();
 	}
 }
