@@ -96,9 +96,13 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 	}
 
 	@Override
-	public Page<Widget> searchSharedWidgets(String term, Long projectId, Pageable pageable) {
+	public Page<Widget> searchSharedWidgets(String term, String username, Long projectId, Pageable pageable) {
 
-		Condition condition = WIDGET.NAME.like("%" + term + "%").and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+		Condition condition = WIDGET.PROJECT_ID.cast(Long.class)
+				.eq(projectId)
+				.and(WIDGET.NAME.like("%" + term + "%")
+						.or(WIDGET.DESCRIPTION.like("%" + term + "%").or(fieldName(OWNER, SID).like("%" + term + "%"))))
+				.and(fieldName(SHARED, SID).cast(String.class).eq(username));
 
 		return getWidgetPage(condition, pageable);
 	}

@@ -55,5 +55,5 @@ public interface WidgetRepositoryCustom {
 	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
 	 * @return Page of widgets
 	 */
-	Page<Widget> searchSharedWidgets(String term, Long projectId, Pageable pageable);
+	Page<Widget> searchSharedWidgets(String term, String username, Long projectId, Pageable pageable);
 }
