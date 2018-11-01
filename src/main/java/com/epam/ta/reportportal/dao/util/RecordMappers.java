@@ -42,6 +42,7 @@ import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -255,14 +256,15 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, SharedEntity> SHARED_ENTITY_MAPPER = r -> r.into(SharedEntity.class);
 
 	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(USER_FILTER.ID))
-			.ifPresent(id -> ofNullable(widget.getFilters()).ifPresent(filters -> {
+			.ifPresent(id -> {
+				Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
 				if (filters.stream().noneMatch(f -> Objects.equals(f.getId(), id))) {
 					UserFilter filter = new UserFilter();
 					filter.setId(res.get(USER_FILTER.ID));
 					filters.add(filter);
 					widget.setFilters(filters);
 				}
-			}));
+			});
 
 	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTION_MAPPER = (widget, res) -> {
 		ofNullable(widget.getWidgetOptions()).ifPresent(options -> {
@@ -270,6 +272,15 @@ public class RecordMappers {
 			widget.setWidgetOptions(options);
 		});
 	};
+
+	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD))
+			.ifPresent(field -> {
+				Set<String> contentFields = ofNullable(widget.getContentFields()).orElseGet(Sets::newLinkedHashSet);
+				if (contentFields.stream().noneMatch(cf -> Objects.equals(cf, field))) {
+					contentFields.add(field);
+					widget.setContentFields(contentFields);
+				}
+			});
 
 	public static final RecordMapper<? super Record, Widget> WIDGET_RECORD_MAPPER = r -> {
 		Widget widget = new Widget();
@@ -280,6 +291,7 @@ public class RecordMappers {
 
 		WIDGET_USER_FILTER_MAPPER.accept(widget, r);
 		WIDGET_OPTION_MAPPER.accept(widget, r);
+		WIDGET_CONTENT_FIELD_MAPPER.accept(widget, r);
 
 		return widget;
 	};
@@ -292,6 +304,7 @@ public class RecordMappers {
 			if (ofNullable(widget).isPresent()) {
 				WIDGET_USER_FILTER_MAPPER.accept(widget, res);
 				WIDGET_OPTION_MAPPER.accept(widget, res);
+				WIDGET_CONTENT_FIELD_MAPPER.accept(widget, res);
 			} else {
 				widgetMap.put(widgetId, WIDGET_RECORD_MAPPER.map(res));
 			}
