@@ -18,11 +18,14 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.jooq.DSLContext;
+import org.jooq.Record1;
+import org.jooq.SelectForUpdateStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,11 +35,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
@@ -133,5 +136,30 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public List<String> findAllProjectNames() {
 		return dsl.select(PROJECT.NAME).from(PROJECT).fetchInto(String.class);
+	}
+
+	@Override
+	public Page<Project> findAllIdsAndProjectAttributes(ProjectAttributeEnum projectAttribute, Pageable pageable) {
+
+		SelectForUpdateStep<Record1<Long>> subquery = DSL.select(PROJECT.ID)
+				.distinctOn(PROJECT.ID)
+				.from(PROJECT)
+				.join(PROJECT_ATTRIBUTE)
+				.on(PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID))
+				.join(ATTRIBUTE)
+				.on(PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID))
+				.where(ATTRIBUTE.NAME.eq(projectAttribute.getAttribute()))
+				.orderBy(PROJECT.ID)
+				.limit(pageable.getPageSize())
+				.offset(Long.valueOf(pageable.getOffset()).intValue());
+
+		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(dsl.select()
+				.from(PROJECT)
+				.join(subquery.asTable("subquery"))
+				.on(fieldName("subquery", "id").cast(Long.class).eq(PROJECT.ID))
+				.join(PROJECT_ATTRIBUTE)
+				.on(PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID))
+				.join(ATTRIBUTE)
+				.on(PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID)))), pageable, () -> dsl.fetchCount(subquery));
 	}
 }

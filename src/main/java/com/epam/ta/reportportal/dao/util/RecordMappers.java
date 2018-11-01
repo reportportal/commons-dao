@@ -207,7 +207,7 @@ public class RecordMappers {
 	 * Map results of records into list of {@link Project}
 	 */
 	public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = result -> {
-		Map<Long, Project> projectMap = Maps.newHashMap();
+		Map<Long, Project> projectMap = Maps.newLinkedHashMap();
 		result.forEach(r -> {
 			Long projectId = r.get(PROJECT.ID);
 			Project project;
@@ -220,9 +220,12 @@ public class RecordMappers {
 					.add(new ProjectAttribute().withProject(project)
 							.withAttribute(ATTRIBUTE_MAPPER.map(r))
 							.withValue(r.get(PROJECT_ATTRIBUTE.VALUE)));
-			project.getUsers()
+			ofNullable(r.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> project.getUsers()
 					.add(new ProjectUser().withProjectUserId(r.into(ProjectUserId.class))
-							.withProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).getName())));
+							.withProjectRole(ProjectRole.valueOf(r.get(f).getName()))));
+
+			projectMap.put(projectId, project);
+
 		});
 		return Lists.newArrayList(projectMap.values());
 	};

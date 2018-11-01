@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.google.common.collect.Sets;
@@ -56,15 +57,15 @@ public class ProjectRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/user/users-projects-fill.sql");
+//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+//		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-create-script.sql");
+//		runSqlScript("/user/users-projects-fill.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -102,5 +103,15 @@ public class ProjectRepositoryTest {
 		Pageable pageable = PageRequest.of(0, 20);
 		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable, "DEFAULT");
 		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
+	}
+
+	@Test
+	public void test() {
+		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(
+				ProjectAttributeEnum.KEEP_LOGS,
+				PageRequest.of(0, 1)
+		);
+
+		System.out.println(projects);
 	}
 }
