@@ -16,6 +16,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.integration.Integration;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,4 +44,10 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @return Found integrations
 	 */
 	List<Integration> findAllByProjectId(Long projectId);
+
+	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i"
+			+ " WHERE (params->'params'->>'url' = :url AND params->'params'->>'project' = :btsProject"
+			+ " AND i.project_id = :projectId) LIMIT 1", nativeQuery = true)
+	Optional<Integration> findByUrlAndBtsProjectAndProjectId(@Param("url") String url, @Param("btsProject") String btsProject,
+			@Param("projectId") Long projectId);
 }

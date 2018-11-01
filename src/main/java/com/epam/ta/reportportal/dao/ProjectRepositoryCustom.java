@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,16 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 * @return Page of project info objects
 	 */
 	Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable, String mode);
+
+	/**
+	 * Find project info for concrete project from date
+	 *
+	 * @param projectId Project id
+	 * @param fromDate  From date
+	 * @param mode      Launch mode
+	 * @return Project info object
+	 */
+	ProjectInfo findProjectInfoFromDate(Long projectId, LocalDateTime fromDate, String mode);
 
 	/**
 	 * Find personal project name by user

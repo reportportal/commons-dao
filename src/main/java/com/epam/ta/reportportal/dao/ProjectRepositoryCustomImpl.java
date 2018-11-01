@@ -30,6 +30,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +44,10 @@ import static org.jooq.impl.DSL.name;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
+
+	private static final String USERS_QUANTITY = "usersQuantity";
+	private static final String LAUNCHES_QUANTITY = "launchesQuantity";
+	private static final String LAST_RUN = "lastRun";
 
 	@Autowired
 	private DSLContext dsl;
@@ -65,10 +72,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 		final String FILTERED_PROJECT = "filtered_project";
 		return PageableExecutionUtils.getPage(dsl.with(FILTERED_PROJECT)
 				.as(QueryBuilder.newBuilder(filter).with(pageable).build())
-				.select(DSL.countDistinct(PROJECT_USER.USER_ID).as("usersQuantity"),
+				.select(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
 						DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
-								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as("launchesQuantity"),
-						DSL.max(LAUNCH.START_TIME).as("lastRun"),
+								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
+						DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
 						fieldName(FILTERED_PROJECT, PROJECT.ID.getName()),
 						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
 						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
@@ -87,6 +94,30 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				)
 				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public ProjectInfo findProjectInfoFromDate(Long projectId, LocalDateTime fromDate, String mode) {
+		return dsl.select(
+				DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
+				DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
+						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
+				DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
+				PROJECT.ID,
+				PROJECT.CREATION_DATE,
+				PROJECT.NAME,
+				PROJECT.PROJECT_TYPE
+		)
+				.from(PROJECT)
+				.leftJoin(PROJECT_USER)
+				.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+				.leftJoin(LAUNCH)
+				.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
+				.where(PROJECT.ID.eq(projectId))
+				.and(LAUNCH.START_TIME.gt(Timestamp.valueOf(fromDate)))
+				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
+				.fetchOne()
+				.into(ProjectInfo.class);
 	}
 
 	@Override
