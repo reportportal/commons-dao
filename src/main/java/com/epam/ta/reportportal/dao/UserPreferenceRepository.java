@@ -37,7 +37,7 @@ public interface UserPreferenceRepository extends ReportPortalRepository<UserPre
 	List<UserPreference> findByProjectIdAndUserId(Long projectId, Long userId);
 
 	/**
-	 * Remove user preferences by rpoject and user
+	 * Remove user preferences by project and user
 	 *
 	 * @param projectId Project id
 	 * @param userId    User id
