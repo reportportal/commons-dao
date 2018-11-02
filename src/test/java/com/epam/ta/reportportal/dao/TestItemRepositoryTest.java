@@ -98,27 +98,4 @@ public class TestItemRepositoryTest {
 
 		Assert.assertNotNull(testItemList);
 	}
-
-	@Test
-	public void streamTestItemIdsTest() {
-//		List<Long> list = testItemRepository.streamTestItemIdsByLaunchId(1L).collect(Collectors.toList());
-//
-//		List<? extends AbstractLdapIntegration> list1 = new ArrayList<>();
-//
-//		list1.add(new Integration());
-//		list1.add(new AbstractLdapIntegration());
-//		list1.add(new LdapConfig());
-//		list1.add(new Object());
-//
-//		List<? super AbstractLdapIntegration> list2 = new ArrayList<>();
-//
-//		list2.f
-//
-//		list2.add(new Integration());
-//		list2.add(new AbstractLdapIntegration());
-//		list2.add(new LdapConfig());
-//		list2.add(new Object());
-//
-//		System.out.println(list.get(0));
-	}
 }
