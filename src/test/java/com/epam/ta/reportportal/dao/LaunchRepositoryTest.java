@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -46,6 +47,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -66,15 +69,15 @@ public class LaunchRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+		//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-create-script.sql");
+		//		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -148,7 +151,11 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void getIdsModifiedBeforeTest() {
-		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(1L, new Date(), PageRequest.of(1, 10));
+		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(
+				2L,
+				Date.from(Instant.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())),
+				PageRequest.of(0, 10)
+		);
 
 		Assert.assertNotNull(modifiedBefore.getContent());
 		Assert.assertTrue(CollectionUtils.isNotEmpty(modifiedBefore.getContent()));

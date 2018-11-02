@@ -23,11 +23,14 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author Pavel Bortnik
  */
 public interface TestItemRepositoryCustom extends FilterableRepository<TestItem> {
+
+	Stream<Long> streamTestItemIdsByLaunchId(Long launchId);
 
 	/**
 	 * Selects all descendants of TestItem with provided id.
