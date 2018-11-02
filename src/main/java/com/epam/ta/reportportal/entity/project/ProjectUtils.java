@@ -61,8 +61,8 @@ public class ProjectUtils {
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
 		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Sets.newHashSet(OWNER),
-				Sets.newHashSet(OWNER),
-				Sets.newHashSet(OWNER),
+				Sets.newHashSet(),
+				Sets.newHashSet(),
 				SendCase.ALWAYS
 		);
 		defaultEmailSenderCase.setProject(project);
