@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -37,7 +37,17 @@ public class EmailSenderCase implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "email_sender_case_id"))
 	@Column(name = "recipient")
-	private List<String> recipients;
+	private Set<String> recipients;
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "launch_names", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@Column(name = "launch_name")
+	private Set<String> launchNames;
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "launch_tags", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@Column(name = "launch_tag")
+	private Set<String> launchTags;
 
 	@Column(name = "send_case")
 	private SendCase sendCase;
@@ -49,8 +59,10 @@ public class EmailSenderCase implements Serializable {
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(List<String> recipients, SendCase sendCase) {
+	public EmailSenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchTags, SendCase sendCase) {
 		this.recipients = recipients;
+		this.launchNames = launchNames;
+		this.launchTags = launchTags;
 		this.sendCase = sendCase;
 	}
 
@@ -62,20 +74,28 @@ public class EmailSenderCase implements Serializable {
 		this.id = id;
 	}
 
-	public List<String> getRecipients() {
+	public Set<String> getRecipients() {
 		return recipients;
 	}
 
-	public void setRecipients(List<String> recipients) {
+	public void setRecipients(Set<String> recipients) {
 		this.recipients = recipients;
 	}
 
-	public Project getProject() {
-		return project;
+	public Set<String> getLaunchNames() {
+		return launchNames;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
+	public void setLaunchNames(Set<String> launchNames) {
+		this.launchNames = launchNames;
+	}
+
+	public Set<String> getLaunchTags() {
+		return launchTags;
+	}
+
+	public void setLaunchTags(Set<String> launchTags) {
+		this.launchTags = launchTags;
 	}
 
 	public SendCase getSendCase() {
@@ -86,4 +106,11 @@ public class EmailSenderCase implements Serializable {
 		this.sendCase = sendCase;
 	}
 
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 }
