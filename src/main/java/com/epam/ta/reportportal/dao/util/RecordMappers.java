@@ -175,7 +175,7 @@ public class RecordMappers {
 		Project project = new Project();
 		project.setId(r.get(PROJECT_USER.PROJECT_ID));
 		projectUser.setProject(project);
-		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).name()));
+		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE, String.class)));
 		user.getProjects().add(projectUser);
 
 		r = r.into(USERS.fields());
