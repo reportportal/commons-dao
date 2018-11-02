@@ -171,6 +171,13 @@ public class RecordMappers {
 			}
 		});
 
+		ProjectUser projectUser = new ProjectUser();
+		Project project = new Project();
+		project.setId(r.get(PROJECT_USER.PROJECT_ID));
+		projectUser.setProject(project);
+		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).name()));
+		user.getProjects().add(projectUser);
+
 		r = r.into(USERS.fields());
 		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
 		user.setId(r.get(USERS.ID));
@@ -186,13 +193,6 @@ public class RecordMappers {
 		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
 
-		ProjectUser projectUser = new ProjectUser();
-		Project project = new Project();
-		project.setId(r.get(PROJECT_USER.PROJECT_ID));
-		projectUser.setProject(project);
-		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).name()));
-
-		user.getProjects().add(projectUser);
 		return user;
 	};
 
