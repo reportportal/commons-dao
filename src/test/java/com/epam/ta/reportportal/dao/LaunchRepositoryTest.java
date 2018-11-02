@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -65,14 +66,14 @@ public class LaunchRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-create-script.sql");
+		//		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -83,6 +84,15 @@ public class LaunchRepositoryTest {
 
 	private static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+	}
+
+	@Test
+	public void testLaunches() {
+		List<Launch> launches = launchRepository.findByProjectIdAndStartTimeGreaterThanAndMode(1l,
+				LocalDateTime.now().minusMonths(1),
+				LaunchModeEnum.DEFAULT
+		);
+		Assert.assertThat(launches.size(), Matchers.greaterThan(0));
 	}
 
 	@Test

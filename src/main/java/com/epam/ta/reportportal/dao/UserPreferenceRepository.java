@@ -21,10 +21,27 @@ import com.epam.ta.reportportal.entity.preference.UserPreference;
 import java.util.List;
 
 /**
+ * User preference repository
+ *
  * @author Pavel Bortnik
  */
 public interface UserPreferenceRepository extends ReportPortalRepository<UserPreference, Long> {
 
+	/**
+	 * Find user preferences by project and user
+	 *
+	 * @param projectId Project id
+	 * @param userId    User id
+	 * @return List of user preferences
+	 */
 	List<UserPreference> findByProjectIdAndUserId(Long projectId, Long userId);
+
+	/**
+	 * Remove user preferences by project and user
+	 *
+	 * @param projectId Project id
+	 * @param userId    User id
+	 */
+	void removeByProjectIdAndUserId(Long projectId, Long userId);
 
 }
