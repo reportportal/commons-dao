@@ -20,6 +20,8 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -65,4 +67,6 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return Page number log found using specified filter
 	 */
 	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
+
+	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
 }

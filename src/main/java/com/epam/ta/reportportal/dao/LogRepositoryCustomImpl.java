@@ -34,10 +34,16 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static java.util.Optional.ofNullable;
@@ -130,5 +136,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.into(Long.class);
 
 		return BigDecimal.valueOf(rowNumber).divide(BigDecimal.valueOf(pageable.getPageSize()), RoundingMode.CEILING).intValue();
+	}
+
+	@Override
+	public int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds) {
+
+		return dsl.deleteFrom(LOG)
+				.where(LOG.ITEM_ID.in(testItemIds)
+						.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(Date.from(Instant.now()
+								.minusSeconds(period.getSeconds())))))))
+				.execute();
 	}
 }
