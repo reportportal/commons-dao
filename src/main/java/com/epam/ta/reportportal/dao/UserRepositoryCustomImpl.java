@@ -38,7 +38,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_RECORD_MAPPER;
@@ -94,11 +93,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
 
-		List<Field<?>> fieldsForSelect = Stream.concat(JUsers.USERS.fieldStream(), JProjectUser.PROJECT_USER.fieldStream())
+		List<Field<?>> fieldsForSelect = JUsers.USERS.fieldStream()
 				.map(Field::getName)
 				.filter(f -> Arrays.stream(exclude).noneMatch(exf -> exf.equalsIgnoreCase(f)))
 				.map(JooqFieldNameTransformer::fieldName)
 				.collect(Collectors.toList());
+
+		fieldsForSelect.add(JProjectUser.PROJECT_USER.PROJECT_ID);
+		fieldsForSelect.add(JProjectUser.PROJECT_USER.PROJECT_ROLE);
 
 		return PageableExecutionUtils.getPage(
 				USER_FETCHER.apply(dsl.select(fieldsForSelect).from(QueryBuilder.newBuilder(filter).with(pageable).build()).fetch()),
