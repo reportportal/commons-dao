@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 
@@ -61,7 +60,11 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(OWNER), SendCase.ALWAYS);
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Sets.newHashSet(OWNER),
+				Sets.newHashSet(OWNER),
+				Sets.newHashSet(OWNER),
+				SendCase.ALWAYS
+		);
 		defaultEmailSenderCase.setProject(project);
 		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
@@ -127,8 +130,8 @@ public class ProjectUtils {
 			if (null != cases) {
 				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
-					List<String> saved = c.getRecipients();
-					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(toList()));
+					Set<String> saved = c.getRecipients();
+					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(Collectors.toSet()));
 				});
 				project.setEmailCases(cases);
 			}
@@ -148,9 +151,11 @@ public class ProjectUtils {
 		Set<EmailSenderCase> cases = project.getEmailCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.stream().forEach(c -> {
-				List<String> saved = c.getRecipients();
+				Set<String> saved = c.getRecipients();
 				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
-					c.setRecipients(saved.stream().filter(processRecipientsEmails(Lists.newArrayList(oldEmail))).collect(toList()));
+					c.setRecipients(saved.stream()
+							.filter(processRecipientsEmails(Lists.newArrayList(oldEmail)))
+							.collect(Collectors.toSet()));
 					c.getRecipients().add(newEmail);
 				}
 			});
