@@ -99,8 +99,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				.map(JooqFieldNameTransformer::fieldName)
 				.collect(Collectors.toList());
 
-		fieldsForSelect.add(JProjectUser.PROJECT_USER.PROJECT_ID);
-		fieldsForSelect.add(JProjectUser.PROJECT_USER.PROJECT_ROLE);
+		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ID.getName()));
+		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ROLE.getName()));
 
 		return PageableExecutionUtils.getPage(
 				USER_FETCHER.apply(dsl.select(fieldsForSelect).from(QueryBuilder.newBuilder(filter).with(pageable).build()).fetch()),
