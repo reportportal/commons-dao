@@ -258,28 +258,23 @@ public class RecordMappers {
 	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(USER_FILTER.ID))
 			.ifPresent(id -> {
 				Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
-				if (filters.stream().noneMatch(f -> Objects.equals(f.getId(), id))) {
-					UserFilter filter = new UserFilter();
-					filter.setId(res.get(USER_FILTER.ID));
-					filters.add(filter);
-					widget.setFilters(filters);
-				}
+				UserFilter filter = new UserFilter();
+				filter.setId(id);
+				filters.add(filter);
+				widget.setFilters(filters);
 			});
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTION_MAPPER = (widget, res) -> {
-		ofNullable(widget.getWidgetOptions()).ifPresent(options -> {
-			options.put(res.get(WIDGET_OPTION.OPTION), res.get(WIDGET_OPTION.VALUE));
-			widget.setWidgetOptions(options);
-		});
-	};
+	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTION_MAPPER = (widget, res) -> ofNullable(widget.getWidgetOptions()).ifPresent(
+			options -> {
+				options.put(res.get(WIDGET_OPTION.OPTION), res.get(WIDGET_OPTION.VALUE));
+				widget.setWidgetOptions(options);
+			});
 
 	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD))
 			.ifPresent(field -> {
 				Set<String> contentFields = ofNullable(widget.getContentFields()).orElseGet(Sets::newLinkedHashSet);
-				if (contentFields.stream().noneMatch(cf -> Objects.equals(cf, field))) {
-					contentFields.add(field);
-					widget.setContentFields(contentFields);
-				}
+				contentFields.add(field);
+				widget.setContentFields(contentFields);
 			});
 
 	public static final RecordMapper<? super Record, Widget> WIDGET_RECORD_MAPPER = r -> {

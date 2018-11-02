@@ -25,5 +25,9 @@ import java.util.List;
  */
 public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, WidgetRepositoryCustom {
 
+	/**
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
+	 * @return The {@link List} of the {@link Widget}
+	 */
 	List<Widget> findAllByProjectId(Long projectId);
 }

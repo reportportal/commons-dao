@@ -21,7 +21,7 @@ package com.epam.ta.reportportal.dao.constant;
  */
 public final class WidgetRepositoryConstants {
 
-	public static final String WIDGET_SUBQUERY = "widget_subquery";
+	public static final String DISTINCT_WIDGET_TABLE = "widget_subquery";
 	public static final String ID = "id";
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";

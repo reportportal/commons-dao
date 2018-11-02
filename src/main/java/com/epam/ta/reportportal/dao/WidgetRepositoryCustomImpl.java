@@ -59,12 +59,12 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 				.and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
 
 		return PageableExecutionUtils.getPage(
-				dsl.fetch(dsl.with(WIDGET_SUBQUERY)
+				dsl.fetch(dsl.with(DISTINCT_WIDGET_TABLE)
 						.as(buildDistinctSubQuery(condition, pageable))
 						.select(WIDGET.ID, WIDGET.NAME, WIDGET.DESCRIPTION, fieldName(SID).as(OWNER))
 						.from(WIDGET)
-						.join(WIDGET_SUBQUERY)
-						.on(fieldName(WIDGET_SUBQUERY, ID).cast(Long.class).eq(WIDGET.ID))).map(SHARED_ENTITY_MAPPER),
+						.join(DISTINCT_WIDGET_TABLE)
+						.on(fieldName(DISTINCT_WIDGET_TABLE, ID).cast(Long.class).eq(WIDGET.ID))).map(SHARED_ENTITY_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(buildDistinctSubQuery(condition))
 		);
@@ -87,12 +87,12 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 
 		Condition condition = fieldName(OWNER, SID).cast(String.class).eq(username).and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
 
-		return dsl.fetch(dsl.with(WIDGET_SUBQUERY)
+		return dsl.fetch(dsl.with(DISTINCT_WIDGET_TABLE)
 				.as(buildDistinctSubQuery(condition))
 				.select(WIDGET.NAME)
 				.from(WIDGET)
-				.join(WIDGET_SUBQUERY)
-				.on(fieldName(WIDGET_SUBQUERY, ID).cast(Long.class).eq(WIDGET.ID))).into(String.class);
+				.join(DISTINCT_WIDGET_TABLE)
+				.on(fieldName(DISTINCT_WIDGET_TABLE, ID).cast(Long.class).eq(WIDGET.ID))).into(String.class);
 
 	}
 
@@ -110,7 +110,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 
 	private Page<Widget> getWidgetPage(Condition condition, Pageable pageable) {
 
-		return PageableExecutionUtils.getPage(WIDGET_FETCHER.apply(dsl.with(WIDGET_SUBQUERY)
+		return PageableExecutionUtils.getPage(WIDGET_FETCHER.apply(dsl.with(DISTINCT_WIDGET_TABLE)
 				.as(buildDistinctSubQuery(condition, pageable))
 				.select(
 						WIDGET.ID,
@@ -125,8 +125,8 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 						CONTENT_FIELD.FIELD
 				)
 				.from(WIDGET)
-				.join(WIDGET_SUBQUERY)
-				.on(fieldName(WIDGET_SUBQUERY, ID).cast(Long.class).eq(WIDGET.ID))
+				.join(DISTINCT_WIDGET_TABLE)
+				.on(fieldName(DISTINCT_WIDGET_TABLE, ID).cast(Long.class).eq(WIDGET.ID))
 				.leftJoin(WIDGET_OPTION)
 				.on(WIDGET.ID.eq(WIDGET_OPTION.WIDGET_ID))
 				.leftJoin(WIDGET_FILTER)

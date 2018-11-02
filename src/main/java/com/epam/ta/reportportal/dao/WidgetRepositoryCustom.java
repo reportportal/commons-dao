@@ -28,13 +28,20 @@ import java.util.List;
  */
 public interface WidgetRepositoryCustom {
 
-	Page<SharedEntity> getSharedWidgetNames(String userName, Long projectId, Pageable pageable);
+	/**
+	 * @param username  Username of the {@link com.epam.ta.reportportal.entity.user.User} who has read permissions for the {@link Widget}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
+	 * @param pageable  {@link Pageable}
+	 * @return The {@link Page} of the {@link SharedEntity}. The information about the shared {@link Widget} will be returned.
+	 */
+	Page<SharedEntity> getSharedWidgetNames(String username, Long projectId, Pageable pageable);
 
 	/**
 	 * Get list of shared widget for specified project
 	 *
-	 * @param username  Username to filter widgets that are shared with the user
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
+	 * @param username  Username of the {@link com.epam.ta.reportportal.entity.user.User} who has read permissions for the {@link Widget}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
+	 * @param pageable  {@link Pageable}
 	 * @return Page of widget
 	 */
 	Page<Widget> getSharedWidgetsList(String username, Long projectId, Pageable pageable);
@@ -42,8 +49,8 @@ public interface WidgetRepositoryCustom {
 	/**
 	 * Get list of widget names for specified user
 	 *
-	 * @param username  Username to filter widgets that are shared with the user
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
+	 * @param username  Username of the {@link com.epam.ta.reportportal.entity.user.User} who has read permissions for the {@link Widget}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
 	 * @return List of widgets' names
 	 */
 	List<String> getWidgetNames(String username, Long projectId);
@@ -52,7 +59,9 @@ public interface WidgetRepositoryCustom {
 	 * Get list of widgets that contains search criteria
 	 *
 	 * @param term      Search criteria
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} to filter widgets
+	 * @param username  Username of the {@link com.epam.ta.reportportal.entity.user.User} who has read permissions for the {@link Widget}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
+	 * @param pageable  {@link Pageable}
 	 * @return Page of widgets
 	 */
 	Page<Widget> searchSharedWidgets(String term, String username, Long projectId, Pageable pageable);
