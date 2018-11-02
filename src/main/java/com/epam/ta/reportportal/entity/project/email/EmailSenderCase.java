@@ -41,12 +41,12 @@ public class EmailSenderCase implements Serializable {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "launch_names", joinColumns = @JoinColumn(name = "email_sender_case_id"))
-	@Column(name = "recipient")
+	@Column(name = "launch_name")
 	private List<String> launchNames;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "launch_tags", joinColumns = @JoinColumn(name = "email_sender_case_id"))
-	@Column(name = "recipient")
+	@Column(name = "launch_tag")
 	private List<String> launchTags;
 
 	@Column(name = "send_case")
