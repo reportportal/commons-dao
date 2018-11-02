@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -185,7 +185,14 @@ public class RecordMappers {
 		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
 		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
-		user.getProjects().add(r.into(ProjectUser.class));
+
+		ProjectUser projectUser = new ProjectUser();
+		Project project = new Project();
+		project.setId(r.get(PROJECT_USER.PROJECT_ID));
+		projectUser.setProject(project);
+		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).name()));
+
+		user.getProjects().add(projectUser);
 		return user;
 	};
 
