@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +32,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,6 +100,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 		return dsl.select(
 				DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
 				DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
+						.and(LAUNCH.START_TIME.gt(Timestamp.valueOf(fromDate)))
 						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
 				DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
 				PROJECT.ID,
@@ -114,7 +114,6 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				.leftJoin(LAUNCH)
 				.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(LAUNCH.START_TIME.gt(Timestamp.valueOf(fromDate)))
 				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
 				.fetchOne()
 				.into(ProjectInfo.class);
