@@ -24,7 +24,10 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,14 +37,13 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Pavel Bortnik
@@ -129,7 +131,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
-		return Optional.ofNullable(dsl.with(LAUNCHES)
+		return ofNullable(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select()
 				.distinctOn(LAUNCH.NAME)
@@ -161,7 +163,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLastRun(Long projectId, String mode) {
-		return Optional.ofNullable(dsl.select()
+		return ofNullable(dsl.select()
 				.from(LAUNCH)
 				.where(LAUNCH.PROJECT_ID.eq(projectId))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
@@ -193,5 +195,27 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 								.and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
 				.groupBy(USERS.LOGIN)
 				.fetchMap(USERS.LOGIN, DSL.field("count", Integer.class));
+	}
+
+	@Override
+	public Page<Long> getIdsModifiedBefore(Long projectId, Date before, Pageable pageable) {
+		Page<Long> page = Page.empty(pageable);
+
+		if (ofNullable(before).isPresent()) {
+			Condition condition = LAUNCH.PROJECT_ID.eq(projectId)
+					.and(LAUNCH.LAST_MODIFIED.lessOrEqual(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(before))));
+			page = PageableExecutionUtils.getPage(
+					dsl.fetch(selectLaunchIdsQuery(condition).limit(pageable.getPageSize())
+							.offset(Long.valueOf(pageable.getOffset()).intValue())).into(Long.class),
+					pageable,
+					() -> dsl.fetchCount(selectLaunchIdsQuery(condition))
+			);
+		}
+
+		return page;
+	}
+
+	private SelectConditionStep<? extends Record> selectLaunchIdsQuery(Condition condition) {
+		return dsl.select(LAUNCH.ID).from(LAUNCH).where(condition);
 	}
 }

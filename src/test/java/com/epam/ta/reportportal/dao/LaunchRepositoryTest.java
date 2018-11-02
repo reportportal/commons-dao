@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +47,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -66,14 +67,14 @@ public class LaunchRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		//		runSqlScript("/test-dropall-script.sql");
-		//		runSqlScript("/test-create-script.sql");
-		//		runSqlScript("/test-fill-script.sql");
+		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-create-script.sql");
+		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -143,6 +144,15 @@ public class LaunchRepositoryTest {
 		)));
 
 		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
+	}
+
+	@Test
+	public void getIdsModifiedBeforeTest() {
+		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(1L, new Date(), PageRequest.of(1, 20));
+
+		Assert.assertNotNull(modifiedBefore.getContent());
+		Assert.assertTrue(CollectionUtils.isNotEmpty(modifiedBefore.getContent()));
+		Assert.assertEquals(20L, modifiedBefore.getNumberOfElements());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
