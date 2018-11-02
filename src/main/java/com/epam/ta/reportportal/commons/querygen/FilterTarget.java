@@ -55,6 +55,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JAclEntry.ACL_ENTRY;
+import static com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity.ACL_OBJECT_IDENTITY;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -189,7 +191,11 @@ public enum FilterTarget {
 					ti.LAST_MODIFIED,
 					ti.PATH,
 					ti.UNIQUE_ID,
-					ti.HAS_CHILDREN, ti.PARENT_ID, ti.LAUNCH_ID, tir.RESULT_ID, tir.STATUS,
+					ti.HAS_CHILDREN,
+					ti.PARENT_ID,
+					ti.LAUNCH_ID,
+					tir.RESULT_ID,
+					tir.STATUS,
 					tir.END_TIME,
 					tir.DURATION,
 					is.ISSUE_ID,

@@ -1,4 +1,4 @@
-INSERT INTO project (name, additional_info, creation_date) VALUES ('default_personal', 'additional info', '2018-07-19 13:25:00');
+INSERT INTO project (name, additional_info, creation_date, project_type) VALUES ('default_personal', 'additional info', '2018-07-19 13:25:00', 'INTERNAL');
 -- INSERT INTO project_configuration (id, project_type, interrupt_timeout, keep_logs_interval, keep_screenshots_interval, created_on)
 -- VALUES ((SELECT currval(pg_get_serial_sequence('project', 'id'))), 'PERSONAL', '1 day', '1 month', '2 weeks', '2018-07-19 13:25:00');
 
@@ -9,7 +9,7 @@ VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com'
 INSERT INTO project_user (user_id, project_id, project_role)
 VALUES ((SELECT currval(pg_get_serial_sequence('users', 'id'))), (SELECT currval(pg_get_serial_sequence('project', 'id'))), 'MEMBER');
 
-INSERT INTO project (name, additional_info, creation_date) VALUES ('superadmin_personal', 'another additional info', '2018-07-19 14:25:00');
+INSERT INTO project (name, additional_info, creation_date, project_type) VALUES ('superadmin_personal', 'another additional info', '2018-07-19 14:25:00', 'INTERNAL');
 
 INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
 VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL',
@@ -58,18 +58,18 @@ INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, 
 INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (10, 2, 'EQUALS', '1', 'project_id', false);
 
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (2, 'start', null, 'launch_statistics', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (4, 'start', null, 'passing_rate_per_launch', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (5, 'start', null, 'passing_rate_summary', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (6, 'start', null, 'cases_trend', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (4, 'start1', null, 'passing_rate_per_launch', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (5, 'start2', null, 'passing_rate_summary', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (6, 'start3', null, 'cases_trend', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (7, 'my widget', null, 'bug_trend', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (3, 'start', null, 'investigated_trend', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (3, 'start4', null, 'investigated_trend', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (12, 'table', null, 'launches_table', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (8, 'comparison', null, 'launches_comparison_chart', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (9, 'duration', null, 'launches_duration_chart', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (10, 'not passed', null, 'not_passed', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (11, 'not passed', null, 'most_failed_test_cases', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (17, 'table', null, 'activity_stream', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (1, 'start', null, 'overall_statistics', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (11, 'not passed1', null, 'most_failed_test_cases', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (17, 'table1', null, 'activity_stream', 1000, 1);
+INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (1, 'start5', null, 'overall_statistics', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1);
 INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (20, 'product status widget', 'description of widget', 'product_status', 2, 1);
@@ -160,7 +160,7 @@ DECLARE   counter       INT = 0;
 BEGIN
   WHILE counter < 50 LOOP
     INSERT INTO launch (uuid, project_id, user_id, name, description, start_time, end_time, "number", mode, status)
-    VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name', 'Description', now(), now() + '3 hours', 1, 'DEFAULT', 'FAILED');
+    VALUES ('fc51ec81-de6f-4f3b-9630-f3f3a3490def', 1, 1, 'launch name' || counter, 'Description', now(), now() + '3 hours', 1, 'DEFAULT', 'FAILED');
     cur_launch_id = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
