@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_RECORD_MAPPER;
@@ -92,7 +94,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
 
-		List<Field<?>> fieldsForSelect = JUsers.USERS.fieldStream()
+		List<Field<?>> fieldsForSelect = Stream.concat(JUsers.USERS.fieldStream(), JProjectUser.PROJECT_USER.fieldStream())
 				.map(Field::getName)
 				.filter(f -> Arrays.stream(exclude).noneMatch(exf -> exf.equalsIgnoreCase(f)))
 				.map(JooqFieldNameTransformer::fieldName)
