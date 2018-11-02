@@ -148,11 +148,11 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void getIdsModifiedBeforeTest() {
-		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(1L, new Date(), PageRequest.of(1, 20));
+		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(1L, new Date(), PageRequest.of(1, 10));
 
 		Assert.assertNotNull(modifiedBefore.getContent());
 		Assert.assertTrue(CollectionUtils.isNotEmpty(modifiedBefore.getContent()));
-		Assert.assertEquals(20L, modifiedBefore.getNumberOfElements());
+		Assert.assertEquals(10L, modifiedBefore.getNumberOfElements());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
