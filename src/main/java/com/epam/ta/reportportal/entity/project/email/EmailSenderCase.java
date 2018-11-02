@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,6 +39,16 @@ public class EmailSenderCase implements Serializable {
 	@Column(name = "recipient")
 	private List<String> recipients;
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "launch_names", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@Column(name = "recipient")
+	private List<String> launchNames;
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "launch_tags", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@Column(name = "recipient")
+	private List<String> launchTags;
+
 	@Column(name = "send_case")
 	private SendCase sendCase;
 
@@ -70,12 +80,20 @@ public class EmailSenderCase implements Serializable {
 		this.recipients = recipients;
 	}
 
-	public Project getProject() {
-		return project;
+	public List<String> getLaunchNames() {
+		return launchNames;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
+	public void setLaunchNames(List<String> launchNames) {
+		this.launchNames = launchNames;
+	}
+
+	public List<String> getLaunchTags() {
+		return launchTags;
+	}
+
+	public void setLaunchTags(List<String> launchTags) {
+		this.launchTags = launchTags;
 	}
 
 	public SendCase getSendCase() {
@@ -86,4 +104,11 @@ public class EmailSenderCase implements Serializable {
 		this.sendCase = sendCase;
 	}
 
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 }
