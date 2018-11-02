@@ -21,7 +21,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -37,17 +37,17 @@ public class EmailSenderCase implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "email_sender_case_id"))
 	@Column(name = "recipient")
-	private List<String> recipients;
+	private Set<String> recipients;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "launch_names", joinColumns = @JoinColumn(name = "email_sender_case_id"))
 	@Column(name = "launch_name")
-	private List<String> launchNames;
+	private Set<String> launchNames;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "launch_tags", joinColumns = @JoinColumn(name = "email_sender_case_id"))
 	@Column(name = "launch_tag")
-	private List<String> launchTags;
+	private Set<String> launchTags;
 
 	@Column(name = "send_case")
 	private SendCase sendCase;
@@ -59,8 +59,10 @@ public class EmailSenderCase implements Serializable {
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(List<String> recipients, SendCase sendCase) {
+	public EmailSenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchTags, SendCase sendCase) {
 		this.recipients = recipients;
+		this.launchNames = launchNames;
+		this.launchTags = launchTags;
 		this.sendCase = sendCase;
 	}
 
@@ -72,27 +74,27 @@ public class EmailSenderCase implements Serializable {
 		this.id = id;
 	}
 
-	public List<String> getRecipients() {
+	public Set<String> getRecipients() {
 		return recipients;
 	}
 
-	public void setRecipients(List<String> recipients) {
+	public void setRecipients(Set<String> recipients) {
 		this.recipients = recipients;
 	}
 
-	public List<String> getLaunchNames() {
+	public Set<String> getLaunchNames() {
 		return launchNames;
 	}
 
-	public void setLaunchNames(List<String> launchNames) {
+	public void setLaunchNames(Set<String> launchNames) {
 		this.launchNames = launchNames;
 	}
 
-	public List<String> getLaunchTags() {
+	public Set<String> getLaunchTags() {
 		return launchTags;
 	}
 
-	public void setLaunchTags(List<String> launchTags) {
+	public void setLaunchTags(Set<String> launchTags) {
 		this.launchTags = launchTags;
 	}
 
