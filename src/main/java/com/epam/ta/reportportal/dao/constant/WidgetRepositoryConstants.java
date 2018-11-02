@@ -14,15 +14,19 @@
  *  limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
-
-import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
-import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
+package com.epam.ta.reportportal.dao.constant;
 
 /**
- * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface IssueGroupRepository extends ReportPortalRepository<IssueGroup, Long> {
+public final class WidgetRepositoryConstants {
 
-	IssueGroup findByTestItemIssueGroup(TestItemIssueGroup testItemIssueGroup);
+	public static final String DISTINCT_WIDGET_TABLE = "widget_subquery";
+	public static final String ID = "id";
+	public static final String NAME = "name";
+	public static final String DESCRIPTION = "description";
+	public static final String SHARED = "shared";
+	public static final String OWNER = "owner";
+	public static final String SID = "sid";
+	public static final String PROJECT_ID = "project_id";
 }
