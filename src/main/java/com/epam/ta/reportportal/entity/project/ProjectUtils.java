@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.entity.project.email.LaunchStatsRule;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -62,7 +62,7 @@ public class ProjectUtils {
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
 		SenderCase recipients = new SenderCase.SenderCaseBuilder().withKey("recipients").withValue(OWNER).get();
-		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey("send_case").withValue(SendCase.ALWAYS.getCaseString()).get();
+		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey("send_case").withValue(LaunchStatsRule.ALWAYS.getRuleString()).get();
 
 		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(recipients, sendCase));
 		defaultEmailSenderCase.setProject(project);

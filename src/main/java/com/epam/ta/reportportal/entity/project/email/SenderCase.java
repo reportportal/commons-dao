@@ -35,18 +35,26 @@ public class SenderCase {
 	private Long id;
 
 	@Column(name = "key")
-	private String key;
+	private SendCaseType key;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "sender_case_value", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "value")
 	private List<String> values;
 
-	public String getKey() {
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public SendCaseType getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
+	public void setKey(SendCaseType key) {
 		this.key = key;
 	}
 
@@ -66,7 +74,7 @@ public class SenderCase {
 			this.senderCase = new SenderCase();
 		}
 
-		public SenderCaseBuilder withKey(String key) {
+		public SenderCaseBuilder withKey(SendCaseType key) {
 			senderCase.key = key;
 			return this;
 		}
