@@ -41,7 +41,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
@@ -62,11 +61,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Autowired
 	public void setDsl(DSLContext dsl) {
 		this.dsl = dsl;
-	}
-
-	@Override
-	public Stream<Long> streamTestItemIdsByLaunchId(Long launchId) {
-		return dsl.select(TEST_ITEM.ITEM_ID).from(TEST_ITEM).where(TEST_ITEM.LAUNCH_ID.eq(launchId)).fetchInto(Long.class).stream();
 	}
 
 	@Override

@@ -22,11 +22,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Pavel Bortnik
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
+
+	@Query("SELECT ti.id FROM TestItem ti WHERE ti.launch.id = :launchId")
+	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
 
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
