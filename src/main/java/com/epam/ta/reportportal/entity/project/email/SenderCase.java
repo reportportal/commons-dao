@@ -16,10 +16,11 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Sets;
 
 import javax.persistence.*;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -27,7 +28,7 @@ import java.util.function.Supplier;
  */
 @Entity
 @Table(name = "sender_case")
-public class SenderCase {
+public class SenderCase implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,10 +38,14 @@ public class SenderCase {
 	@Column(name = "key")
 	private SendCaseType key;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "email_sender_case_id", nullable = false)
+	private EmailSenderCase emailSenderCase;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "sender_case_value", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "value")
-	private List<String> values;
+	private Set<String> values;
 
 	public Long getId() {
 		return id;
@@ -58,11 +63,11 @@ public class SenderCase {
 		this.key = key;
 	}
 
-	public List<String> getValues() {
+	public Set<String> getValues() {
 		return values;
 	}
 
-	public void setValues(List<String> values) {
+	public void setValues(Set<String> values) {
 		this.values = values;
 	}
 
@@ -80,12 +85,12 @@ public class SenderCase {
 		}
 
 		public SenderCaseBuilder withValue(String value) {
-			senderCase.values = senderCase.values == null ? Lists.newArrayList() : senderCase.values;
+			senderCase.values = senderCase.values == null ? Sets.newHashSet() : senderCase.values;
 			senderCase.values.add(value);
 			return this;
 		}
 
-		public SenderCaseBuilder withValues(List<String> values) {
+		public SenderCaseBuilder withValues(Set<String> values) {
 			senderCase.values = values;
 			return this;
 		}

@@ -17,11 +17,11 @@
 package com.epam.ta.reportportal.entity.project.email;
 
 import com.epam.ta.reportportal.entity.project.Project;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -34,9 +34,8 @@ public class EmailSenderCase implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "id")
-	private List<SenderCase> senderCaseList = Lists.newArrayList();
+	@OneToMany(mappedBy = "emailSenderCase", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	private Set<SenderCase> senderCaseList = Sets.newHashSet();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id", nullable = false)
@@ -45,7 +44,7 @@ public class EmailSenderCase implements Serializable {
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(List<SenderCase> senderCaseList) {
+	public EmailSenderCase(Set<SenderCase> senderCaseList) {
 		this.senderCaseList = senderCaseList;
 	}
 
@@ -65,11 +64,11 @@ public class EmailSenderCase implements Serializable {
 		this.project = project;
 	}
 
-	public List<SenderCase> getSenderCaseList() {
+	public Set<SenderCase> getSenderCaseList() {
 		return senderCaseList;
 	}
 
-	public void setSenderCaseList(List<SenderCase> senderCaseList) {
+	public void setSenderCaseList(Set<SenderCase> senderCaseList) {
 		this.senderCaseList = senderCaseList;
 	}
 }

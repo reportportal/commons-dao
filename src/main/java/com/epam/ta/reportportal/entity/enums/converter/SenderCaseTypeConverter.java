@@ -20,7 +20,12 @@ import com.epam.ta.reportportal.entity.project.email.SendCaseType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
+/**
+ * @author Pavel Bortnik
+ */
+@Converter(autoApply = true)
 public class SenderCaseTypeConverter implements AttributeConverter<SendCaseType, String> {
 	@Override
 	public String convertToDatabaseColumn(SendCaseType attribute) {

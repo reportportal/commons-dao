@@ -68,7 +68,7 @@ public class ProjectUtils {
 				.withValue(LaunchStatsRule.ALWAYS.getRuleString())
 				.get();
 
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(recipients, sendCase));
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Sets.newHashSet(recipients, sendCase));
 		defaultEmailSenderCase.setProject(project);
 		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
@@ -142,7 +142,7 @@ public class ProjectUtils {
 					recipients.setValues(recipients.getValues()
 							.stream()
 							.filter(it -> !toExclude.contains(it.toLowerCase()))
-							.collect(Collectors.toList()));
+							.collect(Collectors.toSet()));
 				});
 				project.setEmailCases(cases);
 			}
@@ -167,11 +167,11 @@ public class ProjectUtils {
 						.filter(senderCase -> RECIPIENTS == senderCase.getKey())
 						.findFirst()
 						.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
-				List<String> saved = recipients.getValues();
+				Set<String> saved = recipients.getValues();
 				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
 					recipients.setValues(saved.stream()
 							.filter(processRecipientsEmails(Lists.newArrayList(oldEmail)))
-							.collect(Collectors.toList()));
+							.collect(Collectors.toSet()));
 					recipients.getValues().add(newEmail);
 				}
 			});

@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.google.common.collect.Sets;
 import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,6 +41,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Ivan Budaev
@@ -57,15 +57,15 @@ public class ProjectRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/user/users-projects-fill.sql");
+//		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-create-script.sql");
+//		runSqlScript("/user/users-projects-fill.sql");
 	}
 
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
-	}
+//	@AfterClass
+//	public static void destroy() throws SQLException, IOException, SqlToolError {
+//		runSqlScript("/test-dropall-script.sql");
+//	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
 		try (Connection connection = getConnection()) {
