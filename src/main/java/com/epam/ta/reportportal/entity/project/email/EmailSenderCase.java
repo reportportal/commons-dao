@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.project.email;
 
 import com.epam.ta.reportportal.entity.project.Project;
+import com.google.common.collect.Lists;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,7 +36,7 @@ public class EmailSenderCase implements Serializable {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "sender_case", joinColumns = @JoinColumn(name = "email_sender_case_id"))
-	private List<SenderCase> senderCaseList;
+	private List<SenderCase> senderCaseList = Lists.newArrayList();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id", nullable = false)
@@ -62,5 +63,13 @@ public class EmailSenderCase implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public List<SenderCase> getSenderCaseList() {
+		return senderCaseList;
+	}
+
+	public void setSenderCaseList(List<SenderCase> senderCaseList) {
+		this.senderCaseList = senderCaseList;
 	}
 }

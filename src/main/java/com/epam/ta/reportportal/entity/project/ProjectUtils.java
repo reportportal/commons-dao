@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -60,11 +61,10 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Sets.newHashSet(OWNER),
-				Sets.newHashSet(),
-				Sets.newHashSet(),
-				SendCase.ALWAYS
-		);
+		SenderCase recipients = new SenderCase.SenderCaseBuilder().withKey("recipients").withValue(OWNER).get();
+		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey("send_case").withValue(SendCase.ALWAYS.getCaseString()).get();
+
+		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(recipients, sendCase));
 		defaultEmailSenderCase.setProject(project);
 		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
 		return project;
@@ -130,8 +130,15 @@ public class ProjectUtils {
 			if (null != cases) {
 				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
-					Set<String> saved = c.getRecipients();
-					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(Collectors.toSet()));
+					SenderCase recipients = c.getSenderCaseList()
+							.stream()
+							.filter(senderCase -> "recipients".equalsIgnoreCase(senderCase.getKey()))
+							.findFirst()
+							.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
+					recipients.setValues(recipients.getValues()
+							.stream()
+							.filter(it -> !toExclude.contains(it.toLowerCase()))
+							.collect(Collectors.toList()));
 				});
 				project.setEmailCases(cases);
 			}
@@ -150,13 +157,18 @@ public class ProjectUtils {
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
 		Set<EmailSenderCase> cases = project.getEmailCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
-			cases.stream().forEach(c -> {
-				Set<String> saved = c.getRecipients();
+			cases.forEach(c -> {
+				SenderCase recipients = c.getSenderCaseList()
+						.stream()
+						.filter(senderCase -> "recipients".equalsIgnoreCase(senderCase.getKey()))
+						.findFirst()
+						.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
+				List<String> saved = recipients.getValues();
 				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
-					c.setRecipients(saved.stream()
+					recipients.setValues(saved.stream()
 							.filter(processRecipientsEmails(Lists.newArrayList(oldEmail)))
-							.collect(Collectors.toSet()));
-					c.getRecipients().add(newEmail);
+							.collect(Collectors.toList()));
+					recipients.getValues().add(newEmail);
 				}
 			});
 			project.setEmailCases(cases);

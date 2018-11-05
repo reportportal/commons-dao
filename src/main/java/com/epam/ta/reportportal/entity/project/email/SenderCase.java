@@ -16,8 +16,11 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
+import org.apache.commons.compress.utils.Lists;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author Pavel Bortnik
@@ -53,5 +56,35 @@ public class SenderCase {
 
 	public void setValues(List<String> values) {
 		this.values = values;
+	}
+
+	public static class SenderCaseBuilder implements Supplier<SenderCase> {
+
+		private SenderCase senderCase;
+
+		public SenderCaseBuilder() {
+			this.senderCase = new SenderCase();
+		}
+
+		public SenderCaseBuilder withKey(String key) {
+			senderCase.key = key;
+			return this;
+		}
+
+		public SenderCaseBuilder withValue(String value) {
+			senderCase.values = senderCase.values == null ? Lists.newArrayList() : senderCase.values;
+			senderCase.values.add(value);
+			return this;
+		}
+
+		public SenderCaseBuilder withValues(List<String> values) {
+			senderCase.values = values;
+			return this;
+		}
+
+		@Override
+		public SenderCase get() {
+			return senderCase;
+		}
 	}
 }
