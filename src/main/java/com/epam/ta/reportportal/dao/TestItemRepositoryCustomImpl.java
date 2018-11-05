@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -179,6 +179,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.NAME)
 				.from(TEST_ITEM)
 				.where(DSL.sql(TEST_ITEM.PATH + " @> cast(? AS LTREE)", path))
+				.and(DSL.sql(TEST_ITEM.PATH + " != cast(? AS LTREE)", path))
 				.orderBy(TEST_ITEM.ITEM_ID)
 				.fetch()
 				.stream()
