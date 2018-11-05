@@ -102,7 +102,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.from(LOG)
 				.where(LOG.ITEM_ID.eq(itemId)
 						.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(Date.from(Instant.now()
-								.minusSeconds(period.getSeconds())))))))
+								.minusSeconds(period.getSeconds()))))))
+						.and(LOG.ATTACHMENT.isNotNull().or(LOG.ATTACHMENT_THUMBNAIL.isNotNull())))
 				.fetchInto(Log.class);
 	}
 
