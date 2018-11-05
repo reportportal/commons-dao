@@ -34,8 +34,8 @@ public class EmailSenderCase implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "sender_case", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "id")
 	private List<SenderCase> senderCaseList = Lists.newArrayList();
 
 	@ManyToOne(fetch = FetchType.LAZY)
