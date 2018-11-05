@@ -64,7 +64,7 @@ public class ProjectUtils {
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
 		SenderCase recipients = new SenderCase.SenderCaseBuilder().withKey(RECIPIENTS).withValue(OWNER).get();
-		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey(SendCaseType.LAUNCH_SEND_RULE)
+		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey(SendCaseType.LAUNCH_STATS_RULE)
 				.withValue(LaunchStatsRule.ALWAYS.getRuleString())
 				.get();
 
