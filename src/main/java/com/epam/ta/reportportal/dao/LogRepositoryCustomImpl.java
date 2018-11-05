@@ -97,6 +97,16 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
+		return dsl.select(LOG.ID, LOG.ATTACHMENT, LOG.ATTACHMENT_THUMBNAIL)
+				.from(LOG)
+				.where(LOG.ITEM_ID.eq(itemId)
+						.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(Date.from(Instant.now()
+								.minusSeconds(period.getSeconds())))))))
+				.fetchInto(Log.class);
+	}
+
+	@Override
 	public List<Log> findByFilter(Filter filter) {
 
 		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(LOG_MAPPER);
@@ -146,5 +156,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 						.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(Date.from(Instant.now()
 								.minusSeconds(period.getSeconds())))))))
 				.execute();
+	}
+
+	@Override
+	public void clearLogsAttachmentsAndThumbnails(Collection<Long> ids) {
+		dsl.update(LOG).set(LOG.ATTACHMENT_THUMBNAIL, (String) null).set(LOG.ATTACHMENT, (String) null).where(LOG.ID.in(ids)).execute();
 	}
 }

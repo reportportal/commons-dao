@@ -59,6 +59,15 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	List<Log> findByTestItemId(Long itemId);
 
 	/**
+	 * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
+	 *
+	 * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
+	 * @param period {@link Duration}
+	 * @return List of {@link Log} with {@link Log#id}, {@link Log#attachment} and {@link Log#attachmentThumbnail} that were modified before the specified time period
+	 */
+	List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period);
+
+	/**
 	 * Get the specified log's page number
 	 *
 	 * @param id       ID of log page should be found of
@@ -68,5 +77,17 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
 
+	/**
+	 * @param period      {@link Duration}
+	 * @param testItemIds Collection of the {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem}
+	 * @return Count of removed logs
+	 */
 	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
+
+	/**
+	 * Clear {@link Log#attachment} and {@link Log#attachmentThumbnail} of the specified logs
+	 *
+	 * @param ids Collection of the {@link Log#id} to specify logs which attachments and thumbnails will be cleared
+	 */
+	void clearLogsAttachmentsAndThumbnails(Collection<Long> ids);
 }
