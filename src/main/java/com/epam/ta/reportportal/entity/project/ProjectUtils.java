@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.entity.project.email.SendCaseType;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
@@ -36,6 +37,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.entity.project.email.SendCaseType.RECIPIENTS;
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
@@ -61,8 +63,10 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		SenderCase recipients = new SenderCase.SenderCaseBuilder().withKey("recipients").withValue(OWNER).get();
-		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey("send_case").withValue(LaunchStatsRule.ALWAYS.getRuleString()).get();
+		SenderCase recipients = new SenderCase.SenderCaseBuilder().withKey(RECIPIENTS).withValue(OWNER).get();
+		SenderCase sendCase = new SenderCase.SenderCaseBuilder().withKey(SendCaseType.LAUNCH_SEND_RULE)
+				.withValue(LaunchStatsRule.ALWAYS.getRuleString())
+				.get();
 
 		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Lists.newArrayList(recipients, sendCase));
 		defaultEmailSenderCase.setProject(project);
@@ -132,7 +136,7 @@ public class ProjectUtils {
 					// saved - list of saved user emails before changes
 					SenderCase recipients = c.getSenderCaseList()
 							.stream()
-							.filter(senderCase -> "recipients".equalsIgnoreCase(senderCase.getKey()))
+							.filter(senderCase -> RECIPIENTS == senderCase.getKey())
 							.findFirst()
 							.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
 					recipients.setValues(recipients.getValues()
@@ -160,7 +164,7 @@ public class ProjectUtils {
 			cases.forEach(c -> {
 				SenderCase recipients = c.getSenderCaseList()
 						.stream()
-						.filter(senderCase -> "recipients".equalsIgnoreCase(senderCase.getKey()))
+						.filter(senderCase -> RECIPIENTS == senderCase.getKey())
 						.findFirst()
 						.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
 				List<String> saved = recipients.getValues();
