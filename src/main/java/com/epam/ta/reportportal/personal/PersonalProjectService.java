@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.project.email.EmailIntegraionService;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
@@ -45,13 +46,15 @@ public final class PersonalProjectService {
 	private final ProjectRepository projectRepository;
 	private final AttributeRepository attributeRepository;
 	private final IssueTypeRepository issueTypeRepository;
+	private final EmailIntegraionService emailIntegraionService;
 
 	@Autowired
 	public PersonalProjectService(ProjectRepository projectRepository, AttributeRepository attributeRepository,
-			IssueTypeRepository issueTypeRepository) {
+			IssueTypeRepository issueTypeRepository, EmailIntegraionService emailIntegraionService) {
 		this.projectRepository = projectRepository;
 		this.attributeRepository = attributeRepository;
 		this.issueTypeRepository = issueTypeRepository;
+		this.emailIntegraionService = emailIntegraionService;
 	}
 
 	/**
@@ -93,7 +96,7 @@ public final class PersonalProjectService {
 		project.setProjectIssueTypes(defaultIssueTypes(project, issueTypeRepository.getDefaultIssueTypes()));
 
 		/* Default email configuration */
-		setDefaultEmailConfiguration(project);
+		emailIntegraionService.setDefaultEmailConfiguration(project);
 
 		return project;
 	}

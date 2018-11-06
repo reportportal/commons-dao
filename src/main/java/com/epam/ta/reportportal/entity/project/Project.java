@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -80,8 +79,8 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private JsonbObject metadata;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<EmailSenderCase> emailCases;
+/*	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<EmailSenderCase> emailCases;*/
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonManagedReference("users")
@@ -167,13 +166,13 @@ public class Project implements Serializable {
 		this.projectAttributes = projectAttributes;
 	}
 
-	public Set<EmailSenderCase> getEmailCases() {
-		return emailCases;
-	}
-
-	public void setEmailCases(Set<EmailSenderCase> emailCases) {
-		this.emailCases = emailCases;
-	}
+//	public Set<EmailSenderCase> getEmailCases() {
+//		return emailCases;
+//	}
+//
+//	public void setEmailCases(Set<EmailSenderCase> emailCases) {
+//		this.emailCases = emailCases;
+//	}
 
 	public JsonbObject getMetadata() {
 		return metadata;
