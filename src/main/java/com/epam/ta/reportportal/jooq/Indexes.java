@@ -19,12 +19,64 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
+
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserFilter;
+import com.epam.ta.reportportal.jooq.tables.JUserPreference;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+
+import javax.annotation.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -113,8 +165,11 @@ public class Indexes {
     public static final Index USER_CREATION_BID_EMAIL_KEY = Indexes0.USER_CREATION_BID_EMAIL_KEY;
     public static final Index USER_CREATION_BID_PK = Indexes0.USER_CREATION_BID_PK;
     public static final Index USER_FILTER_PK = Indexes0.USER_FILTER_PK;
+    public static final Index USER_PREFERENCE_PK = Indexes0.USER_PREFERENCE_PK;
+    public static final Index USER_PREFERENCE_UQ = Indexes0.USER_PREFERENCE_UQ;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
+    public static final Index UNQ_WIDGET_NAME_PROJECT = Indexes0.UNQ_WIDGET_NAME_PROJECT;
     public static final Index WIDGET_ID = Indexes0.WIDGET_ID;
     public static final Index WIDGET_FILTER_PK = Indexes0.WIDGET_FILTER_PK;
     public static final Index WIDGET_OPTION_PK = Indexes0.WIDGET_OPTION_PK;
@@ -193,8 +248,11 @@ public class Indexes {
         public static Index USER_CREATION_BID_EMAIL_KEY = Internal.createIndex("user_creation_bid_email_key", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.EMAIL }, true);
         public static Index USER_CREATION_BID_PK = Internal.createIndex("user_creation_bid_pk", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.UUID }, true);
         public static Index USER_FILTER_PK = Internal.createIndex("user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
+        public static Index USER_PREFERENCE_PK = Internal.createIndex("user_preference_pk", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.ID }, true);
+        public static Index USER_PREFERENCE_UQ = Internal.createIndex("user_preference_uq", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID }, true);
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);
+        public static Index UNQ_WIDGET_NAME_PROJECT = Internal.createIndex("unq_widget_name_project", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID }, true);
         public static Index WIDGET_ID = Internal.createIndex("widget_id", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.ID }, true);
         public static Index WIDGET_FILTER_PK = Internal.createIndex("widget_filter_pk", JWidgetFilter.WIDGET_FILTER, new OrderField[] { JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID }, true);
         public static Index WIDGET_OPTION_PK = Internal.createIndex("widget_option_pk", JWidgetOption.WIDGET_OPTION, new OrderField[] { JWidgetOption.WIDGET_OPTION.ID }, true);
