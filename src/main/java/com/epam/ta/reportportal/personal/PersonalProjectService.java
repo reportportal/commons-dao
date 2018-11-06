@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.epam.ta.reportportal.entity.project.email.EmailIntegraionService;
+import com.epam.ta.reportportal.entity.project.email.EmailIntegrationService;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
@@ -46,15 +46,15 @@ public final class PersonalProjectService {
 	private final ProjectRepository projectRepository;
 	private final AttributeRepository attributeRepository;
 	private final IssueTypeRepository issueTypeRepository;
-	private final EmailIntegraionService emailIntegraionService;
+	private final EmailIntegrationService emailIntegrationService;
 
 	@Autowired
 	public PersonalProjectService(ProjectRepository projectRepository, AttributeRepository attributeRepository,
-			IssueTypeRepository issueTypeRepository, EmailIntegraionService emailIntegraionService) {
+			IssueTypeRepository issueTypeRepository, EmailIntegrationService emailIntegrationService) {
 		this.projectRepository = projectRepository;
 		this.attributeRepository = attributeRepository;
 		this.issueTypeRepository = issueTypeRepository;
-		this.emailIntegraionService = emailIntegraionService;
+		this.emailIntegrationService = emailIntegrationService;
 	}
 
 	/**
@@ -96,7 +96,7 @@ public final class PersonalProjectService {
 		project.setProjectIssueTypes(defaultIssueTypes(project, issueTypeRepository.getDefaultIssueTypes()));
 
 		/* Default email configuration */
-		emailIntegraionService.setDefaultEmailConfiguration(project);
+		emailIntegrationService.setDefaultEmailConfiguration(project);
 
 		return project;
 	}

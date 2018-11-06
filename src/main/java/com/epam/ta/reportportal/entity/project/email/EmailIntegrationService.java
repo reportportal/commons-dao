@@ -38,7 +38,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.OW
  * @author Pavel Bortnik
  */
 @Component
-public class EmailIntegraionService {
+public class EmailIntegrationService {
 
 	@Autowired
 	private IntegrationTypeRepository integrationTypeRepository;
