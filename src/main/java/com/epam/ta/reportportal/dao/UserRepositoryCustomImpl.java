@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
@@ -101,6 +102,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ID.getName()));
 		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ROLE.getName()));
+		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProject.PROJECT.NAME.getName()));
+		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProject.PROJECT.PROJECT_TYPE.getName()));
 
 		return PageableExecutionUtils.getPage(
 				USER_FETCHER.apply(dsl.select(fieldsForSelect).from(QueryBuilder.newBuilder(filter).with(pageable).build()).fetch()),

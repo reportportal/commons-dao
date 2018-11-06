@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -278,8 +278,7 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT(Project.class, Arrays.asList(
-			new CriteriaHolder(NAME, "name", String.class, false),
+	PROJECT(Project.class, Arrays.asList(new CriteriaHolder(NAME, "name", String.class, false),
 			new CriteriaHolder("projectType", "project_type", String.class, false)
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
@@ -316,8 +315,7 @@ public enum FilterTarget {
 		}
 	},
 
-	USER(User.class, Arrays.asList(
-			new CriteriaHolder(ID, ID, Long.class, false),
+	USER(User.class, Arrays.asList(new CriteriaHolder(ID, ID, Long.class, false),
 			new CriteriaHolder(UserCriteriaConstant.CRITERIA_LOGIN, UserCriteriaConstant.CRITERIA_LOGIN, String.class, false),
 			new CriteriaHolder(CRITERIA_EMAIL, CRITERIA_EMAIL, String.class, false),
 			new CriteriaHolder(CRITERIA_FULL_NAME, CRITERIA_FULL_NAME, String.class, false),
@@ -330,6 +328,7 @@ public enum FilterTarget {
 		public SelectQuery<? extends Record> getQuery() {
 			JUsers u = JUsers.USERS;
 			JProjectUser pu = JProjectUser.PROJECT_USER;
+			JProject p = JProject.PROJECT;
 			return DSL.select(u.ID,
 					u.LOGIN,
 					u.DEFAULT_PROJECT_ID,
@@ -339,8 +338,14 @@ public enum FilterTarget {
 					u.EMAIL,
 					u.EXPIRED,
 					u.PASSWORD,
-					u.ROLE, u.TYPE, u.METADATA, pu.PROJECT_ID, pu.PROJECT_ROLE
-			).from(u).leftJoin(pu).on(u.ID.eq(pu.USER_ID)).getQuery();
+					u.ROLE,
+					u.TYPE,
+					u.METADATA,
+					pu.PROJECT_ID,
+					pu.PROJECT_ROLE,
+					p.PROJECT_TYPE,
+					p.NAME
+			).from(u).leftJoin(pu).on(u.ID.eq(pu.USER_ID)).leftJoin(p).on(pu.PROJECT_ID.eq(p.ID)).getQuery();
 		}
 	},
 
