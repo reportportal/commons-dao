@@ -151,8 +151,7 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void getIdsModifiedBeforeTest() {
-		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(
-				2L,
+		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(2L,
 				Date.from(Instant.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())),
 				PageRequest.of(0, 10)
 		);

@@ -17,12 +17,14 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Pavel Bortnik
@@ -34,6 +36,9 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	List<Launch> findAllByName(String name);
 
 	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
+
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
+	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status, @Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
 			+ "AND l.project_id = :projectId ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)

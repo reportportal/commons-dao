@@ -57,15 +57,15 @@ public class ProjectRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-//		runSqlScript("/test-dropall-script.sql");
-//		runSqlScript("/test-create-script.sql");
-//		runSqlScript("/user/users-projects-fill.sql");
+		//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+		//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-create-script.sql");
+		//		runSqlScript("/user/users-projects-fill.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -82,8 +82,7 @@ public class ProjectRepositoryTest {
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(3));
-		Assert.assertThat(
-				"Results don't contain all project",
+		Assert.assertThat("Results don't contain all project",
 				names,
 				Matchers.hasItems("test_user_1_personal", "test_user_2_personal", "test_common_project_1")
 		);
