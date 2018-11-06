@@ -19,6 +19,7 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JAclClass;
 import org.jooq.Field;
 import org.jooq.Record1;
