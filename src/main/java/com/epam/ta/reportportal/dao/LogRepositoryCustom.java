@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.springframework.data.domain.Pageable;
 
@@ -76,6 +77,17 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return Page number log found using specified filter
 	 */
 	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
+
+	/**
+	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
+	 * has {@link Log}'s with {@link Log#lastModified} up to the current point of time minus provided 'period'
+	 *
+	 * @param period   {@link Duration}
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if logs(the log) exist(exists)
+	 */
+	boolean hasLogsAddedLately(Duration period, Long launchId, StatusEnum... statuses);
 
 	/**
 	 * @param period      {@link Duration}

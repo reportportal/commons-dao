@@ -18,9 +18,11 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.*;
@@ -40,13 +42,16 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Pavel Bortnik
@@ -147,6 +152,23 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.into(Long.class);
 
 		return BigDecimal.valueOf(rowNumber).divide(BigDecimal.valueOf(pageable.getPageSize()), RoundingMode.CEILING).intValue();
+	}
+
+	@Override
+	public boolean hasLogsAddedLately(Duration period, Long launchId, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		Timestamp before = Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
+		return dsl.fetchExists(dsl.selectOne()
+				.from(LOG)
+				.join(TEST_ITEM)
+				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.and(TEST_ITEM.LAST_MODIFIED.lt(before))
+				.and(LOG.LAST_MODIFIED.lt(before))
+				.limit(1));
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,6 +95,17 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return List of item ids
 	 */
 	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
+
+	/**
+	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
+	 * was started within the provided 'period'
+	 *
+	 * @param period   {@link Duration}
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if items(the item) exist(exists)
+	 */
+	Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses);
 
 	/**
 	 * Select test items that has issue with provided issue type for

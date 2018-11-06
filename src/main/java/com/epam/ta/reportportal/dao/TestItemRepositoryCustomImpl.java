@@ -37,6 +37,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -102,14 +105,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(TEST_ITEM_RESULTS)
 				.onKey()
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.limit(1));
 	}
 
 	@Override
 	public Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
 		return dsl.fetchExists(commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(parentId))
-				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.limit(1));
 	}
 
 	@Override
@@ -121,6 +126,19 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
 				.fetchInto(Long.class);
+	}
+
+	@Override
+	public Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(dsl.selectOne()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.onKey()
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.and(TEST_ITEM.START_TIME.gt(Timestamp.from(Instant.now().minusSeconds(period.getSeconds()))))
+				.limit(1));
 	}
 
 	@Override
