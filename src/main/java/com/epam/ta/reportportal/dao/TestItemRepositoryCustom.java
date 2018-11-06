@@ -108,6 +108,16 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses);
 
 	/**
+	 * True if {@link TestItem} wasn't modified before the provided 'period' and has logs
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param period   {@link Duration}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if {@link TestItem} wasn't modified before the provided 'period' and has logs
+	 */
+	Boolean hasLogs(Long launchId, Duration period, StatusEnum... statuses);
+
+	/**
 	 * Select test items that has issue with provided issue type for
 	 * specified launch.
 	 *
