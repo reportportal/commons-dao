@@ -19,6 +19,7 @@
  */
 package com.epam.ta.reportportal.jooq.enums;
 
+
 import com.epam.ta.reportportal.jooq.JPublic;
 import org.jooq.Catalog;
 import org.jooq.EnumType;
