@@ -22,7 +22,7 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * @author Anton Machulski
  */
 public class LogCriteriaConstant {
-	public static final String CRITERIA_LOG_MESSAGE = "log_message";
+	public static final String CRITERIA_LOG_MESSAGE = "message";
 	public static final String CRITERIA_TEST_ITEM_ID = "item";
 	public static final String CRITERIA_LOG_LEVEL = "level";
 	public static final String CRITERIA_LOG_ID = "log_id";
