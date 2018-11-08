@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
@@ -33,7 +32,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "integration_params", typeClass = JsonbObject.class)
+@TypeDef(name = "params", typeClass = IntegrationParams.class)
 @Table(name = "integration", schema = "public")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Integration implements Serializable {
@@ -53,7 +52,7 @@ public class Integration implements Serializable {
 	@JsonBackReference(value = "integrationTypes")
 	private IntegrationType type;
 
-	@Type(type = "integration_params")
+	@Type(type = "params")
 	@Column(name = "params")
 	private IntegrationParams params;
 

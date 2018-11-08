@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.meta.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -35,7 +34,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbObject.class)
+@TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
@@ -204,10 +203,8 @@ public class User implements Serializable {
 		User user = (User) o;
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(
-				defaultProject,
-				user.defaultProject
-		) && Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
+				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
 				user.attachment
 		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}

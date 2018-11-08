@@ -12,18 +12,24 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ */e.
  */
 
 package com.epam.ta.reportportal.entity.meta;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.commons.JsonbUserType;
 
 import java.util.Map;
 
 /**
  * @author Ivan Budayeu
  */
-public class Metadata extends JsonbObject {
+public class Metadata extends JsonbUserType {
+
+	@Override
+	public Class<?> returnedClass() {
+		return Metadata.class;
+	}
 
 	private Map<String, Object> metadata;
 

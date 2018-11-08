@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
@@ -34,7 +33,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "integration_details", typeClass = JsonbObject.class)
+@TypeDef(name = "details", typeClass = IntegrationTypeDetails.class)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "integration_type", schema = "public")
 public class IntegrationType implements Serializable {
@@ -61,13 +60,13 @@ public class IntegrationType implements Serializable {
 	@Column(name = "group_type", nullable = false)
 	private IntegrationGroupEnum integrationGroup;
 
-	@Type(type = "integration_details")
+	@Type(type = "details")
 	@Column(name = "details")
 	private IntegrationTypeDetails details;
 
-//	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-//	@JsonManagedReference(value = "integrationTypes")
-//	private Set<Integration> integrations = Sets.newHashSet();
+	//	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+	//	@JsonManagedReference(value = "integrationTypes")
+	//	private Set<Integration> integrations = Sets.newHashSet();
 
 	public Long getId() {
 		return id;
@@ -117,11 +116,11 @@ public class IntegrationType implements Serializable {
 		this.details = details;
 	}
 
-//	public Set<Integration> getIntegrations() {
-//		return integrations;
-//	}
-//
-//	public void setIntegrations(Set<Integration> integrations) {
-//		this.integrations = integrations;
-//	}
+	//	public Set<Integration> getIntegrations() {
+	//		return integrations;
+	//	}
+	//
+	//	public void setIntegrations(Set<Integration> integrations) {
+	//		this.integrations = integrations;
+	//	}
 }

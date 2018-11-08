@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.meta.Metadata;
@@ -40,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbObject.class)
+@TypeDef(name = "json", typeClass = Metadata.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -75,7 +74,7 @@ public class Project implements Serializable {
 	@Column(name = "creation_date")
 	private Date creationDate;
 
-	@Type(type = "jsonb")
+	@Type(type = "json")
 	@Column(name = "metadata")
 	private Metadata metadata;
 
