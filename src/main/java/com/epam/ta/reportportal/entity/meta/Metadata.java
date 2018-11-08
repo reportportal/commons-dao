@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */e.
  */
 
 package com.epam.ta.reportportal.entity.meta;
@@ -21,7 +22,7 @@ import com.epam.ta.reportportal.commons.JsonbUserType;
 import java.util.Map;
 
 /**
- * @author Ivan Budayeu
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class Metadata extends JsonbUserType {
 
@@ -46,4 +47,5 @@ public class Metadata extends JsonbUserType {
 	public void setMetadata(Map<String, Object> metadata) {
 		this.metadata = metadata;
 	}
+
 }
