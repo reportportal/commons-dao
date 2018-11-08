@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
@@ -39,10 +40,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Ivan Budaev
@@ -57,32 +58,40 @@ public class ProjectRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		//		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		//		runSqlScript("/test-dropall-script.sql");
-		//		runSqlScript("/test-create-script.sql");
-		//		runSqlScript("/user/user-project-up.sql");
+		SqlRunner.runSqlScripts("/user/user-project-down.sql");
+
+		SqlRunner.runSqlScripts("/user/user-project-up.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//		runSqlScript("/test-dropall-script.sql");
+		SqlRunner.runSqlScripts("/user/user-project-down.sql");
 	}
 
-	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
-		try (Connection connection = getConnection()) {
-			new SqlRunner().runSqlScript(connection, scriptPath);
-		}
-	}
+	@Test
+	public void findAllIdsAndProjectAttributesTest() {
+		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(ProjectAttributeEnum.KEEP_LOGS, PageRequest.of(0, 2));
 
-	private static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+		Assert.assertNotNull(projects);
+		Assert.assertTrue(CollectionUtils.isNotEmpty(projects.getContent()));
+		projects.getContent().forEach(project -> {
+			Assert.assertNotNull(project.getId());
+			Assert.assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
+			Assert.assertEquals(1, project.getProjectAttributes().size());
+			Assert.assertTrue(project.getProjectAttributes()
+					.stream()
+					.allMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
+							.getName()
+							.equals(ProjectAttributeEnum.KEEP_LOGS.getAttribute())));
+		});
 	}
 
 	@Test
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(3));
-		Assert.assertThat("Results don't contain all project",
+		Assert.assertThat(
+				"Results don't contain all project",
 				names,
 				Matchers.hasItems("test_user_1_personal", "test_user_2_personal", "test_common_project_1")
 		);
@@ -106,10 +115,7 @@ public class ProjectRepositoryTest {
 
 	@Test
 	public void test() {
-		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(
-				ProjectAttributeEnum.KEEP_LOGS,
-				PageRequest.of(0, 1)
-		);
+		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(ProjectAttributeEnum.KEEP_LOGS, PageRequest.of(0, 1));
 
 		System.out.println(projects);
 	}

@@ -15,9 +15,9 @@ BEGIN
               1,
               'launch name ' || differentLaunchesCounter,
               'description',
-              current_timestamp,
-              current_timestamp,
-              current_timestamp,
+              '2018-11-08 12:00:00',
+              '2018-11-08 12:00:05',
+              '2018-11-08 12:00:05',
               'DEFAULT',
               'FAILED');
       sameLaunchCounter = sameLaunchCounter + 1;
@@ -28,7 +28,7 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
-
+.;
 SELECT launches_init();
 
 DROP FUNCTION IF EXISTS launches_init();

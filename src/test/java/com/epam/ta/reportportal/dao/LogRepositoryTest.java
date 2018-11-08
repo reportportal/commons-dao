@@ -20,9 +20,15 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
+import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections.CollectionUtils;
+import org.assertj.core.util.Lists;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +38,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.dao.constant.TestConstants.STEP_ITEM_WITH_LOGS_ID;
 
 /**
  * @author Ivan Budaev
@@ -48,6 +61,19 @@ public class LogRepositoryTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@BeforeClass
+	public static void init() throws SQLException {
+		SqlRunner.runSqlScripts("/log/log-down.sql", "/item/item-down.sql", "/launch/launch-down.sql", "/user/user-project-down.sql");
+
+		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql", "/item/item-up.sql", "/log/log-up.sql");
+
+	}
+
+	@AfterClass
+	public static void destroy() throws SQLException {
+		SqlRunner.runSqlScripts("/log/log-down.sql", "/item/item-down.sql", "/launch/launch-down.sql", "/user/user-project-down.sql");
+	}
+
 	@Test
 	public void getPageNumberTest() {
 
@@ -58,5 +84,47 @@ public class LogRepositoryTest {
 
 		Integer number = logRepository.getPageNumber(65L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log_time")));
 		Assert.assertEquals(6L, (long) number);
+	}
+
+	@Test
+	public void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
+
+		Duration duration = Duration.ofDays(6).plusHours(23);
+
+		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(STEP_ITEM_WITH_LOGS_ID, duration);
+
+		Assert.assertNotNull(logs);
+		Assert.assertTrue(CollectionUtils.isNotEmpty(logs));
+		Assert.assertEquals(3, logs.size());
+	}
+
+	@Test
+	public void hasLogsAddedLatelyTest() {
+
+		Assert.assertTrue(logRepository.hasLogsAddedLately(
+				Duration.ofDays(13).plusHours(23),
+				1L,
+				StatusEnum.IN_PROGRESS
+		));
+	}
+
+	@Test
+	public void clearLogsAttachmentsAndThumbnailsTest() {
+		ArrayList<Long> logIds = Lists.newArrayList(1L, 2L, 3L);
+		logRepository.clearLogsAttachmentsAndThumbnails(logIds);
+
+		List<Log> logs = logRepository.findAllById(logIds);
+
+		logs.forEach(log -> {
+			Assert.assertNull(log.getAttachment());
+			Assert.assertNull(log.getAttachmentThumbnail());
+		});
+	}
+
+	@Test
+	public void deleteByPeriodAndTestItemIdsTest() {
+		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(STEP_ITEM_WITH_LOGS_ID));
+
+		Assert.assertEquals(3, removedLogsCount);
 	}
 }

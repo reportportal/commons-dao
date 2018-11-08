@@ -38,13 +38,23 @@ BEGIN
       where item_id = cur_step_id;
 
       INSERT INTO test_item_results (result_id, status, duration, end_time)
-      VALUES (cur_step_id, 'PASSED', 0.35, now());
+      VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
 
       IF stepCounter = 1
       THEN
         UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
         INSERT INTO issue (issue_id, issue_type, issue_description)
         VALUES (cur_step_id, 1, 'issue description');
+      END IF;
+
+      IF stepCounter = 2
+      THEN
+        UPDATE test_item SET last_modified = '2018-11-08 12:00:00' WHERE item_id = cur_step_id;
+      END IF;
+
+      IF stepCounter = 3
+      THEN
+        UPDATE test_item SET last_modified = now() - make_interval(days := 14) WHERE item_id = cur_step_id;
       END IF;
       stepCounter = stepCounter + 1;
     END LOOP;
@@ -55,6 +65,7 @@ BEGIN
 END
 $BODY$
 LANGUAGE plpgsql;
+.;
 
 SELECT items_init();
 

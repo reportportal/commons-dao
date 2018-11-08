@@ -1,5 +1,6 @@
-DO
-$$
+CREATE OR REPLACE FUNCTION user_project_init()
+  RETURNS VOID AS
+$BODY$
 DECLARE
   defaultProject    BIGINT;
   superadminProject BIGINT;
@@ -80,5 +81,14 @@ BEGIN
          (defaultProject, 3),
          (defaultProject, 4),
          (defaultProject, 5);
-END
-$$;
+
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 2, '3 months');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 2, '3 months');
+END;
+$BODY$
+LANGUAGE plpgsql;
+.;
+
+SELECT user_project_init();
+
+DROP FUNCTION IF EXISTS user_project_init();
