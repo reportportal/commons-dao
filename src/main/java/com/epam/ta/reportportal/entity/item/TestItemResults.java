@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -64,6 +65,7 @@ public class TestItemResults implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id", insertable = false, updatable = false)
+	@JsonIgnore
 	private Set<Statistics> statistics;
 
 	@OneToOne(cascade = CascadeType.ALL)
