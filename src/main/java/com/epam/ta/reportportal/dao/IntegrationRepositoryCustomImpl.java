@@ -48,11 +48,9 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 
 	private static final RecordMapper<? super Record, Integration> INTEGRATION_MAPPER = r -> new Integration(r.get(JIntegration.INTEGRATION.ID,
 			Long.class
-	),
-			r.into(Project.class),
-			r.into(IntegrationType.class),
-			null,
-			r.get(JIntegration.INTEGRATION.CREATION_DATE, LocalDateTime.class)
+	), r.into(Project.class), r.into(IntegrationType.class),
+			// TODO move this mapper into common mappers and use that object mapper to parse json
+			null, r.get(JIntegration.INTEGRATION.CREATION_DATE, LocalDateTime.class)
 	);
 
 	@Autowired
