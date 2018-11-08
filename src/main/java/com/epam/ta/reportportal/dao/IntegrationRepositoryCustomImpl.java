@@ -1,3 +1,19 @@
+/*
+ *  Copyright (C) 2018 EPAM Systems
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
@@ -31,13 +47,12 @@ import java.util.Optional;
 @Repository
 public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Integration> INTEGRATION_MAPPER = r -> new Integration(r.get(
-			JIntegration.INTEGRATION.ID,
+	private static final RecordMapper<? super Record, Integration> INTEGRATION_MAPPER = r -> new Integration(r.get(JIntegration.INTEGRATION.ID,
 			Long.class
 	),
 			r.into(Project.class),
 			r.into(IntegrationType.class),
-			JsonbMapper.getJsonb(r.getValue(JIntegration.INTEGRATION.PARAMS)),
+			null,
 			r.get(JIntegration.INTEGRATION.CREATION_DATE, LocalDateTime.class)
 	);
 
@@ -52,8 +67,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 
 	@Override
 	public Page<Integration> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(INTEGRATION_MAPPER),
+		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(INTEGRATION_MAPPER),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
@@ -87,8 +101,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
-		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery(
-				"SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.id = :id AND i.enabled = :enabled",
+		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery("SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.id = :id AND i.enabled = :enabled",
 				LdapConfig.class
 		);
 

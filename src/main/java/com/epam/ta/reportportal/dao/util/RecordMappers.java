@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.ActivityDetails;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -253,7 +254,7 @@ public class RecordMappers {
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
 			try {
-				JsonbObject details = objectMapper.readValue(s, JsonbObject.class);
+				ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
 				activity.setDetails(details);
 			} catch (IOException e) {
 				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
