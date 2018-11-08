@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -42,7 +41,6 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "test_item", schema = "public")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class TestItem implements Serializable {
 
 	@Id
