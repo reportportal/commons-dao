@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 
 import javax.persistence.*;
@@ -50,6 +51,7 @@ public class IssueEntity implements Serializable {
 	private boolean ignoreAnalyzer;
 
 	@OneToOne(mappedBy = "issue")
+	@JsonIgnore
 	private TestItemResults testItemResults;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

@@ -43,4 +43,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	@Query(value = "SELECT merge_launch(?1)", nativeQuery = true)
 	void mergeLaunchTestItems(Long launchId);
 
+	@Query(value = "SELECT id FROM launch WHERE project_id=:projectId", nativeQuery = true)
+	List<Long> findLaunchIdsByProjectId(@Param("projectId") Long projectId);
+
 }
