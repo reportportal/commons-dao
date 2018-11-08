@@ -16,8 +16,9 @@
 
 package com.epam.ta.reportportal.entity;
 
+import com.google.common.collect.Lists;
+
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,12 +26,11 @@ import java.util.List;
  */
 public class ActivityDetails extends JsonbObject implements Serializable {
 
-	private List<HistoryField> history;
+	private List<HistoryField> history = Lists.newArrayList();
 
 	private String objectName;
 
 	public ActivityDetails() {
-		history = new ArrayList<>();
 	}
 
 	public ActivityDetails(String objectName) {
