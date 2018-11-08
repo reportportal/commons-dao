@@ -66,6 +66,7 @@ public class TestItem implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "launch_id")
+	@JsonIgnore
 	private Launch launch;
 
 	@LastModifiedDate
@@ -81,11 +82,13 @@ public class TestItem implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
+	@JsonIgnore
 	private Set<TestItemTag> tags = Sets.newHashSet();
 
-	@JsonIgnore
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
+	@JsonIgnore
 	private Set<Log> logs = Sets.newHashSet();
 
 	@Column(name = "path", nullable = false, columnDefinition = "ltree")
@@ -97,6 +100,7 @@ public class TestItem implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
+	@JsonIgnore
 	private TestItem parent;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
