@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
@@ -33,14 +32,14 @@ import java.time.LocalDateTime;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "integration_params", typeClass = JsonbUserType.class)
+@TypeDef(name = "params", typeClass = IntegrationParams.class)
 @Table(name = "integration", schema = "public")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Integration implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
+	@Column(name = "id")
 	private Long id;
 
 	@ManyToOne
@@ -53,7 +52,7 @@ public class Integration implements Serializable {
 	@JsonBackReference(value = "integrationTypes")
 	private IntegrationType type;
 
-	@Type(type = "integration_params")
+	@Type(type = "params")
 	@Column(name = "params")
 	private IntegrationParams params;
 
@@ -61,7 +60,7 @@ public class Integration implements Serializable {
 	private boolean enabled;
 
 	@CreatedDate
-	@Column(name = "creation_date", nullable = false)
+	@Column(name = "creation_date")
 	private LocalDateTime creationDate;
 
 	public Integration(Long id, Project project, IntegrationType type, IntegrationParams params, LocalDateTime creationDate) {

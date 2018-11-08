@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -20,13 +20,77 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.*;
-import com.epam.ta.reportportal.jooq.tables.records.*;
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JConnectby;
+import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab2;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab3;
+import com.epam.ta.reportportal.jooq.tables.JCrosstab4;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JNormalRand;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserFilter;
+import com.epam.ta.reportportal.jooq.tables.JUserPreference;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
+import com.epam.ta.reportportal.jooq.tables.records.JConnectbyRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstab2Record;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstab3Record;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstab4Record;
+import com.epam.ta.reportportal.jooq.tables.records.JCrosstabRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JNormalRandRecord;
+
+import javax.annotation.Generated;
+
 import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Result;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -35,7 +99,7 @@ import javax.annotation.Generated;
 @Generated(
     value = {
         "http://www.jooq.org",
-        "jOOQ version:3.11.4"
+        "jOOQ version:3.11.7"
     },
     comments = "This class is generated by jOOQ"
 )
@@ -126,22 +190,22 @@ public class Tables {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1)).fetch();
+    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+    public static JCrosstab CROSSTAB(String __1, Integer __2) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
@@ -248,11 +312,6 @@ public class Tables {
     public static final JDefectFormFieldValue DEFECT_FORM_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE;
 
     /**
-     * The table <code>public.email_sender_case</code>.
-     */
-    public static final JEmailSenderCase EMAIL_SENDER_CASE = com.epam.ta.reportportal.jooq.tables.JEmailSenderCase.EMAIL_SENDER_CASE;
-
-    /**
      * The table <code>public.filter</code>.
      */
     public static final JFilter FILTER = com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
@@ -313,19 +372,9 @@ public class Tables {
     public static final JLaunch LAUNCH = com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 
     /**
-     * The table <code>public.launch_names</code>.
-     */
-    public static final JLaunchNames LAUNCH_NAMES = com.epam.ta.reportportal.jooq.tables.JLaunchNames.LAUNCH_NAMES;
-
-    /**
      * The table <code>public.launch_tag</code>.
      */
     public static final JLaunchTag LAUNCH_TAG = com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
-
-    /**
-     * The table <code>public.launch_tags</code>.
-     */
-    public static final JLaunchTags LAUNCH_TAGS = com.epam.ta.reportportal.jooq.tables.JLaunchTags.LAUNCH_TAGS;
 
     /**
      * The table <code>public.ldap_config</code>.
@@ -407,11 +456,6 @@ public class Tables {
      * The table <code>public.project_user</code>.
      */
     public static final JProjectUser PROJECT_USER = com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
-
-    /**
-     * The table <code>public.recipients</code>.
-     */
-    public static final JRecipients RECIPIENTS = com.epam.ta.reportportal.jooq.tables.JRecipients.RECIPIENTS;
 
     /**
      * The table <code>public.restore_password_bid</code>.

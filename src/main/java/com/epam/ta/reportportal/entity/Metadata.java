@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.integration;
+package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 
@@ -22,29 +22,30 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * @author Yauheni_Martynau
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public class IntegrationParams extends JsonbUserType implements Serializable {
+public class Metadata extends JsonbUserType implements Serializable {
 
 	@Override
 	public Class<?> returnedClass() {
-		return IntegrationParams.class;
+		return Metadata.class;
 	}
 
-	private Map<String, Object> params;
+	private Map<String, Object> metadata;
 
-	public IntegrationParams() {
+	public Metadata() {
 	}
 
-	public IntegrationParams(Map<String, Object> params) {
-		this.params = params;
+	public Metadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
 	}
 
-	public Map<String, Object> getParams() {
-		return params;
+	public Map<String, Object> getMetadata() {
+		return metadata;
 	}
 
-	public void setParams(Map<String, Object> params) {
-		this.params = params;
+	public void setMetadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
 	}
+
 }

@@ -23,12 +23,13 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.SelectConditionStep;
+import org.jooq.SelectForUpdateStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,11 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_RECORD_MAPPER;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 /**
  * @author Pavel Bortnik
@@ -82,12 +87,22 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public Page<User> searchForUser(String term, Pageable pageable) {
 
-		SelectConditionStep<Record> select = dsl.select()
+		SelectForUpdateStep<Record> select = dsl.select()
 				.from(USERS)
-				.where(USERS.LOGIN.like("%" + term + "%")
-						.or(USERS.FULL_NAME.like("%" + term + "%"))
-						.or(USERS.EMAIL.like("%" + term + "%")));
-		return PageableExecutionUtils.getPage(dsl.fetch(select).map(USER_RECORD_MAPPER), pageable, () -> dsl.fetchCount(select));
+				.where(USERS.LOGIN.like("%" + term + "%").or(USERS.FULL_NAME.like("%" + term + "%")).or(USERS.EMAIL.like("%" + term + "%")))
+				.limit(pageable.getPageSize())
+				.offset(Long.valueOf(pageable.getOffset()).intValue());
+
+		return PageableExecutionUtils.getPage(dsl.fetch(dsl.with("temp_users")
+				.as(select)
+				.select()
+				.from(USERS)
+				.join("temp_users")
+				.on(USERS.ID.eq(field(name("temp_users", "id"), Long.class)))
+				.leftJoin(PROJECT_USER)
+				.on(USERS.ID.eq(PROJECT_USER.USER_ID))
+				.leftJoin(PROJECT)
+				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))).map(USER_RECORD_MAPPER), pageable, () -> dsl.fetchCount(select));
 	}
 
 	@Override
@@ -101,6 +116,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ID.getName()));
 		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ROLE.getName()));
+		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProject.PROJECT.NAME.getName()));
+		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProject.PROJECT.PROJECT_TYPE.getName()));
 
 		return PageableExecutionUtils.getPage(
 				USER_FETCHER.apply(dsl.select(fieldsForSelect).from(QueryBuilder.newBuilder(filter).with(pageable).build()).fetch()),

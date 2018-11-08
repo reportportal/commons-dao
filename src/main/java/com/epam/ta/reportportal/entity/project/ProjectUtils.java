@@ -16,18 +16,14 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.SendCase;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.sun.javafx.binding.StringFormatter;
 
 import javax.annotation.Nullable;
@@ -51,23 +47,6 @@ public class ProjectUtils {
 
 	private ProjectUtils() {
 
-	}
-
-	/**
-	 * Setup default project email configuration
-	 *
-	 * @param project
-	 * @return project object with default email config
-	 */
-	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Sets.newHashSet(OWNER),
-				Sets.newHashSet(),
-				Sets.newHashSet(),
-				SendCase.ALWAYS
-		);
-		defaultEmailSenderCase.setProject(project);
-		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
-		return project;
 	}
 
 	/**
@@ -126,15 +105,22 @@ public class ProjectUtils {
 					user.getLogin().toLowerCase()
 			)).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
-			Set<EmailSenderCase> cases = project.getEmailCases();
-			if (null != cases) {
-				cases.stream().forEach(c -> {
-					// saved - list of saved user emails before changes
-					Set<String> saved = c.getRecipients();
-					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(Collectors.toSet()));
-				});
-				project.setEmailCases(cases);
-			}
+			//			Set<EmailSenderCase> cases = project.getEmailCases();
+			//			if (null != cases) {
+			//				cases.stream().forEach(c -> {
+			//					// saved - list of saved user emails before changes
+			//					SenderCase recipients = c.getSenderCaseList()
+			//							.stream()
+			//							.filter(senderCase -> RECIPIENTS == senderCase.getKey())
+			//							.findFirst()
+			//							.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
+			//					recipients.setValues(recipients.getValues()
+			//							.stream()
+			//							.filter(it -> !toExclude.contains(it.toLowerCase()))
+			//							.collect(Collectors.toSet()));
+			//				});
+			//				project.setEmailCases(cases);
+			//			}
 		}
 		return project;
 	}
@@ -148,19 +134,24 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
-		Set<EmailSenderCase> cases = project.getEmailCases();
-		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
-			cases.stream().forEach(c -> {
-				Set<String> saved = c.getRecipients();
-				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
-					c.setRecipients(saved.stream()
-							.filter(processRecipientsEmails(Lists.newArrayList(oldEmail)))
-							.collect(Collectors.toSet()));
-					c.getRecipients().add(newEmail);
-				}
-			});
-			project.setEmailCases(cases);
-		}
+		//		Set<EmailSenderCase> cases = project.getEmailCases();
+		//		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
+		//			cases.forEach(c -> {
+		//				SenderCase recipients = c.getSenderCaseList()
+		//						.stream()
+		//						.filter(senderCase -> RECIPIENTS == senderCase.getKey())
+		//						.findFirst()
+		//						.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
+		//				Set<String> saved = recipients.getValues();
+		//				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
+		//					recipients.setValues(saved.stream()
+		//							.filter(processRecipientsEmails(Lists.newArrayList(oldEmail)))
+		//							.collect(Collectors.toSet()));
+		//					recipients.getValues().add(newEmail);
+		//				}
+		//			});
+		//			project.setEmailCases(cases);
+		//		}
 		return project;
 	}
 
