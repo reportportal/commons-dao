@@ -16,10 +16,10 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.meta.Metadata;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "jsonb", typeClass = JsonbObject.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -57,7 +57,7 @@ public class Project implements Serializable {
 	@Column(name = "project_type")
 	private ProjectType projectType;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
@@ -77,10 +77,7 @@ public class Project implements Serializable {
 
 	@Type(type = "jsonb")
 	@Column(name = "metadata")
-	private JsonbObject metadata;
-
-/*	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<EmailSenderCase> emailCases;*/
+	private Metadata metadata;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonManagedReference("users")
@@ -166,19 +163,11 @@ public class Project implements Serializable {
 		this.projectAttributes = projectAttributes;
 	}
 
-//	public Set<EmailSenderCase> getEmailCases() {
-//		return emailCases;
-//	}
-//
-//	public void setEmailCases(Set<EmailSenderCase> emailCases) {
-//		this.emailCases = emailCases;
-//	}
-
-	public JsonbObject getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(JsonbObject metadata) {
+	public void setMetadata(Metadata metadata) {
 		this.metadata = metadata;
 	}
 

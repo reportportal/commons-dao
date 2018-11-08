@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.JsonMap;
 import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -30,6 +29,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
+import com.epam.ta.reportportal.entity.meta.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -165,8 +165,8 @@ public class RecordMappers {
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
-				JsonMap<Object, Object> metaData = objectMapper.readValue(metaDataString, JsonMap.class);
-				user.setMetadata(metaData);
+				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+				user.setMetadata(metadata);
 			} catch (IOException e) {
 				throw new ReportPortalException("Error during parsing user metadata");
 			}

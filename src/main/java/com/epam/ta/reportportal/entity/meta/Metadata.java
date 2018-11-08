@@ -14,29 +14,31 @@
  *  limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.integration;
+package com.epam.ta.reportportal.entity.meta;
 
 import com.epam.ta.reportportal.entity.JsonbObject;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
- * @author Yauheni_Martynau
+ * @author Ivan Budayeu
  */
-public class IntegrationParams extends JsonbObject implements Serializable {
+public class Metadata extends JsonbObject {
 
-	private Map<String, Object> params;
+	private Map<String, Object> metadata;
 
-	public IntegrationParams(Map<String, Object> params) {
-		this.params = params;
+	public Metadata() {
 	}
 
-	public Map<String, Object> getParams() {
-		return params;
+	public Metadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
 	}
 
-	public void setParams(Map<String, Object> params) {
-		this.params = params;
+	public Map<String, Object> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
 	}
 }

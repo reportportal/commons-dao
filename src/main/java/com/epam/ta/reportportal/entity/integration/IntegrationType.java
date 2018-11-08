@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,10 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
+import com.epam.ta.reportportal.entity.JsonbObject;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,14 +28,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
  * @author Yauheni_Martynau
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "integration_details", typeClass = JsonbUserType.class)
+@TypeDef(name = "integration_details", typeClass = JsonbObject.class)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "integration_type", schema = "public")
 public class IntegrationType implements Serializable {
@@ -68,9 +65,9 @@ public class IntegrationType implements Serializable {
 	@Column(name = "details")
 	private IntegrationTypeDetails details;
 
-	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference(value = "integrationTypes")
-	private Set<Integration> integrations = Sets.newHashSet();
+//	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+//	@JsonManagedReference(value = "integrationTypes")
+//	private Set<Integration> integrations = Sets.newHashSet();
 
 	public Long getId() {
 		return id;
@@ -120,11 +117,11 @@ public class IntegrationType implements Serializable {
 		this.details = details;
 	}
 
-	public Set<Integration> getIntegrations() {
-		return integrations;
-	}
-
-	public void setIntegrations(Set<Integration> integrations) {
-		this.integrations = integrations;
-	}
+//	public Set<Integration> getIntegrations() {
+//		return integrations;
+//	}
+//
+//	public void setIntegrations(Set<Integration> integrations) {
+//		this.integrations = integrations;
+//	}
 }

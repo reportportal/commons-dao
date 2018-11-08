@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
-import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.google.common.collect.Sets;
@@ -42,8 +41,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author Ivan Budaev
@@ -77,14 +74,6 @@ public class ProjectRepositoryTest {
 
 	private static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
-	}
-
-	@Test
-	public void getProj() {
-		Optional<Project> byId = projectRepository.findById(1l);
-		Project project = byId.get();
-		Set<Integration> integrations = project.getIntegrations();
-		System.out.printf("");
 	}
 
 	@Test
