@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;

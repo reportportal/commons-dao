@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.user.ProjectUser;

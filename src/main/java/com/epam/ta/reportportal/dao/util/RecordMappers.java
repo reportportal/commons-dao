@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
