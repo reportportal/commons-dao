@@ -60,9 +60,6 @@ public class Project implements Serializable {
 	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
-	@Column(name = "additional_info")
-	private String addInfo;
-
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
@@ -112,14 +109,6 @@ public class Project implements Serializable {
 
 	public void setProjectType(ProjectType projectType) {
 		this.projectType = projectType;
-	}
-
-	public String getAddInfo() {
-		return addInfo;
-	}
-
-	public void setAddInfo(String addInfo) {
-		this.addInfo = addInfo;
 	}
 
 	public Set<ProjectUser> getUsers() {
@@ -179,24 +168,20 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(creationDate,
-				project.creationDate
-		) && Objects.equals(metadata, project.metadata);
+		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
+				metadata,
+				project.metadata
+		);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(name, addInfo, creationDate, metadata);
+		return Objects.hash(name, creationDate, metadata);
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("name", name)
-				.add("addInfo", addInfo)
-				.add("users", users)
-				.add("creationDate", creationDate)
-				.toString();
+		return MoreObjects.toStringHelper(this).add("name", name).add("users", users).add("creationDate", creationDate).toString();
 	}
 }
