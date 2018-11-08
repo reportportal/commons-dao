@@ -40,17 +40,16 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -77,6 +76,12 @@ public class RecordMappers {
 	private static final String STATISTICS = "statistics";
 
 	private static ObjectMapper objectMapper;
+
+	static {
+		objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
 	/**
 	 * Maps record into {@link Attribute} object
@@ -318,17 +323,4 @@ public class RecordMappers {
 
 		return Lists.newArrayList(widgetMap.values());
 	};
-
-	@Component
-	private static class MapperInjector {
-
-		@Autowired
-		private ObjectMapper objectMapper;
-
-		@PostConstruct
-		private void injectMapper() {
-			RecordMappers.objectMapper = objectMapper;
-		}
-
-	}
 }
