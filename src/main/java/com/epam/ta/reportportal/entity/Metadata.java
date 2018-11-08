@@ -18,12 +18,13 @@ package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public class Metadata extends JsonbUserType {
+public class Metadata extends JsonbUserType implements Serializable {
 
 	@Override
 	public Class<?> returnedClass() {
