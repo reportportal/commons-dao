@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -99,6 +100,7 @@ public class TestItem implements Serializable {
 	private TestItem parent;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
+	@JsonManagedReference("itemResults")
 	private TestItemResults itemResults;
 
 	@Column(name = "has_children")

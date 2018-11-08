@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -68,6 +69,7 @@ public class TestItemResults implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL)
 	@MapsId
 	@JoinColumn(name = "result_id")
+	@JsonBackReference("itemResults")
 	private TestItem testItem;
 
 	public TestItemResults() {
