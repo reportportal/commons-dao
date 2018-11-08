@@ -113,3 +113,8 @@ DROP FUNCTION IF EXISTS delete_item_statistics();
 DROP FUNCTION IF EXISTS decrease_execution_statistics();
 DROP FUNCTION IF EXISTS decrease_issue_statistics();
 DROP FUNCTION IF EXISTS merge_launch(LaunchId BIGINT);
+
+DROP TABLE IF EXISTS acl_entry CASCADE;
+DROP TABLE IF EXISTS acl_object_identity CASCADE;
+DROP TABLE IF EXISTS acl_class CASCADE;
+DROP TABLE IF EXISTS acl_sid CASCADE;
