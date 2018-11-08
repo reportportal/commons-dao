@@ -57,7 +57,7 @@ public class Project implements Serializable {
 	@Column(name = "project_type")
 	private ProjectType projectType;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
