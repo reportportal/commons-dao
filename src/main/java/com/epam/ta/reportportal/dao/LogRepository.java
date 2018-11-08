@@ -34,4 +34,5 @@ public interface LogRepository extends JpaRepository<Log, Long>, LogRepositoryCu
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 
+	List<Log> findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(List<Long> testItemIds, Integer logLevel);
 }
