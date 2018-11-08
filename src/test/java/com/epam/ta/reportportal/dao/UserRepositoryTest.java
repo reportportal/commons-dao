@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
-import com.epam.ta.reportportal.entity.JsonMap;
+import com.epam.ta.reportportal.entity.meta.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -254,8 +254,6 @@ public class UserRepositoryTest {
 		User user = userRepository.findByLogin("default").get();
 		Map<String, Object> hashMap = new HashMap<>();
 		hashMap.put("asd", "qwe");
-		JsonMap<Object, Object> metaData = new JsonMap<>(hashMap);
-		user.setMetadata(metaData);
 
 		userRepository.save(user);
 	}
@@ -299,10 +297,8 @@ public class UserRepositoryTest {
 		reg.setRole(UserRole.USER);
 
 		Map<String, Object> map = new HashMap<>();
-
 		map.put("last_login", new Date());
-
-		reg.setMetadata(new JsonMap<>(map));
+		reg.setMetadata(new Metadata(map));
 
 		Set<ProjectUser> projectUsers = defaultProject.getUsers();
 		//noinspection ConstantConditions
