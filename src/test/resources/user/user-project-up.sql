@@ -82,12 +82,16 @@ BEGIN
          (defaultProject, 4),
          (defaultProject, 5);
 
-  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 2, '3 months');
-  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 2, '3 months');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 1, '1 hour');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 2, '2 weeks');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 3, '2 weeks');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 1, '1 hour');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 2, '2 weeks');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 3, '2 weeks');
 END;
 $BODY$
 LANGUAGE plpgsql;
-.;
+-- .;
 
 SELECT user_project_init();
 

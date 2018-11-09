@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -44,6 +45,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Pavel Bortnik
@@ -203,6 +205,26 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 		if (ofNullable(before).isPresent()) {
 			Condition condition = LAUNCH.PROJECT_ID.eq(projectId)
+					.and(LAUNCH.LAST_MODIFIED.lessOrEqual(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(before))));
+			page = PageableExecutionUtils.getPage(
+					dsl.fetch(selectLaunchIdsQuery(condition).limit(pageable.getPageSize())
+							.offset(Long.valueOf(pageable.getOffset()).intValue())).into(Long.class),
+					pageable,
+					() -> dsl.fetchCount(selectLaunchIdsQuery(condition))
+			);
+		}
+
+		return page;
+	}
+
+	@Override
+	public Page<Long> getIdsInStatusModifiedBefore(Long projectId, Date before, Pageable pageable, StatusEnum... statuses) {
+		Page<Long> page = Page.empty(pageable);
+
+		if (ofNullable(before).isPresent()) {
+			List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+			Condition condition = LAUNCH.PROJECT_ID.eq(projectId)
+					.and(LAUNCH.STATUS.in(jStatuses))
 					.and(LAUNCH.LAST_MODIFIED.lessOrEqual(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(before))));
 			page = PageableExecutionUtils.getPage(
 					dsl.fetch(selectLaunchIdsQuery(condition).limit(pageable.getPageSize())

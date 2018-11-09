@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,4 +75,6 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 
 	Page<Long> getIdsModifiedBefore(Long projectId, Date before, Pageable pageable);
+
+	Page<Long> getIdsInStatusModifiedBefore(Long projectId, Date before, Pageable pageable, StatusEnum... statuses);
 }
