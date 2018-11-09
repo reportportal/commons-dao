@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.integration;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -68,7 +68,8 @@ public class IntegrationType implements Serializable {
 	private IntegrationTypeDetails details;
 
 	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference(value = "integrationTypes")
+	//	@JsonBackReference(value = "integrationTypes")
+	@JsonIgnore
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	public Long getId() {
