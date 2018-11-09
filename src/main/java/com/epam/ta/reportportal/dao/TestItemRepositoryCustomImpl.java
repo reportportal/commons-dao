@@ -27,9 +27,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -244,5 +242,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
+	}
+
+	@Override
+	public Page<Long> getIdsByLaunchId(Long launchId, Pageable pageable) {
+
+		Condition condition = TEST_ITEM.LAUNCH_ID.eq(launchId);
+		return PageableExecutionUtils.getPage(
+				dsl.fetch(selectTestItemIdQuery(condition).limit(pageable.getPageSize())
+						.offset(Long.valueOf(pageable.getOffset()).intValue())).into(Long.class),
+				pageable,
+				() -> dsl.fetchCount(selectTestItemIdQuery(condition))
+		);
+	}
+
+	private SelectConditionStep<? extends Record> selectTestItemIdQuery(Condition condition) {
+		return dsl.select(TEST_ITEM.ITEM_ID).from(TEST_ITEM).where(condition);
 	}
 }
