@@ -91,7 +91,7 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
--- .;
+.;
 
 SELECT user_project_init();
 

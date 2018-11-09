@@ -17,7 +17,7 @@ BEGIN
               'description',
               '2018-11-08 12:00:00',
               '2018-11-08 12:00:05',
-              '2018-10-08 12:00:00',
+              '2018-11-08 12:00:05',
               'DEFAULT',
               'IN_PROGRESS');
       sameLaunchCounter = sameLaunchCounter + 1;
@@ -28,7 +28,7 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
--- .;
+.;
 SELECT launches_init();
 
 DROP FUNCTION IF EXISTS launches_init();

@@ -65,7 +65,7 @@ BEGIN
 END
 $BODY$
 LANGUAGE plpgsql;
--- .;
+.;
 
 SELECT items_init();
 

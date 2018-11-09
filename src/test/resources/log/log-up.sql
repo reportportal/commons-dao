@@ -20,7 +20,7 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
--- .;
+.;
 SELECT logs_init();
 
 DROP FUNCTION IF EXISTS logs_init();
