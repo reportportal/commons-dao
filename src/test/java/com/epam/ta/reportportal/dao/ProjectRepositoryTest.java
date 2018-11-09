@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +19,16 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -87,6 +89,24 @@ public class ProjectRepositoryTest {
 	}
 
 	@Test
+	public void test() {
+		Project project = projectRepository.findById(1L).orElseThrow(() -> new ReportPortalException(ErrorType.PROJECT_NOT_FOUND, 1L));
+
+		Integration email = project.getIntegrations()
+				.stream()
+				.filter(it -> it.getType().getName().equalsIgnoreCase("email"))
+				.findFirst()
+				.get();
+
+		email.setEnabled(true);
+
+		projectRepository.save(project);
+
+		System.out.println();
+
+	}
+
+	@Test
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(3));
@@ -111,12 +131,5 @@ public class ProjectRepositoryTest {
 		Pageable pageable = PageRequest.of(0, 20);
 		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable, "DEFAULT");
 		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
-	}
-
-	@Test
-	public void test() {
-		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(ProjectAttributeEnum.KEEP_LOGS, PageRequest.of(0, 1));
-
-		System.out.println(projects);
 	}
 }

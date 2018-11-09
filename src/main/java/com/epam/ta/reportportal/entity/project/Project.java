@@ -1,26 +1,24 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
-import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -41,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "json", typeClass = Metadata.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -58,12 +56,9 @@ public class Project implements Serializable {
 	@Column(name = "project_type")
 	private ProjectType projectType;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
-
-	@Column(name = "additional_info")
-	private String addInfo;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -76,12 +71,9 @@ public class Project implements Serializable {
 	@Column(name = "creation_date")
 	private Date creationDate;
 
-	@Type(type = "jsonb")
+	@Type(type = "json")
 	@Column(name = "metadata")
-	private JsonbObject metadata;
-
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<EmailSenderCase> emailCases;
+	private Metadata metadata;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonManagedReference("users")
@@ -117,14 +109,6 @@ public class Project implements Serializable {
 
 	public void setProjectType(ProjectType projectType) {
 		this.projectType = projectType;
-	}
-
-	public String getAddInfo() {
-		return addInfo;
-	}
-
-	public void setAddInfo(String addInfo) {
-		this.addInfo = addInfo;
 	}
 
 	public Set<ProjectUser> getUsers() {
@@ -167,19 +151,11 @@ public class Project implements Serializable {
 		this.projectAttributes = projectAttributes;
 	}
 
-	public Set<EmailSenderCase> getEmailCases() {
-		return emailCases;
-	}
-
-	public void setEmailCases(Set<EmailSenderCase> emailCases) {
-		this.emailCases = emailCases;
-	}
-
-	public JsonbObject getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(JsonbObject metadata) {
+	public void setMetadata(Metadata metadata) {
 		this.metadata = metadata;
 	}
 
@@ -192,24 +168,20 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(creationDate,
-				project.creationDate
-		) && Objects.equals(metadata, project.metadata);
+		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
+				metadata,
+				project.metadata
+		);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(name, addInfo, creationDate, metadata);
+		return Objects.hash(name, creationDate, metadata);
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("name", name)
-				.add("addInfo", addInfo)
-				.add("users", users)
-				.add("creationDate", creationDate)
-				.toString();
+		return MoreObjects.toStringHelper(this).add("name", name).add("users", users).add("creationDate", creationDate).toString();
 	}
 }

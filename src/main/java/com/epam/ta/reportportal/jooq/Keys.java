@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -35,7 +35,6 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
 import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
 import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
-import com.epam.ta.reportportal.jooq.tables.JEmailSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
@@ -48,9 +47,7 @@ import com.epam.ta.reportportal.jooq.tables.JIssueType;
 import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
 import com.epam.ta.reportportal.jooq.tables.JItemTag;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTags;
 import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
 import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
 import com.epam.ta.reportportal.jooq.tables.JLog;
@@ -62,7 +59,6 @@ import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
@@ -92,7 +88,6 @@ import com.epam.ta.reportportal.jooq.tables.records.JDashboardWidgetRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JDefectFieldAllowedValueRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JDefectFormFieldRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JDefectFormFieldValueRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JEmailSenderCaseRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterConditionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterSortRecord;
@@ -104,10 +99,8 @@ import com.epam.ta.reportportal.jooq.tables.records.JIssueTicketRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeProjectRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JItemTagRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLaunchNamesRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchTagRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLaunchTagsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLdapConfigRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLdapSynchronizationAttributesRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
@@ -119,7 +112,6 @@ import com.epam.ta.reportportal.jooq.tables.records.JParameterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectAttributeRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JRecipientsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JRestorePasswordBidRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JServerSettingsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JStatisticsFieldRecord;
@@ -150,7 +142,7 @@ import org.jooq.impl.Internal;
 @Generated(
     value = {
         "http://www.jooq.org",
-        "jOOQ version:3.11.4"
+        "jOOQ version:3.11.7"
     },
     comments = "This class is generated by jOOQ"
 )
@@ -171,7 +163,6 @@ public class Keys {
     public static final Identity<JDashboardRecord, Integer> IDENTITY_DASHBOARD = Identities0.IDENTITY_DASHBOARD;
     public static final Identity<JDefectFieldAllowedValueRecord, Long> IDENTITY_DEFECT_FIELD_ALLOWED_VALUE = Identities0.IDENTITY_DEFECT_FIELD_ALLOWED_VALUE;
     public static final Identity<JDefectFormFieldRecord, Long> IDENTITY_DEFECT_FORM_FIELD = Identities0.IDENTITY_DEFECT_FORM_FIELD;
-    public static final Identity<JEmailSenderCaseRecord, Long> IDENTITY_EMAIL_SENDER_CASE = Identities0.IDENTITY_EMAIL_SENDER_CASE;
     public static final Identity<JFilterRecord, Long> IDENTITY_FILTER = Identities0.IDENTITY_FILTER;
     public static final Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Identities0.IDENTITY_FILTER_CONDITION;
     public static final Identity<JFilterSortRecord, Long> IDENTITY_FILTER_SORT = Identities0.IDENTITY_FILTER_SORT;
@@ -222,7 +213,6 @@ public class Keys {
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
     public static final UniqueKey<JDefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = UniqueKeys0.DEFECT_FIELD_ALLOWED_VALUE_PK;
     public static final UniqueKey<JDefectFormFieldRecord> DEFECT_FORM_FIELD_PK = UniqueKeys0.DEFECT_FORM_FIELD_PK;
-    public static final UniqueKey<JEmailSenderCaseRecord> EMAIL_SENDER_CASE_PK = UniqueKeys0.EMAIL_SENDER_CASE_PK;
     public static final UniqueKey<JFilterRecord> FILTER_PK = UniqueKeys0.FILTER_PK;
     public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = UniqueKeys0.FILTER_CONDITION_PK;
     public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = UniqueKeys0.FILTER_SORT_PK;
@@ -301,7 +291,6 @@ public class Keys {
     public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = ForeignKeys0.DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY;
     public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY;
     public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY;
-    public static final ForeignKey<JEmailSenderCaseRecord, JProjectRecord> EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY = ForeignKeys0.EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY;
     public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = ForeignKeys0.FILTER__FILTER_PROJECT_ID_FKEY;
     public static final ForeignKey<JFilterConditionRecord, JUserFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = ForeignKeys0.FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY;
     public static final ForeignKey<JFilterSortRecord, JUserFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = ForeignKeys0.FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY;
@@ -317,9 +306,7 @@ public class Keys {
     public static final ForeignKey<JItemTagRecord, JTestItemRecord> ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY = ForeignKeys0.ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY;
     public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_PROJECT_ID_FKEY;
     public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_USER_ID_FKEY;
-    public static final ForeignKey<JLaunchNamesRecord, JEmailSenderCaseRecord> LAUNCH_NAMES__LAUNCH_NAMES_EMAIL_SENDER_CASE_ID_FKEY = ForeignKeys0.LAUNCH_NAMES__LAUNCH_NAMES_EMAIL_SENDER_CASE_ID_FKEY;
     public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = ForeignKeys0.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY;
-    public static final ForeignKey<JLaunchTagsRecord, JEmailSenderCaseRecord> LAUNCH_TAGS__LAUNCH_TAGS_EMAIL_SENDER_CASE_ID_FKEY = ForeignKeys0.LAUNCH_TAGS__LAUNCH_TAGS_EMAIL_SENDER_CASE_ID_FKEY;
     public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_ID_FKEY;
     public static final ForeignKey<JLdapConfigRecord, JLdapSynchronizationAttributesRecord> LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY;
     public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = ForeignKeys0.LOG__LOG_ITEM_ID_FKEY;
@@ -331,7 +318,6 @@ public class Keys {
     public static final ForeignKey<JProjectAttributeRecord, JProjectRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY;
     public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_USER_ID_FKEY;
     public static final ForeignKey<JProjectUserRecord, JProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY;
-    public static final ForeignKey<JRecipientsRecord, JEmailSenderCaseRecord> RECIPIENTS__RECIPIENTS_EMAIL_SENDER_CASE_ID_FKEY = ForeignKeys0.RECIPIENTS__RECIPIENTS_EMAIL_SENDER_CASE_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JLaunchRecord> STATISTICS__STATISTICS_LAUNCH_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_LAUNCH_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_ITEM_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JStatisticsFieldRecord> STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY;
@@ -367,7 +353,6 @@ public class Keys {
         public static Identity<JDashboardRecord, Integer> IDENTITY_DASHBOARD = Internal.createIdentity(JDashboard.DASHBOARD, JDashboard.DASHBOARD.ID);
         public static Identity<JDefectFieldAllowedValueRecord, Long> IDENTITY_DEFECT_FIELD_ALLOWED_VALUE = Internal.createIdentity(JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
         public static Identity<JDefectFormFieldRecord, Long> IDENTITY_DEFECT_FORM_FIELD = Internal.createIdentity(JDefectFormField.DEFECT_FORM_FIELD, JDefectFormField.DEFECT_FORM_FIELD.ID);
-        public static Identity<JEmailSenderCaseRecord, Long> IDENTITY_EMAIL_SENDER_CASE = Internal.createIdentity(JEmailSenderCase.EMAIL_SENDER_CASE, JEmailSenderCase.EMAIL_SENDER_CASE.ID);
         public static Identity<JFilterRecord, Long> IDENTITY_FILTER = Internal.createIdentity(JFilter.FILTER, JFilter.FILTER.ID);
         public static Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Internal.createIdentity(JFilterCondition.FILTER_CONDITION, JFilterCondition.FILTER_CONDITION.ID);
         public static Identity<JFilterSortRecord, Long> IDENTITY_FILTER_SORT = Internal.createIdentity(JFilterSort.FILTER_SORT, JFilterSort.FILTER_SORT.ID);
@@ -416,7 +401,6 @@ public class Keys {
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME);
         public static final UniqueKey<JDefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = Internal.createUniqueKey(JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value_pk", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
         public static final UniqueKey<JDefectFormFieldRecord> DEFECT_FORM_FIELD_PK = Internal.createUniqueKey(JDefectFormField.DEFECT_FORM_FIELD, "defect_form_field_pk", JDefectFormField.DEFECT_FORM_FIELD.ID);
-        public static final UniqueKey<JEmailSenderCaseRecord> EMAIL_SENDER_CASE_PK = Internal.createUniqueKey(JEmailSenderCase.EMAIL_SENDER_CASE, "email_sender_case_pk", JEmailSenderCase.EMAIL_SENDER_CASE.ID);
         public static final UniqueKey<JFilterRecord> FILTER_PK = Internal.createUniqueKey(JFilter.FILTER, "filter_pk", JFilter.FILTER.ID);
         public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = Internal.createUniqueKey(JFilterCondition.FILTER_CONDITION, "filter_condition_pk", JFilterCondition.FILTER_CONDITION.ID);
         public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = Internal.createUniqueKey(JFilterSort.FILTER_SORT, "filter_sort_pk", JFilterSort.FILTER_SORT.ID);
@@ -493,7 +477,6 @@ public class Keys {
         public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value__defect_field_allowed_value_defect_form_field_fkey", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.DEFECT_FORM_FIELD);
         public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, JDefectFormField.DEFECT_FORM_FIELD, "defect_form_field__defect_form_field_bug_tracking_system_id_fkey", JDefectFormField.DEFECT_FORM_FIELD.BUG_TRACKING_SYSTEM_ID);
         public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE, "defect_form_field_value__defect_form_field_value_id_fkey", JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE.ID);
-        public static final ForeignKey<JEmailSenderCaseRecord, JProjectRecord> EMAIL_SENDER_CASE__EMAIL_SENDER_CASE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JEmailSenderCase.EMAIL_SENDER_CASE, "email_sender_case__email_sender_case_project_id_fkey", JEmailSenderCase.EMAIL_SENDER_CASE.PROJECT_ID);
         public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JFilter.FILTER, "filter__filter_project_id_fkey", JFilter.FILTER.PROJECT_ID);
         public static final ForeignKey<JFilterConditionRecord, JUserFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USER_FILTER_PK, JFilterCondition.FILTER_CONDITION, "filter_condition__filter_condition_filter_id_fkey", JFilterCondition.FILTER_CONDITION.FILTER_ID);
         public static final ForeignKey<JFilterSortRecord, JUserFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USER_FILTER_PK, JFilterSort.FILTER_SORT, "filter_sort__filter_sort_filter_id_fkey", JFilterSort.FILTER_SORT.FILTER_ID);
@@ -509,9 +492,7 @@ public class Keys {
         public static final ForeignKey<JItemTagRecord, JTestItemRecord> ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JItemTag.ITEM_TAG, "item_tag__item_tag_item_id_fkey", JItemTag.ITEM_TAG.ITEM_ID);
         public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JLaunch.LAUNCH, "launch__launch_project_id_fkey", JLaunch.LAUNCH.PROJECT_ID);
         public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JLaunch.LAUNCH, "launch__launch_user_id_fkey", JLaunch.LAUNCH.USER_ID);
-        public static final ForeignKey<JLaunchNamesRecord, JEmailSenderCaseRecord> LAUNCH_NAMES__LAUNCH_NAMES_EMAIL_SENDER_CASE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.EMAIL_SENDER_CASE_PK, JLaunchNames.LAUNCH_NAMES, "launch_names__launch_names_email_sender_case_id_fkey", JLaunchNames.LAUNCH_NAMES.EMAIL_SENDER_CASE_ID);
         public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JLaunchTag.LAUNCH_TAG, "launch_tag__launch_tag_launch_id_fkey", JLaunchTag.LAUNCH_TAG.LAUNCH_ID);
-        public static final ForeignKey<JLaunchTagsRecord, JEmailSenderCaseRecord> LAUNCH_TAGS__LAUNCH_TAGS_EMAIL_SENDER_CASE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.EMAIL_SENDER_CASE_PK, JLaunchTags.LAUNCH_TAGS, "launch_tags__launch_tags_email_sender_case_id_fkey", JLaunchTags.LAUNCH_TAGS.EMAIL_SENDER_CASE_ID);
         public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.INTEGRATION_PK, JLdapConfig.LDAP_CONFIG, "ldap_config__ldap_config_id_fkey", JLdapConfig.LDAP_CONFIG.ID);
         public static final ForeignKey<JLdapConfigRecord, JLdapSynchronizationAttributesRecord> LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK, JLdapConfig.LDAP_CONFIG, "ldap_config__ldap_config_sync_attributes_id_fkey", JLdapConfig.LDAP_CONFIG.SYNC_ATTRIBUTES_ID);
         public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JLog.LOG, "log__log_item_id_fkey", JLog.LOG.ITEM_ID);
@@ -523,7 +504,6 @@ public class Keys {
         public static final ForeignKey<JProjectAttributeRecord, JProjectRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JProjectAttribute.PROJECT_ATTRIBUTE, "project_attribute__project_attribute_project_id_fkey", JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);
         public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JProjectUser.PROJECT_USER, "project_user__project_user_user_id_fkey", JProjectUser.PROJECT_USER.USER_ID);
         public static final ForeignKey<JProjectUserRecord, JProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JProjectUser.PROJECT_USER, "project_user__project_user_project_id_fkey", JProjectUser.PROJECT_USER.PROJECT_ID);
-        public static final ForeignKey<JRecipientsRecord, JEmailSenderCaseRecord> RECIPIENTS__RECIPIENTS_EMAIL_SENDER_CASE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.EMAIL_SENDER_CASE_PK, JRecipients.RECIPIENTS, "recipients__recipients_email_sender_case_id_fkey", JRecipients.RECIPIENTS.EMAIL_SENDER_CASE_ID);
         public static final ForeignKey<JStatisticsRecord, JLaunchRecord> STATISTICS__STATISTICS_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JStatistics.STATISTICS, "statistics__statistics_launch_id_fkey", JStatistics.STATISTICS.LAUNCH_ID);
         public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JStatistics.STATISTICS, "statistics__statistics_item_id_fkey", JStatistics.STATISTICS.ITEM_ID);
         public static final ForeignKey<JStatisticsRecord, JStatisticsFieldRecord> STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.STATISTICS_FIELD_PK, JStatistics.STATISTICS, "statistics__statistics_statistics_field_id_fkey", JStatistics.STATISTICS.STATISTICS_FIELD_ID);

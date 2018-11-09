@@ -1,23 +1,22 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.commons.JsonbMapType;
-import com.epam.ta.reportportal.entity.JsonMap;
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
@@ -35,7 +34,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbMapType.class)
+@TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
@@ -70,8 +69,8 @@ public class User implements Serializable {
 	private boolean isExpired;
 
 	@Column(name = "metadata")
-	@Type(type = "jsonb")
-	private JsonMap<Object, Object> metadata;
+	@Type(type = "meta")
+	private Metadata metadata;
 
 	@Column(name = "attachment")
 	private String attachment;
@@ -185,11 +184,11 @@ public class User implements Serializable {
 		this.userType = userType;
 	}
 
-	public JsonMap<Object, Object> getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(JsonMap<Object, Object> metadata) {
+	public void setMetadata(Metadata metadata) {
 		this.metadata = metadata;
 	}
 
@@ -204,9 +203,10 @@ public class User implements Serializable {
 		User user = (User) o;
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(defaultProject, user.defaultProject)
-				&& Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(
-				attachment,
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(
+				defaultProject,
+				user.defaultProject
+		) && Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
 				user.attachment
 		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}
@@ -214,8 +214,7 @@ public class User implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(
-				id,
+		return Objects.hash(id,
 				login,
 				password,
 				email,

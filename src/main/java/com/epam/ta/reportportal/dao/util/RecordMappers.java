@@ -1,25 +1,26 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.JsonMap;
-import com.epam.ta.reportportal.entity.JsonbObject;
+import com.epam.ta.reportportal.entity.ActivityDetails;
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -39,17 +40,16 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -76,6 +76,12 @@ public class RecordMappers {
 	private static final String STATISTICS = "statistics";
 
 	private static ObjectMapper objectMapper;
+
+	static {
+		objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
 	/**
 	 * Maps record into {@link Attribute} object
@@ -164,8 +170,8 @@ public class RecordMappers {
 		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
-				JsonMap<Object, Object> metaData = objectMapper.readValue(metaDataString, JsonMap.class);
-				user.setMetadata(metaData);
+				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+				user.setMetadata(metadata);
 			} catch (IOException e) {
 				throw new ReportPortalException("Error during parsing user metadata");
 			}
@@ -174,6 +180,8 @@ public class RecordMappers {
 		ProjectUser projectUser = new ProjectUser();
 		Project project = new Project();
 		project.setId(r.get(PROJECT_USER.PROJECT_ID));
+		project.setName(r.get(PROJECT.NAME));
+		project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
 		projectUser.setProject(project);
 		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE, String.class)));
 		user.getProjects().add(projectUser);
@@ -255,7 +263,7 @@ public class RecordMappers {
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
 			try {
-				JsonbObject details = objectMapper.readValue(s, JsonbObject.class);
+				ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
 				activity.setDetails(details);
 			} catch (IOException e) {
 				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
@@ -319,17 +327,4 @@ public class RecordMappers {
 
 		return Lists.newArrayList(widgetMap.values());
 	};
-
-	@Component
-	private static class MapperInjector {
-
-		@Autowired
-		private ObjectMapper objectMapper;
-
-		@PostConstruct
-		private void injectMapper() {
-			RecordMappers.objectMapper = objectMapper;
-		}
-
-	}
 }

@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +45,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static org.junit.Assert.assertTrue;
 import static com.epam.ta.reportportal.dao.constant.TestConstants.STEP_ITEM_WITH_LOGS_ID;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Ivan Budaev
@@ -85,6 +94,22 @@ public class LogRepositoryTest {
 		Integer number = logRepository.getPageNumber(65L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log_time")));
 		Assert.assertEquals(6L, (long) number);
 	}
+
+	@Test
+	public void findByTestItemsAndLogLevel() {
+		ArrayList<Long> ids = Lists.newArrayList(3L, 4L);
+		Integer logLevel = 30000;
+
+		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
+
+		assertTrue(logs != null && logs.size() != 0);
+		logs.forEach(log -> {
+			Long itemId = log.getTestItem().getItemId();
+			assertTrue(itemId == 3L || itemId == 4L);
+			assertTrue(log.getLogLevel() >= logLevel);
+		});
+	}
+
 
 	@Test
 	public void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
