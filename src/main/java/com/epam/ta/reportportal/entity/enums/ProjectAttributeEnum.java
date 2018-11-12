@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.entity.enums;
@@ -21,8 +21,6 @@ import com.epam.ta.reportportal.entity.project.ProjectAnalyzerConfig;
 
 import java.util.Arrays;
 import java.util.Optional;
-
-import static com.epam.ta.reportportal.entity.project.ProjectUtils.INIT_FROM;
 
 /**
  * Enum with a list of basic required project parameters
@@ -41,10 +39,7 @@ public enum ProjectAttributeEnum {
 	NUMBER_OF_LOG_LINES("analyzer.numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
 	INDEXING_RUNNING("analyzer.indexingRunning", String.valueOf(false)),
 	AUTO_ANALYZER_ENABLED("analyzer.isAutoAnalyzerEnabled", String.valueOf(false)),
-	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue()),
-
-	EMAIL_ENABLED("email.enabled", String.valueOf(false)),
-	EMAIL_FROM("email.from", INIT_FROM);
+	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
 
 	private String attribute;
 	private String defaultValue;
@@ -69,6 +64,6 @@ public enum ProjectAttributeEnum {
 	public static boolean isPresent(String name) {
 		return findByAttributeName(name).isPresent();
 	}
-}
+	}
 
 
