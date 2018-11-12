@@ -18,12 +18,11 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
-import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
@@ -151,9 +150,16 @@ public class LaunchRepositoryTest {
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
 				),
-				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+				//				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				//				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+				new FilterCondition(Condition.HAS, false, "updated", LaunchCriteriaConstant.CRITERIA_LAUNCH_TAG)
 		);
 		return new Filter(Launch.class, conditionSet);
+	}
+
+	@Test
+	public void test() {
+		List<Launch> byFilter = launchRepository.findByFilter(buildDefaultFilter(1L));
+		System.out.println();
 	}
 }
