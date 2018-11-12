@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +30,13 @@ public class LaunchTagRepositoryCustomImpl implements LaunchTagRepositoryCustom 
 
 		JLaunch l = LAUNCH.as("l");
 		JProject p = PROJECT.as("p");
-		JLaunchTag lt = LAUNCH_TAG.as("lt");
+		JItemAttribute lt = JItemAttribute.ITEM_ATTRIBUTE.as("lt");
 
 		return dslContext.select()
 				.from(lt)
 				.leftJoin(l).on(lt.LAUNCH_ID.eq(l.ID))
 				.leftJoin(p).on(l.PROJECT_ID.eq(p.ID))
 				.where(p.ID.eq(projectId))
-				.and(lt.VALUE.like("%" + value + "%"))
-				.fetch(LAUNCH_TAG.VALUE);
+				.and(lt.VALUE.like("%" + value + "%")).fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 }

@@ -108,19 +108,18 @@ public class Sequences {
     public static final Sequence<Long> ISSUE_TYPE_ID_SEQ = new SequenceImpl<Long>("issue_type_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.item_tag_id_seq</code>
+	 * The sequence <code>public.item_attribute_id_seq</code>
      */
-    public static final Sequence<Integer> ITEM_TAG_ID_SEQ = new SequenceImpl<Integer>("item_tag_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
+	public static final Sequence<Integer> ITEM_ATTRIBUTE_ID_SEQ = new SequenceImpl<Integer>(
+			"item_attribute_id_seq",
+			JPublic.PUBLIC,
+			org.jooq.impl.SQLDataType.INTEGER.nullable(false)
+	);
 
     /**
      * The sequence <code>public.launch_id_seq</code>
      */
     public static final Sequence<Long> LAUNCH_ID_SEQ = new SequenceImpl<Long>("launch_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.launch_tag_id_seq</code>
-     */
-    public static final Sequence<Long> LAUNCH_TAG_ID_SEQ = new SequenceImpl<Long>("launch_tag_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.ldap_synchronization_attributes_id_seq</code>

@@ -59,10 +59,9 @@ public class Indexes {
     public static final Index ISSUE_TYPE_LOCATOR_KEY = Indexes0.ISSUE_TYPE_LOCATOR_KEY;
     public static final Index ISSUE_TYPE_PK = Indexes0.ISSUE_TYPE_PK;
     public static final Index ISSUE_TYPE_PROJECT_PK = Indexes0.ISSUE_TYPE_PROJECT_PK;
-    public static final Index ITEM_TAG_PK = Indexes0.ITEM_TAG_PK;
+    public static final Index ITEM_ATTRIBUTE_PK = Indexes0.ITEM_ATTRIBUTE_PK;
     public static final Index LAUNCH_PK = Indexes0.LAUNCH_PK;
     public static final Index UNQ_NAME_NUMBER = Indexes0.UNQ_NAME_NUMBER;
-    public static final Index LAUNCH_TAG_PK = Indexes0.LAUNCH_TAG_PK;
     public static final Index LDAP_CONFIG_PK = Indexes0.LDAP_CONFIG_PK;
     public static final Index LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY = Indexes0.LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY;
     public static final Index LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Indexes0.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK;
@@ -141,10 +140,14 @@ public class Indexes {
         public static Index ISSUE_TYPE_LOCATOR_KEY = Internal.createIndex("issue_type_locator_key", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.LOCATOR }, true);
         public static Index ISSUE_TYPE_PK = Internal.createIndex("issue_type_pk", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.ID }, true);
         public static Index ISSUE_TYPE_PROJECT_PK = Internal.createIndex("issue_type_project_pk", JIssueTypeProject.ISSUE_TYPE_PROJECT, new OrderField[] { JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID, JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID }, true);
-        public static Index ITEM_TAG_PK = Internal.createIndex("item_tag_pk", JItemTag.ITEM_TAG, new OrderField[] { JItemTag.ITEM_TAG.ID }, true);
+        public static Index ITEM_ATTRIBUTE_PK = Internal.createIndex(
+                "item_attribute_pk",
+                JItemAttribute.ITEM_ATTRIBUTE,
+                new OrderField[] { JItemAttribute.ITEM_ATTRIBUTE.ID },
+                true
+        );
         public static Index LAUNCH_PK = Internal.createIndex("launch_pk", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.ID }, true);
         public static Index UNQ_NAME_NUMBER = Internal.createIndex("unq_name_number", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID }, true);
-        public static Index LAUNCH_TAG_PK = Internal.createIndex("launch_tag_pk", JLaunchTag.LAUNCH_TAG, new OrderField[] { JLaunchTag.LAUNCH_TAG.ID }, true);
         public static Index LDAP_CONFIG_PK = Internal.createIndex("ldap_config_pk", JLdapConfig.LDAP_CONFIG, new OrderField[] { JLdapConfig.LDAP_CONFIG.ID }, true);
         public static Index LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY = Internal.createIndex("ldap_synchronization_attributes_email_key", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, new OrderField[] { JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.EMAIL }, true);
         public static Index LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Internal.createIndex("ldap_synchronization_attributes_pk", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, new OrderField[] { JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.ID }, true);

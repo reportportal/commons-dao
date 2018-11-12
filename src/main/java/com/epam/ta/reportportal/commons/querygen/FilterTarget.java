@@ -78,7 +78,7 @@ public enum FilterTarget {
 			JUsers u = JUsers.USERS;
 			JStatistics s = JStatistics.STATISTICS;
 			JStatisticsField sf = JStatisticsField.STATISTICS_FIELD;
-			JLaunchTag launchTag = JLaunchTag.LAUNCH_TAG;
+			JItemAttribute launchTag = JItemAttribute.ITEM_ATTRIBUTE;
 
 			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
@@ -177,7 +177,7 @@ public enum FilterTarget {
 			JIssue is = JIssue.ISSUE.as("is");
 			JIssueGroup gr = JIssueGroup.ISSUE_GROUP.as("gr");
 			JIssueType it = JIssueType.ISSUE_TYPE.as("it");
-			JItemTag tag = JItemTag.ITEM_TAG;
+			JItemAttribute tag = JItemAttribute.ITEM_ATTRIBUTE;
 			JStatistics s = JStatistics.STATISTICS;
 			JStatisticsField sf = JStatisticsField.STATISTICS_FIELD;
 

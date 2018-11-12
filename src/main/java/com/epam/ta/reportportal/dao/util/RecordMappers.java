@@ -18,18 +18,17 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
-import com.epam.ta.reportportal.entity.item.TestItemTag;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -142,7 +141,7 @@ public class RecordMappers {
 		testItem.setParent(new TestItem(r.get(CRITERIA_PARENT_ID, Long.class)));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
-			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(TestItemTag::new).collect(Collectors.toSet()));
+			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(it -> new ItemAttribute()).collect(Collectors.toSet()));
 		});
 		return testItem;
 	};
@@ -156,7 +155,7 @@ public class RecordMappers {
 		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
-			launch.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(LaunchTag::new).collect(Collectors.toSet()));
+			launch.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(it -> new ItemAttribute()).collect(Collectors.toSet()));
 		});
 		return launch;
 	};

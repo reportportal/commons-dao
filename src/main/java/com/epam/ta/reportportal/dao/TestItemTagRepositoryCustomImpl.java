@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.jooq.tables.JItemTag;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.jooq.DSLContext;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.epam.ta.reportportal.jooq.Tables.ITEM_TAG;
+import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
 
 /**
  * @author Ivan Budaev
@@ -29,7 +29,7 @@ public class TestItemTagRepositoryCustomImpl implements TestItemTagRepositoryCus
 	public List<String> findDistinctByLaunchIdAndValue(Long launchId, String value) {
 
 		JTestItem i = JTestItem.TEST_ITEM.as("t");
-		JItemTag it = JItemTag.ITEM_TAG.as("it");
+		JItemAttribute it = JItemAttribute.ITEM_ATTRIBUTE.as("it");
 		JLaunch l = JLaunch.LAUNCH.as("l");
 
 		return dslContext.selectDistinct(it.VALUE)
@@ -39,7 +39,6 @@ public class TestItemTagRepositoryCustomImpl implements TestItemTagRepositoryCus
 				.leftJoin(l)
 				.on(i.LAUNCH_ID.eq(l.ID))
 				.where(l.ID.eq(launchId))
-				.and(it.VALUE.like("%" + value + "%"))
-				.fetch(ITEM_TAG.VALUE);
+				.and(it.VALUE.like("%" + value + "%")).fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 }
