@@ -70,7 +70,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, "status", JStatusEnum.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, "mode", JLaunchModeEnum.class, false),
 			new CriteriaHolder(CRITERIA_LAUNCH_NAME, "name", String.class, false),
-			new CriteriaHolder(CRITERIA_LAUNCH_TAG, "launch_tag.value", String.class,false)
+			new CriteriaHolder(CRITERIA_LAUNCH_TAG_VALUE, "item_attribute.value", String.class,false),
+			new CriteriaHolder(CRITERIA_LAUNCH_TAG_KEY, "item_attribute.key", String.class,false)
 			//@formatter:on
 	)) {
 		public SelectQuery<? extends Record> getQuery() {
