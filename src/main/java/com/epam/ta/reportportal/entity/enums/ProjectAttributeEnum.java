@@ -30,6 +30,7 @@ import java.util.Optional;
 public enum ProjectAttributeEnum {
 
 	INTERRUPT_JOB_TIME("job.interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
+	KEEP_LAUNCHES("job.keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
 	KEEP_LOGS("job.keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
 	KEEP_SCREENSHOTS("job.keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
 
@@ -64,6 +65,6 @@ public enum ProjectAttributeEnum {
 	public static boolean isPresent(String name) {
 		return findByAttributeName(name).isPresent();
 	}
-	}
+}
 
 
