@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -36,6 +37,10 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	List<Launch> findAllByName(String name);
 
 	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
+
+	@Modifying
+	@Query(value = "DELETE FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
+	int deleteLaunchesByProjectIdModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
 	Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);

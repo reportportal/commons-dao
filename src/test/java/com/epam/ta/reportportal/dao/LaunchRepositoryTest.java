@@ -76,6 +76,15 @@ public class LaunchRepositoryTest {
 	}
 
 	@Test
+	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
+		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(
+				SUPERADMIN_PERSONAL_PROJECT_ID,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		);
+
+		Assert.assertEquals(12, removedCount);
+	}
+	@Test
 	public void streamLaunchIdsWithStatusTest() {
 
 		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
