@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -93,7 +92,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				.limit(pageable.getPageSize())
 				.offset(Long.valueOf(pageable.getOffset()).intValue());
 
-		return PageableExecutionUtils.getPage(dsl.fetch(dsl.with("temp_users")
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(dsl.with("temp_users")
 				.as(select)
 				.select()
 				.from(USERS)
@@ -102,7 +101,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				.leftJoin(PROJECT_USER)
 				.on(USERS.ID.eq(PROJECT_USER.USER_ID))
 				.leftJoin(PROJECT)
-				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))).map(USER_RECORD_MAPPER), pageable, () -> dsl.fetchCount(select));
+				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID)))), pageable, () -> dsl.fetchCount(select));
 	}
 
 	@Override
