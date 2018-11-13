@@ -74,7 +74,5 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	 */
 	Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 
-	Page<Long> getIdsModifiedBefore(Long projectId, Date before, Pageable pageable);
-
 	Page<Long> getIdsInStatusModifiedBefore(Long projectId, Date before, Pageable pageable, StatusEnum... statuses);
 }

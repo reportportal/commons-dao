@@ -8,6 +8,8 @@ ALTER SEQUENCE issue_type_id_seq
   RESTART WITH 1;
 DELETE
 FROM issue_type CASCADE;
+DELETE
+FROM project_attribute;
 ALTER SEQUENCE attribute_id_seq
   RESTART WITH 1;
 DELETE

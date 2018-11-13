@@ -37,6 +37,9 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 
 	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
 
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
+	Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
+
 	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
 	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status, @Param("before") LocalDateTime before);
 

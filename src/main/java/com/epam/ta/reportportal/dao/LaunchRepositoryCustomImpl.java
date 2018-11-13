@@ -200,24 +200,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Page<Long> getIdsModifiedBefore(Long projectId, Date before, Pageable pageable) {
-		Page<Long> page = Page.empty(pageable);
-
-		if (ofNullable(before).isPresent()) {
-			Condition condition = LAUNCH.PROJECT_ID.eq(projectId)
-					.and(LAUNCH.LAST_MODIFIED.lessOrEqual(Timestamp.valueOf(TO_LOCAL_DATE_TIME.apply(before))));
-			page = PageableExecutionUtils.getPage(
-					dsl.fetch(selectLaunchIdsQuery(condition).limit(pageable.getPageSize())
-							.offset(Long.valueOf(pageable.getOffset()).intValue())).into(Long.class),
-					pageable,
-					() -> dsl.fetchCount(selectLaunchIdsQuery(condition))
-			);
-		}
-
-		return page;
-	}
-
-	@Override
 	public Page<Long> getIdsInStatusModifiedBefore(Long projectId, Date before, Pageable pageable, StatusEnum... statuses) {
 		Page<Long> page = Page.empty(pageable);
 

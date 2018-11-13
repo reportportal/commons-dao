@@ -16,8 +16,6 @@
 
 package com.epam.ta.reportportal.dao.constant;
 
-import java.time.LocalDateTime;
-
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -29,5 +27,4 @@ public final class TestConstants {
 
 	public static final Long SUPERADMIN_PERSONAL_PROJECT_ID = 1L;
 	public static final Long STEP_ITEM_WITH_LOGS_ID = 5L;
-	public static final LocalDateTime LAST_MODIFIED_BEFORE = LocalDateTime.of(2018, 11, 22, 12, 0, 10);
 }

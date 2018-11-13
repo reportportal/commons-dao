@@ -45,15 +45,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
-import static com.epam.ta.reportportal.dao.constant.TestConstants.LAST_MODIFIED_BEFORE;
 import static com.epam.ta.reportportal.dao.constant.TestConstants.SUPERADMIN_PERSONAL_PROJECT_ID;
 
 /**
@@ -79,11 +76,11 @@ public class LaunchRepositoryTest {
 	}
 
 	@Test
-	public void streamLaunchIdsTest() {
+	public void streamLaunchIdsWithStatusTest() {
 
 		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
-				StatusEnum.FAILED,
-				LAST_MODIFIED_BEFORE
+				StatusEnum.IN_PROGRESS,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
 
 		Assert.assertNotNull(stream);
@@ -93,15 +90,16 @@ public class LaunchRepositoryTest {
 	}
 
 	@Test
-	public void getIdsModifiedBeforeTest() {
+	public void streamLaunchIdsTest() {
 
-		Date before = TO_DATE.apply(LAST_MODIFIED_BEFORE.minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds()));
+		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		);
 
-		Page<Long> modifiedBefore = launchRepository.getIdsModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID, before, PageRequest.of(0, 12));
-
-		Assert.assertNotNull(modifiedBefore.getContent());
-		Assert.assertTrue(CollectionUtils.isNotEmpty(modifiedBefore.getContent()));
-		Assert.assertEquals(12L, modifiedBefore.getNumberOfElements());
+		Assert.assertNotNull(stream);
+		List<Long> ids = stream.collect(Collectors.toList());
+		Assert.assertTrue(CollectionUtils.isNotEmpty(ids));
+		Assert.assertEquals(12L, ids.size());
 	}
 
 	@Test
