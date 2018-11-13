@@ -135,7 +135,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.onKey()
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(TEST_ITEM.START_TIME.gt(Timestamp.from(Instant.now().minusSeconds(period.getSeconds()))))
+				.and(TEST_ITEM.LAST_MODIFIED.gt(Timestamp.from(Instant.now().minusSeconds(period.getSeconds()))))
 				.limit(1));
 	}
 

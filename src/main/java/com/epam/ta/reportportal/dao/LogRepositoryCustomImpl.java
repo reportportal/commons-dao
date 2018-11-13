@@ -166,8 +166,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(TEST_ITEM.LAST_MODIFIED.lt(before))
-				.and(LOG.LAST_MODIFIED.lt(before))
+				.and(LOG.LAST_MODIFIED.gt(before))
 				.limit(1));
 	}
 

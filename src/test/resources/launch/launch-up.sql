@@ -15,9 +15,9 @@ BEGIN
               1,
               'launch name ' || differentLaunchesCounter,
               'description',
-              now() - make_interval(days := 15),
-              now() - make_interval(days := 15) + make_interval(mins := 1),
-              now() - make_interval(days := 15) + make_interval(mins := 1),
+              now() - make_interval(days := 14),
+              now() - make_interval(days := 14) + make_interval(mins := 1),
+              now() - make_interval(days := 14) + make_interval(mins := 1),
               'DEFAULT',
               'IN_PROGRESS');
       sameLaunchCounter = sameLaunchCounter + 1;

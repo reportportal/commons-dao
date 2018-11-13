@@ -27,6 +27,7 @@ BEGIN
   INSERT INTO attribute (name) VALUES ('job.interruptJobTime');
   INSERT INTO attribute (name) VALUES ('job.keepLogs');
   INSERT INTO attribute (name) VALUES ('job.keepScreenshots');
+  INSERT INTO attribute (name) VALUES ('job.keepLaunches');
   INSERT INTO attribute (name) VALUES ('analyzer.minDocFreq');
   INSERT INTO attribute (name) VALUES ('analyzer.minTermFreq');
   INSERT INTO attribute (name) VALUES ('analyzer.minShouldMatch');
@@ -85,9 +86,11 @@ BEGIN
   INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 1, '1 hour');
   INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 2, '2 weeks');
   INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 3, '2 weeks');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (1, 4, '2 weeks');
   INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 1, '1 hour');
   INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 2, '2 weeks');
   INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 3, '2 weeks');
+  INSERT INTO project_attribute(project_id, attribute_id, value) VALUES (2, 4, '2 weeks');
 END;
 $BODY$
 LANGUAGE plpgsql;
