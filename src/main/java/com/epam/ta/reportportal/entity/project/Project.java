@@ -57,7 +57,6 @@ public class Project implements Serializable {
 	private ProjectType projectType;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	//	@JsonBackReference(value = "integration")
 	@JsonIgnore
 	private Set<Integration> integrations = Sets.newHashSet();
 

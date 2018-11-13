@@ -43,12 +43,10 @@ public class Integration implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "project_id")
-	//	@JsonManagedReference(value = "integration")
 	private Project project;
 
 	@ManyToOne
 	@JoinColumn(name = "type")
-	//	@JsonManagedReference(value = "integrationTypes")
 	private IntegrationType type;
 
 	@Type(type = "params")

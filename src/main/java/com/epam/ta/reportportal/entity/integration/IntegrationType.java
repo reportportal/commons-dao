@@ -68,7 +68,6 @@ public class IntegrationType implements Serializable {
 	private IntegrationTypeDetails details;
 
 	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	//	@JsonBackReference(value = "integrationTypes")
 	@JsonIgnore
 	private Set<Integration> integrations = Sets.newHashSet();
 
