@@ -33,7 +33,6 @@ import java.util.stream.StreamSupport;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.name;
 
 /**
  * PostgreSQL query builder using JOOQ. Constructs PostgreSQL {@link Query}
@@ -116,8 +115,8 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-			query.addSelect(field(name(order.getProperty())));
-			query.addOrderBy(field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+			query.addSelect(field(order.getProperty()));
+			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
 		}));
 		return this;
 	}
