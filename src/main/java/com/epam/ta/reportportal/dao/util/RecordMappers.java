@@ -120,7 +120,7 @@ public class RecordMappers {
 	};
 
 	public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_FETCHER = records -> {
-		Map<Long, TestItem> testItems = Maps.newHashMap();
+		Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
 		records.forEach(record -> {
 			Long id = record.get(TEST_ITEM.ITEM_ID);
 			TestItem testItem;
