@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.TestItemTag;
@@ -38,6 +39,7 @@ import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.*;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -58,7 +60,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PARENT_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -72,8 +73,6 @@ import static java.util.Optional.ofNullable;
  * @author Pavel Bortnik
  */
 public class RecordMappers {
-
-	private static final String STATISTICS = "statistics";
 
 	private static ObjectMapper objectMapper;
 
@@ -89,14 +88,6 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> record.into(Attribute.class);
 
 	/**
-	 * Maps crosstab results statistics into set of {@link Statistics} objects
-	 */
-	public static final RecordMapper<? super Record, Set<Statistics>> CROSSTAB_RECORD_STATISTICS_MAPPER = r -> Arrays.stream(r.fields())
-			.filter(f -> f.getName().startsWith(STATISTICS))
-			.map(f -> new Statistics(new StatisticsField(f.getName()), r.get(f.getName(), Integer.class)))
-			.collect(Collectors.toSet());
-
-	/**
 	 * Maps record into {@link IssueType} object
 	 */
 	public static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_RECORD_MAPPER = r -> {
@@ -109,12 +100,9 @@ public class RecordMappers {
 	 * Maps record into {@link IssueEntity} object
 	 */
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-		if (ofNullable(r.field(ISSUE.ISSUE_ID)).isPresent()) {
-			IssueEntity issueEntity = r.into(IssueEntity.class);
-			issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
-			return issueEntity;
-		}
-		return null;
+		IssueEntity issueEntity = r.into(IssueEntity.class);
+		issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+		return issueEntity;
 	};
 
 	/**
@@ -128,8 +116,36 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, TestItemResults> TEST_ITEM_RESULTS_RECORD_MAPPER = r -> {
 		TestItemResults results = r.into(TestItemResults.class);
 		results.setIssue(ISSUE_RECORD_MAPPER.map(r));
-		results.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		return results;
+	};
+
+	public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_FETCHER = records -> {
+		Map<Long, TestItem> testItems = Maps.newHashMap();
+		records.forEach(record -> {
+			Long id = record.get(TEST_ITEM.ITEM_ID);
+			TestItem testItem;
+			if (!testItems.containsKey(id)) {
+				testItem = RecordMappers.TEST_ITEM_RECORD_MAPPER.map(record);
+			} else {
+				testItem = testItems.get(id);
+			}
+			testItem.getTags().add(record.into(TestItemTag.class));
+			testItem.getParameters().add(record.into(Parameter.class));
+			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+			testItems.put(id, testItem);
+		});
+		return new ArrayList<>(testItems.values());
+	};
+
+	public static final RecordMapper<? super Record, Statistics> STATISTICS_RECORD_MAPPER = r -> {
+		Statistics statistics = new Statistics();
+
+		StatisticsField statisticsField = new StatisticsField();
+		statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
+
+		statistics.setStatisticsField(statisticsField);
+		statistics.setCounter(ofNullable(r.get(Tables.STATISTICS.S_COUNTER)).orElse(0));
+		return statistics;
 	};
 
 	/**
@@ -137,13 +153,10 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
+		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
 		testItem.setLaunch(new Launch(r.get(CRITERIA_LAUNCH_ID, Long.class)));
-		testItem.setParent(new TestItem(r.get(CRITERIA_PARENT_ID, Long.class)));
-		ofNullable(r.field("tags")).ifPresent(f -> {
-			String[] tags = r.getValue(f, String[].class);
-			testItem.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(TestItemTag::new).collect(Collectors.toSet()));
-		});
+		testItem.setParent(new TestItem(r.get("parent_id", Long.class)));
 		return testItem;
 	};
 
@@ -153,7 +166,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
 		Launch launch = r.into(Launch.class);
 		launch.setUser(r.into(User.class));
-		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
+		//		launch.setStatistics(CROSSTAB_RECORD_STATISTICS_MAPPER.map(r));
 		ofNullable(r.field("tags")).ifPresent(f -> {
 			String[] tags = r.getValue(f, String[].class);
 			launch.setTags(Arrays.stream(tags).filter(Objects::nonNull).map(LaunchTag::new).collect(Collectors.toSet()));

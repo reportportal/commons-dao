@@ -1,23 +1,22 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -41,13 +40,19 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class Filter implements Serializable, Queryable {
 
-	private static final long serialVersionUID = 1L;
-
 	private Long id;
 
 	private FilterTarget target;
 
 	private Set<FilterCondition> filterConditions;
+
+	/**
+	 * This constructor uses during serialization to database.
+	 */
+	@SuppressWarnings("unused")
+	private Filter() {
+
+	}
 
 	public Filter(Collection<Filter> filters) {
 		checkArgument(null != filters && !filters.isEmpty(), "Empty filter list");
@@ -92,20 +97,16 @@ public class Filter implements Serializable, Queryable {
 		this.filterConditions = filterConditions;
 	}
 
-	/**
-	 * This constructor uses during serialization to database.
-	 */
-	@SuppressWarnings("unused")
-	private Filter() {
-
-	}
-
 	public Long getId() {
 		return id;
 	}
 
 	public final FilterTarget getTarget() {
 		return target;
+	}
+
+	public Set<FilterCondition> getFilterConditions() {
+		return filterConditions;
 	}
 
 	public Filter withCondition(FilterCondition filterCondition) {
@@ -118,75 +119,55 @@ public class Filter implements Serializable, Queryable {
 		return this;
 	}
 
+	@Override
 	public SelectQuery<? extends Record> toQuery() {
-		/* Get map of defined @FilterCriteria fields */
 		final Function<FilterCondition, org.jooq.Condition> transformer = filterConverter(this.target);
 		QueryBuilder query = QueryBuilder.newBuilder(this.target);
 		this.filterConditions.stream().map(transformer).forEach(query::addCondition);
 		return query.build();
 	}
 
-	public Set<FilterCondition> getFilterConditions() {
-		return filterConditions;
+	public static FilterBuilder builder() {
+		return new FilterBuilder();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		Filter filter = (Filter) o;
+
+		if (target != filter.target) {
+			return false;
+		}
+		return filterConditions != null ? filterConditions.equals(filter.filterConditions) : filter.filterConditions == null;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((filterConditions == null) ? 0 : filterConditions.hashCode());
-		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		int result = target != null ? target.hashCode() : 0;
+		result = 31 * result + (filterConditions != null ? filterConditions.hashCode() : 0);
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Filter other = (Filter) obj;
-		if (filterConditions == null) {
-			if (other.filterConditions != null) {
-				return false;
-			}
-		} else if (!filterConditions.equals(other.filterConditions)) {
-			return false;
-		}
-		if (target == null) {
-			if (other.target != null) {
-				return false;
-			}
-		} else if (!target.equals(other.target)) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("Filter{");
-		sb.append("target=").append(target);
-		sb.append(", filterConditions=").append(filterConditions);
-		sb.append('}');
-		return sb.toString();
-	}
-
-	public static FilterBuilder builder() {
-		return new FilterBuilder();
+		return "Filter{" + "id=" + id + ", target=" + target + ", filterConditions=" + filterConditions + '}';
 	}
 
 	/**
 	 * Builder for {@link Filter}
 	 */
 	public static class FilterBuilder {
+
 		private Class<?> target;
-		private ImmutableSet.Builder<FilterCondition> conditions = ImmutableSet.builder();
+
+		private Set<FilterCondition> conditions = Sets.newHashSet();
 
 		private FilterBuilder() {
 
@@ -204,7 +185,7 @@ public class Filter implements Serializable, Queryable {
 
 		public Filter build() {
 			Set<FilterCondition> filterConditions = Sets.newHashSet();
-			filterConditions.addAll(this.conditions.build());
+			filterConditions.addAll(this.conditions);
 			Preconditions.checkArgument(null != target, "FilterTarget should not be null");
 			Preconditions.checkArgument(!filterConditions.isEmpty(), "Filter should contain at least one condition");
 			return new Filter(FilterTarget.findByClass(target), filterConditions);

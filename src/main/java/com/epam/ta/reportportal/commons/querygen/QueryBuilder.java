@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2018 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.Preconditions;
@@ -14,27 +30,21 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 
 /**
- * MongoDB query builder. Constructs MongoDB
- * {@link org.jooq.Query} by provided filters <br>
- * <p>
- * TODO Some interface for QueryBuilder should be created to avoid problems with possible changing
- * of DB engine
+ * PostgreSQL query builder using JOOQ. Constructs PostgreSQL {@link Query}
+ * by provided filters.
  *
- * @author Andrei Varabyeu
- * @author Andrei_Ramanchuk
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class QueryBuilder {
 
-	private DSLContext dsl;
-
 	/**
-	 * SQL query representation
+	 * JOOQ SQL query representation
 	 */
 	private SelectQuery<? extends Record> query;
 
@@ -105,11 +115,10 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Sort sort) {
-		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
-				.forEach(order -> query.addOrderBy(field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
-						SortOrder.DESC :
-						SortOrder.ASC))));
-
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
+			query.addSelect(field(name(order.getProperty())));
+			query.addOrderBy(field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+		}));
 		return this;
 	}
 
@@ -122,6 +131,11 @@ public class QueryBuilder {
 		return query;
 	}
 
+	public QueryBuilder withWrapper(FilterTarget filterTarget) {
+		query = filterTarget.wrappQuery(query);
+		return this;
+	}
+
 	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
 			String searchCriteria = filterCondition.getSearchCriteria();
@@ -132,18 +146,21 @@ public class QueryBuilder {
 				can be custom statistics so we can't know it till this moment
 			*/
 			if (searchCriteria.startsWith("statistics")) {
-				criteriaHolder = Optional.of(new CriteriaHolder(searchCriteria, searchCriteria, Long.class, false));
+				criteriaHolder = Optional.of(new CriteriaHolder(searchCriteria, searchCriteria, Long.class));
 			}
+
 			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
 					ErrorType.INCORRECT_FILTER_PARAMETERS,
 					Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
 			);
 
 			Condition condition = filterCondition.getCondition().toCondition(filterCondition, criteriaHolder.get());
+
 			/* Does FilterCondition contains negative=true? */
 			if (filterCondition.isNegative()) {
 				condition = condition.not();
 			}
+
 			return condition;
 		};
 	}
