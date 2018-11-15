@@ -131,7 +131,7 @@ public class QueryBuilder {
 	}
 
 	public QueryBuilder withWrapper(FilterTarget filterTarget) {
-		query = filterTarget.wrappQuery(query);
+		query = filterTarget.wrapQuery(query);
 		return this;
 	}
 
