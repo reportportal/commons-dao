@@ -63,7 +63,7 @@ public class Widget implements Serializable {
 	private Set<String> contentFields = Sets.newHashSet();
 
 	@Type(type = "widgetOptions")
-	@Column(name = "widgetOptions")
+	@Column(name = "widget_options")
 	private WidgetOptions widgetOptions;
 
 	@ManyToOne(fetch = FetchType.LAZY)
