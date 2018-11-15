@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
@@ -39,7 +39,6 @@ import static com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
 import static com.epam.ta.reportportal.jooq.tables.JUserFilter.USER_FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
-import static com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -118,8 +117,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 						WIDGET.DESCRIPTION,
 						WIDGET.WIDGET_TYPE,
 						fieldName(SID).as(OWNER),
-						WIDGET_OPTION.OPTION,
-						WIDGET_OPTION.VALUE,
+						WIDGET.WIDGET_OPTIONS,
 						WIDGET.ITEMS_COUNT,
 						USER_FILTER.ID,
 						CONTENT_FIELD.FIELD
@@ -127,8 +125,6 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 				.from(WIDGET)
 				.join(DISTINCT_WIDGET_TABLE)
 				.on(fieldName(DISTINCT_WIDGET_TABLE, ID).cast(Long.class).eq(WIDGET.ID))
-				.leftJoin(WIDGET_OPTION)
-				.on(WIDGET.ID.eq(WIDGET_OPTION.WIDGET_ID))
 				.leftJoin(WIDGET_FILTER)
 				.on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
 				.leftJoin(USER_FILTER)

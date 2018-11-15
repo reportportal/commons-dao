@@ -37,6 +37,7 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.*;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
@@ -279,12 +280,6 @@ public class RecordMappers {
 				widget.setFilters(filters);
 			});
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTION_MAPPER = (widget, res) -> ofNullable(widget.getWidgetOptions()).ifPresent(
-			options -> {
-				options.put(res.get(WIDGET_OPTION.OPTION), res.get(WIDGET_OPTION.VALUE));
-				widget.setWidgetOptions(options);
-			});
-
 	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD))
 			.ifPresent(field -> {
 				Set<String> contentFields = ofNullable(widget.getContentFields()).orElseGet(Sets::newLinkedHashSet);
@@ -300,8 +295,15 @@ public class RecordMappers {
 		widget.setItemsCount(r.get(WIDGET.ITEMS_COUNT));
 		widget.setWidgetType(r.get(WIDGET.WIDGET_TYPE));
 
+		String widgetOptionsString = r.get(WIDGET.WIDGET_OPTIONS, String.class);
+		try {
+			WidgetOptions widgetOptions = objectMapper.readValue(widgetOptionsString, WidgetOptions.class);
+			widget.setWidgetOptions(widgetOptions);
+		} catch (IOException e) {
+			throw new ReportPortalException("Error during parsing widget options");
+		}
+
 		WIDGET_USER_FILTER_MAPPER.accept(widget, r);
-		WIDGET_OPTION_MAPPER.accept(widget, r);
 		WIDGET_CONTENT_FIELD_MAPPER.accept(widget, r);
 
 		return widget;
@@ -314,7 +316,13 @@ public class RecordMappers {
 			Widget widget = widgetMap.get(widgetId);
 			if (ofNullable(widget).isPresent()) {
 				WIDGET_USER_FILTER_MAPPER.accept(widget, res);
-				WIDGET_OPTION_MAPPER.accept(widget, res);
+				String widgetOptionsString = res.get(WIDGET.WIDGET_OPTIONS, String.class);
+				try {
+					WidgetOptions widgetOptions = objectMapper.readValue(widgetOptionsString, WidgetOptions.class);
+					widget.setWidgetOptions(widgetOptions);
+				} catch (IOException e) {
+					throw new ReportPortalException("Error during parsing widget options");
+				}
 				WIDGET_CONTENT_FIELD_MAPPER.accept(widget, res);
 			} else {
 				widgetMap.put(widgetId, WIDGET_RECORD_MAPPER.map(res));
