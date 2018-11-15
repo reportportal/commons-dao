@@ -16,8 +16,14 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
+import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
@@ -31,8 +37,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.DESCRIPTION;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -40,34 +51,107 @@ import static org.jooq.impl.DSL.field;
 
 public enum FilterTarget {
 
+	PROJECT_TARGET(Project.class, Arrays.asList(
+
+			new CriteriaHolder("name", PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder("projectType", PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class)
+	)) {
+		@Override
+		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+			return Lists.newArrayList(PROJECT.ID,
+					PROJECT.NAME,
+					PROJECT.PROJECT_TYPE,
+					PROJECT.CREATION_DATE,
+					PROJECT.METADATA,
+					PROJECT_ATTRIBUTE.VALUE,
+					ATTRIBUTE.NAME,
+					PROJECT_USER.PROJECT_ID,
+					PROJECT_USER.PROJECT_ROLE,
+					PROJECT_USER.USER_ID,
+					USERS.LOGIN
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(PROJECT);
+			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
+			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(USERS.ID));
+			query.addJoin(PROJECT_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID));
+			query.addJoin(ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return PROJECT.ID;
+		}
+	},
+
+	USER_TARGET(User.class, Arrays.asList(
+
+			new CriteriaHolder("id", USERS.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_EMAIL, USERS.EMAIL.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_FULL_NAME, USERS.FULL_NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_ROLE, USERS.ROLE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_TYPE, USERS.TYPE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_EXPIRED, USERS.EXPIRED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID.getQualifiedName().toString(), Long.class)
+
+	)) {
+		@Override
+		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+			return Lists.newArrayList(USERS.ID,
+					USERS.LOGIN,
+					USERS.DEFAULT_PROJECT_ID,
+					USERS.FULL_NAME,
+					USERS.ATTACHMENT,
+					USERS.ATTACHMENT_THUMBNAIL,
+					USERS.EMAIL,
+					USERS.EXPIRED,
+					USERS.PASSWORD,
+					USERS.ROLE,
+					USERS.METADATA,
+					PROJECT_USER.PROJECT_ID,
+					PROJECT_USER.PROJECT_ROLE,
+					PROJECT_USER.USER_ID,
+					PROJECT.PROJECT_TYPE,
+					PROJECT.NAME
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(USERS);
+			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
+			query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return USERS.ID;
+		}
+	},
+
 	LAUNCH_TARGET(Launch.class, Arrays.asList(
 
 			new CriteriaHolder("id", LAUNCH.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder("uuid", LAUNCH.UUID.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_NAME, LAUNCH.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(DESCRIPTION, LAUNCH.DESCRIPTION.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("start_time", LAUNCH.START_TIME.getQualifiedName().toString(), Timestamp.class),
-			new CriteriaHolder("end_time", LAUNCH.END_TIME.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder("startTime", LAUNCH.START_TIME.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder("endTime", LAUNCH.END_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("user_id", LAUNCH.USER_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder("userId", LAUNCH.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder("number", LAUNCH.NUMBER.getQualifiedName().toString(), Integer.class),
-			new CriteriaHolder("last_modified", LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder("lastModified", LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_TAG, LAUNCH_TAG.VALUE.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("statistics_field", STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("statistics_count", STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder("statisticsField", STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder("statisticsCount", STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder("login", USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-			SelectQuery<? extends Record> query = DSL.selectDistinct(LAUNCH.ID.as(FILTERED_ID))
-					.orderBy(LAUNCH.ID.as(FILTERED_ID))
-					.getQuery();
-			joinTables(query);
-			return query;
-		}
-
 		@Override
 		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
 			return Lists.newArrayList(LAUNCH.ID,
@@ -110,24 +194,24 @@ public enum FilterTarget {
 
 					new CriteriaHolder(CRITERIA_NAME, TEST_ITEM.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_TYPE, TEST_ITEM.TYPE.getQualifiedName().toString(), JTestItemTypeEnum.class),
-					new CriteriaHolder("start_time", TEST_ITEM.START_TIME.getQualifiedName().toString(), Timestamp.class),
+					new CriteriaHolder("startTime", TEST_ITEM.START_TIME.getQualifiedName().toString(), Timestamp.class),
 					new CriteriaHolder("description", TEST_ITEM.DESCRIPTION.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("last_modified", TEST_ITEM.LAST_MODIFIED.getQualifiedName().toString(), String.class),
+					new CriteriaHolder("lastModified", TEST_ITEM.LAST_MODIFIED.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_PATH, TEST_ITEM.PATH.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder("unique_id", TEST_ITEM.UNIQUE_ID.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder("parent_id", TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder("uniqueId", TEST_ITEM.UNIQUE_ID.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder("parentId", TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN.getQualifiedName().toString(), Boolean.class),
 
 					new CriteriaHolder(CRITERIA_TI_STATUS, TEST_ITEM_RESULTS.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-					new CriteriaHolder("end_time", TEST_ITEM_RESULTS.END_TIME.getQualifiedName().toString(), Timestamp.class),
+					new CriteriaHolder("endTime", TEST_ITEM_RESULTS.END_TIME.getQualifiedName().toString(), Timestamp.class),
 					new CriteriaHolder("duration", TEST_ITEM_RESULTS.DURATION.getQualifiedName().toString(), Long.class),
 
 					new CriteriaHolder("key", PARAMETER.KEY.getQualifiedName().toString(), String.class),
 					new CriteriaHolder("value", PARAMETER.VALUE.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("statistics_field", STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("statistics_count", STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder("auto_analyzed", ISSUE.AUTO_ANALYZED.getQualifiedName().toString(), Boolean.class),
-					new CriteriaHolder("ignore_analyzer", ISSUE.IGNORE_ANALYZER.getQualifiedName().toString(), Boolean.class),
+					new CriteriaHolder("statisticsField", STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
+					new CriteriaHolder("statisticsCount", STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder("autoAnalyzed", ISSUE.AUTO_ANALYZED.getQualifiedName().toString(), Boolean.class),
+					new CriteriaHolder("ignoreAnalyzer", ISSUE.IGNORE_ANALYZER.getQualifiedName().toString(), Boolean.class),
 					new CriteriaHolder("locator", ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class),
 
 					new CriteriaHolder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID.getQualifiedName().toString(), Long.class),
@@ -137,15 +221,6 @@ public enum FilterTarget {
 					new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class)
 			)
 	) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-			SelectQuery<? extends Record> query = DSL.selectDistinct(TEST_ITEM.ITEM_ID.as(FILTERED_ID))
-					.orderBy(TEST_ITEM.ITEM_ID.as(FILTERED_ID))
-					.getQuery();
-			joinTables(query);
-			return query;
-		}
-
 		@Override
 		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
 			return Lists.newArrayList(TEST_ITEM.ITEM_ID,
@@ -198,160 +273,152 @@ public enum FilterTarget {
 			query.addJoin(ISSUE_GROUP, JoinType.LEFT_OUTER_JOIN, ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID));
 
 		}
-	};
-	//	ACTIVITY(Activity.class, Arrays.asList(
-	//			new CriteriaHolder(ID, "a.id", Long.class)
-	//			new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class),
-	//			new CriteriaHolder(CRITERIA_LOGIN, "u.login", String.class),
-	//			new CriteriaHolder(CRITERIA_ACTION, "a.action", String.class)
-	//			new CriteriaHolder(CRITERIA_OBJECT_ID, "a.object_id", Long.class)
-	//	)) {
-	//		@Override
-	//		public SelectQuery<? extends Record> getQuery() {
-	//
-	//			JActivity a = JActivity.ACTIVITY.as("a");
-	//			JUsers u = JUsers.USERS.as("u");
-	//			JProject p = JProject.PROJECT.as("p");
-	//			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, a.DETAILS, a.OBJECT_ID, u.LOGIN, p.NAME)
-	//					.from(a)
-	//					.join(u)
-	//					.on(a.USER_ID.eq(u.ID))
-	//					.join(p)
-	//					.on(a.PROJECT_ID.eq(p.ID))
-	//					.getQuery();
-	//		}
-	//	};
+	},
 
-	//	INTEGRATION(Integration.class, Arrays.asList(
-	//			//@formatter:off
-//			new CriteriaHolder(GeneralCriteriaConstant.CRITERIA_PROJECT, "p.name", String.class),
-//			new CriteriaHolder(CRITERIA_TYPE, "it.name", String.class)
-//			//@formatter:on
-	//	)) {
-	//		public SelectQuery<? extends Record> getQuery() {
-	//			JIntegration i = JIntegration.INTEGRATION.as("i");
-	//			JIntegrationType it = JIntegrationType.INTEGRATION_TYPE.as("it");
-	//			JProject p = JProject.PROJECT.as("p");
-	//
-	//			return DSL.select(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
-	//					.from(i)
-	//					.leftJoin(it)
-	//					.on(i.TYPE.eq(it.ID))
-	//					.leftJoin(p)
-	//					.on(i.PROJECT_ID.eq(p.ID))
-	//					.groupBy(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
-	//					.getQuery();
-	//		}
-	//	},
-	//
-	//	PROJECT(
-	//			Project.class,
-	//			Arrays.asList(new CriteriaHolder(NAME, "name", String.class), new CriteriaHolder("projectType", "project_type", String.class))
-	//	) {
-	//		public SelectQuery<? extends Record> getQuery() {
-	//			JProject p = JProject.PROJECT;
-	//			return DSL.select(p.ID, p.NAME, p.PROJECT_TYPE, p.CREATION_DATE, p.METADATA).from(p).getQuery();
-	//		}
-	//	},
-	//
-	//	LOG(Log.class, Arrays.asList(
-	//			new CriteriaHolder(CRITERIA_LOG_MESSAGE, "l.log_message", String.class),
-	//			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, "l.item_id", Long.class),
-	//			new CriteriaHolder(CRITERIA_LOG_LEVEL, "l.log_level", LogLevel.class),
-	//			new CriteriaHolder(CRITERIA_LOG_ID, "l.id", Long.class)
-	//	)) {
-	//		@Override
-	//		public SelectQuery<? extends Record> getQuery() {
-	//			JLog l = JLog.LOG.as("l");
-	//			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-	//
-	//			return DSL.select(
-	//					l.ID,
-	//					l.LOG_TIME,
-	//					l.LOG_MESSAGE,
-	//					l.LAST_MODIFIED,
-	//					l.LOG_LEVEL,
-	//					l.ITEM_ID,
-	//					l.ATTACHMENT,
-	//					l.ATTACHMENT_THUMBNAIL,
-	//					l.CONTENT_TYPE
-	//			)
-	//					.from(l)
-	//					.leftJoin(ti)
-	//					.on(l.ITEM_ID.eq(ti.ITEM_ID))
-	//					.groupBy(l.ID, l.LOG_TIME, l.LOG_MESSAGE, l.LAST_MODIFIED, l.LOG_LEVEL, l.ITEM_ID)
-	//					.getQuery();
-	//		}
-	//	},
-	//
-	//	USER(User.class, Arrays.asList(
-	//			new CriteriaHolder(ID, ID, Long.class),
-	//			new CriteriaHolder(UserCriteriaConstant.CRITERIA_LOGIN, UserCriteriaConstant.CRITERIA_LOGIN, String.class),
-	//			new CriteriaHolder(CRITERIA_EMAIL, CRITERIA_EMAIL, String.class),
-	//			new CriteriaHolder(CRITERIA_FULL_NAME, CRITERIA_FULL_NAME, String.class),
-	//			new CriteriaHolder(CRITERIA_ROLE, CRITERIA_ROLE, String.class),
-	//			new CriteriaHolder(UserCriteriaConstant.CRITERIA_TYPE, UserCriteriaConstant.CRITERIA_TYPE, String.class),
-	//			new CriteriaHolder(CRITERIA_EXPIRED, CRITERIA_EXPIRED, Boolean.class),
-	//			new CriteriaHolder(CRITERIA_PROJECT_ID, CRITERIA_PROJECT_ID, Long.class)
-	//	)) {
-	//		@Override
-	//		public SelectQuery<? extends Record> getQuery() {
-	//			JUsers u = JUsers.USERS;
-	//			JProjectUser pu = JProjectUser.PROJECT_USER;
-	//			JProject p = JProject.PROJECT;
-	//			return DSL.select(
-	//					u.ID,
-	//					u.LOGIN,
-	//					u.DEFAULT_PROJECT_ID,
-	//					u.FULL_NAME,
-	//					u.ATTACHMENT,
-	//					u.ATTACHMENT_THUMBNAIL,
-	//					u.EMAIL,
-	//					u.EXPIRED,
-	//					u.PASSWORD,
-	//					u.ROLE,
-	//					u.TYPE,
-	//					u.METADATA,
-	//					pu.PROJECT_ID,
-	//					pu.PROJECT_ROLE,
-	//					p.PROJECT_TYPE,
-	//					p.NAME
-	//			).from(u).leftJoin(pu).on(u.ID.eq(pu.USER_ID)).leftJoin(p).on(pu.PROJECT_ID.eq(p.ID)).getQuery();
-	//		}
-	//	},
-	//
-	//	USER_FILTER(UserFilter.class, Arrays.asList(new CriteriaHolder(NAME, NAME, String.class))) {
-	//		@Override
-	//		public SelectQuery<? extends Record> getQuery() {
-	//			return DSL.select(
-	//					JUserFilter.USER_FILTER.ID,
-	//					FILTER.NAME,
-	//					FILTER.PROJECT_ID,
-	//					FILTER.TARGET,
-	//					FILTER.DESCRIPTION,
-	//					FILTER_CONDITION.SEARCH_CRITERIA,
-	//					FILTER_CONDITION.CONDITION,
-	//					FILTER_CONDITION.VALUE,
-	//					FILTER_CONDITION.NEGATIVE,
-	//					FILTER_SORT.FIELD,
-	//					FILTER_SORT.DIRECTION
-	//			)
-	//					.from(JUserFilter.USER_FILTER)
-	//					.join(ACL_OBJECT_IDENTITY)
-	//					.on(JUserFilter.USER_FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY))
-	//					.join(ACL_CLASS)
-	//					.on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS))
-	//					.join(ACL_ENTRY)
-	//					.on(ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID))
-	//					.join(FILTER)
-	//					.on(JUserFilter.USER_FILTER.ID.eq(FILTER.ID))
-	//					.join(FILTER_CONDITION)
-	//					.on(FILTER.ID.eq(FILTER_CONDITION.FILTER_ID))
-	//					.join(FILTER_SORT)
-	//					.on(FILTER.ID.eq(FILTER_SORT.FILTER_ID))
-	//					.getQuery();
-	//		}
-	//	};
+	LOG_TARGET(Log.class, Arrays.asList(
+
+			new CriteriaHolder(CRITERIA_LOG_ID, LOG.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder("logTime", LOG.LOG_TIME.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder("lastModified", LOG.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(CRITERIA_LOG_LEVEL, LOG.LOG_LEVEL.getQualifiedName().toString(), LogLevel.class),
+			new CriteriaHolder(CRITERIA_LOG_MESSAGE, LOG.LOG_MESSAGE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID.getQualifiedName().toString(), Long.class)
+	)) {
+		@Override
+		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+			return Lists.newArrayList(LOG.ID,
+					LOG.LOG_TIME,
+					LOG.LOG_MESSAGE,
+					LOG.LAST_MODIFIED,
+					LOG.LOG_LEVEL,
+					LOG.ITEM_ID,
+					LOG.ATTACHMENT,
+					LOG.CONTENT_TYPE
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(LOG);
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return LOG.ID;
+		}
+	},
+
+	ACTIVITY_TARGET(Activity.class, Arrays.asList(
+
+			new CriteriaHolder("id", ACTIVITY.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder("projectName", PROJECT.NAME.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder("userId", ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder("entity", ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
+			new CriteriaHolder("creationDate", ACTIVITY.CREATION_DATE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
+	)) {
+		@Override
+		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+			return Lists.newArrayList(ACTIVITY.ID,
+					ACTIVITY.PROJECT_ID,
+					ACTIVITY.USER_ID,
+					ACTIVITY.ENTITY,
+					ACTIVITY.ACTION,
+					ACTIVITY.CREATION_DATE,
+					ACTIVITY.DETAILS,
+					ACTIVITY.OBJECT_ID,
+					USERS.LOGIN,
+					PROJECT.NAME
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(ACTIVITY);
+			query.addJoin(USERS, JoinType.JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
+			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return ACTIVITY.ID;
+		}
+	},
+
+	INTEGRATION_TARGET(Integration.class, Arrays.asList(
+
+			new CriteriaHolder("project", INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
+			new CriteriaHolder("type", INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(), IntegrationGroupEnum.class),
+			new CriteriaHolder("name", INTEGRATION_TYPE.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder("projectName", PROJECT.NAME.getQualifiedName().toString(), String.class)
+	)) {
+		@Override
+		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+			return Lists.newArrayList(INTEGRATION.ID,
+					INTEGRATION.PROJECT_ID,
+					INTEGRATION.TYPE,
+					INTEGRATION.PARAMS,
+					INTEGRATION.CREATION_DATE,
+					INTEGRATION_TYPE.NAME,
+					INTEGRATION_TYPE.GROUP_TYPE,
+					PROJECT.NAME
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(INTEGRATION);
+			query.addJoin(INTEGRATION_TYPE, JoinType.JOIN, INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID));
+			query.addJoin(PROJECT, JoinType.JOIN, INTEGRATION.PROJECT_ID.eq(PROJECT.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return DSL.cast(INTEGRATION.ID, Long.class);
+		}
+	},
+
+	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
+
+			new CriteriaHolder("name", FILTER.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder("name", FILTER.NAME.getQualifiedName().toString(), String.class)
+
+	)) {
+		@Override
+		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+			return Lists.newArrayList(USER_FILTER.ID,
+					FILTER.NAME,
+					FILTER.PROJECT_ID,
+					FILTER.TARGET,
+					FILTER.DESCRIPTION,
+					FILTER_CONDITION.SEARCH_CRITERIA,
+					FILTER_CONDITION.CONDITION,
+					FILTER_CONDITION.VALUE,
+					FILTER_CONDITION.NEGATIVE,
+					FILTER_SORT.FIELD,
+					FILTER_SORT.DIRECTION
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(USER_FILTER);
+			query.addJoin(FILTER, JoinType.JOIN, USER_FILTER.ID.eq(FILTER.ID));
+			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
+			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, USER_FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
+			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return USER_FILTER.ID;
+		}
+	};
 
 	public static final String FILTERED_QUERY = "filtered";
 	public static final String FILTERED_ID = "id";
@@ -364,7 +431,11 @@ public enum FilterTarget {
 		this.criteriaHolders = criteriaHolders;
 	}
 
-	public abstract SelectQuery<? extends Record> getQuery();
+	public SelectQuery<? extends Record> getQuery() {
+		SelectQuery<? extends Record> query = DSL.selectDistinct(idField().as(FILTERED_ID)).orderBy(idField().as(FILTERED_ID)).getQuery();
+		joinTables(query);
+		return query;
+	}
 
 	protected abstract Collection<? extends SelectFieldOrAsterisk> selectFields();
 

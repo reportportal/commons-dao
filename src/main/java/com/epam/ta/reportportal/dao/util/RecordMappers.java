@@ -129,7 +129,7 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps record with crosstab into {@link TestItem} object
+	 * Maps record into {@link TestItem} object
 	 */
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
@@ -141,10 +141,11 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps record with crosstab into {@link Launch} object
+	 * Maps record into {@link Launch} object
 	 */
 	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
 		Launch launch = r.into(Launch.class);
+		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
 		launch.setUser(r.into(User.class));
 		return launch;
@@ -194,7 +195,7 @@ public class RecordMappers {
 	};
 
 	/**
-	 * Maps result of records without crosstab into list of {@link User}
+	 * Maps result of records into list of {@link User}
 	 */
 	public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = result -> {
 		Map<Long, User> userMap = Maps.newHashMap();

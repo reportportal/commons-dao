@@ -16,11 +16,15 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemTag;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
+import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.project.Project;
 import com.google.common.collect.Maps;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -30,8 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
@@ -43,6 +46,44 @@ public class ResultFetchers {
 	private ResultFetchers() {
 		//static only
 	}
+
+	/**
+	 * Fetches records from db results into list of {@link Project} objects.
+	 */
+	public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = records -> {
+		Map<Long, Project> projects = Maps.newLinkedHashMap();
+		records.forEach(record -> {
+			Long id = record.get(PROJECT.ID);
+			Project project;
+			if (!projects.containsKey(id)) {
+				project = RecordMappers.PROJECT_MAPPER.map(record);
+			} else {
+				project = projects.get(id);
+			}
+			projects.put(id, project);
+		});
+		return new ArrayList<>(projects.values());
+	};
+
+	/**
+	 * Fetches records from db results into list of {@link Launch} objects.
+	 */
+	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = records -> {
+		Map<Long, Launch> launches = Maps.newLinkedHashMap();
+		records.forEach(record -> {
+			Long id = record.get(LAUNCH.ID);
+			Launch launch;
+			if (!launches.containsKey(id)) {
+				launch = RecordMappers.LAUNCH_RECORD_MAPPER.map(record);
+			} else {
+				launch = launches.get(id);
+			}
+			launch.getTags().add(record.into(LaunchTag.class));
+			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+			launches.put(id, launch);
+		});
+		return new ArrayList<>(launches.values());
+	};
 
 	/**
 	 * Fetches records from db results into list of {@link TestItem} objects.
@@ -66,23 +107,57 @@ public class ResultFetchers {
 	};
 
 	/**
-	 * Fetches records from db results into list of {@link Launch} objects.
+	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log} objects.
 	 */
-	public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = records -> {
-		Map<Long, Launch> launches = Maps.newLinkedHashMap();
+	public static final Function<Result<? extends Record>, List<Log>> LOG_FETCHER = records -> {
+		Map<Long, Log> logs = Maps.newLinkedHashMap();
 		records.forEach(record -> {
-			Long id = record.get(LAUNCH.ID);
-			Launch launch;
-			if (!launches.containsKey(id)) {
-				launch = RecordMappers.LAUNCH_RECORD_MAPPER.map(record);
+			Long id = record.get(LOG.ID);
+			Log log;
+			if (!logs.containsKey(id)) {
+				log = record.into(Log.class);
 			} else {
-				launch = launches.get(id);
+				log = logs.get(id);
 			}
-			launch.getTags().add(record.into(LaunchTag.class));
-			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
-			launches.put(id, launch);
+			logs.put(id, log);
 		});
-		return new ArrayList<>(launches.values());
+		return new ArrayList<>(logs.values());
+	};
+
+	/**
+	 * Fetches records from db results into list of {@link Activity} objects.
+	 */
+	public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = records -> {
+		Map<Long, Activity> activities = Maps.newLinkedHashMap();
+		records.forEach(record -> {
+			Long id = record.get(ACTIVITY.ID);
+			Activity activity;
+			if (!activities.containsKey(id)) {
+				activity = RecordMappers.ACTIVITY_MAPPER.map(record);
+			} else {
+				activity = activities.get(id);
+			}
+			activities.put(id, activity);
+		});
+		return new ArrayList<>(activities.values());
+	};
+
+	/**
+	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.integration.Integration} objects.
+	 */
+	public static final Function<Result<? extends Record>, List<Integration>> INTEGRATION_FETCHER = records -> {
+		Map<Integer, Integration> integrations = Maps.newLinkedHashMap();
+		records.forEach(record -> {
+			Integer id = record.get(INTEGRATION.ID);
+			Integration integration;
+			if (!integrations.containsKey(id)) {
+				integration = record.into(Integration.class);
+			} else {
+				integration = integrations.get(id);
+			}
+			integrations.put(id, integration);
+		});
+		return new ArrayList<>(integrations.values());
 	};
 
 }

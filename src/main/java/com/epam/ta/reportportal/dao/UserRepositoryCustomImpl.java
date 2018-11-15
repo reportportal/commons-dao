@@ -127,16 +127,16 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public List<User> findByFilter(Filter filter) {
-		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
+		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<User> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 }
