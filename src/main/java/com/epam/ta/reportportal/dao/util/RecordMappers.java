@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -185,6 +186,7 @@ public class RecordMappers {
 		Project project = new Project();
 		project.setId(r.get(PROJECT_USER.PROJECT_ID));
 		project.setName(r.get(PROJECT.NAME));
+		project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
 
 		User user = new User();
 		user.setLogin(r.get(USERS.LOGIN));
