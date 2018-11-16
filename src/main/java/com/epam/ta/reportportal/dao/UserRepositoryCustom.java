@@ -35,8 +35,6 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
 
 	void deleteUserPhoto(String path);
 
-	Page<User> searchForUser(String term, Pageable pageable);
-
 	/**
 	 * Finds entities list according provided filter
 	 *

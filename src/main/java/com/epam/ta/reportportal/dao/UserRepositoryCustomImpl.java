@@ -22,8 +22,6 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.SelectForUpdateStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,11 +31,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.name;
 
 /**
  * @author Pavel Bortnik
@@ -73,27 +66,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public void deleteUserPhoto(String path) {
 		dataStore.delete(path);
-	}
-
-	@Override
-	public Page<User> searchForUser(String term, Pageable pageable) {
-
-		SelectForUpdateStep<Record> select = dsl.select()
-				.from(USERS)
-				.where(USERS.LOGIN.like("%" + term + "%").or(USERS.FULL_NAME.like("%" + term + "%")).or(USERS.EMAIL.like("%" + term + "%")))
-				.limit(pageable.getPageSize())
-				.offset(Long.valueOf(pageable.getOffset()).intValue());
-
-		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(dsl.with("temp_users")
-				.as(select)
-				.select()
-				.from(USERS)
-				.join("temp_users")
-				.on(USERS.ID.eq(field(name("temp_users", "id"), Long.class)))
-				.leftJoin(PROJECT_USER)
-				.on(USERS.ID.eq(PROJECT_USER.USER_ID))
-				.leftJoin(PROJECT)
-				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID)))), pageable, () -> dsl.fetchCount(select));
 	}
 
 	@Override

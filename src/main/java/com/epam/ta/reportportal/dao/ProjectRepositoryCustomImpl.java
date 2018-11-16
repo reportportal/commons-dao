@@ -74,22 +74,19 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
 								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
 						DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
-						fieldName(FILTERED_PROJECT, PROJECT.ID.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
+						PROJECT.ID,
+						PROJECT.CREATION_DATE,
+						PROJECT.NAME,
+						PROJECT.PROJECT_TYPE
 				)
-				.from(DSL.table(name(FILTERED_PROJECT))
-						.leftJoin(PROJECT_USER)
-						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT_USER.PROJECT_ID))
-						.leftJoin(LAUNCH)
-						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(LAUNCH.PROJECT_ID)))
-				.groupBy(
-						fieldName(FILTERED_PROJECT, PROJECT.ID.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
-				)
+				.from(PROJECT)
+				.leftJoin(PROJECT_USER)
+				.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+				.leftJoin(LAUNCH)
+				.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
+				.join(DSL.table(name(FILTERED_PROJECT)))
+				.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT.ID))
+				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
 				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
