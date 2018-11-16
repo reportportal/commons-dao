@@ -21,8 +21,8 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public class StatisticsCriteriaConstant {
 
-	public static final String CRITERIA_STATISTICS_FIELD = "statisticsField";
-	public static final String CRITERIA_STATISTICS_COUNT = "statisticsCount";
+	public static final String CRITERIA_STATISTICS_FIELD = "statistics";
+	public static final String CRITERIA_STATISTICS_COUNT = "count";
 
 	private StatisticsCriteriaConstant() {
 		//static only

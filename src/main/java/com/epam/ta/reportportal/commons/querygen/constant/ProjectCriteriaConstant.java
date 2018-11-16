@@ -20,6 +20,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class ProjectCriteriaConstant {
-	public static final String CRITERIA_PROJECT_TYPE = "projectType";
-	public static final String CRITERIA_PROJECT_NAME = "projectName";
+	public static final String CRITERIA_PROJECT_TYPE = "type";
+	public static final String CRITERIA_PROJECT_NAME = "name";
 }

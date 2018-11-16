@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
@@ -53,7 +54,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
-import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.DESCRIPTION;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.field;
 
@@ -145,9 +145,9 @@ public enum FilterTarget {
 	LAUNCH_TARGET(Launch.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_ID, LAUNCH.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_NAME, LAUNCH.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_DESCRIPTION, LAUNCH.DESCRIPTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_UUID, LAUNCH.UUID.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_LAUNCH_NAME, LAUNCH.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(DESCRIPTION, LAUNCH.DESCRIPTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_START_TIME, LAUNCH.START_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_END_TIME, LAUNCH.END_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
@@ -202,7 +202,10 @@ public enum FilterTarget {
 			Arrays.asList(new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
 
 					new CriteriaHolder(CRITERIA_NAME, TEST_ITEM.NAME.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_TYPE, TEST_ITEM.TYPE.getQualifiedName().toString(), JTestItemTypeEnum.class),
+					new CriteriaHolder(TestItemCriteriaConstant.CRITERIA_TYPE,
+							TEST_ITEM.TYPE.getQualifiedName().toString(),
+							JTestItemTypeEnum.class
+					),
 					new CriteriaHolder(CRITERIA_START_TIME, TEST_ITEM.START_TIME.getQualifiedName().toString(), Timestamp.class),
 					new CriteriaHolder(CRITERIA_DESCRIPTION, TEST_ITEM.DESCRIPTION.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_LAST_MODIFIED, TEST_ITEM.LAST_MODIFIED.getQualifiedName().toString(), String.class),
