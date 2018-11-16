@@ -38,10 +38,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_COUNT;
+import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_FIELD;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
@@ -54,8 +60,8 @@ public enum FilterTarget {
 
 	PROJECT_TARGET(Project.class, Arrays.asList(
 
-			new CriteriaHolder("name", PROJECT.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("projectType", PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_ID, PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
@@ -90,7 +96,7 @@ public enum FilterTarget {
 
 	USER_TARGET(User.class, Arrays.asList(
 
-			new CriteriaHolder("id", USERS.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_ID, USERS.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_EMAIL, USERS.EMAIL.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_FULL_NAME, USERS.FULL_NAME.getQualifiedName().toString(), String.class),
@@ -136,22 +142,22 @@ public enum FilterTarget {
 
 	LAUNCH_TARGET(Launch.class, Arrays.asList(
 
-			new CriteriaHolder("id", LAUNCH.ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("uuid", LAUNCH.UUID.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_ID, LAUNCH.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_LAUNCH_UUID, LAUNCH.UUID.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_NAME, LAUNCH.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(DESCRIPTION, LAUNCH.DESCRIPTION.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("startTime", LAUNCH.START_TIME.getQualifiedName().toString(), Timestamp.class),
-			new CriteriaHolder("endTime", LAUNCH.END_TIME.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(CRITERIA_START_TIME, LAUNCH.START_TIME.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(CRITERIA_END_TIME, LAUNCH.END_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("userId", LAUNCH.USER_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("number", LAUNCH.NUMBER.getQualifiedName().toString(), Integer.class),
-			new CriteriaHolder("lastModified", LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(CRITERIA_USER_ID, LAUNCH.USER_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_LAUNCH_NUMBER, LAUNCH.NUMBER.getQualifiedName().toString(), Integer.class),
+			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_TAG, LAUNCH_TAG.VALUE.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("statisticsField", STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("statisticsCount", STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("login", USERS.LOGIN.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_STATISTICS_FIELD, STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_STATISTICS_COUNT, STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
@@ -195,25 +201,25 @@ public enum FilterTarget {
 
 					new CriteriaHolder(CRITERIA_NAME, TEST_ITEM.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_TYPE, TEST_ITEM.TYPE.getQualifiedName().toString(), JTestItemTypeEnum.class),
-					new CriteriaHolder("startTime", TEST_ITEM.START_TIME.getQualifiedName().toString(), Timestamp.class),
-					new CriteriaHolder("description", TEST_ITEM.DESCRIPTION.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("lastModified", TEST_ITEM.LAST_MODIFIED.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_START_TIME, TEST_ITEM.START_TIME.getQualifiedName().toString(), Timestamp.class),
+					new CriteriaHolder(CRITERIA_DESCRIPTION, TEST_ITEM.DESCRIPTION.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_LAST_MODIFIED, TEST_ITEM.LAST_MODIFIED.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_PATH, TEST_ITEM.PATH.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder("uniqueId", TEST_ITEM.UNIQUE_ID.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder("parentId", TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN.getQualifiedName().toString(), Boolean.class),
 
 					new CriteriaHolder(CRITERIA_TI_STATUS, TEST_ITEM_RESULTS.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-					new CriteriaHolder("endTime", TEST_ITEM_RESULTS.END_TIME.getQualifiedName().toString(), Timestamp.class),
-					new CriteriaHolder("duration", TEST_ITEM_RESULTS.DURATION.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder(CRITERIA_END_TIME, TEST_ITEM_RESULTS.END_TIME.getQualifiedName().toString(), Timestamp.class),
+					new CriteriaHolder(CRITERIA_TI_DURATION, TEST_ITEM_RESULTS.DURATION.getQualifiedName().toString(), Long.class),
 
-					new CriteriaHolder("key", PARAMETER.KEY.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("value", PARAMETER.VALUE.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("statisticsField", STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
-					new CriteriaHolder("statisticsCount", STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder("autoAnalyzed", ISSUE.AUTO_ANALYZED.getQualifiedName().toString(), Boolean.class),
-					new CriteriaHolder("ignoreAnalyzer", ISSUE.IGNORE_ANALYZER.getQualifiedName().toString(), Boolean.class),
-					new CriteriaHolder("locator", ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_TI_PARAMETER_KEY, PARAMETER.KEY.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_TI_PARAMETER_VALUE, PARAMETER.VALUE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_STATISTICS_FIELD, STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_STATISTICS_COUNT, STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder(CRITERIA_ISSUE_AUTO_ANALYZED, ISSUE.AUTO_ANALYZED.getQualifiedName().toString(), Boolean.class),
+					new CriteriaHolder(CRITERIA_ISSUE_IGNORE_ANALYZER, ISSUE.IGNORE_ANALYZER.getQualifiedName().toString(), Boolean.class),
+					new CriteriaHolder(CRITERIA_ISSUE_LOCATOR, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class),
 
 					new CriteriaHolder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
@@ -279,8 +285,8 @@ public enum FilterTarget {
 	LOG_TARGET(Log.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_LOG_ID, LOG.ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("logTime", LOG.LOG_TIME.getQualifiedName().toString(), Timestamp.class),
-			new CriteriaHolder("lastModified", LOG.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(CRITERIA_LOG_TIME, LOG.LOG_TIME.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LOG.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LOG_LEVEL, LOG.LOG_LEVEL.getQualifiedName().toString(), LogLevel.class),
 			new CriteriaHolder(CRITERIA_LOG_MESSAGE, LOG.LOG_MESSAGE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID.getQualifiedName().toString(), Long.class)
@@ -311,13 +317,13 @@ public enum FilterTarget {
 
 	ACTIVITY_TARGET(Activity.class, Arrays.asList(
 
-			new CriteriaHolder("id", ACTIVITY.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("projectName", PROJECT.NAME.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("userId", ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder("entity", ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("creationDate", ACTIVITY.CREATION_DATE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
@@ -351,10 +357,13 @@ public enum FilterTarget {
 
 	INTEGRATION_TARGET(Integration.class, Arrays.asList(
 
-			new CriteriaHolder("project", INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("type", INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(), IntegrationGroupEnum.class),
-			new CriteriaHolder("name", INTEGRATION_TYPE.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("projectName", PROJECT.NAME.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_PROJECT_ID, INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_INTEGRATION_TYPE,
+					INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(),
+					IntegrationGroupEnum.class
+			),
+			new CriteriaHolder(CRITERIA_NAME, INTEGRATION_TYPE.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
@@ -384,8 +393,8 @@ public enum FilterTarget {
 
 	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
 
-			new CriteriaHolder("name", FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder("name", FILTER.NAME.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class)
 
 	)) {
 		@Override

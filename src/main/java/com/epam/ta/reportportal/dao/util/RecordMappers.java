@@ -104,7 +104,19 @@ public class RecordMappers {
 	/**
 	 * Maps record into {@link Project} object
 	 */
-	public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> r.into(Project.class);
+	public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
+		Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.CREATION_DATE, PROJECT.PROJECT_TYPE).into(Project.class);
+		String metaDataString = r.get(PROJECT.METADATA, String.class);
+		ofNullable(metaDataString).ifPresent(md -> {
+			try {
+				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+				project.setMetadata(metadata);
+			} catch (IOException e) {
+				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
+			}
+		});
+		return project;
+	};
 
 	/**
 	 * Maps record into {@link TestItemResults} object

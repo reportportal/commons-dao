@@ -17,15 +17,14 @@
 package com.epam.ta.reportportal.commons.querygen.constant;
 
 /**
- * Search criteria fields for Launch.
- *
- * @author Pavel Bortnik
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class LaunchCriteriaConstant {
-	public static final String CRITERIA_LAUNCH_UUID = "uuid";
-	public static final String CRITERIA_LAUNCH_TAG = "tags";
-	public static final String CRITERIA_LAUNCH_MODE = "mode";
-	public static final String CRITERIA_LAUNCH_STATUS = "status";
-	public static final String CRITERIA_LAUNCH_NAME = "name";
-	public static final String CRITERIA_LAUNCH_NUMBER = "number";
+public class StatisticsCriteriaConstant {
+
+	public static final String CRITERIA_STATISTICS_FIELD = "statisticsField";
+	public static final String CRITERIA_STATISTICS_COUNT = "statisticsCount";
+
+	private StatisticsCriteriaConstant() {
+		//static only
+	}
 }
