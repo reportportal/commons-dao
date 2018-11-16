@@ -140,14 +140,6 @@ public class QueryBuilder {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
 
-			/*
-				creates criteria holder for statistics search criteria cause there
-				can be custom statistics so we can't know it till this moment
-			*/
-			if (searchCriteria.startsWith("statistics")) {
-				criteriaHolder = Optional.of(new CriteriaHolder(searchCriteria, searchCriteria, Long.class));
-			}
-
 			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
 					ErrorType.INCORRECT_FILTER_PARAMETERS,
 					Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
