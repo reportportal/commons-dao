@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;

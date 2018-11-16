@@ -25,6 +25,10 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
+import com.epam.ta.reportportal.entity.user.ProjectUserId;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Maps;
 import org.jooq.Record;
@@ -35,8 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_USER_MAPPER;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -63,6 +66,17 @@ public class ResultFetchers {
 			} else {
 				project = projects.get(id);
 			}
+			project.getProjectAttributes()
+					.add(new ProjectAttribute().withProject(project)
+							.withAttribute(ATTRIBUTE_MAPPER.map(record))
+							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
+			User user = new User();
+			user.setLogin(record.get(USERS.LOGIN));
+			project.getUsers()
+					.add(new ProjectUser().withProjectUserId(record.into(ProjectUserId.class))
+							.withProjectRole(record.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class))
+							.withUser(user));
+
 			projects.put(id, project);
 		});
 		return new ArrayList<>(projects.values());
