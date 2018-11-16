@@ -181,6 +181,7 @@ public class RecordMappers {
 		Project project = new Project();
 		project.setId(r.get(PROJECT_USER.PROJECT_ID));
 		User user = new User();
+		user.setLogin(r.get(USERS.LOGIN));
 		user.setId(r.get(PROJECT_USER.PROJECT_ID));
 		projectUser.setProject(project);
 		projectUser.setUser(user);

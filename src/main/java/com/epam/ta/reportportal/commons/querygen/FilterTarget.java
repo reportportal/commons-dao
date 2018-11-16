@@ -60,7 +60,7 @@ public enum FilterTarget {
 
 	PROJECT_TARGET(Project.class, Arrays.asList(
 
-			new CriteriaHolder(CRITERIA_ID, PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
