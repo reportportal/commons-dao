@@ -172,17 +172,24 @@ public class RecordMappers {
 				throw new ReportPortalException("Error during parsing user metadata");
 			}
 		});
+		Project project = new Project();
+		project.setId(r.get(USERS.DEFAULT_PROJECT_ID));
+		user.setDefaultProject(project);
 		return user;
 	};
 
 	public static final RecordMapper<Record, ProjectUser> PROJECT_USER_MAPPER = r -> {
 		ProjectUser projectUser = new ProjectUser();
 		projectUser.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class));
+
 		Project project = new Project();
 		project.setId(r.get(PROJECT_USER.PROJECT_ID));
+		project.setName(r.get(PROJECT.NAME));
+
 		User user = new User();
 		user.setLogin(r.get(USERS.LOGIN));
 		user.setId(r.get(PROJECT_USER.PROJECT_ID));
+
 		projectUser.setProject(project);
 		projectUser.setUser(user);
 		return projectUser;
