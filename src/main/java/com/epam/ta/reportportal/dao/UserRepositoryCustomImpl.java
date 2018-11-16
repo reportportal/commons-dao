@@ -70,12 +70,11 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@Override
 	public Page<User> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude) {
-		return PageableExecutionUtils.getPage(USER_FETCHER.apply(QueryBuilder.newBuilder(filter)
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget(), exclude)
 				.with(pageable.getSort())
-				.build()
-				.fetch()), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	@Override
