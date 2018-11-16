@@ -123,7 +123,7 @@ public class Filter implements Serializable, Queryable {
 	public SelectQuery<? extends Record> toQuery() {
 		final Function<FilterCondition, org.jooq.Condition> transformer = filterConverter(this.target);
 		QueryBuilder query = QueryBuilder.newBuilder(this.target);
-		this.filterConditions.stream().map(transformer).forEach(query::addCondition);
+		this.filterConditions.forEach(it -> query.addCondition(transformer.apply(it), it.getOperator()));
 		return query.build();
 	}
 

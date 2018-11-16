@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.base.Preconditions;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.jooq.Operator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -67,6 +68,11 @@ public class FilterCondition implements Serializable {
 	@Column(name = "negative")
 	private boolean negative;
 
+	/**
+	 * Whether this is 'AND' or 'OR' filter
+	 */
+	private Operator operator = Operator.AND;
+
 	public FilterCondition() {
 	}
 
@@ -75,6 +81,14 @@ public class FilterCondition implements Serializable {
 		this.value = value;
 		this.searchCriteria = searchCriteria;
 		this.negative = negative;
+	}
+
+	public FilterCondition(Operator operator, Condition condition, boolean negative, String value, String searchCriteria) {
+		this.condition = condition;
+		this.value = value;
+		this.searchCriteria = searchCriteria;
+		this.negative = negative;
+		this.operator = operator;
 	}
 
 	public Long getId() {
@@ -99,6 +113,14 @@ public class FilterCondition implements Serializable {
 
 	public boolean isNegative() {
 		return negative;
+	}
+
+	public Operator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(Operator operator) {
+		this.operator = operator;
 	}
 
 	@Override
@@ -178,6 +200,8 @@ public class FilterCondition implements Serializable {
 
 		private String searchCriteria;
 
+		private Operator operator;
+
 		private ConditionBuilder() {
 
 		}
@@ -199,6 +223,11 @@ public class FilterCondition implements Serializable {
 
 		public FilterCondition.ConditionBuilder withSearchCriteria(String searchCriteria) {
 			this.searchCriteria = searchCriteria;
+			return this;
+		}
+
+		public FilterCondition.ConditionBuilder withOperator(Operator operator) {
+			this.operator = operator;
 			return this;
 		}
 

@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
@@ -64,7 +65,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(PROJECT.ID,
 					PROJECT.NAME,
 					PROJECT.PROJECT_TYPE,
@@ -107,7 +108,7 @@ public enum FilterTarget {
 
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(USERS.ID,
 					USERS.LOGIN,
 					USERS.DEFAULT_PROJECT_ID,
@@ -148,7 +149,7 @@ public enum FilterTarget {
 			new CriteriaHolder(DESCRIPTION, LAUNCH.DESCRIPTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_START_TIME, LAUNCH.START_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_END_TIME, LAUNCH.END_TIME.getQualifiedName().toString(), Timestamp.class),
-			new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER_ID, LAUNCH.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_NUMBER, LAUNCH.NUMBER.getQualifiedName().toString(), Integer.class),
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
@@ -160,7 +161,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(LAUNCH.ID,
 					LAUNCH.UUID,
 					LAUNCH.NAME,
@@ -229,7 +230,7 @@ public enum FilterTarget {
 			)
 	) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(TEST_ITEM.ITEM_ID,
 					TEST_ITEM.NAME,
 					TEST_ITEM.TYPE,
@@ -292,7 +293,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID.getQualifiedName().toString(), Long.class)
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(LOG.ID,
 					LOG.LOG_TIME,
 					LOG.LOG_MESSAGE,
@@ -328,7 +329,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(ACTIVITY.ID,
 					ACTIVITY.PROJECT_ID,
 					ACTIVITY.USER_ID,
@@ -366,7 +367,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(INTEGRATION.ID,
 					INTEGRATION.PROJECT_ID,
 					INTEGRATION.TYPE,
@@ -398,7 +399,7 @@ public enum FilterTarget {
 
 	)) {
 		@Override
-		protected Collection<? extends SelectFieldOrAsterisk> selectFields() {
+		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(USER_FILTER.ID,
 					FILTER.NAME,
 					FILTER.PROJECT_ID,
@@ -447,7 +448,7 @@ public enum FilterTarget {
 		return query;
 	}
 
-	protected abstract Collection<? extends SelectFieldOrAsterisk> selectFields();
+	protected abstract Collection<? extends SelectField> selectFields();
 
 	protected abstract void joinTables(SelectQuery<? extends Record> query);
 
@@ -455,6 +456,20 @@ public enum FilterTarget {
 
 	public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query) {
 		SelectQuery<Record> wrappedQuery = DSL.with(FILTERED_QUERY).as(query).select(selectFields()).getQuery();
+		joinTables(wrappedQuery);
+		wrappedQuery.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
+				JoinType.JOIN,
+				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
+		);
+		return wrappedQuery;
+	}
+
+	public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+		List<String> excludingFields = Lists.newArrayList(excluding);
+		List<? extends SelectField> fields = selectFields().stream()
+				.filter(it -> !excludingFields.contains(it.getName()))
+				.collect(Collectors.toList());
+		SelectQuery<Record> wrappedQuery = DSL.with(FILTERED_QUERY).as(query).select(fields).getQuery();
 		joinTables(wrappedQuery);
 		wrappedQuery.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
 				JoinType.JOIN,

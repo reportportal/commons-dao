@@ -69,8 +69,8 @@ public class QueryBuilder {
 	 * @param condition Condition
 	 * @return QueryBuilder
 	 */
-	public QueryBuilder addCondition(Condition condition) {
-		query.addConditions(condition);
+	public QueryBuilder addCondition(Condition condition, Operator operator) {
+		query.addConditions(operator, condition);
 		return this;
 	}
 
@@ -132,6 +132,11 @@ public class QueryBuilder {
 
 	public QueryBuilder withWrapper(FilterTarget filterTarget) {
 		query = filterTarget.wrapQuery(query);
+		return this;
+	}
+
+	public QueryBuilder withWrapper(FilterTarget filterTarget, String... excludingFields) {
+		query = filterTarget.wrapQuery(query, excludingFields);
 		return this;
 	}
 
