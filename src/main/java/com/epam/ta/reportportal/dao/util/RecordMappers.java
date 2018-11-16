@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -29,11 +28,11 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
-import com.epam.ta.reportportal.entity.user.*;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
+import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
@@ -58,7 +57,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -151,13 +149,9 @@ public class RecordMappers {
 		return launch;
 	};
 
-	/**
-	 * Maps record into {@link User} object
-	 */
-	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
-		User user = new User();
-		Project defaultProject = new Project();
-		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
+	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
+		User user = r.into(User.class);
+		String metaDataString = r.get(USERS.METADATA, String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
 				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
@@ -166,76 +160,64 @@ public class RecordMappers {
 				throw new ReportPortalException("Error during parsing user metadata");
 			}
 		});
-
-		ProjectUser projectUser = new ProjectUser();
-		Project project = new Project();
-		project.setId(r.get(PROJECT_USER.PROJECT_ID));
-		project.setName(r.get(PROJECT.NAME));
-		project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
-		projectUser.setProject(project);
-		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE, String.class)));
-		user.getProjects().add(projectUser);
-
-		r = r.into(USERS.fields());
-		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
-		user.setId(r.get(USERS.ID));
-		user.setAttachment(r.get(USERS.ATTACHMENT));
-		user.setAttachmentThumbnail(r.get(USERS.ATTACHMENT_THUMBNAIL));
-		user.setDefaultProject(defaultProject);
-		user.setEmail(r.get(USERS.EMAIL));
-		user.setExpired(r.get(USERS.EXPIRED));
-		user.setFullName(r.get(USERS.FULL_NAME));
-		user.setLogin(r.get(USERS.LOGIN));
-		user.setPassword(r.get(USERS.PASSWORD));
-		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
-		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
-				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
-
 		return user;
 	};
 
-	/**
-	 * Maps result of records into list of {@link User}
-	 */
-	public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = result -> {
-		Map<Long, User> userMap = Maps.newHashMap();
-		result.forEach(res -> {
-			Long userId = res.get(USERS.ID);
-			User user;
-			if (userMap.containsKey(userId)) {
-				user = userMap.get(userId);
-			} else {
-				user = USER_RECORD_MAPPER.map(res);
-			}
-			userMap.put(userId, user);
-		});
-
-		return Lists.newArrayList(userMap.values());
+	public static final RecordMapper<Record, ProjectUser> PROJECT_USER_MAPPER = r -> {
+		ProjectUser projectUser = new ProjectUser();
+		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).getName()));
+		Project project = new Project();
+		project.setId(r.get(PROJECT_USER.PROJECT_ID));
+		User user = new User();
+		user.setId(r.get(PROJECT_USER.PROJECT_ID));
+		projectUser.setProject(project);
+		projectUser.setUser(user);
+		return projectUser;
 	};
 
-	/**
-	 * Map results of records into list of {@link Project}
-	 */
-	public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = result -> {
-		Map<Long, Project> projectMap = Maps.newHashMap();
-		result.forEach(r -> {
-			Long projectId = r.get(PROJECT.ID);
-			Project project;
-			if (projectMap.containsKey(projectId)) {
-				project = projectMap.get(projectId);
-			} else {
-				project = r.into(Project.class);
-			}
-			project.getProjectAttributes()
-					.add(new ProjectAttribute().withProject(project)
-							.withAttribute(ATTRIBUTE_MAPPER.map(r))
-							.withValue(r.get(PROJECT_ATTRIBUTE.VALUE)));
-			project.getUsers()
-					.add(new ProjectUser().withProjectUserId(r.into(ProjectUserId.class))
-							.withProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).getName())));
-		});
-		return Lists.newArrayList(projectMap.values());
-	};
+	//
+	//	/**
+	//	 * Maps record into {@link User} object
+	//	 */
+	//	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
+	//		User user = new User();
+	//		Project defaultProject = new Project();
+	//		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
+	//		ofNullable(metaDataString).ifPresent(md -> {
+	//			try {
+	//				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+	//				user.setMetadata(metadata);
+	//			} catch (IOException e) {
+	//				throw new ReportPortalException("Error during parsing user metadata");
+	//			}
+	//		});
+	//
+	//		ProjectUser projectUser = new ProjectUser();
+	//		Project project = new Project();
+	//		project.setId(r.get(PROJECT_USER.PROJECT_ID));
+	//		project.setName(r.get(PROJECT.NAME));
+	//		project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
+	//		projectUser.setProject(project);
+	//		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE, String.class)));
+	//		user.getProjects().add(projectUser);
+	//
+	//		r = r.into(USERS.fields());
+	//		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
+	//		user.setId(r.get(USERS.ID));
+	//		user.setAttachment(r.get(USERS.ATTACHMENT));
+	//		user.setAttachmentThumbnail(r.get(USERS.ATTACHMENT_THUMBNAIL));
+	//		user.setDefaultProject(defaultProject);
+	//		user.setEmail(r.get(USERS.EMAIL));
+	//		user.setExpired(r.get(USERS.EXPIRED));
+	//		user.setFullName(r.get(USERS.FULL_NAME));
+	//		user.setLogin(r.get(USERS.LOGIN));
+	//		user.setPassword(r.get(USERS.PASSWORD));
+	//		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
+	//		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
+	//				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+	//
+	//		return user;
+	//	};
 
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();

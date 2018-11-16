@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Maps;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -34,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_USER_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -158,6 +161,21 @@ public class ResultFetchers {
 			integrations.put(id, integration);
 		});
 		return new ArrayList<>(integrations.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = records -> {
+		Map<Long, User> users = Maps.newLinkedHashMap();
+		records.forEach(record -> {
+			Long id = record.get(USERS.ID);
+			User user;
+			if (!users.containsKey(id)) {
+				user = record.map(USER_MAPPER);
+			} else {
+				user = users.get(id);
+			}
+			user.getProjects().add(PROJECT_USER_MAPPER.map(record));
+		});
+		return new ArrayList<>(users.values());
 	};
 
 }
