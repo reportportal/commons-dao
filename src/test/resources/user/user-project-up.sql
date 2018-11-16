@@ -39,8 +39,8 @@ BEGIN
   INSERT INTO attribute (name) VALUES ('email.from');
 
   -- Superadmin project and user
-  INSERT INTO project (name, project_type, additional_info, creation_date)
-  VALUES ('superadmin_personal', 'PERSONAL', 'another additional info', now());
+  INSERT INTO project (name, project_type, creation_date)
+  VALUES ('superadmin_personal', 'PERSONAL', now());
   superadminProject := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
   INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
@@ -58,8 +58,8 @@ BEGIN
   VALUES (superadmin, superadminProject, 'PROJECT_MANAGER');
 
   -- Default project and user
-  INSERT INTO project (name, project_type, additional_info, creation_date)
-  VALUES ('default_personal', 'PERSONAL', 'additional info', now());
+  INSERT INTO project (name, project_type, creation_date)
+  VALUES ('default_personal', 'PERSONAL', now());
   defaultProject := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
   INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired)
