@@ -323,7 +323,7 @@ public enum FilterTarget {
 	ACTIVITY_TARGET(Activity.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
