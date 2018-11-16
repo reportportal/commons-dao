@@ -18,15 +18,17 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 
 public class TestItemCriteriaConstant {
 
-	public static final String CRITERIA_LAUNCH_ID = "launch";
-	public static final String CRITERIA_PARENT_ID = "parent";
 	public static final String CRITERIA_TI_STATUS = "status";
-	public static final String CRITERIA_HAS_CHILDREN = "has_children";
+	public static final String CRITERIA_HAS_CHILDREN = "hasChildren";
 	public static final String CRITERIA_ITEM_TAG = "tags";
 	public static final String CROSSTAB_TEST_ITEM_ID = "ct_ti_id";
-	public static final String CRITERIA_NAME = "name";
 	public static final String CRITERIA_TYPE = "type";
 	public static final String CRITERIA_PATH = "path";
 	public static final String CRITERIA_ISSUE_TYPE = "issue$issue_type";
+	public static final String CRITERIA_UNIQUE_ID = "uniqueId";
+	public static final String CRITERIA_PARENT_ID = "parentId";
+	public static final String CRITERIA_TI_DURATION = "duration";
+	public static final String CRITERIA_TI_PARAMETER_KEY = "key";
+	public static final String CRITERIA_TI_PARAMETER_VALUE = "value";
 
 }
