@@ -177,7 +177,7 @@ public class RecordMappers {
 
 	public static final RecordMapper<Record, ProjectUser> PROJECT_USER_MAPPER = r -> {
 		ProjectUser projectUser = new ProjectUser();
-		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE).getName()));
+		projectUser.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class));
 		Project project = new Project();
 		project.setId(r.get(PROJECT_USER.PROJECT_ID));
 		User user = new User();
