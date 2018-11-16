@@ -145,7 +145,7 @@ public class RecordMappers {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(LAUNCH.ID)));
+		testItem.setLaunch(new Launch(r.get(TEST_ITEM.LAUNCH_ID)));
 		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
 		return testItem;
 	};
