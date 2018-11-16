@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.name;
