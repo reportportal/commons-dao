@@ -57,7 +57,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -146,8 +145,8 @@ public class RecordMappers {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(CRITERIA_LAUNCH_ID, Long.class)));
-		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID, Long.class)));
+		testItem.setLaunch(new Launch(r.get(LAUNCH.ID)));
+		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
 		return testItem;
 	};
 
