@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.log.Log;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.List;
 /**
  * @author Pavel Bortnik
  */
-public interface LogRepository extends JpaRepository<Log, Long>, LogRepositoryCustom {
+public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRepositoryCustom {
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 
