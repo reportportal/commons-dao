@@ -19,8 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
 import java.util.List;
@@ -156,6 +154,4 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return id -> name
 	 */
 	Map<Long, String> selectPathNames(String path);
-
-	Page<Long> getIdsByLaunchId(Long launchId, Pageable pageable);
 }

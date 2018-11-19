@@ -243,19 +243,4 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
-	@Override
-	public Page<Long> getIdsByLaunchId(Long launchId, Pageable pageable) {
-
-		Condition condition = TEST_ITEM.LAUNCH_ID.eq(launchId);
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(selectTestItemIdQuery(condition).limit(pageable.getPageSize())
-						.offset(Long.valueOf(pageable.getOffset()).intValue())).into(Long.class),
-				pageable,
-				() -> dsl.fetchCount(selectTestItemIdQuery(condition))
-		);
-	}
-
-	private SelectConditionStep<? extends Record> selectTestItemIdQuery(Condition condition) {
-		return dsl.select(TEST_ITEM.ITEM_ID).from(TEST_ITEM).where(condition);
-	}
 }
