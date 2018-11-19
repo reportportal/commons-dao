@@ -196,50 +196,6 @@ public class RecordMappers {
 		return projectUser;
 	};
 
-	//
-	//	/**
-	//	 * Maps record into {@link User} object
-	//	 */
-	//	public static final RecordMapper<Record, User> USER_RECORD_MAPPER = r -> {
-	//		User user = new User();
-	//		Project defaultProject = new Project();
-	//		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
-	//		ofNullable(metaDataString).ifPresent(md -> {
-	//			try {
-	//				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
-	//				user.setMetadata(metadata);
-	//			} catch (IOException e) {
-	//				throw new ReportPortalException("Error during parsing user metadata");
-	//			}
-	//		});
-	//
-	//		ProjectUser projectUser = new ProjectUser();
-	//		Project project = new Project();
-	//		project.setId(r.get(PROJECT_USER.PROJECT_ID));
-	//		project.setName(r.get(PROJECT.NAME));
-	//		project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
-	//		projectUser.setProject(project);
-	//		projectUser.setProjectRole(ProjectRole.valueOf(r.get(PROJECT_USER.PROJECT_ROLE, String.class)));
-	//		user.getProjects().add(projectUser);
-	//
-	//		r = r.into(USERS.fields());
-	//		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
-	//		user.setId(r.get(USERS.ID));
-	//		user.setAttachment(r.get(USERS.ATTACHMENT));
-	//		user.setAttachmentThumbnail(r.get(USERS.ATTACHMENT_THUMBNAIL));
-	//		user.setDefaultProject(defaultProject);
-	//		user.setEmail(r.get(USERS.EMAIL));
-	//		user.setExpired(r.get(USERS.EXPIRED));
-	//		user.setFullName(r.get(USERS.FULL_NAME));
-	//		user.setLogin(r.get(USERS.LOGIN));
-	//		user.setPassword(r.get(USERS.PASSWORD));
-	//		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
-	//		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
-	//				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
-	//
-	//		return user;
-	//	};
-
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();
 		activity.setId(r.get(ACTIVITY.ID));
