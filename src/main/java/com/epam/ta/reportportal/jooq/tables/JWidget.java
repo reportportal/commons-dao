@@ -57,7 +57,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidget extends TableImpl<JWidgetRecord> {
 
-    private static final long serialVersionUID = -347916492;
+    private static final long serialVersionUID = -413894655;
 
     /**
      * The reference instance of <code>public.widget</code>
@@ -101,11 +101,6 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      * The column <code>public.widget.project_id</code>.
      */
     public final TableField<JWidgetRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
-
-    /**
-     * The column <code>public.widget.widget_options</code>.
-     */
-    public final TableField<JWidgetRecord, Object> WIDGET_OPTIONS = createField("widget_options", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
 
     /**
      * Create a <code>public.widget</code> table reference
