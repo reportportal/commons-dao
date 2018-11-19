@@ -44,6 +44,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
@@ -156,7 +158,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(CRITERIA_LAUNCH_TAG, LAUNCH_TAG.VALUE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_STATISTICS_FIELD, STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_STATISTICS_COUNT, STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
@@ -175,7 +178,8 @@ public enum FilterTarget {
 					LAUNCH.LAST_MODIFIED,
 					LAUNCH.MODE,
 					LAUNCH.STATUS,
-					LAUNCH_TAG.VALUE,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
 					STATISTICS.S_COUNTER,
 					STATISTICS_FIELD.NAME,
 					USERS.ID,
@@ -186,7 +190,7 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(LAUNCH);
-			query.addJoin(LAUNCH_TAG, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_TAG.LAUNCH_ID));
+			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, LAUNCH.USER_ID.eq(USERS.ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
 			query.addJoin(STATISTICS_FIELD, JoinType.LEFT_OUTER_JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
@@ -229,7 +233,8 @@ public enum FilterTarget {
 					new CriteriaHolder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 					new CriteriaHolder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder(CRITERIA_ITEM_TAG, ITEM_TAG.VALUE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class)
 			)
 	) {
@@ -250,7 +255,8 @@ public enum FilterTarget {
 					TEST_ITEM_RESULTS.STATUS,
 					TEST_ITEM_RESULTS.END_TIME,
 					TEST_ITEM_RESULTS.DURATION,
-					ITEM_TAG.VALUE,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
 					PARAMETER.KEY,
 					PARAMETER.VALUE,
 					STATISTICS_FIELD.NAME,
@@ -274,7 +280,7 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(TEST_ITEM);
-			query.addJoin(ITEM_TAG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_TAG.ITEM_ID));
+			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID));
 			query.addJoin(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID));
 			query.addJoin(STATISTICS_FIELD, JoinType.JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));

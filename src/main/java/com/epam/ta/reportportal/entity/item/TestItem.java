@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.item;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -81,8 +82,7 @@ public class TestItem implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
-	//	@JsonIgnore
-	private Set<TestItemTag> tags = Sets.newHashSet();
+	private Set<ItemAttribute> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
@@ -127,11 +127,11 @@ public class TestItem implements Serializable {
 		this.hasChildren = hasChildren;
 	}
 
-	public Set<TestItemTag> getTags() {
+	public Set<ItemAttribute> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<TestItemTag> tags) {
+	public void setTags(Set<ItemAttribute> tags) {
 		this.tags.clear();
 		this.tags.addAll(tags);
 	}

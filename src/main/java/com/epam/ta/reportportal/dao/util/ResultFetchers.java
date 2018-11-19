@@ -17,12 +17,11 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
-import com.epam.ta.reportportal.entity.item.TestItemTag;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
@@ -86,7 +85,7 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			launch.getTags().add(record.into(LaunchTag.class));
+			launch.getTags().add(record.into(ItemAttribute.class));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
@@ -106,7 +105,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			testItem.getTags().add(record.into(TestItemTag.class));
+			testItem.getTags().add(record.into(ItemAttribute.class));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);
