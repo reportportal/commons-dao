@@ -20,9 +20,6 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -41,7 +38,6 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "test_item", schema = "public")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class TestItem implements Serializable {
 
 	@Id
@@ -65,7 +61,6 @@ public class TestItem implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "launch_id")
-	@JsonIgnore
 	private Launch launch;
 
 	@LastModifiedDate
@@ -81,12 +76,10 @@ public class TestItem implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
-	//	@JsonIgnore
 	private Set<TestItemTag> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
-	@JsonIgnore
 	private Set<Log> logs = Sets.newHashSet();
 
 	@Column(name = "path", nullable = false, columnDefinition = "ltree")
@@ -98,11 +91,9 @@ public class TestItem implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
-	@JsonIgnore
 	private TestItem parent;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
-	@JsonManagedReference("itemResults")
 	private TestItemResults itemResults;
 
 	@Column(name = "has_children")
