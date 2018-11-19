@@ -29,12 +29,10 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
-import com.epam.ta.reportportal.entity.user.ProjectUserId;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -83,7 +81,13 @@ public class RecordMappers {
 	/**
 	 * Maps record into {@link Attribute} object
 	 */
-	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> record.into(Attribute.class);
+	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> {
+		Attribute attribute = new Attribute();
+		ofNullable(record.field(ATTRIBUTE.ID)).ifPresent(f -> attribute.setId(record.get(f)));
+		ofNullable(record.field(ATTRIBUTE.NAME)).ifPresent(f -> attribute.setName(record.get(f)));
+
+		return attribute;
+	};
 
 	/**
 	 * Maps record into {@link IssueType} object
@@ -108,15 +112,18 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
 		Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.CREATION_DATE, PROJECT.PROJECT_TYPE).into(Project.class);
-		String metaDataString = r.get(PROJECT.METADATA, String.class);
-		ofNullable(metaDataString).ifPresent(md -> {
-			try {
-				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
-				project.setMetadata(metadata);
-			} catch (IOException e) {
-				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
-			}
+		ofNullable(r.field(PROJECT.METADATA)).ifPresent(f -> {
+			String metaDataString = r.get(f, String.class);
+			ofNullable(metaDataString).ifPresent(md -> {
+				try {
+					Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+					project.setMetadata(metadata);
+				} catch (IOException e) {
+					throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
+				}
+			});
 		});
+
 		return project;
 	};
 
@@ -196,34 +203,6 @@ public class RecordMappers {
 		projectUser.setProject(project);
 		projectUser.setUser(user);
 		return projectUser;
-	};
-
-	/**
-	 * Map results of records into list of {@link Project}
-	 */
-	public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = result -> {
-		Map<Long, Project> projectMap = Maps.newLinkedHashMap();
-		result.forEach(r -> {
-			Long projectId = r.get(PROJECT.ID);
-			Project project;
-			if (projectMap.containsKey(projectId)) {
-				project = projectMap.get(projectId);
-			} else {
-				project = r.into(Project.class);
-				project.setId(projectId);
-			}
-			project.getProjectAttributes()
-					.add(new ProjectAttribute().withProject(project)
-							.withAttribute(ATTRIBUTE_MAPPER.map(r))
-							.withValue(r.get(PROJECT_ATTRIBUTE.VALUE)));
-			ofNullable(r.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> project.getUsers()
-					.add(new ProjectUser().withProjectUserId(r.into(ProjectUserId.class))
-							.withProjectRole(ProjectRole.valueOf(r.get(f).getName()))));
-
-			projectMap.put(projectId, project);
-
-		});
-		return Lists.newArrayList(projectMap.values());
 	};
 
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {

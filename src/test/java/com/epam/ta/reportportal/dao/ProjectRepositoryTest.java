@@ -16,7 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
@@ -46,6 +48,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ATTRIBUTE_NAME;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -73,7 +76,13 @@ public class ProjectRepositoryTest {
 
 	@Test
 	public void findAllIdsAndProjectAttributesTest() {
-		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(ProjectAttributeEnum.KEEP_LOGS, PageRequest.of(0, 2));
+
+		Filter filter = Filter.builder().withTarget(Project.class).withCondition(new FilterCondition(Condition.EQUALS, false,
+
+				ProjectAttributeEnum.KEEP_LOGS.getAttribute(), CRITERIA_ATTRIBUTE_NAME
+		)).build();
+
+		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(filter, PageRequest.of(0, 2));
 
 		Assert.assertNotNull(projects);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(projects.getContent()));
@@ -111,8 +120,7 @@ public class ProjectRepositoryTest {
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(3));
-		Assert.assertThat(
-				"Results don't contain all project",
+		Assert.assertThat("Results don't contain all project",
 				names,
 				Matchers.hasItems("test_user_1_personal", "test_user_2_personal", "test_common_project_1")
 		);

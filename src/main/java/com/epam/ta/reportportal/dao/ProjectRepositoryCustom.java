@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.springframework.data.domain.Page;
@@ -67,5 +66,14 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 */
 	List<String> findAllProjectNames();
 
-	Page<Project> findAllIdsAndProjectAttributes(ProjectAttributeEnum projectAttribute, Pageable pageable);
+	/**
+	 * Get {@link Page} of {@link Project#id} with attributes
+	 *
+	 * @param filter   {@link Filter}
+	 * @param pageable {@link Pageable}
+	 * @return {@link Page} of {@link Project}s that contain only
+	 * {@link Project#id}, {@link com.epam.ta.reportportal.entity.attribute.Attribute#name}
+	 * and {@link com.epam.ta.reportportal.entity.project.ProjectAttribute#value}
+	 */
+	Page<Project> findAllIdsAndProjectAttributes(Filter filter, Pageable pageable);
 }
