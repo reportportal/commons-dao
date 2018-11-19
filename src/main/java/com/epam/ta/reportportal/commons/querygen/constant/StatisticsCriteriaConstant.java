@@ -17,15 +17,14 @@
 package com.epam.ta.reportportal.commons.querygen.constant;
 
 /**
- * Activity search criteria fields.
- *
- * @author Ivan Budaev
- *
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ActivityCriteriaConstant {
+public class StatisticsCriteriaConstant {
 
-	public static final String CRITERIA_ACTION = "action";
-	public static final String CRITERIA_OBJECT_ID = "objectId";
-	public static final String CRITERIA_ENTITY = "entity";
-	public static final String CRITERIA_CREATION_DATE = "creationDate";
+	public static final String CRITERIA_STATISTICS_FIELD = "statistics";
+	public static final String CRITERIA_STATISTICS_COUNT = "count";
+
+	private StatisticsCriteriaConstant() {
+		//static only
+	}
 }

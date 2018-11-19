@@ -50,7 +50,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 
 /**
  * @author Ivan Budaev
@@ -251,9 +252,11 @@ public class UserRepositoryTest {
 
 	@Test
 	public void searchForUserTest() {
-
-		Page<User> users = userRepository.searchForUser("tes", PageRequest.of(0, 5));
-
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_NAME))
+				.build();
+		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
 		Assert.assertNotNull(users);
 		Assert.assertTrue(users.getSize() >= 1);
 	}

@@ -29,13 +29,11 @@ import java.util.function.Predicate;
  * conditions<br>
  *
  * @author Andrei Varabyeu
- * @see com.epam.ta.reportportal.database.search.Condition
- * @see com.epam.ta.reportportal.database.search.QueryBuilder
  */
 public class FilterRules {
 
 	private FilterRules() {
-
+		//static only
 	}
 
 	/**

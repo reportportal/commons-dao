@@ -23,5 +23,5 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  *
  */
 public class IntegrationCriteriaConstant {
-	public static final String CRITERIA_TYPE = "type";
+	public static final String CRITERIA_INTEGRATION_TYPE = "type";
 }

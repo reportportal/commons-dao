@@ -22,12 +22,14 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * @author Anton Machulski
  */
 public class GeneralCriteriaConstant {
-	public static final String CRITERIA_ES_STATUS = "es_status";
 	public static final String CRITERIA_ID = "id";
+	public static final String CRITERIA_PROJECT_ID = "projectId";
+	public static final String CRITERIA_USER_ID = "userId";
+	public static final String CRITERIA_LAST_MODIFIED = "lastModified";
 	public static final String CRITERIA_NAME = "name";
+	public static final String CRITERIA_START_TIME = "startTime";
 	public static final String CRITERIA_DESCRIPTION = "description";
 	public static final String CRITERIA_PROJECT = "project";
-	public static final String CRITERIA_PROJECT_ID = "project_id";
-	public static final String CRITERIA_LAUNCH_ID = "launch_id";
-	public static final String CRITERIA_PARENT_ID = "parent_id";
+	public static final String CRITERIA_LAUNCH_ID = "launchId";
+	public static final String CRITERIA_END_TIME = "endTime";
 }

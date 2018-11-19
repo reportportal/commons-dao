@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVITY_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 
 /**
@@ -61,13 +62,15 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public List<Activity> findByFilter(Filter filter) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(ACTIVITY_MAPPER);
+		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<Activity> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(ACTIVITY_MAPPER),
-				pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 }

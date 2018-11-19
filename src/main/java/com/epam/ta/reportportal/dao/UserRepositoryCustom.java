@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BinaryData;
-import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +25,7 @@ import org.springframework.data.domain.Pageable;
 /**
  * @author Pavel Bortnik
  */
-public interface UserRepositoryCustom extends FilterableRepository<User>{
+public interface UserRepositoryCustom extends FilterableRepository<User> {
 
 	String uploadUserPhoto(String username, BinaryData binaryData);
 
@@ -35,8 +35,6 @@ public interface UserRepositoryCustom extends FilterableRepository<User>{
 
 	void deleteUserPhoto(String path);
 
-	Page<User> searchForUser(String term, Pageable pageable);
-
 	/**
 	 * Finds entities list according provided filter
 	 *
@@ -45,8 +43,6 @@ public interface UserRepositoryCustom extends FilterableRepository<User>{
 	 * @param exclude  Fields to exclude from query
 	 * @return Found Paged objects
 	 */
-	Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
-
-
+	Page<User> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude);
 
 }

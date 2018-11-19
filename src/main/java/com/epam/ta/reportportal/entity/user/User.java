@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -81,7 +80,6 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private UserType userType;
 
-	@JsonManagedReference(value = "projects")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<ProjectUser> projects = Sets.newHashSet();
 

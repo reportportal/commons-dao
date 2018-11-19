@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -39,9 +38,8 @@ import java.util.Objects;
  */
 public class CriteriaHolder {
 
-	// added for deserialization from DB
 	public CriteriaHolder() {
-
+		// added for deserialization from DB
 	}
 
 	/**
@@ -56,20 +54,16 @@ public class CriteriaHolder {
 
 	private Class<?> dataType;
 
-	private boolean hasDynamicPart;
-
-	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType, boolean hasDynamicPart) {
+	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
 		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
 		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null");
 		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
-		this.hasDynamicPart = hasDynamicPart;
 	}
 
 	public CriteriaHolder(CriteriaHolder holder) {
 		this.filterCriteria = holder.getFilterCriteria();
 		this.queryCriteria = holder.getQueryCriteria();
 		this.dataType = holder.getDataType();
-		this.hasDynamicPart = holder.isHasDynamicPart();
 	}
 
 	public String getFilterCriteria() {
@@ -82,10 +76,6 @@ public class CriteriaHolder {
 
 	public Class<?> getDataType() {
 		return dataType;
-	}
-
-	public boolean isHasDynamicPart() {
-		return hasDynamicPart;
 	}
 
 	public Object castValue(String oneValue) {
@@ -136,32 +126,4 @@ public class CriteriaHolder {
 		return castedValue;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		CriteriaHolder that = (CriteriaHolder) o;
-		return hasDynamicPart == that.hasDynamicPart && Objects.equals(filterCriteria, that.filterCriteria) && Objects.equals(queryCriteria,
-				that.queryCriteria
-		) && Objects.equals(dataType, that.dataType);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(filterCriteria, queryCriteria, dataType, hasDynamicPart);
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("filterCriteria", filterCriteria)
-				.add("queryCriteria", queryCriteria)
-				.add("dataType", dataType)
-				.add("hasDynamicPart", hasDynamicPart)
-				.toString();
-	}
 }

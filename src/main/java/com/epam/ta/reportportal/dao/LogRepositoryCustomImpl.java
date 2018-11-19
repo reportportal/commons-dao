@@ -50,6 +50,8 @@ import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
+import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -114,17 +116,16 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Log> findByFilter(Filter filter) {
-
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(LOG_MAPPER);
+		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<Log> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(LOG_MAPPER),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	@Override

@@ -19,33 +19,18 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.SelectForUpdateStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_FETCHER;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.name;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
 
 /**
  * @author Pavel Bortnik
@@ -84,59 +69,26 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public Page<User> searchForUser(String term, Pageable pageable) {
-
-		SelectForUpdateStep<Record> select = dsl.select()
-				.from(USERS)
-				.where(USERS.LOGIN.like("%" + term + "%").or(USERS.FULL_NAME.like("%" + term + "%")).or(USERS.EMAIL.like("%" + term + "%")))
-				.limit(pageable.getPageSize())
-				.offset(Long.valueOf(pageable.getOffset()).intValue());
-
-		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(dsl.with("temp_users")
-				.as(select)
-				.select()
-				.from(USERS)
-				.join("temp_users")
-				.on(USERS.ID.eq(field(name("temp_users", "id"), Long.class)))
-				.leftJoin(PROJECT_USER)
-				.on(USERS.ID.eq(PROJECT_USER.USER_ID))
-				.leftJoin(PROJECT)
-				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID)))), pageable, () -> dsl.fetchCount(select));
-	}
-
-	@Override
-	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
-
-		List<Field<?>> fieldsForSelect = JUsers.USERS.fieldStream()
-				.map(Field::getName)
-				.filter(f -> Arrays.stream(exclude).noneMatch(exf -> exf.equalsIgnoreCase(f)))
-				.map(JooqFieldNameTransformer::fieldName)
-				.collect(Collectors.toList());
-
-		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ID.getName()));
-		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProjectUser.PROJECT_USER.PROJECT_ROLE.getName()));
-		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProject.PROJECT.NAME.getName()));
-		fieldsForSelect.add(JooqFieldNameTransformer.fieldName(JProject.PROJECT.PROJECT_TYPE.getName()));
-
-		return PageableExecutionUtils.getPage(
-				USER_FETCHER.apply(dsl.select(fieldsForSelect).from(QueryBuilder.newBuilder(filter).with(pageable).build()).fetch()),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+	public Page<User> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude) {
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget(), exclude)
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	@Override
 	public List<User> findByFilter(Filter filter) {
-		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).build()));
+		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<User> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 }

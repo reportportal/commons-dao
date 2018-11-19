@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.log;
 
 import com.epam.ta.reportportal.entity.item.TestItem;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -55,7 +54,6 @@ public class Log implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "item_id")
-	@JsonIgnore
 	private TestItem testItem;
 
 	@Column(name = "attachment")

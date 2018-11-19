@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.commons;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -120,6 +121,7 @@ public abstract class JsonbUserType implements UserType {
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isMutable() {
 		return true;
 	}

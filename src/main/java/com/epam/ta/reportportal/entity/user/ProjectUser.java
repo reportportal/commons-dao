@@ -19,13 +19,13 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Andrei Varabyeu
@@ -41,12 +41,10 @@ public class ProjectUser implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("projectId")
-	@JsonBackReference(value = "users")
 	private Project project;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("userId")
-	@JsonBackReference(value = "projects")
 	private User user;
 
 	@Column(name = "project_role")
@@ -104,5 +102,23 @@ public class ProjectUser implements Serializable {
 	public ProjectUser withProjectRole(ProjectRole projectRole) {
 		this.projectRole = projectRole;
 		return this;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ProjectUser that = (ProjectUser) o;
+		return Objects.equals(id, that.id) && Objects.equals(project, that.project) && Objects.equals(user, that.user)
+				&& projectRole == that.projectRole;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, project, user, projectRole);
 	}
 }
