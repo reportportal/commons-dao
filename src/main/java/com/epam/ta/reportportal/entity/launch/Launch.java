@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -47,7 +46,6 @@ import java.util.Set;
 		@UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
 		@Index(name = "launch_pk", unique = true, columnList = "id ASC"),
 		@Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Launch implements Serializable {
 
 	@Id

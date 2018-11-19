@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.ProjectIssueType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.TypeDef;
 
@@ -56,7 +55,6 @@ public class IssueType implements Serializable {
 	private String hexColor;
 
 	@OneToMany(mappedBy = "issueType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonIgnore
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	public IssueType() {
