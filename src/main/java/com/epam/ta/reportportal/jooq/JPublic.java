@@ -78,7 +78,6 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
 import com.epam.ta.reportportal.jooq.tables.records.JConnectbyRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JCrosstab2Record;
 import com.epam.ta.reportportal.jooq.tables.records.JCrosstab3Record;
@@ -118,7 +117,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 181327687;
+    private static final long serialVersionUID = -1414632897;
 
     /**
      * The reference instance of <code>public</code>
@@ -542,11 +541,6 @@ public class JPublic extends SchemaImpl {
     public final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
     /**
-     * The table <code>public.widget_option</code>.
-     */
-    public final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
-
-    /**
      * No further instances allowed
      */
     private JPublic() {
@@ -605,8 +599,7 @@ public class JPublic extends SchemaImpl {
             Sequences.TICKET_ID_SEQ,
             Sequences.USER_PREFERENCE_ID_SEQ,
             Sequences.USERS_ID_SEQ,
-            Sequences.WIDGET_ID_SEQ,
-            Sequences.WIDGET_OPTION_ID_SEQ);
+            Sequences.WIDGET_ID_SEQ);
     }
 
     @Override
@@ -675,8 +668,7 @@ public class JPublic extends SchemaImpl {
             JUserPreference.USER_PREFERENCE,
             JUsers.USERS,
             JWidget.WIDGET,
-            JWidgetFilter.WIDGET_FILTER,
-            JWidgetOption.WIDGET_OPTION);
+            JWidgetFilter.WIDGET_FILTER);
     }
 
     @Override

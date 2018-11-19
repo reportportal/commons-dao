@@ -69,7 +69,6 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
 
 import javax.annotation.Generated;
 
@@ -165,12 +164,12 @@ public class Indexes {
     public static final Index USER_FILTER_PK = Indexes0.USER_FILTER_PK;
     public static final Index USER_PREFERENCE_PK = Indexes0.USER_PREFERENCE_PK;
     public static final Index USER_PREFERENCE_UQ = Indexes0.USER_PREFERENCE_UQ;
+    public static final Index USERS_EMAIL_KEY = Indexes0.USERS_EMAIL_KEY;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
     public static final Index UNQ_WIDGET_NAME_PROJECT = Indexes0.UNQ_WIDGET_NAME_PROJECT;
     public static final Index WIDGET_ID = Indexes0.WIDGET_ID;
     public static final Index WIDGET_FILTER_PK = Indexes0.WIDGET_FILTER_PK;
-    public static final Index WIDGET_OPTION_PK = Indexes0.WIDGET_OPTION_PK;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
@@ -247,11 +246,11 @@ public class Indexes {
         public static Index USER_FILTER_PK = Internal.createIndex("user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
         public static Index USER_PREFERENCE_PK = Internal.createIndex("user_preference_pk", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.ID }, true);
         public static Index USER_PREFERENCE_UQ = Internal.createIndex("user_preference_uq", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID }, true);
+        public static Index USERS_EMAIL_KEY = Internal.createIndex("users_email_key", JUsers.USERS, new OrderField[] { JUsers.USERS.EMAIL }, true);
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);
         public static Index UNQ_WIDGET_NAME_PROJECT = Internal.createIndex("unq_widget_name_project", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID }, true);
         public static Index WIDGET_ID = Internal.createIndex("widget_id", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.ID }, true);
         public static Index WIDGET_FILTER_PK = Internal.createIndex("widget_filter_pk", JWidgetFilter.WIDGET_FILTER, new OrderField[] { JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID }, true);
-        public static Index WIDGET_OPTION_PK = Internal.createIndex("widget_option_pk", JWidgetOption.WIDGET_OPTION, new OrderField[] { JWidgetOption.WIDGET_OPTION.ID }, true);
     }
 }
