@@ -53,7 +53,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 
 /**
  * @author Ivan Budaev

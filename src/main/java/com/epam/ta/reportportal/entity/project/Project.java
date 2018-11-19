@@ -77,7 +77,7 @@ public class Project implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonManagedReference("users")
-	private Set<ProjectUser> users;
+	private Set<ProjectUser> users = Sets.newHashSet();
 
 	public Project(Long id, String name) {
 		this.id = id;

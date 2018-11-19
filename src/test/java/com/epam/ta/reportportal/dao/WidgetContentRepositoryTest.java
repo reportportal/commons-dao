@@ -57,7 +57,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;

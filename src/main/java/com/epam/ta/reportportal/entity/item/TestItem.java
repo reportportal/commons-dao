@@ -1,22 +1,21 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.entity.item;
 
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -33,7 +32,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -76,16 +74,15 @@ public class TestItem implements Serializable {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "parameter", joinColumns = @JoinColumn(name = "item_id"))
-	private List<Parameter> parameters;
+	private Set<Parameter> parameters = Sets.newHashSet();
 
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
-	@JsonIgnore
-	private Set<ItemAttribute> tags = Sets.newHashSet();
-
+	//	@JsonIgnore
+	private Set<TestItemTag> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
@@ -130,11 +127,11 @@ public class TestItem implements Serializable {
 		this.hasChildren = hasChildren;
 	}
 
-	public Set<ItemAttribute> getTags() {
+	public Set<TestItemTag> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<ItemAttribute> tags) {
+	public void setTags(Set<TestItemTag> tags) {
 		this.tags.clear();
 		this.tags.addAll(tags);
 	}
@@ -200,11 +197,11 @@ public class TestItem implements Serializable {
 		this.description = description;
 	}
 
-	public List<Parameter> getParameters() {
+	public Set<Parameter> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(List<Parameter> parameters) {
+	public void setParameters(Set<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 
