@@ -280,6 +280,18 @@ public class RecordMappers {
 				widget.setContentFields(contentFields);
 			});
 
+	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTIONS_MAPPER = (widget, res) -> {
+		ofNullable(res.get(WIDGET.WIDGET_OPTIONS, String.class)).ifPresent(wo -> {
+			try {
+				WidgetOptions widgetOptions = objectMapper.readValue(wo, WidgetOptions.class);
+				widget.setWidgetOptions(widgetOptions);
+			} catch (IOException e) {
+				throw new ReportPortalException("Error during parsing widget options");
+			}
+		});
+
+	};
+
 	public static final RecordMapper<? super Record, Widget> WIDGET_RECORD_MAPPER = r -> {
 		Widget widget = new Widget();
 		widget.setDescription(r.get(WIDGET.DESCRIPTION));
@@ -288,16 +300,9 @@ public class RecordMappers {
 		widget.setItemsCount(r.get(WIDGET.ITEMS_COUNT));
 		widget.setWidgetType(r.get(WIDGET.WIDGET_TYPE));
 
-		String widgetOptionsString = r.get(WIDGET.WIDGET_OPTIONS, String.class);
-		try {
-			WidgetOptions widgetOptions = objectMapper.readValue(widgetOptionsString, WidgetOptions.class);
-			widget.setWidgetOptions(widgetOptions);
-		} catch (IOException e) {
-			throw new ReportPortalException("Error during parsing widget options");
-		}
-
 		WIDGET_USER_FILTER_MAPPER.accept(widget, r);
 		WIDGET_CONTENT_FIELD_MAPPER.accept(widget, r);
+		WIDGET_OPTIONS_MAPPER.accept(widget, r);
 
 		return widget;
 	};
@@ -309,13 +314,7 @@ public class RecordMappers {
 			Widget widget = widgetMap.get(widgetId);
 			if (ofNullable(widget).isPresent()) {
 				WIDGET_USER_FILTER_MAPPER.accept(widget, res);
-				String widgetOptionsString = res.get(WIDGET.WIDGET_OPTIONS, String.class);
-				try {
-					WidgetOptions widgetOptions = objectMapper.readValue(widgetOptionsString, WidgetOptions.class);
-					widget.setWidgetOptions(widgetOptions);
-				} catch (IOException e) {
-					throw new ReportPortalException("Error during parsing widget options");
-				}
+				WIDGET_OPTIONS_MAPPER.accept(widget, res);
 				WIDGET_CONTENT_FIELD_MAPPER.accept(widget, res);
 			} else {
 				widgetMap.put(widgetId, WIDGET_RECORD_MAPPER.map(res));
