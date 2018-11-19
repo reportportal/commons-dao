@@ -448,7 +448,7 @@ public enum FilterTarget {
 	}
 
 	public SelectQuery<? extends Record> getQuery() {
-		SelectQuery<? extends Record> query = DSL.selectDistinct(idField().as(FILTERED_ID)).orderBy(idField().as(FILTERED_ID)).getQuery();
+		SelectQuery<? extends Record> query = DSL.selectDistinct(idField().as(FILTERED_ID)).getQuery();
 		joinTables(query);
 		return query;
 	}
