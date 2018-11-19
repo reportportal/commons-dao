@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.name;
@@ -53,16 +53,16 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public List<Project> findByFilter(Filter filter) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(PROJECT_MAPPER);
+		return PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<Project> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(PROJECT_MAPPER),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	@Override
@@ -74,22 +74,19 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
 								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
 						DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
-						fieldName(FILTERED_PROJECT, PROJECT.ID.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
+						PROJECT.ID,
+						PROJECT.CREATION_DATE,
+						PROJECT.NAME,
+						PROJECT.PROJECT_TYPE
 				)
-				.from(DSL.table(name(FILTERED_PROJECT))
-						.leftJoin(PROJECT_USER)
-						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT_USER.PROJECT_ID))
-						.leftJoin(LAUNCH)
-						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(LAUNCH.PROJECT_ID)))
-				.groupBy(
-						fieldName(FILTERED_PROJECT, PROJECT.ID.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.CREATION_DATE.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.NAME.getName()),
-						fieldName(FILTERED_PROJECT, PROJECT.PROJECT_TYPE.getName())
-				)
+				.from(PROJECT)
+				.leftJoin(PROJECT_USER)
+				.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+				.leftJoin(LAUNCH)
+				.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
+				.join(DSL.table(name(FILTERED_PROJECT)))
+				.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT.ID))
+				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
 				.fetch()
 				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}

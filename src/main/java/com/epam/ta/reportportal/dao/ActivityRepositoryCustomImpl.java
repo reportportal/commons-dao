@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVITY_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 
 /**
@@ -61,13 +62,15 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public List<Activity> findByFilter(Filter filter) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(ACTIVITY_MAPPER);
+		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<Activity> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(ACTIVITY_MAPPER),
-				pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 }
