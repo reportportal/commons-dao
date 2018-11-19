@@ -35,6 +35,7 @@ import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -272,18 +273,24 @@ public class RecordMappers {
 				widget.setFilters(filters);
 			});
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTION_MAPPER = (widget, res) -> ofNullable(widget.getWidgetOptions()).ifPresent(
-			options -> {
-				options.put(res.get(WIDGET_OPTION.OPTION), res.get(WIDGET_OPTION.VALUE));
-				widget.setWidgetOptions(options);
-			});
-
 	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD))
 			.ifPresent(field -> {
 				Set<String> contentFields = ofNullable(widget.getContentFields()).orElseGet(Sets::newLinkedHashSet);
 				contentFields.add(field);
 				widget.setContentFields(contentFields);
 			});
+
+	private static final BiConsumer<Widget, ? super Record> WIDGET_OPTIONS_MAPPER = (widget, res) -> {
+		ofNullable(res.get(WIDGET.WIDGET_OPTIONS, String.class)).ifPresent(wo -> {
+			try {
+				WidgetOptions widgetOptions = objectMapper.readValue(wo, WidgetOptions.class);
+				widget.setWidgetOptions(widgetOptions);
+			} catch (IOException e) {
+				throw new ReportPortalException("Error during parsing widget options");
+			}
+		});
+
+	};
 
 	public static final RecordMapper<? super Record, Widget> WIDGET_RECORD_MAPPER = r -> {
 		Widget widget = new Widget();
@@ -294,8 +301,8 @@ public class RecordMappers {
 		widget.setWidgetType(r.get(WIDGET.WIDGET_TYPE));
 
 		WIDGET_USER_FILTER_MAPPER.accept(widget, r);
-		WIDGET_OPTION_MAPPER.accept(widget, r);
 		WIDGET_CONTENT_FIELD_MAPPER.accept(widget, r);
+		WIDGET_OPTIONS_MAPPER.accept(widget, r);
 
 		return widget;
 	};
@@ -307,7 +314,7 @@ public class RecordMappers {
 			Widget widget = widgetMap.get(widgetId);
 			if (ofNullable(widget).isPresent()) {
 				WIDGET_USER_FILTER_MAPPER.accept(widget, res);
-				WIDGET_OPTION_MAPPER.accept(widget, res);
+				WIDGET_OPTIONS_MAPPER.accept(widget, res);
 				WIDGET_CONTENT_FIELD_MAPPER.accept(widget, res);
 			} else {
 				widgetMap.put(widgetId, WIDGET_RECORD_MAPPER.map(res));

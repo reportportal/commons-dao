@@ -78,7 +78,6 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.JWidgetOption;
 import com.epam.ta.reportportal.jooq.tables.records.JConnectbyRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JCrosstab2Record;
 import com.epam.ta.reportportal.jooq.tables.records.JCrosstab3Record;
@@ -521,9 +520,4 @@ public class Tables {
      * The table <code>public.widget_filter</code>.
      */
     public static final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
-
-    /**
-     * The table <code>public.widget_option</code>.
-     */
-    public static final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
 }
