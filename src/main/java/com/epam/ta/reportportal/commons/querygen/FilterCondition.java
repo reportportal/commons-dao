@@ -1,9 +1,26 @@
+/*
+ * Copyright (C) 2018 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.base.Preconditions;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.jooq.Operator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,17 +41,6 @@ public class FilterCondition implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
-
-	public FilterCondition() {
-	}
-
-	public FilterCondition(Condition condition, boolean negative, String value, String searchCriteria) {
-		super();
-		this.condition = condition;
-		this.value = value;
-		this.searchCriteria = searchCriteria;
-		this.negative = negative;
-	}
 
 	/**
 	 * Filter Condition
@@ -62,6 +68,29 @@ public class FilterCondition implements Serializable {
 	@Column(name = "negative")
 	private boolean negative;
 
+	/**
+	 * Whether this is 'AND' or 'OR' filter
+	 */
+	private Operator operator = Operator.AND;
+
+	public FilterCondition() {
+	}
+
+	public FilterCondition(Condition condition, boolean negative, String value, String searchCriteria) {
+		this.condition = condition;
+		this.value = value;
+		this.searchCriteria = searchCriteria;
+		this.negative = negative;
+	}
+
+	public FilterCondition(Operator operator, Condition condition, boolean negative, String value, String searchCriteria) {
+		this.condition = condition;
+		this.value = value;
+		this.searchCriteria = searchCriteria;
+		this.negative = negative;
+		this.operator = operator;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -84,6 +113,14 @@ public class FilterCondition implements Serializable {
 
 	public boolean isNegative() {
 		return negative;
+	}
+
+	public Operator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(Operator operator) {
+		this.operator = operator;
 	}
 
 	@Override
@@ -154,10 +191,16 @@ public class FilterCondition implements Serializable {
 	 * Builder for {@link FilterCondition}
 	 */
 	public static class ConditionBuilder {
+
 		private Condition condition;
+
 		private boolean negative;
+
 		private String value;
+
 		private String searchCriteria;
+
+		private Operator operator;
 
 		private ConditionBuilder() {
 
@@ -180,6 +223,11 @@ public class FilterCondition implements Serializable {
 
 		public FilterCondition.ConditionBuilder withSearchCriteria(String searchCriteria) {
 			this.searchCriteria = searchCriteria;
+			return this;
+		}
+
+		public FilterCondition.ConditionBuilder withOperator(Operator operator) {
+			this.operator = operator;
 			return this;
 		}
 
