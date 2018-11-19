@@ -49,10 +49,6 @@ public enum KeepLaunchDelay {
 		this.days = period;
 	}
 
-	public static KeepLaunchDelay getByName(String type) {
-		return KeepLaunchDelay.valueOf(type);
-	}
-
 	public static Optional<KeepLaunchDelay> findByName(String name) {
 		return Arrays.stream(KeepLaunchDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny();
 	}
