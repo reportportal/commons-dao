@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -162,8 +161,7 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
-				metadata,
+		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata,
 				project.metadata
 		);
 	}
@@ -174,8 +172,4 @@ public class Project implements Serializable {
 		return Objects.hash(name, creationDate, metadata);
 	}
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("name", name).add("users", users).add("creationDate", creationDate).toString();
-	}
 }
