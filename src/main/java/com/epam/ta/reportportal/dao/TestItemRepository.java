@@ -35,8 +35,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
-	@Query(value = "SELECT retries_statistics(:itemId)", nativeQuery = true)
-	void handleRetriesStatistics(@Param("itemId") Long itemId);
+	@Query(value = "SELECT retries_statistics(:launchId)", nativeQuery = true)
+	void handleRetriesStatistics(@Param("itemId") Long launchId);
 
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
