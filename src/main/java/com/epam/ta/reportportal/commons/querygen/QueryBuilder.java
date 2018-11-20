@@ -135,13 +135,9 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-			if (!order.getProperty().startsWith(STATISTICS_KEY)) {
-				query.addSelect(field(order.getProperty()));
-			} else {
-				query.addSelect(DSL.max(STATISTICS.S_COUNTER)
-						.filterWhere(STATISTICS_FIELD.NAME.eq(order.getProperty()))
-						.as(order.getProperty()));
-			}
+			query.addSelect(order.getProperty().startsWith(STATISTICS_KEY) ?
+					DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(order.getProperty())).as(order.getProperty()) :
+					field(order.getProperty()));
 			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
 		}));
 		return this;
@@ -175,6 +171,14 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder withWrapper(FilterTarget filterTarget, String... excludingFields) {
 		query = filterTarget.wrapQuery(query, excludingFields);
+		return this;
+	}
+
+	public QueryBuilder withWrappedSort(Sort sort) {
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
+				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC))));
 		return this;
 	}
 
