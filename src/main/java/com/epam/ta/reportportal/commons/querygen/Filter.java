@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.filterConverter;
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -123,8 +124,16 @@ public class Filter implements Serializable, Queryable {
 	public SelectQuery<? extends Record> toQuery() {
 		final Function<FilterCondition, org.jooq.Condition> transformer = filterConverter(this.target);
 		QueryBuilder query = QueryBuilder.newBuilder(this.target);
-		this.filterConditions.forEach(it -> query.addCondition(transformer.apply(it), it.getOperator()));
+		this.filterConditions.forEach(it -> transformCondition(transformer, query, it));
 		return query.build();
+	}
+
+	private void transformCondition(Function<FilterCondition, org.jooq.Condition> transformer, QueryBuilder query, FilterCondition it) {
+		if (it.getSearchCriteria().startsWith(STATISTICS_KEY)) {
+			query.addStatisticsCondition(it, transformer.apply(it), it.getOperator());
+		} else {
+			query.addCondition(transformer.apply(it), it.getOperator());
+		}
 	}
 
 	public static FilterBuilder builder() {
