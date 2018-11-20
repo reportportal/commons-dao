@@ -137,6 +137,10 @@ public class QueryBuilder {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
 			if (!order.getProperty().startsWith(STATISTICS_KEY)) {
 				query.addSelect(field(order.getProperty()));
+			} else {
+				query.addSelect(DSL.max(STATISTICS.S_COUNTER)
+						.filterWhere(STATISTICS_FIELD.NAME.eq(order.getProperty()))
+						.as(order.getProperty()));
 			}
 			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
 		}));
