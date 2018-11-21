@@ -96,6 +96,10 @@ public class TestItem implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "retry_of")
+	private Set<TestItem> retries = Sets.newLinkedHashSet();
+
 	@Column(name = "has_children")
 	private boolean hasChildren;
 
@@ -250,5 +254,13 @@ public class TestItem implements Serializable {
 
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
+	}
+
+	public Set<TestItem> getRetries() {
+		return retries;
+	}
+
+	public void setRetries(Set<TestItem> retries) {
+		this.retries = retries;
 	}
 }
