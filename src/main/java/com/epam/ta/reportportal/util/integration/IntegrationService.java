@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.commons.querygen.constant;
+package com.epam.ta.reportportal.util.integration;
+
+import com.epam.ta.reportportal.entity.project.Project;
+
+import java.util.Map;
 
 /**
- * Search criteria fields for Launch.
+ * Validates parameters of provided integration.
  *
- * @author Pavel Bortnik
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public class LaunchCriteriaConstant {
-	public static final String CRITERIA_LAUNCH_UUID = "uuid";
-	public static final String CRITERIA_LAUNCH_TAG = "tags";
-	public static final String CRITERIA_LAUNCH_MODE = "mode";
-	public static final String CRITERIA_LAUNCH_STATUS = "status";
-	public static final String CRITERIA_LAUNCH_NUMBER = "number";
+public interface IntegrationService {
+
+	/**
+	 * Validates parameters
+	 *
+	 * @param project               Project
+	 * @param integrationParameters Integration parameters
+	 * @return true if valid, false if not
+	 */
+	boolean validateIntegrationParameters(Project project, Map<String, Object> integrationParameters);
+
 }

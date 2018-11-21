@@ -19,14 +19,9 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
-import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,9 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
 
 /**
  * @author Yauheni_Martynau
@@ -46,28 +42,21 @@ import java.util.Optional;
 @Repository
 public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Integration> INTEGRATION_MAPPER = r -> new Integration(r.get(JIntegration.INTEGRATION.ID,
-			Long.class
-	), r.into(Project.class), r.into(IntegrationType.class),
-			// TODO move this mapper into common mappers and use that object mapper to parse json
-			null, r.get(JIntegration.INTEGRATION.CREATION_DATE, LocalDateTime.class)
-	);
-
 	@Autowired
 	private DSLContext dsl;
 
 	@Override
 	public List<Integration> findByFilter(Filter filter) {
-
-		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).map(INTEGRATION_MAPPER);
+		return INTEGRATION_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
 	public Page<Integration> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).map(INTEGRATION_MAPPER),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		return PageableExecutionUtils.getPage(INTEGRATION_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.with(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	private final EntityManager entityManager;
