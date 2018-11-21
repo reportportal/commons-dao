@@ -90,7 +90,7 @@ public class QueryBuilder {
 			query.addSelect(DSL.max(STATISTICS.S_COUNTER)
 					.filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria()))
 					.as(filterCondition.getSearchCriteria()));
-			query.addConditions(operator, condition);
+			query.addHaving(operator, condition);
 		}
 	}
 
