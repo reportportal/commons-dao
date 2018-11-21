@@ -39,6 +39,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -137,13 +138,10 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void findLaunchByFilterTest() {
-		List<Launch> launches = launchRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
-				false,
-				"build",
-				"tags"
-		)));
-
-		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
+		Sort sort = Sort.by(Sort.Direction.ASC, "statistics$executions$total");
+		Page<Launch> filter = launchRepository.findByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2, sort));
+		System.out.println(filter);
+		//		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
@@ -153,7 +151,8 @@ public class LaunchRepositoryTest {
 						CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Operator.OR, Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
+				new FilterCondition(Condition.GREATER_THAN, false, "1", "statistics$executions$total")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
