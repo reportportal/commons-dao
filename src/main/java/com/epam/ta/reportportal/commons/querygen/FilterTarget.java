@@ -443,7 +443,7 @@ public enum FilterTarget {
 	}
 
 	public SelectQuery<? extends Record> getQuery() {
-		SelectQuery<? extends Record> query = DSL.selectDistinct(idField().as(FILTERED_ID)).getQuery();
+		SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
 		joinTables(query);
 		query.addGroupBy(idField());
 		return query;
