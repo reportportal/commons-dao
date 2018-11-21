@@ -86,12 +86,7 @@ public class QueryBuilder {
 	 * @param condition Condition
 	 */
 	void addStatisticsCondition(FilterCondition filterCondition, Condition condition, Operator operator) {
-		if (filterCondition.getSearchCriteria().startsWith(STATISTICS_KEY)) {
-			query.addSelect(DSL.max(STATISTICS.S_COUNTER)
-					.filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria()))
-					.as(filterCondition.getSearchCriteria()));
-			query.addHaving(operator, condition);
-		}
+		query.addHaving(operator, condition);
 	}
 
 	public QueryBuilder with(boolean latest) {
@@ -192,7 +187,11 @@ public class QueryBuilder {
 				can be custom statistics so we can't know it till this moment
 			*/
 			if (searchCriteria.startsWith(STATISTICS_KEY)) {
-				criteriaHolder = Optional.of(new CriteriaHolder(searchCriteria, searchCriteria, Long.class));
+				criteriaHolder = Optional.of(new CriteriaHolder(
+						searchCriteria,
+						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())).toString(),
+						Long.class
+				));
 			}
 
 			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
