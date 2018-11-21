@@ -78,8 +78,7 @@ public class TestItem implements Serializable {
 	@JoinColumn(name = "item_id")
 	private Set<TestItemTag> tags = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinColumn(name = "item_id")
+	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Log> logs = Sets.newHashSet();
 
 	@Column(name = "path", nullable = false, columnDefinition = "ltree")
