@@ -68,14 +68,14 @@ public class LaunchRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-//		runSqlScript("/test-dropall-script.sql");
-//		runSqlScript("/test-create-script.sql");
-//		runSqlScript("/test-fill-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-create-script.sql");
+		//		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-//		runSqlScript("/test-dropall-script.sql");
+		//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -152,7 +152,7 @@ public class LaunchRepositoryTest {
 				),
 				new FilterCondition(Operator.OR, Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
-				new FilterCondition(Condition.GREATER_THAN, false, "1", "statistics$executions$total")
+				new FilterCondition(Condition.BETWEEN, false, "1540155600000,1542920400000", "startTime")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
