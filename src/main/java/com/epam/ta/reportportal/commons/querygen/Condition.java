@@ -25,7 +25,6 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.Predicates.or;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.*;
@@ -107,11 +106,10 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForString()).verify(errorType,
-					formattedSupplier("Contains condition applyable only for strings. Type of field is '{}'",
-							criteriaHolder.getDataType().getSimpleName()
-					)
-			);
+			expect(criteriaHolder, filterForString()).verify(errorType, formattedSupplier(
+					"Contains condition applyable only for strings. Type of field is '{}'",
+					criteriaHolder.getDataType().getSimpleName()
+			));
 		}
 
 		@Override
@@ -268,9 +266,8 @@ public enum Condition {
 			/* Validate only collections */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 			return DSL.condition(Operator.AND,
-					Arrays.stream((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
-							.map(val -> field(filter.getSearchCriteria()).in(val))
-							.collect(Collectors.toList())
+					DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria()))
+							.contains(DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)))
 			);
 
 		}
@@ -425,10 +422,12 @@ public enum Condition {
 			} else if (value.contains(TIMESTAMP_SEPARATOR)) {
 				final String[] values = value.split(TIMESTAMP_SEPARATOR);
 
-				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType, formattedSupplier(
-						"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
-						value
-				));
+				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType,
+						formattedSupplier(
+								"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
+								value
+						)
+				);
 				expect(values[ZONE_OFFSET_INDEX], zoneOffset()).verify(errorType,
 						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'",
 								values[ZONE_OFFSET_INDEX]
@@ -441,10 +440,12 @@ public enum Condition {
 						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[FIRST_TIMESTAMP_INDEX])
 				);
 			} else {
-				fail().withError(errorType, formattedSupplier(
-						"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
-						value
-				));
+				fail().withError(errorType,
+						formattedSupplier(
+								"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
+								value
+						)
+				);
 			}
 		}
 

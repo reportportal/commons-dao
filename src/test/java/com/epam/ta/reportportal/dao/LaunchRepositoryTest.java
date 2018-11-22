@@ -139,7 +139,7 @@ public class LaunchRepositoryTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, "statistics$executions$total");
-		Page<Launch> filter = launchRepository.findByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2, sort));
+		Page<Launch> filter = launchRepository.findByFilter(buildDefaultFilter(2L), PageRequest.of(0, 2, sort));
 		System.out.println(filter);
 		//		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
 	}
@@ -152,7 +152,7 @@ public class LaunchRepositoryTest {
 				),
 				new FilterCondition(Operator.OR, Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
-				new FilterCondition(Condition.BETWEEN, false, "1540155600000,1542920400000", "startTime")
+				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
