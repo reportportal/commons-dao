@@ -35,8 +35,9 @@ public class LaunchTag implements Serializable {
 	@Column(name = "value")
 	private String value;
 
-	@Column(name = "launch_id", precision = 64)
-	private Long launchId;
+	@ManyToOne
+	@JoinColumn(name = "launch_id")
+	private Launch launch;
 
 	public LaunchTag() {
 	}
@@ -61,17 +62,22 @@ public class LaunchTag implements Serializable {
 		this.value = value;
 	}
 
-	public Long getLaunchId() {
-		return launchId;
+	public Launch getLaunch() {
+		return launch;
 	}
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
+	public void setLaunch(Launch launch) {
+		this.launch = launch;
 	}
 
 	@Override
 	public String toString() {
-		return "LaunchTag{" + "id=" + id + ", value='" + value + '\'' + ", launchId=" + launchId + '}';
+		final StringBuilder sb = new StringBuilder("LaunchTag{");
+		sb.append("id=").append(id);
+		sb.append(", value='").append(value).append('\'');
+		sb.append(", launch=").append(launch);
+		sb.append('}');
+		return sb.toString();
 	}
 
 	@Override
@@ -83,11 +89,11 @@ public class LaunchTag implements Serializable {
 			return false;
 		}
 		LaunchTag launchTag = (LaunchTag) o;
-		return Objects.equals(id, launchTag.id) && Objects.equals(value, launchTag.value) && Objects.equals(launchId, launchTag.launchId);
+		return Objects.equals(id, launchTag.id) && Objects.equals(value, launchTag.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, value, launchId);
+		return Objects.hash(id, value);
 	}
 }
