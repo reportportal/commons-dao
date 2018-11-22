@@ -130,7 +130,7 @@ public class Filter implements Serializable, Queryable {
 
 	private void transformCondition(Function<FilterCondition, org.jooq.Condition> transformer, QueryBuilder query, FilterCondition it) {
 		if (it.getSearchCriteria().startsWith(STATISTICS_KEY)) {
-			query.addStatisticsCondition(it, transformer.apply(it), it.getOperator());
+			query.addStatisticsCondition(transformer.apply(it), it.getOperator());
 		} else {
 			query.addCondition(transformer.apply(it), it.getOperator());
 		}
