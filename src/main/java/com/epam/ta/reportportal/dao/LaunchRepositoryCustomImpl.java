@@ -168,7 +168,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.from(LAUNCH)
 				.where(LAUNCH.PROJECT_ID.eq(projectId))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
+				.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)).orderBy(LAUNCH.START_TIME.desc())
 				.limit(1)
 				.fetchOne()
 				.into(Launch.class));
