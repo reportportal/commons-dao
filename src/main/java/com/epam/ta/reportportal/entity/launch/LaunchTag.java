@@ -89,14 +89,11 @@ public class LaunchTag implements Serializable {
 			return false;
 		}
 		LaunchTag launchTag = (LaunchTag) o;
-		return Objects.equals(id, launchTag.id) && Objects.equals(value, launchTag.value) && Objects.equals(
-				launch.getId(),
-				launchTag.launch.getId()
-		);
+		return Objects.equals(id, launchTag.id) && Objects.equals(value, launchTag.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, value, launch.getId());
+		return Objects.hash(id, value);
 	}
 }
