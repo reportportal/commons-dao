@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.commons.querygen;
@@ -107,10 +107,11 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForString()).verify(errorType, formattedSupplier(
-					"Contains condition applyable only for strings. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, filterForString()).verify(errorType,
+					formattedSupplier("Contains condition applyable only for strings. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -424,12 +425,10 @@ public enum Condition {
 			} else if (value.contains(TIMESTAMP_SEPARATOR)) {
 				final String[] values = value.split(TIMESTAMP_SEPARATOR);
 
-				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType,
-						formattedSupplier(
-								"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
-								value
-						)
-				);
+				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType, formattedSupplier(
+						"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
+						value
+				));
 				expect(values[ZONE_OFFSET_INDEX], zoneOffset()).verify(errorType,
 						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'",
 								values[ZONE_OFFSET_INDEX]
@@ -442,12 +441,10 @@ public enum Condition {
 						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[FIRST_TIMESTAMP_INDEX])
 				);
 			} else {
-				fail().withError(errorType,
-						formattedSupplier(
-								"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
-								value
-						)
-				);
+				fail().withError(errorType, formattedSupplier(
+						"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
+						value
+				));
 			}
 		}
 
@@ -467,8 +464,8 @@ public enum Condition {
 				castedValues = (Object[]) this.castValue(criteriaHolder, newValue, INCORRECT_FILTER_PARAMETERS);
 			}
 			return DSL.condition(Operator.AND,
-					field(filter.getSearchCriteria()).greaterOrEqual(castedValues[0]),
-					field(filter.getSearchCriteria()).lessOrEqual(castedValues[1])
+					field(criteriaHolder.getQueryCriteria()).greaterOrEqual(castedValues[0]),
+					field(criteriaHolder.getQueryCriteria()).lessOrEqual(castedValues[1])
 			);
 		}
 
