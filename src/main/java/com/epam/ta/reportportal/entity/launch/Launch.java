@@ -92,9 +92,7 @@ public class Launch implements Serializable {
 	@Type(type = "pqsql_enum")
 	private StatusEnum status;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	@Fetch(FetchMode.JOIN)
-	@JoinColumn(name = "launch_id")
+	@OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private Set<LaunchTag> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
