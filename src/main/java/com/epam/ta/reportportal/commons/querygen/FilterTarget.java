@@ -198,7 +198,7 @@ public enum FilterTarget {
 
 	TEST_ITEM_TARGET(TestItem.class,
 			Arrays.asList(new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
-
+					new CriteriaHolder(CRITERIA_ID, TEST_ITEM.ITEM_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_NAME, TEST_ITEM.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(TestItemCriteriaConstant.CRITERIA_TYPE,
 							TEST_ITEM.TYPE.getQualifiedName().toString(),
