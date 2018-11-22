@@ -48,6 +48,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCrit
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
