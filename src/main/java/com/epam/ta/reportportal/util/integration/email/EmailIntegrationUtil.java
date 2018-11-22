@@ -19,14 +19,16 @@ package com.epam.ta.reportportal.util.integration.email;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.email.SendCaseType;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.google.common.base.Predicates;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
 import static com.epam.ta.reportportal.entity.project.email.SendCaseType.LAUNCH_STATS_RULE;
 
 /**
@@ -61,10 +63,13 @@ public class EmailIntegrationUtil {
 	 * @return List of rules
 	 */
 	public static List<Map<String, Object>> getEmailRules(Map<String, Object> integrationParams) {
-		if (integrationParams != null) {
-			return Optional.ofNullable((List<Map<String, Object>>) integrationParams.get(RULES)).orElse(Collections.emptyList());
-		}
-		return Collections.emptyList();
+		expect(integrationParams, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Integration parameters should exits.");
+
+		Optional<Object> rules = Optional.ofNullable(integrationParams.get(RULES));
+		expect(rules, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR, "Rules should exists.");
+		expect(rules.get(), Predicates.instanceOf(List.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR, "Incorrect class type for rules.");
+
+		return (List<Map<String, Object>>) rules.get();
 	}
 
 	/**
@@ -75,17 +80,32 @@ public class EmailIntegrationUtil {
 	 * @return List of case values
 	 */
 	public static List<String> getRuleValues(Map<String, Object> rule, SendCaseType caseType) {
-		if (caseType != null && caseType != SendCaseType.LAUNCH_STATS_RULE) {
-			return Optional.ofNullable((List<String>) rule.get(caseType.getCaseTypeString())).orElse(Collections.emptyList());
-		}
-		return Collections.emptyList();
+		expect(rule, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Launch rule should exist.");
+
+		expect(caseType, Predicates.notNull().and(it -> it != SendCaseType.LAUNCH_STATS_RULE)).verify(ErrorType.BAD_REQUEST_ERROR,
+				"Case type should exist."
+		);
+
+		Optional<Object> result = Optional.ofNullable(rule.get(caseType.getCaseTypeString()));
+		expect(result, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR, "Rules should exists.");
+		expect(result, Predicates.instanceOf(List.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+				"Incorrect result of retrieving " + caseType.getCaseTypeString()
+		);
+		return (List<String>) result.get();
 	}
 
 	public static String getLaunchStatsValue(Map<String, Object> rule) {
-		if (MapUtils.isNotEmpty(rule)) {
-			return (String) rule.get(LAUNCH_STATS_RULE.getCaseTypeString());
-		}
-		return null;
+		expect(rule, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Launch stats rule should exist.");
+		Optional<Object> launchStatsRule = Optional.ofNullable(rule.get(LAUNCH_STATS_RULE.getCaseTypeString()));
+		expect(launchStatsRule, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+				"Rule should exists.",
+				LAUNCH_STATS_RULE.getCaseTypeString()
+		);
+
+		expect(launchStatsRule, Predicates.instanceOf(String.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+				"Incorrect result of retrieving " + LAUNCH_STATS_RULE.getCaseTypeString()
+		);
+		return (String) launchStatsRule.get();
 	}
 
 }

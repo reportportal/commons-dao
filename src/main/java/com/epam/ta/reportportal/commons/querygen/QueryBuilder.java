@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -41,6 +41,12 @@ import static org.jooq.impl.DSL.field;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class QueryBuilder {
+
+	/**
+	 * Key word for statistics criteria. Query builder works a little bit in another way
+	 * with statistics criteria. It implements kind of pivot using PostgerSQL possibilities
+	 */
+	public final static String STATISTICS_KEY = "statistics";
 
 	/**
 	 * JOOQ SQL query representation
@@ -72,6 +78,15 @@ public class QueryBuilder {
 	public QueryBuilder addCondition(Condition condition, Operator operator) {
 		query.addConditions(operator, condition);
 		return this;
+	}
+
+	/**
+	 * Adds statistics condition to the query
+	 *
+	 * @param condition Condition
+	 */
+	void addStatisticsCondition(FilterCondition filterCondition, Condition condition, Operator operator) {
+		query.addHaving(operator, condition);
 	}
 
 	public QueryBuilder with(boolean latest) {
@@ -115,7 +130,9 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-			query.addSelect(field(order.getProperty()));
+			query.addSelect(order.getProperty().startsWith(STATISTICS_KEY) ?
+					DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(order.getProperty())).as(order.getProperty()) :
+					field(order.getProperty()));
 			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
 		}));
 		return this;
@@ -130,20 +147,52 @@ public class QueryBuilder {
 		return query;
 	}
 
+	/**
+	 * Joins inner query to load all columns after filtering
+	 *
+	 * @param filterTarget Filter target
+	 * @return Query builder
+	 */
 	public QueryBuilder withWrapper(FilterTarget filterTarget) {
 		query = filterTarget.wrapQuery(query);
 		return this;
 	}
 
+	/**
+	 * Joins inner query to load columns exclueing provided fields after filtering
+	 *
+	 * @param filterTarget Filter target
+	 * @return Query builder
+	 */
 	public QueryBuilder withWrapper(FilterTarget filterTarget, String... excludingFields) {
 		query = filterTarget.wrapQuery(query, excludingFields);
 		return this;
 	}
 
-	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
+	public QueryBuilder withWrappedSort(Sort sort) {
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
+				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC))));
+		return this;
+	}
+
+	static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
+
+			/*
+				creates criteria holder for statistics search criteria cause there
+				can be custom statistics so we can't know it till this moment
+			*/
+			if (searchCriteria.startsWith(STATISTICS_KEY)) {
+				criteriaHolder = Optional.of(new CriteriaHolder(
+						searchCriteria,
+						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())).toString(),
+						Long.class
+				));
+			}
 
 			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
 					ErrorType.INCORRECT_FILTER_PARAMETERS,
