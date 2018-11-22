@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,11 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	private List<String> tags;
 
 	@JsonProperty(value = "values")
-	private Map<String, String> values;
+	private Map<String, String> values = new LinkedHashMap<>();
 
 	@Column(name = SUM)
 	@JsonProperty(value = SUM)
-	private Map<String, Integer> totalStatistics;
+	private Map<String, Integer> totalStatistics = new LinkedHashMap<>();
 
 	@Column(name = DURATION)
 	@JsonProperty(value = DURATION)

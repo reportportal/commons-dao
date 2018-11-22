@@ -1,0 +1,16 @@
+ALTER SEQUENCE widget_id_seq
+  RESTART WITH 1;
+DELETE
+FROM widget;
+ALTER SEQUENCE users_id_seq
+  RESTART WITH 1;
+DELETE
+FROM users;
+ALTER SEQUENCE launch_id_seq
+  RESTART WITH 1;
+DELETE
+FROM launch;
+ALTER SEQUENCE project_id_seq
+  RESTART WITH 1;
+DELETE
+FROM project;

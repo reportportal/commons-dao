@@ -25,10 +25,13 @@ import org.jooq.Result;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
+import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
 
 /**
  * Util class for widget content repository.
@@ -41,25 +44,25 @@ public class WidgetContentUtil {
 		//static only
 	}
 
-	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> result
-			.stream()
-			.map(record -> {
-				LaunchesStatisticsContent statisticsContent = record.into(LaunchesStatisticsContent.class);
+	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> {
 
-				Map<String, String> statisticsMap = new LinkedHashMap<>();
+		Map<Long, LaunchesStatisticsContent> resultMap = new LinkedHashMap<>();
 
-				Optional.ofNullable(record.field(fieldName(TOTAL)))
-						.ifPresent(field -> statisticsMap.put(TOTAL, String.valueOf(field.getValue(record))));
+		result.stream().forEach(record -> {
 
-				contentFields.forEach(contentField -> statisticsMap.put(contentField,
-						record.getValue(fieldName(contentField), String.class)
-				));
+			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
+				LaunchesStatisticsContent content = resultMap.get(record.get(LAUNCH.ID));
+				content.getValues().put(record.get(STATISTICS_FIELD.NAME), String.valueOf(record.get(STATISTICS.S_COUNTER)));
+			} else {
+				LaunchesStatisticsContent content = record.into(LaunchesStatisticsContent.class);
+				content.getValues().put(record.get(STATISTICS_FIELD.NAME), String.valueOf(record.get(STATISTICS.S_COUNTER)));
+				resultMap.put(record.get(LAUNCH.ID), content);
+			}
 
-				statisticsContent.setValues(statisticsMap);
+		});
 
-				return statisticsContent;
-			})
-			.collect(Collectors.toList());
+		return new ArrayList<>(resultMap.values());
+	};
 
 	public static final RecordMapper<? super Record, NotPassedCasesContent> NOT_PASSED_CASES_CONTENT_RECORD_MAPPER = r -> {
 		NotPassedCasesContent res = r.into(NotPassedCasesContent.class);

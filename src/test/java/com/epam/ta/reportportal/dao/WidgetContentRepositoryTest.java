@@ -58,6 +58,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
@@ -82,15 +83,16 @@ public class WidgetContentRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
-		runSqlScript("/statistics-filling-script.sql");
+		runSqlScript("/widget/widget-down.sql");
+		runSqlScript("/statistics/statistics-down.sql");
+		runSqlScript("/widget/widget-up.sql");
+		runSqlScript("/statistics/launch-statistics-up.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+		runSqlScript("/widget/widget-down.sql");
+		runSqlScript("/statistics/statistics-down.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -119,7 +121,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchStatistics() {
 
-		String sortingColumn = "statistics$defects$no_defect$ND001";
+		String sortingColumn = "statistics$defects$no_defect$nd001";
 
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
@@ -566,7 +568,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
 						String.valueOf(projectId),
-						"project_id"
+						CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
@@ -601,8 +603,7 @@ public class WidgetContentRepositoryTest {
 				false,
 				String.valueOf(projectId),
 				"project_id"
-		), new FilterCondition(
-				Condition.EQUALS_ANY,
+		), new FilterCondition(Condition.EQUALS_ANY,
 				false,
 				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
 				CRITERIA_TI_STATUS
@@ -652,11 +653,11 @@ public class WidgetContentRepositoryTest {
 	}
 
 	private List<String> buildLaunchesTableContentFields() {
-		return Lists.newArrayList("statistics$defects$no_defect$ND001",
-				"statistics$defects$product_bug$PB001",
-				"statistics$defects$automation_bug$AB001",
-				"statistics$defects$system_issue$SI001",
-				"statistics$defects$to_investigate$TI001",
+		return Lists.newArrayList("statistics$defects$no_defect$nd001",
+				"statistics$defects$product_bug$pb001",
+				"statistics$defects$automation_bug$ab001",
+				"statistics$defects$system_issue$si001",
+				"statistics$defects$to_investigate$ti001",
 				"end_time",
 				"description",
 				"last_modified",
@@ -669,13 +670,14 @@ public class WidgetContentRepositoryTest {
 
 	private List<String> buildContentFields() {
 
-		return Lists.newArrayList("statistics$defects$no_defect$ND001",
-				"statistics$defects$product_bug$PB001",
-				"statistics$defects$automation_bug$AB001",
-				"statistics$defects$system_issue$SI001",
-				"statistics$defects$to_investigate$TI001",
+		return Lists.newArrayList("statistics$defects$no_defect$nd001",
+				"statistics$defects$product_bug$pb001",
+				"statistics$defects$automation_bug$ab001",
+				"statistics$defects$system_issue$si001",
+				"statistics$defects$to_investigate$ti001",
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
+				"statistics$executions$passed",
 				"statistics$executions$total",
 				"statistics$defects$no_defect$total",
 				"statistics$defects$product_bug$total",
@@ -708,11 +710,11 @@ public class WidgetContentRepositoryTest {
 	}
 
 	private List<String> buildProductStatusContentFields() {
-		return Lists.newArrayList("statistics$defects$no_defect$ND001",
-				"statistics$defects$product_bug$PB001",
-				"statistics$defects$automation_bug$AB001",
-				"statistics$defects$system_issue$SI001",
-				"statistics$defects$to_investigate$TI001",
+		return Lists.newArrayList("statistics$defects$no_defect$nd001",
+				"statistics$defects$product_bug$pb001",
+				"statistics$defects$automation_bug$ab001",
+				"statistics$defects$system_issue$si001",
+				"statistics$defects$to_investigate$ti001",
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
 				"statistics$executions$total",

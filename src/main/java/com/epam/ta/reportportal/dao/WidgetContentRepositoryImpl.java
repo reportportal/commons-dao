@@ -173,12 +173,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
-
-		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
-
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME, STATISTICS_FIELD.NAME, STATISTICS.S_COUNTER)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS_FIELD.NAME.in(contentFields))
+				.orderBy(StreamSupport.stream(sort.spliterator(), false)
+						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+						.collect(Collectors.toList()))
 				.fetch(), contentFields);
 
 	}
@@ -192,8 +200,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
 						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL)), 0).cast(Double.class)), 2);
 
-		return dsl.select(
-				fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -225,8 +232,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 
-		return dsl.select(
-				fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -245,7 +251,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
 				.as(TOTAL);
 
-		Collections.addAll(fields, sumField, fieldName(LAUNCH.ID),
+		Collections.addAll(fields,
+				sumField,
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -271,7 +279,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.flatMap(List::stream)
 				.collect(toList());
 
-		Collections.addAll(statisticsFields, fieldName(LAUNCH.ID),
+		Collections.addAll(statisticsFields,
+				fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME)
@@ -286,8 +295,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		return dsl.select(
-				fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NAME),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.STATUS),
@@ -301,8 +309,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(
-				fieldName(LAUNCH.ID),
+		return dsl.select(fieldName(LAUNCH.ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCH.START_TIME),
 				fieldName(LAUNCH.NAME),
@@ -413,7 +420,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
 
-		Collections.addAll(fields, fieldName(LAUNCHES_SUB_QUERY, ID),
+		Collections.addAll(fields,
+				fieldName(LAUNCHES_SUB_QUERY, ID),
 				fieldName(LAUNCH.NUMBER),
 				fieldName(LAUNCHES_SUB_QUERY, NAME),
 				fieldName(LAUNCH.START_TIME),
@@ -482,8 +490,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(TEST_ITEM.NAME),
 				fieldName(TEST_ITEM.TYPE),
 				fieldName(TEST_ITEM.START_TIME),
-				fieldName(TEST_ITEM_RESULTS.END_TIME), fieldName(TEST_ITEM_RESULTS.DURATION), fieldName(TEST_ITEM_RESULTS.STATUS)
-		).from(QueryBuilder.newBuilder(filter).with(20).build())
+				fieldName(TEST_ITEM_RESULTS.END_TIME),
+				fieldName(TEST_ITEM_RESULTS.DURATION),
+				fieldName(TEST_ITEM_RESULTS.STATUS)
+		)
+				.from(QueryBuilder.newBuilder(filter).with(20).build())
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
 	}

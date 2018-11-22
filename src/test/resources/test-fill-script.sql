@@ -39,59 +39,6 @@ INSERT INTO ldap_synchronization_attributes(
 	email, full_name, photo)
 	VALUES ('mail', 'displayName', 'thumbnailPhoto');
 
-INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'com.epam.ta.reportportal.entity.launch.Launch', null);
-INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'com.epam.ta.reportportal.entity.Activity', null);
-INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'test item', 1, 'com.epam.ta.reportportal.entity.item.TestItem', 'YAHOOOOO');
-INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'unique bug', 1, 'com.epam.ta.reportportal.entity.bts.Ticket', 'TICKET FILTER');
-
-INSERT INTO user_filter(id) VALUES (1);
-INSERT INTO user_filter(id) VALUES (2);
-INSERT INTO user_filter(id) VALUES (3);
-INSERT INTO user_filter(id) VALUES (4);
-
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (1, 'statistics$defects$no_defect$ND001', 'DESC');
-
-INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
-INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);
-INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (6, 1, 'EQUALS', '1', 'project_id', false);
-INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (10, 2, 'EQUALS', '1', 'project_id', false);
-
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (2, 'start', null, 'launch_statistics', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (4, 'start1', null, 'passing_rate_per_launch', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (5, 'start2', null, 'passing_rate_summary', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (6, 'start3', null, 'cases_trend', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (7, 'my widget', null, 'bug_trend', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (3, 'start4', null, 'investigated_trend', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (12, 'table', null, 'launches_table', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (8, 'comparison', null, 'launches_comparison_chart', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (9, 'duration', null, 'launches_duration_chart', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (10, 'not passed', null, 'not_passed', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (11, 'not passed1', null, 'most_failed_test_cases', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (17, 'table1', null, 'activity_stream', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (1, 'start5', null, 'overall_statistics', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (18, 'unique', null, 'unique_bug_table', 1000, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (19, 'cumulative test', null, 'cumulative', 2, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (20, 'product status widget', 'description of widget', 'product_status', 2, 1);
-INSERT INTO widget (id, name, description, widget_type, items_count, project_id) VALUES (21, 'most time consuming widget', 'description of widget', 'most_time_consuming', 20, 1);
-
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (2,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (4,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (5,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (6,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (7,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (3,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (12,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (8,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (9,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (10,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (11,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (17,2);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (1,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (18,4);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (19,1);
-INSERT INTO widget_filter(widget_id, filter_id) VALUES (21,3);
-
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (1, 'filterName', 'New_filter');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (2, 'filterName', 'New_filter');
 INSERT INTO public.widget_option (widget_id, option, value) VALUES (3, 'filterName', 'New_filter');
