@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.commons.querygen;
@@ -25,7 +25,6 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.Predicates.or;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.*;
@@ -267,9 +266,8 @@ public enum Condition {
 			/* Validate only collections */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 			return DSL.condition(Operator.AND,
-					Arrays.stream((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
-							.map(val -> field(filter.getSearchCriteria()).in(val))
-							.collect(Collectors.toList())
+					DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria()))
+							.contains(DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)))
 			);
 
 		}
@@ -467,8 +465,8 @@ public enum Condition {
 				castedValues = (Object[]) this.castValue(criteriaHolder, newValue, INCORRECT_FILTER_PARAMETERS);
 			}
 			return DSL.condition(Operator.AND,
-					field(filter.getSearchCriteria()).greaterOrEqual(castedValues[0]),
-					field(filter.getSearchCriteria()).lessOrEqual(castedValues[1])
+					field(criteriaHolder.getQueryCriteria()).greaterOrEqual(castedValues[0]),
+					field(criteriaHolder.getQueryCriteria()).lessOrEqual(castedValues[1])
 			);
 		}
 

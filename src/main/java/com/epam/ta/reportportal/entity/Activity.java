@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "activity", schema = "public")
-@TypeDef(name = "details", typeClass = ActivityDetails.class)
+@TypeDef(name = "activityDetails", typeClass = ActivityDetails.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 public class Activity {
 
@@ -56,7 +56,7 @@ public class Activity {
 	private String action;
 
 	@Column(name = "details")
-	@Type(type = "details")
+	@Type(type = "activityDetails")
 	private ActivityDetails details;
 
 	@Column(name = "creation_date")

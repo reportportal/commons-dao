@@ -204,7 +204,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
-				.with(pageable.getSort())
+				.withWrappedSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 }

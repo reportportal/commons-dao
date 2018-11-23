@@ -20,9 +20,6 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -57,15 +54,12 @@ public class Project implements Serializable {
 	private ProjectType projectType;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JsonManagedReference(value = "integration")
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonIgnore
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonIgnore
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	@Column(name = "creation_date")
@@ -76,8 +70,7 @@ public class Project implements Serializable {
 	private Metadata metadata;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
-	@JsonManagedReference("users")
-	private Set<ProjectUser> users = Sets.newHashSet();
+	private Set<ProjectUser> users;
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -168,8 +161,7 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
-				metadata,
+		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata,
 				project.metadata
 		);
 	}
@@ -180,8 +172,4 @@ public class Project implements Serializable {
 		return Objects.hash(name, creationDate, metadata);
 	}
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("name", name).add("users", users).add("creationDate", creationDate).toString();
-	}
 }

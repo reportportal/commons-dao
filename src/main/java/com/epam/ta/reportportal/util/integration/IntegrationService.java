@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.util.integration;
 
-import java.util.List;
+import com.epam.ta.reportportal.entity.project.Project;
+
+import java.util.Map;
 
 /**
- * @author Yauheni_Martynau
+ * Validates parameters of provided integration.
+ *
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface LaunchTagRepositoryCustom {
+public interface IntegrationService {
 
 	/**
-	 * Select set of tags on project.
+	 * Validates parameters
 	 *
-	 * @param projectId Project id
-	 * @param value     Term for tag value to find
-	 * @return List of distinct tags
+	 * @param project               Project
+	 * @param integrationParameters Integration parameters
+	 * @return true if valid, false if not
 	 */
-	List<String> getTags(Long projectId, String value);
+	boolean validateIntegrationParameters(Project project, Map<String, Object> integrationParameters);
+
 }
