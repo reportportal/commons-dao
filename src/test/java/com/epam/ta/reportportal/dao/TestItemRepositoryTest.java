@@ -79,7 +79,6 @@ public class TestItemRepositoryTest {
 		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
 		Assert.assertThat(results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		Assert.assertThat(results.size(), Matchers.equalTo(2));
-		System.out.println();
 	}
 
 	@Test
@@ -87,7 +86,6 @@ public class TestItemRepositoryTest {
 		List<TestItem> testItems = testItemRepository.loadItemsHistory(Lists.newArrayList("auto:3d3ef012c6687480d6fb9b4a3fa9471d"),
 				Lists.newArrayList(9L, 10L, 11L, 12L, 13L)
 		);
-		System.out.println();
 	}
 
 	@Test
