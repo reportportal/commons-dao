@@ -42,7 +42,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 
 /**
  * @author Ivan Budaev
@@ -58,14 +58,14 @@ public class TestItemRepositoryCustomImplTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/test-fill-script.sql");
+//		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-create-script.sql");
+//		runSqlScript("/test-fill-script.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
+//		runSqlScript("/test-dropall-script.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -88,18 +88,14 @@ public class TestItemRepositoryCustomImplTest {
 
 	@Test
 	public void findLaunchByFilterTest() {
-		List<TestItem> testItems = testItemRepository.findByFilter(buildDefaultFilter(1L).withCondition(new FilterCondition(Condition.CONTAINS,
-				false,
-				"qqqq",
-				"tag"
-		)));
+		List<TestItem> testItems = testItemRepository.findByFilter(buildDefaultFilter(1L));
 
 		testItems.forEach(ti -> Assert.assertTrue(CollectionUtils.isNotEmpty(ti.getTags())));
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-				false, String.valueOf(projectId), CRITERIA_PROJECT_ID
+				false, String.valueOf(projectId), CRITERIA_LAUNCH_ID
 		));
 		return new Filter(TestItem.class, conditionSet);
 	}

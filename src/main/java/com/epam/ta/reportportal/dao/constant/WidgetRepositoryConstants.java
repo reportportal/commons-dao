@@ -29,4 +29,5 @@ public final class WidgetRepositoryConstants {
 	public static final String OWNER = "owner";
 	public static final String SID = "sid";
 	public static final String PROJECT_ID = "project_id";
+	public static final String RETRIES_TABLE = "retries";
 }

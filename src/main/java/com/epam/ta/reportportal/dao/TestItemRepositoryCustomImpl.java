@@ -39,9 +39,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
@@ -196,15 +198,35 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findByFilter(Filter filter) {
-		return TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		fetchRetries(items);
+		return items;
 	}
 
 	@Override
 	public Page<TestItem> findByFilter(Filter filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
 				.with(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+				.build()));
+		fetchRetries(items);
+		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	private void fetchRetries(List<TestItem> items) {
+		RETRIES_FETCHER.accept(
+				items,
+				dsl.select()
+						.from(TEST_ITEM)
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.leftJoin(ITEM_TAG)
+						.on(TEST_ITEM.ITEM_ID.eq(ITEM_TAG.ITEM_ID))
+						.leftJoin(PARAMETER)
+						.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
+						.where(TEST_ITEM.RETRY_OF.in(items.stream().map(TestItem::getItemId).collect(Collectors.toList())))
+						.fetch()
+		);
 	}
 }
