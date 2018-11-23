@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import org.apache.commons.collections.CollectionUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
@@ -215,18 +216,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	private void fetchRetries(List<TestItem> items) {
-		RETRIES_FETCHER.accept(
-				items,
-				dsl.select()
-						.from(TEST_ITEM)
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.leftJoin(ITEM_TAG)
-						.on(TEST_ITEM.ITEM_ID.eq(ITEM_TAG.ITEM_ID))
-						.leftJoin(PARAMETER)
-						.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
-						.where(TEST_ITEM.RETRY_OF.in(items.stream().map(TestItem::getItemId).collect(Collectors.toList())))
-						.fetch()
-		);
+
+		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
+
+		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
+			RETRIES_FETCHER.accept(
+					items,
+					dsl.select()
+							.from(TEST_ITEM)
+							.join(TEST_ITEM_RESULTS)
+							.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+							.leftJoin(ITEM_TAG)
+							.on(TEST_ITEM.ITEM_ID.eq(ITEM_TAG.ITEM_ID))
+							.leftJoin(PARAMETER)
+							.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
+							.where(TEST_ITEM.RETRY_OF.in(itemsWithRetries.stream().map(TestItem::getItemId).collect(Collectors.toList())))
+							.fetch()
+			);
+		}
 	}
 }
