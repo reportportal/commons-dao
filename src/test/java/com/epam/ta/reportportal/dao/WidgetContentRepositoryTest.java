@@ -145,7 +145,7 @@ public class WidgetContentRepositoryTest {
 
 		Map<Long, Map<String, Integer>> statistics = buildTotalDefectsMap();
 
-		String sortingColumn = "statistics$defects$no_defect$ND001";
+		String sortingColumn = "statistics$defects$no_defect$nd001";
 
 		Filter filter = buildDefaultFilter(1L);
 
@@ -160,7 +160,7 @@ public class WidgetContentRepositoryTest {
 		investigatedStatisticsResults.forEach(res -> {
 			Map<String, Integer> stats = statistics.get(res.getId());
 			int sum = stats.values().stream().mapToInt(Integer::intValue).sum();
-			Assert.assertEquals(res.getNotInvestigatedPercentage() + res.getInvestigatedPercentage(), 100.0, 0.01);
+			Assert.assertEquals(100.0, res.getNotInvestigatedPercentage() + res.getInvestigatedPercentage(), 0.01);
 			Assert.assertEquals(res.getNotInvestigatedPercentage(),
 					BigDecimal.valueOf((double) 100 * stats.get("statistics$defects$to_investigate$total") / sum)
 							.setScale(2, RoundingMode.HALF_UP)
@@ -174,7 +174,7 @@ public class WidgetContentRepositoryTest {
 	public void launchPassPerLaunchStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name test", NAME));
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME));
 
 		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 

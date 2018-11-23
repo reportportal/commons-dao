@@ -17,6 +17,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.entity.widget.content.InvestigatedStatisticsResult;
 import com.epam.ta.reportportal.entity.widget.content.LaunchesStatisticsContent;
 import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
 import org.jooq.Record;
@@ -28,6 +29,7 @@ import java.util.function.BiFunction;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TO_INVESTIGATE;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
@@ -62,6 +64,12 @@ public class WidgetContentUtil {
 		});
 
 		return new ArrayList<>(resultMap.values());
+	};
+
+	public static final RecordMapper<? super Record, InvestigatedStatisticsResult> INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER = r -> {
+		InvestigatedStatisticsResult res = r.into(InvestigatedStatisticsResult.class);
+		res.setInvestigatedPercentage(100.0 - r.get(TO_INVESTIGATE, Double.class));
+		return res;
 	};
 
 	public static final RecordMapper<? super Record, NotPassedCasesContent> NOT_PASSED_CASES_CONTENT_RECORD_MAPPER = r -> {

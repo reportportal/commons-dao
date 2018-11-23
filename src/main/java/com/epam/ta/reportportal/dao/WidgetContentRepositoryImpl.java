@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -40,6 +41,7 @@ import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.LAUNCHES_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.NOT_PASSED_CASES_CONTENT_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
@@ -171,7 +173,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, @Nullable Sort sort, int limit) {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -185,7 +187,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(contentFields))
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.fetch(), contentFields);
 
@@ -194,29 +198,81 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit) {
 
-		Field<Double> toInvestigate = round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL).cast(Double.class))
-				.div(nullif(fieldName(DEFECTS_AUTOMATION_BUG_TOTAL).add(fieldName(DEFECTS_NO_DEFECT_TOTAL))
-						.add(fieldName(DEFECTS_TO_INVESTIGATE_TOTAL))
-						.add(fieldName(DEFECTS_PRODUCT_BUG_TOTAL))
-						.add(fieldName(DEFECTS_SYSTEM_ISSUE_TOTAL)), 0).cast(Double.class)), 2);
+		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false)
+				.map(s -> fieldName(LAUNCHES, s.getProperty()))
+				.collect(toList());
 
-		return dsl.select(fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME),
-				fieldName(LAUNCH.NAME),
-				toInvestigate.as(TO_INVESTIGATE),
-				val(PERCENTAGE_MULTIPLIER).sub(coalesce(toInvestigate, 0)).as(INVESTIGATED)
-		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(InvestigatedStatisticsResult.class);
+		Collections.addAll(groupingFields, LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME);
+
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						LAUNCH.NAME,
+						round(val(PERCENTAGE_MULTIPLIER).mul(dsl.select(sum(STATISTICS.S_COUNTER))
+								.from(STATISTICS)
+								.join(STATISTICS_FIELD)
+								.onKey()
+								.where(STATISTICS_FIELD.NAME.eq(DEFECTS_TO_INVESTIGATE_TOTAL).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
+								.asField()
+								.cast(Double.class))
+								.div(nullif(dsl.select(sum(STATISTICS.S_COUNTER))
+										.from(STATISTICS)
+										.join(STATISTICS_FIELD)
+										.onKey()
+										.where(STATISTICS_FIELD.NAME.in(DEFECTS_AUTOMATION_BUG_TOTAL,
+												DEFECTS_NO_DEFECT_TOTAL,
+												DEFECTS_TO_INVESTIGATE_TOTAL,
+												DEFECTS_PRODUCT_BUG_TOTAL,
+												DEFECTS_SYSTEM_ISSUE_TOTAL
+										).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
+										.asField(), 0)), 2).as(TO_INVESTIGATE)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.groupBy(groupingFields)
+				.orderBy(StreamSupport.stream(sort.spliterator(), false)
+						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList()))
+				.fetch(INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER);
 
 	}
 
 	@Override
 	public PassingRateStatisticsResult passingRateStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(sum(fieldName(EXECUTIONS_PASSED).cast(Integer.class)).as(PASSED),
-				sum(fieldName(EXECUTIONS_TOTAL).cast(Integer.class)).as(TOTAL)
-		)
-				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false)
+				.map(s -> fieldName(LAUNCHES, s.getProperty()))
+				.collect(toList());
+
+		Collections.addAll(groupingFields);
+
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED), STATISTICS.S_COUNTER).otherwise(0)).as(PASSED),
+						sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL), STATISTICS.S_COUNTER).otherwise(0)).as(TOTAL)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.groupBy(groupingFields)
+				.orderBy(StreamSupport.stream(sort.spliterator(), false)
+						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList()))
 				.fetchInto(PassingRateStatisticsResult.class)
 				.stream()
 				.findFirst()
