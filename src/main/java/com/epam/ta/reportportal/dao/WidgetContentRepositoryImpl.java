@@ -87,7 +87,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
 				.select(fields)
 				.from(DSL.table(DSL.name(LAUNCHES)))
-				.fetch(), contentFields);
+				.fetch());
 	}
 
 	@Override
@@ -191,7 +191,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								SortOrder.DESC :
 								SortOrder.ASC))
 						.collect(Collectors.toList()))
-				.fetch(), contentFields);
+				.fetch());
 
 	}
 
@@ -247,7 +247,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public PassingRateStatisticsResult passingRateStatistics(Filter filter, Sort sort, int limit) {
+	public PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Sort sort, int limit) {
 
 		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false)
 				.map(s -> fieldName(LAUNCHES, s.getProperty()))
@@ -255,19 +255,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Collections.addAll(groupingFields);
 
-		return dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.select(sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED), STATISTICS.S_COUNTER).otherwise(0)).as(PASSED),
-						sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL), STATISTICS.S_COUNTER).otherwise(0)).as(TOTAL)
-				)
-				.from(LAUNCH)
-				.join(LAUNCHES)
-				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-				.leftJoin(STATISTICS)
-				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
-				.join(STATISTICS_FIELD)
-				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				.groupBy(groupingFields)
+		return buildPassingRateSelect(filter, sort, limit).groupBy(groupingFields)
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
 						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
 								SortOrder.DESC :
@@ -280,44 +268,58 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, Sort sort, int limit) {
+	public PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, Sort sort, int limit) {
+		return buildPassingRateSelect(filter, sort, limit).fetchInto(PassingRateStatisticsResult.class)
+				.stream()
+				.findFirst()
+				.orElseThrow(() -> new ReportPortalException("No results for filter were found"));
+	}
 
-		Field<Integer> executionField = fieldName(executionContentField).cast(Integer.class);
+	@Override
+	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String contentField, Sort sort, int limit) {
 
-		List<SortField<Object>> deltaCounterSort = ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-				.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+		List<? extends SortField<?>> deltaCounterSort = ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+				.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC))
 				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 
-		return dsl.select(fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME),
-				fieldName(LAUNCH.NAME),
-				executionField.as(executionContentField),
-				executionField.sub(lag(executionField).over().orderBy(deltaCounterSort)).as(DELTA)
-		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(CasesTrendContent.class);
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						LAUNCH.NAME,
+						STATISTICS.S_COUNTER.as(contentField),
+						STATISTICS.S_COUNTER.sub(lag(STATISTICS.S_COUNTER).over().orderBy(deltaCounterSort)).as(DELTA)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS_FIELD.NAME.eq(contentField))
+				.orderBy(deltaCounterSort)
+				.fetchInto(CasesTrendContent.class);
 	}
 
 	@Override
 	public List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
-
-		Field<?> sumField = fields.stream()
-				.reduce((field, value) -> field.add(value))
-				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"))
-				.as(TOTAL);
-
-		Collections.addAll(fields,
-				sumField,
-				fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NAME),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME)
-		);
-
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.fetch(), contentFields);
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.START_TIME, STATISTICS_FIELD.NAME, STATISTICS.S_COUNTER)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS_FIELD.NAME.in(contentFields))
+				.fetch());
 
 	}
 
@@ -344,7 +346,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(statisticsFields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.fetch(), contentFields);
+				.fetch());
 
 	}
 
@@ -383,7 +385,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.fetch(), contentFields);
+				.fetch());
 
 	}
 
@@ -497,7 +499,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Query build for Product Status Widget failed"));
 
-		Map<String, List<LaunchesStatisticsContent>> productStatusContent = LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
+		Map<String, List<LaunchesStatisticsContent>> productStatusContent = LAUNCHES_STATISTICS_FETCHER.apply(select.fetch())
 				.stream()
 				.collect(groupingBy(LaunchesStatisticsContent::getFilterName, LinkedHashMap::new, toList()));
 
@@ -533,7 +535,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<LaunchesStatisticsContent> productStatusStatisticsResult = LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
-				.fetch(), contentFields);
+				.fetch());
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
 		return productStatusStatisticsResult;
@@ -553,6 +555,21 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(QueryBuilder.newBuilder(filter).with(20).build())
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
+	}
+
+	private SelectOnConditionStep<? extends Record> buildPassingRateSelect(Filter filter, Sort sort, int limit) {
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED), STATISTICS.S_COUNTER).otherwise(0)).as(PASSED),
+						sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL), STATISTICS.S_COUNTER).otherwise(0)).as(TOTAL)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
 	}
 
 	private List<Field<?>> buildComparisonStatisticsFields(List<String> contentFields) {
@@ -591,7 +608,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								SortOrder.DESC :
 								SortOrder.ASC))
 						.collect(Collectors.toList())).orElseGet(Collections::emptyList))
-				.fetch(), contentFields);
+				.fetch());
 	}
 
 	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort,
@@ -648,7 +665,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private LaunchesStatisticsContent countLaunchTotalStatistics(List<LaunchesStatisticsContent> launchesStatisticsResult) {
 		Map<String, Integer> total = launchesStatisticsResult.stream()
 				.flatMap(lsc -> lsc.getValues().entrySet().stream())
-				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
+				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(Map.Entry::getValue)));
 
 		Double averagePassingRate = launchesStatisticsResult.stream()
 				.collect(averagingDouble(lsc -> ofNullable(lsc.getPassingRate()).orElse(0D)));
@@ -668,7 +685,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.stream()
 				.flatMap(Collection::stream)
 				.flatMap(lsc -> lsc.getValues().entrySet().stream())
-				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
+				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(Map.Entry::getValue)));
 
 		Double averagePassingRate = launchesStatisticsResult.values()
 				.stream()

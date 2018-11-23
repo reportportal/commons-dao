@@ -65,14 +65,24 @@ public interface WidgetContentRepository {
 	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit);
 
 	/**
-	 * Launches passing rate result for launch or for all launches depending on the filter conditions
+	 * Launch passing rate result for depending on the filter conditions
 	 *
 	 * @param filter {@link Filter}
 	 * @param sort   {@link Sort}
 	 * @param limit  Results limit
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult passingRateStatistics(Filter filter, Sort sort, int limit);
+	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Sort sort, int limit);
+
+	/**
+	 * Summary passing rate result for launches depending on the filter conditions
+	 *
+	 * @param filter {@link Filter}
+	 * @param sort   {@link Sort}
+	 * @param limit  Results limit
+	 * @return {@link PassingRateStatisticsResult}
+	 */
+	PassingRateStatisticsResult summaryPassingRateStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Test cases' count trend loading

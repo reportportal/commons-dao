@@ -134,10 +134,8 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(4, launchStatisticsContents.size());
 
-		Assert.assertEquals(launchStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
-		Assert.assertEquals(launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn),
-				String.valueOf(1)
-		);
+		Assert.assertEquals((long) launchStatisticsContents.get(0).getValues().get(sortingColumn), 6);
+		Assert.assertEquals((long) launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn), 1);
 	}
 
 	@Test
@@ -180,7 +178,7 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 1);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter, sort, 1);
 
 		Assert.assertNotNull(passStatisticsResult);
 		Assert.assertEquals(3, passStatisticsResult.getPassed());
@@ -191,11 +189,11 @@ public class WidgetContentRepositoryTest {
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRateStatistics(filter, sort, 4);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, sort, 4);
 
 		Assert.assertNotNull(passStatisticsResult);
 
@@ -208,7 +206,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		String executionContentField = "statistics$executions$total";
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -237,7 +235,7 @@ public class WidgetContentRepositoryTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalDefectsContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -252,13 +250,13 @@ public class WidgetContentRepositoryTest {
 
 		launchStatisticsContents.forEach(res -> {
 			Map<String, Integer> stats = statistics.get(res.getId());
-			Map<String, String> resStatistics = res.getValues();
+			Map<String, Integer> resStatistics = res.getValues();
 
 			long total = stats.values().stream().mapToInt(Integer::intValue).sum();
 
-			stats.keySet().forEach(key -> Assert.assertEquals((long) stats.get(key), (long) Integer.parseInt(resStatistics.get(key))));
+			stats.keySet().forEach(key -> Assert.assertEquals((long) stats.get(key), (long) resStatistics.get(key)));
 
-			Assert.assertEquals(Long.parseLong(resStatistics.get(TOTAL)), total);
+			Assert.assertEquals(total, (long) resStatistics.get(TOTAL));
 		});
 	}
 
@@ -283,7 +281,7 @@ public class WidgetContentRepositoryTest {
 		Assert.assertEquals(2, comparisonStatisticsContents.size());
 
 		comparisonStatisticsContents.forEach(res -> {
-			Map<String, String> currStatistics = res.getValues();
+			Map<String, Integer> currStatistics = res.getValues();
 			Map<Long, Map<String, Integer>> preDefinedStatistics = buildLaunchesComparisonStatistics();
 
 			Map<String, Integer> testStatistics = preDefinedStatistics.get(res.getId());
@@ -301,7 +299,7 @@ public class WidgetContentRepositoryTest {
 			currStatistics.keySet()
 					.stream()
 					.filter(key -> key.contains(EXECUTIONS_KEY))
-					.forEach(key -> Assert.assertEquals(Double.parseDouble(currStatistics.get(key)),
+					.forEach(key -> Assert.assertEquals((double) currStatistics.get(key),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
@@ -310,7 +308,7 @@ public class WidgetContentRepositoryTest {
 			currStatistics.keySet()
 					.stream()
 					.filter(key -> key.contains(DEFECTS_KEY))
-					.forEach(key -> Assert.assertEquals(Double.parseDouble(currStatistics.get(key)),
+					.forEach(key -> Assert.assertEquals((double) (currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / defectsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
@@ -396,7 +394,7 @@ public class WidgetContentRepositoryTest {
 
 		launchStatisticsContents.forEach(content -> {
 
-			Map<String, String> values = content.getValues();
+			Map<String, Integer> values = content.getValues();
 			tableContentFields.forEach(tcf -> {
 				Assert.assertTrue(values.containsKey(tcf));
 				Assert.assertNotNull(values.get(tcf));

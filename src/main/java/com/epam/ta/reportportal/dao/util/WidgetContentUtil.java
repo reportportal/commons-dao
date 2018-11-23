@@ -25,11 +25,9 @@ import org.jooq.RecordMapper;
 import org.jooq.Result;
 
 import java.util.*;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TO_INVESTIGATE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
@@ -46,7 +44,7 @@ public class WidgetContentUtil {
 		//static only
 	}
 
-	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> {
+	public static final Function<Result<? extends Record>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> {
 
 		Map<Long, LaunchesStatisticsContent> resultMap = new LinkedHashMap<>();
 
@@ -54,14 +52,19 @@ public class WidgetContentUtil {
 
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
 				LaunchesStatisticsContent content = resultMap.get(record.get(LAUNCH.ID));
-				content.getValues().put(record.get(STATISTICS_FIELD.NAME), String.valueOf(record.get(STATISTICS.S_COUNTER)));
+				content.getValues().put(record.get(STATISTICS_FIELD.NAME), record.get(STATISTICS.S_COUNTER));
 			} else {
 				LaunchesStatisticsContent content = record.into(LaunchesStatisticsContent.class);
-				content.getValues().put(record.get(STATISTICS_FIELD.NAME), String.valueOf(record.get(STATISTICS.S_COUNTER)));
+				content.getValues().put(record.get(STATISTICS_FIELD.NAME), record.get(STATISTICS.S_COUNTER));
 				resultMap.put(record.get(LAUNCH.ID), content);
 			}
 
 		});
+
+		resultMap.values()
+				.stream()
+				.forEach(content -> content.getValues()
+						.put(TOTAL, content.getValues().values().stream().mapToInt(Integer::intValue).sum()));
 
 		return new ArrayList<>(resultMap.values());
 	};
