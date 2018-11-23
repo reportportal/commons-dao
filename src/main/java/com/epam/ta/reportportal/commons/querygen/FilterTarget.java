@@ -160,8 +160,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), List.class),
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), List.class),
 			new CriteriaHolder(CRITERIA_STATISTICS_FIELD, STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_STATISTICS_COUNT, STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
@@ -233,8 +233,8 @@ public enum FilterTarget {
 					new CriteriaHolder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 					new CriteriaHolder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), List.class),
+					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), List.class),
 					new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class)
 			)
 	) {
