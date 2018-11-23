@@ -26,6 +26,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.impl.DSL;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -104,7 +107,7 @@ public class CriteriaHolder {
 			/* Verify correct date */
 			BusinessRule.expect(oneValue, FilterRules.dateInMillis())
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue));
-			castedValue = new Date(Long.parseLong(oneValue));
+			castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.valueOf(oneValue)), ZoneId.systemDefault());
 		} else if (boolean.class.equals(getDataType()) || Boolean.class.isAssignableFrom(getDataType())) {
 			castedValue = BooleanUtils.toBoolean(oneValue);
 		} else if (LogLevel.class.isAssignableFrom(getDataType())) {

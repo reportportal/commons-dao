@@ -139,7 +139,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			testItem.getTags().add(record.into(TestItemTag.class));
+			testItem.getTags().add(record.into(ITEM_TAG.VALUE).into(TestItemTag.class));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);

@@ -27,17 +27,18 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
+@TypeDef(name = "widgetOptions", typeClass = WidgetOptions.class)
 @Table(name = "widget", schema = "public")
 public class Widget implements Serializable {
 
@@ -66,11 +67,9 @@ public class Widget implements Serializable {
 	@Column(name = "field")
 	private Set<String> contentFields = Sets.newHashSet();
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@JoinTable(name = "widget_option", joinColumns = @JoinColumn(name = "widget_id"))
-	@MapKeyColumn(name = "option")
-	@Column(name = "value")
-	private Map<String, String> widgetOptions = new HashMap<>();
+	@Type(type = "widgetOptions")
+	@Column(name = "widget_options")
+	private WidgetOptions widgetOptions;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
@@ -128,11 +127,11 @@ public class Widget implements Serializable {
 		this.contentFields = contentFields;
 	}
 
-	public Map<String, String> getWidgetOptions() {
+	public WidgetOptions getWidgetOptions() {
 		return widgetOptions;
 	}
 
-	public void setWidgetOptions(Map<String, String> widgetOptions) {
+	public void setWidgetOptions(WidgetOptions widgetOptions) {
 		this.widgetOptions = widgetOptions;
 	}
 
