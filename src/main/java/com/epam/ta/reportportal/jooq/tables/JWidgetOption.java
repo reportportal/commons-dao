@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidgetOption extends TableImpl<JWidgetOptionRecord> {
 
-    private static final long serialVersionUID = -925357305;
+	private static final long serialVersionUID = 1793351912;
 
     /**
      * The reference instance of <code>public.widget_option</code>
@@ -135,18 +135,6 @@ public class JWidgetOption extends TableImpl<JWidgetOptionRecord> {
     @Override
     public List<UniqueKey<JWidgetOptionRecord>> getKeys() {
         return Arrays.<UniqueKey<JWidgetOptionRecord>>asList(Keys.WIDGET_OPTION_PK);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ForeignKey<JWidgetOptionRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JWidgetOptionRecord, ?>>asList(Keys.WIDGET_OPTION__WIDGET_OPTION_WIDGET_ID_FKEY);
-    }
-
-    public JWidget widget() {
-        return new JWidget(this, Keys.WIDGET_OPTION__WIDGET_OPTION_WIDGET_ID_FKEY);
     }
 
     /**

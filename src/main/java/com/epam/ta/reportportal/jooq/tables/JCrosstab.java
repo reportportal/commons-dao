@@ -122,8 +122,10 @@ public class JCrosstab extends TableImpl<JCrosstabRecord> {
      * Call this table-valued function
      */
 	public JCrosstab call(String __1, Integer __2) {
-        return new JCrosstab(DSL.name(getName()), null, new Field[] { 
-              DSL.val(__1, org.jooq.impl.SQLDataType.CLOB), DSL.val(__2, org.jooq.impl.SQLDataType.INTEGER)
+		return new JCrosstab(
+				DSL.name(getName()),
+				null,
+				new Field[] { DSL.val(__1, org.jooq.impl.SQLDataType.CLOB), DSL.val(__2, org.jooq.impl.SQLDataType.INTEGER)
         });
     }
 
@@ -131,8 +133,7 @@ public class JCrosstab extends TableImpl<JCrosstabRecord> {
      * Call this table-valued function
      */
 	public JCrosstab call(Field<String> __1, Field<Integer> __2) {
-        return new JCrosstab(DSL.name(getName()), null, new Field[] { 
-              __1, __2
+		return new JCrosstab(DSL.name(getName()), null, new Field[] { __1, __2
         });
     }
 }

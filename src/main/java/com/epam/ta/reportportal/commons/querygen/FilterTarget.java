@@ -52,6 +52,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_COUNT;
+import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_FIELD;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
@@ -162,7 +164,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_STATISTICS_FIELD, STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_STATISTICS_COUNT, STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {

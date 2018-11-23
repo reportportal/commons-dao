@@ -22,6 +22,8 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -76,6 +78,7 @@ public class TestItem implements Serializable {
 	private String uniqueId;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "item_id")
 	private Set<ItemAttribute> tags = Sets.newHashSet();
 
