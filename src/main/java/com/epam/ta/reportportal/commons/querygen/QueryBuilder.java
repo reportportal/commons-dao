@@ -85,7 +85,7 @@ public class QueryBuilder {
 	 *
 	 * @param condition Condition
 	 */
-	void addStatisticsCondition(FilterCondition filterCondition, Condition condition, Operator operator) {
+	void addHavingCondition(Condition condition, Operator operator) {
 		query.addHaving(operator, condition);
 	}
 

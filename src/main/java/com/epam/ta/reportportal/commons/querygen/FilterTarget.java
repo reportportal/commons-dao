@@ -98,7 +98,7 @@ public enum FilterTarget {
 	USER_TARGET(User.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_ID, USERS.ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_EMAIL, USERS.EMAIL.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_FULL_NAME, USERS.FULL_NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ROLE, USERS.ROLE.getQualifiedName().toString(), String.class),
@@ -156,8 +156,8 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(CRITERIA_LAUNCH_TAG, LAUNCH_TAG.VALUE.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_LAUNCH_TAG, LAUNCH_TAG.VALUE.getQualifiedName().toString(), List.class),
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -198,7 +198,7 @@ public enum FilterTarget {
 
 	TEST_ITEM_TARGET(TestItem.class,
 			Arrays.asList(new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
-
+					new CriteriaHolder(CRITERIA_ID, TEST_ITEM.ITEM_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_NAME, TEST_ITEM.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(TestItemCriteriaConstant.CRITERIA_TYPE,
 							TEST_ITEM.TYPE.getQualifiedName().toString(),
@@ -324,9 +324,9 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), JActivityEntityEnum.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_LOGIN, USERS.LOGIN.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
