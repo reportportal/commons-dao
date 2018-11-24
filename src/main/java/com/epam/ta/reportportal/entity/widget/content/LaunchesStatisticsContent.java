@@ -16,7 +16,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
-	@Column(name = "tag_values")
+	@Column(name = TAG_VALUES)
 	@JsonProperty(value = "tags")
 	private List<String> tags;
 
