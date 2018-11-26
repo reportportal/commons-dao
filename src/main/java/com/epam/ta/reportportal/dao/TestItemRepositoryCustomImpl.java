@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.dao.util.TimeCalculatorUtil;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
@@ -28,8 +29,6 @@ import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
-import com.google.common.collect.Lists;
-import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,9 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +135,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.onKey()
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(TEST_ITEM.LAST_MODIFIED.gt(Timestamp.from(Instant.now().minusSeconds(period.getSeconds()))))
+				.and(TEST_ITEM.LAST_MODIFIED.gt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period)))
 				.limit(1));
 	}
 
@@ -153,7 +150,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(TEST_ITEM.LAST_MODIFIED.lt(Timestamp.from(Instant.now().minusSeconds(period.getSeconds()))))
+				.and(TEST_ITEM.LAST_MODIFIED.lt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period)))
 				.limit(1));
 	}
 
