@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -105,8 +106,8 @@ public class ResultFetchers {
 			} else {
 				testItem = retriesMap.get(id);
 			}
-			Optional.ofNullable(record.get(ITEM_TAG.ID)).ifPresent(tag -> {
-				testItem.getTags().add(record.into(TestItemTag.class));
+			Optional.ofNullable(record.get(ITEM_ATTRIBUTE.ID)).ifPresent(tag -> {
+				testItem.getTags().add(record.into(ItemAttribute.class));
 			});
 			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
 				testItem.getParameters().add(record.into(Parameter.class));

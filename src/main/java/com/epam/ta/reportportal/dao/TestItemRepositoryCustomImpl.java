@@ -207,7 +207,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItem> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable).withWrapper(filter.getTarget()).withWrappedSort(pageable.getSort())
+				.with(pageable)
+				.withWrapper(filter.getTarget())
+				.withWrappedSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
@@ -222,8 +224,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 							.from(TEST_ITEM)
 							.join(TEST_ITEM_RESULTS)
 							.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-							.leftJoin(ITEM_TAG)
-							.on(TEST_ITEM.ITEM_ID.eq(ITEM_TAG.ITEM_ID))
+							.leftJoin(ITEM_ATTRIBUTE)
+							.on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID))
 							.leftJoin(PARAMETER)
 							.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
 							.where(TEST_ITEM.RETRY_OF.in(itemsWithRetries.stream().map(TestItem::getItemId).collect(Collectors.toList())))
