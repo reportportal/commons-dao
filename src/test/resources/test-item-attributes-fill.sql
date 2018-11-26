@@ -7,27 +7,33 @@ INSERT INTO launch (id, uuid, project_id, user_id, name, start_time, number, las
 (6, '8d5c2615-7afa-4522-9f20-5b906195621a', 1, 1, 'Launch F', now(), 1, now(), 'DEFAULT', 'IN_PROGRESS'),
 (7, 'e7a0c9ee-2028-4d12-9d20-d46aae2926b9', 1, 1, 'Launch G', now(), 1, now(), 'DEFAULT', 'IN_PROGRESS');
 
-INSERT INTO item_attribute (id, "key", "value", item_id, launch_id) VALUES
-(1, 'browser', 'chrome', NULL, 1),
-(2, 'env', 'ios', NULL, 1),
+INSERT INTO item_attribute (id, "key", "value", item_id, launch_id, system) VALUES
+(1, 'browser', 'chrome', NULL, 1, false),
+(2, 'env', 'ios', NULL, 1, false),
+(3, 'skippedIssue', 'false', null, 1, true),
 
-(3, 'browser', 'ie', null, 2),
-(4, 'scope', 'regression', null, 2),
+(4, 'browser', 'ie', null, 2, false),
+(5, 'scope', 'regression', null, 2, false),
+(6, 'skippedIssue', 'true', null, 2, true),
 
-(5, 'browser', 'edge', null, 3),
-(6, 'env', 'android', null, 3),
-(7, 'scope', 'sanity', null, 3),
+(7, 'browser', 'edge', null, 3, false),
+(8, 'env', 'android', null, 3, false),
+(9, 'scope', 'sanity', null, 3, false),
+(10, 'skippedIssue', 'false', null, 3, true),
 
+(11, 'browser', 'mozilla', null, 4, false),
+(12, NULL, 'UI', null, 4, false),
+(13, 'skippedIssue', 'true', null, 4, true),
 
-(8, 'browser', 'mozilla', null, 4),
-(9, NULL, 'UI', null, 4),
+(14, 'browser', 'chrome', null, 5, false),
+(15, 'scope', 'regression', null, 5, false),
+(16, 'skippedIssue', 'false', null, 5, true),
 
-(10, 'browser', 'chrome', null, 5),
-(11, 'scope', 'regression', null, 5),
+(17, 'browser', 'safari', null, 6, false),
+(18, 'env', 'win', null, 6, false),
+(19, 'skippedIssue', 'true', null, 6, true),
 
-(12, 'browser', 'safari', null, 6),
-(13, 'env', 'win', null, 6),
-
-(14, 'browser', 'edge', null, 7),
-(15, NULL, 'ws', null, 7),
-(16, 'scope', 'cit', null, 7);
+(20, 'browser', 'edge', null, 7, false),
+(21, NULL, 'ws', null, 7, false),
+(22, 'scope', 'cit', null, 7, false),
+(23, 'skippedIssue', 'false', null, 7, true);

@@ -43,6 +43,9 @@ public class ItemAttribute {
 	@Column(name = "launch_id")
 	private Long launchId;
 
+	@Column(name = "system")
+	private Boolean system;
+
 	public ItemAttribute() {
 	}
 
@@ -86,6 +89,14 @@ public class ItemAttribute {
 		this.launchId = launchId;
 	}
 
+	public boolean isSystem() {
+		return system;
+	}
+
+	public void setSystem(Boolean system) {
+		this.system = system;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -95,14 +106,13 @@ public class ItemAttribute {
 			return false;
 		}
 		ItemAttribute that = (ItemAttribute) o;
-		return Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value) && Objects.equals(itemId,
-				that.itemId
-		) && Objects.equals(launchId, that.launchId);
+		return system == that.system && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value)
+				&& Objects.equals(itemId, that.itemId) && Objects.equals(launchId, that.launchId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, key, value, itemId, launchId);
+		return Objects.hash(id, key, value, itemId, launchId, system);
 	}
 
 	@Override
@@ -113,6 +123,7 @@ public class ItemAttribute {
 		sb.append(", value='").append(value).append('\'');
 		sb.append(", itemId=").append(itemId);
 		sb.append(", launchId=").append(launchId);
+		sb.append(", system=").append(system);
 		sb.append('}');
 		return sb.toString();
 	}

@@ -103,7 +103,6 @@ public class Indexes {
     public static final Index UNQ_WIDGET_NAME_PROJECT = Indexes0.UNQ_WIDGET_NAME_PROJECT;
     public static final Index WIDGET_ID = Indexes0.WIDGET_ID;
     public static final Index WIDGET_FILTER_PK = Indexes0.WIDGET_FILTER_PK;
-    public static final Index WIDGET_OPTION_PK = Indexes0.WIDGET_OPTION_PK;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
@@ -141,7 +140,8 @@ public class Indexes {
         public static Index ISSUE_TYPE_LOCATOR_KEY = Internal.createIndex("issue_type_locator_key", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.LOCATOR }, true);
         public static Index ISSUE_TYPE_PK = Internal.createIndex("issue_type_pk", JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.ID }, true);
         public static Index ISSUE_TYPE_PROJECT_PK = Internal.createIndex("issue_type_project_pk", JIssueTypeProject.ISSUE_TYPE_PROJECT, new OrderField[] { JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID, JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID }, true);
-		public static Index ITEM_ATTRIBUTE_PK = Internal.createIndex("item_attribute_pk",
+		public static Index ITEM_ATTRIBUTE_PK = Internal.createIndex(
+				"item_attribute_pk",
 				JItemAttribute.ITEM_ATTRIBUTE,
 				new OrderField[] { JItemAttribute.ITEM_ATTRIBUTE.ID },
 				true
@@ -183,7 +183,8 @@ public class Indexes {
         public static Index USER_FILTER_PK = Internal.createIndex("user_filter_pk", JUserFilter.USER_FILTER, new OrderField[] { JUserFilter.USER_FILTER.ID }, true);
         public static Index USER_PREFERENCE_PK = Internal.createIndex("user_preference_pk", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.ID }, true);
         public static Index USER_PREFERENCE_UQ = Internal.createIndex("user_preference_uq", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID }, true);
-		public static Index USERS_EMAIL_KEY = Internal.createIndex("users_email_key",
+		public static Index USERS_EMAIL_KEY = Internal.createIndex(
+				"users_email_key",
 				JUsers.USERS,
 				new OrderField[] { JUsers.USERS.EMAIL },
 				true
@@ -193,6 +194,5 @@ public class Indexes {
         public static Index UNQ_WIDGET_NAME_PROJECT = Internal.createIndex("unq_widget_name_project", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID }, true);
         public static Index WIDGET_ID = Internal.createIndex("widget_id", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.ID }, true);
         public static Index WIDGET_FILTER_PK = Internal.createIndex("widget_filter_pk", JWidgetFilter.WIDGET_FILTER, new OrderField[] { JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID }, true);
-        public static Index WIDGET_OPTION_PK = Internal.createIndex("widget_option_pk", JWidgetOption.WIDGET_OPTION, new OrderField[] { JWidgetOption.WIDGET_OPTION.ID }, true);
     }
 }

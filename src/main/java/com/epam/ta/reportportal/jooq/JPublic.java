@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 366800367;
+	private static final long serialVersionUID = 849414495;
 
     /**
      * The reference instance of <code>public</code>
@@ -90,26 +90,26 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.connectby</code>.
      */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4,
-            String __5, Integer __6) {
-        return configuration.dsl()
-                .selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6))
-                .fetch();
+	public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4,
+			String __5, Integer __6, String __7) {
+		return configuration.dsl()
+				.selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7))
+				.fetch();
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+	public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6, String __7) {
+		return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5,
-            Field<Integer> __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
+	public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5,
+			Field<Integer> __6, Field<String> __7) {
+		return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
     }
 
     /**
@@ -125,21 +125,21 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+	public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, String __2) {
         return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1, Integer __2) {
+	public static JCrosstab CROSSTAB(String __1, String __2) {
         return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+	public static JCrosstab CROSSTAB(Field<String> __1, Field<String> __2) {
         return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
@@ -453,11 +453,6 @@ public class JPublic extends SchemaImpl {
     public final JWidgetFilter WIDGET_FILTER = com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
     /**
-     * The table <code>public.widget_option</code>.
-     */
-    public final JWidgetOption WIDGET_OPTION = com.epam.ta.reportportal.jooq.tables.JWidgetOption.WIDGET_OPTION;
-
-    /**
      * No further instances allowed
      */
     private JPublic() {
@@ -497,9 +492,9 @@ public class JPublic extends SchemaImpl {
             Sequences.FILTER_SORT_ID_SEQ,
             Sequences.INTEGRATION_ID_SEQ,
             Sequences.INTEGRATION_TYPE_ID_SEQ,
-                Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ,
-                Sequences.ISSUE_TYPE_ID_SEQ,
-                Sequences.ITEM_ATTRIBUTE_ID_SEQ,
+				Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ,
+				Sequences.ISSUE_TYPE_ID_SEQ,
+				Sequences.ITEM_ATTRIBUTE_ID_SEQ,
             Sequences.LAUNCH_ID_SEQ,
             Sequences.LDAP_SYNCHRONIZATION_ATTRIBUTES_ID_SEQ,
             Sequences.LOG_ID_SEQ,
@@ -515,8 +510,8 @@ public class JPublic extends SchemaImpl {
             Sequences.TICKET_ID_SEQ,
             Sequences.USER_PREFERENCE_ID_SEQ,
             Sequences.USERS_ID_SEQ,
-            Sequences.WIDGET_ID_SEQ,
-            Sequences.WIDGET_OPTION_ID_SEQ);
+				Sequences.WIDGET_ID_SEQ
+		);
     }
 
     @Override
@@ -555,7 +550,10 @@ public class JPublic extends SchemaImpl {
             JIntegrationType.INTEGRATION_TYPE,
             JIssue.ISSUE,
             JIssueGroup.ISSUE_GROUP,
-            JIssueTicket.ISSUE_TICKET, JIssueType.ISSUE_TYPE, JIssueTypeProject.ISSUE_TYPE_PROJECT, JItemAttribute.ITEM_ATTRIBUTE,
+				JIssueTicket.ISSUE_TICKET,
+				JIssueType.ISSUE_TYPE,
+				JIssueTypeProject.ISSUE_TYPE_PROJECT,
+				JItemAttribute.ITEM_ATTRIBUTE,
             JLaunch.LAUNCH,
             JLdapConfig.LDAP_CONFIG,
             JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES,
@@ -581,8 +579,8 @@ public class JPublic extends SchemaImpl {
             JUserPreference.USER_PREFERENCE,
             JUsers.USERS,
             JWidget.WIDGET,
-            JWidgetFilter.WIDGET_FILTER,
-            JWidgetOption.WIDGET_OPTION);
+				JWidgetFilter.WIDGET_FILTER
+		);
     }
 
     @Override

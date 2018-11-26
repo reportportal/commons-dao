@@ -64,7 +64,6 @@ public class Keys {
     public static final Identity<JUserPreferenceRecord, Long> IDENTITY_USER_PREFERENCE = Identities0.IDENTITY_USER_PREFERENCE;
     public static final Identity<JUsersRecord, Long> IDENTITY_USERS = Identities0.IDENTITY_USERS;
     public static final Identity<JWidgetRecord, Long> IDENTITY_WIDGET = Identities0.IDENTITY_WIDGET;
-    public static final Identity<JWidgetOptionRecord, Long> IDENTITY_WIDGET_OPTION = Identities0.IDENTITY_WIDGET_OPTION;
 
     // -------------------------------------------------------------------------
     // UNIQUE and PRIMARY KEY definitions
@@ -143,7 +142,6 @@ public class Keys {
     public static final UniqueKey<JWidgetRecord> WIDGET_ID = UniqueKeys0.WIDGET_ID;
     public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = UniqueKeys0.UNQ_WIDGET_NAME_PROJECT;
     public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = UniqueKeys0.WIDGET_FILTER_PK;
-    public static final UniqueKey<JWidgetOptionRecord> WIDGET_OPTION_PK = UniqueKeys0.WIDGET_OPTION_PK;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -255,7 +253,6 @@ public class Keys {
         public static Identity<JUserPreferenceRecord, Long> IDENTITY_USER_PREFERENCE = Internal.createIdentity(JUserPreference.USER_PREFERENCE, JUserPreference.USER_PREFERENCE.ID);
         public static Identity<JUsersRecord, Long> IDENTITY_USERS = Internal.createIdentity(JUsers.USERS, JUsers.USERS.ID);
         public static Identity<JWidgetRecord, Long> IDENTITY_WIDGET = Internal.createIdentity(JWidget.WIDGET, JWidget.WIDGET.ID);
-        public static Identity<JWidgetOptionRecord, Long> IDENTITY_WIDGET_OPTION = Internal.createIdentity(JWidgetOption.WIDGET_OPTION, JWidgetOption.WIDGET_OPTION.ID);
     }
 
     private static class UniqueKeys0 {
@@ -332,14 +329,14 @@ public class Keys {
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_uq", JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID);
         public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, "users_pk", JUsers.USERS.ID);
         public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = Internal.createUniqueKey(JUsers.USERS, "users_login_key", JUsers.USERS.LOGIN);
-		public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(JUsers.USERS,
+		public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(
+				JUsers.USERS,
 				"users_email_key",
 				JUsers.USERS.EMAIL
 		);
         public static final UniqueKey<JWidgetRecord> WIDGET_ID = Internal.createUniqueKey(JWidget.WIDGET, "widget_id", JWidget.WIDGET.ID);
         public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = Internal.createUniqueKey(JWidget.WIDGET, "unq_widget_name_project", JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID);
         public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = Internal.createUniqueKey(JWidgetFilter.WIDGET_FILTER, "widget_filter_pk", JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID);
-        public static final UniqueKey<JWidgetOptionRecord> WIDGET_OPTION_PK = Internal.createUniqueKey(JWidgetOption.WIDGET_OPTION, "widget_option_pk", JWidgetOption.WIDGET_OPTION.ID);
     }
 
     private static class ForeignKeys0 {

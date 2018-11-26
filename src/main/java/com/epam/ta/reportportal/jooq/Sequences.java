@@ -195,13 +195,4 @@ public class Sequences {
      * The sequence <code>public.widget_id_seq</code>
      */
     public static final Sequence<Long> WIDGET_ID_SEQ = new SequenceImpl<Long>("widget_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.widget_option_id_seq</code>
-	 */
-	public static final Sequence<Long> WIDGET_OPTION_ID_SEQ = new SequenceImpl<Long>(
-			"widget_option_id_seq",
-			JPublic.PUBLIC,
-			org.jooq.impl.SQLDataType.BIGINT.nullable(false)
-	);
 }

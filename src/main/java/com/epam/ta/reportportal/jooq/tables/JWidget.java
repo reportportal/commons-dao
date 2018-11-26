@@ -77,7 +77,8 @@ public class JWidget extends TableImpl<JWidgetRecord> {
 	/**
 	 * The column <code>public.widget.widget_options</code>.
 	 */
-	public final TableField<JWidgetRecord, Object> WIDGET_OPTIONS = createField("widget_options",
+	public final TableField<JWidgetRecord, Object> WIDGET_OPTIONS = createField(
+			"widget_options",
 			org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""),
 			this,
 			""
