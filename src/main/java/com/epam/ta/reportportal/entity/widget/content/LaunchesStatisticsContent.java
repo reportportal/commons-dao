@@ -22,7 +22,7 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	private List<String> tags;
 
 	@JsonProperty(value = "values")
-	private Map<String, Integer> values = new LinkedHashMap<>();
+	private Map<String, String> values = new LinkedHashMap<>();
 
 	@Column(name = SUM)
 	@JsonProperty(value = SUM)
@@ -55,11 +55,11 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 		this.tags = tags;
 	}
 
-	public Map<String, Integer> getValues() {
+	public Map<String, String> getValues() {
 		return values;
 	}
 
-	public void setValues(Map<String, Integer> values) {
+	public void setValues(Map<String, String> values) {
 		this.values = values;
 	}
 

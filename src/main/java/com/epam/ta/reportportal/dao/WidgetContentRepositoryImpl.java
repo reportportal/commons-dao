@@ -36,14 +36,11 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER;
-import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.LAUNCHES_STATISTICS_FETCHER;
-import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.NOT_PASSED_CASES_CONTENT_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -87,7 +84,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
 				.select(fields)
 				.from(DSL.table(DSL.name(LAUNCHES)))
-				.fetch());
+				.fetch(), contentFields);
 	}
 
 	@Override
@@ -191,7 +188,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								SortOrder.DESC :
 								SortOrder.ASC))
 						.collect(Collectors.toList()))
-				.fetch());
+				.fetch(), contentFields);
 
 	}
 
@@ -308,7 +305,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+		return BUG_TREND_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
 				.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.START_TIME, STATISTICS_FIELD.NAME, STATISTICS.S_COUNTER)
 				.from(LAUNCH)
@@ -319,61 +316,128 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(contentFields))
-				.fetch());
+				.fetch(), contentFields);
 
 	}
 
 	@Override
 	public List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> executionStatisticsFields = buildComparisonStatisticsFields(contentFields.stream()
-				.filter(cf -> cf.contains(EXECUTIONS_KEY))
-				.collect(toList()));
-		List<Field<?>> defectStatisticsFields = buildComparisonStatisticsFields(contentFields.stream()
-				.filter(cf -> cf.contains(DEFECTS_KEY))
-				.collect(toList()));
+		List<String> executionStatisticsFields = contentFields.stream().filter(cf -> cf.contains(EXECUTIONS_KEY)).collect(toList());
+		List<String> defectStatisticsFields = contentFields.stream().filter(cf -> cf.contains(DEFECTS_KEY)).collect(toList());
 
-		List<Field<?>> statisticsFields = Stream.of(defectStatisticsFields, executionStatisticsFields)
-				.flatMap(List::stream)
-				.collect(toList());
-
-		Collections.addAll(statisticsFields,
-				fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NAME),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME)
-		);
-
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(statisticsFields)
-				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.fetch());
+		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NAME,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						STATISTICS_FIELD.NAME,
+						round(val(PERCENTAGE_MULTIPLIER).mul(STATISTICS.S_COUNTER)
+										.div(nullif(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
+												.from(STATISTICS)
+												.join(STATISTICS_FIELD)
+												.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+												.where(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
+												.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)), 0).cast(Double.class)),
+								2
+						).as("s_counter")
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS_FIELD.NAME.in(executionStatisticsFields))
+				.orderBy(StreamSupport.stream(sort.spliterator(), false)
+						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList()))
+				.unionAll(DSL.select(LAUNCH.ID,
+						LAUNCH.NAME,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						STATISTICS_FIELD.NAME,
+						round(val(PERCENTAGE_MULTIPLIER).mul(STATISTICS.S_COUNTER)
+								.div(nullif(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
+										.from(STATISTICS)
+										.join(STATISTICS_FIELD)
+										.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+										.where(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
+										.and(STATISTICS_FIELD.NAME.in(defectStatisticsFields)), 0).cast(Double.class)), 2)
+				)
+						.from(LAUNCH)
+						.join(LAUNCHES)
+						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+						.leftJoin(STATISTICS)
+						.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.where(STATISTICS_FIELD.NAME.in(defectStatisticsFields)))
+				.orderBy(StreamSupport.stream(sort.spliterator(), false)
+						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList()))
+				.fetch(), contentFields);
 
 	}
 
 	@Override
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		return dsl.select(fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NAME),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.STATUS),
-				fieldName(LAUNCH.START_TIME),
-				fieldName(LAUNCH.END_TIME),
-				timestampDiff(fieldName(LAUNCH.END_TIME).cast(Timestamp.class), (fieldName(LAUNCH.START_TIME).cast(Timestamp.class))).as(
-						DURATION)
-		).from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build()).fetchInto(LaunchesDurationContent.class);
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NAME,
+						LAUNCH.NUMBER,
+						LAUNCH.STATUS,
+						LAUNCH.START_TIME,
+						LAUNCH.END_TIME,
+						timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.orderBy(StreamSupport.stream(sort.spliterator(), false)
+						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList()))
+				.fetchInto(LaunchesDurationContent.class);
 	}
 
 	@Override
 	public List<NotPassedCasesContent> notPassedCasesStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(fieldName(LAUNCH.ID),
-				fieldName(LAUNCH.NUMBER),
-				fieldName(LAUNCH.START_TIME),
-				fieldName(LAUNCH.NAME),
-				coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(fieldName(EXECUTIONS_FAILED).add(fieldName(EXECUTIONS_SKIPPED))
-						.cast(Double.class)).div(nullif(fieldName(EXECUTIONS_TOTAL), 0).cast(Double.class)), 2), 0).as(PERCENTAGE)
-		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetch(NOT_PASSED_CASES_CONTENT_RECORD_MAPPER);
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NAME,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						STATISTICS.S_COUNTER,
+						coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
+								.from(STATISTICS)
+								.join(STATISTICS_FIELD)
+								.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+								.where(STATISTICS_FIELD.NAME.in(EXECUTIONS_SKIPPED, EXECUTIONS_FAILED))
+								.and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
+								.asField()
+								.cast(Double.class)).div(nullif(STATISTICS.S_COUNTER, 0).cast(Double.class)), 2), 0).as(PERCENTAGE)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS_FIELD.NAME.in(EXECUTIONS_TOTAL))
+				.fetch(NOT_PASSED_CASES_CONTENT_RECORD_MAPPER);
 	}
 
 	@Override
@@ -385,20 +449,30 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.fetch());
+				.fetch(), contentFields);
 
 	}
 
 	@Override
 	public List<ActivityContent> activityStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.select(fieldName(ACTIVITY.ID).as(ID),
-				fieldName(ACTIVITY.ACTION).as(ACTION_TYPE),
-				fieldName(ACTIVITY.ENTITY).as(ENTITY),
-				fieldName(ACTIVITY.CREATION_DATE).as(LAST_MODIFIED),
-				fieldName(USERS.LOGIN).as(USER_LOGIN),
-				fieldName(PROJECT.NAME).as(PROJECT_NAME)
-		).from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()).fetchInto(ActivityContent.class);
+		return dsl.with(ACTIVITIES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(ACTIVITY.ID.as(ID),
+						ACTIVITY.ACTION.as(ACTION_TYPE),
+						ACTIVITY.ENTITY.as(ENTITY),
+						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
+						USERS.LOGIN.as(USER_LOGIN),
+						PROJECT.NAME.as(PROJECT_NAME)
+				)
+				.from(ACTIVITY)
+				.join(ACTIVITIES)
+				.on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
+				.join(USERS)
+				.on(ACTIVITY.USER_ID.eq(USERS.ID))
+				.join(PROJECT)
+				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+				.fetchInto(ActivityContent.class);
 
 	}
 
@@ -499,7 +573,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Query build for Product Status Widget failed"));
 
-		Map<String, List<LaunchesStatisticsContent>> productStatusContent = LAUNCHES_STATISTICS_FETCHER.apply(select.fetch())
+		Map<String, List<LaunchesStatisticsContent>> productStatusContent = LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
 				.stream()
 				.collect(groupingBy(LaunchesStatisticsContent::getFilterName, LinkedHashMap::new, toList()));
 
@@ -535,7 +609,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<LaunchesStatisticsContent> productStatusStatisticsResult = LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
 				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
-				.fetch());
+				.fetch(), contentFields);
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
 		return productStatusStatisticsResult;
@@ -608,7 +682,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								SortOrder.DESC :
 								SortOrder.ASC))
 						.collect(Collectors.toList())).orElseGet(Collections::emptyList))
-				.fetch());
+				.fetch(), contentFields);
 	}
 
 	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort,
@@ -665,7 +739,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private LaunchesStatisticsContent countLaunchTotalStatistics(List<LaunchesStatisticsContent> launchesStatisticsResult) {
 		Map<String, Integer> total = launchesStatisticsResult.stream()
 				.flatMap(lsc -> lsc.getValues().entrySet().stream())
-				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(Map.Entry::getValue)));
+				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
 
 		Double averagePassingRate = launchesStatisticsResult.stream()
 				.collect(averagingDouble(lsc -> ofNullable(lsc.getPassingRate()).orElse(0D)));
@@ -685,7 +759,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.stream()
 				.flatMap(Collection::stream)
 				.flatMap(lsc -> lsc.getValues().entrySet().stream())
-				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(Map.Entry::getValue)));
+				.collect(Collectors.groupingBy(entry -> (entry.getKey()), summingInt(entry -> Integer.parseInt(entry.getValue()))));
 
 		Double averagePassingRate = launchesStatisticsResult.values()
 				.stream()

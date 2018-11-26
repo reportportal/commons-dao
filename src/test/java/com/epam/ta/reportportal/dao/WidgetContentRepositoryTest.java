@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 
@@ -83,14 +84,17 @@ public class WidgetContentRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
+		runSqlScript("/activity/activity-down.sql");
 		runSqlScript("/widget/widget-down.sql");
 		runSqlScript("/statistics/statistics-down.sql");
 		runSqlScript("/widget/widget-up.sql");
 		runSqlScript("/statistics/launch-statistics-up.sql");
+		runSqlScript("/activity/activity-up.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
+		runSqlScript("/activity/activity-down.sql");
 		runSqlScript("/widget/widget-down.sql");
 		runSqlScript("/statistics/statistics-down.sql");
 	}
@@ -134,8 +138,11 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(4, launchStatisticsContents.size());
 
-		Assert.assertEquals((long) launchStatisticsContents.get(0).getValues().get(sortingColumn), 6);
-		Assert.assertEquals((long) launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn), 1);
+		Assert.assertEquals(launchStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
+		Assert.assertEquals(
+				launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn),
+				String.valueOf(1)
+		);
 	}
 
 	@Test
@@ -250,13 +257,13 @@ public class WidgetContentRepositoryTest {
 
 		launchStatisticsContents.forEach(res -> {
 			Map<String, Integer> stats = statistics.get(res.getId());
-			Map<String, Integer> resStatistics = res.getValues();
+			Map<String, String> resStatistics = res.getValues();
 
 			long total = stats.values().stream().mapToInt(Integer::intValue).sum();
 
-			stats.keySet().forEach(key -> Assert.assertEquals((long) stats.get(key), (long) resStatistics.get(key)));
+			stats.keySet().forEach(key -> Assert.assertEquals((long) stats.get(key), (long) Integer.parseInt(resStatistics.get(key))));
 
-			Assert.assertEquals(total, (long) resStatistics.get(TOTAL));
+			Assert.assertEquals(String.valueOf(total), resStatistics.get(TOTAL));
 		});
 	}
 
@@ -264,10 +271,10 @@ public class WidgetContentRepositoryTest {
 	public void launchesComparisonStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalContentFields();
-		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name", NAME));
+		Set<FilterCondition> defaultConditions = Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME));
 		filter = filter.withConditions(defaultConditions);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -281,7 +288,7 @@ public class WidgetContentRepositoryTest {
 		Assert.assertEquals(2, comparisonStatisticsContents.size());
 
 		comparisonStatisticsContents.forEach(res -> {
-			Map<String, Integer> currStatistics = res.getValues();
+			Map<String, String> currStatistics = res.getValues();
 			Map<Long, Map<String, Integer>> preDefinedStatistics = buildLaunchesComparisonStatistics();
 
 			Map<String, Integer> testStatistics = preDefinedStatistics.get(res.getId());
@@ -299,7 +306,7 @@ public class WidgetContentRepositoryTest {
 			currStatistics.keySet()
 					.stream()
 					.filter(key -> key.contains(EXECUTIONS_KEY))
-					.forEach(key -> Assert.assertEquals((double) currStatistics.get(key),
+					.forEach(key -> Assert.assertEquals(Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
@@ -308,7 +315,7 @@ public class WidgetContentRepositoryTest {
 			currStatistics.keySet()
 					.stream()
 					.filter(key -> key.contains(DEFECTS_KEY))
-					.forEach(key -> Assert.assertEquals((double) (currStatistics.get(key)),
+					.forEach(key -> Assert.assertEquals(Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / defectsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
@@ -321,7 +328,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void launchesDurationStatistics() {
 		Filter filter = buildDefaultFilter(1L);
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -345,7 +352,7 @@ public class WidgetContentRepositoryTest {
 	public void notPassedCasesStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -375,7 +382,7 @@ public class WidgetContentRepositoryTest {
 	public void launchesTableStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -394,7 +401,7 @@ public class WidgetContentRepositoryTest {
 
 		launchStatisticsContents.forEach(content -> {
 
-			Map<String, Integer> values = content.getValues();
+			Map<String, String> values = content.getValues();
 			tableContentFields.forEach(tcf -> {
 				Assert.assertTrue(values.containsKey(tcf));
 				Assert.assertNotNull(values.get(tcf));
@@ -414,7 +421,7 @@ public class WidgetContentRepositoryTest {
 
 		List<String> contentFields = buildActivityContentFields();
 
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "login"))
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
 				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), "action"));
 
 		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
@@ -555,7 +562,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
-		filter = updateFilter(filter, "launch name", true);
+		filter = updateFilter(filter, "launch name 1", true);
 		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
 				filter);
 
@@ -591,7 +598,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
-				"project_id"
+				CRITERIA_PROJECT_ID
 		));
 		return new Filter(1L, Activity.class, conditionSet);
 	}
