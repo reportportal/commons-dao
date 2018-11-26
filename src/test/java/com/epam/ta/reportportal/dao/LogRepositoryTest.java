@@ -23,7 +23,6 @@ import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.junit.AfterClass;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,14 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
-import static org.junit.Assert.assertTrue;
 import static com.epam.ta.reportportal.dao.constant.TestConstants.STEP_ITEM_WITH_LOGS_ID;
 import static org.junit.Assert.assertTrue;
 
@@ -66,9 +57,6 @@ public class LogRepositoryTest {
 
 	@Autowired
 	private LogRepository logRepository;
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@BeforeClass
 	public static void init() throws SQLException {
