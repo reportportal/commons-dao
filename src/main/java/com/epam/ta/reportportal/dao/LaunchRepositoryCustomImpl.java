@@ -74,9 +74,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable)
-				.withWrapper(filter.getTarget())
-				.withWrappedSort(pageable.getSort())
+				.with(pageable).withWrapper(filter.getTarget()).withWrappedSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
@@ -174,8 +172,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 								.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))))
 						.orderBy(LAUNCH.START_TIME.desc())
 						.limit(1))
-				.select()
-				.from(LAUNCH).join(FILTERED_QUERY).on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
+				.select().from(LAUNCH).join(FILTERED_QUERY).on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
 				.leftJoin(STATISTICS)
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)

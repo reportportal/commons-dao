@@ -206,13 +206,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Page<TestItem> findByFilter(Filter filter, Pageable pageable) {
-		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable)
-				.withWrapper(filter.getTarget())
-				.withWrappedSort(pageable.getSort())
-				.build()));
-		fetchRetries(items);
-		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable).withWrapper(filter.getTarget()).withWrappedSort(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	private void fetchRetries(List<TestItem> items) {

@@ -3,118 +3,14 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
-import com.epam.ta.reportportal.jooq.tables.JItemTag;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
-import com.epam.ta.reportportal.jooq.tables.JUserFilter;
-import com.epam.ta.reportportal.jooq.tables.JUserPreference;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.records.JAclClassRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JAclEntryRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JAclObjectIdentityRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JAclSidRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JActiveDirectoryConfigRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JAttributeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JAuthConfigRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JBugTrackingSystemRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JContentFieldRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JDashboardRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JDashboardWidgetRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JDefectFieldAllowedValueRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JDefectFormFieldRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JDefectFormFieldValueRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JFilterConditionRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JFilterRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JFilterSortRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIntegrationRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIntegrationTypeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIssueGroupRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIssueRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIssueTicketRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeProjectRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JItemTagRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLaunchTagRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLdapConfigRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLdapSynchronizationAttributesRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOauthAccessTokenRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JParameterRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JProjectAttributeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JRestorePasswordBidRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JServerSettingsRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JStatisticsFieldRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JStatisticsRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JTestItemResultsRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JTicketRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JUserCreationBidRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JUserFilterRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JUserPreferenceRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JWidgetFilterRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JWidgetRecord;
-
-import javax.annotation.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
+import com.epam.ta.reportportal.jooq.tables.records.*;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.Internal;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -152,9 +48,8 @@ public class Keys {
     public static final Identity<JIntegrationTypeRecord, Integer> IDENTITY_INTEGRATION_TYPE = Identities0.IDENTITY_INTEGRATION_TYPE;
     public static final Identity<JIssueGroupRecord, Short> IDENTITY_ISSUE_GROUP = Identities0.IDENTITY_ISSUE_GROUP;
     public static final Identity<JIssueTypeRecord, Long> IDENTITY_ISSUE_TYPE = Identities0.IDENTITY_ISSUE_TYPE;
-    public static final Identity<JItemTagRecord, Integer> IDENTITY_ITEM_TAG = Identities0.IDENTITY_ITEM_TAG;
+	public static final Identity<JItemAttributeRecord, Integer> IDENTITY_ITEM_ATTRIBUTE = Identities0.IDENTITY_ITEM_ATTRIBUTE;
     public static final Identity<JLaunchRecord, Long> IDENTITY_LAUNCH = Identities0.IDENTITY_LAUNCH;
-    public static final Identity<JLaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = Identities0.IDENTITY_LAUNCH_TAG;
     public static final Identity<JLdapSynchronizationAttributesRecord, Long> IDENTITY_LDAP_SYNCHRONIZATION_ATTRIBUTES = Identities0.IDENTITY_LDAP_SYNCHRONIZATION_ATTRIBUTES;
     public static final Identity<JLogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
@@ -205,10 +100,9 @@ public class Keys {
     public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_PK = UniqueKeys0.ISSUE_TYPE_PK;
     public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_LOCATOR_KEY = UniqueKeys0.ISSUE_TYPE_LOCATOR_KEY;
     public static final UniqueKey<JIssueTypeProjectRecord> ISSUE_TYPE_PROJECT_PK = UniqueKeys0.ISSUE_TYPE_PROJECT_PK;
-    public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = UniqueKeys0.ITEM_TAG_PK;
+	public static final UniqueKey<JItemAttributeRecord> ITEM_ATTRIBUTE_PK = UniqueKeys0.ITEM_ATTRIBUTE_PK;
     public static final UniqueKey<JLaunchRecord> LAUNCH_PK = UniqueKeys0.LAUNCH_PK;
     public static final UniqueKey<JLaunchRecord> UNQ_NAME_NUMBER = UniqueKeys0.UNQ_NAME_NUMBER;
-    public static final UniqueKey<JLaunchTagRecord> LAUNCH_TAG_PK = UniqueKeys0.LAUNCH_TAG_PK;
     public static final UniqueKey<JLdapConfigRecord> LDAP_CONFIG_PK = UniqueKeys0.LDAP_CONFIG_PK;
     public static final UniqueKey<JLdapSynchronizationAttributesRecord> LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = UniqueKeys0.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK;
     public static final UniqueKey<JLdapSynchronizationAttributesRecord> LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY = UniqueKeys0.LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY;
@@ -244,7 +138,7 @@ public class Keys {
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = UniqueKeys0.USER_PREFERENCE_UQ;
     public static final UniqueKey<JUsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
     public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = UniqueKeys0.USERS_LOGIN_KEY;
-    public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = UniqueKeys0.USERS_EMAIL_KEY;
+	public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = UniqueKeys0.USERS_EMAIL_KEY;
     public static final UniqueKey<JWidgetRecord> WIDGET_ID = UniqueKeys0.WIDGET_ID;
     public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = UniqueKeys0.UNQ_WIDGET_NAME_PROJECT;
     public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = UniqueKeys0.WIDGET_FILTER_PK;
@@ -284,10 +178,10 @@ public class Keys {
     public static final ForeignKey<JIssueTypeRecord, JIssueGroupRecord> ISSUE_TYPE__ISSUE_TYPE_ISSUE_GROUP_ID_FKEY = ForeignKeys0.ISSUE_TYPE__ISSUE_TYPE_ISSUE_GROUP_ID_FKEY;
     public static final ForeignKey<JIssueTypeProjectRecord, JProjectRecord> ISSUE_TYPE_PROJECT__ISSUE_TYPE_PROJECT_PROJECT_ID_FKEY = ForeignKeys0.ISSUE_TYPE_PROJECT__ISSUE_TYPE_PROJECT_PROJECT_ID_FKEY;
     public static final ForeignKey<JIssueTypeProjectRecord, JIssueTypeRecord> ISSUE_TYPE_PROJECT__ISSUE_TYPE_PROJECT_ISSUE_TYPE_ID_FKEY = ForeignKeys0.ISSUE_TYPE_PROJECT__ISSUE_TYPE_PROJECT_ISSUE_TYPE_ID_FKEY;
-    public static final ForeignKey<JItemTagRecord, JTestItemRecord> ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY = ForeignKeys0.ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY;
+	public static final ForeignKey<JItemAttributeRecord, JTestItemRecord> ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_ITEM_ID_FKEY = ForeignKeys0.ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_ITEM_ID_FKEY;
+	public static final ForeignKey<JItemAttributeRecord, JLaunchRecord> ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_LAUNCH_ID_FKEY = ForeignKeys0.ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_LAUNCH_ID_FKEY;
     public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_PROJECT_ID_FKEY;
     public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_USER_ID_FKEY;
-    public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = ForeignKeys0.LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY;
     public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_ID_FKEY;
     public static final ForeignKey<JLdapConfigRecord, JLdapSynchronizationAttributesRecord> LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY;
     public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = ForeignKeys0.LOG__LOG_ITEM_ID_FKEY;
@@ -340,9 +234,11 @@ public class Keys {
         public static Identity<JIntegrationTypeRecord, Integer> IDENTITY_INTEGRATION_TYPE = Internal.createIdentity(JIntegrationType.INTEGRATION_TYPE, JIntegrationType.INTEGRATION_TYPE.ID);
         public static Identity<JIssueGroupRecord, Short> IDENTITY_ISSUE_GROUP = Internal.createIdentity(JIssueGroup.ISSUE_GROUP, JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID);
         public static Identity<JIssueTypeRecord, Long> IDENTITY_ISSUE_TYPE = Internal.createIdentity(JIssueType.ISSUE_TYPE, JIssueType.ISSUE_TYPE.ID);
-        public static Identity<JItemTagRecord, Integer> IDENTITY_ITEM_TAG = Internal.createIdentity(JItemTag.ITEM_TAG, JItemTag.ITEM_TAG.ID);
+		public static Identity<JItemAttributeRecord, Integer> IDENTITY_ITEM_ATTRIBUTE = Internal.createIdentity(
+				JItemAttribute.ITEM_ATTRIBUTE,
+				JItemAttribute.ITEM_ATTRIBUTE.ID
+		);
         public static Identity<JLaunchRecord, Long> IDENTITY_LAUNCH = Internal.createIdentity(JLaunch.LAUNCH, JLaunch.LAUNCH.ID);
-        public static Identity<JLaunchTagRecord, Long> IDENTITY_LAUNCH_TAG = Internal.createIdentity(JLaunchTag.LAUNCH_TAG, JLaunchTag.LAUNCH_TAG.ID);
         public static Identity<JLdapSynchronizationAttributesRecord, Long> IDENTITY_LDAP_SYNCHRONIZATION_ATTRIBUTES = Internal.createIdentity(JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.ID);
         public static Identity<JLogRecord, Long> IDENTITY_LOG = Internal.createIdentity(JLog.LOG, JLog.LOG.ID);
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
@@ -391,10 +287,13 @@ public class Keys {
         public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_PK = Internal.createUniqueKey(JIssueType.ISSUE_TYPE, "issue_type_pk", JIssueType.ISSUE_TYPE.ID);
         public static final UniqueKey<JIssueTypeRecord> ISSUE_TYPE_LOCATOR_KEY = Internal.createUniqueKey(JIssueType.ISSUE_TYPE, "issue_type_locator_key", JIssueType.ISSUE_TYPE.LOCATOR);
         public static final UniqueKey<JIssueTypeProjectRecord> ISSUE_TYPE_PROJECT_PK = Internal.createUniqueKey(JIssueTypeProject.ISSUE_TYPE_PROJECT, "issue_type_project_pk", JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID, JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID);
-        public static final UniqueKey<JItemTagRecord> ITEM_TAG_PK = Internal.createUniqueKey(JItemTag.ITEM_TAG, "item_tag_pk", JItemTag.ITEM_TAG.ID);
+		public static final UniqueKey<JItemAttributeRecord> ITEM_ATTRIBUTE_PK = Internal.createUniqueKey(
+				JItemAttribute.ITEM_ATTRIBUTE,
+				"item_attribute_pk",
+				JItemAttribute.ITEM_ATTRIBUTE.ID
+		);
         public static final UniqueKey<JLaunchRecord> LAUNCH_PK = Internal.createUniqueKey(JLaunch.LAUNCH, "launch_pk", JLaunch.LAUNCH.ID);
         public static final UniqueKey<JLaunchRecord> UNQ_NAME_NUMBER = Internal.createUniqueKey(JLaunch.LAUNCH, "unq_name_number", JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID);
-        public static final UniqueKey<JLaunchTagRecord> LAUNCH_TAG_PK = Internal.createUniqueKey(JLaunchTag.LAUNCH_TAG, "launch_tag_pk", JLaunchTag.LAUNCH_TAG.ID);
         public static final UniqueKey<JLdapConfigRecord> LDAP_CONFIG_PK = Internal.createUniqueKey(JLdapConfig.LDAP_CONFIG, "ldap_config_pk", JLdapConfig.LDAP_CONFIG.ID);
         public static final UniqueKey<JLdapSynchronizationAttributesRecord> LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Internal.createUniqueKey(JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, "ldap_synchronization_attributes_pk", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.ID);
         public static final UniqueKey<JLdapSynchronizationAttributesRecord> LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY = Internal.createUniqueKey(JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, "ldap_synchronization_attributes_email_key", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.EMAIL);
@@ -430,7 +329,11 @@ public class Keys {
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_uq", JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID);
         public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, "users_pk", JUsers.USERS.ID);
         public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = Internal.createUniqueKey(JUsers.USERS, "users_login_key", JUsers.USERS.LOGIN);
-        public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(JUsers.USERS, "users_email_key", JUsers.USERS.EMAIL);
+		public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(
+				JUsers.USERS,
+				"users_email_key",
+				JUsers.USERS.EMAIL
+		);
         public static final UniqueKey<JWidgetRecord> WIDGET_ID = Internal.createUniqueKey(JWidget.WIDGET, "widget_id", JWidget.WIDGET.ID);
         public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = Internal.createUniqueKey(JWidget.WIDGET, "unq_widget_name_project", JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID);
         public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = Internal.createUniqueKey(JWidgetFilter.WIDGET_FILTER, "widget_filter_pk", JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID);
@@ -468,10 +371,20 @@ public class Keys {
         public static final ForeignKey<JIssueTypeRecord, JIssueGroupRecord> ISSUE_TYPE__ISSUE_TYPE_ISSUE_GROUP_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ISSUE_GROUP_PK, JIssueType.ISSUE_TYPE, "issue_type__issue_type_issue_group_id_fkey", JIssueType.ISSUE_TYPE.ISSUE_GROUP_ID);
         public static final ForeignKey<JIssueTypeProjectRecord, JProjectRecord> ISSUE_TYPE_PROJECT__ISSUE_TYPE_PROJECT_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JIssueTypeProject.ISSUE_TYPE_PROJECT, "issue_type_project__issue_type_project_project_id_fkey", JIssueTypeProject.ISSUE_TYPE_PROJECT.PROJECT_ID);
         public static final ForeignKey<JIssueTypeProjectRecord, JIssueTypeRecord> ISSUE_TYPE_PROJECT__ISSUE_TYPE_PROJECT_ISSUE_TYPE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ISSUE_TYPE_PK, JIssueTypeProject.ISSUE_TYPE_PROJECT, "issue_type_project__issue_type_project_issue_type_id_fkey", JIssueTypeProject.ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID);
-        public static final ForeignKey<JItemTagRecord, JTestItemRecord> ITEM_TAG__ITEM_TAG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JItemTag.ITEM_TAG, "item_tag__item_tag_item_id_fkey", JItemTag.ITEM_TAG.ITEM_ID);
+		public static final ForeignKey<JItemAttributeRecord, JTestItemRecord> ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_ITEM_ID_FKEY = Internal.createForeignKey(
+				com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK,
+				JItemAttribute.ITEM_ATTRIBUTE,
+				"item_attribute__item_attribute_item_id_fkey",
+				JItemAttribute.ITEM_ATTRIBUTE.ITEM_ID
+		);
+		public static final ForeignKey<JItemAttributeRecord, JLaunchRecord> ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_LAUNCH_ID_FKEY = Internal.createForeignKey(
+				com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK,
+				JItemAttribute.ITEM_ATTRIBUTE,
+				"item_attribute__item_attribute_launch_id_fkey",
+				JItemAttribute.ITEM_ATTRIBUTE.LAUNCH_ID
+		);
         public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JLaunch.LAUNCH, "launch__launch_project_id_fkey", JLaunch.LAUNCH.PROJECT_ID);
         public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JLaunch.LAUNCH, "launch__launch_user_id_fkey", JLaunch.LAUNCH.USER_ID);
-        public static final ForeignKey<JLaunchTagRecord, JLaunchRecord> LAUNCH_TAG__LAUNCH_TAG_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JLaunchTag.LAUNCH_TAG, "launch_tag__launch_tag_launch_id_fkey", JLaunchTag.LAUNCH_TAG.LAUNCH_ID);
         public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.INTEGRATION_PK, JLdapConfig.LDAP_CONFIG, "ldap_config__ldap_config_id_fkey", JLdapConfig.LDAP_CONFIG.ID);
         public static final ForeignKey<JLdapConfigRecord, JLdapSynchronizationAttributesRecord> LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK, JLdapConfig.LDAP_CONFIG, "ldap_config__ldap_config_sync_attributes_id_fkey", JLdapConfig.LDAP_CONFIG.SYNC_ATTRIBUTES_ID);
         public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JLog.LOG, "log__log_item_id_fkey", JLog.LOG.ITEM_ID);

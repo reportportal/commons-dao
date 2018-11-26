@@ -39,14 +39,14 @@ public class LaunchTagRepositoryCustomImpl implements LaunchTagRepositoryCustom 
 
 	@Override
 	public List<String> getTags(Long projectId, String value) {
-		return dslContext.selectDistinct(LAUNCH_TAG.VALUE)
-				.from(LAUNCH_TAG)
+		return dslContext.selectDistinct()
+				.from(ITEM_ATTRIBUTE)
 				.leftJoin(LAUNCH)
-				.on(LAUNCH_TAG.LAUNCH_ID.eq(LAUNCH.ID))
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(LAUNCH_TAG.VALUE.like("%" + value + "%"))
-				.fetch(LAUNCH_TAG.VALUE);
+				.and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + value + "%"))
+				.fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 }

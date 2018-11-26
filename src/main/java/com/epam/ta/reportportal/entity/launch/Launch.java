@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.launch;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -92,20 +93,21 @@ public class Launch implements Serializable {
 	@Type(type = "pqsql_enum")
 	private StatusEnum status;
 
-	@OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Fetch(FetchMode.JOIN)
-	private Set<LaunchTag> tags = Sets.newHashSet();
+	@JoinColumn(name = "launch_id")
+	private Set<ItemAttribute> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
-	public Set<LaunchTag> getTags() {
+	public Set<ItemAttribute> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<LaunchTag> tags) {
+	public void setTags(Set<ItemAttribute> tags) {
 		this.tags.clear();
 		this.tags.addAll(tags);
 	}
@@ -230,32 +232,15 @@ public class Launch implements Serializable {
 			return false;
 		}
 		Launch launch = (Launch) o;
-		return Objects.equals(id, launch.id) && Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId)
-				&& Objects.equals(user, launch.user) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
-				&& Objects.equals(startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(number,
-				launch.number
-		) && Objects.equals(lastModified, launch.lastModified) && mode == launch.mode && status == launch.status && Objects.equals(tags,
-				launch.tags
-		) && Objects.equals(statistics, launch.statistics);
+		return Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId) && Objects.equals(name, launch.name)
+				&& Objects.equals(description, launch.description) && Objects.equals(startTime, launch.startTime) && Objects.equals(endTime,
+				launch.endTime
+		) && Objects.equals(number, launch.number) && mode == launch.mode && status == launch.status;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id,
-				uuid,
-				projectId,
-				user,
-				name,
-				description,
-				startTime,
-				endTime,
-				number,
-				lastModified,
-				mode,
-				status,
-				tags,
-				statistics
-		);
+		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, mode, status);
 	}
 
 	@Override

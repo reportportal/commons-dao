@@ -3,21 +3,13 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.tables.records.JCrosstabRecord;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -33,7 +25,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JCrosstab extends TableImpl<JCrosstabRecord> {
 
-    private static final long serialVersionUID = -1837069944;
+	private static final long serialVersionUID = -964366163;
 
     /**
      * The reference instance of <code>public.crosstab</code>
@@ -75,7 +67,7 @@ public class JCrosstab extends TableImpl<JCrosstabRecord> {
     }
 
     private JCrosstab(Name alias, Table<JCrosstabRecord> aliased) {
-        this(alias, aliased, new Field[1]);
+		this(alias, aliased, new Field[2]);
     }
 
     private JCrosstab(Name alias, Table<JCrosstabRecord> aliased, Field<?>[] parameters) {
@@ -129,18 +121,19 @@ public class JCrosstab extends TableImpl<JCrosstabRecord> {
     /**
      * Call this table-valued function
      */
-    public JCrosstab call(String __1) {
-        return new JCrosstab(DSL.name(getName()), null, new Field[] { 
-              DSL.val(__1, org.jooq.impl.SQLDataType.CLOB)
+	public JCrosstab call(String __1, String __2) {
+		return new JCrosstab(
+				DSL.name(getName()),
+				null,
+				new Field[] { DSL.val(__1, org.jooq.impl.SQLDataType.CLOB), DSL.val(__2, org.jooq.impl.SQLDataType.CLOB)
         });
     }
 
     /**
      * Call this table-valued function
      */
-    public JCrosstab call(Field<String> __1) {
-        return new JCrosstab(DSL.name(getName()), null, new Field[] { 
-              __1
+	public JCrosstab call(Field<String> __1, Field<String> __2) {
+		return new JCrosstab(DSL.name(getName()), null, new Field[] { __1, __2
         });
     }
 }

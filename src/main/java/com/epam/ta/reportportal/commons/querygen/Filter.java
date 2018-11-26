@@ -49,7 +49,8 @@ public class Filter implements Serializable, Queryable {
 
 	private Set<FilterCondition> filterConditions;
 
-	private static final List<Condition> HAVING_CONDITONS = ImmutableList.<Condition>builder().add(Condition.HAS).build();
+	private static final List<Condition> HAVING_CONDITONS = ImmutableList.<Condition>builder().add(Condition.HAS, Condition.OVERLAP)
+			.build();
 
 	/**
 	 * This constructor uses during serialization to database.
