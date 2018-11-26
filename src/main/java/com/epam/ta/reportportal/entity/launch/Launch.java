@@ -230,32 +230,15 @@ public class Launch implements Serializable {
 			return false;
 		}
 		Launch launch = (Launch) o;
-		return Objects.equals(id, launch.id) && Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId)
-				&& Objects.equals(user, launch.user) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
-				&& Objects.equals(startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(number,
-				launch.number
-		) && Objects.equals(lastModified, launch.lastModified) && mode == launch.mode && status == launch.status && Objects.equals(tags,
-				launch.tags
-		) && Objects.equals(statistics, launch.statistics);
+		return Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId) && Objects.equals(name, launch.name)
+				&& Objects.equals(description, launch.description) && Objects.equals(startTime, launch.startTime) && Objects.equals(endTime,
+				launch.endTime
+		) && Objects.equals(number, launch.number) && mode == launch.mode && status == launch.status;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id,
-				uuid,
-				projectId,
-				user,
-				name,
-				description,
-				startTime,
-				endTime,
-				number,
-				lastModified,
-				mode,
-				status,
-				tags,
-				statistics
-		);
+		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, mode, status);
 	}
 
 	@Override
