@@ -1,22 +1,17 @@
 /*
- * Copyright 2017 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/service-api
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Report Portal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Report Portal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.epam.ta.reportportal.entity.enums;
 
@@ -28,32 +23,32 @@ import java.util.Optional;
  */
 public enum ActivityEventType {
 
-	CREATE_DASHBOARD("create_dashboard"),
-	UPDATE_DASHBOARD("update_dashboard"),
-	DELETE_DASHBOARD("delete_dashboard"),
-	CREATE_WIDGET("create_widget"),
-	UPDATE_WIDGET("update_widget"),
-	DELETE_WIDGET("delete_widget"),
-	CREATE_FILTER("create_filter"),
-	UPDATE_FILTER("update_filter"),
-	DELETE_FILTER("delete_filter"),
-	ANALYZE_ITEM("analyze_item"),
-	UPDATE_DEFECT("update_defect"),
-	DELETE_DEFECT("delete_defect"),
-	CREATE_BTS("create_bts"),
-	UPDATE_BTS("update_bts"),
-	DELETE_BTS("delete_bts"),
-	START_LAUNCH("start_launch"),
-	FINISH_LAUNCH("finish_launch"),
-	DELETE_LAUNCH("delete_launch"),
-	UPDATE_PROJECT("update_project"),
-	POST_ISSUE("post_issue"),
-	ATTACH_ISSUE("attach_issue"),
-	ATTACH_ISSUE_AA("attach_issue_aa"),
-	UPDATE_ITEM("update_item"),
-	CREATE_USER("create_user"),
-	START_IMPORT("start_import"),
-	FINISH_IMPORT("finish_import");
+	CREATE_DASHBOARD("createDashboard"),
+	UPDATE_DASHBOARD("updateDashboard"),
+	DELETE_DASHBOARD("deleteDashboard"),
+	CREATE_WIDGET("createWidget"),
+	UPDATE_WIDGET("updateWidget"),
+	DELETE_WIDGET("deleteWidget"),
+	CREATE_FILTER("createFilter"),
+	UPDATE_FILTER("updateFilter"),
+	DELETE_FILTER("deleteFilter"),
+	ANALYZE_ITEM("analyzeItem"),
+	UPDATE_DEFECT("updateDefect"),
+	DELETE_DEFECT("deleteDefect"),
+	CREATE_BTS("createBts"),
+	UPDATE_BTS("updateBts"),
+	DELETE_BTS("deleteBts"),
+	START_LAUNCH("startLaunch"),
+	FINISH_LAUNCH("finishLaunch"),
+	DELETE_LAUNCH("deleteLaunch"),
+	UPDATE_PROJECT("updateProject"),
+	POST_ISSUE("postIssue"),
+	ATTACH_ISSUE("attachIssue"),
+	ATTACH_ISSUE_AA("attachIssueAa"),
+	UPDATE_ITEM("updateItem"),
+	CREATE_USER("createUser"),
+	START_IMPORT("startImport"),
+	FINISH_IMPORT("finishImport");
 
 	private String value;
 

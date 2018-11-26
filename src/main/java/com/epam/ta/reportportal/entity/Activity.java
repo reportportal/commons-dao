@@ -23,6 +23,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Activity table entity
@@ -130,19 +132,33 @@ public class Activity {
 	}
 
 	public enum ActivityEntityType {
-		LAUNCH,
-		ITEM,
-		DASHBOARD,
-		DEFECT_TYPE,
-		EMAIL_CONFIG,
-		FILTER,
-		IMPORT,
-		INTEGRATION,
-		ITEM_ISSUE,
-		PROJECT,
-		SHARING,
-		TICKET,
-		USER,
-		WIDGET
+		LAUNCH("launch"),
+		ITEM("item"),
+		DASHBOARD("dashboard"),
+		DEFECT_TYPE("defectType"),
+		EMAIL_CONFIG("emailConfig"),
+		FILTER("filter"),
+		IMPORT("import"),
+		INTEGRATION("integration"),
+		ITEM_ISSUE("itemIssue"),
+		PROJECT("project"),
+		SHARING("sharing"),
+		TICKET("ticket"),
+		USER("user"),
+		WIDGET("widget");
+
+		private String value;
+
+		ActivityEntityType(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public static Optional<ActivityEntityType> fromString(String string) {
+			return Optional.ofNullable(string).flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equals(str)).findAny());
+		}
 	}
 }

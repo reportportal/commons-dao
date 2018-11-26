@@ -26,12 +26,12 @@ import java.util.Optional;
  */
 public enum ProjectInfoWidget {
 	INVESTIGATED("investigated"),
-	CASES_STATISTIC("cases_stats"),
-	LAUNCHES_QUANTITY("launches_quantity"),
-	ISSUES_CHART("issues_chart"),
-	BUGS_PERCENTAGE("bugs_percentage"),
+	CASES_STATISTIC("casesStats"),
+	LAUNCHES_QUANTITY("launchesQuantity"),
+	ISSUES_CHART("issuesChart"),
+	BUGS_PERCENTAGE("bugsPercentage"),
 	ACTIVITIES("activities"),
-	LAST_LAUNCH("last_launch");
+	LAST_LAUNCH("lastLaunch");
 
 	private String widgetCode;
 
