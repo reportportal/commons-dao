@@ -111,7 +111,10 @@ public class ItemAttribute {
 			return false;
 		}
 		ItemAttribute that = (ItemAttribute) o;
-		return system == that.system && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value);
+		return Objects.equals(system, that.system) && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(
+				value,
+				that.value
+		);
 	}
 
 	@Override

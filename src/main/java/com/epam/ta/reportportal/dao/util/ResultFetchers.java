@@ -85,7 +85,7 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			launch.getTags().add(record.into(ItemAttribute.class));
+			launch.getAttributes().add(record.into(ItemAttribute.class));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
@@ -105,7 +105,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			testItem.getTags().add(record.into(ItemAttribute.class));
+			testItem.getAttributes().add(record.into(ItemAttribute.class));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);
