@@ -3,15 +3,13 @@
  */
 package com.epam.ta.reportportal.jooq.udt;
 
-
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.udt.records.JTablefuncCrosstab_2Record;
-
-import javax.annotation.Generated;
-
 import org.jooq.Schema;
 import org.jooq.UDTField;
 import org.jooq.impl.UDTImpl;
+
+import javax.annotation.Generated;
 
 
 /**

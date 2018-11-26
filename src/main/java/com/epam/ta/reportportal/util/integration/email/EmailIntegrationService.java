@@ -95,7 +95,7 @@ public class EmailIntegrationService implements IntegrationService {
 
 		Map<String, Object> defaultCases = new HashMap<>();
 		defaultCases.put(RECIPIENTS.getCaseTypeString(), Lists.newArrayList(OWNER));
-		defaultCases.put(SendCaseType.LAUNCH_STATS_RULE.getCaseTypeString(), Lists.newArrayList(LaunchStatsRule.ALWAYS.getRuleString()));
+		defaultCases.put(SendCaseType.LAUNCH_STATS_RULE.getCaseTypeString(), LaunchStatsRule.ALWAYS.getRuleString());
 		IntegrationParams integrationParams = new IntegrationParams(defaultCases);
 
 		Integration integration = new Integration();

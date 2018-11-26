@@ -3,89 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
-import com.epam.ta.reportportal.jooq.tables.JConnectby;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JCrosstab;
-import com.epam.ta.reportportal.jooq.tables.JCrosstab2;
-import com.epam.ta.reportportal.jooq.tables.JCrosstab3;
-import com.epam.ta.reportportal.jooq.tables.JCrosstab4;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
-import com.epam.ta.reportportal.jooq.tables.JItemTag;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchTag;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JNormalRand;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
-import com.epam.ta.reportportal.jooq.tables.JUserFilter;
-import com.epam.ta.reportportal.jooq.tables.JUserPreference;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-import com.epam.ta.reportportal.jooq.tables.records.JConnectbyRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JCrosstab2Record;
-import com.epam.ta.reportportal.jooq.tables.records.JCrosstab3Record;
-import com.epam.ta.reportportal.jooq.tables.records.JCrosstab4Record;
-import com.epam.ta.reportportal.jooq.tables.records.JCrosstabRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JNormalRandRecord;
+import com.epam.ta.reportportal.jooq.tables.*;
+import com.epam.ta.reportportal.jooq.tables.records.*;
 import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_2;
 import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_3;
 import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_4;
+import org.jooq.*;
+import org.jooq.impl.SchemaImpl;
 
+import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Catalog;
-import org.jooq.Configuration;
-import org.jooq.Field;
-import org.jooq.Result;
-import org.jooq.Sequence;
-import org.jooq.Table;
-import org.jooq.UDT;
-import org.jooq.impl.SchemaImpl;
 
 
 /**
@@ -101,7 +30,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 528313286;
+	private static final long serialVersionUID = 849414495;
 
     /**
      * The reference instance of <code>public</code>
@@ -161,22 +90,26 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.connectby</code>.
      */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, Integer __5) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5)).fetch();
+	public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4,
+			String __5, Integer __6, String __7) {
+		return configuration.dsl()
+				.selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7))
+				.fetch();
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, Integer __5) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5);
+	public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6, String __7) {
+		return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
     }
 
     /**
      * Get <code>public.connectby</code> as a table.
      */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<Integer> __5) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5);
+	public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5,
+			Field<Integer> __6, Field<String> __7) {
+		return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6, __7);
     }
 
     /**
@@ -192,21 +125,21 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+	public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, String __2) {
         return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1, Integer __2) {
+	public static JCrosstab CROSSTAB(String __1, String __2) {
         return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+	public static JCrosstab CROSSTAB(Field<String> __1, Field<String> __2) {
         return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
@@ -364,19 +297,14 @@ public class JPublic extends SchemaImpl {
     public final JIssueTypeProject ISSUE_TYPE_PROJECT = com.epam.ta.reportportal.jooq.tables.JIssueTypeProject.ISSUE_TYPE_PROJECT;
 
     /**
-     * The table <code>public.item_tag</code>.
+     * The table <code>public.item_attribute</code>.
      */
-    public final JItemTag ITEM_TAG = com.epam.ta.reportportal.jooq.tables.JItemTag.ITEM_TAG;
+    public final JItemAttribute ITEM_ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 
     /**
      * The table <code>public.launch</code>.
      */
     public final JLaunch LAUNCH = com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-
-    /**
-     * The table <code>public.launch_tag</code>.
-     */
-    public final JLaunchTag LAUNCH_TAG = com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 
     /**
      * The table <code>public.ldap_config</code>.
@@ -564,11 +492,10 @@ public class JPublic extends SchemaImpl {
             Sequences.FILTER_SORT_ID_SEQ,
             Sequences.INTEGRATION_ID_SEQ,
             Sequences.INTEGRATION_TYPE_ID_SEQ,
-            Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ,
-            Sequences.ISSUE_TYPE_ID_SEQ,
-            Sequences.ITEM_TAG_ID_SEQ,
+				Sequences.ISSUE_GROUP_ISSUE_GROUP_ID_SEQ,
+				Sequences.ISSUE_TYPE_ID_SEQ,
+				Sequences.ITEM_ATTRIBUTE_ID_SEQ,
             Sequences.LAUNCH_ID_SEQ,
-            Sequences.LAUNCH_TAG_ID_SEQ,
             Sequences.LDAP_SYNCHRONIZATION_ATTRIBUTES_ID_SEQ,
             Sequences.LOG_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
@@ -583,7 +510,8 @@ public class JPublic extends SchemaImpl {
             Sequences.TICKET_ID_SEQ,
             Sequences.USER_PREFERENCE_ID_SEQ,
             Sequences.USERS_ID_SEQ,
-            Sequences.WIDGET_ID_SEQ);
+				Sequences.WIDGET_ID_SEQ
+		);
     }
 
     @Override
@@ -622,12 +550,11 @@ public class JPublic extends SchemaImpl {
             JIntegrationType.INTEGRATION_TYPE,
             JIssue.ISSUE,
             JIssueGroup.ISSUE_GROUP,
-            JIssueTicket.ISSUE_TICKET,
-            JIssueType.ISSUE_TYPE,
-            JIssueTypeProject.ISSUE_TYPE_PROJECT,
-            JItemTag.ITEM_TAG,
+				JIssueTicket.ISSUE_TICKET,
+				JIssueType.ISSUE_TYPE,
+				JIssueTypeProject.ISSUE_TYPE_PROJECT,
+				JItemAttribute.ITEM_ATTRIBUTE,
             JLaunch.LAUNCH,
-            JLaunchTag.LAUNCH_TAG,
             JLdapConfig.LDAP_CONFIG,
             JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES,
             JLog.LOG,
@@ -652,7 +579,8 @@ public class JPublic extends SchemaImpl {
             JUserPreference.USER_PREFERENCE,
             JUsers.USERS,
             JWidget.WIDGET,
-            JWidgetFilter.WIDGET_FILTER);
+				JWidgetFilter.WIDGET_FILTER
+		);
     }
 
     @Override

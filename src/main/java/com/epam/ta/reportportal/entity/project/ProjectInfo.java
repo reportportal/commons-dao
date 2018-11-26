@@ -16,34 +16,28 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
+ * Not database object. Representation of project info query
+ *
  * @author Pavel Bortnik
  */
 public class ProjectInfo implements Serializable {
 
-	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "creation_date")
 	private LocalDateTime creationDate;
 
-	@Column(name = "name")
 	private String name;
 
-	@Column(name = "project_type")
 	private String projectType;
 
-	@Column(name = "usersQuantity")
 	private Integer usersQuantity;
 
-	@Column(name = "launchesQuantity")
 	private Integer launchesQuantity;
 
-	@Column(name = "lastRun")
 	private LocalDateTime lastRun;
 
 	public Long getId() {

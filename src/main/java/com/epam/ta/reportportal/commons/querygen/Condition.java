@@ -19,13 +19,13 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
+import org.jooq.util.postgres.PostgresDSL;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.Predicates.or;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.*;
@@ -267,9 +267,8 @@ public enum Condition {
 			/* Validate only collections */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 			return DSL.condition(Operator.AND,
-					Arrays.stream((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
-							.map(val -> field(filter.getSearchCriteria()).in(val))
-							.collect(Collectors.toList())
+					DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria()))
+							.contains(DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)))
 			);
 
 		}
@@ -285,6 +284,29 @@ public enum Condition {
 		@Override
 		public Object castValue(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
 			return castArray(criteriaHolder, value, errorType);
+		}
+	},
+
+	OVERLAP("overlap") {
+		@Override
+		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
+			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
+			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria())),
+					DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
+			));
+		}
+
+		@Override
+		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
+			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
+					"'OVERLAP' condition applyable only for collection data types. Type of field is '{}'",
+					criteriaHolder.getDataType().getSimpleName()
+			));
+		}
+
+		@Override
+		public Object castValue(CriteriaHolder criteriaHolder, String values, ErrorType errorType) {
+			return castArray(criteriaHolder, values, errorType);
 		}
 	},
 
@@ -467,8 +489,8 @@ public enum Condition {
 				castedValues = (Object[]) this.castValue(criteriaHolder, newValue, INCORRECT_FILTER_PARAMETERS);
 			}
 			return DSL.condition(Operator.AND,
-					field(filter.getSearchCriteria()).greaterOrEqual(castedValues[0]),
-					field(filter.getSearchCriteria()).lessOrEqual(castedValues[1])
+					field(criteriaHolder.getQueryCriteria()).greaterOrEqual(castedValues[0]),
+					field(criteriaHolder.getQueryCriteria()).lessOrEqual(castedValues[1])
 			);
 		}
 

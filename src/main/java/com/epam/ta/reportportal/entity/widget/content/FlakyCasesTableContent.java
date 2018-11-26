@@ -29,23 +29,23 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
  */
 public class FlakyCasesTableContent implements Serializable {
 
-	@JsonProperty(value = "statuses")
+	@JsonProperty(value = STATUSES)
 	@Column(name = STATUSES)
 	private List<String> statuses;
 
-	@JsonProperty(value = "flaky_count")
+	@JsonProperty(value = FLAKY_COUNT)
 	@Column(name = FLAKY_COUNT)
 	private Long flakyCount;
 
-	@JsonProperty(value = "total")
+	@JsonProperty(value = TOTAL)
 	@Column(name = TOTAL)
 	private Long total;
 
-	@JsonProperty(value = "item_name")
+	@JsonProperty(value = ITEM_NAME)
 	@Column(name = ITEM_NAME)
 	private String itemName;
 
-	@JsonProperty(value = "unique_id")
+	@JsonProperty(value = UNIQUE_ID)
 	@Column(name = UNIQUE_ID)
 	private String uniqueId;
 

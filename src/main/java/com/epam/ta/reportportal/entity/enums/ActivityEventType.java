@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,32 +23,32 @@ import java.util.Optional;
  */
 public enum ActivityEventType {
 
-	CREATE_DASHBOARD("create_dashboard"),
-	UPDATE_DASHBOARD("update_dashboard"),
-	DELETE_DASHBOARD("delete_dashboard"),
-	CREATE_WIDGET("create_widget"),
-	UPDATE_WIDGET("update_widget"),
-	DELETE_WIDGET("delete_widget"),
-	CREATE_FILTER("create_filter"),
-	UPDATE_FILTER("update_filter"),
-	DELETE_FILTER("delete_filter"),
-	ANALYZE_ITEM("analyze_item"),
-	UPDATE_DEFECT("update_defect"),
-	DELETE_DEFECT("delete_defect"),
-	CREATE_BTS("create_bts"),
-	UPDATE_BTS("update_bts"),
-	DELETE_BTS("delete_bts"),
-	START_LAUNCH("start_launch"),
-	FINISH_LAUNCH("finish_launch"),
-	DELETE_LAUNCH("delete_launch"),
-	UPDATE_PROJECT("update_project"),
-	POST_ISSUE("post_issue"),
-	ATTACH_ISSUE("attach_issue"),
-	ATTACH_ISSUE_AA("attach_issue_aa"),
-	UPDATE_ITEM("update_item"),
-	CREATE_USER("create_user"),
-	START_IMPORT("start_import"),
-	FINISH_IMPORT("finish_import");
+	CREATE_DASHBOARD("createDashboard"),
+	UPDATE_DASHBOARD("updateDashboard"),
+	DELETE_DASHBOARD("deleteDashboard"),
+	CREATE_WIDGET("createWidget"),
+	UPDATE_WIDGET("updateWidget"),
+	DELETE_WIDGET("deleteWidget"),
+	CREATE_FILTER("createFilter"),
+	UPDATE_FILTER("updateFilter"),
+	DELETE_FILTER("deleteFilter"),
+	ANALYZE_ITEM("analyzeItem"),
+	UPDATE_DEFECT("updateDefect"),
+	DELETE_DEFECT("deleteDefect"),
+	CREATE_BTS("createBts"),
+	UPDATE_BTS("updateBts"),
+	DELETE_BTS("deleteBts"),
+	START_LAUNCH("startLaunch"),
+	FINISH_LAUNCH("finishLaunch"),
+	DELETE_LAUNCH("deleteLaunch"),
+	UPDATE_PROJECT("updateProject"),
+	POST_ISSUE("postIssue"),
+	ATTACH_ISSUE("attachIssue"),
+	ATTACH_ISSUE_AA("attachIssueAa"),
+	UPDATE_ITEM("updateItem"),
+	CREATE_USER("createUser"),
+	START_IMPORT("startImport"),
+	FINISH_IMPORT("finishImport");
 
 	private String value;
 

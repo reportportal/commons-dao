@@ -26,9 +26,9 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 /**
  * @author Ivan Budaev
  */
-public class CriteraHistoryItem implements Serializable {
+public class CriteriaHistoryItem implements Serializable {
 
-	@Column(name = "unique_id")
+	@Column(name = "uniqueId")
 	private String uniqueId;
 
 	@Column(name = "name")

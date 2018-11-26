@@ -39,7 +39,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -72,9 +75,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Page<Launch> findByFilter(Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable)
-				.withWrapper(filter.getTarget())
-				.withWrappedSort(pageable.getSort())
+				.with(pageable).withWrapper(filter.getTarget()).withWrappedSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
@@ -165,14 +166,18 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLastRun(Long projectId, String mode) {
-		return ofNullable(dsl.select()
-				.from(LAUNCH)
-				.where(LAUNCH.PROJECT_ID.eq(projectId))
-				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
-				.limit(1)
-				.fetchOne()
-				.into(Launch.class));
+		return LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_QUERY)
+				.as(dsl.select(LAUNCH.ID)
+						.from(LAUNCH)
+						.where(LAUNCH.PROJECT_ID.eq(projectId)
+								.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))))
+						.orderBy(LAUNCH.START_TIME.desc())
+						.limit(1))
+				.select().from(LAUNCH).join(FILTERED_QUERY).on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)))).stream().findFirst();
 	}
 
 	@Override

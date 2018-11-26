@@ -3,7 +3,6 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import org.jooq.Field;

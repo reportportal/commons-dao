@@ -25,9 +25,9 @@ import java.util.Optional;
 public enum SendCaseType {
 
 	RECIPIENTS("recipients"),
-	LAUNCH_STATS_RULE("launch_stats_rule"),
-	LAUNCH_NAME_RULE("launch_name_rule"),
-	LAUNCH_TAG_RULE("launch_tag_rule");
+	LAUNCH_STATS_RULE("launchStatsRule"),
+	LAUNCH_NAME_RULE("launchNameRule"),
+	LAUNCH_TAG_RULE("launchTagRule");
 
 	private final String value;
 

@@ -55,6 +55,8 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.TestConstants.SUPERADMIN_PERSONAL_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 
 /**
  * @author Ivan Budaev
@@ -165,7 +167,7 @@ public class LaunchRepositoryTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, "statistics$executions$total");
-		Page<Launch> filter = launchRepository.findByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2, sort));
+		Page<Launch> filter = launchRepository.findByFilter(buildDefaultFilter(2L), PageRequest.of(0, 2, sort));
 		System.out.println(filter);
 		//		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
 	}
@@ -178,8 +180,21 @@ public class LaunchRepositoryTest {
 				),
 				new FilterCondition(Operator.OR, Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
-				new FilterCondition(Condition.GREATER_THAN, false, "1", "statistics$executions$total")
+				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);
 		return new Filter(Launch.class, conditionSet);
+	}
+
+	@Test
+	public void testAttributes() {
+
+		//all : without all
+		List<Launch> byFilter = launchRepository.findByFilter(new Filter(Launch.class,
+				Sets.newHashSet(new FilterCondition(Condition.HAS, false, "browser, scope", CRITERIA_ITEM_ATTRIBUTE_KEY),
+						new FilterCondition(Condition.OVERLAP, true, "chrome, regression", CRITERIA_ITEM_ATTRIBUTE_VALUE)
+				)
+		));
+
+		System.out.println();
 	}
 }

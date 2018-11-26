@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.filter.Queryable;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import org.springframework.data.domain.Sort;
 
@@ -57,7 +56,7 @@ public interface WidgetContentRepository {
 	 * @param includeMethods Include or not test item types that have 'METHOD' or 'CLASS'
 	 * @return List of items, one represents history of concrete step
 	 */
-	List<CriteraHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods);
+	List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods);
 
 	/**
 	 * Launch statistics content loading
@@ -203,7 +202,7 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic with own sorting
 	 * @param contentFields     Custom fields for select query building
-	 * @param tags              List of the prefixes of the {@link LaunchTag#getValue()}
+	 * @param tags              List of the prefixes of the {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
 	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link LaunchesStatisticsContent} as value
@@ -216,7 +215,7 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        {@link Filter}
 	 * @param contentFields Custom fields for select query building
-	 * @param tags          List of the prefixes of the {@link LaunchTag#getValue()}
+	 * @param tags          List of the prefixes of the {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
 	 * @param sort          {@link Sort}
 	 * @param isLatest      Flag for retrieving only latest launches
 	 * @param limit         Results limit

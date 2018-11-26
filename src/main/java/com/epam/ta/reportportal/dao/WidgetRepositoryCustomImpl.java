@@ -115,9 +115,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 						WIDGET.ID,
 						WIDGET.NAME,
 						WIDGET.DESCRIPTION,
-						WIDGET.WIDGET_TYPE,
-						fieldName(SID).as(OWNER),
-						WIDGET.WIDGET_OPTIONS,
+						WIDGET.WIDGET_TYPE, fieldName(SID).as(OWNER), WIDGET.WIDGET_OPTIONS,
 						WIDGET.ITEMS_COUNT,
 						USER_FILTER.ID,
 						CONTENT_FIELD.FIELD

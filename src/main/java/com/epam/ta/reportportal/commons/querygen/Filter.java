@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -25,6 +26,7 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,6 +48,9 @@ public class Filter implements Serializable, Queryable {
 	private FilterTarget target;
 
 	private Set<FilterCondition> filterConditions;
+
+	private static final List<Condition> HAVING_CONDITONS = ImmutableList.<Condition>builder().add(Condition.HAS, Condition.OVERLAP)
+			.build();
 
 	/**
 	 * This constructor uses during serialization to database.
@@ -129,8 +134,8 @@ public class Filter implements Serializable, Queryable {
 	}
 
 	private void transformCondition(Function<FilterCondition, org.jooq.Condition> transformer, QueryBuilder query, FilterCondition it) {
-		if (it.getSearchCriteria().startsWith(STATISTICS_KEY)) {
-			query.addStatisticsCondition(it, transformer.apply(it), it.getOperator());
+		if (HAVING_CONDITONS.contains(it.getCondition()) || it.getSearchCriteria().startsWith(STATISTICS_KEY)) {
+			query.addHavingCondition(transformer.apply(it), it.getOperator());
 		} else {
 			query.addCondition(transformer.apply(it), it.getOperator());
 		}

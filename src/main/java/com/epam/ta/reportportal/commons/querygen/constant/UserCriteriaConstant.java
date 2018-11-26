@@ -21,7 +21,7 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class UserCriteriaConstant {
 
-	public static final String CRITERIA_LOGIN = "login";
+	public static final String CRITERIA_USER = "user";
 	public static final String CRITERIA_ROLE = "role";
 	public static final String CRITERIA_TYPE = "type";
 	public static final String CRITERIA_FULL_NAME = "fullName";
