@@ -73,7 +73,7 @@ import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 public class WidgetContentRepositoryTest {
 
 	public static final String FILTER_START_TIME = "start_time";
-	public static final String FILTER_CREATION_DATE = "creation_date";
+	public static final String FILTER_CREATION_DATE = "activity.creation_date";
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
@@ -435,7 +435,7 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
