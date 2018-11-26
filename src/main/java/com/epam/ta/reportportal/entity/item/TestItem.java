@@ -77,9 +77,8 @@ public class TestItem implements Serializable {
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@Fetch(FetchMode.JOIN)
-	@JoinColumn(name = "item_id")
 	private Set<ItemAttribute> tags = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

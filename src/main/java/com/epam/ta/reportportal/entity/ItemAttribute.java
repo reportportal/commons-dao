@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity;
 
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 
 import javax.persistence.*;
@@ -39,8 +40,9 @@ public class ItemAttribute {
 	@Column(name = "value")
 	private String value;
 
-	@Column(name = "item_id")
-	private Long itemId;
+	@ManyToOne
+	@JoinColumn(name = "item_id")
+	private TestItem testItem;
 
 	@ManyToOne
 	@JoinColumn(name = "launch_id")
@@ -76,12 +78,12 @@ public class ItemAttribute {
 		this.value = value;
 	}
 
-	public Long getItemId() {
-		return itemId;
+	public TestItem getTestItem() {
+		return testItem;
 	}
 
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
+	public void setTestItem(TestItem testItem) {
+		this.testItem = testItem;
 	}
 
 	public Launch getLaunch() {
@@ -109,13 +111,12 @@ public class ItemAttribute {
 			return false;
 		}
 		ItemAttribute that = (ItemAttribute) o;
-		return system == that.system && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value)
-				&& Objects.equals(itemId, that.itemId);
+		return system == that.system && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, key, value, itemId, system);
+		return Objects.hash(id, key, value, system);
 	}
 
 	@Override
@@ -124,7 +125,6 @@ public class ItemAttribute {
 		sb.append("id=").append(id);
 		sb.append(", key='").append(key).append('\'');
 		sb.append(", value='").append(value).append('\'');
-		sb.append(", itemId=").append(itemId);
 		sb.append(", system=").append(system);
 		sb.append('}');
 		return sb.toString();
