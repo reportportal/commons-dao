@@ -16,9 +16,6 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JProject;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -42,16 +39,14 @@ public class LaunchTagRepositoryCustomImpl implements LaunchTagRepositoryCustom 
 
 	@Override
 	public List<String> getTags(Long projectId, String value) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-		JItemAttribute lt = JItemAttribute.ITEM_ATTRIBUTE.as("lt");
-
-		return dslContext.select()
-				.from(lt)
-				.leftJoin(l).on(lt.LAUNCH_ID.eq(l.ID))
-				.leftJoin(p).on(l.PROJECT_ID.eq(p.ID))
-				.where(p.ID.eq(projectId))
-				.and(lt.VALUE.like("%" + value + "%")).fetch(ITEM_ATTRIBUTE.VALUE);
+		return dslContext.selectDistinct()
+				.from(ITEM_ATTRIBUTE)
+				.leftJoin(LAUNCH)
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.where(PROJECT.ID.eq(projectId))
+				.and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + value + "%"))
+				.fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 }
