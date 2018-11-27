@@ -16,6 +16,9 @@
 
 package com.epam.ta.reportportal.entity;
 
+import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.launch.Launch;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -37,16 +40,24 @@ public class ItemAttribute {
 	@Column(name = "value")
 	private String value;
 
-	@Column(name = "item_id")
-	private Long itemId;
+	@ManyToOne
+	@JoinColumn(name = "item_id")
+	private TestItem testItem;
 
-	@Column(name = "launch_id")
-	private Long launchId;
+	@ManyToOne
+	@JoinColumn(name = "launch_id")
+	private Launch launch;
 
 	@Column(name = "system")
 	private Boolean system;
 
 	public ItemAttribute() {
+	}
+
+	public ItemAttribute(String key, String value, Boolean system) {
+		this.key = key;
+		this.value = value;
+		this.system = system;
 	}
 
 	public Long getId() {
@@ -73,23 +84,23 @@ public class ItemAttribute {
 		this.value = value;
 	}
 
-	public Long getItemId() {
-		return itemId;
+	public TestItem getTestItem() {
+		return testItem;
 	}
 
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
+	public void setTestItem(TestItem testItem) {
+		this.testItem = testItem;
 	}
 
-	public Long getLaunchId() {
-		return launchId;
+	public Launch getLaunch() {
+		return launch;
 	}
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
+	public void setLaunch(Launch launch) {
+		this.launch = launch;
 	}
 
-	public boolean isSystem() {
+	public Boolean isSystem() {
 		return system;
 	}
 
@@ -106,13 +117,14 @@ public class ItemAttribute {
 			return false;
 		}
 		ItemAttribute that = (ItemAttribute) o;
-		return system == that.system && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value)
-				&& Objects.equals(itemId, that.itemId) && Objects.equals(launchId, that.launchId);
+		return Objects.equals(system, that.system) && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value,
+				that.value
+		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, key, value, itemId, launchId, system);
+		return Objects.hash(id, key, value, system);
 	}
 
 	@Override
@@ -121,8 +133,6 @@ public class ItemAttribute {
 		sb.append("id=").append(id);
 		sb.append(", key='").append(key).append('\'');
 		sb.append(", value='").append(value).append('\'');
-		sb.append(", itemId=").append(itemId);
-		sb.append(", launchId=").append(launchId);
 		sb.append(", system=").append(system);
 		sb.append('}');
 		return sb.toString();

@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -37,6 +36,7 @@ import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
@@ -85,7 +85,7 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			launch.getTags().add(record.into(ItemAttribute.class));
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> launch.getAttributes().add(it));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
@@ -105,7 +105,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			testItem.getTags().add(record.into(ItemAttribute.class));
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);

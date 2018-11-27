@@ -77,10 +77,9 @@ public class TestItem implements Serializable {
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@Fetch(FetchMode.JOIN)
-	@JoinColumn(name = "item_id")
-	private Set<ItemAttribute> tags = Sets.newHashSet();
+	private Set<ItemAttribute> attributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Log> logs = Sets.newHashSet();
@@ -121,13 +120,13 @@ public class TestItem implements Serializable {
 		this.hasChildren = hasChildren;
 	}
 
-	public Set<ItemAttribute> getTags() {
-		return tags;
+	public Set<ItemAttribute> getAttributes() {
+		return attributes;
 	}
 
-	public void setTags(Set<ItemAttribute> tags) {
-		this.tags.clear();
-		this.tags.addAll(tags);
+	public void setAttributes(Set<ItemAttribute> tags) {
+		this.attributes.clear();
+		this.attributes.addAll(tags);
 	}
 
 	public Set<Log> getLogs() {
