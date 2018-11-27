@@ -94,7 +94,7 @@ public class ItemAttribute {
 		this.launch = launch;
 	}
 
-	public boolean isSystem() {
+	public Boolean isSystem() {
 		return system;
 	}
 
