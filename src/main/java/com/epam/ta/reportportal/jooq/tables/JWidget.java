@@ -3,17 +3,29 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JWidgetRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +41,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidget extends TableImpl<JWidgetRecord> {
 
-	private static final long serialVersionUID = -347916492;
+    private static final long serialVersionUID = -347916492;
 
     /**
      * The reference instance of <code>public.widget</code>
@@ -74,15 +86,10 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      */
     public final TableField<JWidgetRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
-	/**
-	 * The column <code>public.widget.widget_options</code>.
-	 */
-	public final TableField<JWidgetRecord, Object> WIDGET_OPTIONS = createField(
-			"widget_options",
-			org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""),
-			this,
-			""
-	);
+    /**
+     * The column <code>public.widget.widget_options</code>.
+     */
+    public final TableField<JWidgetRecord, Object> WIDGET_OPTIONS = createField("widget_options", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
 
     /**
      * Create a <code>public.widget</code> table reference

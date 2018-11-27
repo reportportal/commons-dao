@@ -3,14 +3,16 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JCrosstab;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Row1;
 import org.jooq.impl.TableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
