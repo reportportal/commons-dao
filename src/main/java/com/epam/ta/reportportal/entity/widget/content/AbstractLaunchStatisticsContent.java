@@ -42,7 +42,7 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 	private String name;
 
 	@Column(name = START_TIME)
-	@JsonProperty(value = "start_time")
+	@JsonProperty(value = "startTime")
 	private Timestamp startTime;
 
 	public AbstractLaunchStatisticsContent() {

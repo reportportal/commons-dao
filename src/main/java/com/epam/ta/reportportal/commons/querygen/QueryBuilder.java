@@ -197,7 +197,7 @@ public class QueryBuilder {
 			if (searchCriteria.startsWith(STATISTICS_KEY)) {
 				criteriaHolder = Optional.of(new CriteriaHolder(
 						searchCriteria,
-						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())).toString(),
+						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())),
 						Long.class
 				));
 			}

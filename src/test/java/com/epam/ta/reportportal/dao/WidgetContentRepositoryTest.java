@@ -57,8 +57,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
@@ -387,7 +386,7 @@ public class WidgetContentRepositoryTest {
 
 		List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
+		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
 				contentFields,
 				sort,
 				3
@@ -396,7 +395,10 @@ public class WidgetContentRepositoryTest {
 		Assert.assertNotNull(launchStatisticsContents);
 		Assert.assertEquals(3, launchStatisticsContents.size());
 
-		List<String> tableContentFields = contentFields.stream().filter(cf -> !cf.startsWith("statistics$")).collect(Collectors.toList());
+		List<String> tableContentFields = Lists.newArrayList(CRITERIA_END_TIME,
+				CRITERIA_DESCRIPTION,
+				CRITERIA_LAST_MODIFIED,
+				CRITERIA_USER);
 
 		launchStatisticsContents.forEach(content -> {
 
@@ -663,9 +665,14 @@ public class WidgetContentRepositoryTest {
 				"statistics$defects$automation_bug$ab001",
 				"statistics$defects$system_issue$si001",
 				"statistics$defects$to_investigate$ti001",
-				"end_time",
-				"description",
-				"last_modified",
+				CRITERIA_END_TIME,
+				CRITERIA_DESCRIPTION,
+				CRITERIA_LAST_MODIFIED,
+				CRITERIA_USER,
+				"number",
+				"name",
+				"startTime",
+				"tags",
 				"statistics$executions$total",
 				"statistics$executions$failed",
 				"statistics$executions$passed",

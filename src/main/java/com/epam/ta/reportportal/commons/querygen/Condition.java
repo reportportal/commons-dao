@@ -50,7 +50,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getQueryCriteria()).eq(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).eq(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -75,7 +75,7 @@ public enum Condition {
 	NOT_EQUALS("ne") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getQueryCriteria()).ne(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).ne(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -218,7 +218,7 @@ public enum Condition {
 	IN("in") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getQueryCriteria()).in(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).in(castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS));
 		}
 
 		@Override
@@ -238,7 +238,7 @@ public enum Condition {
 	EQUALS_ANY("ea") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getQueryCriteria()).eq(any(DSL.array(castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).eq(any(DSL.array(castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			))));
@@ -266,7 +266,7 @@ public enum Condition {
 			/* Validate only collections */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 			return DSL.condition(Operator.AND,
-					DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria()))
+					DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()))
 							.contains(DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)))
 			);
 
@@ -294,7 +294,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getQueryCriteria()).greaterThan(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).greaterThan(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -323,7 +323,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getQueryCriteria()).greaterOrEqual(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).greaterOrEqual(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -353,7 +353,7 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			return field(criteriaHolder.getQueryCriteria()).lessThan(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).lessThan(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -383,7 +383,7 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			return field(criteriaHolder.getQueryCriteria()).lessOrEqual(this.castValue(criteriaHolder,
+			return field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).lessOrEqual(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -465,8 +465,8 @@ public enum Condition {
 				castedValues = (Object[]) this.castValue(criteriaHolder, newValue, INCORRECT_FILTER_PARAMETERS);
 			}
 			return DSL.condition(Operator.AND,
-					field(criteriaHolder.getQueryCriteria()).greaterOrEqual(castedValues[0]),
-					field(criteriaHolder.getQueryCriteria()).lessOrEqual(castedValues[1])
+					field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).greaterOrEqual(castedValues[0]),
+					field(criteriaHolder.getQueryCriteria().getQualifiedName().toString()).lessOrEqual(castedValues[1])
 			);
 		}
 

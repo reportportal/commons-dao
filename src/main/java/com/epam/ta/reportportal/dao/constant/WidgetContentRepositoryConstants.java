@@ -39,6 +39,10 @@ public class WidgetContentRepositoryConstants {
 	public static final String TABLE_COLUMN_KEY = "columns";
 	public static final String ISSUE_GROUP_KEY = "groups";
 
+	public static final String STATISTICS_TABLE = "statistics_table";
+	public static final String 	STATISTICS_COUNTER = "s_counter";
+	public static final String SF_NAME = "sf_name";
+
 	/*Constants for result query mapping*/
 	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;

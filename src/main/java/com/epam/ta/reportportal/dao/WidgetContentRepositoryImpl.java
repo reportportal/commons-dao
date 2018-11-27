@@ -16,8 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -38,6 +40,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
@@ -251,8 +254,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(s -> fieldName(LAUNCHES, s.getProperty()))
 				.collect(toList());
 
-		Collections.addAll(groupingFields);
-
 		return buildPassingRateSelect(filter, sort, limit).groupBy(groupingFields)
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
 						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
@@ -442,14 +443,49 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
+		Map<String, Field<?>> criteria = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
 
-		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
+		boolean remove = contentFields.remove("tags");
 
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+		List<Field<?>> selectFields = contentFields.stream()
+				.filter(cf -> !cf.startsWith(STATISTICS_KEY))
+				.map(cf -> ofNullable(criteria.get(cf)).orElseThrow(() -> new ReportPortalException(Suppliers.formattedSupplier(
+						"Unknown table field - '{}'",
+						cf
+				).get())))
+				.collect(Collectors.toList());
+
+		Collections.addAll(selectFields, LAUNCH.ID, fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), fieldName(STATISTICS_TABLE, SF_NAME));
+
+		List<SortField<?>> orderFields = StreamSupport.stream(sort.spliterator(), false)
+				.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC))
+				.collect(Collectors.toList());
+
+		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
+
+		return LAUNCHES_TABLE_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(selectFields)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
+						.from(STATISTICS)
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
+						.asTable(STATISTICS_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.join(USERS)
+				.on(LAUNCH.USER_ID.eq(USERS.ID))
+				.orderBy(orderFields)
 				.fetch(), contentFields);
 
 	}
@@ -652,20 +688,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
-	}
-
-	private List<Field<?>> buildComparisonStatisticsFields(List<String> contentFields) {
-		List<Field<Double>> fields = contentFields.stream()
-				.map(contentField -> fieldName(contentField).cast(Double.class).as(contentField))
-				.collect(Collectors.toList());
-
-		Field<Double> contentFieldsSum = fields.stream()
-				.reduce(Field::add)
-				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Content fields should not be empty"));
-
-		return fields.stream()
-				.map(field -> round(val(PERCENTAGE_MULTIPLIER).mul(field).div(nullif(contentFieldsSum, 0).cast(Double.class)), 2).as(field))
-				.collect(Collectors.toList());
 	}
 
 	private List<LaunchesStatisticsContent> fetchProductStatusLaunchGroupedStatisticsWithTags(Filter filter, List<String> contentFields,

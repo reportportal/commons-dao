@@ -145,9 +145,9 @@ public interface WidgetContentRepository {
 	 * @param contentFields Custom fields for select query building
 	 * @param sort          {@link Sort}
 	 * @param limit         Results limit
-	 * @return List of{@link LaunchesStatisticsContent}
+	 * @return List of{@link LaunchesTableContent}
 	 */
-	List<LaunchesStatisticsContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
+	List<LaunchesTableContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * User activity content loading
