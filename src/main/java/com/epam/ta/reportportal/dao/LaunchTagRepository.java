@@ -1,9 +1,9 @@
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.launch.LaunchTag;
 
 /**
  * @author Yauheni_Martynau
  */
-public interface LaunchTagRepository extends ReportPortalRepository<ItemAttribute, Long>, LaunchTagRepositoryCustom {
+public interface LaunchTagRepository extends ReportPortalRepository<LaunchTag, Long>, LaunchTagRepositoryCustom{
 }
