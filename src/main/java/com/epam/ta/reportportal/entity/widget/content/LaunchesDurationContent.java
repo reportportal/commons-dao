@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import java.sql.Timestamp;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DURATION;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.END_TIME;
 
 /**
  * @author Ivan Budayeu
@@ -16,8 +17,8 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 	@Column(name = "status")
 	private String status;
 
-	@Column(name = "end_time")
-	@JsonProperty(value = "end_time")
+	@Column(name = END_TIME)
+	@JsonProperty(value = END_TIME)
 	private Timestamp endTime;
 
 	@Column(name = DURATION)
