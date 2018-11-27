@@ -3,17 +3,29 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -29,7 +41,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-	private static final long serialVersionUID = -136105142;
+    private static final long serialVersionUID = -136105142;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -150,7 +162,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-		return Arrays.<Index>asList(Indexes.USERS_EMAIL_KEY, Indexes.USERS_LOGIN_KEY, Indexes.USERS_PK);
+        return Arrays.<Index>asList(Indexes.USERS_EMAIL_KEY, Indexes.USERS_LOGIN_KEY, Indexes.USERS_PK);
     }
 
     /**
@@ -174,7 +186,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
      */
     @Override
     public List<UniqueKey<JUsersRecord>> getKeys() {
-		return Arrays.<UniqueKey<JUsersRecord>>asList(Keys.USERS_PK, Keys.USERS_LOGIN_KEY, Keys.USERS_EMAIL_KEY);
+        return Arrays.<UniqueKey<JUsersRecord>>asList(Keys.USERS_PK, Keys.USERS_LOGIN_KEY, Keys.USERS_EMAIL_KEY);
     }
 
     /**

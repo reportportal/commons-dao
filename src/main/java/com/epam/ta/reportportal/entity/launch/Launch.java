@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.launch;
 
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -93,21 +92,20 @@ public class Launch implements Serializable {
 	@Type(type = "pqsql_enum")
 	private StatusEnum status;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Fetch(FetchMode.JOIN)
-	@JoinColumn(name = "launch_id")
-	private Set<ItemAttribute> tags = Sets.newHashSet();
+	private Set<LaunchTag> tags = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
-	public Set<ItemAttribute> getTags() {
+	public Set<LaunchTag> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<ItemAttribute> tags) {
+	public void setTags(Set<LaunchTag> tags) {
 		this.tags.clear();
 		this.tags.addAll(tags);
 	}

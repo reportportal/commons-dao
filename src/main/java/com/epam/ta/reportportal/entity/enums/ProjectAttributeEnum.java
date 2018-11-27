@@ -65,6 +65,6 @@ public enum ProjectAttributeEnum {
 	public static boolean isPresent(String name) {
 		return findByAttributeName(name).isPresent();
 	}
-}
+	}
 
 

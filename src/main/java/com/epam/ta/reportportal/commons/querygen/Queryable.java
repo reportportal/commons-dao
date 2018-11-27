@@ -19,6 +19,8 @@ package com.epam.ta.reportportal.commons.querygen;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 
+import java.util.Set;
+
 /**
  * Can be used to generate Mongo queries
  *
@@ -27,5 +29,9 @@ import org.jooq.SelectQuery;
 public interface Queryable {
 
 	SelectQuery<? extends Record> toQuery();
+
+	FilterTarget getTarget();
+
+	Set<FilterCondition> getFilterConditions();
 
 }

@@ -3,13 +3,21 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
+
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.tables.records.JConnectbyRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -25,7 +33,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JConnectby extends TableImpl<JConnectbyRecord> {
 
-	private static final long serialVersionUID = -101966132;
+    private static final long serialVersionUID = 1775415824;
 
     /**
      * The reference instance of <code>public.connectby</code>
@@ -67,7 +75,7 @@ public class JConnectby extends TableImpl<JConnectbyRecord> {
     }
 
     private JConnectby(Name alias, Table<JConnectbyRecord> aliased) {
-		this(alias, aliased, new Field[7]);
+        this(alias, aliased, new Field[5]);
     }
 
     private JConnectby(Name alias, Table<JConnectbyRecord> aliased, Field<?>[] parameters) {
@@ -121,22 +129,26 @@ public class JConnectby extends TableImpl<JConnectbyRecord> {
     /**
      * Call this table-valued function
      */
-	public JConnectby call(String __1, String __2, String __3, String __4, String __5, Integer __6, String __7) {
-        return new JConnectby(DSL.name(getName()), null, new Field[] { DSL.val(__1, org.jooq.impl.SQLDataType.CLOB),
-				DSL.val(__2, org.jooq.impl.SQLDataType.CLOB), DSL.val(__3, org.jooq.impl.SQLDataType.CLOB),
-				DSL.val(__4, org.jooq.impl.SQLDataType.CLOB), DSL.val(__5, org.jooq.impl.SQLDataType.CLOB),
-				DSL.val(__6, org.jooq.impl.SQLDataType.INTEGER), DSL.val(__7, org.jooq.impl.SQLDataType.CLOB)
+    public JConnectby call(String __1, String __2, String __3, String __4, Integer __5) {
+        return new JConnectby(DSL.name(getName()), null, new Field[] { 
+              DSL.val(__1, org.jooq.impl.SQLDataType.CLOB)
+            , DSL.val(__2, org.jooq.impl.SQLDataType.CLOB)
+            , DSL.val(__3, org.jooq.impl.SQLDataType.CLOB)
+            , DSL.val(__4, org.jooq.impl.SQLDataType.CLOB)
+            , DSL.val(__5, org.jooq.impl.SQLDataType.INTEGER)
         });
     }
 
     /**
      * Call this table-valued function
      */
-	public JConnectby call(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5,
-			Field<Integer> __6, Field<String> __7) {
+    public JConnectby call(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<Integer> __5) {
         return new JConnectby(DSL.name(getName()), null, new Field[] { 
               __1
-            , __2, __3, __4, __5, __6, __7
+            , __2
+            , __3
+            , __4
+            , __5
         });
     }
 }

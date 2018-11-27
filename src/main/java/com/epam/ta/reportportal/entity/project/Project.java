@@ -161,8 +161,7 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
-				metadata,
+		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata,
 				project.metadata
 		);
 	}

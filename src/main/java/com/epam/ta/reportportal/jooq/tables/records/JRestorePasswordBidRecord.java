@@ -3,15 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+
+import java.sql.Timestamp;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Row3;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
-import java.sql.Timestamp;
 
 
 /**

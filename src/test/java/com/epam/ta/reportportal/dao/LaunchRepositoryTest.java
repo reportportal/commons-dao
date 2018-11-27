@@ -55,8 +55,6 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.TestConstants.SUPERADMIN_PERSONAL_PROJECT_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 
 /**
  * @author Ivan Budaev
@@ -183,18 +181,5 @@ public class LaunchRepositoryTest {
 				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);
 		return new Filter(Launch.class, conditionSet);
-	}
-
-	@Test
-	public void testAttributes() {
-
-		//all : without all
-		List<Launch> byFilter = launchRepository.findByFilter(new Filter(Launch.class,
-				Sets.newHashSet(new FilterCondition(Condition.HAS, false, "browser, scope", CRITERIA_ITEM_ATTRIBUTE_KEY),
-						new FilterCondition(Condition.OVERLAP, true, "chrome, regression", CRITERIA_ITEM_ATTRIBUTE_VALUE)
-				)
-		));
-
-		System.out.println();
 	}
 }
