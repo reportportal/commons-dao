@@ -68,11 +68,6 @@ public class FilterCondition implements Serializable {
 	@Column(name = "negative")
 	private boolean negative;
 
-	/**
-	 * Whether this is 'AND' or 'OR' filter
-	 */
-	private Operator operator = Operator.AND;
-
 	public FilterCondition() {
 	}
 
@@ -81,14 +76,6 @@ public class FilterCondition implements Serializable {
 		this.value = value;
 		this.searchCriteria = searchCriteria;
 		this.negative = negative;
-	}
-
-	public FilterCondition(Operator operator, Condition condition, boolean negative, String value, String searchCriteria) {
-		this.condition = condition;
-		this.value = value;
-		this.searchCriteria = searchCriteria;
-		this.negative = negative;
-		this.operator = operator;
 	}
 
 	public Long getId() {
@@ -113,14 +100,6 @@ public class FilterCondition implements Serializable {
 
 	public boolean isNegative() {
 		return negative;
-	}
-
-	public Operator getOperator() {
-		return operator;
-	}
-
-	public void setOperator(Operator operator) {
-		this.operator = operator;
 	}
 
 	@Override

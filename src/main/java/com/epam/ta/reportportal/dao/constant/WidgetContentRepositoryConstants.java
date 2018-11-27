@@ -32,7 +32,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String DEFECTS_SYSTEM_ISSUE_TOTAL = "statistics$defects$system_issue$total";
 	public static final String DEFECTS_TO_INVESTIGATE_TOTAL = "statistics$defects$to_investigate$total";
 
-	public static final String EXECUTION_STATS = "execution_stats";
+	public static final String EXECUTION_STATS = "executionStats";
 	public static final String TOTAL = "total";
 	public static final String EXECUTIONS_KEY = "executions";
 	public static final String DEFECTS_KEY = "defects";
@@ -46,20 +46,20 @@ public class WidgetContentRepositoryConstants {
 	/*Constants for result query mapping*/
 	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;
-	public static final String LAUNCH_ID = "launch_id";
+	public static final String LAUNCH_ID = "launchId";
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	public static final String TARGET = "target";
 	public static final String ID = "id";
 	public static final String NUMBER = "number";
-	public static final String START_TIME = "start_time";
-	public static final String END_TIME = "end_time";
+	public static final String START_TIME = "startTime";
+	public static final String END_TIME = "endTime";
 
 	/* Most failed widget constants */
 	public static final String HISTORY = "history";
 	public static final String CRITERIA = "criteria";
-	public static final String STATUS_HISTORY = "status_history";
-	public static final String START_TIME_HISTORY = "start_time_history";
+	public static final String STATUS_HISTORY = "statusHistory";
+	public static final String START_TIME_HISTORY = "startTimeHistory";
 
 	/* Overall statistics widget constants */
 	public static final String LAUNCHES = "launches";
@@ -69,17 +69,17 @@ public class WidgetContentRepositoryConstants {
 
 	/*Activity table widget constants*/
 	public static final String ACTIVITIES = "activities";
-	public static final String ACTION_TYPE = "action_type";
+	public static final String ACTION_TYPE = "actionType";
 	public static final String ENTITY = "entity";
-	public static final String LAST_MODIFIED = "last_modified";
-	public static final String USER_LOGIN = "user_login";
-	public static final String PROJECT_ID = "project_id";
-	public static final String PROJECT_NAME = "project_name";
-	public static final String ACTIVITY_TYPE = "activity_type";
+	public static final String LAST_MODIFIED = "lastModified";
+	public static final String USER_LOGIN = "userLogin";
+	public static final String PROJECT_ID = "projectId";
+	public static final String PROJECT_NAME = "projectName";
+	public static final String ACTIVITY_TYPE = "activityType";
 
 	/*Investigation widget constants*/
 	public static final String INVESTIGATED = "investigated";
-	public static final String TO_INVESTIGATE = "to_investigate";
+	public static final String TO_INVESTIGATE = "toInvestigate";
 
 	/*Launch pass widget constants*/
 	public static final String PASSED = "passed";
@@ -107,25 +107,25 @@ public class WidgetContentRepositoryConstants {
 	public static final String SUBMITTER = "submitter";
 
 	/*Flaky cases table widget constants*/
-	public static final String UNIQUE_ID = "unique_id";
+	public static final String UNIQUE_ID = "uniqueId";
 	public static final String ITEM_NAME = "itemName";
 	public static final String STATUSES = "statuses";
-	public static final String SWITCH_FLAG = "switch_flag";
+	public static final String SWITCH_FLAG = "switchFlag";
 	public static final String FLAKY_COUNT = "flakyCount";
 
 	/*Cumulative trend widget constants*/
 	public static final Integer LAUNCHES_COUNT = 100;
-	public static final String LAUNCHES_SUB_QUERY = "launches_sub_query";
+	public static final String LAUNCHES_SUB_QUERY = "launchesSubQuery";
 	public static final String LIKE_CONDITION_SYMBOL = "%";
 
 	/*Product status widget constants*/
-	public static final String TAG_VALUE = "tag_value";
-	public static final String FILTER_NAME = "filter_name";
-	public static final String TAG_TABLE = "tag_table";
-	public static final String TAG_VALUES = "tag_values";
-	public static final String PASSING_RATE = "passing_rate";
+	public static final String TAG_VALUE = "tagValue";
+	public static final String FILTER_NAME = "filterName";
+	public static final String TAG_TABLE = "tagTable";
+	public static final String TAG_VALUES = "tagValues";
+	public static final String PASSING_RATE = "passingRate";
 	public static final String SUM = "sum";
-	public static final String AVERAGE_PASSING_RATE = "average_passing_rate";
+	public static final String AVERAGE_PASSING_RATE = "averagePassingRate";
 
 	/*Sub-query fields*/
 	public static final String SUBQUERY_LAUNCH_ID = "l_id";

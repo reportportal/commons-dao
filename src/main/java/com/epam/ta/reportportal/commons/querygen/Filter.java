@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -26,12 +25,11 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.filterConverter;
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -49,8 +47,6 @@ public class Filter implements Serializable, Queryable {
 
 	private Set<FilterCondition> filterConditions;
 
-	private static final List<Condition> HAVING_CONDITONS = ImmutableList.<Condition>builder().add(Condition.HAS).build();
-
 	/**
 	 * This constructor uses during serialization to database.
 	 */
@@ -59,14 +55,14 @@ public class Filter implements Serializable, Queryable {
 
 	}
 
-	public Filter(Collection<Filter> filters) {
+	public Filter(Collection<Queryable> filters) {
 		checkArgument(null != filters && !filters.isEmpty(), "Empty filter list");
-		checkArgument(1 == filters.stream().map(Filter::getTarget).distinct().count(), "Different targets");
+		checkArgument(1 == filters.stream().map(Queryable::getTarget).distinct().count(), "Different targets");
 		this.target = filters.iterator().next().getTarget();
 		this.filterConditions = filters.stream().flatMap(f -> f.getFilterConditions().stream()).collect(Collectors.toSet());
 	}
 
-	public Filter(Filter... filters) {
+	public Filter(Queryable... filters) {
 		this(Arrays.asList(filters));
 	}
 
@@ -133,10 +129,11 @@ public class Filter implements Serializable, Queryable {
 	}
 
 	private void transformCondition(Function<FilterCondition, org.jooq.Condition> transformer, QueryBuilder query, FilterCondition it) {
-		if (HAVING_CONDITONS.contains(it.getCondition()) || it.getSearchCriteria().startsWith(STATISTICS_KEY)) {
-			query.addHavingCondition(transformer.apply(it), it.getOperator());
+		org.jooq.Condition condition = transformer.apply(it);
+		if (HAVING_CONDITION.test(it)) {
+			query.addHavingCondition(condition);
 		} else {
-			query.addCondition(transformer.apply(it), it.getOperator());
+			query.addCondition(condition);
 		}
 	}
 

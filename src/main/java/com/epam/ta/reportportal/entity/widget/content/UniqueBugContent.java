@@ -33,7 +33,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 public class UniqueBugContent implements Serializable {
 
 	@Column(name = "item_id")
-	@JsonProperty(value = "item_id")
+	@JsonProperty(value = "itemId")
 	private Long testItemId;
 
 	@Column(name = "ticket_id")
@@ -45,7 +45,7 @@ public class UniqueBugContent implements Serializable {
 	private String submitter;
 
 	@Column(name = "name")
-	@JsonProperty(value = "item_name")
+	@JsonProperty(value = "itemName")
 	private String testItemName;
 
 	@Column(name = "url")
@@ -53,11 +53,11 @@ public class UniqueBugContent implements Serializable {
 	private String url;
 
 	@Column(name = "submit_date")
-	@JsonProperty(value = "submit_date")
+	@JsonProperty(value = "submitDate")
 	private Timestamp submitDate;
 
 	@Column(name = "launch_id")
-	@JsonProperty(value = "launch_id")
+	@JsonProperty(value = "launchId")
 	private Long launchId;
 
 	@Column(name = DESCRIPTION)
