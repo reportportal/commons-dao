@@ -16,19 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
-import java.util.List;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 
 /**
- * @author Yauheni_Martynau
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface LaunchTagRepositoryCustom {
-
-	/**
-	 * Select set of tags on project.
-	 *
-	 * @param projectId Project id
-	 * @param value     Term for tag value to find
-	 * @return List of distinct tags
-	 */
-	List<String> getTags(Long projectId, String value);
+public interface ItemAttributeRepository extends ReportPortalRepository<ItemAttribute, Long>, ItemAttributeRepositoryCustom {
 }
