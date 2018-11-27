@@ -54,6 +54,12 @@ public class ItemAttribute {
 	public ItemAttribute() {
 	}
 
+	public ItemAttribute(String key, String value, Boolean system) {
+		this.key = key;
+		this.value = value;
+		this.system = system;
+	}
+
 	public Long getId() {
 		return id;
 	}
