@@ -30,8 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
-import org.hsqldb.cmdline.SqlToolError;
-import org.jooq.Operator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -80,13 +78,13 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
-		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(
-				SUPERADMIN_PERSONAL_PROJECT_ID,
+		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
 
 		Assert.assertEquals(12, removedCount);
 	}
+
 	@Test
 	public void streamLaunchIdsWithStatusTest() {
 
@@ -176,7 +174,7 @@ public class LaunchRepositoryTest {
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
 				),
-				new FilterCondition(Operator.OR, Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);

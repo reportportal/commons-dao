@@ -7,13 +7,13 @@ import java.time.Instant;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public final class TimeCalculatorUtil {
+public final class TimestampUtils {
 
-	private TimeCalculatorUtil() {
+	private TimestampUtils() {
 		//static only
 	}
 
-	public static Timestamp getTimeBeforeNowWithPeriod(Duration period) {
+	public static Timestamp getTimestampBackFromNow(Duration period) {
 		return Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
 	}
 }

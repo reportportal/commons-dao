@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.dao.util.TimeCalculatorUtil;
+import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
@@ -135,7 +135,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.onKey()
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(TEST_ITEM.LAST_MODIFIED.gt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period)))
+				.and(TEST_ITEM.LAST_MODIFIED.gt(TimestampUtils.getTimestampBackFromNow(period)))
 				.limit(1));
 	}
 
@@ -150,7 +150,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(TEST_ITEM.LAST_MODIFIED.lt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period)))
+				.and(TEST_ITEM.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period)))
 				.limit(1));
 	}
 

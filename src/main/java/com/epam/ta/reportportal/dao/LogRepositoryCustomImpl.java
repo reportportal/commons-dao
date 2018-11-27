@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.dao.util.TimeCalculatorUtil;
+import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -104,7 +104,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
 		return dsl.select(LOG.ID, LOG.ATTACHMENT, LOG.ATTACHMENT_THUMBNAIL)
 				.from(LOG)
-				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period))))
+				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.and(LOG.ATTACHMENT.isNotNull().or(LOG.ATTACHMENT_THUMBNAIL.isNotNull()))
 				.fetchInto(Log.class);
 	}
@@ -161,7 +161,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(LOG.LAST_MODIFIED.gt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period)))
+				.and(LOG.LAST_MODIFIED.gt(TimestampUtils.getTimestampBackFromNow(period)))
 				.limit(1));
 	}
 
@@ -169,7 +169,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds) {
 
 		return dsl.deleteFrom(LOG)
-				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LAST_MODIFIED.lt(TimeCalculatorUtil.getTimeBeforeNowWithPeriod(period))))
+				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.execute();
 	}
 
