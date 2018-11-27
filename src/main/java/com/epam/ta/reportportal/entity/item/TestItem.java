@@ -16,11 +16,14 @@
 
 package com.epam.ta.reportportal.entity.item;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -74,9 +77,9 @@ public class TestItem implements Serializable {
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinColumn(name = "item_id")
-	private Set<TestItemTag> tags = Sets.newHashSet();
+	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Fetch(FetchMode.JOIN)
+	private Set<ItemAttribute> attributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Log> logs = Sets.newHashSet();
@@ -117,13 +120,13 @@ public class TestItem implements Serializable {
 		this.hasChildren = hasChildren;
 	}
 
-	public Set<TestItemTag> getTags() {
-		return tags;
+	public Set<ItemAttribute> getAttributes() {
+		return attributes;
 	}
 
-	public void setTags(Set<TestItemTag> tags) {
-		this.tags.clear();
-		this.tags.addAll(tags);
+	public void setAttributes(Set<ItemAttribute> tags) {
+		this.attributes.clear();
+		this.attributes.addAll(tags);
 	}
 
 	public Set<Log> getLogs() {
