@@ -87,6 +87,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String ISSUE_PERCENTAGE = "issuePercentage";
 
 	/*Launches duration widget constants*/
+	public static final String ITEMS = "items";
 	public static final String DURATION = "duration";
 
 	/*Not passed cases widget constants*/

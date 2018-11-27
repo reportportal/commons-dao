@@ -139,12 +139,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
 		)
 				.from(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).build())
+						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER.desc()).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
 								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
-										TEST_ITEM.UNIQUE_ID
+										TEST_ITEM.ITEM_ID
 										)))
 												.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 														TEST_ITEM.ITEM_ID
@@ -166,6 +166,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
 				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
+				.limit(20)
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
@@ -617,17 +618,24 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter) {
-		return dsl.select(fieldName(TEST_ITEM.ITEM_ID).as(ID),
-				fieldName(TEST_ITEM.UNIQUE_ID),
-				fieldName(TEST_ITEM.NAME),
-				fieldName(TEST_ITEM.TYPE),
-				fieldName(TEST_ITEM.START_TIME),
-				fieldName(TEST_ITEM_RESULTS.END_TIME),
-				fieldName(TEST_ITEM_RESULTS.DURATION),
-				fieldName(TEST_ITEM_RESULTS.STATUS)
-		)
-				.from(QueryBuilder.newBuilder(filter).with(20).build())
+		return dsl.with(ITEMS)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select(TEST_ITEM.ITEM_ID.as(ID),
+						TEST_ITEM.UNIQUE_ID,
+						TEST_ITEM.NAME,
+						TEST_ITEM.TYPE,
+						TEST_ITEM.START_TIME,
+						TEST_ITEM_RESULTS.END_TIME,
+						TEST_ITEM_RESULTS.DURATION,
+						TEST_ITEM_RESULTS.STATUS
+				)
+				.from(TEST_ITEM)
+				.join(ITEMS)
+				.on(fieldName(ITEMS, ID).cast(Long.class).eq(TEST_ITEM.ITEM_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
+				.limit(20)
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
 	}
 

@@ -139,8 +139,7 @@ public class WidgetContentRepositoryTest {
 		Assert.assertEquals(4, launchStatisticsContents.size());
 
 		Assert.assertEquals(launchStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
-		Assert.assertEquals(
-				launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn),
+		Assert.assertEquals(launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn),
 				String.valueOf(1)
 		);
 	}
@@ -455,9 +454,10 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 5);
+		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 4);
 
 		Assert.assertNotNull(flakyCasesStatistics);
+		Assert.assertEquals(4, flakyCasesStatistics.size());
 
 		flakyCasesStatistics.forEach(content -> {
 			long counter = 0;
@@ -607,7 +607,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
-				"project_id"
+				PROJECT_ID
 		), new FilterCondition(Condition.EQUALS_ANY,
 				false,
 				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),

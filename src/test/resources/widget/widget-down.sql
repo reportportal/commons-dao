@@ -1,7 +1,3 @@
-ALTER SEQUENCE widget_id_seq
-  RESTART WITH 1;
-DELETE
-FROM widget;
 ALTER SEQUENCE users_id_seq
   RESTART WITH 1;
 DELETE
