@@ -92,7 +92,7 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> launch.getAttributes().add(it));
+			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> launch.getAttributes().add(it));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
@@ -112,7 +112,7 @@ public class ResultFetchers {
 			} else {
 				testItem = retriesMap.get(id);
 			}
-			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
+			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
 			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
 				testItem.getParameters().add(record.into(Parameter.class));
 			});
@@ -142,7 +142,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
+			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);
