@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
@@ -36,6 +37,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -104,14 +106,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(TEST_ITEM_RESULTS)
 				.onKey()
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.limit(1));
 	}
 
 	@Override
 	public Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
 		return dsl.fetchExists(commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(parentId))
-				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)));
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.limit(1));
 	}
 
 	@Override
@@ -123,6 +127,34 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
 				.fetchInto(Long.class);
+	}
+
+	@Override
+	public Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(dsl.selectOne()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.onKey()
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.and(TEST_ITEM.LAST_MODIFIED.gt(TimestampUtils.getTimestampBackFromNow(period)))
+				.limit(1));
+	}
+
+	@Override
+	public Boolean hasLogs(Long launchId, Duration period, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(dsl.selectOne()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.onKey()
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.and(TEST_ITEM.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period)))
+				.limit(1));
 	}
 
 	@Override

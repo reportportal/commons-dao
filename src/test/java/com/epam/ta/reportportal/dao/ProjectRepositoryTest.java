@@ -1,32 +1,37 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,10 +45,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ATTRIBUTE_NAME;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Ivan Budaev
@@ -58,25 +64,38 @@ public class ProjectRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		//		runSqlScript("/test-dropall-script.sql");
-		//		runSqlScript("/test-create-script.sql");
-		//		runSqlScript("/user/users-projects-fill.sql");
+		SqlRunner.runSqlScripts("/user/user-project-down.sql");
+
+		SqlRunner.runSqlScripts("/user/user-project-up.sql");
 	}
 
-	//	@AfterClass
-	//	public static void destroy() throws SQLException, IOException, SqlToolError {
-	//		runSqlScript("/test-dropall-script.sql");
-	//	}
-
-	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
-		try (Connection connection = getConnection()) {
-			new SqlRunner().runSqlScript(connection, scriptPath);
-		}
+	@AfterClass
+	public static void destroy() throws SQLException, IOException, SqlToolError {
+		SqlRunner.runSqlScripts("/user/user-project-down.sql");
 	}
 
-	private static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+	@Test
+	public void findAllIdsAndProjectAttributesTest() {
+
+		Filter filter = Filter.builder().withTarget(Project.class).withCondition(new FilterCondition(Condition.EQUALS, false,
+
+				ProjectAttributeEnum.KEEP_LOGS.getAttribute(), CRITERIA_ATTRIBUTE_NAME
+		)).build();
+
+		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(filter, PageRequest.of(0, 2));
+
+		Assert.assertNotNull(projects);
+		Assert.assertTrue(CollectionUtils.isNotEmpty(projects.getContent()));
+		projects.getContent().forEach(project -> {
+			Assert.assertNotNull(project.getId());
+			Assert.assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
+			Assert.assertEquals(1, project.getProjectAttributes().size());
+			Assert.assertTrue(project.getProjectAttributes()
+					.stream()
+					.allMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
+							.getName()
+							.equals(ProjectAttributeEnum.KEEP_LOGS.getAttribute())));
+		});
 	}
 
 	@Test
@@ -101,8 +120,7 @@ public class ProjectRepositoryTest {
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(3));
-		Assert.assertThat(
-				"Results don't contain all project",
+		Assert.assertThat("Results don't contain all project",
 				names,
 				Matchers.hasItems("test_user_1_personal", "test_user_2_personal", "test_common_project_1")
 		);

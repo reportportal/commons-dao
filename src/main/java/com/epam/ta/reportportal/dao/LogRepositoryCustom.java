@@ -1,25 +1,28 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -57,6 +60,15 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	List<Log> findByTestItemId(Long itemId);
 
 	/**
+	 * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
+	 *
+	 * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
+	 * @param period {@link Duration}
+	 * @return List of {@link Log} with {@link Log#id}, {@link Log#attachment} and {@link Log#attachmentThumbnail} that were modified before the specified time period
+	 */
+	List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period);
+
+	/**
 	 * Get the specified log's page number
 	 *
 	 * @param id       ID of log page should be found of
@@ -65,4 +77,29 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return Page number log found using specified filter
 	 */
 	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
+
+	/**
+	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
+	 * has {@link Log}'s with {@link Log#lastModified} up to the current point of time minus provided 'period'
+	 *
+	 * @param period   {@link Duration}
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if logs(the log) exist(exists)
+	 */
+	boolean hasLogsAddedLately(Duration period, Long launchId, StatusEnum... statuses);
+
+	/**
+	 * @param period      {@link Duration}
+	 * @param testItemIds Collection of the {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem}
+	 * @return Count of removed logs
+	 */
+	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
+
+	/**
+	 * Clear {@link Log#attachment} and {@link Log#attachmentThumbnail} of the specified logs
+	 *
+	 * @param ids Collection of the {@link Log#id} to specify logs which attachments and thumbnails will be cleared
+	 */
+	void clearLogsAttachmentsAndThumbnails(Collection<Long> ids);
 }
