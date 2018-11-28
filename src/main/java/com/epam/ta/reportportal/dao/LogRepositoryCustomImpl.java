@@ -18,9 +18,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.*;
@@ -34,14 +37,20 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Pavel Bortnik
@@ -92,6 +101,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
+		return dsl.select(LOG.ID, LOG.ATTACHMENT, LOG.ATTACHMENT_THUMBNAIL)
+				.from(LOG)
+				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.and(LOG.ATTACHMENT.isNotNull().or(LOG.ATTACHMENT_THUMBNAIL.isNotNull()))
+				.fetchInto(Log.class);
+	}
+
+	@Override
 	public List<Log> findByFilter(Filter filter) {
 		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
@@ -130,5 +148,33 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.into(Long.class);
 
 		return BigDecimal.valueOf(rowNumber).divide(BigDecimal.valueOf(pageable.getPageSize()), RoundingMode.CEILING).intValue();
+	}
+
+	@Override
+	public boolean hasLogsAddedLately(Duration period, Long launchId, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(dsl.selectOne()
+				.from(LOG)
+				.join(TEST_ITEM)
+				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.and(LOG.LAST_MODIFIED.gt(TimestampUtils.getTimestampBackFromNow(period)))
+				.limit(1));
+	}
+
+	@Override
+	public int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds) {
+
+		return dsl.deleteFrom(LOG)
+				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.execute();
+	}
+
+	@Override
+	public void clearLogsAttachmentsAndThumbnails(Collection<Long> ids) {
+		dsl.update(LOG).set(LOG.ATTACHMENT_THUMBNAIL, (String) null).set(LOG.ATTACHMENT, (String) null).where(LOG.ID.in(ids)).execute();
 	}
 }

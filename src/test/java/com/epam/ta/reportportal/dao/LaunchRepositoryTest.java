@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -29,7 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
-import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -43,15 +43,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.dao.constant.TestConstants.SUPERADMIN_PERSONAL_PROJECT_ID;
 
 /**
  * @author Ivan Budaev
@@ -65,26 +66,50 @@ public class LaunchRepositoryTest {
 	private LaunchRepository launchRepository;
 
 	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		//		runSqlScript("/test-dropall-script.sql");
-		//		runSqlScript("/test-create-script.sql");
-		//		runSqlScript("/test-fill-script.sql");
+	public static void init() throws SQLException {
+		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
+		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql");
 	}
 
 	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		//		runSqlScript("/test-dropall-script.sql");
+	public static void destroy() throws SQLException {
+		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
 	}
 
-	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
-		try (Connection connection = getConnection()) {
-			new SqlRunner().runSqlScript(connection, scriptPath);
-		}
+	@Test
+	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
+		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		);
+
+		Assert.assertEquals(12, removedCount);
 	}
 
-	private static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
+	@Test
+	public void streamLaunchIdsWithStatusTest() {
+
+		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
+				StatusEnum.IN_PROGRESS,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		);
+
+		Assert.assertNotNull(stream);
+		List<Long> ids = stream.collect(Collectors.toList());
+		Assert.assertTrue(CollectionUtils.isNotEmpty(ids));
+		Assert.assertEquals(12L, ids.size());
+	}
+
+	@Test
+	public void streamLaunchIdsTest() {
+
+		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(SUPERADMIN_PERSONAL_PROJECT_ID,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		);
+
+		Assert.assertNotNull(stream);
+		List<Long> ids = stream.collect(Collectors.toList());
+		Assert.assertTrue(CollectionUtils.isNotEmpty(ids));
+		Assert.assertEquals(12L, ids.size());
 	}
 
 	@Test
@@ -148,8 +173,7 @@ public class LaunchRepositoryTest {
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				), new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);

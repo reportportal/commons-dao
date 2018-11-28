@@ -1,3 +1,8 @@
+INSERT INTO public.launch (id, uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status) VALUES (1, 'asdqwerty123', 1, 1, 'test launch', 'descr', '2018-11-05 08:51:21.305000', '2018-11-05 08:51:23.306000', '2018-11-05 08:51:34.411347', 'DEFAULT', 'FAILED');
+INSERT INTO public.launch (id, uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status) VALUES (1, 'asdqwerty1232', 1, 1, 'test launch', 'descr', '2018-11-05 08:51:21.305000', '2018-11-05 08:51:23.306000', '2018-11-05 08:51:34.411347', 'DEFAULT', 'FAILED');
+INSERT INTO public.launch (id, uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status) VALUES (1, 'asdqwerty1233', 1, 1, 'test launch', 'descr', '2018-11-05 08:51:21.305000', '2018-11-05 08:51:23.306000', '2018-11-05 08:51:34.411347', 'DEFAULT', 'FAILED');
+INSERT INTO public.launch (id, uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status) VALUES (1, 'jjjjjjqwerty', 1, 1, 'launch name test', 'descr', '2018-11-05 08:51:21.305000', '2018-11-05 08:51:23.306000', '2018-11-05 08:51:34.411347', 'DEFAULT', 'FAILED');
+
 INSERT INTO statistics_field (sf_id, name) VALUES (1, 'statistics$executions$total');
 INSERT INTO statistics_field (sf_id, name) VALUES (2, 'statistics$executions$passed');
 INSERT INTO statistics_field (sf_id, name) VALUES (3, 'statistics$executions$skipped');

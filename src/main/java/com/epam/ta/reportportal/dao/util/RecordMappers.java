@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -82,7 +83,13 @@ public class RecordMappers {
 	/**
 	 * Maps record into {@link Attribute} object
 	 */
-	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> record.into(Attribute.class);
+	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> {
+		Attribute attribute = new Attribute();
+		ofNullable(record.field(ATTRIBUTE.ID)).ifPresent(f -> attribute.setId(record.get(f)));
+		ofNullable(record.field(ATTRIBUTE.NAME)).ifPresent(f -> attribute.setName(record.get(f)));
+
+		return attribute;
+	};
 
 	/**
 	 * Maps record into {@link IssueType} object
@@ -107,15 +114,18 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
 		Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.CREATION_DATE, PROJECT.PROJECT_TYPE).into(Project.class);
-		String metaDataString = r.get(PROJECT.METADATA, String.class);
-		ofNullable(metaDataString).ifPresent(md -> {
-			try {
-				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
-				project.setMetadata(metadata);
-			} catch (IOException e) {
-				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
-			}
+		ofNullable(r.field(PROJECT.METADATA)).ifPresent(f -> {
+			String metaDataString = r.get(f, String.class);
+			ofNullable(metaDataString).ifPresent(md -> {
+				try {
+					Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+					project.setMetadata(metadata);
+				} catch (IOException e) {
+					throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
+				}
+			});
 		});
+
 		return project;
 	};
 
@@ -277,5 +287,16 @@ public class RecordMappers {
 		});
 
 		return Lists.newArrayList(widgetMap.values());
+	};
+
+	public static final Function<? super Record, ItemAttribute> ITEM_ATTRIBUTE_MAPPER = r -> {
+		String key = r.get(ITEM_ATTRIBUTE.KEY);
+		String value = r.get(ITEM_ATTRIBUTE.VALUE);
+		Boolean system = r.get(ITEM_ATTRIBUTE.SYSTEM);
+		if (key != null || value != null) {
+			return new ItemAttribute(key, value, system);
+		} else {
+			return null;
+		}
 	};
 }

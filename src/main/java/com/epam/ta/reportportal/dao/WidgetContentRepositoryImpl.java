@@ -43,6 +43,9 @@ import java.util.stream.StreamSupport;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.LAUNCHES_STATISTICS_FETCHER;
+import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.NOT_PASSED_CASES_CONTENT_RECORD_MAPPER;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
@@ -51,7 +54,6 @@ import static com.epam.ta.reportportal.jooq.tables.JFilter.FILTER;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-import static com.epam.ta.reportportal.jooq.tables.JLaunchTag.LAUNCH_TAG;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
@@ -613,8 +615,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
 
-		List<Condition> conditions = tags.stream()
-				.map(cf -> LAUNCH_TAG.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
+		List<Condition> conditions = tags.stream().map(cf -> ITEM_ATTRIBUTE.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 
 		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
@@ -680,16 +681,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			List<Field<?>> fields, Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> selectFields = Lists.newArrayList(fields);
-		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
-				fieldName(LAUNCH_TAG.VALUE)
+		selectFields.add(arrayAgg(fieldName(ITEM_ATTRIBUTE.VALUE)).orderBy(charLength(fieldName(ITEM_ATTRIBUTE.VALUE).cast(String.class)),
+				fieldName(ITEM_ATTRIBUTE.VALUE)
 		).as(TAG_VALUES));
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(selectFields)
 				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
-				.leftJoin(dsl.select(LAUNCH_TAG.LAUNCH_ID, LAUNCH_TAG.VALUE)
-						.from(LAUNCH_TAG)
-						.where(combinedTagCondition)
-						.orderBy(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
+				.leftJoin(dsl.select(ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.VALUE).from(ITEM_ATTRIBUTE)
+						.where(combinedTagCondition).orderBy(charLength(ITEM_ATTRIBUTE.VALUE), ITEM_ATTRIBUTE.VALUE)
 						.asTable(TAG_TABLE))
 				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.groupBy(fields)
@@ -704,8 +703,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort,
 			boolean isLatest, int limit) {
 		List<Condition> conditions = Lists.newArrayList(FILTER.ID.eq(filter.getId()));
-		List<Condition> tagConditions = tags.stream()
-				.map(tag -> LAUNCH_TAG.VALUE.like(tag + LIKE_CONDITION_SYMBOL))
+		List<Condition> tagConditions = tags.stream().map(tag -> ITEM_ATTRIBUTE.VALUE.like(tag + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 		Optional<Condition> combinedTagCondition = tagConditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
@@ -726,8 +724,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			Condition combinedTagCondition, Sort sort, boolean isLatest, int limit) {
 
 		List<Field<?>> selectFields = Lists.newArrayList(fields);
-		selectFields.add(arrayAgg(fieldName(LAUNCH_TAG.VALUE)).orderBy(charLength(fieldName(LAUNCH_TAG.VALUE).cast(String.class)),
-				fieldName(LAUNCH_TAG.VALUE)
+		selectFields.add(arrayAgg(fieldName(ITEM_ATTRIBUTE.VALUE)).orderBy(charLength(fieldName(ITEM_ATTRIBUTE.VALUE).cast(String.class)),
+				fieldName(ITEM_ATTRIBUTE.VALUE)
 		).as(TAG_VALUES));
 
 		return dsl.select(selectFields)
@@ -736,10 +734,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, PROJECT_ID).cast(Long.class)))
 				.join(FILTER)
 				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
-				.leftJoin(dsl.select(LAUNCH_TAG.LAUNCH_ID, LAUNCH_TAG.VALUE)
-						.from(LAUNCH_TAG)
-						.where(combinedTagCondition)
-						.orderBy(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
+				.leftJoin(dsl.select(ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.VALUE).from(ITEM_ATTRIBUTE)
+						.where(combinedTagCondition).orderBy(charLength(ITEM_ATTRIBUTE.VALUE), ITEM_ATTRIBUTE.VALUE)
 						.asTable(TAG_TABLE))
 				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.where(conditions)

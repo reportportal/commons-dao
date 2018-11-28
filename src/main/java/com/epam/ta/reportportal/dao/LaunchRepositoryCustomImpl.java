@@ -46,6 +46,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Pavel Bortnik
@@ -135,7 +136,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
-		return Optional.ofNullable(dsl.with(LAUNCHES)
+		return ofNullable(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).build())
 				.select()
 				.distinctOn(LAUNCH.NAME)
@@ -205,4 +206,5 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.groupBy(USERS.LOGIN)
 				.fetchMap(USERS.LOGIN, DSL.field("count", Integer.class));
 	}
+
 }

@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.dao;
@@ -22,15 +22,42 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Pavel Bortnik
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
 
+	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launch.id = :launchId")
+	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
+
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
+
+	/**
+	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
+	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
+	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of other {@link TestItem}
+	 * with the same {@link TestItem#uniqueId} then all those test items becomes retries of the new-inserted one:
+	 * theirs {@link TestItem#hasRetries} flag sets to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
+	 * The same operation applies to the new-inserted {@link TestItem} if its {@link TestItem#startTime} is less than
+	 * MAX {@link TestItem#startTime} of other {@link TestItem} with the same {@link TestItem#uniqueId}
+	 *
+	 * @param itemId The new-inserted {@link TestItem#itemId}
+	 */
+	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
+	void handleRetries(@Param("itemId") Long itemId);
+
+	/**
+	 * Execute sql-function that removes statistics of {@link TestItem} with non-null {@link TestItem#retryOf} value
+	 * of {@link com.epam.ta.reportportal.entity.launch.Launch} with provided 'launchId'
+	 *
+	 * @param launchId Id of the {@link com.epam.ta.reportportal.entity.launch.Launch} to perform retries statistics recalculation
+	 */
+	@Query(value = "SELECT retries_statistics(:launchId)", nativeQuery = true)
+	void handleRetriesStatistics(@Param("launchId") Long launchId);
 
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);

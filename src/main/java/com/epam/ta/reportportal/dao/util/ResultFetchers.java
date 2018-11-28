@@ -23,9 +23,8 @@ import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
-import com.epam.ta.reportportal.entity.item.TestItemTag;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
@@ -35,15 +34,15 @@ import com.google.common.collect.Maps;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
@@ -73,7 +72,8 @@ public class ResultFetchers {
 					.add(new ProjectAttribute().withProject(project)
 							.withAttribute(ATTRIBUTE_MAPPER.map(record))
 							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
-			project.getUsers().add(PROJECT_USER_MAPPER.map(record));
+			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> project.getUsers().add(PROJECT_USER_MAPPER.map(record)));
+
 			projects.put(id, project);
 		});
 		return new ArrayList<>(projects.values());
@@ -92,11 +92,41 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			launch.getTags().add(record.into(LaunchTag.class));
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> launch.getAttributes().add(it));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
 		return new ArrayList<>(launches.values());
+	};
+
+	public static final BiConsumer<List<TestItem>, Result<? extends Record>> RETRIES_FETCHER = (testItems, retries) -> {
+		Map<Long, TestItem> retriesMap = Maps.newLinkedHashMap();
+		retries.forEach(record -> {
+			Long id = record.get(TEST_ITEM.ITEM_ID);
+			TestItem testItem;
+			if (!retriesMap.containsKey(id)) {
+				testItem = record.into(TestItem.class);
+				testItem.setItemId(id);
+				testItem.setName(record.get(TEST_ITEM.NAME));
+				testItem.setItemResults(record.into(TestItemResults.class));
+			} else {
+				testItem = retriesMap.get(id);
+			}
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
+			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
+				testItem.getParameters().add(record.into(Parameter.class));
+			});
+			retriesMap.put(id, testItem);
+		});
+
+		Map<Long, TestItem> items = testItems.stream()
+				.collect(HashMap::new, (map, item) -> map.put(item.getItemId(), item), HashMap::putAll);
+		retriesMap.values()
+				.stream()
+				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toSet()))
+				.entrySet()
+				.stream()
+				.forEach(entry -> items.get(entry.getKey()).setRetries(entry.getValue()));
 	};
 
 	/**
@@ -112,7 +142,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			testItem.getTags().add(record.into(ITEM_TAG.VALUE).into(TestItemTag.class));
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);

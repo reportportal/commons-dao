@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -47,8 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -75,25 +72,12 @@ public class UserRepositoryTest {
 
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/test-dropall-script.sql");
-		runSqlScript("/test-create-script.sql");
-		runSqlScript("/widgetcontent/user/users-projects-fill.sql");
+
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/test-dropall-script.sql");
-	}
 
-	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
-		try (Connection connection = getConnection()) {
-			new SqlRunner().runSqlScript(connection, scriptPath);
-		}
-	}
-
-	private static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/reportportal", "rpuser", "rppass");
 	}
 
 	@Test

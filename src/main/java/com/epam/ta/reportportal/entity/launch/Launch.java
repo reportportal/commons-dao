@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.launch;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -94,20 +95,20 @@ public class Launch implements Serializable {
 
 	@OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Fetch(FetchMode.JOIN)
-	private Set<LaunchTag> tags = Sets.newHashSet();
+	private Set<ItemAttribute> attributes = Sets.newHashSet();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
-	public Set<LaunchTag> getTags() {
-		return tags;
+	public Set<ItemAttribute> getAttributes() {
+		return attributes;
 	}
 
-	public void setTags(Set<LaunchTag> tags) {
-		this.tags.clear();
-		this.tags.addAll(tags);
+	public void setAttributes(Set<ItemAttribute> tags) {
+		this.attributes.clear();
+		this.attributes.addAll(tags);
 	}
 
 	public Launch() {
@@ -245,7 +246,7 @@ public class Launch implements Serializable {
 	public String toString() {
 		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", user=" + user + ", name='" + name + '\''
 				+ ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
-				+ ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status + ", tags=" + tags + ", statistics="
+				+ ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status + ", tags=" + attributes + ", statistics="
 				+ statistics + '}';
 	}
 }
