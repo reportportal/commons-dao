@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -112,9 +111,7 @@ public class ResultFetchers {
 			} else {
 				testItem = retriesMap.get(id);
 			}
-			Optional.ofNullable(record.get(ITEM_ATTRIBUTE.ID)).ifPresent(tag -> {
-				testItem.getAttributes().add(record.into(ItemAttribute.class));
-			});
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
 			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
 				testItem.getParameters().add(record.into(Parameter.class));
 			});
