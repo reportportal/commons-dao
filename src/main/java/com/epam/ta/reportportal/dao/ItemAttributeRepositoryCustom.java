@@ -16,7 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -30,4 +33,6 @@ public interface ItemAttributeRepositoryCustom {
 	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
 
 	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
+
+	Optional<ItemAttribute> findSystemAttributeByLaunchIdAndValue(Long launchId, String value);
 }
