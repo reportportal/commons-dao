@@ -26,12 +26,44 @@ import java.util.Optional;
  */
 public interface ItemAttributeRepositoryCustom {
 
+	/**
+	 * Retrieves launch attribute keys by project and part of value.
+	 * Used for autocompletion functionality
+	 *
+	 * @param projectId Id of project
+	 * @param value     part of key
+	 * @return List of matched attribute keys
+	 */
 	List<String> findKeysByProjectIdAndValue(Long projectId, String value);
 
+	/**
+	 * Retrieves launch attribute values by project and part of value.
+	 * Used for autocompletion functionality
+	 *
+	 * @param projectId Id of project
+	 * @param value    part of value
+	 * @return List of matched attribute values
+	 */
 	List<String> findValuesByProjectIdAndValue(Long projectId, String value);
 
+	/**
+	 * Retrieves test item attribute keys by launch and part of value.
+	 * Used for autocompletion functionality
+	 *
+	 * @param launchId    Id of launch
+	 * @param value    part of key
+	 * @return List of matched attribute keys
+	 */
 	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
 
+	/**
+	 * Retrieves test item attribute values by launch and part of value.
+	 * Used for autocompletion functionality
+	 *
+	 * @param launchId    Id of launch
+	 * @param value    part of key
+	 * @return List of matched attribute values
+	 */
 	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
 
 	Optional<ItemAttribute> findSystemAttributeByLaunchIdAndValue(Long launchId, String value);
