@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
-
-import java.util.List;
+package com.epam.ta.reportportal.commons.querygen.constant;
 
 /**
- * @author Yauheni_Martynau
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface LaunchTagRepositoryCustom {
+public class ItemAttributeConstant {
 
-	/**
-	 * Select set of tags on project.
-	 *
-	 * @param projectId Project id
-	 * @param value     Term for tag value to find
-	 * @return List of distinct tags
-	 */
-	List<String> getTags(Long projectId, String value);
+	public static final String CRITERIA_ITEM_ATTRIBUTE_KEY = "attributeKey";
+	public static final String CRITERIA_ITEM_ATTRIBUTE_VALUE = "attributeValue";
 }

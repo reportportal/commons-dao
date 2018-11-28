@@ -94,7 +94,7 @@ public class TestItemRepositoryCustomImplTest {
 				"tag"
 		)));
 
-		testItems.forEach(ti -> Assert.assertTrue(CollectionUtils.isNotEmpty(ti.getTags())));
+		testItems.forEach(ti -> Assert.assertTrue(CollectionUtils.isNotEmpty(ti.getAttributes())));
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
