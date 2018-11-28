@@ -19,6 +19,7 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
+import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -32,7 +33,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
-import org.hsqldb.cmdline.SqlToolError;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -44,7 +44,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
@@ -78,28 +77,28 @@ public class WidgetContentRepositoryTest {
 	private LaunchRepository launchRepository;
 
 	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/widgetcontent/activity/activity-down.sql");
-		runSqlScript("/widgetcontent/ticket/ticket-down.sql");
-		runSqlScript("/widgetcontent/widget/widget-down.sql");
-		runSqlScript("/widgetcontent/statistics/statistics-down.sql");
-		runSqlScript("/widgetcontent/widget/widget-up.sql");
-		runSqlScript("/widgetcontent/ticket/ticket-up.sql");
-		runSqlScript("/widgetcontent/statistics/statistics-down.sql");
-		runSqlScript("/widgetcontent/statistics/launch-statistics-up.sql");
-		runSqlScript("/widgetcontent/activity/activity-up.sql");
+	public static void init() throws SQLException {
+		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
+				"/widgetcontent/ticket/ticket-down.sql",
+				"/widgetcontent/widget/widget-down.sql",
+				"/widgetcontent/statistics/statistics-down.sql"
+		);
+		SqlRunner.runSqlScripts("/widgetcontent/widget/widget-up.sql",
+				"/widgetcontent/ticket/ticket-up.sql",
+				"/widgetcontent/statistics/statistics-down.sql",
+				"/widgetcontent/statistics/launch-statistics-up.sql",
+				"/widgetcontent/activity/activity-up.sql"
+		);
 	}
 
 	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/widgetcontent/activity/activity-down.sql");
-		runSqlScript("/widgetcontent/ticket/ticket-down.sql");
-		runSqlScript("/widgetcontent/widget/widget-down.sql");
-		runSqlScript("/widgetcontent/statistics/statistics-down.sql");
+	public static void destroy() throws SQLException {
+		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
+				"/widgetcontent/ticket/ticket-down.sql",
+				"/widgetcontent/widget/widget-down.sql",
+				"/widgetcontent/statistics/statistics-down.sql"
+		);
 	}
-
-
 
 	@Test
 	public void overallStatisticsContent() {
