@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -33,11 +34,10 @@ import com.google.common.collect.Maps;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -97,6 +97,36 @@ public class ResultFetchers {
 			launches.put(id, launch);
 		});
 		return new ArrayList<>(launches.values());
+	};
+
+	public static final BiConsumer<List<TestItem>, Result<? extends Record>> RETRIES_FETCHER = (testItems, retries) -> {
+		Map<Long, TestItem> retriesMap = Maps.newLinkedHashMap();
+		retries.forEach(record -> {
+			Long id = record.get(TEST_ITEM.ITEM_ID);
+			TestItem testItem;
+			if (!retriesMap.containsKey(id)) {
+				testItem = record.into(TestItem.class);
+				testItem.setItemId(id);
+				testItem.setName(record.get(TEST_ITEM.NAME));
+				testItem.setItemResults(record.into(TestItemResults.class));
+			} else {
+				testItem = retriesMap.get(id);
+			}
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
+			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
+				testItem.getParameters().add(record.into(Parameter.class));
+			});
+			retriesMap.put(id, testItem);
+		});
+
+		Map<Long, TestItem> items = testItems.stream()
+				.collect(HashMap::new, (map, item) -> map.put(item.getItemId(), item), HashMap::putAll);
+		retriesMap.values()
+				.stream()
+				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toSet()))
+				.entrySet()
+				.stream()
+				.forEach(entry -> items.get(entry.getKey()).setRetries(entry.getValue()));
 	};
 
 	/**

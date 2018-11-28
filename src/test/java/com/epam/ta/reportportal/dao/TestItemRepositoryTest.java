@@ -94,7 +94,6 @@ public class TestItemRepositoryTest {
 		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
 		Assert.assertThat(results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		Assert.assertThat(results.size(), Matchers.equalTo(2));
-		System.out.println();
 	}
 
 	@Test

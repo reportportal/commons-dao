@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import org.apache.commons.collections.CollectionUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
@@ -41,9 +42,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
@@ -228,7 +231,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findByFilter(Filter filter) {
-		return TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		fetchRetries(items);
+		return items;
 	}
 
 	@Override
@@ -240,4 +245,24 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
+	private void fetchRetries(List<TestItem> items) {
+
+		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
+
+		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
+			RETRIES_FETCHER.accept(
+					items,
+					dsl.select()
+							.from(TEST_ITEM)
+							.join(TEST_ITEM_RESULTS)
+							.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+							.leftJoin(ITEM_ATTRIBUTE)
+							.on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID))
+							.leftJoin(PARAMETER)
+							.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
+							.where(TEST_ITEM.RETRY_OF.in(itemsWithRetries.stream().map(TestItem::getItemId).collect(Collectors.toList())))
+							.fetch()
+			);
+		}
+	}
 }

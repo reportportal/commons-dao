@@ -98,8 +98,15 @@ public class TestItem implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "retry_of")
+	private Set<TestItem> retries = Sets.newLinkedHashSet();
+
 	@Column(name = "has_children")
 	private boolean hasChildren;
+
+	@Column(name = "has_retries")
+	private boolean hasRetries;
 
 	public TestItem() {
 	}
@@ -109,7 +116,7 @@ public class TestItem implements Serializable {
 	}
 
 	public TestItem(Long itemId, String name, TestItemTypeEnum type, LocalDateTime startTime, String description,
-			LocalDateTime lastModified, String uniqueId, Boolean hasChildren) {
+			LocalDateTime lastModified, String uniqueId, Boolean hasChildren, Boolean hasRetries) {
 		this.itemId = itemId;
 		this.name = name;
 		this.type = type;
@@ -118,6 +125,7 @@ public class TestItem implements Serializable {
 		this.lastModified = lastModified;
 		this.uniqueId = uniqueId;
 		this.hasChildren = hasChildren;
+		this.hasRetries = hasRetries;
 	}
 
 	public Set<ItemAttribute> getAttributes() {
@@ -252,5 +260,21 @@ public class TestItem implements Serializable {
 
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
+	}
+
+	public Set<TestItem> getRetries() {
+		return retries;
+	}
+
+	public void setRetries(Set<TestItem> retries) {
+		this.retries = retries;
+	}
+
+	public boolean isHasRetries() {
+		return hasRetries;
+	}
+
+	public void setHasRetries(boolean hasRetries) {
+		this.hasRetries = hasRetries;
 	}
 }

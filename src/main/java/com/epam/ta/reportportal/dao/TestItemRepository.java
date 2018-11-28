@@ -36,6 +36,29 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
 
+	/**
+	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
+	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
+	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of other {@link TestItem}
+	 * with the same {@link TestItem#uniqueId} then all those test items becomes retries of the new-inserted one:
+	 * theirs {@link TestItem#hasRetries} flag sets to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
+	 * The same operation applies to the new-inserted {@link TestItem} if its {@link TestItem#startTime} is less than
+	 * MAX {@link TestItem#startTime} of other {@link TestItem} with the same {@link TestItem#uniqueId}
+	 *
+	 * @param itemId The new-inserted {@link TestItem#itemId}
+	 */
+	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
+	void handleRetries(@Param("itemId") Long itemId);
+
+	/**
+	 * Execute sql-function that removes statistics of {@link TestItem} with non-null {@link TestItem#retryOf} value
+	 * of {@link com.epam.ta.reportportal.entity.launch.Launch} with provided 'launchId'
+	 *
+	 * @param launchId Id of the {@link com.epam.ta.reportportal.entity.launch.Launch} to perform retries statistics recalculation
+	 */
+	@Query(value = "SELECT retries_statistics(:launchId)", nativeQuery = true)
+	void handleRetriesStatistics(@Param("launchId") Long launchId);
+
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
