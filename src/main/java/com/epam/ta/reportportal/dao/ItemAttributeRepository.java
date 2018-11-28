@@ -16,10 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.launch.LaunchTag;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 
 /**
- * @author Yauheni_Martynau
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface LaunchTagRepository extends ReportPortalRepository<LaunchTag, Long>, LaunchTagRepositoryCustom{
+public interface ItemAttributeRepository extends ReportPortalRepository<ItemAttribute, Long>, ItemAttributeRepositoryCustom {
 }

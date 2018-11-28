@@ -19,9 +19,15 @@ package com.epam.ta.reportportal.dao;
 import java.util.List;
 
 /**
- * @author Ivan Budaev
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface TestItemTagRepositoryCustom {
+public interface ItemAttributeRepositoryCustom {
 
-	List<String> findDistinctByLaunchIdAndValue(Long launchId, String value);
+	List<String> findKeysByProjectIdAndValue(Long projectId, String value);
+
+	List<String> findValuesByProjectIdAndValue(Long projectId, String value);
+
+	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
+
+	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
 }

@@ -173,8 +173,7 @@ public class LaunchRepositoryTest {
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				), new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);
