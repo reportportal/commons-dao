@@ -434,7 +434,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<LaunchesTableContent> launchesTableStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		Map<String, Field<?>> criteria = filter.getTarget()
+		Map<String, String> criteria = filter.getTarget()
 				.getCriteriaHolders()
 				.stream()
 				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
@@ -443,10 +443,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> selectFields = contentFields.stream()
 				.filter(cf -> !cf.startsWith(STATISTICS_KEY))
-				.map(cf -> ofNullable(criteria.get(cf)).orElseThrow(() -> new ReportPortalException(Suppliers.formattedSupplier(
+				.map(cf -> field(ofNullable(criteria.get(cf)).orElseThrow(() -> new ReportPortalException(Suppliers.formattedSupplier(
 						"Unknown table field - '{}'",
 						cf
-				).get())))
+				).get()))))
 				.collect(Collectors.toList());
 
 		Collections.addAll(selectFields, LAUNCH.ID, fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), fieldName(STATISTICS_TABLE, SF_NAME));
@@ -611,28 +611,38 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			List<String> tags, Sort sort, boolean isLatest, int limit) {
 
-		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
-
-		Collections.addAll(fields, fieldName(LAUNCH.ID), fieldName(LAUNCH.NUMBER), fieldName(LAUNCH.START_TIME), fieldName(LAUNCH.NAME));
-
-		List<Condition> conditions = tags.stream().map(cf -> ITEM_ATTRIBUTE.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
+		List<Condition> conditions = tags.stream()
+				.map(cf -> ITEM_ATTRIBUTE.VALUE.like(cf + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 
 		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
-		if (combinedTagCondition.isPresent()) {
-			return fetchProductStatusLaunchGroupedStatisticsWithTags(filter,
-					contentFields,
-					fields,
-					combinedTagCondition.get(),
-					sort,
-					isLatest,
-					limit
-			);
-		}
+		//		if (combinedTagCondition.isPresent()) {
+		//			return fetchProductStatusLaunchGroupedStatisticsWithTags(filter,
+		//					contentFields,
+		//					fields,
+		//					combinedTagCondition.get(),
+		//					sort,
+		//					isLatest,
+		//					limit
+		//			);
+		//		}
 
-		List<LaunchesStatisticsContent> productStatusStatisticsResult = LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(fields)
-				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
+		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
+
+		List<LaunchesStatisticsContent> productStatusStatisticsResult = LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build())
+				.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.START_TIME)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
+						.from(STATISTICS)
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
+						.asTable(STATISTICS_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
 				.fetch(), contentFields);
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
@@ -687,8 +697,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.select(selectFields)
 				.from(QueryBuilder.newBuilder(filter).with(isLatest).with(sort).with(limit).build().asTable(LAUNCHES_SUB_QUERY))
-				.leftJoin(dsl.select(ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.VALUE).from(ITEM_ATTRIBUTE)
-						.where(combinedTagCondition).orderBy(charLength(ITEM_ATTRIBUTE.VALUE), ITEM_ATTRIBUTE.VALUE)
+				.leftJoin(dsl.select(ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.VALUE)
+						.from(ITEM_ATTRIBUTE)
+						.where(combinedTagCondition)
+						.orderBy(charLength(ITEM_ATTRIBUTE.VALUE), ITEM_ATTRIBUTE.VALUE)
 						.asTable(TAG_TABLE))
 				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.groupBy(fields)
@@ -703,7 +715,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private Select<Record> buildProjectStatusFilterGroupedSelect(Filter filter, List<Field<?>> fields, List<String> tags, Sort sort,
 			boolean isLatest, int limit) {
 		List<Condition> conditions = Lists.newArrayList(FILTER.ID.eq(filter.getId()));
-		List<Condition> tagConditions = tags.stream().map(tag -> ITEM_ATTRIBUTE.VALUE.like(tag + LIKE_CONDITION_SYMBOL))
+		List<Condition> tagConditions = tags.stream()
+				.map(tag -> ITEM_ATTRIBUTE.VALUE.like(tag + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 		Optional<Condition> combinedTagCondition = tagConditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
@@ -734,8 +747,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(PROJECT.ID.eq(fieldName(LAUNCHES_SUB_QUERY, PROJECT_ID).cast(Long.class)))
 				.join(FILTER)
 				.on(FILTER.PROJECT_ID.eq(PROJECT.ID))
-				.leftJoin(dsl.select(ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.VALUE).from(ITEM_ATTRIBUTE)
-						.where(combinedTagCondition).orderBy(charLength(ITEM_ATTRIBUTE.VALUE), ITEM_ATTRIBUTE.VALUE)
+				.leftJoin(dsl.select(ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.VALUE)
+						.from(ITEM_ATTRIBUTE)
+						.where(combinedTagCondition)
+						.orderBy(charLength(ITEM_ATTRIBUTE.VALUE), ITEM_ATTRIBUTE.VALUE)
 						.asTable(TAG_TABLE))
 				.on(fieldName(TAG_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
 				.where(conditions)

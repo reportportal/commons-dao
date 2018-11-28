@@ -25,7 +25,9 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -107,23 +109,30 @@ public class WidgetContentUtil {
 		List<String> nonStatisticsFields = contentFields.stream().filter(cf -> !cf.startsWith(STATISTICS_KEY)).collect(Collectors.toList());
 
 		nonStatisticsFields.removeAll(Stream.of(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.START_TIME)
-				.map(cf -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, cf.getName()))
+				.map(cf -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, cf.getQualifiedName().last()))
 				.collect(Collectors.toList()));
 
 		Map<Long, LaunchesTableContent> resultMap = new LinkedHashMap<>();
 
-		Map<String, Field<?>> criteria = FilterTarget.LAUNCH_TARGET.getCriteriaHolders()
+		Map<String, String> criteria = FilterTarget.LAUNCH_TARGET.getCriteriaHolders()
 				.stream()
 				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
+		Optional<Field<Timestamp>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME));
 
 		result.stream().forEach(record -> {
 			LaunchesTableContent content;
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
+
 				content = resultMap.get(record.get(LAUNCH.ID));
 			} else {
-				content = record.into(LaunchesTableContent.class);
+				content = new LaunchesTableContent();
+				content.setId(record.get(LAUNCH.ID));
+				content.setName(record.get(DSL.field(LAUNCH.NAME.getQualifiedName().toString()), String.class));
+				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
+
+				startTimeField.ifPresent(f -> content.setStartTime(record.get(f)));
 
 			}
 

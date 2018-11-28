@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import java.time.Instant;
@@ -54,11 +53,11 @@ public class CriteriaHolder {
 	/**
 	 * Internal Criteria to internal search be performed
 	 */
-	private Field<?> queryCriteria;
+	private String queryCriteria;
 
 	private Class<?> dataType;
 
-	public CriteriaHolder(String filterCriteria, Field<?> queryCriteria, Class<?> dataType) {
+	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
 		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
 		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null");
 		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
@@ -74,7 +73,7 @@ public class CriteriaHolder {
 		return filterCriteria;
 	}
 
-	public Field<?> getQueryCriteria() {
+	public String getQueryCriteria() {
 		return queryCriteria;
 	}
 

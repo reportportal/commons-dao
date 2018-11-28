@@ -554,7 +554,7 @@ public class WidgetContentRepositoryTest {
 	public void productStatusLaunchGroupedWidget() {
 		Filter filter = buildDefaultTestFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$pb001"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
 
 		Sort sort = Sort.by(orderings);
 
@@ -607,7 +607,7 @@ public class WidgetContentRepositoryTest {
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
-				new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "12", "statistics$executions$total")
+				new FilterCondition(Condition.findByMarker("lte").get(), false, "12", "statistics$executions$total")
 		);
 		return new Filter(3L, Launch.class, conditionSet);
 	}

@@ -55,7 +55,8 @@ public class QueryBuilder {
 	 * Conditions that should be applied with HAVING
 	 */
 	private static final List<com.epam.ta.reportportal.commons.querygen.Condition> HAVING_CONDITIONS = ImmutableList.<com.epam.ta.reportportal.commons.querygen.Condition>builder()
-			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS).add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
 			.build();
 
 	/**
@@ -213,7 +214,7 @@ public class QueryBuilder {
 			if (searchCriteria.startsWith(STATISTICS_KEY)) {
 				criteriaHolder = Optional.of(new CriteriaHolder(
 						searchCriteria,
-						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())),
+						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())).toString(),
 						Long.class
 				));
 			}
