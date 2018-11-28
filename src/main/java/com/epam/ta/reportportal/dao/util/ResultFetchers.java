@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -36,10 +37,6 @@ import org.jooq.Result;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -116,7 +113,7 @@ public class ResultFetchers {
 				testItem = retriesMap.get(id);
 			}
 			Optional.ofNullable(record.get(ITEM_ATTRIBUTE.ID)).ifPresent(tag -> {
-				testItem.getTags().add(record.into(ItemAttribute.class));
+				testItem.getAttributes().add(record.into(ItemAttribute.class));
 			});
 			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
 				testItem.getParameters().add(record.into(Parameter.class));
