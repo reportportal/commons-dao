@@ -17,11 +17,11 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 	@Column(name = "status")
 	private String status;
 
-	@Column(name = END_TIME)
+	@Column(name = "end_time")
 	@JsonProperty(value = END_TIME)
 	private Timestamp endTime;
 
-	@Column(name = DURATION)
+	@Column(name = "duration")
 	@JsonProperty(value = DURATION)
 	private long duration;
 

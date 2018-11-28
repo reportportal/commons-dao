@@ -17,27 +17,27 @@ public class ActivityContent implements Serializable {
 	@JsonProperty(value = ID)
 	private Long activityId;
 
-	@Column(name = PROJECT_ID)
+	@Column(name = "project_id")
 	@JsonProperty(value = PROJECT_ID)
 	private Long projectId;
 
-	@Column(name = ACTION_TYPE)
+	@Column(name = "action_type")
 	@JsonProperty(value = ACTION_TYPE)
 	private String actionType;
 
-	@Column(name = ENTITY)
+	@Column(name = "entity")
 	@JsonProperty(value = ENTITY)
 	private String entity;
 
-	@Column(name = PROJECT_NAME)
+	@Column(name = "project_name")
 	@JsonProperty(value = PROJECT_NAME)
 	private String projectName;
 
-	@Column(name = USER_LOGIN)
+	@Column(name = "user_login")
 	@JsonProperty(value = "user")
 	private String userLogin;
 
-	@Column(name = LAST_MODIFIED)
+	@Column(name = "last_modified")
 	@JsonProperty(value = LAST_MODIFIED)
 	private Timestamp lastModified;
 

@@ -250,15 +250,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Sort sort, int limit) {
 
-		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false)
-				.map(s -> fieldName(LAUNCHES, s.getProperty()))
-				.collect(toList());
+		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false).map(s -> field(s.getProperty())).collect(toList());
 
 		return buildPassingRateSelect(filter, sort, limit).groupBy(groupingFields)
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-								SortOrder.DESC :
-								SortOrder.ASC))
+						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.fetchInto(PassingRateStatisticsResult.class)
 				.stream()
@@ -278,9 +274,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String contentField, Sort sort, int limit) {
 
 		List<? extends SortField<?>> deltaCounterSort = ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-				.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-						SortOrder.DESC :
-						SortOrder.ASC))
+				.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 
 		return dsl.with(LAUNCHES)
@@ -354,9 +348,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(executionStatisticsFields))
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-								SortOrder.DESC :
-								SortOrder.ASC))
+						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.unionAll(DSL.select(LAUNCH.ID,
 						LAUNCH.NAME,
@@ -378,12 +370,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 						.join(STATISTICS_FIELD)
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-						.where(STATISTICS_FIELD.NAME.in(defectStatisticsFields)))
-				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-								SortOrder.DESC :
-								SortOrder.ASC))
-						.collect(Collectors.toList()))
+						.where(STATISTICS_FIELD.NAME.in(defectStatisticsFields))
+						.orderBy(StreamSupport.stream(sort.spliterator(), false)
+								.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ?
+										SortOrder.DESC :
+										SortOrder.ASC))
+								.collect(Collectors.toList())))
 				.fetch(), contentFields);
 
 	}
@@ -405,9 +397,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-								SortOrder.DESC :
-								SortOrder.ASC))
+						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.fetchInto(LaunchesDurationContent.class);
 	}
@@ -463,9 +453,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Collections.addAll(selectFields, LAUNCH.ID, fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), fieldName(STATISTICS_TABLE, SF_NAME));
 
 		List<SortField<?>> orderFields = StreamSupport.stream(sort.spliterator(), false)
-				.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-						SortOrder.DESC :
-						SortOrder.ASC))
+				.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 				.collect(Collectors.toList());
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
@@ -516,19 +504,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		List<UniqueBugContent> uniqueBugContents = dsl.select(TICKET.TICKET_ID,
-				TICKET.SUBMIT_DATE,
-				TICKET.URL,
-				TEST_ITEM.ITEM_ID,
-				TEST_ITEM.NAME,
-				TEST_ITEM.DESCRIPTION,
-				USERS.LOGIN,
-				fieldName(LAUNCHES_SUB_QUERY, ID)
-
-		)
-				.from(QueryBuilder.newBuilder(filter).with(limit).with(sort).with(isLatest).build().asTable(LAUNCHES_SUB_QUERY))
-				.join(TEST_ITEM)
-				.on(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+		List<UniqueBugContent> uniqueBugContents = dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(limit).with(sort).with(isLatest).build())
+				.select(TICKET.TICKET_ID,
+						TICKET.SUBMIT_DATE,
+						TICKET.URL,
+						TEST_ITEM.ITEM_ID,
+						TEST_ITEM.NAME,
+						TEST_ITEM.DESCRIPTION,
+						TEST_ITEM.LAUNCH_ID,
+						USERS.LOGIN
+				)
+				.from(TEST_ITEM)
+				.join(LAUNCHES)
+				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.leftJoin(ISSUE)

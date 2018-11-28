@@ -40,13 +40,13 @@ public class WidgetContentRepositoryConstants {
 	public static final String ISSUE_GROUP_KEY = "groups";
 
 	public static final String STATISTICS_TABLE = "statistics_table";
-	public static final String 	STATISTICS_COUNTER = "s_counter";
+	public static final String STATISTICS_COUNTER = "s_counter";
 	public static final String SF_NAME = "sf_name";
 
 	/*Constants for result query mapping*/
 	public static final Double PERCENTAGE_MULTIPLIER = 100d;
 	public static final Integer ZERO_QUERY_VALUE = 0;
-	public static final String LAUNCH_ID = "launchId";
+	public static final String LAUNCH_ID = "launch_id";
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	public static final String TARGET = "target";

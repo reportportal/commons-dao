@@ -60,7 +60,7 @@ public class UniqueBugContent implements Serializable {
 	@JsonProperty(value = "launchId")
 	private Long launchId;
 
-	@Column(name = DESCRIPTION)
+	@Column(name = "description")
 	@JsonProperty(value = DESCRIPTION)
 	private String description;
 
