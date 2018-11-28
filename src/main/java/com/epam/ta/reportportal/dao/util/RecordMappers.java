@@ -83,7 +83,13 @@ public class RecordMappers {
 	/**
 	 * Maps record into {@link Attribute} object
 	 */
-	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> record.into(Attribute.class);
+	public static final RecordMapper<? super Record, Attribute> ATTRIBUTE_MAPPER = record -> {
+		Attribute attribute = new Attribute();
+		ofNullable(record.field(ATTRIBUTE.ID)).ifPresent(f -> attribute.setId(record.get(f)));
+		ofNullable(record.field(ATTRIBUTE.NAME)).ifPresent(f -> attribute.setName(record.get(f)));
+
+		return attribute;
+	};
 
 	/**
 	 * Maps record into {@link IssueType} object
@@ -108,15 +114,18 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
 		Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.CREATION_DATE, PROJECT.PROJECT_TYPE).into(Project.class);
-		String metaDataString = r.get(PROJECT.METADATA, String.class);
-		ofNullable(metaDataString).ifPresent(md -> {
-			try {
-				Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
-				project.setMetadata(metadata);
-			} catch (IOException e) {
-				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
-			}
+		ofNullable(r.field(PROJECT.METADATA)).ifPresent(f -> {
+			String metaDataString = r.get(f, String.class);
+			ofNullable(metaDataString).ifPresent(md -> {
+				try {
+					Metadata metadata = objectMapper.readValue(metaDataString, Metadata.class);
+					project.setMetadata(metadata);
+				} catch (IOException e) {
+					throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Error during parsing user metadata");
+				}
+			});
 		});
+
 		return project;
 	};
 

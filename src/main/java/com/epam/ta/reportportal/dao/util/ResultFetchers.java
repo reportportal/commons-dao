@@ -72,7 +72,8 @@ public class ResultFetchers {
 					.add(new ProjectAttribute().withProject(project)
 							.withAttribute(ATTRIBUTE_MAPPER.map(record))
 							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
-			project.getUsers().add(PROJECT_USER_MAPPER.map(record));
+			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> project.getUsers().add(PROJECT_USER_MAPPER.map(record)));
+
 			projects.put(id, project);
 		});
 		return new ArrayList<>(projects.values());

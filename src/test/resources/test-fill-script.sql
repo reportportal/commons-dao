@@ -39,10 +39,10 @@ INSERT INTO ldap_synchronization_attributes(
 	email, full_name, photo)
 	VALUES ('mail', 'displayName', 'thumbnailPhoto');
 
-INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'com.epam.ta.reportportal.entity.launch.Launch', null);
-INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'com.epam.ta.reportportal.entity.Activity', null);
-INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'test item', 1, 'com.epam.ta.reportportal.entity.item.TestItem', 'YAHOOOOO');
-INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'unique bug', 1, 'com.epam.ta.reportportal.entity.bts.Ticket', 'TICKET FILTER');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (1, 'launch name', 1, 'Launch', null);
+INSERT INTO filter (id, name, project_id, target, description) VALUES (2, 'launch_name_filter', 1, 'Activity', null);
+INSERT INTO filter (id, name, project_id, target, description) VALUES (3, 'test item', 1, 'TestItem', 'YAHOOOOO');
+INSERT INTO filter (id, name, project_id, target, description) VALUES (4, 'unique bug', 1, 'Ticket', 'TICKET FILTER');
 
 INSERT INTO user_filter(id) VALUES (1);
 INSERT INTO user_filter(id) VALUES (2);
@@ -50,7 +50,7 @@ INSERT INTO user_filter(id) VALUES (3);
 INSERT INTO user_filter(id) VALUES (4);
 
 INSERT INTO filter_sort(filter_id, field, direction) VALUES (2, 'creation_date', 'DESC');
-INSERT INTO filter_sort(filter_id, field, direction) VALUES (1, 'statistics$defects$no_defect$ND001', 'DESC');
+INSERT INTO filter_sort(filter_id, field, direction) VALUES (1, 'statistics$defects$no_defect$nd001', 'DESC');
 
 INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (8, 1, 'NOT_EQUALS', 'IN_PROGRESS', 'status', false);
 INSERT INTO filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (7, 1, 'EQUALS', 'DEFAULT', 'mode', false);

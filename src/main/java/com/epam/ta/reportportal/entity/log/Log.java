@@ -172,10 +172,4 @@ public class Log implements Serializable {
 	public int hashCode() {
 		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem);
 	}
-
-	@Override
-	public String toString() {
-		return "Log{" + "id=" + id + ", logTime=" + logTime + ", logMessage='" + logMessage + '\'' + ", lastModified=" + lastModified
-				+ ", logLevel=" + logLevel + '}';
-	}
 }

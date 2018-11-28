@@ -47,6 +47,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	private static final String USERS_QUANTITY = "usersQuantity";
 	private static final String LAUNCHES_QUANTITY = "launchesQuantity";
 	private static final String LAST_RUN = "lastRun";
+	private static final String FILTERED_PROJECT = "filtered_project";
 
 	@Autowired
 	private DSLContext dsl;
@@ -67,7 +68,6 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable, String mode) {
-		final String FILTERED_PROJECT = "filtered_project";
 		return PageableExecutionUtils.getPage(dsl.with(FILTERED_PROJECT)
 				.as(QueryBuilder.newBuilder(filter).with(pageable).build())
 				.select(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
@@ -128,5 +128,24 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public List<String> findAllProjectNames() {
 		return dsl.select(PROJECT.NAME).from(PROJECT).fetchInto(String.class);
+	}
+
+	@Override
+	public Page<Project> findAllIdsAndProjectAttributes(Filter filter, Pageable pageable) {
+
+		return PageableExecutionUtils.getPage(
+				PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
+						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+						.select(PROJECT.ID, ATTRIBUTE.NAME, PROJECT_ATTRIBUTE.VALUE)
+						.from(PROJECT)
+						.join(PROJECT_ATTRIBUTE)
+						.on(PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID))
+						.join(ATTRIBUTE)
+						.on(PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID))
+						.join(DSL.table(name(FILTERED_PROJECT)))
+						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT.ID)))),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 }
