@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -289,14 +290,14 @@ public class RecordMappers {
 		return Lists.newArrayList(widgetMap.values());
 	};
 
-	public static final Function<? super Record, ItemAttribute> ITEM_ATTRIBUTE_MAPPER = r -> {
+	public static final Function<? super Record, Optional<ItemAttribute>> ITEM_ATTRIBUTE_MAPPER = r -> {
 		String key = r.get(ITEM_ATTRIBUTE.KEY);
 		String value = r.get(ITEM_ATTRIBUTE.VALUE);
 		Boolean system = r.get(ITEM_ATTRIBUTE.SYSTEM);
 		if (key != null || value != null) {
-			return new ItemAttribute(key, value, system);
+			return Optional.of(new ItemAttribute(key, value, system));
 		} else {
-			return null;
+			return Optional.empty();
 		}
 	};
 }
