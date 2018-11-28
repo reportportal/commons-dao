@@ -137,6 +137,15 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void mostFailedByDefectCriteria() {
+
+		String defect = "statistics$defects$no_defect$nd001";
+
+		Filter filter = buildDefaultFilter(1L);
+
+		List<CriteriaHistoryItem> criteriaHistoryItems = widgetContentRepository.topItemsByCriteria(filter, defect, 10, false);
+
+		System.out.println(123);
+
 	}
 
 	@Test
@@ -557,7 +566,7 @@ public class WidgetContentRepositoryTest {
 	public void productStatusLaunchGroupedWidget() {
 		Filter filter = buildDefaultTestFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$pb001"));
 
 		Sort sort = Sort.by(orderings);
 
