@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.commons.querygen;
+package com.epam.ta.reportportal.dao;
 
-import org.jooq.Record;
-import org.jooq.SelectQuery;
-
-import java.util.Set;
+import java.util.List;
 
 /**
- * Can be used to generate Mongo queries
- *
- * @author Andrei Varabyeu
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface Queryable {
+public interface ItemAttributeRepositoryCustom {
 
-	SelectQuery<? extends Record> toQuery();
+	List<String> findKeysByProjectIdAndValue(Long projectId, String value);
 
-	FilterTarget getTarget();
+	List<String> findValuesByProjectIdAndValue(Long projectId, String value);
 
-	Set<FilterCondition> getFilterConditions();
+	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
 
+	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
 }

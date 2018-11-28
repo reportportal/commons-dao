@@ -30,7 +30,6 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.hsqldb.cmdline.SqlToolError;
-import org.jooq.Operator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -53,8 +52,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 
 /**
  * @author Ivan Budaev
@@ -151,24 +148,10 @@ public class LaunchRepositoryTest {
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Operator.OR, Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				), new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.HAS, false, "updated", "tags")
 		);
 		return new Filter(Launch.class, conditionSet);
-	}
-
-	@Test
-	public void testAttributes() {
-
-		//all : without all
-		List<Launch> byFilter = launchRepository.findByFilter(new Filter(Launch.class,
-				Sets.newHashSet(new FilterCondition(Condition.HAS, false, "browser, scope", CRITERIA_ITEM_ATTRIBUTE_KEY),
-						new FilterCondition(Condition.OVERLAP, true, "chrome, regression", CRITERIA_ITEM_ATTRIBUTE_VALUE)
-				)
-		));
-
-		System.out.println();
 	}
 }

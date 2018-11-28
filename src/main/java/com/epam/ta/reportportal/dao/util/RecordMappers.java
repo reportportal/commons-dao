@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -277,5 +278,16 @@ public class RecordMappers {
 		});
 
 		return Lists.newArrayList(widgetMap.values());
+	};
+
+	public static final Function<? super Record, ItemAttribute> ITEM_ATTRIBUTE_MAPPER = r -> {
+		String key = r.get(ITEM_ATTRIBUTE.KEY);
+		String value = r.get(ITEM_ATTRIBUTE.VALUE);
+		Boolean system = r.get(ITEM_ATTRIBUTE.SYSTEM);
+		if (key != null || value != null) {
+			return new ItemAttribute(key, value, system);
+		} else {
+			return null;
+		}
 	};
 }

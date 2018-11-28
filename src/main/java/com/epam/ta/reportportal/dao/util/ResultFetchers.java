@@ -16,8 +16,10 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.filter.FilterSort;
+import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -27,17 +29,24 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.User;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jooq.Record;
 import org.jooq.Result;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
@@ -86,7 +95,7 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			launch.getTags().add(record.into(ItemAttribute.class));
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> launch.getAttributes().add(it));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
@@ -138,7 +147,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			testItem.getTags().add(record.into(ItemAttribute.class));
+			ofNullable(ITEM_ATTRIBUTE_MAPPER.apply(record)).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			testItems.put(id, testItem);
@@ -214,6 +223,26 @@ public class ResultFetchers {
 			users.put(id, user);
 		});
 		return new ArrayList<>(users.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<UserFilter>> USER_FILTER_FETCHER = result -> {
+		Map<Long, UserFilter> userFilterMap = new HashMap<>();
+		result.forEach(r -> {
+			Long userFilterID = r.get(ID, Long.class);
+			UserFilter userFilter;
+			if (userFilterMap.containsKey(userFilterID)) {
+				userFilter = userFilterMap.get(userFilterID);
+			} else {
+				userFilter = r.into(UserFilter.class);
+				Project project = new Project();
+				project.setId(r.get(PROJECT.ID, Long.class));
+				userFilter.setProject(project);
+				userFilterMap.put(userFilterID, userFilter);
+			}
+			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
+			userFilter.getFilterSorts().add(r.into(FilterSort.class));
+		});
+		return Lists.newArrayList(userFilterMap.values());
 	};
 
 }

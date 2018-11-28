@@ -202,7 +202,7 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic with own sorting
 	 * @param contentFields     Custom fields for select query building
-	 * @param tags              List of the prefixes of the {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
+	 * @param tags              List of the prefixes of the {@link }
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
 	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link LaunchesStatisticsContent} as value
@@ -215,7 +215,7 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        {@link Filter}
 	 * @param contentFields Custom fields for select query building
-	 * @param tags          List of the prefixes of the {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
+	 * @param tags          List of the prefixes of the {@link }
 	 * @param sort          {@link Sort}
 	 * @param isLatest      Flag for retrieving only latest launches
 	 * @param limit         Results limit

@@ -20,14 +20,17 @@ import com.epam.ta.reportportal.commons.Preconditions;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.google.common.collect.ImmutableList;
 import org.jooq.Condition;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -47,6 +50,19 @@ public class QueryBuilder {
 	 * with statistics criteria. It implements kind of pivot using PostgerSQL possibilities
 	 */
 	public final static String STATISTICS_KEY = "statistics";
+
+	/**
+	 * Conditions that should be applied with HAVING
+	 */
+	private static final List<com.epam.ta.reportportal.commons.querygen.Condition> HAVING_CONDITIONS = ImmutableList.<com.epam.ta.reportportal.commons.querygen.Condition>builder()
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS).add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
+			.build();
+
+	/**
+	 * Predicate that checks if filter condition should be applied with HAVING
+	 */
+	public final static Predicate<FilterCondition> HAVING_CONDITION = filterCondition ->
+			HAVING_CONDITIONS.contains(filterCondition.getCondition()) || filterCondition.getSearchCriteria().startsWith(STATISTICS_KEY);
 
 	/**
 	 * JOOQ SQL query representation
@@ -75,8 +91,8 @@ public class QueryBuilder {
 	 * @param condition Condition
 	 * @return QueryBuilder
 	 */
-	public QueryBuilder addCondition(Condition condition, Operator operator) {
-		query.addConditions(operator, condition);
+	public QueryBuilder addCondition(Condition condition) {
+		query.addConditions(condition);
 		return this;
 	}
 
@@ -85,8 +101,8 @@ public class QueryBuilder {
 	 *
 	 * @param condition Condition
 	 */
-	void addHavingCondition(Condition condition, Operator operator) {
-		query.addHaving(operator, condition);
+	void addHavingCondition(Condition condition) {
+		query.addHaving(condition);
 	}
 
 	public QueryBuilder with(boolean latest) {

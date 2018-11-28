@@ -138,7 +138,7 @@ public class Keys {
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = UniqueKeys0.USER_PREFERENCE_UQ;
     public static final UniqueKey<JUsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
     public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = UniqueKeys0.USERS_LOGIN_KEY;
-	public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = UniqueKeys0.USERS_EMAIL_KEY;
+    public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = UniqueKeys0.USERS_EMAIL_KEY;
     public static final UniqueKey<JWidgetRecord> WIDGET_ID = UniqueKeys0.WIDGET_ID;
     public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = UniqueKeys0.UNQ_WIDGET_NAME_PROJECT;
     public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = UniqueKeys0.WIDGET_FILTER_PK;
@@ -329,11 +329,7 @@ public class Keys {
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_uq", JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID);
         public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, "users_pk", JUsers.USERS.ID);
         public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = Internal.createUniqueKey(JUsers.USERS, "users_login_key", JUsers.USERS.LOGIN);
-		public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(
-				JUsers.USERS,
-				"users_email_key",
-				JUsers.USERS.EMAIL
-		);
+        public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(JUsers.USERS, "users_email_key", JUsers.USERS.EMAIL);
         public static final UniqueKey<JWidgetRecord> WIDGET_ID = Internal.createUniqueKey(JWidget.WIDGET, "widget_id", JWidget.WIDGET.ID);
         public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = Internal.createUniqueKey(JWidget.WIDGET, "unq_widget_name_project", JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID);
         public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = Internal.createUniqueKey(JWidgetFilter.WIDGET_FILTER, "widget_filter_pk", JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID);
