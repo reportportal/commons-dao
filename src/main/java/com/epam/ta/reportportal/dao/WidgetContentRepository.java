@@ -38,10 +38,9 @@ public interface WidgetContentRepository {
 	 * @param contentFields Content fields to load
 	 * @param latest        Load only for latest launches
 	 * @param limit         Limit of loaded launches
-	 * @return List of {@link LaunchesStatisticsContent}
+	 * @return {@link OverallStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest,
-			int limit);
+	OverallStatisticsContent overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest, int limit);
 
 	/**
 	 * Loads top limit history of items sorted in descending order by provided criteria

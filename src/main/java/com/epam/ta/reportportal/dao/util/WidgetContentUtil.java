@@ -19,10 +19,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import com.epam.ta.reportportal.entity.widget.content.InvestigatedStatisticsResult;
-import com.epam.ta.reportportal.entity.widget.content.LaunchesStatisticsContent;
-import com.epam.ta.reportportal.entity.widget.content.LaunchesTableContent;
-import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
+import com.epam.ta.reportportal.entity.widget.content.*;
 import com.google.common.base.CaseFormat;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -72,6 +69,14 @@ public class WidgetContentUtil {
 		});
 
 		return resultMap;
+	};
+
+	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
+		Map<String, Long> values = new HashMap<>();
+
+		result.stream().forEach(record -> values.put(record.get(STATISTICS_FIELD.NAME), record.get(fieldName(SUM), Long.class)));
+
+		return new OverallStatisticsContent(values);
 	};
 
 	//	private static final BiFunction<Result<? extends Record>, List<String>, Map<Long, LaunchesStatisticsContent>> STATISTICS_FETCHER = (result, contentFields) -> {

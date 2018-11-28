@@ -53,7 +53,7 @@ public class UserCreationBidRepositoryTest {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
-		runSqlScript("/user/user-bid-fill-script.sql");
+		runSqlScript("/widgetcontent/user/user-bid-fill-script.sql");
 	}
 
 	@AfterClass

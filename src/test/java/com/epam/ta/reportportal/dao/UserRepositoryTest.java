@@ -78,7 +78,7 @@ public class UserRepositoryTest {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		runSqlScript("/test-dropall-script.sql");
 		runSqlScript("/test-create-script.sql");
-		runSqlScript("/user/users-projects-fill.sql");
+		runSqlScript("/widgetcontent/user/users-projects-fill.sql");
 	}
 
 	@AfterClass

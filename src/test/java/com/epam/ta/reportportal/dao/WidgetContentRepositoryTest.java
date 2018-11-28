@@ -83,23 +83,23 @@ public class WidgetContentRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 		Class.forName("org.hsqldb.jdbc.JDBCDriver");
-		runSqlScript("/activity/activity-down.sql");
-		runSqlScript("/ticket/ticket-down.sql");
-		runSqlScript("/widget/widget-down.sql");
-		runSqlScript("/statistics/statistics-down.sql");
-		runSqlScript("/widget/widget-up.sql");
-		runSqlScript("/ticket/ticket-up.sql");
-		runSqlScript("/statistics/statistics-down.sql");
-		runSqlScript("/statistics/launch-statistics-up.sql");
-		runSqlScript("/activity/activity-up.sql");
+		runSqlScript("/widgetcontent/activity/activity-down.sql");
+		runSqlScript("/widgetcontent/ticket/ticket-down.sql");
+		runSqlScript("/widgetcontent/widget/widget-down.sql");
+		runSqlScript("/widgetcontent/statistics/statistics-down.sql");
+		runSqlScript("/widgetcontent/widget/widget-up.sql");
+		runSqlScript("/widgetcontent/ticket/ticket-up.sql");
+		runSqlScript("/widgetcontent/statistics/statistics-down.sql");
+		runSqlScript("/widgetcontent/statistics/launch-statistics-up.sql");
+		runSqlScript("/widgetcontent/activity/activity-up.sql");
 	}
 
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
-		runSqlScript("/activity/activity-down.sql");
-		runSqlScript("/ticket/ticket-down.sql");
-		runSqlScript("/widget/widget-down.sql");
-		runSqlScript("/statistics/statistics-down.sql");
+		runSqlScript("/widgetcontent/activity/activity-down.sql");
+		runSqlScript("/widgetcontent/ticket/ticket-down.sql");
+		runSqlScript("/widgetcontent/widget/widget-down.sql");
+		runSqlScript("/widgetcontent/statistics/statistics-down.sql");
 	}
 
 	private static void runSqlScript(String scriptPath) throws SQLException, IOException, SqlToolError {
@@ -114,7 +114,21 @@ public class WidgetContentRepositoryTest {
 
 	@Test
 	public void overallStatisticsContent() {
-		//StatisticsContent statisticsContent = widgetContentRepository.overallStatisticsContent()
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildContentFields();
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+
+		Sort sort = Sort.by(orderings);
+
+		OverallStatisticsContent overallStatisticsContent = widgetContentRepository.overallStatisticsContent(filter,
+				sort,
+				contentFields,
+				false,
+				4
+		);
 	}
 
 	@Test
@@ -402,7 +416,8 @@ public class WidgetContentRepositoryTest {
 		List<String> tableContentFields = Lists.newArrayList(CRITERIA_END_TIME,
 				CRITERIA_DESCRIPTION,
 				CRITERIA_LAST_MODIFIED,
-				CRITERIA_USER);
+				CRITERIA_USER
+		);
 
 		launchStatisticsContents.forEach(content -> {
 

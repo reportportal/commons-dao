@@ -78,16 +78,19 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}).collect(Collectors.toList());
 
 	@Override
-	public List<LaunchesStatisticsContent> overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest,
+	public OverallStatisticsContent overallStatisticsContent(Filter filter, Sort sort, List<String> contentFields, boolean latest,
 			int limit) {
-		List<Field<?>> fields = contentFields.stream()
-				.map(it -> sum(field(name(LAUNCHES, it)).cast(Long.class)).as(it))
-				.collect(Collectors.toList());
-		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
+
+		return OVERALL_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
-				.select(fields)
-				.from(DSL.table(DSL.name(LAUNCHES)))
-				.fetch(), contentFields);
+				.select(STATISTICS_FIELD.NAME, sum(STATISTICS.S_COUNTER).as(SUM))
+				.from(STATISTICS)
+				.join(LAUNCHES)
+				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(STATISTICS.LAUNCH_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.groupBy(STATISTICS_FIELD.NAME)
+				.fetch());
 	}
 
 	@Override
@@ -188,9 +191,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(contentFields))
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-								SortOrder.DESC :
-								SortOrder.ASC))
+						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.fetch(), contentFields);
 
@@ -199,9 +200,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit) {
 
-		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false)
-				.map(s -> fieldName(LAUNCHES, s.getProperty()))
-				.collect(toList());
+		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false).map(s -> field(s.getProperty())).collect(toList());
 
 		Collections.addAll(groupingFields, LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME);
 
@@ -239,9 +238,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.groupBy(groupingFields)
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
-						.map(order -> fieldName(LAUNCHES, order.getProperty()).sort(order.getDirection().isDescending() ?
-								SortOrder.DESC :
-								SortOrder.ASC))
+						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.fetch(INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER);
 
