@@ -80,11 +80,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return OVERALL_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).with(latest).build())
 				.select(STATISTICS_FIELD.NAME, sum(STATISTICS.S_COUNTER).as(SUM))
-				.from(STATISTICS)
+				.from(LAUNCH)
 				.join(LAUNCHES)
-				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(STATISTICS.LAUNCH_ID))
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS_FIELD.NAME.in(contentFields))
 				.groupBy(STATISTICS_FIELD.NAME)
 				.fetch());
 	}
