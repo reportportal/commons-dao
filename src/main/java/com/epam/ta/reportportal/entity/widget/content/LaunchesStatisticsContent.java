@@ -50,10 +50,6 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	private Long duration;
 
 	@JsonIgnore
-	@Column(name = TAG_VALUE)
-	private String tagValue;
-
-	@JsonIgnore
 	@Column(name = FILTER_NAME)
 	private String filterName;
 
@@ -87,14 +83,6 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
-	}
-
-	public String getTagValue() {
-		return tagValue;
-	}
-
-	public void setTagValue(String tagValue) {
-		this.tagValue = tagValue;
 	}
 
 	public String getFilterName() {

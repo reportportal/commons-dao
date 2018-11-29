@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
@@ -81,29 +82,6 @@ public class WidgetContentUtil {
 
 		return new OverallStatisticsContent(values);
 	};
-
-	//	private static final BiFunction<Result<? extends Record>, List<String>, Map<Long, LaunchesStatisticsContent>> STATISTICS_FETCHER = (result, contentFields) -> {
-	//
-	//		Map<String, Map<Long, String>> map = new LinkedHashMap<>();
-	//		contentFields.forEach(cf -> map.put(cf, new HashMap<>()));
-	//
-	//		Map<Long, LaunchesStatisticsContent> resultMap = new LinkedHashMap<>();
-	//
-	//		result.stream().forEach(record -> {
-	//			Long currentLaunchId = record.get(LAUNCH.ID);
-	//			if (!resultMap.containsKey(currentLaunchId)) {
-	//				LaunchesStatisticsContent content = record.into(LaunchesStatisticsContent.class);
-	//				resultMap.put(currentLaunchId, content);
-	//			}
-	//			ofNullable(map.get(record.get(STATISTICS_FIELD.NAME))).ifPresent(m -> m.put(currentLaunchId,
-	//					String.valueOf(record.get(STATISTICS.S_COUNTER))
-	//			));
-	//		});
-	//
-	//		resultMap.values().stream().forEach(v -> map.keySet().forEach(k -> v.getValues().put(k, map.get(k).get(v.getId()))));
-	//
-	//		return resultMap;
-	//	};
 
 	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesTableContent>> LAUNCHES_TABLE_FETCHER = (result, contentFields) -> {
 
@@ -178,28 +156,24 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			String filterName = record.get(fieldName(FILTER_NAME), String.class);
+			Map<Long, ProductStatusStatisticsContent> productStatusMapping;
 			if (filterMapping.containsKey(filterName)) {
-				if (attributeField.isPresent()) {
-					PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER.accept(filterMapping.get(filterName), record);
-				} else {
-					PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(filterMapping.get(filterName), record);
-				}
-
+				productStatusMapping = filterMapping.get(filterName);
 			} else {
-				Map<Long, ProductStatusStatisticsContent> productStatusMapping = new LinkedHashMap<>();
-				if (attributeField.isPresent()) {
-					PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER.accept(productStatusMapping, record);
-				} else {
-					PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-				}
+				productStatusMapping = new LinkedHashMap<>();
 				filterMapping.put(filterName, productStatusMapping);
+			}
+			if (attributeField.isPresent()) {
+				PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER.accept(productStatusMapping, record);
+			} else {
+				PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
 			}
 		});
 
 		return filterMapping.entrySet().stream().collect(
 				LinkedHashMap::new,
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				HashMap::putAll
+				LinkedHashMap::putAll
 		);
 	};
 
@@ -219,10 +193,47 @@ public class WidgetContentUtil {
 		return new ArrayList<>(resultMap.values());
 	};
 
-	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> new ArrayList<>(
+	public static final Function<Result<? extends Record>, Map<String, List<CumulativeTrendChartContent>>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
+		Map<String, Map<Long, CumulativeTrendChartContent>> tagMapper = new LinkedHashMap<>();
+
+		result.stream().forEach(record -> {
+
+			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
+			String tag = record.get(ITEM_ATTRIBUTE.VALUE);
+			if (tagMapper.containsKey(tag)) {
+				cumulativeTrendMapper = tagMapper.get(tag);
+			} else {
+				cumulativeTrendMapper = new LinkedHashMap<>();
+				tagMapper.put(tag, cumulativeTrendMapper);
+			}
+
+			CumulativeTrendChartContent content;
+			Long launchId = record.get(LAUNCH.ID);
+			if (cumulativeTrendMapper.containsKey(launchId)) {
+				content = cumulativeTrendMapper.get(launchId);
+			} else {
+				content = record.into(CumulativeTrendChartContent.class);
+				content.setId(launchId);
+				cumulativeTrendMapper.put(launchId, content);
+			}
+			content.getValues().put(
+					record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
+					record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
+			);
+
+		});
+
+		return tagMapper.entrySet().stream().collect(
+				LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
+	};
+
+	public static final Function<Result<? extends Record>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
 			STATISTICS_FETCHER.apply(result).values());
 
-	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> BUG_TREND_STATISTICS_FETCHER = (result, contentFields) -> {
+	public static final Function<Result<? extends Record>, List<LaunchesStatisticsContent>> BUG_TREND_STATISTICS_FETCHER = result -> {
 		Map<Long, LaunchesStatisticsContent> resultMap = STATISTICS_FETCHER.apply(result);
 
 		resultMap.values()

@@ -79,12 +79,14 @@ public class WidgetContentRepositoryTest {
 	@BeforeClass
 	public static void init() throws SQLException {
 		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
+				"/widgetcontent/attribute/attribute-down.sql",
 				"/widgetcontent/ticket/ticket-down.sql",
 				"/widgetcontent/filter/filter-down.sql",
 				"/widgetcontent/widget/widget-down.sql",
 				"/widgetcontent/statistics/statistics-down.sql"
 		);
 		SqlRunner.runSqlScripts("/widgetcontent/widget/widget-up.sql",
+				"/widgetcontent/attribute/attribute-up.sql",
 				"/widgetcontent/filter/filter-up.sql",
 				"/widgetcontent/ticket/ticket-up.sql",
 				"/widgetcontent/statistics/statistics-down.sql",
@@ -98,6 +100,7 @@ public class WidgetContentRepositoryTest {
 		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
 				"/widgetcontent/ticket/ticket-down.sql",
 				"/widgetcontent/filter/filter-down.sql",
+				"/widgetcontent/attribute/attribute-down.sql",
 				"/widgetcontent/widget/widget-down.sql",
 				"/widgetcontent/statistics/statistics-down.sql"
 		);
@@ -504,23 +507,23 @@ public class WidgetContentRepositoryTest {
 		);
 	}
 
-	//	@Test
-	//	public void cumulativeTrendChart() {
-	//		Filter filter = buildDefaultFilter(1L);
-	//		List<String> contentFields = buildContentFields();
-	//
-	//		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$ND001"));
-	//
-	//		Sort sort = Sort.by(orderings);
-	//		Map<String, List<LaunchesStatisticsContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
-	//				contentFields,
-	//				sort,
-	//				"build",
-	//				4
-	//		);
-	//
-	//		Assert.assertNotNull(launchesStatisticsContents);
-	//	}
+	@Test
+	public void cumulativeTrendChart() {
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildContentFields();
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$nd001"));
+
+		Sort sort = Sort.by(orderings);
+		Map<String, List<CumulativeTrendChartContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+				contentFields,
+				sort,
+				"build",
+				4
+		);
+
+		Assert.assertNotNull(launchesStatisticsContents);
+	}
 
 	@Test
 	public void productStatusFilterGroupedWidget() {

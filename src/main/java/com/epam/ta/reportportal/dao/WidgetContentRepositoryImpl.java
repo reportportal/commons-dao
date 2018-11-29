@@ -189,7 +189,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orderBy(StreamSupport.stream(sort.spliterator(), false)
 						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
-				.fetch(), contentFields);
+				.fetch());
 
 	}
 
@@ -305,7 +305,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(contentFields))
-				.fetch(), contentFields);
+				.fetch());
 
 	}
 
@@ -369,7 +369,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 										SortOrder.DESC :
 										SortOrder.ASC))
 								.collect(Collectors.toList())))
-				.fetch(), contentFields);
+				.fetch());
 
 	}
 
@@ -526,44 +526,42 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId, LinkedHashMap::new, toList()));
 	}
 
-	//	@Override
-	//	public Map<String, List<LaunchesStatisticsContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-	//			String tagPrefix, int limit) {
-	//
-	//		List<Field<?>> fields = buildFieldsFromContentFields(contentFields);
-	//
-	//		Collections.addAll(fields,
-	//				fieldName(LAUNCHES_SUB_QUERY, ID),
-	//				fieldName(LAUNCH.NUMBER),
-	//				fieldName(LAUNCH.START_TIME),
-	//				fieldName(LAUNCH.NAME),
-	//				fieldName(LAUNCH_TAG.VALUE).as(TAG_VALUE)
-	//		);
-	//
-	//		Select<Record> select = dsl.select(fields)
-	//				.from(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build().asTable(LAUNCHES_SUB_QUERY))
-	//				.join(LAUNCH_TAG)
-	//				.on(LAUNCH_TAG.LAUNCH_ID.eq(fieldName(LAUNCHES_SUB_QUERY, ID).cast(Long.class)))
-	//				.where(LAUNCH_TAG.VALUE.in(DSL.selectDistinct(LAUNCH_TAG.VALUE)
-	//						.on(charLength(LAUNCH_TAG.VALUE), LAUNCH_TAG.VALUE)
-	//						.from(LAUNCH_TAG)
-	//						.where(LAUNCH_TAG.VALUE.like(tagPrefix + LIKE_CONDITION_SYMBOL))
-	//						.orderBy(charLength(LAUNCH_TAG.VALUE).desc(), LAUNCH_TAG.VALUE.desc())
-	//						.limit(limit)))
-	//				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-	//						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
-	//								SortOrder.DESC :
-	//								SortOrder.ASC))
-	//						.collect(Collectors.toList())).orElseGet(Collections::emptyList));
-	//
-	//		return LAUNCHES_STATISTICS_FETCHER.apply(select.fetch(), contentFields)
-	//				.stream()
-	//				.collect(groupingBy(LaunchesStatisticsContent::getTagValue))
-	//				.entrySet()
-	//				.stream()
-	//				.sorted(TAG_SORT_COMPARATOR)
-	//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-	//	}
+	@Override
+	public Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+			String tagPrefix, int limit) {
+
+		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
+
+		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NAME,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						ITEM_ATTRIBUTE.ID,
+						ITEM_ATTRIBUTE.VALUE,
+						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
+						fieldName(STATISTICS_TABLE, SF_NAME)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
+				.join(ITEM_ATTRIBUTE)
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
+						.from(STATISTICS)
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
+						.asTable(STATISTICS_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.orderBy(ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+						.map(order -> field(name(order.getProperty())).sort(order.getDirection().isDescending() ?
+								SortOrder.DESC :
+								SortOrder.ASC))
+						.collect(Collectors.toList())).orElseGet(Collections::emptyList))
+				.fetch());
+	}
 
 	@Override
 	public Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
@@ -594,13 +592,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			List<String> tags, Sort sort, boolean isLatest, int limit) {
 
-		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(buildLaunchGroupedQuery(filter,
-				isLatest,
-				sort,
-				limit,
-				contentFields,
-				tags
-		).fetch());
+		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
+				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, tags).fetch());
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
 		return productStatusStatisticsResult;
@@ -714,7 +707,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			Collection<Field<?>> fields, Collection<String> contentFields, Collection<String> tags) {
 
 		List<Condition> conditions = tags.stream()
-				.map(cf -> ITEM_ATTRIBUTE.KEY.like(LIKE_CONDITION_SYMBOL + cf + LIKE_CONDITION_SYMBOL))
+				.map(cf -> ITEM_ATTRIBUTE.KEY.like(cf + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 
 		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
