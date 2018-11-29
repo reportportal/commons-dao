@@ -216,7 +216,7 @@ public interface WidgetContentRepository {
 	 * @param limit             Results limit
 	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link LaunchesStatisticsContent} as value
 	 */
-	Map<String, List<LaunchesStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
+	Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
 			List<String> contentFields, List<String> tags, boolean isLatest, int limit);
 
 	/**
@@ -230,7 +230,7 @@ public interface WidgetContentRepository {
 	 * @param limit         Results limit
 	 * @return list of {@link LaunchesStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, List<String> tags,
+	List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields, List<String> tags,
 			Sort sort, boolean isLatest, int limit);
 
 	/**

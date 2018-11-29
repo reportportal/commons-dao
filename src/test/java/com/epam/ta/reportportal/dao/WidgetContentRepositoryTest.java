@@ -80,10 +80,12 @@ public class WidgetContentRepositoryTest {
 	public static void init() throws SQLException {
 		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
 				"/widgetcontent/ticket/ticket-down.sql",
+				"/widgetcontent/filter/filter-down.sql",
 				"/widgetcontent/widget/widget-down.sql",
 				"/widgetcontent/statistics/statistics-down.sql"
 		);
 		SqlRunner.runSqlScripts("/widgetcontent/widget/widget-up.sql",
+				"/widgetcontent/filter/filter-up.sql",
 				"/widgetcontent/ticket/ticket-up.sql",
 				"/widgetcontent/statistics/statistics-down.sql",
 				"/widgetcontent/statistics/launch-statistics-up.sql",
@@ -95,6 +97,7 @@ public class WidgetContentRepositoryTest {
 	public static void destroy() throws SQLException {
 		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
 				"/widgetcontent/ticket/ticket-down.sql",
+				"/widgetcontent/filter/filter-down.sql",
 				"/widgetcontent/widget/widget-down.sql",
 				"/widgetcontent/statistics/statistics-down.sql"
 		);
@@ -522,8 +525,8 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void productStatusFilterGroupedWidget() {
 
-		List<Sort.Order> firstOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$PB001"));
-		List<Sort.Order> secondOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, "statistics$defects$automation_bug$AB001"));
+		List<Sort.Order> firstOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$pb001"));
+		List<Sort.Order> secondOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, "statistics$defects$automation_bug$ab001"));
 
 		Sort firstSort = Sort.by(firstOrdering);
 		Sort secondSort = Sort.by(secondOrdering);
@@ -540,7 +543,7 @@ public class WidgetContentRepositoryTest {
 				.filter(s -> !s.startsWith("tag"))
 				.collect(Collectors.toList());
 
-		Map<String, List<LaunchesStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				contentFields,
 				tagContentFields,
 				false,
@@ -566,7 +569,7 @@ public class WidgetContentRepositoryTest {
 				.filter(s -> !s.startsWith("tag"))
 				.collect(Collectors.toList());
 
-		List<LaunchesStatisticsContent> result = widgetContentRepository.productStatusGroupedByLaunchesStatistics(filter,
+		List<ProductStatusStatisticsContent> result = widgetContentRepository.productStatusGroupedByLaunchesStatistics(filter,
 				contentFields,
 				tagContentFields,
 				sort,
@@ -596,7 +599,7 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
 		);
-		return new Filter(2L, Launch.class, conditionSet);
+		return new Filter(1L, Launch.class, conditionSet);
 	}
 
 	private Filter buildDefaultTestFilter(Long projectId) {
@@ -609,7 +612,7 @@ public class WidgetContentRepositoryTest {
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.findByMarker("lte").get(), false, "12", "statistics$executions$total")
 		);
-		return new Filter(3L, Launch.class, conditionSet);
+		return new Filter(2L, Launch.class, conditionSet);
 	}
 
 	private Filter buildDefaultActivityFilter(Long projectId) {

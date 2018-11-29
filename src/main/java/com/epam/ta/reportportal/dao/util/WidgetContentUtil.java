@@ -29,6 +29,7 @@ import org.jooq.impl.DSL;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -146,6 +147,75 @@ public class WidgetContentUtil {
 
 		return new ArrayList<>(resultMap.values());
 
+	};
+
+	private static final BiFunction<Map<Long, ProductStatusStatisticsContent>, Record, ProductStatusStatisticsContent> PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER = (mapping, record) -> {
+		ProductStatusStatisticsContent content;
+		if (mapping.containsKey(record.get(LAUNCH.ID))) {
+			content = mapping.get(record.get(LAUNCH.ID));
+		} else {
+			content = record.into(ProductStatusStatisticsContent.class);
+		}
+		content.getValues().put(
+				record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
+				record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
+		);
+
+		return content;
+	};
+
+	private static final BiConsumer<Map<Long, ProductStatusStatisticsContent>, Record> PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER = (mapping, record) -> {
+		PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(mapping, record)
+				.getTags()
+				.add(record.get(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE), String.class));
+	};
+
+	public static final Function<Result<? extends Record>, Map<String, List<ProductStatusStatisticsContent>>> PRODUCT_STATUS_FILTER_GROUPED_FETCHER = result -> {
+		Map<String, Map<Long, ProductStatusStatisticsContent>> filterMapping = new LinkedHashMap<>();
+
+		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE)));
+
+		result.forEach(record -> {
+			String filterName = record.get(fieldName(FILTER_NAME), String.class);
+			if (filterMapping.containsKey(filterName)) {
+				if (attributeField.isPresent()) {
+					PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER.accept(filterMapping.get(filterName), record);
+				} else {
+					PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(filterMapping.get(filterName), record);
+				}
+
+			} else {
+				Map<Long, ProductStatusStatisticsContent> productStatusMapping = new LinkedHashMap<>();
+				if (attributeField.isPresent()) {
+					PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER.accept(productStatusMapping, record);
+				} else {
+					PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+				}
+				filterMapping.put(filterName, productStatusMapping);
+			}
+		});
+
+		return filterMapping.entrySet().stream().collect(
+				LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				HashMap::putAll
+		);
+	};
+
+	public static final Function<Result<? extends Record>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = result -> {
+		Map<Long, ProductStatusStatisticsContent> resultMap = new LinkedHashMap<>();
+
+		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE)));
+
+		result.stream().forEach(record -> {
+			if (attributeField.isPresent()) {
+				PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER.accept(resultMap, record);
+			} else {
+				PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(resultMap, record);
+			}
+		});
+
+		return new ArrayList<>(resultMap.values());
 	};
 
 	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> new ArrayList<>(

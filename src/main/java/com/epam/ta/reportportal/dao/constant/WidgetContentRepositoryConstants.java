@@ -120,12 +120,15 @@ public class WidgetContentRepositoryConstants {
 
 	/*Product status widget constants*/
 	public static final String TAG_VALUE = "tagValue";
-	public static final String FILTER_NAME = "filterName";
+	public static final String FILTER_NAME = "filter_name";
 	public static final String TAG_TABLE = "tagTable";
 	public static final String TAG_VALUES = "tagValues";
 	public static final String PASSING_RATE = "passingRate";
 	public static final String SUM = "sum";
 	public static final String AVERAGE_PASSING_RATE = "averagePassingRate";
+	public static final String ATTRIBUTE_ID = "attr_id";
+	public static final String ATTRIBUTE_VALUE = "attr_value";
+	public static final String ATTRIBUTE_TABLE = "attr_table";
 
 	/*Sub-query fields*/
 	public static final String SUBQUERY_LAUNCH_ID = "l_id";
