@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Interruption job delay parameters enumerator<br>
@@ -52,15 +53,11 @@ public enum InterruptionJobDelay {
 		this.period = time;
 	}
 
-	public static InterruptionJobDelay getByName(String type) {
-		return InterruptionJobDelay.valueOf(type);
-	}
-
-	public static InterruptionJobDelay findByName(String name) {
-		return Arrays.stream(InterruptionJobDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny().orElse(null);
+	public static Optional<InterruptionJobDelay> findByName(String name) {
+		return Arrays.stream(InterruptionJobDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
-		return null != findByName(name);
+		return findByName(name).isPresent();
 	}
 }
