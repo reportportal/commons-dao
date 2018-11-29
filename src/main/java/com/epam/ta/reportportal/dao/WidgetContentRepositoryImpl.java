@@ -190,7 +190,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
 						.collect(Collectors.toList()))
 				.fetch());
-
 	}
 
 	@Override
