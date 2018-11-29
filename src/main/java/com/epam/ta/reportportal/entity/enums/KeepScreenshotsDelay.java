@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Keep Screenshots Delay values enumerator
@@ -51,15 +52,11 @@ public enum KeepScreenshotsDelay {
 		this.days = days;
 	}
 
-	public static KeepScreenshotsDelay getByName(String type) {
-		return KeepScreenshotsDelay.valueOf(type);
-	}
-
-	public static KeepScreenshotsDelay findByName(String name) {
-		return Arrays.stream(KeepScreenshotsDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny().orElse(null);
+	public static Optional<KeepScreenshotsDelay> findByName(String name) {
+		return Arrays.stream(KeepScreenshotsDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
-		return null != findByName(name);
+		return findByName(name).isPresent();
 	}
 }

@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Keep Launches Delay project parameter enumerator<br>
@@ -51,15 +52,11 @@ public enum KeepLogsDelay {
 		this.days = period;
 	}
 
-	public static KeepLogsDelay getByName(String type) {
-		return KeepLogsDelay.valueOf(type);
-	}
-
-	public static KeepLogsDelay findByName(String name) {
-		return Arrays.stream(KeepLogsDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny().orElse(null);
+	public static Optional<KeepLogsDelay> findByName(String name) {
+		return Arrays.stream(KeepLogsDelay.values()).filter(delay -> delay.getValue().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
-		return null != findByName(name);
+		return findByName(name).isPresent();
 	}
 }
