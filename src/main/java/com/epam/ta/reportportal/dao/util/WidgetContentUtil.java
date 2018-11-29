@@ -40,7 +40,6 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-import static com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
 import static java.util.Optional.ofNullable;
 
@@ -60,15 +59,17 @@ public class WidgetContentUtil {
 		Map<Long, LaunchesStatisticsContent> resultMap = new LinkedHashMap<>();
 
 		result.stream().forEach(record -> {
-
+			LaunchesStatisticsContent content;
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
-				LaunchesStatisticsContent content = resultMap.get(record.get(LAUNCH.ID));
-				content.getValues().put(record.get(STATISTICS_FIELD.NAME), String.valueOf(record.get(STATISTICS.S_COUNTER)));
+				content = resultMap.get(record.get(LAUNCH.ID));
 			} else {
-				LaunchesStatisticsContent content = record.into(LaunchesStatisticsContent.class);
-				content.getValues().put(record.get(STATISTICS_FIELD.NAME), String.valueOf(record.get(STATISTICS.S_COUNTER)));
+				content = record.into(LaunchesStatisticsContent.class);
 				resultMap.put(record.get(LAUNCH.ID), content);
 			}
+			content.getValues().put(
+					record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
+					record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
+			);
 
 		});
 
