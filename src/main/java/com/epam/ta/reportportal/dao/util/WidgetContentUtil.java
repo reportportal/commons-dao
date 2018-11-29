@@ -145,9 +145,9 @@ public class WidgetContentUtil {
 	};
 
 	private static final BiConsumer<Map<Long, ProductStatusStatisticsContent>, Record> PRODUCT_STATUS_WITH_ATTRIBUTES_MAPPER = (mapping, record) -> {
-		PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(mapping, record)
-				.getTags()
-				.add(record.get(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE), String.class));
+		ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(mapping, record);
+		ofNullable(record.get(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE), String.class)).ifPresent(value -> content.getTags().add(value));
+
 	};
 
 	public static final Function<Result<? extends Record>, Map<String, List<ProductStatusStatisticsContent>>> PRODUCT_STATUS_FILTER_GROUPED_FETCHER = result -> {

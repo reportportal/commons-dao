@@ -748,10 +748,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		if (combinedTagCondition.isPresent()) {
 			Collections.addAll(fields, fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_ID), fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE));
 			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields).leftJoin(DSL.select(ITEM_ATTRIBUTE.ID.as(
-					ATTRIBUTE_ID), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE))
+					ATTRIBUTE_ID), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE), ITEM_ATTRIBUTE.LAUNCH_ID.as(LAUNCH_ID))
 					.from(ITEM_ATTRIBUTE)
 					.where(combinedTagCondition.get())
-					.asTable(ATTRIBUTE_TABLE)).on(LAUNCH.ID.eq(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_ID).cast(Long.class)));
+					.asTable(ATTRIBUTE_TABLE)).on(LAUNCH.ID.eq(fieldName(ATTRIBUTE_TABLE, LAUNCH_ID).cast(Long.class)));
 		} else {
 			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields);
 		}
