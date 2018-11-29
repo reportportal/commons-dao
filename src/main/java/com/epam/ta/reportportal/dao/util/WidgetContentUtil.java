@@ -155,6 +155,7 @@ public class WidgetContentUtil {
 			content = mapping.get(record.get(LAUNCH.ID));
 		} else {
 			content = record.into(ProductStatusStatisticsContent.class);
+			mapping.put(record.get(LAUNCH.ID), content);
 		}
 		content.getValues().put(
 				record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
