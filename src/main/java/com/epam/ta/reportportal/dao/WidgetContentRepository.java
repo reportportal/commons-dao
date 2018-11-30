@@ -211,13 +211,13 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic with own sorting
 	 * @param contentFields     Custom fields for select query building
-	 * @param tags              List of the prefixes of the {@link }
+	 * @param tags              Map of the prefixes of the {@link }
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
 	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link LaunchesStatisticsContent} as value
 	 */
 	Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
-			List<String> contentFields, List<String> tags, boolean isLatest, int limit);
+			List<String> contentFields, Map<String, String> tags, boolean isLatest, int limit);
 
 	/**
 	 * Loading the product status statistics grouped by {@link com.epam.ta.reportportal.entity.launch.Launch} with combined {@link Filter}
@@ -231,7 +231,7 @@ public interface WidgetContentRepository {
 	 * @return list of {@link LaunchesStatisticsContent}
 	 */
 	List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
-			List<String> tags, Sort sort, boolean isLatest, int limit);
+			Map<String, String> tags, Sort sort, boolean isLatest, int limit);
 
 	/**
 	 * Loading the TOP-20 most time consuming test cases

@@ -590,7 +590,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
-			List<String> contentFields, List<String> tags, boolean isLatest, int limit) {
+			List<String> contentFields, Map<String, String> tags, boolean isLatest, int limit) {
 
 		Select<? extends Record> select = filterSortMapping.entrySet()
 				.stream()
@@ -606,7 +606,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Query build for Product Status Widget failed"));
 
-		Map<String, List<ProductStatusStatisticsContent>> productStatusContent = PRODUCT_STATUS_FILTER_GROUPED_FETCHER.apply(select.fetch());
+		Map<String, List<ProductStatusStatisticsContent>> productStatusContent = PRODUCT_STATUS_FILTER_GROUPED_FETCHER.apply(select.fetch(), tags);
 
 		productStatusContent.put(TOTAL, countFilterTotalStatistics(productStatusContent));
 
@@ -615,10 +615,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
-			List<String> tags, Sort sort, boolean isLatest, int limit) {
+			Map<String, String> tags, Sort sort, boolean isLatest, int limit) {
 
 		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
-				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, tags).fetch());
+				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, tags).fetch(), tags);
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
 		return productStatusStatisticsResult;
@@ -675,7 +675,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	private SelectSeekStepN<? extends Record> buildFilterGroupedQuery(Filter filter, boolean isLatest, Sort sort, int limit,
-			Collection<String> contentFields, Collection<String> tags) {
+			Collection<String> contentFields, Map<String, String> tags) {
 
 		List<Field<?>> fields = Lists.newArrayList(LAUNCH.ID,
 				LAUNCH.NAME,
@@ -706,7 +706,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	private SelectSeekStepN<? extends Record> buildLaunchGroupedQuery(Filter filter, boolean isLatest, Sort sort, int limit,
-			Collection<String> contentFields, Collection<String> tags) {
+			Collection<String> contentFields, Map<String, String> tags) {
 
 		List<Field<?>> fields = Lists.newArrayList(LAUNCH.ID,
 				LAUNCH.NAME,
@@ -735,9 +735,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
-			Collection<Field<?>> fields, Collection<String> contentFields, Collection<String> tags) {
+			Collection<Field<?>> fields, Collection<String> contentFields, Map<String, String> tags) {
 
-		List<Condition> conditions = tags.stream()
+		List<Condition> conditions = tags.values()
+				.stream()
 				.map(cf -> ITEM_ATTRIBUTE.KEY.like(cf + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 
@@ -746,12 +747,18 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
 		if (combinedTagCondition.isPresent()) {
-			Collections.addAll(fields, fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_ID), fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE));
+			Collections.addAll(fields,
+					fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_ID),
+					fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE),
+					fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_KEY)
+			);
 			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields).leftJoin(DSL.select(ITEM_ATTRIBUTE.ID.as(
-					ATTRIBUTE_ID), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE), ITEM_ATTRIBUTE.LAUNCH_ID.as(LAUNCH_ID))
-					.from(ITEM_ATTRIBUTE)
-					.where(combinedTagCondition.get())
-					.asTable(ATTRIBUTE_TABLE)).on(LAUNCH.ID.eq(fieldName(ATTRIBUTE_TABLE, LAUNCH_ID).cast(Long.class)));
+					ATTRIBUTE_ID),
+					ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE),
+					ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
+					ITEM_ATTRIBUTE.LAUNCH_ID.as(LAUNCH_ID)
+			).from(ITEM_ATTRIBUTE).where(combinedTagCondition.get()).asTable(ATTRIBUTE_TABLE))
+					.on(LAUNCH.ID.eq(fieldName(ATTRIBUTE_TABLE, LAUNCH_ID).cast(Long.class)));
 		} else {
 			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields);
 		}

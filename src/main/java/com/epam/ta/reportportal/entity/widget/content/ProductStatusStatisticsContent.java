@@ -5,13 +5,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -25,7 +23,7 @@ public class ProductStatusStatisticsContent extends AbstractLaunchStatisticsCont
 
 	@Column(name = TAG_VALUES)
 	@JsonProperty(value = "tags")
-	private List<String> tags = new ArrayList<>();
+	private Map<String, Set<String>> tags;
 
 	@JsonProperty(value = "values")
 	private Map<String, String> values = new LinkedHashMap<>();
@@ -61,11 +59,11 @@ public class ProductStatusStatisticsContent extends AbstractLaunchStatisticsCont
 		this.status = status;
 	}
 
-	public List<String> getTags() {
+	public Map<String, Set<String>> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(Map<String, Set<String>> tags) {
 		this.tags = tags;
 	}
 

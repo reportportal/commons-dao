@@ -48,10 +48,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
@@ -538,17 +538,13 @@ public class WidgetContentRepositoryTest {
 		filterSortMapping.put(buildDefaultFilter(1L), firstSort);
 		filterSortMapping.put(buildDefaultTestFilter(1L), secondSort);
 
-		List<String> tagContentFields = buildProductStatusContentFields().stream()
-				.filter(s -> s.startsWith("tag"))
-				.map(tag -> tag.split("\\$")[1])
-				.collect(Collectors.toList());
-		List<String> contentFields = buildProductStatusContentFields().stream()
-				.filter(s -> !s.startsWith("tag"))
-				.collect(Collectors.toList());
+		Map<String, String> tags = new LinkedHashMap<>();
+		tags.put("firstColumn", "build");
+		tags.put("secondColumn", "hello");
 
 		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
-				contentFields,
-				tagContentFields,
+				buildProductStatusContentFields(),
+				tags,
 				false,
 				10
 		);
@@ -564,17 +560,13 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<String> tagContentFields = buildProductStatusContentFields().stream()
-				.filter(s -> s.startsWith("tag"))
-				.map(tag -> tag.split("\\$")[1])
-				.collect(Collectors.toList());
-		List<String> contentFields = buildProductStatusContentFields().stream()
-				.filter(s -> !s.startsWith("tag"))
-				.collect(Collectors.toList());
+		Map<String, String> tags = new LinkedHashMap<>();
+		tags.put("firstColumn", "build");
+		tags.put("secondColumn", "hello");
 
 		List<ProductStatusStatisticsContent> result = widgetContentRepository.productStatusGroupedByLaunchesStatistics(filter,
-				contentFields,
-				tagContentFields,
+				buildProductStatusContentFields(),
+				tags,
 				sort,
 				false,
 				10
@@ -756,9 +748,7 @@ public class WidgetContentRepositoryTest {
 				"statistics$defects$product_bug$total",
 				"statistics$defects$automation_bug$total",
 				"statistics$defects$system_issue$total",
-				"statistics$defects$to_investigate$total",
-				"tag$build",
-				"tag$check"
+				"statistics$defects$to_investigate$total"
 
 		);
 	}

@@ -128,6 +128,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String AVERAGE_PASSING_RATE = "averagePassingRate";
 	public static final String ATTRIBUTE_ID = "attr_id";
 	public static final String ATTRIBUTE_VALUE = "attr_value";
+	public static final String ATTRIBUTE_KEY = "attr_key";
 	public static final String ATTRIBUTE_TABLE = "attr_table";
 
 	/*Sub-query fields*/
