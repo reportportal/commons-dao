@@ -117,7 +117,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(TEST_ITEM.TYPE.in(includeMethods ?
 								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
 								Collections.singletonList(JTestItemTypeEnum.STEP)))
-						.and(STATISTICS_FIELD.NAME.eq(criteria))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
