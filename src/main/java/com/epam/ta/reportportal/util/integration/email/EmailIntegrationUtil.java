@@ -88,7 +88,7 @@ public class EmailIntegrationUtil {
 
 		Optional<Object> result = Optional.ofNullable(rule.get(caseType.getCaseTypeString()));
 		expect(result, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR, "Rules should exists.");
-		expect(result, Predicates.instanceOf(List.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+		expect(result.get(), Predicates.instanceOf(List.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
 				"Incorrect result of retrieving " + caseType.getCaseTypeString()
 		);
 		return (List<String>) result.get();
@@ -102,7 +102,7 @@ public class EmailIntegrationUtil {
 				LAUNCH_STATS_RULE.getCaseTypeString()
 		);
 
-		expect(launchStatsRule, Predicates.instanceOf(String.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+		expect(launchStatsRule.get(), Predicates.instanceOf(String.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
 				"Incorrect result of retrieving " + LAUNCH_STATS_RULE.getCaseTypeString()
 		);
 		return (String) launchStatsRule.get();
