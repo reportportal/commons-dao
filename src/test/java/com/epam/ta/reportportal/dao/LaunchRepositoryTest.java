@@ -19,7 +19,6 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -30,9 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +40,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,16 +61,16 @@ public class LaunchRepositoryTest {
 	@Autowired
 	private LaunchRepository launchRepository;
 
-	@BeforeClass
-	public static void init() throws SQLException {
-		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
-		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException {
-		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
-	}
+//	@BeforeClass
+//	public static void init() throws SQLException {
+//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
+//		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql");
+//	}
+//
+//	@AfterClass
+//	public static void destroy() throws SQLException {
+//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
+//	}
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
@@ -174,8 +170,7 @@ public class LaunchRepositoryTest {
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
 				), new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
-				new FilterCondition(Condition.HAS, false, "updated", "tags")
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
