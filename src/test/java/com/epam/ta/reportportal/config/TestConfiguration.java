@@ -21,9 +21,12 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
+import com.opentable.db.postgres.junit.EmbeddedPostgresRules;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableConfigurationProperties
@@ -32,6 +35,12 @@ import org.springframework.context.annotation.*;
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
 @PropertySource("classpath:test-application.properties")
 public class TestConfiguration {
+
+	@Bean
+	@Profile("test")
+	public DataSource dataSource() {
+		return EmbeddedPostgresRules.singleInstance().getEmbeddedPostgres().getPostgresDatabase();
+	}
 
 	@Bean
 	public Thumbnailator thumbnailator() {

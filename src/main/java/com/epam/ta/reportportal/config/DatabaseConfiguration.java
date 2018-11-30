@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -63,6 +64,7 @@ public class DatabaseConfiguration {
 	@Autowired
 	private DataSourceProperties properties;
 
+	@Profile("!test")
 	@Bean
 	public DataSource dataSource() {
 		return properties.initializeDataSourceBuilder().build();

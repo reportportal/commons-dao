@@ -16,21 +16,18 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.Activity;
 import org.apache.commons.compress.utils.Lists;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -38,17 +35,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
 @Sql("/test-activities-fill.sql")
-public class ActivityRepositoryCustomImplTest {
+public class ActivityRepositoryCustomImplTest extends BaseTest {
 
 	@Autowired
 	private ActivityRepository repository;
 
+	@FlywayTest
 	@Test
 	public void deleteModifiedLaterAgo() {
 		Duration period = Duration.ofDays(10);
@@ -56,13 +53,16 @@ public class ActivityRepositoryCustomImplTest {
 
 		repository.deleteModifiedLaterAgo(1L, period);
 		List<Activity> all = repository.findAll();
-		all.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound) && a.getProjectId() == 1L));
+		all.stream().filter(a -> a.getProjectId() == 1L).forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
+	@FlywayTest
 	@Test
 	public void findByFilterWithSortingAndLimit() {
 		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
-				new Sort(Sort.Direction.DESC, "creation_date"),
+				new Sort(Sort.Direction.DESC,
+						defaultFilter().getTarget().getCriteriaByFilter(CRITERIA_CREATION_DATE).get().getQueryCriteria()
+				),
 				2
 		);
 
@@ -70,6 +70,7 @@ public class ActivityRepositoryCustomImplTest {
 		activities.forEach(a -> assertTrue(a.getCreatedAt().toLocalDate().isEqual(LocalDate.of(2018, 10, 5))));
 	}
 
+	@FlywayTest
 	@Test
 	public void findByFilter() {
 		List<Activity> activities = repository.findByFilter(filterGetById(1));
@@ -78,6 +79,7 @@ public class ActivityRepositoryCustomImplTest {
 		assertNotNull(activities.get(0));
 	}
 
+	@FlywayTest
 	@Test
 	public void findByFilterPageable() {
 		Page<Activity> page = repository.findByFilter(filterGetById(1), PageRequest.of(0, 10));
@@ -93,6 +95,6 @@ public class ActivityRepositoryCustomImplTest {
 	}
 
 	private Filter defaultFilter() {
-		return new Filter(Activity.class, Condition.LOWER_THAN, false, "100", "id");
+		return new Filter(Activity.class, Condition.LOWER_THAN, false, "100", CRITERIA_ID);
 	}
 }
