@@ -33,28 +33,28 @@ public class ActivityContent implements Serializable {
 	@JsonProperty(value = ID)
 	private Long activityId;
 
-	@Column(name = "project_id")
-	@JsonProperty(value = PROJECT_ID)
+	@Column(name = PROJECT_ID)
+	@JsonProperty(value = "projectId")
 	private Long projectId;
 
-	@Column(name = "action_type")
-	@JsonProperty(value = ACTION_TYPE)
+	@Column(name = ACTION_TYPE)
+	@JsonProperty(value = "actionType")
 	private String actionType;
 
-	@Column(name = "entity")
+	@Column(name = ENTITY)
 	@JsonProperty(value = ENTITY)
 	private String entity;
 
-	@Column(name = "project_name")
-	@JsonProperty(value = PROJECT_NAME)
+	@Column(name = PROJECT_NAME)
+	@JsonProperty(value = "projectName")
 	private String projectName;
 
-	@Column(name = "user_login")
+	@Column(name = USER_LOGIN)
 	@JsonProperty(value = "user")
 	private String userLogin;
 
-	@Column(name = "last_modified")
-	@JsonProperty(value = LAST_MODIFIED)
+	@Column(name = LAST_MODIFIED)
+	@JsonProperty(value = "lastModified")
 	private Timestamp lastModified;
 
 	public Long getActivityId() {

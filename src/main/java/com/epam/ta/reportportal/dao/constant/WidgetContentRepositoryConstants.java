@@ -69,13 +69,12 @@ public class WidgetContentRepositoryConstants {
 
 	/*Activity table widget constants*/
 	public static final String ACTIVITIES = "activities";
-	public static final String ACTION_TYPE = "actionType";
+	public static final String ACTION_TYPE = "action_type";
 	public static final String ENTITY = "entity";
-	public static final String LAST_MODIFIED = "lastModified";
-	public static final String USER_LOGIN = "userLogin";
-	public static final String PROJECT_ID = "projectId";
-	public static final String PROJECT_NAME = "projectName";
-	public static final String ACTIVITY_TYPE = "activityType";
+	public static final String LAST_MODIFIED = "last_modified";
+	public static final String USER_LOGIN = "user_login";
+	public static final String PROJECT_ID = "project_id";
+	public static final String PROJECT_NAME = "project_name";
 
 	/*Investigation widget constants*/
 	public static final String INVESTIGATED = "investigated";

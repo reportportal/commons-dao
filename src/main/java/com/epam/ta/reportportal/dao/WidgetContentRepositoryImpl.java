@@ -508,6 +508,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ACTIVITY.ACTION.as(ACTION_TYPE),
 						ACTIVITY.ENTITY.as(ENTITY),
 						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
+						ACTIVITY.PROJECT_ID.as(PROJECT_ID),
 						USERS.LOGIN.as(USER_LOGIN),
 						PROJECT.NAME.as(PROJECT_NAME)
 				)
@@ -605,7 +606,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, "Query build for Product Status Widget failed"));
 
-		Map<String, List<ProductStatusStatisticsContent>> productStatusContent = PRODUCT_STATUS_FILTER_GROUPED_FETCHER.apply(select.fetch(), tags);
+		Map<String, List<ProductStatusStatisticsContent>> productStatusContent = PRODUCT_STATUS_FILTER_GROUPED_FETCHER.apply(
+				select.fetch(),
+				tags
+		);
 
 		productStatusContent.put(TOTAL, countFilterTotalStatistics(productStatusContent));
 
@@ -617,7 +621,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			Map<String, String> tags, Sort sort, boolean isLatest, int limit) {
 
 		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
-				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, tags).fetch(), tags);
+				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, tags).fetch(),
+				tags
+		);
 
 		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
 		return productStatusStatisticsResult;

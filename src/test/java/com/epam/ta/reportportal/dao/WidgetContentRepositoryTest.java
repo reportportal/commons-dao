@@ -623,7 +623,7 @@ public class WidgetContentRepositoryTest {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
-				PROJECT_ID
+				CRITERIA_PROJECT_ID
 		), new FilterCondition(Condition.EQUALS_ANY,
 				false,
 				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
