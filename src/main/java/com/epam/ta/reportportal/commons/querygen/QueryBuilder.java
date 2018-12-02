@@ -156,11 +156,9 @@ public class QueryBuilder {
 	}
 
 	public QueryBuilder with(SortField<?> sort) {
-
 		query.addSelect(field(sort.getName()));
 		query.addOrderBy(sort);
 		return this;
-
 	}
 
 	/**
