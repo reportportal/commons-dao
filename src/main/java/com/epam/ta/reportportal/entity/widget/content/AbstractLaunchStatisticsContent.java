@@ -34,15 +34,15 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 	private Long id;
 
 	@Column(name = "number")
-	@JsonProperty(value = NUMBER)
+	@JsonProperty(value = "number")
 	private Integer number;
 
 	@Column(name = "name")
-	@JsonProperty(value = NAME)
+	@JsonProperty(value = "name")
 	private String name;
 
 	@Column(name = "start_time")
-	@JsonProperty(value = START_TIME)
+	@JsonProperty(value = "startTime")
 	private Timestamp startTime;
 
 	public AbstractLaunchStatisticsContent() {

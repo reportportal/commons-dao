@@ -106,16 +106,6 @@ public class QueryBuilder {
 		query.addHaving(condition);
 	}
 
-	public QueryBuilder with(boolean latest) {
-		if (latest) {
-			query.addConditions(LAUNCH.ID.in(DSL.selectDistinct(LAUNCH.ID)
-					.on(LAUNCH.NAME)
-					.from(LAUNCH)
-					.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())));
-		}
-		return this;
-	}
-
 	/**
 	 * Adds {@link Pageable} conditions
 	 *

@@ -578,7 +578,7 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
-		filter = updateFilter(filter, "launch name 1", true);
+		filter = updateFilter(filter, "launch name 1", 1L, true);
 		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
 				filter);
 
@@ -633,20 +633,22 @@ public class WidgetContentRepositoryTest {
 		return new Filter(1L, TestItem.class, conditionSet);
 	}
 
-	private Filter updateFilter(Filter filter, String launchName, boolean includeMethodsFlag) {
-		filter = updateFilterWithLaunchName(filter, launchName);
+	private Filter updateFilter(Filter filter, String launchName, Long projectId, boolean includeMethodsFlag) {
+		filter = updateFilterWithLaunchName(filter, launchName, projectId);
 		filter = updateFilterWithTestItemTypes(filter, includeMethodsFlag);
 		return filter;
 	}
 
-	private Filter updateFilterWithLaunchName(Filter filter, String launchName) {
-		return filter.withCondition(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(launchRepository.findLatestByNameAndFilter(launchName, filter)
-						.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
-						.getId()),
-				CRITERIA_LAUNCH_ID
-		));
+	private Filter updateFilterWithLaunchName(Filter filter, String launchName, Long projectId) {
+		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(launchRepository.findLatestByFilter(
+
+				Filter.builder()
+						.withTarget(Launch.class)
+						.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID))
+						.withCondition(new FilterCondition(Condition.EQUALS, false, launchName, CRITERIA_NAME))
+						.build())
+				.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
+				.getId()), CRITERIA_LAUNCH_ID));
 	}
 
 	private Filter updateFilterWithTestItemTypes(Filter filter, boolean includeMethodsFlag) {
@@ -686,7 +688,7 @@ public class WidgetContentRepositoryTest {
 				"number",
 				"name",
 				"startTime",
-				"tags",
+				"attributes",
 				"statistics$executions$total",
 				"statistics$executions$failed",
 				"statistics$executions$passed",

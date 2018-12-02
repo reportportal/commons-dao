@@ -145,25 +145,25 @@ public class WidgetContentUtil {
 		return content;
 	};
 
-	private static void proceedProductStatusTags(Record record, String columnName, ProductStatusStatisticsContent content) {
+	private static void proceedProductStatusAttributes(Record record, String columnName, ProductStatusStatisticsContent content) {
 
-		ofNullable(record.get(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE), String.class)).ifPresent(value -> {
-			Map<String, Set<String>> tagMapping = ofNullable(content.getTags()).orElseGet(LinkedHashMap::new);
-			Set<String> tagValues = tagMapping.get(columnName);
-			if (ofNullable(tagValues).isPresent()) {
-				tagValues.add(value);
+		ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_VALUE), String.class)).ifPresent(value -> {
+			Map<String, Set<String>> attributesMapping = ofNullable(content.getAttributes()).orElseGet(LinkedHashMap::new);
+			Set<String> attributeValues = attributesMapping.get(columnName);
+			if (ofNullable(attributeValues).isPresent()) {
+				attributeValues.add(value);
 			} else {
-				tagMapping.put(columnName, Sets.newHashSet(value));
+				attributesMapping.put(columnName, Sets.newHashSet(value));
 			}
-			content.setTags(tagMapping);
+			content.setAttributes(attributesMapping);
 		});
 
 	}
 
-	public static final BiFunction<Result<? extends Record>, Map<String, String>, Map<String, List<ProductStatusStatisticsContent>>> PRODUCT_STATUS_FILTER_GROUPED_FETCHER = (result, tags) -> {
+	public static final BiFunction<Result<? extends Record>, Map<String, String>, Map<String, List<ProductStatusStatisticsContent>>> PRODUCT_STATUS_FILTER_GROUPED_FETCHER = (result, attributes) -> {
 		Map<String, Map<Long, ProductStatusStatisticsContent>> filterMapping = new LinkedHashMap<>();
 
-		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE)));
+		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTR_VALUE)));
 
 		result.forEach(record -> {
 			String filterName = record.get(fieldName(FILTER_NAME), String.class);
@@ -177,10 +177,10 @@ public class WidgetContentUtil {
 
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> tags.entrySet()
+				ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_KEY), String.class)).ifPresent(key -> attributes.entrySet()
 						.stream()
-						.filter(tagName -> StringUtils.isNotBlank(key) && key.startsWith(tagName.getValue()))
-						.forEach(tag -> proceedProductStatusTags(record, tag.getKey(), content)));
+						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
 
 			}
 		});
@@ -192,18 +192,18 @@ public class WidgetContentUtil {
 		);
 	};
 
-	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, tags) -> {
+	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
 		Map<Long, ProductStatusStatisticsContent> productStatusMapping = new LinkedHashMap<>();
 
-		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_VALUE)));
+		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTR_VALUE)));
 
 		result.stream().forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTRIBUTE_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> tags.entrySet()
+				ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_KEY), String.class)).ifPresent(key -> attributes.entrySet()
 						.stream()
-						.filter(tagName -> StringUtils.isNotBlank(key) && key.startsWith(tagName.getValue()))
-						.forEach(tag -> proceedProductStatusTags(record, tag.getKey(), content)));
+						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
 
 			}
 		});
@@ -212,17 +212,17 @@ public class WidgetContentUtil {
 	};
 
 	public static final Function<Result<? extends Record>, Map<String, List<CumulativeTrendChartContent>>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
-		Map<String, Map<Long, CumulativeTrendChartContent>> tagMapper = new LinkedHashMap<>();
+		Map<String, Map<Long, CumulativeTrendChartContent>> attributeMapping = new LinkedHashMap<>();
 
 		result.stream().forEach(record -> {
 
 			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
-			String tag = record.get(ITEM_ATTRIBUTE.VALUE);
-			if (tagMapper.containsKey(tag)) {
-				cumulativeTrendMapper = tagMapper.get(tag);
+			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
+			if (attributeMapping.containsKey(attributeValue)) {
+				cumulativeTrendMapper = attributeMapping.get(attributeValue);
 			} else {
 				cumulativeTrendMapper = new LinkedHashMap<>();
-				tagMapper.put(tag, cumulativeTrendMapper);
+				attributeMapping.put(attributeValue, cumulativeTrendMapper);
 			}
 
 			CumulativeTrendChartContent content;
@@ -241,7 +241,7 @@ public class WidgetContentUtil {
 
 		});
 
-		return tagMapper.entrySet().stream().collect(
+		return attributeMapping.entrySet().stream().collect(
 				LinkedHashMap::new,
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
 				LinkedHashMap::putAll

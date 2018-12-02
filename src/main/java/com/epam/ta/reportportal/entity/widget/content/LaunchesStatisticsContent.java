@@ -21,10 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
@@ -34,9 +31,9 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 
-	@Column(name = TAG_VALUES)
-	@JsonProperty(value = "tags")
-	private List<String> tags = new ArrayList<>();
+	@Column(name = ATTRIBUTE_VALUES)
+	@JsonProperty(value = "attributes")
+	private Set<String> attributes = new LinkedHashSet<>();
 
 	@JsonProperty(value = "values")
 	private Map<String, String> values = new LinkedHashMap<>();
@@ -53,12 +50,12 @@ public class LaunchesStatisticsContent extends AbstractLaunchStatisticsContent {
 	@Column(name = FILTER_NAME)
 	private String filterName;
 
-	public List<String> getTags() {
-		return tags;
+	public Set<String> getAttributes() {
+		return attributes;
 	}
 
-	public void setTags(List<String> tags) {
-		this.tags = tags;
+	public void setAttributes(Set<String> attributes) {
+		this.attributes = attributes;
 	}
 
 	public Map<String, String> getValues() {

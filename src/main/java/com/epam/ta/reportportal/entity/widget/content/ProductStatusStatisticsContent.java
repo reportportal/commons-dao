@@ -21,9 +21,9 @@ public class ProductStatusStatisticsContent extends AbstractLaunchStatisticsCont
 	@JsonProperty(value = "status")
 	private String status;
 
-	@Column(name = TAG_VALUES)
-	@JsonProperty(value = "tags")
-	private Map<String, Set<String>> tags;
+	@Column(name = ATTRIBUTE_VALUES)
+	@JsonProperty(value = "attributes")
+	private Map<String, Set<String>> attributes;
 
 	@JsonProperty(value = "values")
 	private Map<String, String> values = new LinkedHashMap<>();
@@ -44,7 +44,7 @@ public class ProductStatusStatisticsContent extends AbstractLaunchStatisticsCont
 	private Double averagePassingRate;
 
 	@JsonIgnore
-	@Column(name = TAG_VALUE)
+	@Column(name = ATTRIBUTE_VALUE)
 	private String tagValue;
 
 	@JsonIgnore
@@ -59,12 +59,12 @@ public class ProductStatusStatisticsContent extends AbstractLaunchStatisticsCont
 		this.status = status;
 	}
 
-	public Map<String, Set<String>> getTags() {
-		return tags;
+	public Map<String, Set<String>> getAttributes() {
+		return attributes;
 	}
 
-	public void setTags(Map<String, Set<String>> tags) {
-		this.tags = tags;
+	public void setAttributes(Map<String, Set<String>> attributes) {
+		this.attributes = attributes;
 	}
 
 	public Map<String, String> getValues() {

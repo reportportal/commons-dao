@@ -32,12 +32,9 @@ public class WidgetContentRepositoryConstants {
 	public static final String DEFECTS_SYSTEM_ISSUE_TOTAL = "statistics$defects$system_issue$total";
 	public static final String DEFECTS_TO_INVESTIGATE_TOTAL = "statistics$defects$to_investigate$total";
 
-	public static final String EXECUTION_STATS = "executionStats";
 	public static final String TOTAL = "total";
 	public static final String EXECUTIONS_KEY = "executions";
 	public static final String DEFECTS_KEY = "defects";
-	public static final String TABLE_COLUMN_KEY = "columns";
-	public static final String ISSUE_GROUP_KEY = "groups";
 
 	public static final String STATISTICS_TABLE = "statistics_table";
 	public static final String STATISTICS_COUNTER = "s_counter";
@@ -86,9 +83,6 @@ public class WidgetContentRepositoryConstants {
 	/*Cases trend widget constants*/
 	public static final String DELTA = "delta";
 
-	/*Launches comparison widget constants*/
-	public static final String ISSUE_PERCENTAGE = "issuePercentage";
-
 	/*Launches duration widget constants*/
 	public static final String ITEMS = "items";
 	public static final String DURATION = "duration";
@@ -98,41 +92,29 @@ public class WidgetContentRepositoryConstants {
 	public static final String NOT_PASSED_STATISTICS_KEY = "% (Failed+Skipped)/Total";
 
 	/*Unique bugs table widget constants*/
-	public static final String TICKET_ID = "ticketId";
-	public static final String SUBMIT_DATE = "submitDate";
 	public static final String URL = "url";
-	public static final String TEST_ITEM_ID = "testItemId";
-	public static final String TEST_ITEM_NAME = "testItemName";
-	public static final String SUBMITTER = "submitter";
 
 	/*Flaky cases table widget constants*/
-	public static final String UNIQUE_ID = "uniqueId";
-	public static final String ITEM_NAME = "itemName";
+	public static final String UNIQUE_ID = "unique_id";
+	public static final String ITEM_NAME = "item_Name";
 	public static final String STATUSES = "statuses";
 	public static final String SWITCH_FLAG = "switchFlag";
 	public static final String FLAKY_COUNT = "flakyCount";
 
 	/*Cumulative trend widget constants*/
 	public static final Integer LAUNCHES_COUNT = 100;
-	public static final String LAUNCHES_SUB_QUERY = "launchesSubQuery";
 	public static final String LIKE_CONDITION_SYMBOL = "%";
 
 	/*Product status widget constants*/
-	public static final String TAG_VALUE = "tagValue";
+	public static final String ATTRIBUTE_VALUE = "attribute_value";
 	public static final String FILTER_NAME = "filter_name";
-	public static final String TAG_TABLE = "tagTable";
-	public static final String TAG_VALUES = "tagValues";
+	public static final String ATTRIBUTE_VALUES = "attribute_values";
 	public static final String PASSING_RATE = "passingRate";
 	public static final String SUM = "sum";
 	public static final String AVERAGE_PASSING_RATE = "averagePassingRate";
-	public static final String ATTRIBUTE_ID = "attr_id";
-	public static final String ATTRIBUTE_VALUE = "attr_value";
-	public static final String ATTRIBUTE_KEY = "attr_key";
-	public static final String ATTRIBUTE_TABLE = "attr_table";
-
-	/*Sub-query fields*/
-	public static final String SUBQUERY_LAUNCH_ID = "l_id";
-	public static final String SUBQUERY_USER_ID = "u_id";
-	public static final String SUBQUERY_TEST_ITEM_ID = "ti_id";
+	public static final String ATTR_ID = "attr_id";
+	public static final String ATTR_VALUE = "attr_value";
+	public static final String ATTR_KEY = "attr_key";
+	public static final String ATTR_TABLE = "attr_table";
 
 }
