@@ -236,8 +236,47 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 				.groupBy(groupingFields)
 				.orderBy(buildSortFields(sort))
-				.fetch(INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER);
+				.fetch(INVESTIGATED_STATISTICS_RECORD_MAPPER);
 
+	}
+
+	@Override
+	public List<ChartStatisticsContent> timelineInvestigatedStatistics(Filter filter, Sort sort, int limit) {
+		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false).map(s -> field(s.getProperty())).collect(toList());
+
+		Collections.addAll(groupingFields, LAUNCH.ID, LAUNCH.NUMBER, LAUNCH.START_TIME, LAUNCH.NAME);
+
+		return dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(LAUNCH.ID,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						LAUNCH.NAME,
+						coalesce(DSL.select(sum(STATISTICS.S_COUNTER))
+								.from(STATISTICS)
+								.join(STATISTICS_FIELD)
+								.onKey()
+								.where(STATISTICS_FIELD.NAME.eq(DEFECTS_TO_INVESTIGATE_TOTAL).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
+								.asField()
+								.cast(Double.class), 0).as(TO_INVESTIGATE),
+						coalesce(DSL.select(sum(STATISTICS.S_COUNTER))
+								.from(STATISTICS)
+								.join(STATISTICS_FIELD)
+								.onKey()
+								.where(STATISTICS_FIELD.NAME.in(DEFECTS_AUTOMATION_BUG_TOTAL,
+										DEFECTS_NO_DEFECT_TOTAL,
+										DEFECTS_TO_INVESTIGATE_TOTAL,
+										DEFECTS_PRODUCT_BUG_TOTAL,
+										DEFECTS_SYSTEM_ISSUE_TOTAL
+								).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
+								.asField(), 0).as(INVESTIGATED)
+				)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.groupBy(groupingFields)
+				.orderBy(buildSortFields(sort))
+				.fetch(TIMELINE_INVESTIGATED_STATISTICS_RECORD_MAPPER);
 	}
 
 	@Override
@@ -273,8 +312,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						LAUNCH.START_TIME,
 						LAUNCH.NAME,
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-						coalesce(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).sub(lag(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER)).over()
-								.orderBy(deltaCounterSort)), 0).as(DELTA)
+						coalesce(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).sub(lag(fieldName(STATISTICS_TABLE,
+								STATISTICS_COUNTER
+						)).over().orderBy(deltaCounterSort)), 0).as(DELTA)
 				)
 				.from(LAUNCH)
 				.join(LAUNCHES)

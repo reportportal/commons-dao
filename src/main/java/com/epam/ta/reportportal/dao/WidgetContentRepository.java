@@ -78,6 +78,17 @@ public interface WidgetContentRepository {
 	 */
 	List<ChartStatisticsContent> investigatedStatistics(Filter filter, Sort sort, int limit);
 
+
+	/**
+	 * Investigated statistics loading for timeline view
+	 *
+	 * @param filter {@link Filter}
+	 * @param sort   {@link Sort}
+	 * @param limit  Results limit
+	 * @return List of{@link ChartStatisticsContent}
+	 */
+	List<ChartStatisticsContent> timelineInvestigatedStatistics(Filter filter, Sort sort, int limit);
+
 	/**
 	 * Launch passing rate result for depending on the filter conditions
 	 *

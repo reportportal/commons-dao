@@ -275,11 +275,18 @@ public class WidgetContentUtil {
 		return new ArrayList<>(resultMap.values());
 	};
 
-	public static final RecordMapper<? super Record, ChartStatisticsContent> INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER = r -> {
+	public static final RecordMapper<? super Record, ChartStatisticsContent> INVESTIGATED_STATISTICS_RECORD_MAPPER = r -> {
 		ChartStatisticsContent res = r.into(ChartStatisticsContent.class);
 		Double toInvestigatePercentage = r.get(TO_INVESTIGATE, Double.class);
 		res.getValues().put(TO_INVESTIGATE, String.valueOf(toInvestigatePercentage));
 		res.getValues().put(INVESTIGATED, String.valueOf(100.0 - toInvestigatePercentage));
+		return res;
+	};
+
+	public static final RecordMapper<? super Record, ChartStatisticsContent> TIMELINE_INVESTIGATED_STATISTICS_RECORD_MAPPER = r -> {
+		ChartStatisticsContent res = r.into(ChartStatisticsContent.class);
+		res.getValues().put(TO_INVESTIGATE, String.valueOf(r.get(TO_INVESTIGATE, Integer.class)));
+		res.getValues().put(INVESTIGATED, String.valueOf(r.get(INVESTIGATED, Integer.class)));
 		return res;
 	};
 
