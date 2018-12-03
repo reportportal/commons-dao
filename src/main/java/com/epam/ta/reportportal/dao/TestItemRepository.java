@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -88,6 +89,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds);
 
 	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
-			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!='PASSED')", nativeQuery = true)
-	boolean hasFailedStatusWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId);
+			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=:status)", nativeQuery = true)
+	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
+			@Param("status") StatusEnum status);
 }
