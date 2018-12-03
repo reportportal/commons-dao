@@ -59,13 +59,12 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public Optional<ItemAttribute> findSystemAttributeByLaunchIdAndValue(Long launchId, String value) {
+	public Optional<ItemAttribute> findAttributeByLaunchIdAndValue(Long launchId, String value, boolean system) {
 		return Optional.ofNullable(dslContext.select()
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(LAUNCH)
 				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.ID.eq(launchId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(true))
+				.where(LAUNCH.ID.eq(launchId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
 				.and(ITEM_ATTRIBUTE.KEY.eq(value))
 				.fetchOneInto(ItemAttribute.class));
 	}

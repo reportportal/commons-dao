@@ -66,5 +66,5 @@ public interface ItemAttributeRepositoryCustom {
 	 */
 	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
 
-	Optional<ItemAttribute> findSystemAttributeByLaunchIdAndValue(Long launchId, String value);
+	Optional<ItemAttribute> findAttributeByLaunchIdAndValue(Long launchId, String value, boolean system);
 }
