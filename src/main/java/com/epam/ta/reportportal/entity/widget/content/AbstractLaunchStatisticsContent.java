@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 /**
  * @author Ivan Budayeu
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
 	@Column(name = ID)
