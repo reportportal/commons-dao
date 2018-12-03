@@ -154,12 +154,12 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort, 4);
-		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(4, launchStatisticsContents.size());
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort, 4);
+		Assert.assertNotNull(chartStatisticsContents);
+		Assert.assertEquals(4, chartStatisticsContents.size());
 
-		Assert.assertEquals(launchStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
-		Assert.assertEquals(launchStatisticsContents.get(launchStatisticsContents.size() - 1).getValues().get(sortingColumn),
+		Assert.assertEquals(chartStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
+		Assert.assertEquals(chartStatisticsContents.get(chartStatisticsContents.size() - 1).getValues().get(sortingColumn),
 				String.valueOf(1)
 		);
 	}
@@ -177,15 +177,18 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<InvestigatedStatisticsResult> investigatedStatisticsResults = widgetContentRepository.investigatedStatistics(filter, sort, 4);
-		Assert.assertNotNull(investigatedStatisticsResults);
-		Assert.assertEquals(4, investigatedStatisticsResults.size());
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.investigatedStatistics(filter, sort, 4);
+		Assert.assertNotNull(chartStatisticsContents);
+		Assert.assertEquals(4, chartStatisticsContents.size());
 
-		investigatedStatisticsResults.forEach(res -> {
+		chartStatisticsContents.forEach(res -> {
 			Map<String, Integer> stats = statistics.get(res.getId());
 			int sum = stats.values().stream().mapToInt(Integer::intValue).sum();
-			Assert.assertEquals(100.0, res.getNotInvestigatedPercentage() + res.getInvestigatedPercentage(), 0.01);
-			Assert.assertEquals(res.getNotInvestigatedPercentage(),
+			Assert.assertEquals(100.0,
+					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)) + Double.parseDouble(res.getValues().get(INVESTIGATED)),
+					0.01
+			);
+			Assert.assertEquals(Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
 					BigDecimal.valueOf((double) 100 * stats.get("statistics$defects$to_investigate$total") / sum)
 							.setScale(2, RoundingMode.HALF_UP)
 							.doubleValue(),
@@ -236,15 +239,22 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<CasesTrendContent> casesTrendContents = widgetContentRepository.casesTrendStatistics(filter, executionContentField, sort, 4);
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.casesTrendStatistics(filter,
+				executionContentField,
+				sort,
+				4
+		);
 
-		Assert.assertNotNull(casesTrendContents);
-		Assert.assertEquals(4, casesTrendContents.size());
+		Assert.assertNotNull(chartStatisticsContents);
+		Assert.assertEquals(4, chartStatisticsContents.size());
 
-		int firstElementDelta = casesTrendContents.get(0).getDelta();
-		int secondElementDelta = casesTrendContents.get(1).getTotal() - casesTrendContents.get(0).getTotal();
-		int thirdElementDelta = casesTrendContents.get(2).getTotal() - casesTrendContents.get(1).getTotal();
-		int fourthElementDelta = casesTrendContents.get(3).getTotal() - casesTrendContents.get(2).getTotal();
+		int firstElementDelta = Integer.parseInt(chartStatisticsContents.get(0).getValues().get(DELTA));
+		int secondElementDelta = Integer.parseInt(chartStatisticsContents.get(1).getValues().get(executionContentField)) - Integer.parseInt(
+				chartStatisticsContents.get(0).getValues().get(executionContentField));
+		int thirdElementDelta = Integer.parseInt(chartStatisticsContents.get(2).getValues().get(executionContentField)) - Integer.parseInt(
+				chartStatisticsContents.get(1).getValues().get(executionContentField));
+		int fourthElementDelta = Integer.parseInt(chartStatisticsContents.get(3).getValues().get(executionContentField)) - Integer.parseInt(
+				chartStatisticsContents.get(2).getValues().get(executionContentField));
 
 		Assert.assertEquals(0, firstElementDelta);
 		Assert.assertEquals(1, secondElementDelta);
@@ -265,16 +275,12 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<LaunchesStatisticsContent> launchStatisticsContents = widgetContentRepository.bugTrendStatistics(filter,
-				contentFields,
-				sort,
-				4
-		);
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.bugTrendStatistics(filter, contentFields, sort, 4);
 
-		Assert.assertNotNull(launchStatisticsContents);
-		Assert.assertEquals(4, launchStatisticsContents.size());
+		Assert.assertNotNull(chartStatisticsContents);
+		Assert.assertEquals(4, chartStatisticsContents.size());
 
-		launchStatisticsContents.forEach(res -> {
+		chartStatisticsContents.forEach(res -> {
 			Map<String, Integer> stats = statistics.get(res.getId());
 			Map<String, String> resStatistics = res.getValues();
 
@@ -297,16 +303,16 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<LaunchesStatisticsContent> comparisonStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
 				sort,
 				2
 		);
 
-		Assert.assertNotNull(comparisonStatisticsContents);
-		Assert.assertEquals(2, comparisonStatisticsContents.size());
+		Assert.assertNotNull(chartStatisticsContents);
+		Assert.assertEquals(2, chartStatisticsContents.size());
 
-		comparisonStatisticsContents.forEach(res -> {
+		chartStatisticsContents.forEach(res -> {
 			Map<String, String> currStatistics = res.getValues();
 			Map<Long, Map<String, Integer>> preDefinedStatistics = buildLaunchesComparisonStatistics();
 

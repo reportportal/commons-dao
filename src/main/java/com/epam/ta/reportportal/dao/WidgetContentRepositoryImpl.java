@@ -174,7 +174,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+	public List<ChartStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -200,7 +200,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit) {
+	public List<ChartStatisticsContent> investigatedStatistics(Filter filter, Sort sort, int limit) {
 
 		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false).map(s -> field(s.getProperty())).collect(toList());
 
@@ -262,19 +262,19 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<CasesTrendContent> casesTrendStatistics(Filter filter, String contentField, Sort sort, int limit) {
+	public List<ChartStatisticsContent> casesTrendStatistics(Filter filter, String contentField, Sort sort, int limit) {
 
 		List<SortField<Object>> deltaCounterSort = buildSortFields(sort);
 
-		return dsl.with(LAUNCHES)
+		return CASES_GROWTH_TREND_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
 				.select(LAUNCH.ID,
 						LAUNCH.NUMBER,
 						LAUNCH.START_TIME,
 						LAUNCH.NAME,
-						fieldName(STATISTICS.S_COUNTER).as(contentField),
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).sub(lag(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER)).over()
-								.orderBy(deltaCounterSort)).as(DELTA)
+						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
+						coalesce(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).sub(lag(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER)).over()
+								.orderBy(deltaCounterSort)), 0).as(DELTA)
 				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
@@ -287,11 +287,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
 				.orderBy(deltaCounterSort)
-				.fetchInto(CasesTrendContent.class);
+				.fetch(), contentField);
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+	public List<ChartStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		return BUG_TREND_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
@@ -312,12 +312,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(STATISTICS_FIELD.NAME.in(contentFields))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.orderBy(buildSortFields(sort))
 				.fetch());
 
 	}
 
 	@Override
-	public List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
+	public List<ChartStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
 		List<String> executionStatisticsFields = contentFields.stream().filter(cf -> cf.contains(EXECUTIONS_KEY)).collect(toList());
 		List<String> defectStatisticsFields = contentFields.stream().filter(cf -> cf.contains(DEFECTS_KEY)).collect(toList());
@@ -463,13 +464,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
-		return LAUNCHES_TABLE_FETCHER.apply(buildLaunchesTableQuery(selectFields,
-				statisticsFields,
-				filter,
-				sort,
-				limit,
-				isAttributePresent
-		).fetch(), contentFields);
+		return LAUNCHES_TABLE_FETCHER.apply(buildLaunchesTableQuery(selectFields, statisticsFields, filter, sort, limit, isAttributePresent)
+				.fetch(), contentFields);
 
 	}
 
@@ -619,8 +615,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit) {
 
-		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
-				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, customColumns).fetch(),
+		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, customColumns).fetch(),
 				customColumns
 		);
 
@@ -751,11 +746,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
 		if (combinedTagCondition.isPresent()) {
-			Collections.addAll(fields,
-					fieldName(ATTR_TABLE, ATTR_ID),
-					fieldName(ATTR_TABLE, ATTR_VALUE),
-					fieldName(ATTR_TABLE, ATTR_KEY)
-			);
+			Collections.addAll(fields, fieldName(ATTR_TABLE, ATTR_ID), fieldName(ATTR_TABLE, ATTR_VALUE), fieldName(ATTR_TABLE, ATTR_KEY));
 			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields).leftJoin(DSL.select(ITEM_ATTRIBUTE.ID.as(
 					ATTR_ID),
 					ITEM_ATTRIBUTE.VALUE.as(ATTR_VALUE),

@@ -55,20 +55,19 @@ public class WidgetContentUtil {
 		//static only
 	}
 
-	private static final Function<Result<? extends Record>, Map<Long, LaunchesStatisticsContent>> STATISTICS_FETCHER = result -> {
+	private static final Function<Result<? extends Record>, Map<Long, ChartStatisticsContent>> STATISTICS_FETCHER = result -> {
 
-		Map<Long, LaunchesStatisticsContent> resultMap = new LinkedHashMap<>();
+		Map<Long, ChartStatisticsContent> resultMap = new LinkedHashMap<>();
 
-		result.stream().forEach(record -> {
-			LaunchesStatisticsContent content;
+		result.forEach(record -> {
+			ChartStatisticsContent content;
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
 				content = resultMap.get(record.get(LAUNCH.ID));
 			} else {
-				content = record.into(LaunchesStatisticsContent.class);
+				content = record.into(ChartStatisticsContent.class);
 				resultMap.put(record.get(LAUNCH.ID), content);
 			}
-			content.getValues().put(
-					record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
+			content.getValues().put(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
 					record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
 			);
 
@@ -80,7 +79,7 @@ public class WidgetContentUtil {
 	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
 		Map<String, Long> values = new HashMap<>();
 
-		result.stream().forEach(record -> values.put(record.get(STATISTICS_FIELD.NAME), record.get(fieldName(SUM), Long.class)));
+		result.forEach(record -> values.put(record.get(STATISTICS_FIELD.NAME), record.get(fieldName(SUM), Long.class)));
 
 		return new OverallStatisticsContent(values);
 	};
@@ -102,7 +101,7 @@ public class WidgetContentUtil {
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<Timestamp>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME));
 
-		result.stream().forEach(record -> {
+		result.forEach(record -> {
 			LaunchesTableContent content;
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
 
@@ -137,8 +136,7 @@ public class WidgetContentUtil {
 			content = record.into(ProductStatusStatisticsContent.class);
 			mapping.put(record.get(LAUNCH.ID), content);
 		}
-		content.getValues().put(
-				record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
+		content.getValues().put(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
 				record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
 		);
 
@@ -185,8 +183,7 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(
-				LinkedHashMap::new,
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
 				LinkedHashMap::putAll
 		);
@@ -197,7 +194,7 @@ public class WidgetContentUtil {
 
 		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTR_VALUE)));
 
-		result.stream().forEach(record -> {
+		result.forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
 			if (attributeField.isPresent()) {
 				ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_KEY), String.class)).ifPresent(key -> attributes.entrySet()
@@ -214,7 +211,7 @@ public class WidgetContentUtil {
 	public static final Function<Result<? extends Record>, Map<String, List<CumulativeTrendChartContent>>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
 		Map<String, Map<Long, CumulativeTrendChartContent>> attributeMapping = new LinkedHashMap<>();
 
-		result.stream().forEach(record -> {
+		result.forEach(record -> {
 
 			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
 			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
@@ -234,37 +231,55 @@ public class WidgetContentUtil {
 				content.setId(launchId);
 				cumulativeTrendMapper.put(launchId, content);
 			}
-			content.getValues().put(
-					record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
+			content.getValues().put(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
 					record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
 			);
 
 		});
 
-		return attributeMapping.entrySet().stream().collect(
-				LinkedHashMap::new,
+		return attributeMapping.entrySet().stream().collect(LinkedHashMap::new,
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
 				LinkedHashMap::putAll
 		);
 	};
 
-	public static final Function<Result<? extends Record>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
+	public static final BiFunction<Result<? extends Record>, String, List<ChartStatisticsContent>> CASES_GROWTH_TREND_FETCHER = (result, contentField) -> {
+		List<ChartStatisticsContent> content = new ArrayList<>(result.size());
+
+		result.forEach(record -> {
+			ChartStatisticsContent statisticsContent = record.into(ChartStatisticsContent.class);
+
+			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
+					String.class
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
+
+			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
+
+			content.add(statisticsContent);
+		});
+
+		return content;
+	};
+
+	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
 			STATISTICS_FETCHER.apply(result).values());
 
-	public static final Function<Result<? extends Record>, List<LaunchesStatisticsContent>> BUG_TREND_STATISTICS_FETCHER = result -> {
-		Map<Long, LaunchesStatisticsContent> resultMap = STATISTICS_FETCHER.apply(result);
+	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> BUG_TREND_STATISTICS_FETCHER = result -> {
+		Map<Long, ChartStatisticsContent> resultMap = STATISTICS_FETCHER.apply(result);
 
 		resultMap.values()
-				.stream()
 				.forEach(content -> content.getValues()
 						.put(TOTAL, String.valueOf(content.getValues().values().stream().mapToInt(Integer::parseInt).sum())));
 
 		return new ArrayList<>(resultMap.values());
 	};
 
-	public static final RecordMapper<? super Record, InvestigatedStatisticsResult> INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER = r -> {
-		InvestigatedStatisticsResult res = r.into(InvestigatedStatisticsResult.class);
-		res.setInvestigatedPercentage(100.0 - r.get(TO_INVESTIGATE, Double.class));
+	public static final RecordMapper<? super Record, ChartStatisticsContent> INVESTIGATED_STATISTICS_CONTENT_RECORD_MAPPER = r -> {
+		ChartStatisticsContent res = r.into(ChartStatisticsContent.class);
+		Double toInvestigatePercentage = r.get(TO_INVESTIGATE, Double.class);
+		res.getValues().put(TO_INVESTIGATE, String.valueOf(toInvestigatePercentage));
+		res.getValues().put(INVESTIGATED, String.valueOf(100.0 - toInvestigatePercentage));
 		return res;
 	};
 

@@ -64,9 +64,9 @@ public interface WidgetContentRepository {
 	 * @param contentFields Custom fields for select query building
 	 * @param sort          {@link Sort}
 	 * @param limit         Results limit
-	 * @return List of {@link LaunchesStatisticsContent}
+	 * @return List of {@link ChartStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
+	List<ChartStatisticsContent> launchStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Investigated statistics loading
@@ -74,9 +74,9 @@ public interface WidgetContentRepository {
 	 * @param filter {@link Filter}
 	 * @param sort   {@link Sort}
 	 * @param limit  Results limit
-	 * @return List of{@link InvestigatedStatisticsResult}
+	 * @return List of{@link ChartStatisticsContent}
 	 */
-	List<InvestigatedStatisticsResult> investigatedStatistics(Filter filter, Sort sort, int limit);
+	List<ChartStatisticsContent> investigatedStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Launch passing rate result for depending on the filter conditions
@@ -105,9 +105,9 @@ public interface WidgetContentRepository {
 	 * @param executionContentField Content field with table column name
 	 * @param sort                  {@link Sort}
 	 * @param limit                 Results limit
-	 * @return List of{@link CasesTrendContent}
+	 * @return List of{@link ChartStatisticsContent}
 	 */
-	List<CasesTrendContent> casesTrendStatistics(Filter filter, String executionContentField, Sort sort, int limit);
+	List<ChartStatisticsContent> casesTrendStatistics(Filter filter, String executionContentField, Sort sort, int limit);
 
 	/**
 	 * Bug trend loading
@@ -116,9 +116,9 @@ public interface WidgetContentRepository {
 	 * @param contentFields Custom fields for select query building
 	 * @param sort          {@link Sort}
 	 * @param limit         Results limit
-	 * @return List of{@link LaunchesStatisticsContent}
+	 * @return List of{@link ChartStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
+	List<ChartStatisticsContent> bugTrendStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Comparison statistics content loading for launches with specified Ids
@@ -127,9 +127,9 @@ public interface WidgetContentRepository {
 	 * @param contentFields Custom fields for select query building
 	 * @param sort          {@link Sort}
 	 * @param limit         Results limit
-	 * @return List of{@link LaunchesStatisticsContent}
+	 * @return List of{@link ChartStatisticsContent}
 	 */
-	List<LaunchesStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
+	List<ChartStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit);
 
 	/**
 	 * Launches duration content loading
@@ -214,7 +214,7 @@ public interface WidgetContentRepository {
 	 * @param customColumns     Map of the custom column name as key and {@link com.epam.ta.reportportal.entity.ItemAttribute#key} as value
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
-	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link LaunchesStatisticsContent} as value
+	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link ProductStatusStatisticsContent} as value
 	 */
 	Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
 			List<String> contentFields, Map<String, String> customColumns, boolean isLatest, int limit);
@@ -228,7 +228,7 @@ public interface WidgetContentRepository {
 	 * @param sort          {@link Sort}
 	 * @param isLatest      Flag for retrieving only latest launches
 	 * @param limit         Results limit
-	 * @return list of {@link LaunchesStatisticsContent}
+	 * @return list of {@link ProductStatusStatisticsContent}
 	 */
 	List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit);
