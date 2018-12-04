@@ -23,7 +23,7 @@ import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 
 /**
  * @author Ivan Budayeu
