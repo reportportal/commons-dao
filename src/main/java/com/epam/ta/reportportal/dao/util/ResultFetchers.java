@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -239,6 +240,26 @@ public class ResultFetchers {
 			userFilter.getFilterSorts().add(r.into(FilterSort.class));
 		});
 		return Lists.newArrayList(userFilterMap.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<Dashboard>> DASHBOARD_FETCHER = result -> {
+		Map<Long, Dashboard> dashboardMap = new HashMap<>();
+		result.forEach(r -> {
+			Long dashboardId = r.get(ID, Long.class);
+			Dashboard dashboard;
+			if (dashboardMap.containsKey(dashboardId)) {
+				dashboard = dashboardMap.get(dashboardId);
+			} else {
+				dashboard = r.into(Dashboard.class);
+				dashboard.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
+				dashboard.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+				Project project = new Project();
+				project.setId(r.get(PROJECT.ID, Long.class));
+				dashboard.setProject(project);
+				dashboardMap.put(dashboardId, dashboard);
+			}
+		});
+		return Lists.newArrayList(dashboardMap.values());
 	};
 
 }

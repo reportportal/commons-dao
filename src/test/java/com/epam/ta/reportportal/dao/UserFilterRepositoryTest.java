@@ -84,8 +84,7 @@ public class UserFilterRepositoryTest {
 		Assert.assertEquals(2l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
 
-		Page<UserFilter> result2 = userFilterRepository.getPermitted(
-				ProjectFilter.of(buildDefaultFilter(), 2L),
+		Page<UserFilter> result2 = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
 				PageRequest.of(0, 3),
 				"default"
 		);
@@ -96,8 +95,7 @@ public class UserFilterRepositoryTest {
 
 	@Test
 	public void getOwnFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getOwn(
-				ProjectFilter.of(buildDefaultFilter(), 2L),
+		Page<UserFilter> result1 = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L),
 				PageRequest.of(0, 3),
 				"superadmin"
 		);
@@ -112,8 +110,7 @@ public class UserFilterRepositoryTest {
 
 	@Test
 	public void getSharedFiltersPaging() {
-		Page<UserFilter> result1 = userFilterRepository.getShared(
-				ProjectFilter.of(buildDefaultFilter(), 2L),
+		Page<UserFilter> result1 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
 				PageRequest.of(0, 1),
 				"superadmin"
 		);
