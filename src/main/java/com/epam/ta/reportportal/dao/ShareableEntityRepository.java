@@ -32,6 +32,6 @@ public interface ShareableEntityRepository extends ReportPortalRepository<Sharea
 	 * @param shared    Shared or not
 	 * @return List of shareable entities
 	 */
-	List<ShareableEntity> findAllByProjectAndShared(Long projectId, boolean shared);
+	List<ShareableEntity> findAllByProjectIdAndShared(Long projectId, boolean shared);
 
 }
