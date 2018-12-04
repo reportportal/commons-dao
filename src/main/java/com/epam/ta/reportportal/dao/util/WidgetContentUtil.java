@@ -41,6 +41,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -78,7 +79,7 @@ public class WidgetContentUtil {
 	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
 		Map<String, Long> values = new HashMap<>();
 
-		result.forEach(record -> ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> values.put(v,
+		result.forEach(record -> ofNullable(record.get(STATISTICS_FIELD.NAME)).ifPresent(v -> values.put(v,
 				ofNullable(record.get(fieldName(SUM), Long.class)).orElse(0L)
 		)));
 
