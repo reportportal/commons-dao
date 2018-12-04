@@ -31,7 +31,7 @@ public interface ItemAttributeRepositoryCustom {
 	 * @param value     part of key
 	 * @return List of matched attribute keys
 	 */
-	List<String> findKeysByProjectIdAndValue(Long projectId, String value);
+	List<String> findLaunchAttributeKeys(Long projectId, String value, boolean system);
 
 	/**
 	 * Retrieves launch attribute values by project, specified key and part of value.
@@ -42,7 +42,7 @@ public interface ItemAttributeRepositoryCustom {
 	 * @param value     Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findValuesByProjectIdAndKeyLikeValue(Long projectId, String key, String value);
+	List<String> findLaunchAttributeValues(Long projectId, String key, String value, boolean system);
 
 	/**
 	 * Retrieves test item attribute keys by launch and part of value.
@@ -52,7 +52,7 @@ public interface ItemAttributeRepositoryCustom {
 	 * @param value    part of key
 	 * @return List of matched attribute keys
 	 */
-	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
+	List<String> findTestItemAttributeKeys(Long launchId, String value, boolean system);
 
 	/**
 	 * Retrieves test item attribute values by launch, specified key and part of value.
@@ -63,5 +63,5 @@ public interface ItemAttributeRepositoryCustom {
 	 * @param value     Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findValuesByLaunchIdAndKeyLikeValue(Long launchId, String key, String value);
+	List<String> findTestItemAttributeValues(Long launchId, String key, String value, boolean system);
 }

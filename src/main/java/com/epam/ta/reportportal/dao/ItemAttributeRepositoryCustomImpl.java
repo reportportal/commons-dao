@@ -41,22 +41,21 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findKeysByProjectIdAndValue(Long projectId, String value) {
+	public List<String> findLaunchAttributeKeys(Long projectId, String value, boolean system) {
 		return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(LAUNCH)
 				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
-				.where(PROJECT.ID.eq(projectId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+				.where(PROJECT.ID.eq(projectId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
 				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
 	@Override
-	public List<String> findValuesByProjectIdAndKeyLikeValue(Long projectId, String key, String value) {
-		Condition condition = getValueCondition(PROJECT.ID, projectId, key, value);
+	public List<String> findLaunchAttributeValues(Long projectId, String key, String value, boolean system) {
+		Condition condition = prepareFetchingValuesCondition(PROJECT.ID, projectId, key, value, system);
 		return dslContext.selectDistinct(ITEM_ATTRIBUTE.VALUE)
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(LAUNCH)
@@ -68,22 +67,21 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findKeysByLaunchIdAndValue(Long launchId, String value) {
+	public List<String> findTestItemAttributeKeys(Long launchId, String value, boolean system) {
 		return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(TEST_ITEM)
 				.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
 				.leftJoin(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.ID.eq(launchId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+				.where(LAUNCH.ID.eq(launchId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
 				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
 	@Override
-	public List<String> findValuesByLaunchIdAndKeyLikeValue(Long launchId, String key, String value) {
-		Condition condition = getValueCondition(LAUNCH.ID, launchId, key, value);
+	public List<String> findTestItemAttributeValues(Long launchId, String key, String value, boolean system) {
+		Condition condition = prepareFetchingValuesCondition(LAUNCH.ID, launchId, key, value, system);
 		return dslContext.selectDistinct(ITEM_ATTRIBUTE.VALUE)
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(TEST_ITEM)
@@ -94,9 +92,11 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 
-	private Condition getValueCondition(TableField<? extends Record, Long> field, Long id, String key, String value) {
+	private Condition prepareFetchingValuesCondition(TableField<? extends Record, Long> field, Long id, String key, String value,
+			boolean system) {
 		Condition condition = field.eq(id)
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(false)).and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + (value == null ? "" : value) + "%"));
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + (value == null ? "" : value) + "%"));
 		if (key != null) {
 			condition = condition.and(ITEM_ATTRIBUTE.KEY.eq(key));
 		}
