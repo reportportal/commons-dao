@@ -67,9 +67,9 @@ public class WidgetContentUtil {
 				content = record.into(ChartStatisticsContent.class);
 				resultMap.put(record.get(LAUNCH.ID), content);
 			}
-			content.getValues().put(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
-					record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
-			);
+
+			ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
+					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
 
 		});
 
@@ -79,7 +79,9 @@ public class WidgetContentUtil {
 	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
 		Map<String, Long> values = new HashMap<>();
 
-		result.forEach(record -> values.put(record.get(STATISTICS_FIELD.NAME), record.get(fieldName(SUM), Long.class)));
+		result.forEach(record -> ofNullable(record.get(STATISTICS_FIELD.NAME)).ifPresent(v -> values.put(v,
+				ofNullable(record.get(fieldName(SUM), Long.class)).orElse(0L)
+		)));
 
 		return new OverallStatisticsContent(values);
 	};
@@ -116,8 +118,9 @@ public class WidgetContentUtil {
 
 			}
 
-			statisticsField.ifPresent(sf -> content.getValues()
-					.put(record.get(sf, String.class), String.valueOf(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER)))));
+			statisticsField.ifPresent(sf -> ofNullable(record.get(sf, String.class)).ifPresent(v -> content.getValues()
+					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0"))));
+
 			resultMap.put(record.get(LAUNCH.ID), content);
 
 			nonStatisticsFields.forEach(cf -> content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf)))));
@@ -136,9 +139,9 @@ public class WidgetContentUtil {
 			content = record.into(ProductStatusStatisticsContent.class);
 			mapping.put(record.get(LAUNCH.ID), content);
 		}
-		content.getValues().put(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
-				record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
-		);
+
+		ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
+				.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
 
 		return content;
 	};
@@ -231,9 +234,8 @@ public class WidgetContentUtil {
 				content.setId(launchId);
 				cumulativeTrendMapper.put(launchId, content);
 			}
-			content.getValues().put(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class),
-					record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)
-			);
+			ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
+					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
 
 		});
 
