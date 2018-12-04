@@ -47,6 +47,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -174,7 +175,10 @@ public class RecordMappers {
 	};
 
 	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
-		User user = r.into(User.class);
+		User user = r.into(USERS.fieldStream()
+				.filter(f -> !USERS.METADATA.getQualifiedName().toString().equalsIgnoreCase(f.getQualifiedName().toString())
+						|| !USERS.METADATA.getName().equalsIgnoreCase(f.getName()))
+				.toArray(Field[]::new)).into(User.class);
 		String metaDataString = r.get(USERS.METADATA, String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
