@@ -33,6 +33,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.RecordMappers.SHARED_ENTITY_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.WIDGET_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.FILTER;
+import static com.epam.ta.reportportal.jooq.Tables.SHAREABLE_ENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JAclEntry.ACL_ENTRY;
 import static com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity.ACL_OBJECT_IDENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JAclSid.ACL_SID;
@@ -55,7 +56,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 		Condition condition = fieldName(SHARED, SID).cast(String.class)
 				.eq(username)
 				.and(fieldName(OWNER, SID).cast(String.class).ne(username))
-				.and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+				.and(SHAREABLE_ENTITY.PROJECT_ID.cast(Long.class).eq(projectId));
 
 		return PageableExecutionUtils.getPage(
 				dsl.fetch(dsl.with(DISTINCT_WIDGET_TABLE)
@@ -76,7 +77,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 		Condition condition = fieldName(SHARED, SID).cast(String.class)
 				.eq(username)
 				.and(fieldName(OWNER, SID).cast(String.class).ne(username))
-				.and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+				.and(SHAREABLE_ENTITY.PROJECT_ID.cast(Long.class).eq(projectId));
 
 		return getWidgetPage(condition, pageable);
 	}
@@ -84,7 +85,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 	@Override
 	public List<String> getWidgetNames(String username, Long projectId) {
 
-		Condition condition = fieldName(OWNER, SID).cast(String.class).eq(username).and(WIDGET.PROJECT_ID.cast(Long.class).eq(projectId));
+		Condition condition = fieldName(OWNER, SID).cast(String.class).eq(username).and(SHAREABLE_ENTITY.PROJECT_ID.cast(Long.class).eq(projectId));
 
 		return dsl.fetch(dsl.with(DISTINCT_WIDGET_TABLE)
 				.as(buildDistinctSubQuery(condition))
@@ -98,7 +99,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 	@Override
 	public Page<Widget> searchSharedWidgets(String term, String username, Long projectId, Pageable pageable) {
 
-		Condition condition = WIDGET.PROJECT_ID.cast(Long.class)
+		Condition condition = SHAREABLE_ENTITY.PROJECT_ID.cast(Long.class)
 				.eq(projectId)
 				.and(WIDGET.NAME.like("%" + term + "%")
 						.or(WIDGET.DESCRIPTION.like("%" + term + "%").or(fieldName(OWNER, SID).like("%" + term + "%"))))
