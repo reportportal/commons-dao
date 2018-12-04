@@ -22,6 +22,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -31,7 +32,7 @@ import java.util.Objects;
 @Table(name = "filter")
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Queryable {
+public abstract class Queryable implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
