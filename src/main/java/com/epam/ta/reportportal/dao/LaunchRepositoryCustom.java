@@ -39,7 +39,7 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
 	Map<String, String> getStatuses(Long projectId, Long[] ids);
 
-	Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter);
+	Optional<Launch> findLatestByFilter(Filter filter);
 
 	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
 

@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -151,18 +152,12 @@ public class Filter implements Serializable, Queryable {
 		}
 
 		Filter filter = (Filter) o;
-
-		if (target != filter.target) {
-			return false;
-		}
-		return filterConditions != null ? filterConditions.equals(filter.filterConditions) : filter.filterConditions == null;
+		return Objects.equals(id, filter.id) && target == filter.target && Objects.equals(filterConditions, filter.filterConditions);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = target != null ? target.hashCode() : 0;
-		result = 31 * result + (filterConditions != null ? filterConditions.hashCode() : 0);
-		return result;
+		return Objects.hash(id, target, filterConditions);
 	}
 
 	@Override

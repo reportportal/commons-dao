@@ -44,16 +44,16 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 	@Column(name = "type")
 	private String type;
 
-	@JsonProperty(value = UNIQUE_ID)
+	@JsonProperty(value = "uniqueId")
 	@Column(name = UNIQUE_ID)
 	private String uniqueId;
 
 	@JsonProperty(value = START_TIME)
-	@Column(name = START_TIME)
+	@Column(name = "start_time")
 	private Long startTime;
 
 	@JsonProperty(value = END_TIME)
-	@Column(name = END_TIME)
+	@Column(name = "end_time")
 	private Long endTime;
 
 	@JsonProperty(value = DURATION)
