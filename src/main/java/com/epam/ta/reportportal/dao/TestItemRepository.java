@@ -88,8 +88,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds);
 
 	/**
-	 * Checks if all children of test item with id = {@param parentId}, except item with id = {@param stepId},
-	 * has status not equal provided {@param status}
+	 * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId},
+	 * has status not equal provided {@code status}
 	 *
 	 * @param parentId Id of parent test item
 	 * @param stepId   Id of test item that should be ignored during the checking
