@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.widget;
 
+import com.epam.ta.reportportal.entity.SharedEntity;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -33,13 +34,9 @@ import java.util.Set;
  * @author Pavel Bortnik
  */
 @Entity
+@Table(name = "widget")
 @TypeDef(name = "widgetOptions", typeClass = WidgetOptions.class)
-@Table(name = "widget", schema = "public")
-public class Widget implements Serializable {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Widget extends SharedEntity implements Serializable {
 
 	@Column(name = "name")
 	private String name;
@@ -73,14 +70,6 @@ public class Widget implements Serializable {
 	@OneToMany(mappedBy = "widget", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.JOIN)
 	private Set<DashboardWidget> dashboardWidgets = Sets.newHashSet();
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;

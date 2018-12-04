@@ -24,7 +24,8 @@ public class ProjectFilter extends Filter {
 		super(id, filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
 				false,
-				String.valueOf(projectId), GeneralCriteriaConstant.CRITERIA_PROJECT_ID
+				String.valueOf(projectId),
+				GeneralCriteriaConstant.CRITERIA_PROJECT_ID
 		));
 
 	}
@@ -33,16 +34,17 @@ public class ProjectFilter extends Filter {
 		super(filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
 				false,
-				String.valueOf(projectId), GeneralCriteriaConstant.CRITERIA_PROJECT_ID
+				String.valueOf(projectId),
+				GeneralCriteriaConstant.CRITERIA_PROJECT_ID
 		));
 
 	}
 
-	public static Filter of(Filter filter, Long projectId) {
+	public static ProjectFilter of(Filter filter, Long projectId) {
 		return new ProjectFilter(filter, projectId);
 	}
 
-	public static Filter of(Long id, Filter filter, Long projectId) {
+	public static ProjectFilter of(Long id, Filter filter, Long projectId) {
 		return new ProjectFilter(id, filter, projectId);
 	}
 

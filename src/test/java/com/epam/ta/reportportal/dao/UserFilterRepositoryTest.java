@@ -17,14 +17,11 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Sets;
-import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +31,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Set;
 
 /**
@@ -46,41 +41,54 @@ import java.util.Set;
 @Transactional("transactionManager")
 public class UserFilterRepositoryTest {
 
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/test-dropall-script.sql");
-		//TODO this scripts should be syncronized with migration scripts
-		SqlRunner.runSqlScripts("/test-create-script.sql", "/test-fill-user-filters-script.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/test-dropall-script.sql");
-	}
+//	@BeforeClass
+	//	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
+	//		SqlRunner.runSqlScripts("/test-dropall-script.sql");
+	//		//TODO this scripts should be syncronized with migration scripts
+	//		SqlRunner.runSqlScripts("/test-create-script.sql", "/test-fill-user-filters-script.sql");
+	//	}
+	//
+	//	@AfterClass
+	//	public static void destroy() throws SQLException, IOException, SqlToolError {
+	//		SqlRunner.runSqlScripts("/test-dropall-script.sql");
+	//	}
 
 	@Autowired
-	private UserFilterRepositoryCustom userFilterRepository;
+	private UserFilterRepository userFilterRepository;
 
 	@Test
 	public void getSharedFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getSharedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"superadmin"
+		);
 
 		Assert.assertEquals(2l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
 
-		Page<UserFilter> result2 = userFilterRepository.getSharedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "default");
+		Page<UserFilter> result2 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"default"
+		);
 
 		Assert.assertEquals(0l, result2.getTotalElements());
 	}
 
 	@Test
 	public void getPermittedFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getPermittedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"superadmin"
+		);
 
 		Assert.assertEquals(2l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
 
-		Page<UserFilter> result2 = userFilterRepository.getPermittedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "default");
+		Page<UserFilter> result2 = userFilterRepository.getPermitted(
+				ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"default"
+		);
 
 		Assert.assertEquals(3l, result2.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result2.get().findFirst().get().getId());
@@ -88,11 +96,15 @@ public class UserFilterRepositoryTest {
 
 	@Test
 	public void getOwnFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getOwnFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getOwn(
+				ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"superadmin"
+		);
 
 		Assert.assertEquals(0l, result1.getTotalElements());
 
-		Page<UserFilter> result2 = userFilterRepository.getOwnFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "default");
+		Page<UserFilter> result2 = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L), PageRequest.of(0, 3), "default");
 
 		Assert.assertEquals(3l, result2.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result2.get().findFirst().get().getId());
@@ -100,7 +112,11 @@ public class UserFilterRepositoryTest {
 
 	@Test
 	public void getSharedFiltersPaging() {
-		Page<UserFilter> result1 = userFilterRepository.getSharedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 1), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getShared(
+				ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 1),
+				"superadmin"
+		);
 
 		Assert.assertEquals(1l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
@@ -108,7 +124,7 @@ public class UserFilterRepositoryTest {
 
 	private Filter buildDefaultFilter() {
 		Set<FilterCondition> conditionSet = Sets.newHashSet();
-		return new Filter(2L, UserFilter.class, conditionSet);
+		return new Filter(UserFilter.class, conditionSet);
 	}
 
 }

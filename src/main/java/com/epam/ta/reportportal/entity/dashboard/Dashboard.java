@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.dashboard;
 
+import com.epam.ta.reportportal.entity.SharedEntity;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -32,12 +33,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Dashboard implements Serializable {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+public class Dashboard extends SharedEntity implements Serializable {
 
 	@Column(name = "name")
 	private String name;
@@ -55,14 +51,6 @@ public class Dashboard implements Serializable {
 	@OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.JOIN)
 	private Set<DashboardWidget> widgets = Sets.newHashSet();
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;

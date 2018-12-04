@@ -17,22 +17,39 @@
 package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.SharedEntity;
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.entity.project.Project;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
 /**
- * Extension of basic filter object. Represents user filter
- * with sorting and conditions
- *
  * @author Pavel Bortnik
  */
-
 @Entity
-@Table(name = "user_filter", schema = "public")
-public class UserFilter extends Queryable implements Serializable {
+@Table(name = "filter")
+@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
+public class UserFilter extends SharedEntity implements Serializable {
+
+	@Column(name = "name")
+	private String name;
+
+	@Enumerated(EnumType.STRING)
+	@Type(type = "pqsql_enum")
+	@Column(name = "target")
+	private ObjectType targetClass;
+
+	@Column(name = "description")
+	private String description;
+
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project project;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")
@@ -58,4 +75,35 @@ public class UserFilter extends Queryable implements Serializable {
 		this.filterSorts = filterSorts;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public ObjectType getTargetClass() {
+		return targetClass;
+	}
+
+	public void setTargetClass(ObjectType targetClass) {
+		this.targetClass = targetClass;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 }

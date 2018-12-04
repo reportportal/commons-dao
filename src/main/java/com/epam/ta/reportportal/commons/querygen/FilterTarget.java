@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -27,6 +28,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -50,9 +52,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeCo
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ATTRIBUTE_NAME;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_COUNT;
 import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_FIELD;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
@@ -181,7 +181,10 @@ public enum FilterTarget {
 					LAUNCH.NUMBER,
 					LAUNCH.LAST_MODIFIED,
 					LAUNCH.MODE,
-					LAUNCH.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM,
+					LAUNCH.STATUS,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
+					ITEM_ATTRIBUTE.SYSTEM,
 					STATISTICS.S_COUNTER,
 					STATISTICS_FIELD.NAME,
 					USERS.ID,
@@ -255,7 +258,10 @@ public enum FilterTarget {
 					TEST_ITEM.LAUNCH_ID,
 					TEST_ITEM_RESULTS.STATUS,
 					TEST_ITEM_RESULTS.END_TIME,
-					TEST_ITEM_RESULTS.DURATION, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM,
+					TEST_ITEM_RESULTS.DURATION,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
+					ITEM_ATTRIBUTE.SYSTEM,
 					PARAMETER.KEY,
 					PARAMETER.VALUE,
 					STATISTICS_FIELD.NAME,
@@ -401,15 +407,83 @@ public enum FilterTarget {
 		}
 	},
 
-	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
+	DASHBOARD_TARGET(Dashboard.class, Arrays.asList(
 
-			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED, SHARED_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, DASHBOARD.PROJECT_ID.getQualifiedName().toString(), Long.class)
 
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(USER_FILTER.ID,
+			return Lists.newArrayList(DASHBOARD.ID,
+					DASHBOARD.NAME,
+					DASHBOARD.DESCRIPTION,
+					DASHBOARD.CREATION_DATE,
+					DASHBOARD.PROJECT_ID,
+					SHARED_ENTITY.SHARED,
+					DSL.select(ACL_SID.SID).from(ACL_SID).where(ACL_SID.ID.eq(ACL_OBJECT_IDENTITY.OWNER_SID)).asField(OWNER)
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(DASHBOARD);
+			query.addJoin(SHARED_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHARED_ENTITY.ID));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, DASHBOARD.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
+			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return DASHBOARD.ID.cast(Long.class);
+		}
+	},
+
+	WIDGET_TARGET(Widget.class, Arrays.asList(
+
+			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED, SHARED_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, WIDGET.PROJECT_ID.getQualifiedName().toString(), Long.class)
+
+	)) {
+		@Override
+		protected Collection<? extends SelectField> selectFields() {
+			return Lists.newArrayList(WIDGET.ID,
+					WIDGET.NAME,
+					WIDGET.DESCRIPTION,
+					WIDGET.PROJECT_ID,
+					SHARED_ENTITY.SHARED,
+					DSL.select(ACL_SID.SID).from(ACL_SID).where(ACL_SID.ID.eq(ACL_OBJECT_IDENTITY.OWNER_SID)).asField(OWNER)
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(WIDGET);
+			query.addJoin(SHARED_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHARED_ENTITY.ID));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
+			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return WIDGET.ID;
+		}
+	},
+
+	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
+
+			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED, SHARED_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, FILTER.PROJECT_ID.getQualifiedName().toString(), Long.class)
+
+	)) {
+		@Override
+		protected Collection<? extends SelectField> selectFields() {
+			return Lists.newArrayList(FILTER.ID,
 					FILTER.NAME,
 					FILTER.PROJECT_ID,
 					FILTER.TARGET,
@@ -419,29 +493,32 @@ public enum FilterTarget {
 					FILTER_CONDITION.VALUE,
 					FILTER_CONDITION.NEGATIVE,
 					FILTER_SORT.FIELD,
-					FILTER_SORT.DIRECTION
+					FILTER_SORT.DIRECTION,
+					SHARED_ENTITY.SHARED,
+					DSL.select(ACL_SID.SID).from(ACL_SID).where(ACL_SID.ID.eq(ACL_OBJECT_IDENTITY.OWNER_SID)).asField(OWNER)
 			);
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
-			query.addFrom(USER_FILTER);
-			query.addJoin(FILTER, JoinType.JOIN, USER_FILTER.ID.eq(FILTER.ID));
+			query.addFrom(FILTER);
+			query.addJoin(SHARED_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHARED_ENTITY.ID));
 			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
 			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
-			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, USER_FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
 			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
 			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
 		}
 
 		@Override
 		protected Field<Long> idField() {
-			return USER_FILTER.ID;
+			return FILTER.ID;
 		}
 	};
 
 	public static final String FILTERED_QUERY = "filtered";
 	public static final String FILTERED_ID = "id";
+	public static final String OWNER = "owner";
 
 	private Class<?> clazz;
 	private List<CriteriaHolder> criteriaHolders;

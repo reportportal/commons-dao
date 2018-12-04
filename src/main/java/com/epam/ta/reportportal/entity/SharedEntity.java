@@ -14,10 +14,37 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.entity;
 
-import com.epam.ta.reportportal.entity.filter.UserFilter;
+import javax.persistence.*;
 
-public interface UserFilterRepositoryCustom extends ShareableRepository<UserFilter> {
+/**
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
+ */
+@Entity
+@Table(name = "shared_entity")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class SharedEntity {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	private boolean shared;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public boolean isShared() {
+		return shared;
+	}
+
+	public void setShared(boolean shared) {
+		this.shared = shared;
+	}
 }

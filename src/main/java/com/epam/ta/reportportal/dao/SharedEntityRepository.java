@@ -16,8 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.epam.ta.reportportal.entity.SharedEntity;
 
-public interface UserFilterRepositoryCustom extends ShareableRepository<UserFilter> {
-
+/**
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
+ */
+public interface SharedEntityRepository extends ReportPortalRepository<SharedEntity, Long> {
 }
