@@ -164,9 +164,9 @@ public class Sequences {
     public static final Sequence<Short> SERVER_SETTINGS_ID_SEQ = new SequenceImpl<Short>("server_settings_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
 
     /**
-     * The sequence <code>public.shared_entity_id_seq</code>
+     * The sequence <code>public.shareable_entity_id_seq</code>
      */
-    public static final Sequence<Long> SHARED_ENTITY_ID_SEQ = new SequenceImpl<Long>("shared_entity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Long> SHAREABLE_ENTITY_ID_SEQ = new SequenceImpl<Long>("shareable_entity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.statistics_field_sf_id_seq</code>

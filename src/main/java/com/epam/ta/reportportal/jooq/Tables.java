@@ -20,10 +20,6 @@
 package com.epam.ta.reportportal.jooq;
 
 import com.epam.ta.reportportal.jooq.tables.*;
-import com.epam.ta.reportportal.jooq.tables.records.*;
-import org.jooq.Configuration;
-import org.jooq.Field;
-import org.jooq.Result;
 
 import javax.annotation.Generated;
 
@@ -87,139 +83,9 @@ public class Tables {
     public static final JBugTrackingSystem BUG_TRACKING_SYSTEM = com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem.BUG_TRACKING_SYSTEM;
 
     /**
-     * The table <code>public.connectby</code>.
-     */
-    public static final JConnectby CONNECTBY = com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY;
-
-    /**
-     * Call <code>public.connectby</code>.
-     */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6)).fetch();
-    }
-
-    /**
-     * Get <code>public.connectby</code> as a table.
-     */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
-    }
-
-    /**
-     * Get <code>public.connectby</code> as a table.
-     */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5, Field<Integer> __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
-    }
-
-    /**
      * The table <code>public.content_field</code>.
      */
     public static final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
-
-    /**
-     * The table <code>public.crosstab</code>.
-     */
-    public static final JCrosstab CROSSTAB = com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB;
-
-    /**
-     * Call <code>public.crosstab</code>.
-     */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, String __2) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab</code> as a table.
-     */
-    public static JCrosstab CROSSTAB(String __1, String __2) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
-    }
-
-    /**
-     * Get <code>public.crosstab</code> as a table.
-     */
-    public static JCrosstab CROSSTAB(Field<String> __1, Field<String> __2) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
-    }
-
-    /**
-     * The table <code>public.crosstab2</code>.
-     */
-    public static final JCrosstab2 CROSSTAB2 = com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2;
-
-    /**
-     * Call <code>public.crosstab2</code>.
-     */
-    public static Result<JCrosstab2Record> CROSSTAB2(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab2</code> as a table.
-     */
-    public static JCrosstab2 CROSSTAB2(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1);
-    }
-
-    /**
-     * Get <code>public.crosstab2</code> as a table.
-     */
-    public static JCrosstab2 CROSSTAB2(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1);
-    }
-
-    /**
-     * The table <code>public.crosstab3</code>.
-     */
-    public static final JCrosstab3 CROSSTAB3 = com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3;
-
-    /**
-     * Call <code>public.crosstab3</code>.
-     */
-    public static Result<JCrosstab3Record> CROSSTAB3(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab3</code> as a table.
-     */
-    public static JCrosstab3 CROSSTAB3(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1);
-    }
-
-    /**
-     * Get <code>public.crosstab3</code> as a table.
-     */
-    public static JCrosstab3 CROSSTAB3(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1);
-    }
-
-    /**
-     * The table <code>public.crosstab4</code>.
-     */
-    public static final JCrosstab4 CROSSTAB4 = com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4;
-
-    /**
-     * Call <code>public.crosstab4</code>.
-     */
-    public static Result<JCrosstab4Record> CROSSTAB4(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab4</code> as a table.
-     */
-    public static JCrosstab4 CROSSTAB4(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1);
-    }
-
-    /**
-     * Get <code>public.crosstab4</code> as a table.
-     */
-    public static JCrosstab4 CROSSTAB4(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1);
-    }
 
     /**
      * The table <code>public.dashboard</code>.
@@ -322,32 +188,6 @@ public class Tables {
     public static final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
 
     /**
-     * The table <code>public.normal_rand</code>.
-     */
-    public static final JNormalRand NORMAL_RAND = com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND;
-
-    /**
-     * Call <code>public.normal_rand</code>.
-     */
-    public static Result<JNormalRandRecord> NORMAL_RAND(Configuration configuration, Integer __1, Double __2, Double __3) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3)).fetch();
-    }
-
-    /**
-     * Get <code>public.normal_rand</code> as a table.
-     */
-    public static JNormalRand NORMAL_RAND(Integer __1, Double __2, Double __3) {
-        return com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3);
-    }
-
-    /**
-     * Get <code>public.normal_rand</code> as a table.
-     */
-    public static JNormalRand NORMAL_RAND(Field<Integer> __1, Field<Double> __2, Field<Double> __3) {
-        return com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3);
-    }
-
-    /**
      * The table <code>public.oauth_access_token</code>.
      */
     public static final JOauthAccessToken OAUTH_ACCESS_TOKEN = com.epam.ta.reportportal.jooq.tables.JOauthAccessToken.OAUTH_ACCESS_TOKEN;
@@ -398,9 +238,9 @@ public class Tables {
     public static final JServerSettings SERVER_SETTINGS = com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
 
     /**
-     * The table <code>public.shared_entity</code>.
+     * The table <code>public.shareable_entity</code>.
      */
-    public static final JSharedEntity SHARED_ENTITY = com.epam.ta.reportportal.jooq.tables.JSharedEntity.SHARED_ENTITY;
+    public static final JShareableEntity SHAREABLE_ENTITY = com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
 
     /**
      * The table <code>public.statistics</code>.

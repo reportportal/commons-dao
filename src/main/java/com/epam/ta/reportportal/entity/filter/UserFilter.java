@@ -17,9 +17,8 @@
 package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.entity.SharedEntity;
+import com.epam.ta.reportportal.entity.ShareableEntity;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.project.Project;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -34,7 +33,7 @@ import java.util.Set;
 @Entity
 @Table(name = "filter")
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
-public class UserFilter extends SharedEntity implements Serializable {
+public class UserFilter extends ShareableEntity implements Serializable {
 
 	@Column(name = "name")
 	private String name;
@@ -46,10 +45,6 @@ public class UserFilter extends SharedEntity implements Serializable {
 
 	@Column(name = "description")
 	private String description;
-
-	@ManyToOne
-	@JoinColumn(name = "project_id")
-	private Project project;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")
@@ -97,13 +92,5 @@ public class UserFilter extends SharedEntity implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
 	}
 }

@@ -28,6 +28,7 @@ public class GeneralCriteriaConstant {
 	public static final String CRITERIA_LAST_MODIFIED = "lastModified";
 	public static final String CRITERIA_NAME = "name";
 	public static final String CRITERIA_SHARED = "shared";
+	public static final String CRITERIA_OWNER = "shared";
 	public static final String CRITERIA_START_TIME = "startTime";
 	public static final String CRITERIA_DESCRIPTION = "description";
 	public static final String CRITERIA_PROJECT = "project";

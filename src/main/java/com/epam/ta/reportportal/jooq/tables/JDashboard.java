@@ -46,7 +46,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboard extends TableImpl<JDashboardRecord> {
 
-    private static final long serialVersionUID = 1019220249;
+    private static final long serialVersionUID = -590060491;
 
     /**
      * The reference instance of <code>public.dashboard</code>
@@ -75,11 +75,6 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
      * The column <code>public.dashboard.description</code>.
      */
     public final TableField<JDashboardRecord, String> DESCRIPTION = createField("description", org.jooq.impl.SQLDataType.VARCHAR, this, "");
-
-    /**
-     * The column <code>public.dashboard.project_id</code>.
-     */
-    public final TableField<JDashboardRecord, Integer> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * The column <code>public.dashboard.creation_date</code>.
@@ -132,7 +127,7 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.DASHBOARD_PK, Indexes.UNQ_NAME_PROJECT);
+        return Arrays.<Index>asList(Indexes.DASHBOARD_PK);
     }
 
     /**
@@ -148,7 +143,7 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
      */
     @Override
     public List<UniqueKey<JDashboardRecord>> getKeys() {
-        return Arrays.<UniqueKey<JDashboardRecord>>asList(Keys.DASHBOARD_PK, Keys.UNQ_NAME_PROJECT);
+        return Arrays.<UniqueKey<JDashboardRecord>>asList(Keys.DASHBOARD_PK);
     }
 
     /**
@@ -156,15 +151,11 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
      */
     @Override
     public List<ForeignKey<JDashboardRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JDashboardRecord, ?>>asList(Keys.DASHBOARD__DASHBOARD_ID_FK, Keys.DASHBOARD__DASHBOARD_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JDashboardRecord, ?>>asList(Keys.DASHBOARD__DASHBOARD_ID_FK);
     }
 
-    public JSharedEntity sharedEntity() {
-        return new JSharedEntity(this, Keys.DASHBOARD__DASHBOARD_ID_FK);
-    }
-
-    public JProject project() {
-        return new JProject(this, Keys.DASHBOARD__DASHBOARD_PROJECT_ID_FKEY);
+    public JShareableEntity shareableEntity() {
+        return new JShareableEntity(this, Keys.DASHBOARD__DASHBOARD_ID_FK);
     }
 
     /**

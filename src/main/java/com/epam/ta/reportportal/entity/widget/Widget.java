@@ -16,10 +16,9 @@
 
 package com.epam.ta.reportportal.entity.widget;
 
-import com.epam.ta.reportportal.entity.SharedEntity;
+import com.epam.ta.reportportal.entity.ShareableEntity;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
-import com.epam.ta.reportportal.entity.project.Project;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -36,7 +35,7 @@ import java.util.Set;
 @Entity
 @Table(name = "widget")
 @TypeDef(name = "widgetOptions", typeClass = WidgetOptions.class)
-public class Widget extends SharedEntity implements Serializable {
+public class Widget extends ShareableEntity implements Serializable {
 
 	@Column(name = "name")
 	private String name;
@@ -62,10 +61,6 @@ public class Widget extends SharedEntity implements Serializable {
 	@Type(type = "widgetOptions")
 	@Column(name = "widget_options")
 	private WidgetOptions widgetOptions;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")
-	private Project project;
 
 	@OneToMany(mappedBy = "widget", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.JOIN)
@@ -117,14 +112,6 @@ public class Widget extends SharedEntity implements Serializable {
 
 	public void setWidgetOptions(WidgetOptions widgetOptions) {
 		this.widgetOptions = widgetOptions;
-	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
 	}
 
 	public Set<DashboardWidget> getDashboardWidgets() {

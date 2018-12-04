@@ -71,7 +71,7 @@ public class Keys {
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Identities0.IDENTITY_PROJECT_ATTRIBUTE;
     public static final Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Identities0.IDENTITY_SERVER_SETTINGS;
-    public static final Identity<JSharedEntityRecord, Long> IDENTITY_SHARED_ENTITY = Identities0.IDENTITY_SHARED_ENTITY;
+    public static final Identity<JShareableEntityRecord, Long> IDENTITY_SHAREABLE_ENTITY = Identities0.IDENTITY_SHAREABLE_ENTITY;
     public static final Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Identities0.IDENTITY_STATISTICS;
     public static final Identity<JStatisticsFieldRecord, Long> IDENTITY_STATISTICS_FIELD = Identities0.IDENTITY_STATISTICS_FIELD;
     public static final Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Identities0.IDENTITY_TEST_ITEM;
@@ -98,7 +98,6 @@ public class Keys {
     public static final UniqueKey<JBugTrackingSystemRecord> BUG_TRACKING_SYSTEM_PK = UniqueKeys0.BUG_TRACKING_SYSTEM_PK;
     public static final UniqueKey<JBugTrackingSystemRecord> UNIQUE_BTS = UniqueKeys0.UNIQUE_BTS;
     public static final UniqueKey<JDashboardRecord> DASHBOARD_PK = UniqueKeys0.DASHBOARD_PK;
-    public static final UniqueKey<JDashboardRecord> UNQ_NAME_PROJECT = UniqueKeys0.UNQ_NAME_PROJECT;
     public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = UniqueKeys0.DASHBOARD_WIDGET_PK;
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
     public static final UniqueKey<JDefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = UniqueKeys0.DEFECT_FIELD_ALLOWED_VALUE_PK;
@@ -136,7 +135,7 @@ public class Keys {
     public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_EMAIL_KEY = UniqueKeys0.RESTORE_PASSWORD_BID_EMAIL_KEY;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = UniqueKeys0.SERVER_SETTINGS_KEY_KEY;
-    public static final UniqueKey<JSharedEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
+    public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
     public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = UniqueKeys0.STATISTICS_PK;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = UniqueKeys0.UNIQUE_STATS_LAUNCH;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = UniqueKeys0.UNIQUE_STATS_ITEM;
@@ -154,7 +153,6 @@ public class Keys {
     public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = UniqueKeys0.USERS_LOGIN_KEY;
     public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = UniqueKeys0.USERS_EMAIL_KEY;
     public static final UniqueKey<JWidgetRecord> WIDGET_PK = UniqueKeys0.WIDGET_PK;
-    public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = UniqueKeys0.UNQ_WIDGET_NAME_PROJECT;
     public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = UniqueKeys0.WIDGET_FILTER_PK;
 
     // -------------------------------------------------------------------------
@@ -174,15 +172,13 @@ public class Keys {
     public static final ForeignKey<JAuthConfigRecord, JActiveDirectoryConfigRecord> AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY = ForeignKeys0.AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY;
     public static final ForeignKey<JBugTrackingSystemRecord, JProjectRecord> BUG_TRACKING_SYSTEM__BUG_TRACKING_SYSTEM_PROJECT_ID_FKEY = ForeignKeys0.BUG_TRACKING_SYSTEM__BUG_TRACKING_SYSTEM_PROJECT_ID_FKEY;
     public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
-    public static final ForeignKey<JDashboardRecord, JSharedEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
-    public static final ForeignKey<JDashboardRecord, JProjectRecord> DASHBOARD__DASHBOARD_PROJECT_ID_FKEY = ForeignKeys0.DASHBOARD__DASHBOARD_PROJECT_ID_FKEY;
+    public static final ForeignKey<JDashboardRecord, JShareableEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
     public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY;
     public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY;
     public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = ForeignKeys0.DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY;
     public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY;
     public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = ForeignKeys0.DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY;
-    public static final ForeignKey<JFilterRecord, JSharedEntityRecord> FILTER__FILTER_ID_FK = ForeignKeys0.FILTER__FILTER_ID_FK;
-    public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = ForeignKeys0.FILTER__FILTER_PROJECT_ID_FKEY;
+    public static final ForeignKey<JFilterRecord, JShareableEntityRecord> FILTER__FILTER_ID_FK = ForeignKeys0.FILTER__FILTER_ID_FK;
     public static final ForeignKey<JFilterConditionRecord, JFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = ForeignKeys0.FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY;
     public static final ForeignKey<JFilterSortRecord, JFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = ForeignKeys0.FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY;
     public static final ForeignKey<JIntegrationRecord, JProjectRecord> INTEGRATION__INTEGRATION_PROJECT_ID_FKEY = ForeignKeys0.INTEGRATION__INTEGRATION_PROJECT_ID_FKEY;
@@ -209,6 +205,7 @@ public class Keys {
     public static final ForeignKey<JProjectAttributeRecord, JProjectRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY;
     public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_USER_ID_FKEY;
     public static final ForeignKey<JProjectUserRecord, JProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY;
+    public static final ForeignKey<JShareableEntityRecord, JProjectRecord> SHAREABLE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = ForeignKeys0.SHAREABLE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JLaunchRecord> STATISTICS__STATISTICS_LAUNCH_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_LAUNCH_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_ITEM_ID_FKEY;
     public static final ForeignKey<JStatisticsRecord, JStatisticsFieldRecord> STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY = ForeignKeys0.STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY;
@@ -223,8 +220,7 @@ public class Keys {
     public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY;
     public static final ForeignKey<JUsersRecord, JProjectRecord> USERS__USERS_DEFAULT_PROJECT_ID_FKEY = ForeignKeys0.USERS__USERS_DEFAULT_PROJECT_ID_FKEY;
-    public static final ForeignKey<JWidgetRecord, JSharedEntityRecord> WIDGET__WIDGET_ID_FK = ForeignKeys0.WIDGET__WIDGET_ID_FK;
-    public static final ForeignKey<JWidgetRecord, JProjectRecord> WIDGET__WIDGET_PROJECT_ID_FKEY = ForeignKeys0.WIDGET__WIDGET_PROJECT_ID_FKEY;
+    public static final ForeignKey<JWidgetRecord, JShareableEntityRecord> WIDGET__WIDGET_ID_FK = ForeignKeys0.WIDGET__WIDGET_ID_FK;
     public static final ForeignKey<JWidgetFilterRecord, JWidgetRecord> WIDGET_FILTER__WIDGET_FILTER_WIDGET_ID_FKEY = ForeignKeys0.WIDGET_FILTER__WIDGET_FILTER_WIDGET_ID_FKEY;
     public static final ForeignKey<JWidgetFilterRecord, JFilterRecord> WIDGET_FILTER__WIDGET_FILTER_FILTER_ID_FKEY = ForeignKeys0.WIDGET_FILTER__WIDGET_FILTER_FILTER_ID_FKEY;
 
@@ -257,7 +253,7 @@ public class Keys {
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Internal.createIdentity(JProjectAttribute.PROJECT_ATTRIBUTE, JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
         public static Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Internal.createIdentity(JServerSettings.SERVER_SETTINGS, JServerSettings.SERVER_SETTINGS.ID);
-        public static Identity<JSharedEntityRecord, Long> IDENTITY_SHARED_ENTITY = Internal.createIdentity(JSharedEntity.SHARED_ENTITY, JSharedEntity.SHARED_ENTITY.ID);
+        public static Identity<JShareableEntityRecord, Long> IDENTITY_SHAREABLE_ENTITY = Internal.createIdentity(JShareableEntity.SHAREABLE_ENTITY, JShareableEntity.SHAREABLE_ENTITY.ID);
         public static Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Internal.createIdentity(JStatistics.STATISTICS, JStatistics.STATISTICS.S_ID);
         public static Identity<JStatisticsFieldRecord, Long> IDENTITY_STATISTICS_FIELD = Internal.createIdentity(JStatisticsField.STATISTICS_FIELD, JStatisticsField.STATISTICS_FIELD.SF_ID);
         public static Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Internal.createIdentity(JTestItem.TEST_ITEM, JTestItem.TEST_ITEM.ITEM_ID);
@@ -282,7 +278,6 @@ public class Keys {
         public static final UniqueKey<JBugTrackingSystemRecord> BUG_TRACKING_SYSTEM_PK = Internal.createUniqueKey(JBugTrackingSystem.BUG_TRACKING_SYSTEM, "bug_tracking_system_pk", JBugTrackingSystem.BUG_TRACKING_SYSTEM.ID);
         public static final UniqueKey<JBugTrackingSystemRecord> UNIQUE_BTS = Internal.createUniqueKey(JBugTrackingSystem.BUG_TRACKING_SYSTEM, "unique_bts", JBugTrackingSystem.BUG_TRACKING_SYSTEM.URL, JBugTrackingSystem.BUG_TRACKING_SYSTEM.TYPE, JBugTrackingSystem.BUG_TRACKING_SYSTEM.BTS_PROJECT, JBugTrackingSystem.BUG_TRACKING_SYSTEM.PROJECT_ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PK = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pk", JDashboard.DASHBOARD.ID);
-        public static final UniqueKey<JDashboardRecord> UNQ_NAME_PROJECT = Internal.createUniqueKey(JDashboard.DASHBOARD, "unq_name_project", JDashboard.DASHBOARD.NAME, JDashboard.DASHBOARD.PROJECT_ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME);
         public static final UniqueKey<JDefectFieldAllowedValueRecord> DEFECT_FIELD_ALLOWED_VALUE_PK = Internal.createUniqueKey(JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value_pk", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID);
@@ -320,7 +315,7 @@ public class Keys {
         public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createUniqueKey(JRestorePasswordBid.RESTORE_PASSWORD_BID, "restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_id", JServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_key_key", JServerSettings.SERVER_SETTINGS.KEY);
-        public static final UniqueKey<JSharedEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JSharedEntity.SHARED_ENTITY, "shareable_pk", JSharedEntity.SHARED_ENTITY.ID);
+        public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JShareableEntity.SHAREABLE_ENTITY, "shareable_pk", JShareableEntity.SHAREABLE_ENTITY.ID);
         public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = Internal.createUniqueKey(JStatistics.STATISTICS, "statistics_pk", JStatistics.STATISTICS.S_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_launch", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_item", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID);
@@ -338,7 +333,6 @@ public class Keys {
         public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = Internal.createUniqueKey(JUsers.USERS, "users_login_key", JUsers.USERS.LOGIN);
         public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(JUsers.USERS, "users_email_key", JUsers.USERS.EMAIL);
         public static final UniqueKey<JWidgetRecord> WIDGET_PK = Internal.createUniqueKey(JWidget.WIDGET, "widget_pk", JWidget.WIDGET.ID);
-        public static final UniqueKey<JWidgetRecord> UNQ_WIDGET_NAME_PROJECT = Internal.createUniqueKey(JWidget.WIDGET, "unq_widget_name_project", JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID);
         public static final UniqueKey<JWidgetFilterRecord> WIDGET_FILTER_PK = Internal.createUniqueKey(JWidgetFilter.WIDGET_FILTER, "widget_filter_pk", JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID);
     }
 
@@ -356,15 +350,13 @@ public class Keys {
         public static final ForeignKey<JAuthConfigRecord, JActiveDirectoryConfigRecord> AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACTIVE_DIRECTORY_CONFIG_PK, JAuthConfig.AUTH_CONFIG, "auth_config__auth_config_active_directory_config_id_fkey", JAuthConfig.AUTH_CONFIG.ACTIVE_DIRECTORY_CONFIG_ID);
         public static final ForeignKey<JBugTrackingSystemRecord, JProjectRecord> BUG_TRACKING_SYSTEM__BUG_TRACKING_SYSTEM_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JBugTrackingSystem.BUG_TRACKING_SYSTEM, "bug_tracking_system__bug_tracking_system_project_id_fkey", JBugTrackingSystem.BUG_TRACKING_SYSTEM.PROJECT_ID);
         public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PK, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
-        public static final ForeignKey<JDashboardRecord, JSharedEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
-        public static final ForeignKey<JDashboardRecord, JProjectRecord> DASHBOARD__DASHBOARD_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JDashboard.DASHBOARD, "dashboard__dashboard_project_id_fkey", JDashboard.DASHBOARD.PROJECT_ID);
+        public static final ForeignKey<JDashboardRecord, JShareableEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
         public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DASHBOARD_PK, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_dashboard_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID);
         public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PK, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_widget_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final ForeignKey<JDefectFieldAllowedValueRecord, JDefectFormFieldRecord> DEFECT_FIELD_ALLOWED_VALUE__DEFECT_FIELD_ALLOWED_VALUE_DEFECT_FORM_FIELD_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, "defect_field_allowed_value__defect_field_allowed_value_defect_form_field_fkey", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.DEFECT_FORM_FIELD);
         public static final ForeignKey<JDefectFormFieldRecord, JBugTrackingSystemRecord> DEFECT_FORM_FIELD__DEFECT_FORM_FIELD_BUG_TRACKING_SYSTEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.BUG_TRACKING_SYSTEM_PK, JDefectFormField.DEFECT_FORM_FIELD, "defect_form_field__defect_form_field_bug_tracking_system_id_fkey", JDefectFormField.DEFECT_FORM_FIELD.BUG_TRACKING_SYSTEM_ID);
         public static final ForeignKey<JDefectFormFieldValueRecord, JDefectFormFieldRecord> DEFECT_FORM_FIELD_VALUE__DEFECT_FORM_FIELD_VALUE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DEFECT_FORM_FIELD_PK, JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE, "defect_form_field_value__defect_form_field_value_id_fkey", JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE.ID);
-        public static final ForeignKey<JFilterRecord, JSharedEntityRecord> FILTER__FILTER_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JFilter.FILTER, "filter__filter_id_fk", JFilter.FILTER.ID);
-        public static final ForeignKey<JFilterRecord, JProjectRecord> FILTER__FILTER_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JFilter.FILTER, "filter__filter_project_id_fkey", JFilter.FILTER.PROJECT_ID);
+        public static final ForeignKey<JFilterRecord, JShareableEntityRecord> FILTER__FILTER_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JFilter.FILTER, "filter__filter_id_fk", JFilter.FILTER.ID);
         public static final ForeignKey<JFilterConditionRecord, JFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PK, JFilterCondition.FILTER_CONDITION, "filter_condition__filter_condition_filter_id_fkey", JFilterCondition.FILTER_CONDITION.FILTER_ID);
         public static final ForeignKey<JFilterSortRecord, JFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PK, JFilterSort.FILTER_SORT, "filter_sort__filter_sort_filter_id_fkey", JFilterSort.FILTER_SORT.FILTER_ID);
         public static final ForeignKey<JIntegrationRecord, JProjectRecord> INTEGRATION__INTEGRATION_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JIntegration.INTEGRATION, "integration__integration_project_id_fkey", JIntegration.INTEGRATION.PROJECT_ID);
@@ -391,6 +383,7 @@ public class Keys {
         public static final ForeignKey<JProjectAttributeRecord, JProjectRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JProjectAttribute.PROJECT_ATTRIBUTE, "project_attribute__project_attribute_project_id_fkey", JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);
         public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JProjectUser.PROJECT_USER, "project_user__project_user_user_id_fkey", JProjectUser.PROJECT_USER.USER_ID);
         public static final ForeignKey<JProjectUserRecord, JProjectRecord> PROJECT_USER__PROJECT_USER_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JProjectUser.PROJECT_USER, "project_user__project_user_project_id_fkey", JProjectUser.PROJECT_USER.PROJECT_ID);
+        public static final ForeignKey<JShareableEntityRecord, JProjectRecord> SHAREABLE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JShareableEntity.SHAREABLE_ENTITY, "shareable_entity__shareable_entity_project_id_fkey", JShareableEntity.SHAREABLE_ENTITY.PROJECT_ID);
         public static final ForeignKey<JStatisticsRecord, JLaunchRecord> STATISTICS__STATISTICS_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JStatistics.STATISTICS, "statistics__statistics_launch_id_fkey", JStatistics.STATISTICS.LAUNCH_ID);
         public static final ForeignKey<JStatisticsRecord, JTestItemRecord> STATISTICS__STATISTICS_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JStatistics.STATISTICS, "statistics__statistics_item_id_fkey", JStatistics.STATISTICS.ITEM_ID);
         public static final ForeignKey<JStatisticsRecord, JStatisticsFieldRecord> STATISTICS__STATISTICS_STATISTICS_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.STATISTICS_FIELD_PK, JStatistics.STATISTICS, "statistics__statistics_statistics_field_id_fkey", JStatistics.STATISTICS.STATISTICS_FIELD_ID);
@@ -405,8 +398,7 @@ public class Keys {
         public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_user_id_fkey", JUserPreference.USER_PREFERENCE.USER_ID);
         public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_filter_id_fkey", JUserPreference.USER_PREFERENCE.FILTER_ID);
         public static final ForeignKey<JUsersRecord, JProjectRecord> USERS__USERS_DEFAULT_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUsers.USERS, "users__users_default_project_id_fkey", JUsers.USERS.DEFAULT_PROJECT_ID);
-        public static final ForeignKey<JWidgetRecord, JSharedEntityRecord> WIDGET__WIDGET_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JWidget.WIDGET, "widget__widget_id_fk", JWidget.WIDGET.ID);
-        public static final ForeignKey<JWidgetRecord, JProjectRecord> WIDGET__WIDGET_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JWidget.WIDGET, "widget__widget_project_id_fkey", JWidget.WIDGET.PROJECT_ID);
+        public static final ForeignKey<JWidgetRecord, JShareableEntityRecord> WIDGET__WIDGET_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JWidget.WIDGET, "widget__widget_id_fk", JWidget.WIDGET.ID);
         public static final ForeignKey<JWidgetFilterRecord, JWidgetRecord> WIDGET_FILTER__WIDGET_FILTER_WIDGET_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PK, JWidgetFilter.WIDGET_FILTER, "widget_filter__widget_filter_widget_id_fkey", JWidgetFilter.WIDGET_FILTER.WIDGET_ID);
         public static final ForeignKey<JWidgetFilterRecord, JFilterRecord> WIDGET_FILTER__WIDGET_FILTER_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PK, JWidgetFilter.WIDGET_FILTER, "widget_filter__widget_filter_filter_id_fkey", JWidgetFilter.WIDGET_FILTER.FILTER_ID);
     }

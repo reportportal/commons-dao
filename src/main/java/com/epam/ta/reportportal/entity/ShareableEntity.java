@@ -16,21 +16,29 @@
 
 package com.epam.ta.reportportal.entity;
 
+import com.epam.ta.reportportal.entity.project.Project;
+
 import javax.persistence.*;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Entity
-@Table(name = "shared_entity")
+@Table(name = "shareable_entity")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class SharedEntity {
+public abstract class ShareableEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String owner;
+
 	private boolean shared;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "project_id")
+	private Project project;
 
 	public Long getId() {
 		return id;
@@ -46,5 +54,21 @@ public abstract class SharedEntity {
 
 	public void setShared(boolean shared) {
 		this.shared = shared;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 }

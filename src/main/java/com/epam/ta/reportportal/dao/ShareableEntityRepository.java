@@ -16,10 +16,22 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.SharedEntity;
+import com.epam.ta.reportportal.entity.ShareableEntity;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface SharedEntityRepository extends ReportPortalRepository<SharedEntity, Long> {
+public interface ShareableEntityRepository extends ReportPortalRepository<ShareableEntity, Long> {
+
+	/**
+	 * Find all shareable entities on project with share status
+	 *
+	 * @param projectId Project id
+	 * @param shared    Shared or not
+	 * @return List of shareable entities
+	 */
+	List<ShareableEntity> findAllByProjectAndShared(Long projectId, boolean shared);
+
 }

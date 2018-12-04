@@ -20,11 +20,9 @@
 package com.epam.ta.reportportal.jooq;
 
 import com.epam.ta.reportportal.jooq.tables.*;
-import com.epam.ta.reportportal.jooq.tables.records.*;
-import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_2;
-import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_3;
-import com.epam.ta.reportportal.jooq.udt.JTablefuncCrosstab_4;
-import org.jooq.*;
+import org.jooq.Catalog;
+import org.jooq.Sequence;
+import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
 
 import javax.annotation.Generated;
@@ -46,7 +44,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -698384933;
+    private static final long serialVersionUID = -1470446758;
 
     /**
      * The reference instance of <code>public</code>
@@ -99,139 +97,9 @@ public class JPublic extends SchemaImpl {
     public final JBugTrackingSystem BUG_TRACKING_SYSTEM = com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem.BUG_TRACKING_SYSTEM;
 
     /**
-     * The table <code>public.connectby</code>.
-     */
-    public final JConnectby CONNECTBY = com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY;
-
-    /**
-     * Call <code>public.connectby</code>.
-     */
-    public static Result<JConnectbyRecord> CONNECTBY(Configuration configuration, String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6)).fetch();
-    }
-
-    /**
-     * Get <code>public.connectby</code> as a table.
-     */
-    public static JConnectby CONNECTBY(String __1, String __2, String __3, String __4, String __5, Integer __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
-    }
-
-    /**
-     * Get <code>public.connectby</code> as a table.
-     */
-    public static JConnectby CONNECTBY(Field<String> __1, Field<String> __2, Field<String> __3, Field<String> __4, Field<String> __5, Field<Integer> __6) {
-        return com.epam.ta.reportportal.jooq.tables.JConnectby.CONNECTBY.call(__1, __2, __3, __4, __5, __6);
-    }
-
-    /**
      * The table <code>public.content_field</code>.
      */
     public final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
-
-    /**
-     * The table <code>public.crosstab</code>.
-     */
-    public final JCrosstab CROSSTAB = com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB;
-
-    /**
-     * Call <code>public.crosstab</code>.
-     */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, String __2) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab</code> as a table.
-     */
-    public static JCrosstab CROSSTAB(String __1, String __2) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
-    }
-
-    /**
-     * Get <code>public.crosstab</code> as a table.
-     */
-    public static JCrosstab CROSSTAB(Field<String> __1, Field<String> __2) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
-    }
-
-    /**
-     * The table <code>public.crosstab2</code>.
-     */
-    public final JCrosstab2 CROSSTAB2 = com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2;
-
-    /**
-     * Call <code>public.crosstab2</code>.
-     */
-    public static Result<JCrosstab2Record> CROSSTAB2(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab2</code> as a table.
-     */
-    public static JCrosstab2 CROSSTAB2(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1);
-    }
-
-    /**
-     * Get <code>public.crosstab2</code> as a table.
-     */
-    public static JCrosstab2 CROSSTAB2(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab2.CROSSTAB2.call(__1);
-    }
-
-    /**
-     * The table <code>public.crosstab3</code>.
-     */
-    public final JCrosstab3 CROSSTAB3 = com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3;
-
-    /**
-     * Call <code>public.crosstab3</code>.
-     */
-    public static Result<JCrosstab3Record> CROSSTAB3(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab3</code> as a table.
-     */
-    public static JCrosstab3 CROSSTAB3(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1);
-    }
-
-    /**
-     * Get <code>public.crosstab3</code> as a table.
-     */
-    public static JCrosstab3 CROSSTAB3(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab3.CROSSTAB3.call(__1);
-    }
-
-    /**
-     * The table <code>public.crosstab4</code>.
-     */
-    public final JCrosstab4 CROSSTAB4 = com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4;
-
-    /**
-     * Call <code>public.crosstab4</code>.
-     */
-    public static Result<JCrosstab4Record> CROSSTAB4(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1)).fetch();
-    }
-
-    /**
-     * Get <code>public.crosstab4</code> as a table.
-     */
-    public static JCrosstab4 CROSSTAB4(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1);
-    }
-
-    /**
-     * Get <code>public.crosstab4</code> as a table.
-     */
-    public static JCrosstab4 CROSSTAB4(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab4.CROSSTAB4.call(__1);
-    }
 
     /**
      * The table <code>public.dashboard</code>.
@@ -334,32 +202,6 @@ public class JPublic extends SchemaImpl {
     public final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
 
     /**
-     * The table <code>public.normal_rand</code>.
-     */
-    public final JNormalRand NORMAL_RAND = com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND;
-
-    /**
-     * Call <code>public.normal_rand</code>.
-     */
-    public static Result<JNormalRandRecord> NORMAL_RAND(Configuration configuration, Integer __1, Double __2, Double __3) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3)).fetch();
-    }
-
-    /**
-     * Get <code>public.normal_rand</code> as a table.
-     */
-    public static JNormalRand NORMAL_RAND(Integer __1, Double __2, Double __3) {
-        return com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3);
-    }
-
-    /**
-     * Get <code>public.normal_rand</code> as a table.
-     */
-    public static JNormalRand NORMAL_RAND(Field<Integer> __1, Field<Double> __2, Field<Double> __3) {
-        return com.epam.ta.reportportal.jooq.tables.JNormalRand.NORMAL_RAND.call(__1, __2, __3);
-    }
-
-    /**
      * The table <code>public.oauth_access_token</code>.
      */
     public final JOauthAccessToken OAUTH_ACCESS_TOKEN = com.epam.ta.reportportal.jooq.tables.JOauthAccessToken.OAUTH_ACCESS_TOKEN;
@@ -410,9 +252,9 @@ public class JPublic extends SchemaImpl {
     public final JServerSettings SERVER_SETTINGS = com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
 
     /**
-     * The table <code>public.shared_entity</code>.
+     * The table <code>public.shareable_entity</code>.
      */
-    public final JSharedEntity SHARED_ENTITY = com.epam.ta.reportportal.jooq.tables.JSharedEntity.SHARED_ENTITY;
+    public final JShareableEntity SHAREABLE_ENTITY = com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
 
     /**
      * The table <code>public.statistics</code>.
@@ -514,7 +356,7 @@ public class JPublic extends SchemaImpl {
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
             Sequences.PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
-            Sequences.SHARED_ENTITY_ID_SEQ,
+            Sequences.SHAREABLE_ENTITY_ID_SEQ,
             Sequences.STATISTICS_FIELD_SF_ID_SEQ,
             Sequences.STATISTICS_S_ID_SEQ,
             Sequences.TEST_ITEM_ITEM_ID_SEQ,
@@ -541,12 +383,7 @@ public class JPublic extends SchemaImpl {
             JAttribute.ATTRIBUTE,
             JAuthConfig.AUTH_CONFIG,
             JBugTrackingSystem.BUG_TRACKING_SYSTEM,
-            JConnectby.CONNECTBY,
             JContentField.CONTENT_FIELD,
-            JCrosstab.CROSSTAB,
-            JCrosstab2.CROSSTAB2,
-            JCrosstab3.CROSSTAB3,
-            JCrosstab4.CROSSTAB4,
             JDashboard.DASHBOARD,
             JDashboardWidget.DASHBOARD_WIDGET,
             JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE,
@@ -567,7 +404,6 @@ public class JPublic extends SchemaImpl {
             JLdapConfig.LDAP_CONFIG,
             JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES,
             JLog.LOG,
-            JNormalRand.NORMAL_RAND,
             JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
@@ -578,7 +414,7 @@ public class JPublic extends SchemaImpl {
             JProjectUser.PROJECT_USER,
             JRestorePasswordBid.RESTORE_PASSWORD_BID,
             JServerSettings.SERVER_SETTINGS,
-            JSharedEntity.SHARED_ENTITY,
+            JShareableEntity.SHAREABLE_ENTITY,
             JStatistics.STATISTICS,
             JStatisticsField.STATISTICS_FIELD,
             JTestItem.TEST_ITEM,
@@ -589,19 +425,5 @@ public class JPublic extends SchemaImpl {
             JUsers.USERS,
             JWidget.WIDGET,
             JWidgetFilter.WIDGET_FILTER);
-    }
-
-    @Override
-    public final List<UDT<?>> getUDTs() {
-        List result = new ArrayList();
-        result.addAll(getUDTs0());
-        return result;
-    }
-
-    private final List<UDT<?>> getUDTs0() {
-        return Arrays.<UDT<?>>asList(
-            JTablefuncCrosstab_2.TABLEFUNC_CROSSTAB_2,
-            JTablefuncCrosstab_3.TABLEFUNC_CROSSTAB_3,
-            JTablefuncCrosstab_4.TABLEFUNC_CROSSTAB_4);
     }
 }

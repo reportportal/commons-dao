@@ -45,7 +45,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilter extends TableImpl<JFilterRecord> {
 
-    private static final long serialVersionUID = -1250548505;
+    private static final long serialVersionUID = -1757642728;
 
     /**
      * The reference instance of <code>public.filter</code>
@@ -69,11 +69,6 @@ public class JFilter extends TableImpl<JFilterRecord> {
      * The column <code>public.filter.name</code>.
      */
     public final TableField<JFilterRecord, String> NAME = createField("name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
-     * The column <code>public.filter.project_id</code>.
-     */
-    public final TableField<JFilterRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.filter.target</code>.
@@ -155,15 +150,11 @@ public class JFilter extends TableImpl<JFilterRecord> {
      */
     @Override
     public List<ForeignKey<JFilterRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JFilterRecord, ?>>asList(Keys.FILTER__FILTER_ID_FK, Keys.FILTER__FILTER_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JFilterRecord, ?>>asList(Keys.FILTER__FILTER_ID_FK);
     }
 
-    public JSharedEntity sharedEntity() {
-        return new JSharedEntity(this, Keys.FILTER__FILTER_ID_FK);
-    }
-
-    public JProject project() {
-        return new JProject(this, Keys.FILTER__FILTER_PROJECT_ID_FKEY);
+    public JShareableEntity shareableEntity() {
+        return new JShareableEntity(this, Keys.FILTER__FILTER_ID_FK);
     }
 
     /**

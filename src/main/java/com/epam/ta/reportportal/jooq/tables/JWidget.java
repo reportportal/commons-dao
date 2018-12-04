@@ -45,7 +45,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidget extends TableImpl<JWidgetRecord> {
 
-    private static final long serialVersionUID = -1926835443;
+    private static final long serialVersionUID = 1276587978;
 
     /**
      * The reference instance of <code>public.widget</code>
@@ -84,11 +84,6 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      * The column <code>public.widget.items_count</code>.
      */
     public final TableField<JWidgetRecord, Short> ITEMS_COUNT = createField("items_count", org.jooq.impl.SQLDataType.SMALLINT, this, "");
-
-    /**
-     * The column <code>public.widget.project_id</code>.
-     */
-    public final TableField<JWidgetRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.widget.widget_options</code>.
@@ -141,7 +136,7 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.UNQ_WIDGET_NAME_PROJECT, Indexes.WIDGET_PK);
+        return Arrays.<Index>asList(Indexes.WIDGET_PK);
     }
 
     /**
@@ -157,7 +152,7 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      */
     @Override
     public List<UniqueKey<JWidgetRecord>> getKeys() {
-        return Arrays.<UniqueKey<JWidgetRecord>>asList(Keys.WIDGET_PK, Keys.UNQ_WIDGET_NAME_PROJECT);
+        return Arrays.<UniqueKey<JWidgetRecord>>asList(Keys.WIDGET_PK);
     }
 
     /**
@@ -165,15 +160,11 @@ public class JWidget extends TableImpl<JWidgetRecord> {
      */
     @Override
     public List<ForeignKey<JWidgetRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JWidgetRecord, ?>>asList(Keys.WIDGET__WIDGET_ID_FK, Keys.WIDGET__WIDGET_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JWidgetRecord, ?>>asList(Keys.WIDGET__WIDGET_ID_FK);
     }
 
-    public JSharedEntity sharedEntity() {
-        return new JSharedEntity(this, Keys.WIDGET__WIDGET_ID_FK);
-    }
-
-    public JProject project() {
-        return new JProject(this, Keys.WIDGET__WIDGET_PROJECT_ID_FKEY);
+    public JShareableEntity shareableEntity() {
+        return new JShareableEntity(this, Keys.WIDGET__WIDGET_ID_FK);
     }
 
     /**

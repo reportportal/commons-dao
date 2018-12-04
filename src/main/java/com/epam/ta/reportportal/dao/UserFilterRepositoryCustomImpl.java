@@ -29,6 +29,9 @@ import org.springframework.stereotype.Repository;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ShareableUtils.*;
 
+/**
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
+ */
 @Repository
 public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCustom {
 

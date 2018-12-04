@@ -59,7 +59,6 @@ public class Indexes {
     public static final Index BUG_TRACKING_SYSTEM_PK = Indexes0.BUG_TRACKING_SYSTEM_PK;
     public static final Index UNIQUE_BTS = Indexes0.UNIQUE_BTS;
     public static final Index DASHBOARD_PK = Indexes0.DASHBOARD_PK;
-    public static final Index UNQ_NAME_PROJECT = Indexes0.UNQ_NAME_PROJECT;
     public static final Index DASHBOARD_WIDGET_PK = Indexes0.DASHBOARD_WIDGET_PK;
     public static final Index WIDGET_ON_DASHBOARD_UNQ = Indexes0.WIDGET_ON_DASHBOARD_UNQ;
     public static final Index DEFECT_FIELD_ALLOWED_VALUE_PK = Indexes0.DEFECT_FIELD_ALLOWED_VALUE_PK;
@@ -116,7 +115,6 @@ public class Indexes {
     public static final Index USERS_EMAIL_KEY = Indexes0.USERS_EMAIL_KEY;
     public static final Index USERS_LOGIN_KEY = Indexes0.USERS_LOGIN_KEY;
     public static final Index USERS_PK = Indexes0.USERS_PK;
-    public static final Index UNQ_WIDGET_NAME_PROJECT = Indexes0.UNQ_WIDGET_NAME_PROJECT;
     public static final Index WIDGET_PK = Indexes0.WIDGET_PK;
     public static final Index WIDGET_FILTER_PK = Indexes0.WIDGET_FILTER_PK;
 
@@ -140,7 +138,6 @@ public class Indexes {
         public static Index BUG_TRACKING_SYSTEM_PK = Internal.createIndex("bug_tracking_system_pk", JBugTrackingSystem.BUG_TRACKING_SYSTEM, new OrderField[] { JBugTrackingSystem.BUG_TRACKING_SYSTEM.ID }, true);
         public static Index UNIQUE_BTS = Internal.createIndex("unique_bts", JBugTrackingSystem.BUG_TRACKING_SYSTEM, new OrderField[] { JBugTrackingSystem.BUG_TRACKING_SYSTEM.URL, JBugTrackingSystem.BUG_TRACKING_SYSTEM.TYPE, JBugTrackingSystem.BUG_TRACKING_SYSTEM.BTS_PROJECT, JBugTrackingSystem.BUG_TRACKING_SYSTEM.PROJECT_ID }, true);
         public static Index DASHBOARD_PK = Internal.createIndex("dashboard_pk", JDashboard.DASHBOARD, new OrderField[] { JDashboard.DASHBOARD.ID }, true);
-        public static Index UNQ_NAME_PROJECT = Internal.createIndex("unq_name_project", JDashboard.DASHBOARD, new OrderField[] { JDashboard.DASHBOARD.NAME, JDashboard.DASHBOARD.PROJECT_ID }, true);
         public static Index DASHBOARD_WIDGET_PK = Internal.createIndex("dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID }, true);
         public static Index WIDGET_ON_DASHBOARD_UNQ = Internal.createIndex("widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME }, true);
         public static Index DEFECT_FIELD_ALLOWED_VALUE_PK = Internal.createIndex("defect_field_allowed_value_pk", JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE, new OrderField[] { JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE.ID }, true);
@@ -178,7 +175,7 @@ public class Indexes {
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
         public static Index SERVER_SETTINGS_KEY_KEY = Internal.createIndex("server_settings_key_key", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.KEY }, true);
-        public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JSharedEntity.SHARED_ENTITY, new OrderField[] { JSharedEntity.SHARED_ENTITY.ID }, true);
+        public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.ID }, true);
         public static Index STATISTICS_PK = Internal.createIndex("statistics_pk", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
         public static Index UNIQUE_STATS_ITEM = Internal.createIndex("unique_stats_item", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID }, true);
         public static Index UNIQUE_STATS_LAUNCH = Internal.createIndex("unique_stats_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID }, true);
@@ -197,7 +194,6 @@ public class Indexes {
         public static Index USERS_EMAIL_KEY = Internal.createIndex("users_email_key", JUsers.USERS, new OrderField[] { JUsers.USERS.EMAIL }, true);
         public static Index USERS_LOGIN_KEY = Internal.createIndex("users_login_key", JUsers.USERS, new OrderField[] { JUsers.USERS.LOGIN }, true);
         public static Index USERS_PK = Internal.createIndex("users_pk", JUsers.USERS, new OrderField[] { JUsers.USERS.ID }, true);
-        public static Index UNQ_WIDGET_NAME_PROJECT = Internal.createIndex("unq_widget_name_project", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.NAME, JWidget.WIDGET.PROJECT_ID }, true);
         public static Index WIDGET_PK = Internal.createIndex("widget_pk", JWidget.WIDGET, new OrderField[] { JWidget.WIDGET.ID }, true);
         public static Index WIDGET_FILTER_PK = Internal.createIndex("widget_filter_pk", JWidgetFilter.WIDGET_FILTER, new OrderField[] { JWidgetFilter.WIDGET_FILTER.WIDGET_ID, JWidgetFilter.WIDGET_FILTER.FILTER_ID }, true);
     }

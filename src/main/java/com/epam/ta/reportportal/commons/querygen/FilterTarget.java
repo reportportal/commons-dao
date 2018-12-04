@@ -409,8 +409,9 @@ public enum FilterTarget {
 	DASHBOARD_TARGET(Dashboard.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHARED_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, DASHBOARD.PROJECT_ID.getQualifiedName().toString(), Long.class)
+			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
 
 	)) {
 		@Override
@@ -419,16 +420,16 @@ public enum FilterTarget {
 					DASHBOARD.NAME,
 					DASHBOARD.DESCRIPTION,
 					DASHBOARD.CREATION_DATE,
-					DASHBOARD.PROJECT_ID,
-					SHARED_ENTITY.SHARED,
-					DSL.select(ACL_SID.SID).from(ACL_SID).where(ACL_SID.ID.eq(ACL_OBJECT_IDENTITY.OWNER_SID)).asField(OWNER)
+					SHAREABLE_ENTITY.SHARED,
+					SHAREABLE_ENTITY.PROJECT_ID,
+					SHAREABLE_ENTITY.OWNER
 			);
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(DASHBOARD);
-			query.addJoin(SHARED_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHARED_ENTITY.ID));
+			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, DASHBOARD.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
 			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
 			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
@@ -443,8 +444,9 @@ public enum FilterTarget {
 	WIDGET_TARGET(Widget.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHARED_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, WIDGET.PROJECT_ID.getQualifiedName().toString(), Long.class)
+			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
 
 	)) {
 		@Override
@@ -452,16 +454,16 @@ public enum FilterTarget {
 			return Lists.newArrayList(WIDGET.ID,
 					WIDGET.NAME,
 					WIDGET.DESCRIPTION,
-					WIDGET.PROJECT_ID,
-					SHARED_ENTITY.SHARED,
-					DSL.select(ACL_SID.SID).from(ACL_SID).where(ACL_SID.ID.eq(ACL_OBJECT_IDENTITY.OWNER_SID)).asField(OWNER)
+					SHAREABLE_ENTITY.PROJECT_ID,
+					SHAREABLE_ENTITY.SHARED,
+					SHAREABLE_ENTITY.OWNER
 			);
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(WIDGET);
-			query.addJoin(SHARED_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHARED_ENTITY.ID));
+			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
 			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
 			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
@@ -476,15 +478,15 @@ public enum FilterTarget {
 	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHARED_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, FILTER.PROJECT_ID.getQualifiedName().toString(), Long.class)
+			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
 
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(FILTER.ID,
 					FILTER.NAME,
-					FILTER.PROJECT_ID,
 					FILTER.TARGET,
 					FILTER.DESCRIPTION,
 					FILTER_CONDITION.SEARCH_CRITERIA,
@@ -493,15 +495,16 @@ public enum FilterTarget {
 					FILTER_CONDITION.NEGATIVE,
 					FILTER_SORT.FIELD,
 					FILTER_SORT.DIRECTION,
-					SHARED_ENTITY.SHARED,
-					DSL.select(ACL_SID.SID).from(ACL_SID).where(ACL_SID.ID.eq(ACL_OBJECT_IDENTITY.OWNER_SID)).asField(OWNER)
+					SHAREABLE_ENTITY.SHARED,
+					SHAREABLE_ENTITY.PROJECT_ID,
+					SHAREABLE_ENTITY.OWNER
 			);
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(FILTER);
-			query.addJoin(SHARED_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHARED_ENTITY.ID));
+			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
 			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
@@ -517,7 +520,6 @@ public enum FilterTarget {
 
 	public static final String FILTERED_QUERY = "filtered";
 	public static final String FILTERED_ID = "id";
-	public static final String OWNER = "owner";
 
 	private Class<?> clazz;
 	private List<CriteriaHolder> criteriaHolders;
