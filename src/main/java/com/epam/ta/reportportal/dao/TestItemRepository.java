@@ -87,8 +87,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT * FROM test_item ti WHERE ti.unique_id IN :uniqueIds AND ti.launch_id IN :launchIds", nativeQuery = true)
 	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds);
 
-	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
-			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
-	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
-			@Param("status") String status);
+	/**
+	 * Checks if all children of test item with id = {@param parentId}, except item with id = {@param stepId},
+	 * has status not equal provided {@param status}
+	 *
+	 * @param parentId Id of parent test item
+	 * @param stepId   Id of test item that should be ignored during the checking
+	 * @param status   status {@link com.epam.ta.reportportal.entity.enums.StatusEnum}
+	 * @return True if has
+	 */
+	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id " + "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
+	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId, @Param("status") String status);
 }
