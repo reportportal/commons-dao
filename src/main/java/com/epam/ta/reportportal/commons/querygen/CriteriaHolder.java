@@ -107,7 +107,7 @@ public class CriteriaHolder {
 			/* Verify correct date */
 			BusinessRule.expect(oneValue, FilterRules.dateInMillis())
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue));
-			castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.valueOf(oneValue)), ZoneId.systemDefault());
+			castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)), ZoneId.systemDefault());
 		} else if (boolean.class.equals(getDataType()) || Boolean.class.isAssignableFrom(getDataType())) {
 			castedValue = BooleanUtils.toBoolean(oneValue);
 		} else if (LogLevel.class.isAssignableFrom(getDataType())) {
