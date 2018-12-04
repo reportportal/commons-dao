@@ -61,6 +61,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -175,10 +176,8 @@ public class RecordMappers {
 	};
 
 	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
-		User user = r.into(USERS.fieldStream()
-				.filter(f -> !USERS.METADATA.getQualifiedName().toString().equalsIgnoreCase(f.getQualifiedName().toString())
-						|| !USERS.METADATA.getName().equalsIgnoreCase(f.getName()))
-				.toArray(Field[]::new)).into(User.class);
+		User user = r.into(USERS.fieldStream().filter(f -> fieldExcludingPredicate(USERS.METADATA).test(f)).toArray(Field[]::new))
+				.into(User.class);
 		String metaDataString = r.get(USERS.METADATA, String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
