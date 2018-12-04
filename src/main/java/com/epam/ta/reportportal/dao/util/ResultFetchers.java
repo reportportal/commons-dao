@@ -125,7 +125,6 @@ public class ResultFetchers {
 				.stream()
 				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toSet()))
 				.entrySet()
-				.stream()
 				.forEach(entry -> items.get(entry.getKey()).setRetries(entry.getValue()));
 	};
 
@@ -229,6 +228,8 @@ public class ResultFetchers {
 				userFilter = userFilterMap.get(userFilterID);
 			} else {
 				userFilter = r.into(UserFilter.class);
+				userFilter.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
+				userFilter.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
 				project.setId(r.get(PROJECT.ID, Long.class));
 				userFilter.setProject(project);
