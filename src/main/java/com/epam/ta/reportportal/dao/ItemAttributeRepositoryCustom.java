@@ -34,32 +34,34 @@ public interface ItemAttributeRepositoryCustom {
 	List<String> findKeysByProjectIdAndValue(Long projectId, String value);
 
 	/**
-	 * Retrieves launch attribute values by project and part of value.
+	 * Retrieves launch attribute values by project, specified key and part of value.
 	 * Used for autocompletion functionality
 	 *
 	 * @param projectId Id of project
-	 * @param value    part of value
+	 * @param key       Specified key
+	 * @param value     Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findValuesByProjectIdAndValue(Long projectId, String value);
+	List<String> findValuesByProjectIdAndKeyLikeValue(Long projectId, String key, String value);
 
 	/**
 	 * Retrieves test item attribute keys by launch and part of value.
 	 * Used for autocompletion functionality
 	 *
-	 * @param launchId    Id of launch
+	 * @param launchId Id of launch
 	 * @param value    part of key
 	 * @return List of matched attribute keys
 	 */
 	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
 
 	/**
-	 * Retrieves test item attribute values by launch and part of value.
+	 * Retrieves test item attribute values by launch, specified key and part of value.
 	 * Used for autocompletion functionality
 	 *
 	 * @param launchId    Id of launch
-	 * @param value    part of key
+	 * @param key       Specified key
+	 * @param value     Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
+	List<String> findValuesByLaunchIdAndKeyLikeValue(Long launchId, String key, String value);
 }
