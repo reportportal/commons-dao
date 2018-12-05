@@ -45,7 +45,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JItemAttribute extends TableImpl<JItemAttributeRecord> {
 
-    private static final long serialVersionUID = 928179727;
+    private static final long serialVersionUID = 368738659;
 
     /**
      * The reference instance of <code>public.item_attribute</code>
@@ -63,7 +63,7 @@ public class JItemAttribute extends TableImpl<JItemAttributeRecord> {
     /**
      * The column <code>public.item_attribute.id</code>.
      */
-    public final TableField<JItemAttributeRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('item_attribute_id_seq'::regclass)", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+    public final TableField<JItemAttributeRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('item_attribute_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * The column <code>public.item_attribute.key</code>.
@@ -143,7 +143,7 @@ public class JItemAttribute extends TableImpl<JItemAttributeRecord> {
      * {@inheritDoc}
      */
     @Override
-    public Identity<JItemAttributeRecord, Integer> getIdentity() {
+    public Identity<JItemAttributeRecord, Long> getIdentity() {
         return Keys.IDENTITY_ITEM_ATTRIBUTE;
     }
 
