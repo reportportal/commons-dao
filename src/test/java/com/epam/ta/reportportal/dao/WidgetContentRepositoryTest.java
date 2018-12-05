@@ -592,6 +592,7 @@ public class WidgetContentRepositoryTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
+
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
 						String.valueOf(projectId),

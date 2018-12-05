@@ -191,7 +191,7 @@ public class QueryBuilder {
 		return this;
 	}
 
-	static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
+	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);

@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
@@ -40,7 +41,6 @@ import java.util.stream.StreamSupport;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.QueryUtils.updateWithLatestLaunchOption;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -77,7 +77,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			int limit) {
 
 		return OVERALL_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(updateWithLatestLaunchOption(QueryBuilder.newBuilder(filter).with(sort).with(limit), latest).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, latest).with(sort).with(limit).build())
 				.select(STATISTICS_FIELD.NAME, sum(STATISTICS.S_COUNTER).as(SUM))
 				.from(LAUNCH)
 				.join(LAUNCHES)
@@ -426,7 +426,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<LaunchesDurationContent> launchesDurationStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
 		return dsl.with(LAUNCHES)
-				.as(updateWithLatestLaunchOption(QueryBuilder.newBuilder(filter).with(sort).with(limit), isLatest).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, isLatest).with(sort).with(limit).build())
 				.select(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
@@ -563,7 +563,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
 		List<UniqueBugContent> uniqueBugContents = dsl.with(LAUNCHES)
-				.as(updateWithLatestLaunchOption(QueryBuilder.newBuilder(filter).with(limit).with(sort), isLatest).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, isLatest).with(limit).with(sort).build())
 				.select(TICKET.TICKET_ID,
 						TICKET.SUBMIT_DATE,
 						TICKET.URL,
@@ -802,7 +802,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private SelectOnConditionStep<? extends Record> getProductStatusSelect(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields) {
 		return dsl.with(LAUNCHES)
-				.as(updateWithLatestLaunchOption(QueryBuilder.newBuilder(filter).with(sort).with(limit), isLatest).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, isLatest).with(sort).with(limit).build())
 				.select(fields)
 				.from(LAUNCH)
 				.join(LAUNCHES)

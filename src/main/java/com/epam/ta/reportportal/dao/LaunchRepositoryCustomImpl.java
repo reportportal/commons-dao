@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -43,7 +44,6 @@ import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QU
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.QueryUtils.updateWithLatestLaunchOption;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
@@ -139,7 +139,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Optional<Launch> findLatestByFilter(Filter filter) {
 		return ofNullable(dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER.desc()).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
 				.select()
 				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
@@ -154,9 +154,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 		return PageableExecutionUtils.getPage(
 				LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
-						.as(updateWithLatestLaunchOption(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER.desc()).with(pageable),
-								true
-						).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).with(pageable).build())
 						.select()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
@@ -172,7 +170,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
-						.as(updateWithLatestLaunchOption(QueryBuilder.newBuilder(filter), true).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
 						.select()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
