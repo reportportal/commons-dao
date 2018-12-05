@@ -22,6 +22,7 @@ import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -36,7 +37,7 @@ import java.util.Optional;
 @Table(name = "activity", schema = "public")
 @TypeDef(name = "activityDetails", typeClass = ActivityDetails.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
-public class Activity {
+public class Activity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

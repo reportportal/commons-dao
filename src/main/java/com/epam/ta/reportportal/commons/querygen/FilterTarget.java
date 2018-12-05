@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -27,6 +28,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -404,17 +406,87 @@ public enum FilterTarget {
 		}
 	},
 
-	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
+	DASHBOARD_TARGET(Dashboard.class, Arrays.asList(
 
-			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
 
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(USER_FILTER.ID,
+			return Lists.newArrayList(DASHBOARD.ID,
+					DASHBOARD.NAME,
+					DASHBOARD.DESCRIPTION,
+					DASHBOARD.CREATION_DATE,
+					SHAREABLE_ENTITY.SHARED,
+					SHAREABLE_ENTITY.PROJECT_ID,
+					SHAREABLE_ENTITY.OWNER
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(DASHBOARD);
+			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHAREABLE_ENTITY.ID));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, DASHBOARD.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
+			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return DASHBOARD.ID.cast(Long.class);
+		}
+	},
+
+	WIDGET_TARGET(Widget.class, Arrays.asList(
+
+			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+
+	)) {
+		@Override
+		protected Collection<? extends SelectField> selectFields() {
+			return Lists.newArrayList(WIDGET.ID,
+					WIDGET.NAME,
+					WIDGET.DESCRIPTION,
+					SHAREABLE_ENTITY.PROJECT_ID,
+					SHAREABLE_ENTITY.SHARED,
+					SHAREABLE_ENTITY.OWNER
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(WIDGET);
+			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHAREABLE_ENTITY.ID));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
+			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return WIDGET.ID;
+		}
+	},
+
+	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(
+
+			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+
+	)) {
+		@Override
+		protected Collection<? extends SelectField> selectFields() {
+			return Lists.newArrayList(FILTER.ID,
 					FILTER.NAME,
-					FILTER.PROJECT_ID,
 					FILTER.TARGET,
 					FILTER.DESCRIPTION,
 					FILTER_CONDITION.SEARCH_CRITERIA,
@@ -422,24 +494,27 @@ public enum FilterTarget {
 					FILTER_CONDITION.VALUE,
 					FILTER_CONDITION.NEGATIVE,
 					FILTER_SORT.FIELD,
-					FILTER_SORT.DIRECTION
+					FILTER_SORT.DIRECTION,
+					SHAREABLE_ENTITY.SHARED,
+					SHAREABLE_ENTITY.PROJECT_ID,
+					SHAREABLE_ENTITY.OWNER
 			);
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
-			query.addFrom(USER_FILTER);
-			query.addJoin(FILTER, JoinType.JOIN, USER_FILTER.ID.eq(FILTER.ID));
+			query.addFrom(FILTER);
+			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
 			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
-			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, USER_FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
+			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
 			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
 			query.addJoin(ACL_ENTRY, JoinType.JOIN, ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
 		}
 
 		@Override
 		protected Field<Long> idField() {
-			return USER_FILTER.ID;
+			return FILTER.ID;
 		}
 	};
 

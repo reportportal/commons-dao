@@ -18,10 +18,10 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -30,24 +30,18 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.epam.ta.reportportal.entity.widget.Widget;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
-import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
@@ -58,14 +52,6 @@ import static java.util.Optional.ofNullable;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class ResultFetchers {
-
-	private static ObjectMapper objectMapper;
-
-	static {
-		objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new JavaTimeModule());
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
 
 	private ResultFetchers() {
 		//static only
@@ -141,7 +127,6 @@ public class ResultFetchers {
 				.stream()
 				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toSet()))
 				.entrySet()
-				.stream()
 				.forEach(entry -> items.get(entry.getKey()).setRetries(entry.getValue()));
 	};
 
@@ -211,23 +196,10 @@ public class ResultFetchers {
 			Integer id = record.get(INTEGRATION.ID);
 			Integration integration;
 			if (!integrations.containsKey(id)) {
-				integration = record.into(INTEGRATION.fieldStream()
-						.filter(f -> fieldExcludingPredicate(INTEGRATION.PARAMS).test(f))
-						.toArray(Field[]::new)).into(Integration.class);
+				integration = record.into(Integration.class);
 			} else {
 				integration = integrations.get(id);
 			}
-
-			String params = record.get(INTEGRATION.PARAMS, String.class);
-			ofNullable(params).ifPresent(p -> {
-				try {
-					IntegrationParams integrationParams = objectMapper.readValue(params, IntegrationParams.class);
-					integration.setParams(integrationParams);
-				} catch (IOException e) {
-					throw new ReportPortalException("Error during parsing user metadata");
-				}
-			});
-
 			integrations.put(id, integration);
 		});
 		return new ArrayList<>(integrations.values());
@@ -258,15 +230,57 @@ public class ResultFetchers {
 				userFilter = userFilterMap.get(userFilterID);
 			} else {
 				userFilter = r.into(UserFilter.class);
+				userFilter.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
+				userFilter.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
 				project.setId(r.get(PROJECT.ID, Long.class));
 				userFilter.setProject(project);
-				userFilterMap.put(userFilterID, userFilter);
 			}
 			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
 			userFilter.getFilterSorts().add(r.into(FilterSort.class));
+			userFilterMap.put(userFilterID, userFilter);
 		});
 		return Lists.newArrayList(userFilterMap.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<Dashboard>> DASHBOARD_FETCHER = result -> {
+		Map<Long, Dashboard> dashboardMap = new HashMap<>();
+		result.forEach(r -> {
+			Long dashboardId = r.get(ID, Long.class);
+			Dashboard dashboard;
+			if (dashboardMap.containsKey(dashboardId)) {
+				dashboard = dashboardMap.get(dashboardId);
+			} else {
+				dashboard = r.into(Dashboard.class);
+				dashboard.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
+				dashboard.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+				Project project = new Project();
+				project.setId(r.get(PROJECT.ID, Long.class));
+				dashboard.setProject(project);
+			}
+			dashboardMap.put(dashboardId, dashboard);
+		});
+		return Lists.newArrayList(dashboardMap.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<Widget>> WIDGET_FETCHER = result -> {
+		Map<Long, Widget> widgetMap = new HashMap<>();
+		result.forEach(r -> {
+			Long widgetId = r.get(ID, Long.class);
+			Widget widget;
+			if (widgetMap.containsKey(widgetId)) {
+				widget = widgetMap.get(widgetId);
+			} else {
+				widget = r.into(Widget.class);
+				widget.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
+				widget.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+				Project project = new Project();
+				project.setId(r.get(PROJECT.ID, Long.class));
+				widget.setProject(project);
+			}
+			widgetMap.put(widgetId, widget);
+		});
+		return Lists.newArrayList(widgetMap.values());
 	};
 
 }

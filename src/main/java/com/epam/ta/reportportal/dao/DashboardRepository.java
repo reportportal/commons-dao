@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author Pavel Bortnik
  */
-public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long> {
+public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
 
 	List<Dashboard> findAllByProjectId(Long projectId);
 
