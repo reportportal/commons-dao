@@ -16,11 +16,13 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import org.jooq.DSLContext;
 import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
@@ -54,6 +56,17 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	@Override
 	public List<String> findValuesByLaunchIdAndValue(Long launchId, String value) {
 		return findByLaunchIdAndValue(launchId, value, ITEM_ATTRIBUTE.VALUE);
+	}
+
+	@Override
+	public Optional<ItemAttribute> findAttributeByLaunchIdAndValue(Long launchId, String value, boolean system) {
+		return Optional.ofNullable(dslContext.select()
+				.from(ITEM_ATTRIBUTE)
+				.leftJoin(LAUNCH)
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(LAUNCH.ID.eq(launchId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.KEY.eq(value))
+				.fetchOneInto(ItemAttribute.class));
 	}
 
 	private List<String> findByProjectIdAndValue(Long projectId, String value, TableField field) {
