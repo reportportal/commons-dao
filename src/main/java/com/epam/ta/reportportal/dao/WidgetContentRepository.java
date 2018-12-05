@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.entity.filter.Queryable;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import org.springframework.data.domain.Sort;
 
@@ -225,7 +224,7 @@ public interface WidgetContentRepository {
 	 * @param customColumns     Map of the custom column name as key and {@link com.epam.ta.reportportal.entity.ItemAttribute#key} as value
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
-	 * @return Map grouped by filter name with {@link Queryable#getName()} as key and list of {@link ProductStatusStatisticsContent} as value
+	 * @return Map grouped by filter name with {@link com.epam.ta.reportportal.entity.filter.UserFilter#getName()} as key and list of {@link LaunchesStatisticsContent} as value
 	 */
 	Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
 			List<String> contentFields, Map<String, String> customColumns, boolean isLatest, int limit);

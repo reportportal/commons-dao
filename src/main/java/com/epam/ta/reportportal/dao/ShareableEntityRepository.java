@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao.util;
+package com.epam.ta.reportportal.dao;
 
-import org.junit.Assert;
-import org.junit.Test;
+import com.epam.ta.reportportal.entity.ShareableEntity;
 
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import java.util.List;
 
 /**
- * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public class RecordMapperUtilsTest {
+public interface ShareableEntityRepository extends ReportPortalRepository<ShareableEntity, Long> {
 
-	@Test
-	public void fieldExcludingPredicate() {
+	/**
+	 * Find all shareable entities on project with share status
+	 *
+	 * @param projectId Project id
+	 * @param shared    Shared or not
+	 * @return List of shareable entities
+	 */
+	List<ShareableEntity> findAllByProjectIdAndShared(Long projectId, boolean shared);
 
-		Assert.assertFalse(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.LOGIN));
-		Assert.assertTrue(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.FULL_NAME));
-	}
 }

@@ -16,11 +16,28 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface WidgetRepositoryCustom extends ShareableRepository<Widget> {
+public interface ShareableRepository<T> {
+
+	/**
+	 * Get all permitted objects for specified user
+	 */
+	Page<T> getPermitted(ProjectFilter filter, Pageable pageable, String userName);
+
+	/**
+	 * Get only objects for which the user is owner
+	 */
+	Page<T> getOwn(ProjectFilter filter, Pageable pageable, String userName);
+
+	/**
+	 * Get all shared objects user without own objects
+	 */
+	Page<T> getShared(ProjectFilter filter, Pageable pageable, String userName);
 
 }
