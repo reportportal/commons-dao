@@ -41,11 +41,11 @@ public class FlakyCasesTableContent implements Serializable {
 	@Column(name = TOTAL)
 	private Long total;
 
-	@JsonProperty(value = ITEM_NAME)
+	@JsonProperty(value = "itemName")
 	@Column(name = ITEM_NAME)
 	private String itemName;
 
-	@JsonProperty(value = UNIQUE_ID)
+	@JsonProperty(value = "uniqueId")
 	@Column(name = UNIQUE_ID)
 	private String uniqueId;
 

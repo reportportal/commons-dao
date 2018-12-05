@@ -138,7 +138,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
+	public Optional<Launch> findLatestByFilter(Filter filter) {
 		return ofNullable(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER.desc()).addCondition(buildLatestLaunchCondition(filter)).build())
 				.select()
@@ -146,7 +146,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
-				.where(LAUNCH.NAME.eq(launchName))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOneInto(Launch.class));
 	}
@@ -172,7 +171,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).with(true).build())
+						.as(QueryBuilder.newBuilder(filter).addCondition(buildLatestLaunchCondition(filter)).build())
 						.select()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)

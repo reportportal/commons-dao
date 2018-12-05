@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -29,17 +30,24 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
@@ -50,6 +58,14 @@ import static java.util.Optional.ofNullable;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class ResultFetchers {
+
+	private static ObjectMapper objectMapper;
+
+	static {
+		objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
 	private ResultFetchers() {
 		//static only
@@ -195,10 +211,23 @@ public class ResultFetchers {
 			Integer id = record.get(INTEGRATION.ID);
 			Integration integration;
 			if (!integrations.containsKey(id)) {
-				integration = record.into(Integration.class);
+				integration = record.into(INTEGRATION.fieldStream()
+						.filter(f -> fieldExcludingPredicate(INTEGRATION.PARAMS).test(f))
+						.toArray(Field[]::new)).into(Integration.class);
 			} else {
 				integration = integrations.get(id);
 			}
+
+			String params = record.get(INTEGRATION.PARAMS, String.class);
+			ofNullable(params).ifPresent(p -> {
+				try {
+					IntegrationParams integrationParams = objectMapper.readValue(params, IntegrationParams.class);
+					integration.setParams(integrationParams);
+				} catch (IOException e) {
+					throw new ReportPortalException("Error during parsing user metadata");
+				}
+			});
+
 			integrations.put(id, integration);
 		});
 		return new ArrayList<>(integrations.values());

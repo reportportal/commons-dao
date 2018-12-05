@@ -60,7 +60,7 @@ public class Widget implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
 	@Column(name = "field")
-	private Set<String> contentFields = Sets.newHashSet();
+	private Set<String> contentFields = Sets.newLinkedHashSet();
 
 	@Type(type = "widgetOptions")
 	@Column(name = "widget_options")
