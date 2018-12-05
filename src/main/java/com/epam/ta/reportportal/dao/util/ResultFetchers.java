@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.widget.Widget;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jooq.Record;
@@ -234,10 +235,10 @@ public class ResultFetchers {
 				Project project = new Project();
 				project.setId(r.get(PROJECT.ID, Long.class));
 				userFilter.setProject(project);
-				userFilterMap.put(userFilterID, userFilter);
 			}
 			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
 			userFilter.getFilterSorts().add(r.into(FilterSort.class));
+			userFilterMap.put(userFilterID, userFilter);
 		});
 		return Lists.newArrayList(userFilterMap.values());
 	};
@@ -256,10 +257,30 @@ public class ResultFetchers {
 				Project project = new Project();
 				project.setId(r.get(PROJECT.ID, Long.class));
 				dashboard.setProject(project);
-				dashboardMap.put(dashboardId, dashboard);
 			}
+			dashboardMap.put(dashboardId, dashboard);
 		});
 		return Lists.newArrayList(dashboardMap.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<Widget>> WIDGET_FETCHER = result -> {
+		Map<Long, Widget> widgetMap = new HashMap<>();
+		result.forEach(r -> {
+			Long widgetId = r.get(ID, Long.class);
+			Widget widget;
+			if (widgetMap.containsKey(widgetId)) {
+				widget = widgetMap.get(widgetId);
+			} else {
+				widget = r.into(Widget.class);
+				widget.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
+				widget.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+				Project project = new Project();
+				project.setId(r.get(PROJECT.ID, Long.class));
+				widget.setProject(project);
+			}
+			widgetMap.put(widgetId, widget);
+		});
+		return Lists.newArrayList(widgetMap.values());
 	};
 
 }
