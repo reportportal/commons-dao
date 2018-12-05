@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.entity.dashboard.Dashboard;
+import org.jooq.Field;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
- * @author Pavel Bortnik
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
+public final class RecordMapperUtils {
 
-	List<Dashboard> findAllByProjectId(Long projectId);
+	private RecordMapperUtils() {
+		//static only
+	}
 
+	public static Predicate<Field<?>> fieldExcludingPredicate(Field<?>... fields) {
+		return field -> Arrays.stream(fields)
+				.noneMatch(f -> f.getName().equalsIgnoreCase(field.getName()) && f.getQualifiedName()
+						.toString()
+						.equalsIgnoreCase(field.getQualifiedName().toString()));
+	}
 }

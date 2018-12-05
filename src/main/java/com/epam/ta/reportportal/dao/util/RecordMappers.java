@@ -47,6 +47,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -60,6 +61,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -174,7 +176,8 @@ public class RecordMappers {
 	};
 
 	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
-		User user = r.into(User.class);
+		User user = r.into(USERS.fieldStream().filter(f -> fieldExcludingPredicate(USERS.METADATA).test(f)).toArray(Field[]::new))
+				.into(User.class);
 		String metaDataString = r.get(USERS.METADATA, String.class);
 		ofNullable(metaDataString).ifPresent(md -> {
 			try {
@@ -231,7 +234,7 @@ public class RecordMappers {
 
 	public static final RecordMapper<? super Record, SharedEntity> SHARED_ENTITY_MAPPER = r -> r.into(SharedEntity.class);
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(USER_FILTER.ID))
+	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(FILTER.ID))
 			.ifPresent(id -> {
 				Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
 				UserFilter filter = new UserFilter();

@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.entity.dashboard.Dashboard;
+import org.junit.Assert;
+import org.junit.Test;
 
-import java.util.List;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 
 /**
- * @author Pavel Bortnik
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
+public class RecordMapperUtilsTest {
 
-	List<Dashboard> findAllByProjectId(Long projectId);
+	@Test
+	public void fieldExcludingPredicate() {
 
+		Assert.assertFalse(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.LOGIN));
+		Assert.assertTrue(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.FULL_NAME));
+	}
 }

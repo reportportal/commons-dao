@@ -18,13 +18,8 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 
-import java.util.List;
-
 /**
- * @author Pavel Bortnik
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
-
-	List<Dashboard> findAllByProjectId(Long projectId);
-
+public interface DashboardRepositoryCustom extends ShareableRepository<Dashboard> {
 }
