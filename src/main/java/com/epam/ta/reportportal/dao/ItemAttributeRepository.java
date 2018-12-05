@@ -18,8 +18,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.ItemAttribute;
 
+import java.util.Optional;
+
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public interface ItemAttributeRepository extends ReportPortalRepository<ItemAttribute, Long>, ItemAttributeRepositoryCustom {
+
+	Optional<ItemAttribute> findByLaunchIdAndKeyAndSystem(Long launchId, String key, boolean isSystem);
 }
