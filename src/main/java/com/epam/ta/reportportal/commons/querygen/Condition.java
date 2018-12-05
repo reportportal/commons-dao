@@ -291,8 +291,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(
-					DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria())),
+			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(DSL.arrayAggDistinct(DSL.field(criteriaHolder.getQueryCriteria())),
 					DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
 			));
 		}

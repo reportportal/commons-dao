@@ -50,15 +50,12 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeCo
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ATTRIBUTE_NAME;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_COUNT;
 import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_FIELD;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.field;
 
@@ -181,7 +178,10 @@ public enum FilterTarget {
 					LAUNCH.NUMBER,
 					LAUNCH.LAST_MODIFIED,
 					LAUNCH.MODE,
-					LAUNCH.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM,
+					LAUNCH.STATUS,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
+					ITEM_ATTRIBUTE.SYSTEM,
 					STATISTICS.S_COUNTER,
 					STATISTICS_FIELD.NAME,
 					USERS.ID,
@@ -205,7 +205,7 @@ public enum FilterTarget {
 	},
 
 	TEST_ITEM_TARGET(TestItem.class,
-			Arrays.asList(new CriteriaHolder(PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_ID, LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_ID, TEST_ITEM.ITEM_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_NAME, TEST_ITEM.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(TestItemCriteriaConstant.CRITERIA_TYPE,
@@ -255,7 +255,10 @@ public enum FilterTarget {
 					TEST_ITEM.LAUNCH_ID,
 					TEST_ITEM_RESULTS.STATUS,
 					TEST_ITEM_RESULTS.END_TIME,
-					TEST_ITEM_RESULTS.DURATION, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM,
+					TEST_ITEM_RESULTS.DURATION,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
+					ITEM_ATTRIBUTE.SYSTEM,
 					PARAMETER.KEY,
 					PARAMETER.VALUE,
 					STATISTICS_FIELD.NAME,
