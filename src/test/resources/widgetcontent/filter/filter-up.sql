@@ -1,0 +1,2 @@
+INSERT INTO filter (name, project_id, target, description) VALUES ('f1', 1, 'Launch.class', 'descr1');
+INSERT INTO filter (name, project_id, target, description) VALUES ('f2', 1, 'Launch.class', 'descr2');

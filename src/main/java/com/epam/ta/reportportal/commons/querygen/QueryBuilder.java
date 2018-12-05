@@ -55,7 +55,8 @@ public class QueryBuilder {
 	 * Conditions that should be applied with HAVING
 	 */
 	private static final List<com.epam.ta.reportportal.commons.querygen.Condition> HAVING_CONDITIONS = ImmutableList.<com.epam.ta.reportportal.commons.querygen.Condition>builder()
-			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS).add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
 			.build();
 
 	/**
@@ -103,16 +104,6 @@ public class QueryBuilder {
 	 */
 	void addHavingCondition(Condition condition) {
 		query.addHaving(condition);
-	}
-
-	public QueryBuilder with(boolean latest) {
-		if (latest) {
-			query.addConditions(LAUNCH.ID.in(DSL.selectDistinct(LAUNCH.ID)
-					.on(LAUNCH.NAME)
-					.from(LAUNCH)
-					.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())));
-		}
-		return this;
 	}
 
 	/**

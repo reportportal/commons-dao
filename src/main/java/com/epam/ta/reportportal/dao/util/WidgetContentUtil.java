@@ -17,18 +17,32 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.entity.widget.content.LaunchesStatisticsContent;
-import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
+import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
+import com.epam.ta.reportportal.commons.querygen.FilterTarget;
+import com.epam.ta.reportportal.entity.widget.content.*;
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
+import static java.util.Optional.ofNullable;
 
 /**
  * Util class for widget content repository.
@@ -41,25 +55,242 @@ public class WidgetContentUtil {
 		//static only
 	}
 
-	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = (result, contentFields) -> result
-			.stream()
-			.map(record -> {
-				LaunchesStatisticsContent statisticsContent = record.into(LaunchesStatisticsContent.class);
+	private static final Function<Result<? extends Record>, Map<Long, ChartStatisticsContent>> STATISTICS_FETCHER = result -> {
 
-				Map<String, String> statisticsMap = new LinkedHashMap<>();
+		Map<Long, ChartStatisticsContent> resultMap = new LinkedHashMap<>();
 
-				Optional.ofNullable(record.field(fieldName(TOTAL)))
-						.ifPresent(field -> statisticsMap.put(TOTAL, String.valueOf(field.getValue(record))));
+		result.forEach(record -> {
+			ChartStatisticsContent content;
+			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
+				content = resultMap.get(record.get(LAUNCH.ID));
+			} else {
+				content = record.into(ChartStatisticsContent.class);
+				resultMap.put(record.get(LAUNCH.ID), content);
+			}
 
-				contentFields.forEach(contentField -> statisticsMap.put(contentField,
-						record.getValue(fieldName(contentField), String.class)
-				));
+			ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
+					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
 
-				statisticsContent.setValues(statisticsMap);
+		});
 
-				return statisticsContent;
-			})
-			.collect(Collectors.toList());
+		return resultMap;
+	};
+
+	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
+		Map<String, Long> values = new HashMap<>();
+
+		result.forEach(record -> ofNullable(record.get(STATISTICS_FIELD.NAME)).ifPresent(v -> values.put(v,
+				ofNullable(record.get(fieldName(SUM), Long.class)).orElse(0L)
+		)));
+
+		return new OverallStatisticsContent(values);
+	};
+
+	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesTableContent>> LAUNCHES_TABLE_FETCHER = (result, contentFields) -> {
+
+		List<String> nonStatisticsFields = contentFields.stream().filter(cf -> !cf.startsWith(STATISTICS_KEY)).collect(Collectors.toList());
+
+		nonStatisticsFields.removeAll(Stream.of(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.START_TIME)
+				.map(cf -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, cf.getQualifiedName().last()))
+				.collect(Collectors.toList()));
+
+		Map<Long, LaunchesTableContent> resultMap = new LinkedHashMap<>();
+
+		Map<String, String> criteria = FilterTarget.LAUNCH_TARGET.getCriteriaHolders()
+				.stream()
+				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
+
+		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
+		Optional<Field<Timestamp>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME));
+
+		result.forEach(record -> {
+			LaunchesTableContent content;
+			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
+
+				content = resultMap.get(record.get(LAUNCH.ID));
+			} else {
+				content = new LaunchesTableContent();
+				content.setId(record.get(LAUNCH.ID));
+				content.setName(record.get(DSL.field(LAUNCH.NAME.getQualifiedName().toString()), String.class));
+				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
+
+				startTimeField.ifPresent(f -> content.setStartTime(record.get(f)));
+
+			}
+
+			statisticsField.ifPresent(sf -> ofNullable(record.get(sf, String.class)).ifPresent(v -> content.getValues()
+					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0"))));
+
+			resultMap.put(record.get(LAUNCH.ID), content);
+
+			nonStatisticsFields.forEach(cf -> content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf)))));
+
+		});
+
+		return new ArrayList<>(resultMap.values());
+
+	};
+
+	private static final BiFunction<Map<Long, ProductStatusStatisticsContent>, Record, ProductStatusStatisticsContent> PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER = (mapping, record) -> {
+		ProductStatusStatisticsContent content;
+		if (mapping.containsKey(record.get(LAUNCH.ID))) {
+			content = mapping.get(record.get(LAUNCH.ID));
+		} else {
+			content = record.into(ProductStatusStatisticsContent.class);
+			mapping.put(record.get(LAUNCH.ID), content);
+		}
+
+		ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
+				.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
+
+		return content;
+	};
+
+	private static void proceedProductStatusAttributes(Record record, String columnName, ProductStatusStatisticsContent content) {
+
+		ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_VALUE), String.class)).ifPresent(value -> {
+			Map<String, Set<String>> attributesMapping = ofNullable(content.getAttributes()).orElseGet(LinkedHashMap::new);
+			Set<String> attributeValues = attributesMapping.get(columnName);
+			if (ofNullable(attributeValues).isPresent()) {
+				attributeValues.add(value);
+			} else {
+				attributesMapping.put(columnName, Sets.newHashSet(value));
+			}
+			content.setAttributes(attributesMapping);
+		});
+
+	}
+
+	public static final BiFunction<Result<? extends Record>, Map<String, String>, Map<String, List<ProductStatusStatisticsContent>>> PRODUCT_STATUS_FILTER_GROUPED_FETCHER = (result, attributes) -> {
+		Map<String, Map<Long, ProductStatusStatisticsContent>> filterMapping = new LinkedHashMap<>();
+
+		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTR_VALUE)));
+
+		result.forEach(record -> {
+			String filterName = record.get(fieldName(FILTER_NAME), String.class);
+			Map<Long, ProductStatusStatisticsContent> productStatusMapping;
+			if (filterMapping.containsKey(filterName)) {
+				productStatusMapping = filterMapping.get(filterName);
+			} else {
+				productStatusMapping = new LinkedHashMap<>();
+				filterMapping.put(filterName, productStatusMapping);
+			}
+
+			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+			if (attributeField.isPresent()) {
+				ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+						.stream()
+						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+
+			}
+		});
+
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
+	};
+
+	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
+		Map<Long, ProductStatusStatisticsContent> productStatusMapping = new LinkedHashMap<>();
+
+		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTR_VALUE)));
+
+		result.forEach(record -> {
+			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+			if (attributeField.isPresent()) {
+				ofNullable(record.get(fieldName(ATTR_TABLE, ATTR_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+						.stream()
+						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+
+			}
+		});
+
+		return new ArrayList<>(productStatusMapping.values());
+	};
+
+	public static final Function<Result<? extends Record>, Map<String, List<CumulativeTrendChartContent>>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
+		Map<String, Map<Long, CumulativeTrendChartContent>> attributeMapping = new LinkedHashMap<>();
+
+		result.forEach(record -> {
+
+			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
+			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
+			if (attributeMapping.containsKey(attributeValue)) {
+				cumulativeTrendMapper = attributeMapping.get(attributeValue);
+			} else {
+				cumulativeTrendMapper = new LinkedHashMap<>();
+				attributeMapping.put(attributeValue, cumulativeTrendMapper);
+			}
+
+			CumulativeTrendChartContent content;
+			Long launchId = record.get(LAUNCH.ID);
+			if (cumulativeTrendMapper.containsKey(launchId)) {
+				content = cumulativeTrendMapper.get(launchId);
+			} else {
+				content = record.into(CumulativeTrendChartContent.class);
+				content.setId(launchId);
+				cumulativeTrendMapper.put(launchId, content);
+			}
+			ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
+					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
+
+		});
+
+		return attributeMapping.entrySet().stream().collect(LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
+	};
+
+	public static final BiFunction<Result<? extends Record>, String, List<ChartStatisticsContent>> CASES_GROWTH_TREND_FETCHER = (result, contentField) -> {
+		List<ChartStatisticsContent> content = new ArrayList<>(result.size());
+
+		result.forEach(record -> {
+			ChartStatisticsContent statisticsContent = record.into(ChartStatisticsContent.class);
+
+			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
+					String.class
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
+
+			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
+
+			content.add(statisticsContent);
+		});
+
+		return content;
+	};
+
+	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
+			STATISTICS_FETCHER.apply(result).values());
+
+	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> BUG_TREND_STATISTICS_FETCHER = result -> {
+		Map<Long, ChartStatisticsContent> resultMap = STATISTICS_FETCHER.apply(result);
+
+		resultMap.values()
+				.forEach(content -> content.getValues()
+						.put(TOTAL, String.valueOf(content.getValues().values().stream().mapToInt(Integer::parseInt).sum())));
+
+		return new ArrayList<>(resultMap.values());
+	};
+
+	public static final RecordMapper<? super Record, ChartStatisticsContent> INVESTIGATED_STATISTICS_RECORD_MAPPER = r -> {
+		ChartStatisticsContent res = r.into(ChartStatisticsContent.class);
+		Double toInvestigatePercentage = r.get(TO_INVESTIGATE, Double.class);
+		res.getValues().put(TO_INVESTIGATE, String.valueOf(toInvestigatePercentage));
+		res.getValues().put(INVESTIGATED, String.valueOf(100.0 - toInvestigatePercentage));
+		return res;
+	};
+
+	public static final RecordMapper<? super Record, ChartStatisticsContent> TIMELINE_INVESTIGATED_STATISTICS_RECORD_MAPPER = r -> {
+		ChartStatisticsContent res = r.into(ChartStatisticsContent.class);
+		res.getValues().put(TO_INVESTIGATE, String.valueOf(r.get(TO_INVESTIGATE, Integer.class)));
+		res.getValues().put(INVESTIGATED, String.valueOf(r.get(INVESTIGATED, Integer.class)));
+		return res;
+	};
 
 	public static final RecordMapper<? super Record, NotPassedCasesContent> NOT_PASSED_CASES_CONTENT_RECORD_MAPPER = r -> {
 		NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
