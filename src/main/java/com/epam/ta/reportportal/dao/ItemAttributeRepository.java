@@ -17,8 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.ItemAttribute;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -27,7 +25,5 @@ import java.util.Optional;
  */
 public interface ItemAttributeRepository extends ReportPortalRepository<ItemAttribute, Long>, ItemAttributeRepositoryCustom {
 
-	@Query(value = "SELECT a.id, a.launch_id, a.key, a.value, a.system FROM item_attribute a WHERE a.launch_id = :launchId AND a.key = :attributeKey AND a.system = :isSystem LIMIT 1", nativeQuery = true)
-	Optional<ItemAttribute> findByLaunchIdAndKeyAndSystem(@Param("launchId") Long launchId, @Param("attributeKey") String key,
-			@Param("isSystem") boolean isSystem);
+	Optional<ItemAttribute> findByLaunchIdAndKeyAndSystem(Long launchId, String key, boolean isSystem);
 }
