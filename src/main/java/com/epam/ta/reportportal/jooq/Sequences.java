@@ -110,10 +110,10 @@ public class Sequences {
     /**
 	 * The sequence <code>public.item_attribute_id_seq</code>
      */
-	public static final Sequence<Integer> ITEM_ATTRIBUTE_ID_SEQ = new SequenceImpl<Integer>(
+	public static final Sequence<Long> ITEM_ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>(
 			"item_attribute_id_seq",
 			JPublic.PUBLIC,
-			org.jooq.impl.SQLDataType.INTEGER.nullable(false)
+			org.jooq.impl.SQLDataType.BIGINT.nullable(false)
 	);
 
     /**

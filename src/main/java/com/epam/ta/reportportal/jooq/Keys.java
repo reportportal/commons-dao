@@ -48,7 +48,7 @@ public class Keys {
     public static final Identity<JIntegrationTypeRecord, Integer> IDENTITY_INTEGRATION_TYPE = Identities0.IDENTITY_INTEGRATION_TYPE;
     public static final Identity<JIssueGroupRecord, Short> IDENTITY_ISSUE_GROUP = Identities0.IDENTITY_ISSUE_GROUP;
     public static final Identity<JIssueTypeRecord, Long> IDENTITY_ISSUE_TYPE = Identities0.IDENTITY_ISSUE_TYPE;
-	public static final Identity<JItemAttributeRecord, Integer> IDENTITY_ITEM_ATTRIBUTE = Identities0.IDENTITY_ITEM_ATTRIBUTE;
+	public static final Identity<JItemAttributeRecord, Long> IDENTITY_ITEM_ATTRIBUTE = Identities0.IDENTITY_ITEM_ATTRIBUTE;
     public static final Identity<JLaunchRecord, Long> IDENTITY_LAUNCH = Identities0.IDENTITY_LAUNCH;
     public static final Identity<JLdapSynchronizationAttributesRecord, Long> IDENTITY_LDAP_SYNCHRONIZATION_ATTRIBUTES = Identities0.IDENTITY_LDAP_SYNCHRONIZATION_ATTRIBUTES;
     public static final Identity<JLogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
@@ -234,7 +234,7 @@ public class Keys {
         public static Identity<JIntegrationTypeRecord, Integer> IDENTITY_INTEGRATION_TYPE = Internal.createIdentity(JIntegrationType.INTEGRATION_TYPE, JIntegrationType.INTEGRATION_TYPE.ID);
         public static Identity<JIssueGroupRecord, Short> IDENTITY_ISSUE_GROUP = Internal.createIdentity(JIssueGroup.ISSUE_GROUP, JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID);
         public static Identity<JIssueTypeRecord, Long> IDENTITY_ISSUE_TYPE = Internal.createIdentity(JIssueType.ISSUE_TYPE, JIssueType.ISSUE_TYPE.ID);
-		public static Identity<JItemAttributeRecord, Integer> IDENTITY_ITEM_ATTRIBUTE = Internal.createIdentity(
+		public static Identity<JItemAttributeRecord, Long> IDENTITY_ITEM_ATTRIBUTE = Internal.createIdentity(
 				JItemAttribute.ITEM_ATTRIBUTE,
 				JItemAttribute.ITEM_ATTRIBUTE.ID
 		);
