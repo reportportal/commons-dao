@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,37 +84,26 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<String> getLaunchNames(Long projectId, String value, String mode) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-
-		return dsl.select()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.where(p.ID.eq(projectId))
-				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.and(l.NAME.like("%" + value + "%"))
-				.fetch(l.NAME);
+		return dsl.selectDistinct(LAUNCH.NAME)
+				.from(LAUNCH)
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.where(PROJECT.ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))).and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
+				.fetch(LAUNCH.NAME);
 	}
 
 	@Override
 	public List<String> getOwnerNames(Long projectId, String value, String mode) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-		JUsers u = USERS.as("u");
-
-		return dsl.selectDistinct()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.leftJoin(u)
-				.on(l.USER_ID.eq(u.ID))
-				.where(p.ID.eq(projectId))
-				.and(u.FULL_NAME.like("%" + value + "%"))
-				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.fetch(u.FULL_NAME);
+		return dsl.selectDistinct(USERS.LOGIN)
+				.from(LAUNCH)
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.leftJoin(USERS)
+				.on(LAUNCH.USER_ID.eq(USERS.ID))
+				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + value + "%"))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.fetch(USERS.LOGIN);
 	}
 
 	@Override

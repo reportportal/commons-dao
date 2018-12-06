@@ -94,7 +94,7 @@ public enum Condition {
 	},
 
 	/**
-	 * Contains operation. NON case sensitive
+	 * Contains operation. Case insensitive
 	 */
 	CONTAINS("cnt") {
 		@Override
@@ -102,7 +102,7 @@ public enum Condition {
 			/* Validate only strings */
 
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getQueryCriteria()).like("%" + filter.getValue() + "%");
+			return field(criteriaHolder.getQueryCriteria()).likeIgnoreCase("%" + filter.getValue() + "%");
 		}
 
 		@Override
