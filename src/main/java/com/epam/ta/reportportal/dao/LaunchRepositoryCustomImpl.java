@@ -84,18 +84,14 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<String> getLaunchNames(Long projectId, String value, String mode) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-
-		return dsl.select()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.where(p.ID.eq(projectId))
-				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.and(l.NAME.like("%" + value + "%"))
-				.fetch(l.NAME);
+		return dsl.selectDistinct(LAUNCH.NAME)
+				.from(LAUNCH)
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.where(PROJECT.ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.and(LAUNCH.NAME.like("%" + value + "%"))
+				.fetch(LAUNCH.NAME);
 	}
 
 	@Override
