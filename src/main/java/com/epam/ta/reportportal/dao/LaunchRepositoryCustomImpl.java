@@ -89,8 +89,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.and(LAUNCH.NAME.like("%" + value + "%"))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))).and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
 				.fetch(LAUNCH.NAME);
 	}
 
@@ -102,8 +101,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.leftJoin(USERS)
 				.on(LAUNCH.USER_ID.eq(USERS.ID))
-				.where(PROJECT.ID.eq(projectId))
-				.and(USERS.LOGIN.like("%" + value + "%"))
+				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + value + "%"))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 				.fetch(USERS.LOGIN);
 	}
