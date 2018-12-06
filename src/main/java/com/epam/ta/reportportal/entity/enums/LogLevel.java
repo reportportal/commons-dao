@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum LogLevel {
 
@@ -59,8 +60,8 @@ public enum LogLevel {
 	/**
 	 * Convert the string passed as argument to a Level. If there are no such level throws exception
 	 */
-	public static LogLevel toLevel(String levelString) {
-		return Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelString)).findAny().orElse(null);
+	public static Optional<LogLevel> toLevel(String levelString) {
+		return Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelString)).findAny();
 	}
 
 	/**
@@ -68,12 +69,11 @@ public enum LogLevel {
 	 * and return UNKNOWN
 	 */
 	public static LogLevel toLevelOrUnknown(String levelString) {
-		for (LogLevel level : LogLevel.values()) {
-			if (level.name().equalsIgnoreCase(levelString)) {
-				return level;
-			}
-		}
-		return UNKNOWN;
+
+		return Arrays.stream(LogLevel.values())
+				.filter(l -> l.name().equalsIgnoreCase(levelString) || String.valueOf(l.intLevel).equals(levelString))
+				.findFirst()
+				.orElse(LogLevel.UNKNOWN);
 	}
 
 	/**
