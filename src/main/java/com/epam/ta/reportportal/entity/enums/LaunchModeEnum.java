@@ -27,6 +27,6 @@ public enum LaunchModeEnum {
 	DEBUG;
 
 	public static Optional<LaunchModeEnum> findByName(String name) {
-		return Arrays.stream(LaunchModeEnum.values()).filter(type -> type.name().equals(name)).findAny();
+		return Arrays.stream(LaunchModeEnum.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
 	}
 }
