@@ -17,13 +17,14 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
+import com.epam.ta.reportportal.entity.ShareableEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface ShareableRepository<T> {
+public interface ShareableRepository<T extends ShareableEntity> {
 
 	/**
 	 * Get all permitted objects for specified user

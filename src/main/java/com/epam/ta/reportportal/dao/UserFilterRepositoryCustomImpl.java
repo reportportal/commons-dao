@@ -17,65 +17,32 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
-import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
-import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ShareableUtils.*;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCustom {
-
-	private final DSLContext dsl;
-
-	@Autowired
-	public UserFilterRepositoryCustomImpl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+public class UserFilterRepositoryCustomImpl extends AbstractShareableRepositoryImpl<UserFilter> implements UserFilterRepositoryCustom {
 
 	@Override
 	public Page<UserFilter> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return PageableExecutionUtils.getPage(
-				USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(permittedCondition(userName))
-						.withWrapper(filter.getTarget())
-						.build())),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(permittedCondition(userName)).build())
-		);
+		return getPermitted(USER_FILTER_FETCHER, filter, pageable, userName);
 	}
 
 	@Override
 	public Page<UserFilter> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return PageableExecutionUtils.getPage(
-				USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(ownCondition(userName))
-						.withWrapper(filter.getTarget())
-						.build())),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(ownCondition(userName)).build())
-		);
+		return getOwn(USER_FILTER_FETCHER, filter, pageable, userName);
 	}
 
 	@Override
 	public Page<UserFilter> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return PageableExecutionUtils.getPage(
-				USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(sharedCondition(userName))
-						.withWrapper(filter.getTarget())
-						.build())),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(sharedCondition(userName)).build())
-		);
+		return getShared(USER_FILTER_FETCHER, filter, pageable, userName);
 	}
 
 }
