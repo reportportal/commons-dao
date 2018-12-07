@@ -25,10 +25,13 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +41,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
@@ -129,7 +134,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return ofNullable(dsl.with(LAUNCHES)
 				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
 				.select()
-				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
@@ -144,7 +148,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
 						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).with(pageable).build())
 						.select()
-						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
 						.join(LAUNCHES)
 						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
@@ -154,7 +157,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.leftJoin(ITEM_ATTRIBUTE)
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
+						.orderBy(buildSortFields(pageable.getSort()))
 						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
@@ -164,7 +167,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.from(LAUNCH)
 						.join(LAUNCHES)
 						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
-						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
+						.orderBy(buildSortFields(pageable.getSort())))
 		);
 	}
 
@@ -209,6 +212,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 								.and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
 				.groupBy(USERS.LOGIN)
 				.fetchMap(USERS.LOGIN, field("count", Integer.class));
+	}
+
+	private List<SortField<Object>> buildSortFields(Sort sort) {
+		return ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+				.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 	}
 
 }

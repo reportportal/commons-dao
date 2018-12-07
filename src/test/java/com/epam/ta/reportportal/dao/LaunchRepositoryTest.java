@@ -61,16 +61,16 @@ public class LaunchRepositoryTest {
 	@Autowired
 	private LaunchRepository launchRepository;
 
-//	@BeforeClass
-//	public static void init() throws SQLException {
-//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
-//		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql");
-//	}
-//
-//	@AfterClass
-//	public static void destroy() throws SQLException {
-//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
-//	}
+	//	@BeforeClass
+	//	public static void init() throws SQLException {
+	//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
+	//		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql");
+	//	}
+	//
+	//	@AfterClass
+	//	public static void destroy() throws SQLException {
+	//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
+	//	}
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
@@ -169,8 +169,10 @@ public class LaunchRepositoryTest {
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
-				), new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
+				),
+				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
+				new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "1", "statistics$executions$passed")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
