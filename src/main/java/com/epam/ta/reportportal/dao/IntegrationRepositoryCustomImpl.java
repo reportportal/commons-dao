@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
+import static com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
 
 /**
  * @author Yauheni_Martynau
@@ -42,8 +43,14 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCH
 @Repository
 public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCustom {
 
+	private final DSLContext dsl;
+	private final EntityManager entityManager;
+
 	@Autowired
-	private DSLContext dsl;
+	public IntegrationRepositoryCustomImpl(EntityManager entityManager, DSLContext dsl) {
+		this.entityManager = entityManager;
+		this.dsl = dsl;
+	}
 
 	@Override
 	public List<Integration> findByFilter(Filter filter) {
@@ -59,55 +66,28 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
-	private final EntityManager entityManager;
-
-	@Autowired
-	public IntegrationRepositoryCustomImpl(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-
-	@Transactional
 	@Override
-	public void deleteSettings(Integration integration) {
-		entityManager.remove(integration);
-	}
+	public LdapConfig findLdap(boolean enabled) {
 
-	@Transactional
-	@Override
-	public void updateLdap(LdapConfig ldapConfig) {
-		entityManager.merge(ldapConfig);
-
-	}
-
-	@Transactional
-	@Override
-	public void updateActiveDirectory(ActiveDirectoryConfig adConfig) {
-		entityManager.merge(adConfig);
-	}
-
-	@Override
-	public Optional<LdapConfig> findLdap(boolean enabled) {
-		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery("SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.id = :id AND i.enabled = :enabled",
+		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery("SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.enabled = :enabled",
 				LdapConfig.class
 		);
 
-		ldapConfigTypedQuery.setParameter("id", 1L);    //should be custom id, that was received from user
 		ldapConfigTypedQuery.setParameter("enabled", enabled);
 
-		return ldapConfigTypedQuery.getResultList().stream().findFirst();
+		return ldapConfigTypedQuery.getSingleResult();
 	}
 
 	@Override
-	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
+	public ActiveDirectoryConfig findActiveDirectory(boolean enabled) {
 		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(
-				"SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE i.id = :id AND i.enabled = :enabled",
+				"SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE i.enabled = :enabled",
 				ActiveDirectoryConfig.class
 		);
 
-		activeDirectoryConfigTypedQuery.setParameter("id", 1L);   //should be custom id, that was received from user
 		activeDirectoryConfigTypedQuery.setParameter("enabled", enabled);
 
-		return activeDirectoryConfigTypedQuery.getResultList().stream().findFirst();
+		return activeDirectoryConfigTypedQuery.getSingleResult();
 	}
 
 }
