@@ -111,7 +111,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 		return dsl.select()
 				.from(ACTIVE_DIRECTORY_CONFIG)
 				.join(INTEGRATION)
-				.on(LDAP_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
+				.on(ACTIVE_DIRECTORY_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
 				.join(INTEGRATION_TYPE)
 				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
