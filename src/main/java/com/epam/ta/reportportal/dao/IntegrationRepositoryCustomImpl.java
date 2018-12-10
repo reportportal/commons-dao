@@ -72,26 +72,26 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	@Override
 	public Optional<LdapConfig> findLdap() {
 
-		return Optional.ofNullable(buildLdapSelectQuery().fetchOne(LDAP_CONFIG_MAPPER));
+		return Optional.ofNullable(buildLdapSelectQuery().fetchAny(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory() {
 
-		return Optional.ofNullable(buildActiveDirectorySelectQuery().fetchOne(ACTIVE_DIRECTORY_CONFIG_MAPPER));
+		return Optional.ofNullable(buildActiveDirectorySelectQuery().fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
 
-		return Optional.ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchOne(LDAP_CONFIG_MAPPER));
+		return Optional.ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchAny(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
 
 		return Optional.ofNullable(buildActiveDirectorySelectQuery().where(INTEGRATION.ENABLED.eq(enabled))
-				.fetchOne(ACTIVE_DIRECTORY_CONFIG_MAPPER));
+				.fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	private SelectOnConditionStep<Record> buildLdapSelectQuery() {
