@@ -370,6 +370,8 @@ public class RecordMappers {
 
 		INTEGRATION_PARAMS_MAPPER.accept(ldapConfig, r);
 
+		ldapConfig.setId(r.get(LDAP_CONFIG.ID));
+
 		return ldapConfig;
 	};
 
@@ -384,6 +386,8 @@ public class RecordMappers {
 		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
 
 		INTEGRATION_PARAMS_MAPPER.accept(activeDirectoryConfig, r);
+
+		activeDirectoryConfig.setId(r.get(ACTIVE_DIRECTORY_CONFIG.ID));
 
 		return activeDirectoryConfig;
 	};
