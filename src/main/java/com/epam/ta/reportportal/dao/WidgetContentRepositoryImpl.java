@@ -142,7 +142,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
 		)
 				.from(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER.desc()).build())
+						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,

@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
@@ -40,7 +41,7 @@ public final class QueryUtils {
 		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getTarget());
 
 		if (isLatest) {
-			queryBuilder.with(LAUNCH.NUMBER.desc())
+			queryBuilder.with(LAUNCH.NUMBER, SortOrder.DESC)
 					.addCondition(LAUNCH.ID.in(DSL.with(LAUNCHES)
 							.as(QueryBuilder.newBuilder(filter).build())
 							.selectDistinct(LAUNCH.ID)

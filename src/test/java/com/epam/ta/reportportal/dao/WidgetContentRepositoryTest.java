@@ -468,7 +468,7 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, false, 2);
+		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 2);
 
 		Assert.assertNotNull(uniqueBugStatistics);
 		Assert.assertEquals(3, uniqueBugStatistics.size());
