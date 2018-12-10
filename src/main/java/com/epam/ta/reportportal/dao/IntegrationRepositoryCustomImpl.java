@@ -33,6 +33,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVE_DIRECTORY_CONFIG_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.LDAP_CONFIG_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
 import static com.epam.ta.reportportal.jooq.tables.JIntegration.INTEGRATION;
@@ -70,26 +72,26 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	@Override
 	public Optional<LdapConfig> findLdap() {
 
-		return Optional.ofNullable(buildLdapSelectQuery().fetchOneInto(LdapConfig.class));
+		return Optional.ofNullable(buildLdapSelectQuery().fetchOne(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory() {
 
-		return Optional.ofNullable(buildActiveDirectorySelectQuery().fetchOneInto(ActiveDirectoryConfig.class));
+		return Optional.ofNullable(buildActiveDirectorySelectQuery().fetchOne(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
 
-		return Optional.ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchOneInto(LdapConfig.class));
+		return Optional.ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchOne(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
 
 		return Optional.ofNullable(buildActiveDirectorySelectQuery().where(INTEGRATION.ENABLED.eq(enabled))
-				.fetchOneInto(ActiveDirectoryConfig.class));
+				.fetchOne(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	private SelectOnConditionStep<Record> buildLdapSelectQuery() {

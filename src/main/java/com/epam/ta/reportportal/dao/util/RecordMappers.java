@@ -21,14 +21,23 @@ import com.epam.ta.reportportal.entity.ActivityDetails;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.integration.IntegrationParams;
+import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import com.epam.ta.reportportal.entity.integration.IntegrationTypeDetails;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
+import com.epam.ta.reportportal.entity.ldap.LdapConfig;
+import com.epam.ta.reportportal.entity.ldap.SynchronizationAttributes;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
@@ -234,8 +243,8 @@ public class RecordMappers {
 
 	public static final RecordMapper<? super Record, SharedEntity> SHARED_ENTITY_MAPPER = r -> r.into(SharedEntity.class);
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(FILTER.ID))
-			.ifPresent(id -> {
+	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(FILTER.ID)).ifPresent(
+			id -> {
 				Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
 				UserFilter filter = new UserFilter();
 				filter.setId(id);
@@ -302,5 +311,78 @@ public class RecordMappers {
 		} else {
 			return Optional.empty();
 		}
+	};
+
+	public static final Function<? super Record, SynchronizationAttributes> SYNCHRONIZATION_ATTRIBUTES_MAPPER = r -> {
+		SynchronizationAttributes synchronizationAttributes = new SynchronizationAttributes();
+		synchronizationAttributes.setFullName(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.FULL_NAME));
+		synchronizationAttributes.setEmail(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.EMAIL));
+		synchronizationAttributes.setPhoto(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.PHOTO));
+		synchronizationAttributes.setId(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
+
+		return synchronizationAttributes;
+	};
+
+	public static final Function<? super Record, IntegrationType> INTEGRATION_TYPE_MAPPER = r -> {
+		IntegrationType integrationType = new IntegrationType();
+		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
+		integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toLocalDateTime());
+		integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(r.get(INTEGRATION_TYPE.AUTH_FLOW).getLiteral())
+				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		integrationType.setName(r.get(INTEGRATION_TYPE.NAME));
+		integrationType.setIntegrationGroup(IntegrationGroupEnum.findByName(r.get(INTEGRATION_TYPE.GROUP_TYPE).getLiteral())
+				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+
+		String detailsJson = r.get(INTEGRATION_TYPE.DETAILS, String.class);
+		ofNullable(detailsJson).ifPresent(s -> {
+			try {
+				IntegrationTypeDetails details = objectMapper.readValue(s, IntegrationTypeDetails.class);
+				integrationType.setDetails(details);
+			} catch (IOException e) {
+				throw new ReportPortalException("Error during parsing integration type details");
+			}
+		});
+
+		return integrationType;
+	};
+
+	public static final BiConsumer<? super Integration, ? super Record> INTEGRATION_PARAMS_MAPPER = (i, r) -> {
+		String paramsJson = r.get(INTEGRATION.PARAMS, String.class);
+		ofNullable(paramsJson).ifPresent(s -> {
+			try {
+				IntegrationParams params = objectMapper.readValue(s, IntegrationParams.class);
+				i.setParams(params);
+			} catch (IOException e) {
+				throw new ReportPortalException("Error during parsing integration params");
+			}
+		});
+	};
+
+	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
+
+		LdapConfig ldapConfig = r.into(INTEGRATION.fieldStream()
+				.filter(f -> fieldExcludingPredicate(INTEGRATION.PARAMS, INTEGRATION_TYPE.DETAILS).test(f))
+				.toArray(Field[]::new)).into(LdapConfig.class);
+
+		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
+
+		INTEGRATION_PARAMS_MAPPER.accept(ldapConfig, r);
+
+		return ldapConfig;
+	};
+
+	public static final RecordMapper<? super Record, ActiveDirectoryConfig> ACTIVE_DIRECTORY_CONFIG_MAPPER = r -> {
+
+		ActiveDirectoryConfig activeDirectoryConfig = r.into(INTEGRATION.fieldStream()
+				.filter(f -> fieldExcludingPredicate(INTEGRATION.PARAMS, INTEGRATION_TYPE.DETAILS).test(f))
+				.toArray(Field[]::new)).into(ActiveDirectoryConfig.class);
+
+		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
+
+		INTEGRATION_PARAMS_MAPPER.accept(activeDirectoryConfig, r);
+
+		return activeDirectoryConfig;
 	};
 }
