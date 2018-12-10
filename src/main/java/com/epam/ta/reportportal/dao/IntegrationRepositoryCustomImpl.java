@@ -42,9 +42,9 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCH
 public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCustom {
 
 	public static final String SELECT_ENABLED_LDAP_QUERY = "SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.enabled = :enabled";
-	public static final String SELECT_LDAP_BY_ID_QUERY = "SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE l.id = :id";
+	public static final String SELECT_LDAP_QUERY = "SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id";
 	public static final String SELECT_ENABLED_ACTIVE_DIRECTORY_QUERY = "SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE i.enabled = :enabled";
-	public static final String SELECT_ACTIVE_DIRECTORY_BY_ID_QUERY = "SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE a.id = :id";
+	public static final String SELECT_ACTIVE_DIRECTORY_QUERY = "SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id";
 
 	private static final String CRITERIA_ENABLED = "enabled";
 	private static final String CRITERIA_ID = "id";
@@ -83,12 +83,9 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
-	public Optional<LdapConfig> findLdapById(Long id) {
-		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery(SELECT_LDAP_BY_ID_QUERY, LdapConfig.class);
+	public Optional<LdapConfig> findLdap() {
 
-		ldapConfigTypedQuery.setParameter(CRITERIA_ID, id);
-
-		return Optional.ofNullable(ldapConfigTypedQuery.getSingleResult());
+		return Optional.ofNullable(entityManager.createQuery(SELECT_LDAP_QUERY, LdapConfig.class).getSingleResult());
 	}
 
 	@Override
@@ -104,14 +101,9 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
-	public Optional<ActiveDirectoryConfig> findActiveDirectoryById(Long id) {
-		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(SELECT_ACTIVE_DIRECTORY_BY_ID_QUERY,
-				ActiveDirectoryConfig.class
-		);
+	public Optional<ActiveDirectoryConfig> findActiveDirectory() {
 
-		activeDirectoryConfigTypedQuery.setParameter(CRITERIA_ID, id);
-
-		return Optional.ofNullable(activeDirectoryConfigTypedQuery.getSingleResult());
+		return Optional.ofNullable(entityManager.createQuery(SELECT_ACTIVE_DIRECTORY_QUERY, ActiveDirectoryConfig.class).getSingleResult());
 	}
 
 }
