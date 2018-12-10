@@ -36,6 +36,7 @@ import java.util.Optional;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
 import static com.epam.ta.reportportal.jooq.tables.JIntegration.INTEGRATION;
+import static com.epam.ta.reportportal.jooq.tables.JIntegrationType.INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
 import static com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
 
@@ -97,6 +98,8 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.from(LDAP_CONFIG)
 				.join(INTEGRATION)
 				.on(LDAP_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
 				.on(LDAP_CONFIG.SYNC_ATTRIBUTES_ID.eq(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
 	}
@@ -107,6 +110,8 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.from(ACTIVE_DIRECTORY_CONFIG)
 				.join(INTEGRATION)
 				.on(LDAP_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
 				.on(LDAP_CONFIG.SYNC_ATTRIBUTES_ID.eq(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
 	}
