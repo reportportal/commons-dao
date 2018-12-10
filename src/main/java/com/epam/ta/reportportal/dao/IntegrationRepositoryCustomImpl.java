@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
 
@@ -72,26 +73,26 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
-	public LdapConfig findLdap(boolean enabled) {
+	public Optional<LdapConfig> findLdap(boolean enabled) {
 
 		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery(SELECT_ENABLED_LDAP_QUERY, LdapConfig.class);
 
 		ldapConfigTypedQuery.setParameter(CRITERIA_ENABLED, enabled);
 
-		return ldapConfigTypedQuery.getSingleResult();
+		return Optional.ofNullable(ldapConfigTypedQuery.getSingleResult());
 	}
 
 	@Override
-	public LdapConfig findLdapById(Long id) {
+	public Optional<LdapConfig> findLdapById(Long id) {
 		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery(SELECT_LDAP_BY_ID_QUERY, LdapConfig.class);
 
 		ldapConfigTypedQuery.setParameter(CRITERIA_ID, id);
 
-		return ldapConfigTypedQuery.getSingleResult();
+		return Optional.ofNullable(ldapConfigTypedQuery.getSingleResult());
 	}
 
 	@Override
-	public ActiveDirectoryConfig findActiveDirectory(boolean enabled) {
+	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
 
 		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(SELECT_ENABLED_ACTIVE_DIRECTORY_QUERY,
 				ActiveDirectoryConfig.class
@@ -99,18 +100,18 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 
 		activeDirectoryConfigTypedQuery.setParameter(CRITERIA_ENABLED, enabled);
 
-		return activeDirectoryConfigTypedQuery.getSingleResult();
+		return Optional.ofNullable(activeDirectoryConfigTypedQuery.getSingleResult());
 	}
 
 	@Override
-	public ActiveDirectoryConfig findActiveDirectoryById(Long id) {
+	public Optional<ActiveDirectoryConfig> findActiveDirectoryById(Long id) {
 		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(SELECT_ACTIVE_DIRECTORY_BY_ID_QUERY,
 				ActiveDirectoryConfig.class
 		);
 
 		activeDirectoryConfigTypedQuery.setParameter(CRITERIA_ID, id);
 
-		return activeDirectoryConfigTypedQuery.getSingleResult();
+		return Optional.ofNullable(activeDirectoryConfigTypedQuery.getSingleResult());
 	}
 
 }

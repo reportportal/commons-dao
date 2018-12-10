@@ -20,17 +20,19 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 
+import java.util.Optional;
+
 /**
  * @author Yauheni_Martynau
  */
 public interface IntegrationRepositoryCustom extends FilterableRepository<Integration> {
 
-	LdapConfig findLdap(boolean enabled);
+	Optional<LdapConfig> findLdap(boolean enabled);
 
-	LdapConfig findLdapById(Long id);
+	Optional<LdapConfig> findLdapById(Long id);
 
-	ActiveDirectoryConfig findActiveDirectory(boolean enabled);
+	Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled);
 
-	ActiveDirectoryConfig findActiveDirectoryById(Long id);
+	Optional<ActiveDirectoryConfig> findActiveDirectoryById(Long id);
 
 }
