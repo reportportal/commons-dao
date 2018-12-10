@@ -27,21 +27,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
-import static com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
 
 /**
  * @author Yauheni_Martynau
  */
 @Repository
 public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCustom {
+
+	public static final String SELECT_ENABLED_LDAP_QUERY = "SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.enabled = :enabled";
+	public static final String SELECT_LDAP_BY_ID_QUERY = "SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE l.id = :id";
+	public static final String SELECT_ENABLED_ACTIVE_DIRECTORY_QUERY = "SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE i.enabled = :enabled";
+	public static final String SELECT_ACTIVE_DIRECTORY_BY_ID_QUERY = "SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE a.id = :id";
+
+	private static final String CRITERIA_ENABLED = "enabled";
+	private static final String CRITERIA_ID = "id";
 
 	private final DSLContext dsl;
 	private final EntityManager entityManager;
@@ -69,23 +74,41 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	@Override
 	public LdapConfig findLdap(boolean enabled) {
 
-		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery("SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.enabled = :enabled",
-				LdapConfig.class
-		);
+		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery(SELECT_ENABLED_LDAP_QUERY, LdapConfig.class);
 
-		ldapConfigTypedQuery.setParameter("enabled", enabled);
+		ldapConfigTypedQuery.setParameter(CRITERIA_ENABLED, enabled);
+
+		return ldapConfigTypedQuery.getSingleResult();
+	}
+
+	@Override
+	public LdapConfig findLdapById(Long id) {
+		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery(SELECT_LDAP_BY_ID_QUERY, LdapConfig.class);
+
+		ldapConfigTypedQuery.setParameter(CRITERIA_ID, id);
 
 		return ldapConfigTypedQuery.getSingleResult();
 	}
 
 	@Override
 	public ActiveDirectoryConfig findActiveDirectory(boolean enabled) {
-		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(
-				"SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE i.enabled = :enabled",
+
+		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(SELECT_ENABLED_ACTIVE_DIRECTORY_QUERY,
 				ActiveDirectoryConfig.class
 		);
 
-		activeDirectoryConfigTypedQuery.setParameter("enabled", enabled);
+		activeDirectoryConfigTypedQuery.setParameter(CRITERIA_ENABLED, enabled);
+
+		return activeDirectoryConfigTypedQuery.getSingleResult();
+	}
+
+	@Override
+	public ActiveDirectoryConfig findActiveDirectoryById(Long id) {
+		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(SELECT_ACTIVE_DIRECTORY_BY_ID_QUERY,
+				ActiveDirectoryConfig.class
+		);
+
+		activeDirectoryConfigTypedQuery.setParameter(CRITERIA_ID, id);
 
 		return activeDirectoryConfigTypedQuery.getSingleResult();
 	}

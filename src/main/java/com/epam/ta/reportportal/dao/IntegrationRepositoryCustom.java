@@ -27,6 +27,10 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 
 	LdapConfig findLdap(boolean enabled);
 
+	LdapConfig findLdapById(Long id);
+
 	ActiveDirectoryConfig findActiveDirectory(boolean enabled);
+
+	ActiveDirectoryConfig findActiveDirectoryById(Long id);
 
 }
