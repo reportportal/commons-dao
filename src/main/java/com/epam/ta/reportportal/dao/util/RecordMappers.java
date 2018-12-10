@@ -360,9 +360,10 @@ public class RecordMappers {
 
 	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
 
-		LdapConfig ldapConfig = r.into(INTEGRATION.fieldStream()
-				.filter(f -> fieldExcludingPredicate(INTEGRATION.PARAMS, INTEGRATION_TYPE.DETAILS).test(f))
-				.toArray(Field[]::new)).into(LdapConfig.class);
+		LdapConfig ldapConfig = r.into(LdapConfig.class);
+
+		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
+		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 
 		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
 		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
@@ -374,9 +375,10 @@ public class RecordMappers {
 
 	public static final RecordMapper<? super Record, ActiveDirectoryConfig> ACTIVE_DIRECTORY_CONFIG_MAPPER = r -> {
 
-		ActiveDirectoryConfig activeDirectoryConfig = r.into(INTEGRATION.fieldStream()
-				.filter(f -> fieldExcludingPredicate(INTEGRATION.PARAMS, INTEGRATION_TYPE.DETAILS).test(f))
-				.toArray(Field[]::new)).into(ActiveDirectoryConfig.class);
+		ActiveDirectoryConfig activeDirectoryConfig = r.into(ActiveDirectoryConfig.class);
+
+		activeDirectoryConfig.setEnabled(r.get(INTEGRATION.ENABLED));
+		activeDirectoryConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 
 		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
 		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
