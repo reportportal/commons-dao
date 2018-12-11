@@ -134,9 +134,7 @@ public class LaunchRepositoryTest {
 
 	@Test
 	public void findAllLatestLaunchesTest() {
-
 		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2));
-
 		Assert.assertNotNull(allLatestByFilter);
 		Assert.assertEquals(2, allLatestByFilter.getNumberOfElements());
 	}
