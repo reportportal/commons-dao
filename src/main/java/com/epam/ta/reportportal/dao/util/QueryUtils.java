@@ -43,7 +43,7 @@ public final class QueryUtils {
 		if (isLatest) {
 			queryBuilder.with(LAUNCH.NUMBER, SortOrder.DESC)
 					.addCondition(LAUNCH.ID.in(DSL.with(LAUNCHES)
-							.as(queryBuilder.build())
+							.as(QueryBuilder.newBuilder(filter).build())
 							.selectDistinct(LAUNCH.ID)
 							.on(LAUNCH.NAME)
 							.from(LAUNCH)
