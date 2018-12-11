@@ -36,6 +36,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
 
+	List<TestItem> findTestItemsByLaunchIdOrderByStartTime(Long launchId);
+
 	/**
 	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
 	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
