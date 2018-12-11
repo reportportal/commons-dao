@@ -124,4 +124,11 @@ public class UserFilterRepositoryTest {
 		return new Filter(UserFilter.class, conditionSet);
 	}
 
+	@Test
+	public void existsByNameAndOwnerAndProjectIdTest() {
+		Assert.assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "superadmin", 1L));
+		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "yahoo", 1L));
+		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "superadmin", 2L));
+	}
+
 }
