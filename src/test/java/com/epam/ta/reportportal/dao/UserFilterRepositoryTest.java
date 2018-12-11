@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +43,7 @@ import java.util.Set;
 @Transactional("transactionManager")
 public class UserFilterRepositoryTest {
 
-//	@BeforeClass
+	//	@BeforeClass
 	//	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 	//		SqlRunner.runSqlScripts("/test-dropall-script.sql");
 	//		//TODO this scripts should be syncronized with migration scripts
@@ -76,10 +78,8 @@ public class UserFilterRepositoryTest {
 
 	@Test
 	public void getPermittedFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				"superadmin"
-		);
+		PageRequest of = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, JFilter.FILTER.NAME.getQualifiedName().toString()));
+		Page<UserFilter> result1 = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L), of, "superadmin");
 
 		Assert.assertEquals(2l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
