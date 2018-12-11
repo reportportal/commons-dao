@@ -23,10 +23,10 @@ public class WidgetRepositoryTest {
 	private WidgetRepository widgetRepository;
 
 	@Test
-	public void existsByNameAndProjectId() {
+	public void existsByNameAndOwnerAndProjectId() {
 
-		Assert.assertTrue(widgetRepository.existsByNameAndProjectId("LAUNCH TABLE", 1L));
-		Assert.assertFalse(widgetRepository.existsByNameAndProjectId("LAUNCH TABLE1", 1L));
-		Assert.assertFalse(widgetRepository.existsByNameAndProjectId("LAUNCH TABLE", 2L));
+		Assert.assertTrue(widgetRepository.existsByNameAndOwnerAndProjectId("LAUNCH TABLE", "superadmin", 1L));
+		Assert.assertFalse(widgetRepository.existsByNameAndOwnerAndProjectId("LAUNCH TABLE", "yahoo", 1L));
+		Assert.assertFalse(widgetRepository.existsByNameAndOwnerAndProjectId("LAUNCH TABLE", "superadmin", 2L));
 	}
 }

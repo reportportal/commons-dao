@@ -31,5 +31,5 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, 
 	 */
 	List<Widget> findAllByProjectId(Long projectId);
 
-	boolean existsByNameAndProjectId(String name, Long projectId);
+	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
 }

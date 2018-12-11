@@ -41,7 +41,7 @@ import java.util.Set;
 @Transactional("transactionManager")
 public class UserFilterRepositoryTest {
 
-//	@BeforeClass
+	//	@BeforeClass
 	//	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
 	//		SqlRunner.runSqlScripts("/test-dropall-script.sql");
 	//		//TODO this scripts should be syncronized with migration scripts
@@ -125,10 +125,10 @@ public class UserFilterRepositoryTest {
 	}
 
 	@Test
-	public void existsByNameAndProjectIdTest() {
-		Assert.assertTrue(userFilterRepository.existsByNameAndProjectId("DEMO_FILTER", 1L));
-		Assert.assertFalse(userFilterRepository.existsByNameAndProjectId("DEMO_FILTEr", 1L));
-		Assert.assertFalse(userFilterRepository.existsByNameAndProjectId("DEMO_FILTER", 2L));
+	public void existsByNameAndOwnerAndProjectIdTest() {
+		Assert.assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "superadmin", 1L));
+		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "yahoo", 1L));
+		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "superadmin", 2L));
 	}
 
 }
