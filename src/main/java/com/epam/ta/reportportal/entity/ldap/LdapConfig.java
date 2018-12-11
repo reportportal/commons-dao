@@ -15,8 +15,11 @@
  */
 package com.epam.ta.reportportal.entity.ldap;
 
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.ldap.validation.LdapSequenceProvider;
 import com.google.common.base.MoreObjects;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.group.GroupSequenceProvider;
 
 import javax.persistence.*;
@@ -29,6 +32,7 @@ import javax.persistence.*;
 
 @GroupSequenceProvider(LdapSequenceProvider.class)
 @Entity
+@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "ldap_config", schema = "public")
 public class LdapConfig extends AbstractLdapIntegration {
 
@@ -45,6 +49,8 @@ public class LdapConfig extends AbstractLdapIntegration {
 	private String groupSearchFilter;
 
 	@Enumerated(EnumType.STRING)
+	@Type(type = "pqsql_enum")
+	@Column(name = "passwordencodertype", nullable = false)
 	private PasswordEncoderType passwordEncoderType;
 
 	@Column(name = "password_attributes", length = 256)

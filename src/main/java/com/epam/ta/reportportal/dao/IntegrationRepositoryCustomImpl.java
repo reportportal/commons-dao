@@ -22,19 +22,25 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVE_DIRECTORY_CONFIG_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.LDAP_CONFIG_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
+import static com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
+import static com.epam.ta.reportportal.jooq.tables.JIntegration.INTEGRATION;
+import static com.epam.ta.reportportal.jooq.tables.JIntegrationType.INTEGRATION_TYPE;
+import static com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
+import static com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
 
 /**
  * @author Yauheni_Martynau
@@ -42,8 +48,12 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCH
 @Repository
 public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCustom {
 
+	private final DSLContext dsl;
+
 	@Autowired
-	private DSLContext dsl;
+	public IntegrationRepositoryCustomImpl(DSLContext dsl) {
+		this.dsl = dsl;
+	}
 
 	@Override
 	public List<Integration> findByFilter(Filter filter) {
@@ -59,55 +69,53 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
-	private final EntityManager entityManager;
+	@Override
+	public Optional<LdapConfig> findLdap() {
 
-	@Autowired
-	public IntegrationRepositoryCustomImpl(EntityManager entityManager) {
-		this.entityManager = entityManager;
+		return Optional.ofNullable(buildLdapSelectQuery().fetchAny(LDAP_CONFIG_MAPPER));
 	}
 
-	@Transactional
 	@Override
-	public void deleteSettings(Integration integration) {
-		entityManager.remove(integration);
-	}
+	public Optional<ActiveDirectoryConfig> findActiveDirectory() {
 
-	@Transactional
-	@Override
-	public void updateLdap(LdapConfig ldapConfig) {
-		entityManager.merge(ldapConfig);
-
-	}
-
-	@Transactional
-	@Override
-	public void updateActiveDirectory(ActiveDirectoryConfig adConfig) {
-		entityManager.merge(adConfig);
+		return Optional.ofNullable(buildActiveDirectorySelectQuery().fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
-		TypedQuery<LdapConfig> ldapConfigTypedQuery = entityManager.createQuery("SELECT l FROM LdapConfig l JOIN Integration i ON l.id = i.id WHERE i.id = :id AND i.enabled = :enabled",
-				LdapConfig.class
-		);
 
-		ldapConfigTypedQuery.setParameter("id", 1L);    //should be custom id, that was received from user
-		ldapConfigTypedQuery.setParameter("enabled", enabled);
-
-		return ldapConfigTypedQuery.getResultList().stream().findFirst();
+		return Optional.ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchAny(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
-		TypedQuery<ActiveDirectoryConfig> activeDirectoryConfigTypedQuery = entityManager.createQuery(
-				"SELECT a FROM ActiveDirectoryConfig a JOIN Integration i ON a.id = i.id WHERE i.id = :id AND i.enabled = :enabled",
-				ActiveDirectoryConfig.class
-		);
 
-		activeDirectoryConfigTypedQuery.setParameter("id", 1L);   //should be custom id, that was received from user
-		activeDirectoryConfigTypedQuery.setParameter("enabled", enabled);
+		return Optional.ofNullable(buildActiveDirectorySelectQuery().where(INTEGRATION.ENABLED.eq(enabled))
+				.fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
+	}
 
-		return activeDirectoryConfigTypedQuery.getResultList().stream().findFirst();
+	private SelectOnConditionStep<Record> buildLdapSelectQuery() {
+
+		return dsl.select()
+				.from(LDAP_CONFIG)
+				.join(INTEGRATION)
+				.on(LDAP_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
+				.on(LDAP_CONFIG.SYNC_ATTRIBUTES_ID.eq(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
+	}
+
+	private SelectOnConditionStep<Record> buildActiveDirectorySelectQuery() {
+
+		return dsl.select()
+				.from(ACTIVE_DIRECTORY_CONFIG)
+				.join(INTEGRATION)
+				.on(ACTIVE_DIRECTORY_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
+				.on(ACTIVE_DIRECTORY_CONFIG.SYNC_ATTRIBUTES_ID.eq(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
 	}
 
 }
