@@ -30,4 +30,6 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, 
 	 * @return The {@link List} of the {@link Widget}
 	 */
 	List<Widget> findAllByProjectId(Long projectId);
+
+	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
 }
