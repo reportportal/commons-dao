@@ -114,8 +114,10 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Pageable p) {
-		query.addLimit(p.getPageSize());
-		query.addOffset(Long.valueOf(p.getOffset()).intValue());
+		if (p.isPaged()) {
+			query.addLimit(p.getPageSize());
+			query.addOffset(Long.valueOf(p.getOffset()).intValue());
+		}
 		return with(p.getSort());
 	}
 
