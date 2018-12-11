@@ -25,13 +25,11 @@ import java.util.Optional;
 /**
  * @author Yauheni_Martynau
  */
-public interface IntegrationRepositoryCustom extends FilterableRepository<Integration>{
+public interface IntegrationRepositoryCustom extends FilterableRepository<Integration> {
 
-	void deleteSettings(Integration integration);
+	Optional<LdapConfig> findLdap();
 
-	void updateLdap(LdapConfig ldapConfig);
-
-	void updateActiveDirectory(ActiveDirectoryConfig adConfig);
+	Optional<ActiveDirectoryConfig> findActiveDirectory();
 
 	Optional<LdapConfig> findLdap(boolean enabled);
 
