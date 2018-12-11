@@ -27,4 +27,6 @@ public interface UserFilterRepository extends ReportPortalRepository<UserFilter,
 
 	List<UserFilter> findAllByProjectId(Long projectId);
 
+	boolean existsByNameAndProjectId(String name, Long projectId);
+
 }
