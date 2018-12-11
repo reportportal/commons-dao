@@ -25,8 +25,20 @@ import java.util.List;
  */
 public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long>, UserFilterRepositoryCustom {
 
+	/**
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
+	 * @return The {@link List} of the {@link UserFilter}
+	 */
 	List<UserFilter> findAllByProjectId(Long projectId);
 
+	/**
+	 * Checks the existence of the {@link UserFilter} with specified name for a user on a project
+	 *
+	 * @param name      {@link UserFilter#name}
+	 * @param owner     {@link UserFilter#owner}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which filter existence will be checked
+	 * @return if exists 'true' else 'false'
+	 */
 	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
 
 }
