@@ -108,7 +108,7 @@ public enum Condition {
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, filterForString()).verify(errorType, formattedSupplier(
-					"Contains condition applyable only for strings. Type of field is '{}'",
+					"Contains condition applicable only for strings. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -130,7 +130,7 @@ public enum Condition {
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, filterForLtree()).verify(errorType, formattedSupplier(
-					"'Under' condition is applyable only for 'path' filter condition. Type of field is '{}'",
+					"'Under' condition is applicable only for 'path' filter condition. Type of field is '{}'",
 					criteriaHolder.getFilterCriteria()
 			));
 		}
@@ -154,7 +154,7 @@ public enum Condition {
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, or(filterForNumbers(), filterForLtree())).verify(errorType, formattedSupplier(
-					"'Level' condition is applyable only for positive Numbers and 'path' filter condition. Type of field is '{}'",
+					"'Level' condition is applicable only for positive Numbers and 'path' filter condition. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -179,7 +179,7 @@ public enum Condition {
 	//		@Override
 	//		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 	//			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
-	//					"'Size' condition applyable only for collection data types. Type of field is '{}'",
+	//					"'Size' condition applicable only for collection data types. Type of field is '{}'",
 	//					criteriaHolder.getDataType().getSimpleName()
 	//			));
 	//			expect(value, number()).verify(errorType, formattedSupplier("Provided value '{}' is not a number", value));
@@ -276,7 +276,7 @@ public enum Condition {
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
-					"'HAS' condition applyable only for collection data types. Type of field is '{}'",
+					"'HAS' condition applicable only for collection data types. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -299,7 +299,7 @@ public enum Condition {
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
-					"'OVERLAP' condition applyable only for collection data types. Type of field is '{}'",
+					"'OVERLAP' condition applicable only for collection data types. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -328,7 +328,7 @@ public enum Condition {
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Greater than' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
+					"'Greater than' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -357,7 +357,7 @@ public enum Condition {
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Greater than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
+					"'Greater than or equals' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -387,7 +387,7 @@ public enum Condition {
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Lower than' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
+					"'Lower than' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -417,7 +417,7 @@ public enum Condition {
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Lower than or equals' condition applyable only for positive Numbers or Dates. Type of field is '{}'",
+					"'Lower than or equals' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
 					criteriaHolder.getDataType().getSimpleName()
 			));
 		}
@@ -436,7 +436,7 @@ public enum Condition {
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
-					formattedSupplier("'Between' condition applyable only for positive Numbers, Dates or specific TimeStamp values. "
+					formattedSupplier("'Between' condition applicable only for positive Numbers, Dates or specific TimeStamp values. "
 							+ "Type of field is '{}'", criteriaHolder.getDataType().getSimpleName())
 			);
 			if (value.contains(VALUES_SEPARATOR)) {
