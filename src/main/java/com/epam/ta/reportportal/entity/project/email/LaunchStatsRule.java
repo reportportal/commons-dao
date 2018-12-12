@@ -29,10 +29,10 @@ public enum LaunchStatsRule {
 	//@formatter:off
 	ALWAYS("always"),
 	FAILED("failed"),
-	TO_INVESTIGATE("to_investigate"),
-	MORE_10("more_10"),
-	MORE_20("more_20"),
-	MORE_50("more_50");
+	TO_INVESTIGATE("toInvestigate"),
+	MORE_10("more10"),
+	MORE_20("more20"),
+	MORE_50("more50");
 	//@formatter:on
 
 	private final String value;

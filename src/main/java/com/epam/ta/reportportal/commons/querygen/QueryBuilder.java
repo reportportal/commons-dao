@@ -114,8 +114,10 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Pageable p) {
-		query.addLimit(p.getPageSize());
-		query.addOffset(Long.valueOf(p.getOffset()).intValue());
+		if (p.isPaged()) {
+			query.addLimit(p.getPageSize());
+			query.addOffset(Long.valueOf(p.getOffset()).intValue());
+		}
 		return with(p.getSort());
 	}
 
@@ -173,7 +175,7 @@ public class QueryBuilder {
 	}
 
 	/**
-	 * Joins inner query to load columns exclueing provided fields after filtering
+	 * Joins inner query to load columns excluding provided fields after filtering
 	 *
 	 * @param filterTarget Filter target
 	 * @return Query builder
@@ -183,6 +185,12 @@ public class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Adds sorting after wrapping filtered query
+	 *
+	 * @param sort Sort
+	 * @return Query builder
+	 */
 	public QueryBuilder withWrappedSort(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
 				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
