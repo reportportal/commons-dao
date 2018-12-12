@@ -30,7 +30,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +38,13 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static org.junit.Assert.*;
 
+@FlywayTest
 @Sql("/test-activities-fill.sql")
 public class ActivityRepositoryCustomImplTest extends BaseTest {
 
 	@Autowired
 	private ActivityRepository repository;
 
-	@FlywayTest
 	@Test
 	public void deleteModifiedLaterAgo() {
 		Duration period = Duration.ofDays(10);
@@ -56,7 +55,6 @@ public class ActivityRepositoryCustomImplTest extends BaseTest {
 		all.stream().filter(a -> a.getProjectId() == 1L).forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
-	@FlywayTest
 	@Test
 	public void findByFilterWithSortingAndLimit() {
 		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
@@ -67,10 +65,9 @@ public class ActivityRepositoryCustomImplTest extends BaseTest {
 		);
 
 		assertEquals(2, activities.size());
-		activities.forEach(a -> assertTrue(a.getCreatedAt().toLocalDate().isEqual(LocalDate.of(2018, 10, 5))));
+		assertTrue(activities.get(0).getCreatedAt().isBefore(activities.get(1).getCreatedAt()));
 	}
 
-	@FlywayTest
 	@Test
 	public void findByFilter() {
 		List<Activity> activities = repository.findByFilter(filterGetById(1));
@@ -79,7 +76,6 @@ public class ActivityRepositoryCustomImplTest extends BaseTest {
 		assertNotNull(activities.get(0));
 	}
 
-	@FlywayTest
 	@Test
 	public void findByFilterPageable() {
 		Page<Activity> page = repository.findByFilter(filterGetById(1), PageRequest.of(0, 10));

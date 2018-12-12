@@ -26,7 +26,7 @@ CREATE TYPE PASSWORD_ENCODER_TYPE AS ENUM ('PLAIN', 'SHA', 'LDAP_SHA', 'MD4', 'M
 
 CREATE TYPE SORT_DIRECTION_ENUM AS ENUM ('ASC', 'DESC');
 
-CREATE EXTENSION IF NOT EXISTS ltree;
+CREATE EXTENSION ltree;
 
 CREATE TABLE server_settings (
   id    SMALLSERIAL CONSTRAINT server_settings_id PRIMARY KEY,
@@ -194,7 +194,7 @@ CREATE TABLE integration (
 CREATE TABLE ldap_synchronization_attributes
 (
   id        BIGSERIAL CONSTRAINT ldap_synchronization_attributes_pk PRIMARY KEY,
-  email     VARCHAR(256) UNIQUE,
+  email     VARCHAR(256),
   full_name VARCHAR(256),
   photo     VARCHAR(128)
 );
@@ -233,22 +233,23 @@ CREATE TABLE auth_config (
 -----------------------------------------------------------------------------------
 
 -------------------------- Dashboards, widgets, user filters -----------------------------
-
-CREATE TABLE filter (
-  id          BIGSERIAL CONSTRAINT filter_pk PRIMARY KEY,
-  name        VARCHAR                                          NOT NULL,
-  project_id  BIGINT REFERENCES project (id) ON DELETE CASCADE NOT NULL,
-  target      VARCHAR                                          NOT NULL,
-  description VARCHAR
+CREATE TABLE shareable_entity (
+  id         BIGSERIAL CONSTRAINT shareable_pk PRIMARY KEY,
+  shared     BOOLEAN NOT NULL DEFAULT false,
+  owner      VARCHAR NOT NULL,
+  project_id BIGINT  NOT NULL REFERENCES project (id) ON DELETE CASCADE
 );
 
-CREATE TABLE user_filter (
-  id BIGINT NOT NULL CONSTRAINT user_filter_pk PRIMARY KEY CONSTRAINT user_filter_id_fk REFERENCES filter (id) ON DELETE CASCADE
+CREATE TABLE filter (
+  id          BIGINT  NOT NULL CONSTRAINT filter_pk PRIMARY KEY CONSTRAINT filter_id_fk REFERENCES shareable_entity (id) ON DELETE CASCADE,
+  name        VARCHAR NOT NULL,
+  target      VARCHAR NOT NULL,
+  description VARCHAR
 );
 
 CREATE TABLE filter_condition (
   id              BIGSERIAL CONSTRAINT filter_condition_pk PRIMARY KEY,
-  filter_id       BIGINT REFERENCES user_filter (id) ON DELETE CASCADE,
+  filter_id       BIGINT REFERENCES filter (id) ON DELETE CASCADE,
   condition       FILTER_CONDITION_ENUM NOT NULL,
   value           VARCHAR               NOT NULL,
   search_criteria VARCHAR               NOT NULL,
@@ -257,30 +258,27 @@ CREATE TABLE filter_condition (
 
 CREATE TABLE filter_sort (
   id        BIGSERIAL CONSTRAINT filter_sort_pk PRIMARY KEY,
-  filter_id BIGINT REFERENCES user_filter (id) ON DELETE CASCADE,
+  filter_id BIGINT REFERENCES filter (id) ON DELETE CASCADE,
   field     VARCHAR             NOT NULL,
   direction SORT_DIRECTION_ENUM NOT NULL DEFAULT 'ASC'
 );
 
 CREATE TABLE dashboard (
-  id            SERIAL CONSTRAINT dashboard_pk PRIMARY KEY,
-  name          VARCHAR                 NOT NULL,
+  id            BIGINT    NOT NULL CONSTRAINT dashboard_pk PRIMARY KEY CONSTRAINT dashboard_id_fk REFERENCES shareable_entity (id) ON DELETE CASCADE,
+  name          VARCHAR   NOT NULL,
   description   VARCHAR,
-  project_id    INTEGER REFERENCES project (id) ON DELETE CASCADE,
-  creation_date TIMESTAMP DEFAULT now() NOT NULL,
-  CONSTRAINT unq_name_project UNIQUE (name, project_id)
-  -- acl
+  creation_date TIMESTAMP NOT NULL DEFAULT now()
+  --   CONSTRAINT unq_name_project UNIQUE (name, project_id)
 );
 
 CREATE TABLE widget (
-  id             BIGSERIAL CONSTRAINT widget_id PRIMARY KEY,
+  id             BIGINT  NOT NULL CONSTRAINT widget_pk PRIMARY KEY CONSTRAINT widget_id_fk REFERENCES shareable_entity (id) ON DELETE CASCADE,
   name           VARCHAR NOT NULL,
   description    VARCHAR,
   widget_type    VARCHAR NOT NULL,
   items_count    SMALLINT,
-  project_id     BIGINT REFERENCES project (id) ON DELETE CASCADE,
-  widget_options JSONB   NULL,
-  CONSTRAINT unq_widget_name_project UNIQUE (name, project_id)
+  widget_options JSONB   NULL
+  --   CONSTRAINT unq_widget_name_project UNIQUE (name, project_id)
 );
 
 CREATE TABLE content_field (
@@ -291,7 +289,7 @@ CREATE TABLE content_field (
 CREATE TABLE dashboard_widget (
   dashboard_id      INTEGER REFERENCES dashboard (id) ON DELETE CASCADE,
   widget_id         INTEGER REFERENCES widget (id) ON DELETE CASCADE,
-  widget_name       VARCHAR NOT NULL, -- make it as reference ??
+  widget_name       VARCHAR NOT NULL,
   widget_width      INT     NOT NULL,
   widget_height     INT     NOT NULL,
   widget_position_x INT     NOT NULL,
@@ -302,7 +300,7 @@ CREATE TABLE dashboard_widget (
 
 CREATE TABLE widget_filter (
   widget_id BIGINT REFERENCES widget (id) ON DELETE CASCADE         NOT NULL,
-  filter_id BIGINT REFERENCES user_filter (id) ON DELETE CASCADE    NOT NULL,
+  filter_id BIGINT REFERENCES filter (id) ON DELETE CASCADE         NOT NULL,
   CONSTRAINT widget_filter_pk PRIMARY KEY (widget_id, filter_id)
 );
 -----------------------------------------------------------------------------------
@@ -363,7 +361,7 @@ CREATE TABLE parameter (
 );
 
 CREATE TABLE item_attribute (
-  id        SERIAL CONSTRAINT item_attribute_pk PRIMARY KEY,
+  id        BIGSERIAL CONSTRAINT item_attribute_pk PRIMARY KEY,
   key       VARCHAR,
   value     VARCHAR,
   item_id   BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
@@ -517,8 +515,6 @@ CREATE TABLE acl_entry (
 
 ----------------------------------------------------------------------------------------
 
-CREATE EXTENSION IF NOT EXISTS tablefunc;
-
 ------- Functions and triggers -----------------------
 
 CREATE OR REPLACE FUNCTION has_child(path_value ltree)
@@ -601,16 +597,18 @@ BEGIN
                         AND test_item.launch_id = LaunchId)
       WHERE test_item_results.result_id = parentItemId;
 
-      INSERT INTO statistics (statistics_field_id, item_id, launch_id, s_counter)
-      select statistics_field_id, parentItemId, null, sum(s_counter)
-      from statistics
-             join test_item ti on statistics.item_id = ti.item_id
-      where ti.unique_id = firstItemId
-      group by statistics_field_id
-      ON CONFLICT ON CONSTRAINT unique_stats_item
-                                DO UPDATE
-                                  SET
-                                    s_counter = EXCLUDED.s_counter;
+            INSERT INTO statistics (statistics_field_id, item_id, launch_id, s_counter)
+            select statistics_field_id, parentItemId, null, sum(s_counter)
+            from statistics
+                   join test_item ti on statistics.item_id = ti.item_id
+            where ti.unique_id = firstItemId
+                  and ti.launch_id = LaunchId
+                  and nlevel(ti.path) = i
+            group by statistics_field_id
+            ON CONFLICT ON CONSTRAINT unique_stats_item
+                                      DO UPDATE
+                                        SET
+                                          s_counter = EXCLUDED.s_counter;
 
       IF exists(select 1
                 from test_item_results
@@ -634,14 +632,15 @@ BEGIN
 
         IF has_child(MergingTestItemField.path_value)
         THEN
-
           UPDATE test_item
           SET parent_id = parentItemId
           WHERE test_item.path <@ MergingTestItemField.path_value
             AND test_item.path != MergingTestItemField.path_value
             AND nlevel(test_item.path) = i + 1;
-          DELETE from test_item where test_item.path = MergingTestItemField.path_value
-                                  and test_item.item_id != parentItemId;
+          DELETE
+          from test_item
+          where test_item.path = MergingTestItemField.path_value
+            and test_item.item_id != parentItemId;
 
         end if;
 
@@ -661,6 +660,7 @@ BEGIN
   from statistics
          join test_item ti on statistics.item_id = ti.item_id
   where ti.launch_id = LaunchId
+        and ti.parent_id is null
   group by statistics_field_id
   ON CONFLICT ON CONSTRAINT unique_stats_launch
                             DO UPDATE
@@ -882,10 +882,13 @@ BEGIN
   THEN RETURN new;
   END IF;
 
-  IF exists(SELECT 1
-            FROM test_item
-            WHERE item_id = new.result_id
-              AND retry_of IS NOT NULL)
+  IF exists(SELECT 1 FROM test_item ti WHERE ti.item_id = new.result_id
+                                         and ti.type != 'STEP' :: TEST_ITEM_TYPE_ENUM)
+  THEN RETURN new;
+  END IF;
+
+  IF exists(SELECT 1 FROM test_item WHERE item_id = new.result_id
+                                      AND retry_of IS NOT NULL)
   THEN RETURN new;
   END IF;
 
@@ -1000,10 +1003,8 @@ BEGIN
   THEN RETURN new;
   END IF;
 
-  IF exists(SELECT 1
-            FROM test_item
-            WHERE item_id = new.issue_id
-              AND retry_of IS NOT NULL)
+  IF exists(SELECT 1 FROM test_item WHERE item_id = new.issue_id
+                                      AND retry_of IS NOT NULL)
   THEN RETURN new;
   END IF;
 
@@ -1087,10 +1088,8 @@ BEGIN
   THEN RETURN new;
   END IF;
 
-  IF exists(SELECT 1
-            FROM test_item
-            WHERE item_id = new.issue_id
-              AND retry_of IS NOT NULL)
+  IF exists(SELECT 1 FROM test_item WHERE item_id = new.issue_id
+                                      AND retry_of IS NOT NULL)
   THEN RETURN new;
   END IF;
 
@@ -1188,11 +1187,65 @@ END;
 $$
 LANGUAGE plpgsql;
 
-
 CREATE TRIGGER after_issue_update
   AFTER UPDATE
   ON issue
   FOR EACH ROW EXECUTE PROCEDURE update_defect_statistics();
+
+CREATE OR REPLACE FUNCTION delete_defect_statistics()
+  RETURNS TRIGGER AS $$
+DECLARE   cur_id                    BIGINT;
+  DECLARE cur_launch_id             BIGINT;
+  DECLARE defect_field_old_id       BIGINT;
+  DECLARE defect_field_old_total_id BIGINT;
+BEGIN
+  cur_launch_id := (SELECT launch_id FROM test_item WHERE test_item.item_id = old.issue_id);
+
+  defect_field_old_id := (SELECT DISTINCT ON (statistics_field.name) sf_id
+                          FROM statistics_field
+                          WHERE statistics_field.name =
+                                (SELECT concat('statistics$defects$', lower(public.issue_group.issue_group :: VARCHAR), '$',
+                                               lower(public.issue_type.locator))
+                                 FROM issue_type
+                                        JOIN issue_group ON issue_type.issue_group_id = issue_group.issue_group_id
+                                 WHERE issue_type.id = old.issue_type));
+
+  defect_field_old_total_id := (SELECT DISTINCT ON (statistics_field.name) sf_id
+                                FROM statistics_field
+                                WHERE statistics_field.name =
+                                      (SELECT concat('statistics$defects$', lower(public.issue_group.issue_group :: VARCHAR), '$total')
+                                       FROM issue_type
+                                              JOIN issue_group ON issue_type.issue_group_id = issue_group.issue_group_id
+                                       WHERE issue_type.id = old.issue_type));
+
+  FOR cur_id IN
+  (SELECT item_id FROM test_item WHERE PATH @> (SELECT PATH FROM test_item WHERE item_id = old.issue_id))
+
+  LOOP
+    /* decrease item defects statistics for concrete field */
+    UPDATE statistics SET s_counter = s_counter - 1 WHERE statistics_field_id = defect_field_old_id
+                                                      AND statistics.item_id = cur_id;
+
+    /* decrease item defects statistics for total field */
+    UPDATE statistics SET s_counter = s_counter - 1 WHERE statistics_field_id = defect_field_old_total_id
+                                                      AND item_id = cur_id;
+  END LOOP;
+
+  /* decrease launch defects statistics for concrete field */
+  UPDATE statistics SET s_counter = s_counter - 1 WHERE statistics_field_id = defect_field_old_id
+                                                    AND launch_id = cur_launch_id;
+  /* decrease launch defects statistics for total field */
+  UPDATE statistics SET s_counter = s_counter - 1 WHERE statistics_field_id = defect_field_old_total_id
+                                                    AND launch_id = cur_launch_id;
+  RETURN old;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER before_issue_delete
+  BEFORE DELETE
+  ON issue
+  FOR EACH ROW EXECUTE PROCEDURE delete_defect_statistics();
 
 
 CREATE OR REPLACE FUNCTION decrease_statistics()
@@ -1204,10 +1257,8 @@ BEGIN
 
   cur_launch_id := (SELECT launch_id FROM test_item WHERE item_id = old.result_id);
 
-  IF exists(SELECT 1
-            FROM test_item
-            WHERE item_id = old.result_id
-              AND retry_of IS NOT NULL)
+  IF exists(SELECT 1 FROM test_item WHERE item_id = old.result_id
+                                      AND retry_of IS NOT NULL)
   THEN RETURN old;
   END IF;
 

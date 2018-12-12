@@ -21,25 +21,41 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
-import com.opentable.db.postgres.junit.EmbeddedPostgresRules;
+import com.opentable.db.postgres.embedded.EmbeddedPostgres;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 
 @Configuration
 @EnableConfigurationProperties
-@EnableAutoConfiguration
-@Import(DatabaseConfiguration.class)
+@EnableAutoConfiguration(exclude = QuartzAutoConfiguration.class)
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
 @PropertySource("classpath:test-application.properties")
 public class TestConfiguration {
 
+	@Value("${embedded.data.dir}")
+	private String dataDir;
+
+	@Value("${embedded.data.dir.clean}")
+	private boolean clean;
+
+	// A port number of 0 means that the port number is automatically allocated.
+	@Value("${embedded.port}")
+	private int port;
+
 	@Bean
 	@Profile("test")
-	public DataSource dataSource() {
-		return EmbeddedPostgresRules.singleInstance().getEmbeddedPostgres().getPostgresDatabase();
+	public DataSource dataSource() throws IOException {
+		final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
+				.setPort(port)
+				.setDataDirectory(System.getProperty("user.dir") + dataDir)
+				.setCleanDataDirectory(clean);
+		return builder.start().getPostgresDatabase();
 	}
 
 	@Bean
