@@ -165,33 +165,6 @@ public enum Condition {
 		}
 	},
 
-	//	/**
-	//	 * Size operation
-	//	 */
-	//	SIZE("size") {
-	//		@Override
-	//		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-	//			/* Validate only numbers */
-	//			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-	//			field(filter.getSearchCriteria()).size(Integer.parseInt(filter.getValue()));
-	//		}
-	//
-	//		@Override
-	//		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-	//			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
-	//					"'Size' condition applicable only for collection data types. Type of field is '{}'",
-	//					criteriaHolder.getDataType().getSimpleName()
-	//			));
-	//			expect(value, number()).verify(errorType, formattedSupplier("Provided value '{}' is not a number", value));
-	//		}
-	//
-	//		@Override
-	//		public Object castValue(CriteriaHolder criteriaHolder, String values, ErrorType errorType) {
-	//			// values cast is not required here
-	//			return values;
-	//		}
-	//	},
-
 	/**
 	 * Exists condition
 	 */
