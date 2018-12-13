@@ -94,7 +94,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))).and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
 				.fetch(LAUNCH.NAME);
 	}
 
@@ -105,8 +106,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.leftJoin(USERS)
-				.on(LAUNCH.USER_ID.eq(USERS.ID))
-				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + value + "%"))
+				.on(LAUNCH.USER_ID.eq(USERS.ID)).where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + value + "%"))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 				.fetch(USERS.LOGIN);
 	}
@@ -131,12 +131,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLatestByFilter(Filter filter) {
-		return ofNullable(dsl.with(LAUNCHES)
-				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
-				.select()
-				.from(LAUNCH)
-				.join(LAUNCHES)
-				.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
+		return ofNullable(dsl.with(LAUNCHES).as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
+				.select().from(LAUNCH).join(LAUNCHES).on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOneInto(Launch.class));
 	}

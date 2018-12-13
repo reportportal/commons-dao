@@ -96,6 +96,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   status {@link com.epam.ta.reportportal.entity.enums.StatusEnum}
 	 * @return True if has
 	 */
-	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id " + "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
-	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId, @Param("status") String status);
+	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
+			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
+	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
+			@Param("status") String status);
 }

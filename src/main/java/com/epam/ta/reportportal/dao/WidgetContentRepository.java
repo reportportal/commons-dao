@@ -77,7 +77,6 @@ public interface WidgetContentRepository {
 	 */
 	List<ChartStatisticsContent> investigatedStatistics(Filter filter, Sort sort, int limit);
 
-
 	/**
 	 * Investigated statistics loading for timeline view
 	 *

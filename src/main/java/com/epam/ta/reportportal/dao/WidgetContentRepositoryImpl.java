@@ -140,9 +140,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
-		)
-				.from(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).build())
+		).from(dsl.with(LAUNCHES).as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
@@ -167,9 +165,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.asTable(FLAKY_TABLE_RESULTS))
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
-				)
-				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
-				.limit(20)
+				).orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID)).limit(20)
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
@@ -284,8 +280,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> groupingFields = StreamSupport.stream(sort.spliterator(), false).map(s -> field(s.getProperty())).collect(toList());
 
-		return buildPassingRateSelect(filter, sort, limit).groupBy(groupingFields)
-				.orderBy(buildSortFields(sort))
+		return buildPassingRateSelect(filter, sort, limit).groupBy(groupingFields).orderBy(buildSortFields(sort))
 				.fetchInto(PassingRateStatisticsResult.class)
 				.stream()
 				.findFirst()
@@ -776,9 +771,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields, Map<String, String> customColumns) {
 
-		List<Condition> conditions = customColumns.values()
-				.stream()
-				.map(cf -> ITEM_ATTRIBUTE.KEY.like(cf + LIKE_CONDITION_SYMBOL))
+		List<Condition> conditions = customColumns.values().stream().map(cf -> ITEM_ATTRIBUTE.KEY.like(cf + LIKE_CONDITION_SYMBOL))
 				.collect(Collectors.toList());
 
 		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));

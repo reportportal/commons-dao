@@ -47,8 +47,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(LAUNCH)
 				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
 				.leftJoin(PROJECT)
-				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
-				.where(PROJECT.ID.eq(projectId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID)).where(PROJECT.ID.eq(projectId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
 				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
@@ -60,10 +59,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(LAUNCH)
 				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-				.leftJoin(PROJECT)
-				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
-				.where(condition)
-				.fetch(ITEM_ATTRIBUTE.VALUE);
+				.leftJoin(PROJECT).on(LAUNCH.PROJECT_ID.eq(PROJECT.ID)).where(condition).fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 
 	@Override
@@ -73,8 +69,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(TEST_ITEM)
 				.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
 				.leftJoin(LAUNCH)
-				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.ID.eq(launchId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID)).where(LAUNCH.ID.eq(launchId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
 				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
