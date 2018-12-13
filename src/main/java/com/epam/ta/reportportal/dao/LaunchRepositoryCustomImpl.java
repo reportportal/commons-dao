@@ -190,7 +190,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.leftJoin(STATISTICS)
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
-				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)))).stream().findFirst();
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.leftJoin(ITEM_ATTRIBUTE)
+				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID)))).stream().findFirst();
 	}
 
 	@Override
