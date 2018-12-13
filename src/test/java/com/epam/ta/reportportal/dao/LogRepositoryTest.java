@@ -16,26 +16,23 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.time.Duration;
@@ -50,10 +47,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Ivan Budaev
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class LogRepositoryTest {
+@FlywayTest
+public class LogRepositoryTest extends BaseTest {
 
 	@Autowired
 	private LogRepository logRepository;
@@ -98,7 +93,6 @@ public class LogRepositoryTest {
 		});
 	}
 
-
 	@Test
 	public void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
 
@@ -114,11 +108,7 @@ public class LogRepositoryTest {
 	@Test
 	public void hasLogsAddedLatelyTest() {
 
-		Assert.assertTrue(logRepository.hasLogsAddedLately(
-				Duration.ofDays(13).plusHours(23),
-				1L,
-				StatusEnum.IN_PROGRESS
-		));
+		Assert.assertTrue(logRepository.hasLogsAddedLately(Duration.ofDays(13).plusHours(23), 1L, StatusEnum.IN_PROGRESS));
 	}
 
 	@Test
@@ -136,7 +126,9 @@ public class LogRepositoryTest {
 
 	@Test
 	public void deleteByPeriodAndTestItemIdsTest() {
-		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(STEP_ITEM_WITH_LOGS_ID));
+		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20),
+				Collections.singleton(STEP_ITEM_WITH_LOGS_ID)
+		);
 
 		Assert.assertEquals(3, removedLogsCount);
 	}

@@ -30,6 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = TestConfiguration.class)
 @Transactional("transactionManager")
 @ActiveProfiles("test")
-public class BaseTest {
+public abstract class BaseTest {
 
 }

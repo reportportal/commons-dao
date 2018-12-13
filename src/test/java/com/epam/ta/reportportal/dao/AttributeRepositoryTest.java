@@ -16,42 +16,29 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-import org.junit.AfterClass;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-import java.sql.SQLException;
 import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Ivan Budaev
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class AttributeRepositoryTest {
+@FlywayTest
+@Sql("/test-attributes-fill.sql")
+public class AttributeRepositoryTest extends BaseTest {
 
 	@Autowired
 	private AttributeRepository attributeRepository;
-
-	@BeforeClass
-	public static void init() throws SQLException {
-		SqlRunner.runSqlScripts("/test-dropall-script.sql", "/test-create-script.sql", "/test-fill-script.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException {
-		SqlRunner.runSqlScripts("/test-dropall-script.sql");
-	}
 
 	@Test
 	public void shouldFindWhenNameIsPresent() {
@@ -63,7 +50,7 @@ public class AttributeRepositoryTest {
 		Optional<Attribute> attribute = attributeRepository.findByName(name);
 
 		//then
-		Assert.assertTrue(attribute.isPresent());
+		assertTrue(attribute.isPresent());
 	}
 
 	@Test
@@ -81,6 +68,7 @@ public class AttributeRepositoryTest {
 
 	@Test
 	public void getDefaultProjectAttributesTest() {
-		attributeRepository.getDefaultProjectAttributes();
+		final Set<Attribute> defaultProjectAttributes = attributeRepository.getDefaultProjectAttributes();
+		defaultProjectAttributes.forEach(it -> assertTrue(ProjectAttributeEnum.findByAttributeName(it.getName()).isPresent()));
 	}
 }

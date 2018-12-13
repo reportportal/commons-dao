@@ -15,10 +15,10 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -32,22 +32,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
-import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -62,10 +54,8 @@ import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 /**
  * @author Ivan Budayeu
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class WidgetContentRepositoryTest {
+@FlywayTest
+public class WidgetContentRepositoryTest extends BaseTest {
 
 	public static final String FILTER_START_TIME = "start_time";
 	public static final String FILTER_CREATION_DATE = "creation_date";
@@ -75,22 +65,6 @@ public class WidgetContentRepositoryTest {
 
 	@Autowired
 	private LaunchRepository launchRepository;
-
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-
-//		runSqlScript("/test-dropall-script.sql");
-//		runSqlScript("/test-create-script.sql");
-//		runSqlScript("/test-fill-script.sql");
-//		runSqlScript("/statistics-filling-script.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-//		runSqlScript("/test-dropall-script.sql");
-	}
-
-
 
 	@Test
 	public void overallStatisticsContent() {

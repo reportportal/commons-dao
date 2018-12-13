@@ -16,10 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -29,24 +29,16 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
-import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -56,10 +48,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 /**
  * @author Ivan Budaev
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class UserRepositoryTest {
+@FlywayTest
+public class UserRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -70,27 +60,17 @@ public class UserRepositoryTest {
 	@Autowired
 	private ActivityRepository activityRepository;
 
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-
-	}
-
 	@Test
 	public void loadUserNameByProject() {
 		//given
 		long projectId = 3L;
-		String term = "2";
+		String term = "def";
 		//when
 		List<String> userNames = userRepository.findNamesByProject(projectId, term);
 		//then
 		Assert.assertThat("User names not found", userNames, Matchers.notNullValue());
 		Assert.assertThat("Incorrect size of user names", userNames, Matchers.hasSize(1));
-		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified '2' term", name, Matchers.containsString(term)));
+		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified 'def' term", name, Matchers.containsString(term)));
 	}
 
 	@Test

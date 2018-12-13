@@ -15,48 +15,27 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Sets;
-import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Set;
 
 /**
  * @author Ivan Nikitsenka
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class UserFilterRepositoryTest {
-
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/test-dropall-script.sql");
-		//TODO this scripts should be syncronized with migration scripts
-		SqlRunner.runSqlScripts("/test-create-script.sql", "/test-fill-user-filters-script.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/test-dropall-script.sql");
-	}
+@FlywayTest
+@Sql("/test-user-filters-fill.sql")
+public class UserFilterRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserFilterRepositoryCustom userFilterRepository;
