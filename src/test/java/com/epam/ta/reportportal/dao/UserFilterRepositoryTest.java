@@ -19,6 +19,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.google.common.collect.Sets;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
@@ -38,28 +39,38 @@ import java.util.Set;
 public class UserFilterRepositoryTest extends BaseTest {
 
 	@Autowired
-	private UserFilterRepositoryCustom userFilterRepository;
+	private UserFilterRepository userFilterRepository;
 
 	@Test
 	public void getSharedFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getSharedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"superadmin"
+		);
 
 		Assert.assertEquals(2l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
 
-		Page<UserFilter> result2 = userFilterRepository.getSharedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "default");
+		Page<UserFilter> result2 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"default"
+		);
 
 		Assert.assertEquals(0l, result2.getTotalElements());
 	}
 
 	@Test
 	public void getPermittedFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getPermittedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "superadmin");
+		PageRequest of = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, JFilter.FILTER.NAME.getQualifiedName().toString()));
+		Page<UserFilter> result1 = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L), of, "superadmin");
 
 		Assert.assertEquals(2l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
 
-		Page<UserFilter> result2 = userFilterRepository.getPermittedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "default");
+		Page<UserFilter> result2 = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"default"
+		);
 
 		Assert.assertEquals(3l, result2.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result2.get().findFirst().get().getId());
@@ -67,11 +78,14 @@ public class UserFilterRepositoryTest extends BaseTest {
 
 	@Test
 	public void getOwnFilters() {
-		Page<UserFilter> result1 = userFilterRepository.getOwnFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 3),
+				"superadmin"
+		);
 
 		Assert.assertEquals(0l, result1.getTotalElements());
 
-		Page<UserFilter> result2 = userFilterRepository.getOwnFilters(1l, buildDefaultFilter(), PageRequest.of(0, 3), "default");
+		Page<UserFilter> result2 = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L), PageRequest.of(0, 3), "default");
 
 		Assert.assertEquals(3l, result2.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result2.get().findFirst().get().getId());
@@ -79,7 +93,10 @@ public class UserFilterRepositoryTest extends BaseTest {
 
 	@Test
 	public void getSharedFiltersPaging() {
-		Page<UserFilter> result1 = userFilterRepository.getSharedFilters(1l, buildDefaultFilter(), PageRequest.of(0, 1), "superadmin");
+		Page<UserFilter> result1 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
+				PageRequest.of(0, 1),
+				"superadmin"
+		);
 
 		Assert.assertEquals(1l, result1.getTotalElements());
 		Assert.assertEquals(Long.valueOf(1l), result1.get().findFirst().get().getId());
@@ -87,7 +104,14 @@ public class UserFilterRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultFilter() {
 		Set<FilterCondition> conditionSet = Sets.newHashSet();
-		return new Filter(2L, UserFilter.class, conditionSet);
+		return new Filter(UserFilter.class, conditionSet);
+	}
+
+	@Test
+	public void existsByNameAndOwnerAndProjectIdTest() {
+		Assert.assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "superadmin", 1L));
+		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "yahoo", 1L));
+		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "superadmin", 2L));
 	}
 
 }

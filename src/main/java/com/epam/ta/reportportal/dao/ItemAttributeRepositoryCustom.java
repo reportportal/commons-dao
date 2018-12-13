@@ -31,35 +31,37 @@ public interface ItemAttributeRepositoryCustom {
 	 * @param value     part of key
 	 * @return List of matched attribute keys
 	 */
-	List<String> findKeysByProjectIdAndValue(Long projectId, String value);
+	List<String> findLaunchAttributeKeys(Long projectId, String value, boolean system);
 
 	/**
-	 * Retrieves launch attribute values by project and part of value.
+	 * Retrieves launch attribute values by project, specified key and part of value.
 	 * Used for autocompletion functionality
 	 *
 	 * @param projectId Id of project
-	 * @param value    part of value
+	 * @param key       Specified key
+	 * @param value     Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findValuesByProjectIdAndValue(Long projectId, String value);
+	List<String> findLaunchAttributeValues(Long projectId, String key, String value, boolean system);
 
 	/**
 	 * Retrieves test item attribute keys by launch and part of value.
 	 * Used for autocompletion functionality
 	 *
-	 * @param launchId    Id of launch
+	 * @param launchId Id of launch
 	 * @param value    part of key
 	 * @return List of matched attribute keys
 	 */
-	List<String> findKeysByLaunchIdAndValue(Long launchId, String value);
+	List<String> findTestItemAttributeKeys(Long launchId, String value, boolean system);
 
 	/**
-	 * Retrieves test item attribute values by launch and part of value.
+	 * Retrieves test item attribute values by launch, specified key and part of value.
 	 * Used for autocompletion functionality
 	 *
 	 * @param launchId    Id of launch
-	 * @param value    part of key
+	 * @param key       Specified key
+	 * @param value     Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findValuesByLaunchIdAndValue(Long launchId, String value);
+	List<String> findTestItemAttributeValues(Long launchId, String key, String value, boolean system);
 }

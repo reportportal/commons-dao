@@ -80,29 +80,30 @@ public class EmailIntegrationUtil {
 	 * @return List of case values
 	 */
 	public static List<String> getRuleValues(Map<String, Object> rule, SendCaseType caseType) {
-		expect(rule, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Launch rule should exist.");
+		expect(rule, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Launch rules should exist");
 
 		expect(caseType, Predicates.notNull().and(it -> it != SendCaseType.LAUNCH_STATS_RULE)).verify(ErrorType.BAD_REQUEST_ERROR,
-				"Case type should exist."
+				"Case type should exist"
 		);
 
 		Optional<Object> result = Optional.ofNullable(rule.get(caseType.getCaseTypeString()));
-		expect(result, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR, "Rules should exists.");
-		expect(result, Predicates.instanceOf(List.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+		expect(result, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+				"Rule '" + caseType.getCaseTypeString() + "' should exist"
+		);
+		expect(result.get(), Predicates.instanceOf(List.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
 				"Incorrect result of retrieving " + caseType.getCaseTypeString()
 		);
 		return (List<String>) result.get();
 	}
 
 	public static String getLaunchStatsValue(Map<String, Object> rule) {
-		expect(rule, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Launch stats rule should exist.");
+		expect(rule, MapUtils::isNotEmpty).verify(ErrorType.BAD_REQUEST_ERROR, "Launch stats rule should exist");
 		Optional<Object> launchStatsRule = Optional.ofNullable(rule.get(LAUNCH_STATS_RULE.getCaseTypeString()));
 		expect(launchStatsRule, Optional::isPresent).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
-				"Rule should exists.",
-				LAUNCH_STATS_RULE.getCaseTypeString()
+				"Rule '" + LAUNCH_STATS_RULE.getCaseTypeString() + "' should exist"
 		);
 
-		expect(launchStatsRule, Predicates.instanceOf(String.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
+		expect(launchStatsRule.get(), Predicates.instanceOf(String.class)).verify(ErrorType.OBJECT_RETRIEVAL_ERROR,
 				"Incorrect result of retrieving " + LAUNCH_STATS_RULE.getCaseTypeString()
 		);
 		return (String) launchStatsRule.get();

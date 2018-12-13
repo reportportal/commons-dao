@@ -33,7 +33,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -55,7 +56,8 @@ public class QueryBuilder {
 	 * Conditions that should be applied with HAVING
 	 */
 	private static final List<com.epam.ta.reportportal.commons.querygen.Condition> HAVING_CONDITIONS = ImmutableList.<com.epam.ta.reportportal.commons.querygen.Condition>builder()
-			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS).add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
 			.build();
 
 	/**
@@ -105,16 +107,6 @@ public class QueryBuilder {
 		query.addHaving(condition);
 	}
 
-	public QueryBuilder with(boolean latest) {
-		if (latest) {
-			query.addConditions(LAUNCH.ID.in(DSL.selectDistinct(LAUNCH.ID)
-					.on(LAUNCH.NAME)
-					.from(LAUNCH)
-					.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())));
-		}
-		return this;
-	}
-
 	/**
 	 * Adds {@link Pageable} conditions
 	 *
@@ -122,8 +114,10 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Pageable p) {
-		query.addLimit(p.getPageSize());
-		query.addOffset(Long.valueOf(p.getOffset()).intValue());
+		if (p.isPaged()) {
+			query.addLimit(p.getPageSize());
+			query.addOffset(Long.valueOf(p.getOffset()).intValue());
+		}
 		return with(p.getSort());
 	}
 
@@ -154,6 +148,12 @@ public class QueryBuilder {
 		return this;
 	}
 
+	public QueryBuilder with(Field<?> field, SortOrder sort) {
+		query.addSelect(field);
+		query.addOrderBy(field.sort(sort));
+		return this;
+	}
+
 	/**
 	 * Builds query
 	 *
@@ -175,7 +175,7 @@ public class QueryBuilder {
 	}
 
 	/**
-	 * Joins inner query to load columns exclueing provided fields after filtering
+	 * Joins inner query to load columns excluding provided fields after filtering
 	 *
 	 * @param filterTarget Filter target
 	 * @return Query builder
@@ -185,6 +185,12 @@ public class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Adds sorting after wrapping filtered query
+	 *
+	 * @param sort Sort
+	 * @return Query builder
+	 */
 	public QueryBuilder withWrappedSort(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
 				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
@@ -193,7 +199,7 @@ public class QueryBuilder {
 		return this;
 	}
 
-	static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
+	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
@@ -205,7 +211,8 @@ public class QueryBuilder {
 			if (searchCriteria.startsWith(STATISTICS_KEY)) {
 				criteriaHolder = Optional.of(new CriteriaHolder(
 						searchCriteria,
-						DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())).toString(),
+						DSL.coalesce(DSL.max(STATISTICS.S_COUNTER)
+								.filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())), 0).toString(),
 						Long.class
 				));
 			}

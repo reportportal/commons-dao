@@ -124,9 +124,7 @@ public class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	public void findAllLatestLaunchesTest() {
-
 		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2));
-
 		Assert.assertNotNull(allLatestByFilter);
 		Assert.assertEquals(2, allLatestByFilter.getNumberOfElements());
 	}
@@ -159,9 +157,10 @@ public class LaunchRepositoryTest extends BaseTest {
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
-				), new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
+				),
+				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
-				new FilterCondition(Condition.HAS, false, "updated", "tags")
+				new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "1", "statistics$executions$passed")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}

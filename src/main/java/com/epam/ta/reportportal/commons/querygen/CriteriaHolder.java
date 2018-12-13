@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Holds mapping between request search criteria and DB engine search criteria. Should be used for
@@ -107,11 +108,14 @@ public class CriteriaHolder {
 			/* Verify correct date */
 			BusinessRule.expect(oneValue, FilterRules.dateInMillis())
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue));
-			castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.valueOf(oneValue)), ZoneId.systemDefault());
+			castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)), ZoneId.systemDefault());
 		} else if (boolean.class.equals(getDataType()) || Boolean.class.isAssignableFrom(getDataType())) {
 			castedValue = BooleanUtils.toBoolean(oneValue);
 		} else if (LogLevel.class.isAssignableFrom(getDataType())) {
-			castedValue = LogLevel.toLevel(oneValue).toInt();
+			Optional<LogLevel> level = LogLevel.toLevel(oneValue);
+			BusinessRule.expect(level, Optional::isPresent)
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+			castedValue = level.get().toInt();
 			BusinessRule.expect(castedValue, Objects::nonNull)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
 		} else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {

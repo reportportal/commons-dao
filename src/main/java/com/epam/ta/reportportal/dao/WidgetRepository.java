@@ -30,4 +30,14 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, 
 	 * @return The {@link List} of the {@link Widget}
 	 */
 	List<Widget> findAllByProjectId(Long projectId);
+
+	/**
+	 * Checks the existence of the {@link Widget} with specified name for a user on a project
+	 *
+	 * @param name      {@link Widget#name}
+	 * @param owner     {@link Widget#owner}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which widget existence will be checked
+	 * @return if exists 'true' else 'false'
+	 */
+	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
 }

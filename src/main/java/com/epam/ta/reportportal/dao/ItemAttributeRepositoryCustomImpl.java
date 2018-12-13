@@ -16,9 +16,12 @@
 
 package com.epam.ta.reportportal.dao;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -27,6 +30,7 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
+@Repository
 public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositoryCustom {
 
 	private final DSLContext dslContext;
@@ -37,49 +41,66 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findKeysByProjectIdAndValue(Long projectId, String value) {
-		return findByProjectIdAndValue(projectId, value, ITEM_ATTRIBUTE.KEY);
-	}
-
-	@Override
-	public List<String> findValuesByProjectIdAndValue(Long projectId, String value) {
-		return findByProjectIdAndValue(projectId, value, ITEM_ATTRIBUTE.VALUE);
-	}
-
-	@Override
-	public List<String> findKeysByLaunchIdAndValue(Long launchId, String value) {
-		return findByLaunchIdAndValue(launchId, value, ITEM_ATTRIBUTE.KEY);
-	}
-
-	@Override
-	public List<String> findValuesByLaunchIdAndValue(Long launchId, String value) {
-		return findByLaunchIdAndValue(launchId, value, ITEM_ATTRIBUTE.VALUE);
-	}
-
-	private List<String> findByProjectIdAndValue(Long projectId, String value, TableField field) {
-		return dslContext.selectDistinct(field)
+	public List<String> findLaunchAttributeKeys(Long projectId, String value, boolean system) {
+		return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(LAUNCH)
 				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
-				.where(PROJECT.ID.eq(projectId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(false))
-				.and(field.likeIgnoreCase("%" + value + "%"))
-				.fetch(field);
+				.where(PROJECT.ID.eq(projectId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
+				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
-	private List<String> findByLaunchIdAndValue(Long launchId, String value, TableField field) {
-		return dslContext.selectDistinct(field)
+	@Override
+	public List<String> findLaunchAttributeValues(Long projectId, String key, String value, boolean system) {
+		Condition condition = prepareFetchingValuesCondition(PROJECT.ID, projectId, key, value, system);
+		return dslContext.selectDistinct(ITEM_ATTRIBUTE.VALUE)
+				.from(ITEM_ATTRIBUTE)
+				.leftJoin(LAUNCH)
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.where(condition)
+				.fetch(ITEM_ATTRIBUTE.VALUE);
+	}
+
+	@Override
+	public List<String> findTestItemAttributeKeys(Long launchId, String value, boolean system) {
+		return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
 				.from(ITEM_ATTRIBUTE)
 				.leftJoin(TEST_ITEM)
 				.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
 				.leftJoin(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.ID.eq(launchId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(false))
-				.and(field.likeIgnoreCase("%" + value + "%"))
-				.fetch(field);
+				.where(LAUNCH.ID.eq(launchId)).and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
+				.fetch(ITEM_ATTRIBUTE.KEY);
+	}
+
+	@Override
+	public List<String> findTestItemAttributeValues(Long launchId, String key, String value, boolean system) {
+		Condition condition = prepareFetchingValuesCondition(LAUNCH.ID, launchId, key, value, system);
+		return dslContext.selectDistinct(ITEM_ATTRIBUTE.VALUE)
+				.from(ITEM_ATTRIBUTE)
+				.leftJoin(TEST_ITEM)
+				.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.leftJoin(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(condition)
+				.fetch(ITEM_ATTRIBUTE.VALUE);
+	}
+
+	private Condition prepareFetchingValuesCondition(TableField<? extends Record, Long> field, Long id, String key, String value,
+			boolean system) {
+		Condition condition = field.eq(id)
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + (value == null ? "" : value) + "%"));
+		if (key != null) {
+			condition = condition.and(ITEM_ATTRIBUTE.KEY.eq(key));
+		}
+		return condition;
 	}
 
 }

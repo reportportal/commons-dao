@@ -18,17 +18,20 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -38,15 +41,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 /**
  * @author Pavel Bortnik
@@ -83,37 +89,26 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<String> getLaunchNames(Long projectId, String value, String mode) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-
-		return dsl.select()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.where(p.ID.eq(projectId))
-				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.and(l.NAME.like("%" + value + "%"))
-				.fetch(l.NAME);
+		return dsl.selectDistinct(LAUNCH.NAME)
+				.from(LAUNCH)
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.where(PROJECT.ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))).and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
+				.fetch(LAUNCH.NAME);
 	}
 
 	@Override
 	public List<String> getOwnerNames(Long projectId, String value, String mode) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-		JUsers u = USERS.as("u");
-
-		return dsl.selectDistinct()
-				.from(l)
-				.leftJoin(p)
-				.on(l.PROJECT_ID.eq(p.ID))
-				.leftJoin(u)
-				.on(l.USER_ID.eq(u.ID))
-				.where(p.ID.eq(projectId))
-				.and(u.FULL_NAME.like("%" + value + "%"))
-				.and(l.MODE.eq(JLaunchModeEnum.valueOf(mode)))
-				.fetch(u.FULL_NAME);
+		return dsl.selectDistinct(USERS.LOGIN)
+				.from(LAUNCH)
+				.leftJoin(PROJECT)
+				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
+				.leftJoin(USERS)
+				.on(LAUNCH.USER_ID.eq(USERS.ID))
+				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + value + "%"))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.fetch(USERS.LOGIN);
 	}
 
 	@Override
@@ -135,13 +130,13 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Optional<Launch> findLatestByNameAndFilter(String launchName, Filter filter) {
+	public Optional<Launch> findLatestByFilter(Filter filter) {
 		return ofNullable(dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
 				.select()
-				.distinctOn(LAUNCH.NAME)
 				.from(LAUNCH)
-				.where(LAUNCH.NAME.eq(launchName))
+				.join(LAUNCHES)
+				.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
 				.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())
 				.fetchOneInto(Launch.class));
 	}
@@ -150,19 +145,29 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(
-				dsl.fetch(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+				LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).with(pageable).build())
 						.select()
-						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
-						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())).map(LAUNCH_RECORD_MAPPER),
+						.join(LAUNCHES)
+						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
+						.leftJoin(STATISTICS)
+						.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+						.leftJoin(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.leftJoin(ITEM_ATTRIBUTE)
+						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+						.orderBy(buildSortFields(pageable.getSort()))
+						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
 						.select()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
-						.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc()))
+						.join(LAUNCHES)
+						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
+						.orderBy(buildSortFields(pageable.getSort())))
 		);
 	}
 
@@ -176,7 +181,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.orderBy(LAUNCH.START_TIME.desc())
 						.limit(1))
 				.select()
-				.from(LAUNCH).join(FILTERED_QUERY).on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
+				.from(LAUNCH)
+				.join(FILTERED_QUERY)
+				.on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
 				.leftJoin(STATISTICS)
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
@@ -204,7 +211,13 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
 								.and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
 				.groupBy(USERS.LOGIN)
-				.fetchMap(USERS.LOGIN, DSL.field("count", Integer.class));
+				.fetchMap(USERS.LOGIN, field("count", Integer.class));
+	}
+
+	private List<SortField<Object>> buildSortFields(Sort sort) {
+		return ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+				.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 	}
 
 }

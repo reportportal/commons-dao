@@ -1,0 +1,4 @@
+INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id) VALUES (1, 1, 'LAUNCH', 'CREATE_LAUNCH', null, now(), null);
+INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id) VALUES (1, 1, 'LAUNCH', 'CREATE_LAUNCH', null, now(), null);
+INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id) VALUES (1, 1, 'LAUNCH', 'CREATE_LAUNCH', null, now(), null);
+INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id) VALUES (1, 1, 'LAUNCH', 'CREATE_LAUNCH', null, now(), null);
