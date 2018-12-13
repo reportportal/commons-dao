@@ -34,10 +34,10 @@ import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -56,10 +56,6 @@ import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 /**
  * @author Ivan Budayeu
  */
-@FlywayTest
-@Sql(scripts = { "/widgetcontent/widget/widget-up.sql", "/widgetcontent/attribute/attribute-up.sql", "/widgetcontent/ticket/ticket-up.sql",
-		"/widgetcontent/statistics/statistics-down.sql", "/widgetcontent/statistics/launch-statistics-up.sql",
-		"/widgetcontent/activity/activity-up.sql" })
 public class WidgetContentRepositoryTest extends BaseTest {
 
 	public static final String FILTER_START_TIME = "launch.start_time";
@@ -70,6 +66,11 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 	@Autowired
 	private LaunchRepository launchRepository;
+
+	@FlywayTest(locationsForMigrate = { "db/fill/widget-content" }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+	}
 
 	@Test
 	public void overallStatisticsContent() {
@@ -563,7 +564,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	private Filter buildDefaultFilter(Long projectId) {
 
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false, String.valueOf(projectId), CRITERIA_PROJECT_ID
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode")
@@ -573,7 +576,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultTestFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false, String.valueOf(projectId), CRITERIA_PROJECT_ID
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
@@ -584,14 +589,18 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultActivityFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-				false, String.valueOf(projectId), CRITERIA_PROJECT_ID
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
 		));
 		return new Filter(1L, Activity.class, conditionSet);
 	}
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-				false, String.valueOf(projectId), CRITERIA_PROJECT_ID
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
 		), new FilterCondition(
 				Condition.EQUALS_ANY,
 				false,
@@ -656,8 +665,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				CRITERIA_USER,
 				"number",
 				"name",
-				"startTime",
-				"attributes",
+				"startTime", "db/fill/attributes",
 				"statistics$executions$total",
 				"statistics$executions$failed",
 				"statistics$executions$passed",

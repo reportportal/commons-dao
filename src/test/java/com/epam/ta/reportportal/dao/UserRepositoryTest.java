@@ -42,8 +42,8 @@ import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingExcept
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 
 /**
  * @author Ivan Budaev
@@ -56,9 +56,6 @@ public class UserRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ProjectRepository projectRepository;
-
-	@Autowired
-	private ActivityRepository activityRepository;
 
 	@Test
 	public void loadUserNameByProject() {
@@ -233,8 +230,7 @@ public class UserRepositoryTest extends BaseTest {
 	@Test
 	public void searchForUserTest() {
 		Filter filter = Filter.builder()
-				.withTarget(User.class)
-				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_NAME))
+				.withTarget(User.class).withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
 				.build();
 		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
 		Assert.assertNotNull(users);

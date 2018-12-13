@@ -1,21 +1,14 @@
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.config.TestConfiguration;
+import com.epam.ta.reportportal.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class WidgetRepositoryTest {
+public class WidgetRepositoryTest extends BaseTest {
 
 	@Autowired
 	private WidgetRepository widgetRepository;

@@ -24,24 +24,27 @@ import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.google.common.collect.Sets;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Set;
 
 /**
  * @author Ivan Nikitsenka
  */
-@FlywayTest
-@Sql("/test-user-filters-fill.sql")
 public class UserFilterRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserFilterRepository userFilterRepository;
+
+	@FlywayTest(locationsForMigrate = { "db/fill/filter" }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+	}
 
 	@Test
 	public void getSharedFilters() {

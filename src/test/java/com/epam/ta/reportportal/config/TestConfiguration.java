@@ -22,6 +22,7 @@ import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
@@ -56,6 +57,11 @@ public class TestConfiguration {
 				.setDataDirectory(System.getProperty("user.dir") + dataDir)
 				.setCleanDataDirectory(clean);
 		return builder.start().getPostgresDatabase();
+	}
+
+	@Bean
+	public Flyway flyway() throws IOException {
+		return Flyway.configure().dataSource(dataSource()).validateOnMigrate(false).load();
 	}
 
 	@Bean

@@ -22,12 +22,12 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.Activity;
 import org.apache.commons.compress.utils.Lists;
 import org.flywaydb.test.annotation.FlywayTest;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,12 +38,15 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static org.junit.Assert.*;
 
-@FlywayTest
-@Sql("/test-activities-fill.sql")
 public class ActivityRepositoryCustomImplTest extends BaseTest {
 
 	@Autowired
 	private ActivityRepository repository;
+
+	@FlywayTest(locationsForMigrate = { "/db/fill/activity" }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+	}
 
 	@Test
 	public void deleteModifiedLaterAgo() {

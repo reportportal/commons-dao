@@ -24,21 +24,18 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.jdbc.Sql;
 
-import javax.sql.DataSource;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,15 +49,16 @@ import static com.epam.ta.reportportal.dao.constant.TestConstants.SUPERADMIN_PER
 /**
  * @author Ivan Budaev
  */
-@FlywayTest
-@Sql("/launch/launch-up.sql")
 public class LaunchRepositoryTest extends BaseTest {
 
 	@Autowired
 	private LaunchRepository launchRepository;
 
-	@Autowired
-	DataSource dataSource;
+	@FlywayTest(locationsForMigrate = { "db/fill/launch" }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+
+	}
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
@@ -135,13 +133,6 @@ public class LaunchRepositoryTest extends BaseTest {
 
 		Assert.assertNotNull(launchNames);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(launchNames));
-	}
-
-	@Test
-	public void jsonParsingTest() throws JsonProcessingException {
-		Launch launch = launchRepository.findById(2L).get();
-
-		String string = new ObjectMapper().writeValueAsString(launch);
 	}
 
 	@Test

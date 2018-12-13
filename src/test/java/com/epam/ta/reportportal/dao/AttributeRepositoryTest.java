@@ -21,9 +21,9 @@ import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Optional;
 import java.util.Set;
@@ -33,12 +33,15 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Ivan Budaev
  */
-@FlywayTest
-@Sql("/test-attributes-fill.sql")
 public class AttributeRepositoryTest extends BaseTest {
 
 	@Autowired
 	private AttributeRepository attributeRepository;
+
+	@FlywayTest(locationsForMigrate = { "db/fill/attributes" }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+	}
 
 	@Test
 	public void shouldFindWhenNameIsPresent() {

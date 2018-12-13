@@ -49,3 +49,12 @@ INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (5, floor(ran
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (5, 2);
 INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (6, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (6, 3);
+
+ALTER SEQUENCE statistics_s_id_seq
+  RESTART WITH 1;
+DELETE
+FROM statistics;
+ALTER SEQUENCE statistics_field_sf_id_seq
+  RESTART WITH 1;
+DELETE
+FROM statistics_field;
