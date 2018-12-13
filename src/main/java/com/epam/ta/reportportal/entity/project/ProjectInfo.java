@@ -34,9 +34,9 @@ public class ProjectInfo implements Serializable {
 
 	private String projectType;
 
-	private Integer usersQuantity;
+	private int usersQuantity;
 
-	private Integer launchesQuantity;
+	private int launchesQuantity;
 
 	private LocalDateTime lastRun;
 
@@ -72,19 +72,19 @@ public class ProjectInfo implements Serializable {
 		this.projectType = projectType;
 	}
 
-	public Integer getUsersQuantity() {
+	public int getUsersQuantity() {
 		return usersQuantity;
 	}
 
-	public void setUsersQuantity(Integer usersQuantity) {
+	public void setUsersQuantity(int usersQuantity) {
 		this.usersQuantity = usersQuantity;
 	}
 
-	public Integer getLaunchesQuantity() {
+	public int getLaunchesQuantity() {
 		return launchesQuantity;
 	}
 
-	public void setLaunchesQuantity(Integer launchesQuantity) {
+	public void setLaunchesQuantity(int launchesQuantity) {
 		this.launchesQuantity = launchesQuantity;
 	}
 

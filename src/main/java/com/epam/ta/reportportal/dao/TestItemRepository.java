@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,6 +38,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
 
 	/**
+	 * Finds all {@link TestItem} by specified launch id
+	 *
+	 * @param launchId {@link Launch#id}
+	 * @return {@link List<TestItem>} ordered by {@link TestItem#startTime} ascending
+	 */
+	List<TestItem> findTestItemsByLaunchIdOrderByStartTimeAsc(Long launchId);
+
+	/**
 	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
 	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
 	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of other {@link TestItem}
@@ -52,7 +61,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
 	/**
 	 * Execute sql-function that removes statistics of {@link TestItem} with non-null {@link TestItem#retryOf} value
-	 * of {@link com.epam.ta.reportportal.entity.launch.Launch} with provided 'launchId'
+	 * of {@link Launch} with provided 'launchId'
 	 *
 	 * @param launchId Id of the {@link com.epam.ta.reportportal.entity.launch.Launch} to perform retries statistics recalculation
 	 */
