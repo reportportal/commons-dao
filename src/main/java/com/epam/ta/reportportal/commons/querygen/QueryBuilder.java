@@ -94,7 +94,9 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder addCondition(Condition condition) {
-		query.addConditions(condition);
+		if (null != condition) {
+			query.addConditions(condition);
+		}
 		return this;
 	}
 
@@ -103,8 +105,11 @@ public class QueryBuilder {
 	 *
 	 * @param condition Condition
 	 */
-	void addHavingCondition(Condition condition) {
-		query.addHaving(condition);
+	public QueryBuilder addHavingCondition(Condition condition) {
+		if (null != condition) {
+			query.addHaving(condition);
+		}
+		return this;
 	}
 
 	/**

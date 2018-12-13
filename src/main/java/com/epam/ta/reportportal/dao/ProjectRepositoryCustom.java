@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.springframework.data.domain.Page;
@@ -34,22 +35,22 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	/**
 	 * Find projects info by filter with paging
 	 *
-	 * @param filter   Filter
-	 * @param pageable Paging
-	 * @param mode     Launch mode
+	 * @param filter       Filter
+	 * @param pageable     Paging
+	 * @param launchesMode Launch mode
 	 * @return Page of project info objects
 	 */
-	Page<ProjectInfo> findProjectInfoByFilter(Filter filter, Pageable pageable, String mode);
+	Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable, String launchesMode);
 
 	/**
 	 * Find project info for concrete project from date
 	 *
-	 * @param projectId Project id
-	 * @param fromDate  From date
-	 * @param mode      Launch mode
+	 * @param projectId    Project id
+	 * @param fromDate     From date
+	 * @param launchesMode Launch mode
 	 * @return Project info object
 	 */
-	ProjectInfo findProjectInfoFromDate(Long projectId, LocalDateTime fromDate, String mode);
+	ProjectInfo findProjectInfoFromDate(Long projectId, LocalDateTime fromDate, String launchesMode);
 
 	/**
 	 * Find personal project name by user
@@ -75,5 +76,5 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 * {@link Project#id}, {@link com.epam.ta.reportportal.entity.attribute.Attribute#name}
 	 * and {@link com.epam.ta.reportportal.entity.project.ProjectAttribute#value}
 	 */
-	Page<Project> findAllIdsAndProjectAttributes(Filter filter, Pageable pageable);
+	Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable);
 }

@@ -15,6 +15,7 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.CompositeFilter;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
+import org.jooq.Operator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -157,7 +159,9 @@ public class LaunchRepositoryTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, "statistics$executions$total");
-		Page<Launch> filter = launchRepository.findByFilter(buildDefaultFilter(2L), PageRequest.of(0, 2, sort));
+		Page<Launch> filter = launchRepository.findByFilter(new CompositeFilter(buildDefaultFilter(2L), buildDefaultFilter2()),
+				PageRequest.of(0, 2, sort)
+		);
 		System.out.println(filter);
 		//		launches.forEach(l -> Assert.assertTrue(CollectionUtils.isNotEmpty(l.getTags())));
 	}
@@ -171,6 +175,19 @@ public class LaunchRepositoryTest {
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), "status"),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
 				new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "1", "statistics$executions$passed")
+		);
+		return new Filter(Launch.class, conditionSet);
+	}
+
+	private Filter buildDefaultFilter2() {
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Operator.OR,
+						Condition.NOT_EQUALS,
+						false,
+						StatusEnum.IN_PROGRESS.name(),
+						"status"
+				),
+				new FilterCondition(Operator.OR, Condition.EQUALS, false, Mode.DEFAULT.toString(), "mode"),
+				new FilterCondition(Operator.OR, Condition.GREATER_THAN_OR_EQUALS, false, "1", "statistics$executions$failed")
 		);
 		return new Filter(Launch.class, conditionSet);
 	}

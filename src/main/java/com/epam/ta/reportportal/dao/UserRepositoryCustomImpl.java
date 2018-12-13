@@ -17,8 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BinaryData;
-import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import org.jooq.DSLContext;
@@ -69,7 +69,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public Page<User> findByFilterExcluding(Filter filter, Pageable pageable, String... exclude) {
+	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
 		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget(), exclude)
@@ -78,12 +78,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public List<User> findByFilter(Filter filter) {
+	public List<User> findByFilter(Queryable filter) {
 		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
-	public Page<User> findByFilter(Filter filter, Pageable pageable) {
+	public Page<User> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
