@@ -25,13 +25,12 @@ import java.util.Optional;
 public enum LogLevel {
 
 	//@formatter:off
-	ERROR(LogLevel.ERROR_INT), 
-	WARN(LogLevel.WARN_INT), 
+	ERROR(LogLevel.ERROR_INT),
+	WARN(LogLevel.WARN_INT),
 	INFO(LogLevel.INFO_INT), 
 	DEBUG(LogLevel.DEBUG_INT), 
 	TRACE(LogLevel.TRACE_INT),
-	FATAL(LogLevel.FATAL_INT),
-	ALL(LogLevel.ALL_INT);
+	FATAL(LogLevel.FATAL_INT);
 	//@formatter:on
 
 	public static final int FATAL_INT = 50000;
@@ -40,7 +39,6 @@ public enum LogLevel {
 	public static final int INFO_INT = 20000;
 	public static final int DEBUG_INT = 10000;
 	public static final int TRACE_INT = 5000;
-	public static final int ALL_INT = Integer.MIN_VALUE;
 
 	private int intLevel;
 
@@ -76,7 +74,8 @@ public enum LogLevel {
 
 		return level.map(LogLevel::toInt).orElseGet(() -> {
 			try {
-				return Integer.parseInt(levelString);
+				int intLevel = Integer.parseInt(levelString);
+				return intLevel < TRACE.toInt() ? TRACE.toInt() : intLevel;
 			} catch (NumberFormatException ex) {
 				throw new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level =" + levelString);
 			}
