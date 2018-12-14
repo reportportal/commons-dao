@@ -16,22 +16,44 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
- * Can be used to generate Mongo queries
+ * Can be used to generate SQL queries with help of JOOQ
  *
- * @author Andrei Varabyeu
+ * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public interface Queryable {
 
+	/**
+	 * Builds a JOOQ query
+	 *
+	 * @return {@link org.jooq.SelectQuery}
+	 */
 	SelectQuery<? extends Record> toQuery();
 
+	/**
+	 * Build a map where key is {@link ConditionType} and value is a composite {@link Condition}
+	 * that should be applied either in {@link ConditionType#HAVING} or {@link ConditionType#WHERE} clause
+	 *
+	 * @return Resulted map
+	 */
+	Map<ConditionType, Condition> toCondition();
+
+	/**
+	 * @return {@link FilterTarget}
+	 */
 	FilterTarget getTarget();
 
+	/**
+	 * @return Set of {@link FilterCondition}
+	 */
 	Set<FilterCondition> getFilterConditions();
 
 }

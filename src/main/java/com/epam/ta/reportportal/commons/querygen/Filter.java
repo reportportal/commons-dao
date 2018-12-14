@@ -20,19 +20,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
+import org.jooq.impl.DSL;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.filterConverter;
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Filter for building queries to database. Contains CriteriaHolder which is mapping between request
@@ -54,17 +50,6 @@ public class Filter implements Serializable, Queryable {
 	@SuppressWarnings("unused")
 	private Filter() {
 
-	}
-
-	public Filter(Collection<Queryable> filters) {
-		checkArgument(null != filters && !filters.isEmpty(), "Empty filter list");
-		checkArgument(1 == filters.stream().map(Queryable::getTarget).distinct().count(), "Different targets");
-		this.target = filters.iterator().next().getTarget();
-		this.filterConditions = filters.stream().flatMap(f -> f.getFilterConditions().stream()).collect(Collectors.toSet());
-	}
-
-	public Filter(Queryable... filters) {
-		this(Arrays.asList(filters));
 	}
 
 	public Filter(Class<?> target, Condition condition, boolean negative, String value, String searchCriteria) {
@@ -103,7 +88,7 @@ public class Filter implements Serializable, Queryable {
 		return id;
 	}
 
-	public final FilterTarget getTarget() {
+	public FilterTarget getTarget() {
 		return target;
 	}
 
@@ -123,19 +108,41 @@ public class Filter implements Serializable, Queryable {
 
 	@Override
 	public SelectQuery<? extends Record> toQuery() {
-		final Function<FilterCondition, org.jooq.Condition> transformer = filterConverter(this.target);
 		QueryBuilder query = QueryBuilder.newBuilder(this.target);
-		this.filterConditions.forEach(it -> transformCondition(transformer, query, it));
-		return query.build();
+		Map<ConditionType, org.jooq.Condition> conditions = toCondition();
+		return query.addCondition(conditions.get(ConditionType.WHERE)).addHavingCondition(conditions.get(ConditionType.HAVING)).build();
 	}
 
-	private void transformCondition(Function<FilterCondition, org.jooq.Condition> transformer, QueryBuilder query, FilterCondition it) {
-		org.jooq.Condition condition = transformer.apply(it);
-		if (HAVING_CONDITION.test(it)) {
-			query.addHavingCondition(condition);
-		} else {
-			query.addCondition(condition);
+	@Override
+	public Map<ConditionType, org.jooq.Condition> toCondition() {
+		Map<ConditionType, org.jooq.Condition> resultedConditions = new HashMap<>();
+		for (FilterCondition filterCondition : filterConditions) {
+			if (HAVING_CONDITION.test(filterCondition)) {
+				addTransformedCondition(resultedConditions, filterCondition, ConditionType.HAVING);
+			} else {
+				addTransformedCondition(resultedConditions, filterCondition, ConditionType.WHERE);
+			}
 		}
+		return resultedConditions;
+	}
+
+	/**
+	 * Transforms {@link FilterCondition} into {@link org.jooq.Condition} and adds it to existed {@link Condition}
+	 * according the {@link ConditionType} with {@link FilterCondition#getOperator()}
+	 * {@link org.jooq.Operator}
+	 *
+	 * @param resultedConditions Resulted map of conditions divided into {@link ConditionType}
+	 * @param filterCondition    Filter condition that should be converted
+	 * @param conditionType      {@link ConditionType}
+	 * @return Updated map of conditions
+	 */
+	private Map<ConditionType, org.jooq.Condition> addTransformedCondition(Map<ConditionType, org.jooq.Condition> resultedConditions,
+			FilterCondition filterCondition, ConditionType conditionType) {
+		final Function<FilterCondition, org.jooq.Condition> transformer = filterConverter(this.target);
+		org.jooq.Condition composite = resultedConditions.getOrDefault(conditionType, DSL.noCondition());
+		composite = DSL.condition(filterCondition.getOperator(), composite, transformer.apply(filterCondition));
+		resultedConditions.put(conditionType, composite);
+		return resultedConditions;
 	}
 
 	public static FilterBuilder builder() {
