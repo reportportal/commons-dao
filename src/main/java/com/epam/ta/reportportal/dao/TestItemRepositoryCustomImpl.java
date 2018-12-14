@@ -17,8 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.MoreCollectors;
-import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -230,14 +230,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> findByFilter(Filter filter) {
+	public List<TestItem> findByFilter(Queryable filter) {
 		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 		fetchRetries(items);
 		return items;
 	}
 
 	@Override
-	public Page<TestItem> findByFilter(Filter filter, Pageable pageable) {
+	public Page<TestItem> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())

@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.Activity;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +62,12 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	}
 
 	@Override
-	public List<Activity> findByFilter(Filter filter) {
+	public List<Activity> findByFilter(Queryable filter) {
 		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
 
 	@Override
-	public Page<Activity> findByFilter(Filter filter, Pageable pageable) {
+	public Page<Activity> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())

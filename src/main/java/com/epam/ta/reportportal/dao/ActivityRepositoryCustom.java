@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.Activity;
 import org.springframework.data.domain.Sort;
 
@@ -39,10 +39,10 @@ public interface ActivityRepositoryCustom extends FilterableRepository<Activity>
 	/**
 	 * Find limiting count of results
 	 *
-	 * @param filter    Filter
-	 * @param sort        Sorting details
-	 * @param limit    Maximum number of returning items
+	 * @param filter Filter
+	 * @param sort   Sorting details
+	 * @param limit  Maximum number of returning items
 	 * @return Found activities
 	 */
-	List<Activity> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit);
+	List<Activity> findByFilterWithSortingAndLimit(Queryable filter, Sort sort, int limit);
 }
