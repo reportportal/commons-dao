@@ -27,4 +27,14 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
 
 	List<Dashboard> findAllByProjectId(Long projectId);
 
+	/**
+	 * Checks the existence of the {@link Dashboard} with specified name for a user on a project
+	 *
+	 * @param name      {@link Dashboard#name}
+	 * @param owner     {@link Dashboard#owner}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which dashboard existence will be checked
+	 * @return if exists 'true' else 'false'
+	 */
+	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
+
 }
