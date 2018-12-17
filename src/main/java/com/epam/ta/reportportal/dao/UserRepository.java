@@ -58,10 +58,15 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata->>'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
 	void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
 
+	/**
+	 * Updates user's last login value
+	 *
+	 * @param lastLogin Last login date
+	 * @param username  User
+	 */
 	@Modifying
-	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{last_login}', to_jsonb(CAST (:lastLogin AS TEXT)), true ) WHERE login = :username", nativeQuery = true)
+	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(CAST (:lastLogin AS TEXT)), true ) WHERE login = :username", nativeQuery = true)
 	void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin, @Param("username") String username);
-
 
 	@Query(value = "SELECT u.login FROM users u join project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
 	List<String> findNamesByProject(@Param("projectId") Long projectId);
