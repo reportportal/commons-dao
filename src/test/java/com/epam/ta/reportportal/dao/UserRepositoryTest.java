@@ -52,6 +52,7 @@ import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 
 /**
  * @author Ivan Budaev
@@ -78,6 +79,20 @@ public class UserRepositoryTest {
 	@AfterClass
 	public static void destroy() throws SQLException, IOException, SqlToolError {
 
+	}
+
+	@Test
+	public void loadUserByLastLogin() {
+		//given
+		long now = new Date().getTime();
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN, false, String.valueOf(now), CRITERIA_LAST_LOGIN))
+				.build();
+		//when
+		List<User> users = userRepository.findByFilter(filter);
+		//then
+		Assert.assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
 	}
 
 	@Test
