@@ -124,35 +124,35 @@ public class CriteriaHolder {
 			Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
 			BusinessRule.expect(status, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
-			castedValue = status;
+			castedValue = JStatusEnum.valueOf(status.get().name());
 
 		} else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
 			BusinessRule.expect(itemType, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'", oneValue));
-			castedValue = itemType;
+			castedValue = JTestItemTypeEnum.valueOf(itemType.get().name());
 
 		} else if (JLaunchModeEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
 			BusinessRule.expect(launchMode, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
-			castedValue = launchMode;
+			castedValue = JLaunchModeEnum.valueOf(launchMode.get().name());
 
 		} else if (JActivityEntityEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<Activity.ActivityEntityType> activityEntityType = Activity.ActivityEntityType.fromString(oneValue);
 			BusinessRule.expect(activityEntityType, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Activity entity'", oneValue));
-			castedValue = activityEntityType;
+			castedValue = JActivityEntityEnum.valueOf(activityEntityType.get().name());
 
 		} else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<IntegrationGroupEnum> integrationGroup = IntegrationGroupEnum.findByName(oneValue);
 			BusinessRule.expect(integrationGroup, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Integration group", oneValue));
-			castedValue = integrationGroup;
+			castedValue = JIntegrationGroupEnum.valueOf(integrationGroup.get().name());
 
 		} else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {
 			castedValue = TestItemIssueGroup.validate(oneValue);
