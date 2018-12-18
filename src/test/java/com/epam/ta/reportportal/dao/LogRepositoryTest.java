@@ -76,11 +76,11 @@ public class LogRepositoryTest {
 
 		Filter filter = Filter.builder()
 				.withTarget(Log.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_ITEM_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "5", CRITERIA_TEST_ITEM_ID))
 				.build();
 
-		Integer number = logRepository.getPageNumber(65L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log_time")));
-		Assert.assertEquals(6L, (long) number);
+		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log.log_time")));
+		Assert.assertEquals(1L, (long) number);
 	}
 
 	@Test
