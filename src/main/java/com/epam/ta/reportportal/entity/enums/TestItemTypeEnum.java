@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Optional;
 
 public enum TestItemTypeEnum implements Comparable<TestItemTypeEnum> {
 
@@ -47,8 +48,8 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		this.awareStatistics = awareStatistics;
 	}
 
-	public static TestItemTypeEnum fromValue(String value) {
-		return Arrays.stream(TestItemTypeEnum.values()).filter(type -> type.name().equalsIgnoreCase(value)).findAny().orElse(null);
+	public static Optional<TestItemTypeEnum> fromValue(String value) {
+		return Arrays.stream(TestItemTypeEnum.values()).filter(type -> type.name().equalsIgnoreCase(value)).findAny();
 	}
 
 	public boolean sameLevel(TestItemTypeEnum other) {

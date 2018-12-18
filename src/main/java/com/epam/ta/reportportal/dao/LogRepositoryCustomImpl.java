@@ -40,11 +40,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.DISTINCT_LOGS_TABLE;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ROW_NUMBER;
+import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
@@ -52,6 +54,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.jooq.impl.DSL.field;
 
 /**
  * @author Pavel Bortnik
@@ -126,7 +129,6 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public Integer getPageNumber(Long id, Filter filter, Pageable pageable) {
-		Table<? extends Record> logSubquery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build().asTable("log_subquery");
 
 		Sort.Order order = ofNullable(pageable.getSort().getOrderFor(LOG.LOG_TIME.getName())).orElseThrow(() -> new ReportPortalException(
 				ErrorType.INCORRECT_SORTING_PARAMETERS));
@@ -139,16 +141,17 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			sortField = fieldName(LOG.getName(), order.getProperty()).desc();
 		}
 
-		Long rowNumber = dsl.select(fieldName("row_number"))
-				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as("row_number"))
+		return ofNullable(dsl.select(fieldName(ROW_NUMBER))
+				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as(ROW_NUMBER))
 						.from(LOG)
-						.join(logSubquery)
-						.on(LOG.ID.eq(fieldName("log_subquery", "id").cast(Long.class))))
-				.where(fieldName("id").cast(Long.class).eq(id))
-				.fetchOne()
-				.into(Long.class);
+						.join(QueryBuilder.newBuilder(filter).with(pageable.getSort()).build().asTable(DISTINCT_LOGS_TABLE))
+						.on(LOG.ID.eq(fieldName(DISTINCT_LOGS_TABLE, ID).cast(Long.class))))
+				.where(fieldName(ID).cast(Long.class).eq(id))
+				.fetchAny()).map(r -> {
+			Long rowNumber = r.into(Long.class);
+			return BigDecimal.valueOf(rowNumber).divide(BigDecimal.valueOf(pageable.getPageSize()), RoundingMode.CEILING).intValue();
+		}).orElseThrow(() -> new ReportPortalException(ErrorType.LOG_NOT_FOUND, id));
 
-		return BigDecimal.valueOf(rowNumber).divide(BigDecimal.valueOf(pageable.getPageSize()), RoundingMode.CEILING).intValue();
 	}
 
 	@Override
@@ -177,5 +180,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public void clearLogsAttachmentsAndThumbnails(Collection<Long> ids) {
 		dsl.update(LOG).set(LOG.ATTACHMENT_THUMBNAIL, (String) null).set(LOG.ATTACHMENT, (String) null).where(LOG.ID.in(ids)).execute();
+	}
+
+	private List<SortField<Object>> buildSortFields(Sort sort) {
+		return ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
+				.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
 	}
 }

@@ -23,7 +23,7 @@ public class TestItemCriteriaConstant {
 	public static final String CRITERIA_ITEM_TAG = "tags";
 	public static final String CRITERIA_TYPE = "type";
 	public static final String CRITERIA_PATH = "path";
-	public static final String CRITERIA_ISSUE_TYPE = "issue$issue_type";
+	public static final String CRITERIA_ISSUE_TYPE = "issueType";
 	public static final String CRITERIA_UNIQUE_ID = "uniqueId";
 	public static final String CRITERIA_PARENT_ID = "parentId";
 	public static final String CRITERIA_TI_DURATION = "duration";
