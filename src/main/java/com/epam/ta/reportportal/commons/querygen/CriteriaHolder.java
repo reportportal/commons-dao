@@ -123,21 +123,21 @@ public class CriteriaHolder {
 
 			Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
 			BusinessRule.expect(status, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'"), oneValue);
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
 			castedValue = status;
 
 		} else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
 			BusinessRule.expect(itemType, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'"), oneValue);
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'", oneValue));
 			castedValue = itemType;
 
 		} else if (JLaunchModeEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
 			BusinessRule.expect(launchMode, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'"), oneValue);
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
 			castedValue = launchMode;
 
 		} else if (JActivityEntityEnum.class.isAssignableFrom(getDataType())) {
