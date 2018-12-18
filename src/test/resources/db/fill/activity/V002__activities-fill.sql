@@ -1,5 +1,5 @@
-INSERT INTO activity(id, user_id, project_id, entity, action, details, creation_date, object_id) VALUES
-(1, 1, 1, 'DASHBOARD', 'dashboard_update', '{
+INSERT INTO activity(user_id, project_id, entity, action, details, creation_date, object_id) VALUES
+(1, 1, 'DASHBOARD', 'dashboard_update', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",
   "history": [
     {
@@ -16,19 +16,24 @@ INSERT INTO activity(id, user_id, project_id, entity, action, details, creation_
   "objectName": "name"
 }', now() - INTERVAL '12 day', 1),
 
-(2,1,1, 'WIDGET', 'widget_create', '{
+(1,1, 'WIDGET', 'widget_create', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",
   "history": null,
   "objectName": "widget test"
-}', now() - interval '20 day', 1),
+}', now() - interval '20 day', 2),
 
-(3, 1, 1, 'FILTER', 'filter_create', '{
+(1, 1, 'FILTER', 'filter_create', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",
   "history": null,
   "objectName": "filter test"
-}', now() - interval '3 day', 1),
+}', now() - interval '3 day', 3),
+(2, 2, 'FILTER', 'filter_create', '{
+  "type": "com.epam.ta.reportportal.entity.ActivityDetails",
+  "history": [],
+  "objectName": "filter new test"
+}', now() - interval '2 day', 4),
 
-(4, 2, 2, 'FILTER', 'filter_update', '{
+(2, 2, 'FILTER', 'filter_update', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",
   "history": [
     {
@@ -43,4 +48,16 @@ INSERT INTO activity(id, user_id, project_id, entity, action, details, creation_
     }
   ],
   "objectName": "filter new test"
-}', '2018-10-05 17:40:03.845000', 1);
+}', now() - interval '1 day' - interval '4 hour', 4),
+
+(2, 2, 'LAUNCH', 'start_launch', '{
+  "type": "com.epam.ta.reportportal.entity.ActivityDetails",
+  "history": [],
+  "objectName": "launch test"
+}', now() - interval '2 day', 5),
+
+(2, 2, 'LAUNCH', 'finish_launch', '{
+  "type": "com.epam.ta.reportportal.entity.ActivityDetails",
+  "history": [],
+  "objectName": "launch test"
+}', now() - interval '1 day', 5);

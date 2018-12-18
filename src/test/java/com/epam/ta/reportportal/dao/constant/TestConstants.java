@@ -25,6 +25,8 @@ public final class TestConstants {
 		//static only
 	}
 
+	public static final Long SUPERADMIN_ID = 1L;
 	public static final Long SUPERADMIN_PERSONAL_PROJECT_ID = 1L;
+	public static final String SUPERADMIN_LOGIN = "superadmin";
 	public static final Long STEP_ITEM_WITH_LOGS_ID = 1L;
 }
