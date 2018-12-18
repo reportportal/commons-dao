@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
-import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -29,10 +28,7 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
-import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
-import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.jooq.enums.*;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -375,7 +371,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT_ID, INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_INTEGRATION_TYPE,
 					INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(),
-					IntegrationGroupEnum.class
+					JIntegrationGroupEnum.class
 			),
 			new CriteriaHolder(CRITERIA_NAME, INTEGRATION_TYPE.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class)
