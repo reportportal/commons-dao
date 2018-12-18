@@ -27,4 +27,5 @@ public class LogCriteriaConstant {
 	public static final String CRITERIA_LOG_LEVEL = "level";
 	public static final String CRITERIA_LOG_ID = "logId";
 	public static final String CRITERIA_LOG_TIME = "logTime";
+	public static final String CRITERIA_LOG_BINARY_CONTENT = "binaryContent";
 }
