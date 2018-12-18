@@ -124,35 +124,35 @@ public class CriteriaHolder {
 			Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
 			BusinessRule.expect(status, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
-			castedValue = status;
+			castedValue = status.get();
 
 		} else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
 			BusinessRule.expect(itemType, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'", oneValue));
-			castedValue = itemType;
+			castedValue = itemType.get();
 
 		} else if (JLaunchModeEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
 			BusinessRule.expect(launchMode, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
-			castedValue = launchMode;
+			castedValue = launchMode.get();
 
 		} else if (JActivityEntityEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<Activity.ActivityEntityType> activityEntityType = Activity.ActivityEntityType.fromString(oneValue);
 			BusinessRule.expect(activityEntityType, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Activity entity'", oneValue));
-			castedValue = activityEntityType;
+			castedValue = activityEntityType.get();
 
 		} else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
 
 			Optional<IntegrationGroupEnum> integrationGroup = IntegrationGroupEnum.findByName(oneValue);
 			BusinessRule.expect(integrationGroup, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Integration group", oneValue));
-			castedValue = integrationGroup;
+			castedValue = integrationGroup.get();
 
 		} else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {
 			castedValue = TestItemIssueGroup.validate(oneValue);
