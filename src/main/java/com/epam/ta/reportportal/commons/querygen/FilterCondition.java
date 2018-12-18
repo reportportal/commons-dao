@@ -71,6 +71,7 @@ public class FilterCondition implements Serializable {
 	/**
 	 * Whether this is 'AND' or 'OR' filter
 	 */
+	@Transient
 	private Operator operator = Operator.AND;
 
 	public FilterCondition() {
