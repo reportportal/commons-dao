@@ -55,7 +55,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("isExpired") boolean isExpired, Pageable pageable);
 
 	@Modifying
-	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata->>'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
+	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata-> 'metadata' ->> 'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
 	void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
 
 	/**
