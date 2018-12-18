@@ -48,6 +48,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingExcept
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
@@ -93,6 +94,14 @@ public class UserRepositoryTest {
 		List<User> users = userRepository.findByFilter(filter);
 		//then
 		Assert.assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
+		users.forEach(user -> Assert.assertThat(
+				"Last login should be lower than in the filer",
+				LocalDateTime.parse((String) users.get(0).getMetadata().getMetadata().get("last_login"))
+						.atZone(ZoneId.systemDefault())
+						.toInstant()
+						.toEpochMilli(),
+				Matchers.lessThan(now)
+		));
 	}
 
 	@Test
