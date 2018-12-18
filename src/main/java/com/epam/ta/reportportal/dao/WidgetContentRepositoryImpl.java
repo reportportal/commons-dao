@@ -118,6 +118,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
 								Collections.singletonList(JTestItemTypeEnum.STEP)))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
+						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
@@ -128,7 +129,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit) {
+	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
 
 		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
 				.from(name(LAUNCHES))
@@ -162,7 +163,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.where(LAUNCH.ID.in(commonSelect))
-						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+						.and(TEST_ITEM.TYPE.in(includeMethods ?
+								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
+								Collections.singletonList(JTestItemTypeEnum.STEP)))
+						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
 						.asTable(FLAKY_TABLE_RESULTS))
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
