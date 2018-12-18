@@ -22,5 +22,6 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 public class ProjectCriteriaConstant {
 	public static final String CRITERIA_PROJECT_TYPE = "type";
 	public static final String CRITERIA_PROJECT_NAME = "name";
+	public static final String CRITERIA_ORGANIZATION = "organization";
 	public static final String CRITERIA_ATTRIBUTE_NAME = "attributeName";
 }
