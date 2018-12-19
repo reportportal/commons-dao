@@ -16,22 +16,23 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+
 import java.util.Arrays;
 import java.util.Optional;
 
 public enum LogLevel {
 
 	//@formatter:off
-	ERROR(LogLevel.ERROR_INT), 
-	WARN(LogLevel.WARN_INT), 
+	ERROR(LogLevel.ERROR_INT),
+	WARN(LogLevel.WARN_INT),
 	INFO(LogLevel.INFO_INT), 
 	DEBUG(LogLevel.DEBUG_INT), 
 	TRACE(LogLevel.TRACE_INT),
-	FATAL(LogLevel.FATAL_INT),
-	UNKNOWN(LogLevel.UNKNOWN_INT);
+	FATAL(LogLevel.FATAL_INT);
 	//@formatter:on
 
-	public static final int UNKNOWN_INT = 60000;
 	public static final int FATAL_INT = 50000;
 	public static final int ERROR_INT = 40000;
 	public static final int WARN_INT = 30000;
@@ -58,46 +59,41 @@ public enum LogLevel {
 	}
 
 	/**
-	 * Convert the string passed as argument to a Level. If there are no such level throws exception
+	 * Convert the string passed as argument to a Level. If there is no such level throws exception
 	 */
 	public static Optional<LogLevel> toLevel(String levelString) {
 		return Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelString)).findAny();
 	}
 
 	/**
-	 * Convert the string passed as argument to a Level. If level is unknown don't throw exception
-	 * and return UNKNOWN
+	 * Convert the string passed as argument to a Level.
 	 */
-	public static LogLevel toLevelOrUnknown(String levelString) {
+	public static int toCustomLogLevel(String levelString) {
 
-		return Arrays.stream(LogLevel.values())
-				.filter(l -> l.name().equalsIgnoreCase(levelString) || String.valueOf(l.intLevel).equals(levelString))
-				.findFirst()
-				.orElse(LogLevel.UNKNOWN);
+		Optional<LogLevel> level = Arrays.stream(LogLevel.values()).filter(l -> l.name().equalsIgnoreCase(levelString)).findFirst();
+
+		return level.map(LogLevel::toInt).orElseGet(() -> {
+			try {
+				int intLevel = Integer.parseInt(levelString);
+				return intLevel < TRACE.toInt() ? TRACE.toInt() : intLevel;
+			} catch (NumberFormatException ex) {
+				throw new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level =" + levelString);
+			}
+
+		});
 	}
 
 	/**
 	 * Convert the string passed as argument to a Level
 	 */
 	public static LogLevel toLevel(int intLevel) {
-		switch (intLevel) {
-			case UNKNOWN_INT:
-				return UNKNOWN;
-			case FATAL_INT:
-				return FATAL;
-			case TRACE_INT:
-				return TRACE;
-			case DEBUG_INT:
-				return DEBUG;
-			case INFO_INT:
-				return INFO;
-			case WARN_INT:
-				return WARN;
-			case ERROR_INT:
-				return ERROR;
-			default:
-				throw new IllegalArgumentException("Level " + intLevel + " is unknown.");
-		}
+
+		return Arrays.stream(LogLevel.values())
+				.sorted((prev, curr) -> Integer.compare(curr.toInt(), prev.toInt()))
+				.filter(l -> l.toInt() <= intLevel)
+				.findFirst()
+				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level =" + intLevel));
+
 	}
 
 	@Override
