@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.dao.suite;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.dao.ActivityRepository;
 import com.epam.ta.reportportal.entity.Activity;
 import org.apache.commons.compress.utils.Lists;
 import org.flywaydb.test.annotation.FlywayTest;
@@ -38,7 +39,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static org.junit.Assert.*;
 
-public class ActivityRepositoryCustomImplTest extends BaseTest {
+public class ActivityRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ActivityRepository repository;
