@@ -84,7 +84,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
-				.withWrappedSort(pageable.getSort())
+				.with(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 

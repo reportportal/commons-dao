@@ -21,15 +21,19 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.jooq.tables.JProject;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_PROJECT;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
 
 /**
@@ -69,15 +73,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
-		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable)
-				.withWrapper(filter.getTarget(), exclude)
-				.with(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
-	}
-
-	@Override
 	public List<User> findByFilter(Queryable filter) {
 		return USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
 	}
@@ -87,8 +82,28 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
-				.with(pageable.getSort())
+				.with(normalizeProperties(pageable.getSort()))
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
+		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.withWrapper(filter.getTarget(), exclude)
+				.with(normalizeProperties(pageable.getSort()))
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	private Sort normalizeProperties(Sort sort) {
+		if (null != sort) {
+			List<Sort.Order> orders = sort.get()
+					.filter(it -> it.getProperty().equalsIgnoreCase(CRITERIA_USER_PROJECT))
+					.map(it -> it.withProperty(JProject.PROJECT.NAME.getQualifiedName().toString()))
+					.collect(Collectors.toList());
+			return Sort.by(orders);
+		}
+		return Sort.unsorted();
 	}
 
 }

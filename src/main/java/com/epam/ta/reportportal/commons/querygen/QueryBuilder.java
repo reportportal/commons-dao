@@ -23,7 +23,6 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
 import org.jooq.Condition;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -33,8 +32,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
-import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -71,7 +68,10 @@ public class QueryBuilder {
 	 */
 	private SelectQuery<? extends Record> query;
 
+	private static FilterTarget filterTarget;
+
 	private QueryBuilder(FilterTarget target) {
+		filterTarget = target;
 		query = target.getQuery();
 	}
 
@@ -84,6 +84,7 @@ public class QueryBuilder {
 	}
 
 	public static QueryBuilder newBuilder(Queryable queryable) {
+		filterTarget = queryable.getTarget();
 		return new QueryBuilder(queryable.toQuery());
 	}
 
@@ -138,16 +139,14 @@ public class QueryBuilder {
 	}
 
 	/**
-	 * Add sorting {@link Sort}
+	 * Convert properties to query criteria and add sorting {@link Sort}
 	 *
 	 * @param sort Sort condition
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-			query.addSelect(order.getProperty().startsWith(STATISTICS_KEY) ?
-					DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(order.getProperty())).as(order.getProperty()) :
-					field(order.getProperty()));
+			query.addSelect(field(order.getProperty()));
 			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
 		}));
 		return this;
@@ -190,37 +189,10 @@ public class QueryBuilder {
 		return this;
 	}
 
-	/**
-	 * Adds sorting after wrapping filtered query
-	 *
-	 * @param sort Sort
-	 * @return Query builder
-	 */
-	public QueryBuilder withWrappedSort(Sort sort) {
-		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
-				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
-						SortOrder.DESC :
-						SortOrder.ASC))));
-		return this;
-	}
-
-	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
+	static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
-
-			/*
-				creates criteria holder for statistics search criteria cause there
-				can be custom statistics so we can't know it till this moment
-			*/
-			if (searchCriteria.startsWith(STATISTICS_KEY)) {
-				criteriaHolder = Optional.of(new CriteriaHolder(
-						searchCriteria,
-						DSL.coalesce(DSL.max(STATISTICS.S_COUNTER)
-								.filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())), 0).toString(),
-						Long.class
-				));
-			}
 
 			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
 					ErrorType.INCORRECT_FILTER_PARAMETERS,

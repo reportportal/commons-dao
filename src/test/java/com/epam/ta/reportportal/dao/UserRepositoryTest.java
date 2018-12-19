@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,9 +52,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 
 /**
  * @author Ivan Budaev
@@ -276,21 +277,32 @@ public class UserRepositoryTest {
 
 	@Test
 	public void searchForUserTest() {
+		//given
 		Filter filter = Filter.builder()
 				.withTarget(User.class)
-				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_NAME))
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
 				.build();
+		//when
 		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
-		Assert.assertNotNull(users);
-		Assert.assertTrue(users.getSize() >= 1);
+		//then
+		Assert.assertTrue(users.getTotalElements() >= 1);
 	}
 
 	@Test
 	public void removeUserFromProjectTest() {
-
 		User user = userRepository.findByLogin("default").get();
-
 		userRepository.delete(user);
+	}
+
+	@Test
+	public void usersWithProjectSort() {
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
+				.build();
+		PageRequest pageRequest = PageRequest.of(0, 5, Sort.Direction.ASC, "project");
+		Page<User> result = userRepository.findByFilter(filter, pageRequest);
+		Assert.assertTrue(result.getTotalElements() >= 1);
 	}
 
 	@Test

@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
@@ -104,7 +105,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_TYPE, USERS.TYPE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_EXPIRED, USERS.EXPIRED.getQualifiedName().toString(), Boolean.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_PROJECT, PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT, DSL.arrayAgg(PROJECT.NAME).toString(), String.class),
 			new CriteriaHolder(CRITERIA_LAST_LOGIN,
 					DSL.cast(DSL.field(USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login'"), Timestamp.class)
 							.toString(),
@@ -112,14 +113,6 @@ public enum FilterTarget {
 			)
 
 	)) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-			SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID), DSL.arrayAgg(PROJECT.NAME)).getQuery();
-			joinTables(query);
-			query.addGroupBy(idField());
-			return query;
-		}
-
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(USERS.ID,
@@ -583,6 +576,16 @@ public enum FilterTarget {
 	}
 
 	public Optional<CriteriaHolder> getCriteriaByFilter(String filterCriteria) {
+		/*
+			creates criteria holder for statistics search criteria cause there
+			can be custom statistics so we can't know it till this moment
+		*/
+		if (filterCriteria != null && filterCriteria.startsWith(STATISTICS_KEY)) {
+			return Optional.of(new CriteriaHolder(filterCriteria,
+					DSL.coalesce(DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCriteria)), 0).toString(),
+					Long.class
+			));
+		}
 		return criteriaHolders.stream().filter(holder -> holder.getFilterCriteria().equals(filterCriteria)).findAny();
 	}
 
