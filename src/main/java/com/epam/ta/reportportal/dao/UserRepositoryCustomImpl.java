@@ -84,7 +84,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
-				.with(normalizeProperties(pageable.getSort()))
+				.with(normalizeProperties(pageable.getSort(), filter.getTarget()))
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
