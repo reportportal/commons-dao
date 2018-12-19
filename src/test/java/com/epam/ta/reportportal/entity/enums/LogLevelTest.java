@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,16 +72,37 @@ public class LogLevelTest {
 	}
 
 	@Test
-	public void toLevelOrUnknown() {
-		allowedNames.forEach((key, value) -> value.forEach(val -> assertEquals(key, LogLevel.toLevelOrUnknown(val))));
-		allowedCodes.forEach((key, value) -> assertEquals(key, LogLevel.toLevelOrUnknown(value.toString())));
-		disallowedNames.forEach(it -> assertEquals(LogLevel.UNKNOWN, LogLevel.toLevelOrUnknown(it)));
-		disallowedCodes.stream().map(Object::toString).forEach(it -> assertEquals(LogLevel.UNKNOWN, LogLevel.toLevelOrUnknown(it)));
+	public void toLevelInt() {
+		allowedCodes.forEach((key, value) -> assertEquals(key, LogLevel.toLevel(value)));
 	}
 
 	@Test
-	public void toLevelInt() {
-		allowedCodes.forEach((key, value) -> assertEquals(key, LogLevel.toLevel(value)));
+	public void toCustomLogLevel() {
+		allowedNames.forEach((key, value) -> value.forEach(val -> assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val))));
+		allowedCodes.forEach((key, val) -> assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val.toString())));
+		disallowedCodes.forEach(it -> {
+			if (it < LogLevel.TRACE_INT) {
+				assertEquals(LogLevel.TRACE_INT, LogLevel.toCustomLogLevel(it.toString()));
+			} else {
+				assertEquals(it.intValue(), LogLevel.toCustomLogLevel(it.toString()));
+			}
+		});
+	}
+
+	@Test
+	public void toCustomLogLevelNamesFail() {
+		thrown.expect(ReportPortalException.class);
+		Collections.shuffle(disallowedNames);
+		final String wrongLogName = disallowedNames.get(0);
+		thrown.expectMessage("Error in Save Log Request. Wrong level = " + wrongLogName);
+		LogLevel.toCustomLogLevel(wrongLogName);
+	}
+
+	@Test
+	public void toCustomLogLevelCodesFail() {
+
+		final int i = LogLevel.toCustomLogLevel(disallowedCodes.get(0).toString());
+		System.out.println(i);
 	}
 
 	@Test
