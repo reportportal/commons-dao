@@ -55,7 +55,6 @@ dependencyManagement {
     }
 }
 
-
 project.ext {
     releaseMode = project.hasProperty("releaseMode")
 }
@@ -129,13 +128,17 @@ dependencies {
     testCompile 'org.dbunit:dbunit:2.5.4'
 
     testCompile 'org.testcontainers:postgresql:1.8.0'
-
-
 }
 
 jacocoTestReport {
     reports {
         xml.enabled true
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ['com/epam/ta/reportportal/jooq/**', 'com/epam/ta/reportportal/config/**'])
+        })
     }
 }
 
