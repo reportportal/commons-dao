@@ -34,7 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -93,10 +93,14 @@ public class EmailIntegrationService implements IntegrationService {
 		Optional<IntegrationType> email = integrationTypeRepository.findByNameAndIntegrationGroup(EMAIL, IntegrationGroupEnum.NOTIFICATION);
 		expect(email, Optional::isPresent).verify(ErrorType.INTEGRATION_NOT_FOUND, EMAIL);
 
-		Map<String, Object> defaultCases = new HashMap<>();
-		defaultCases.put(RECIPIENTS.getCaseTypeString(), Lists.newArrayList(OWNER));
-		defaultCases.put(SendCaseType.LAUNCH_STATS_RULE.getCaseTypeString(), LaunchStatsRule.ALWAYS.getRuleString());
-		IntegrationParams integrationParams = new IntegrationParams(defaultCases);
+		List<Map<String, Object>> defaultCases = Lists.newArrayList();
+
+		defaultCases.add(Collections.singletonMap(RECIPIENTS.getCaseTypeString(), Lists.newArrayList(OWNER)));
+		defaultCases.add(Collections.singletonMap(SendCaseType.LAUNCH_STATS_RULE.getCaseTypeString(),
+				LaunchStatsRule.ALWAYS.getRuleString()
+		));
+
+		IntegrationParams integrationParams = new IntegrationParams(Collections.singletonMap(RULES, defaultCases));
 
 		Integration integration = new Integration();
 		integration.setParams(integrationParams);
