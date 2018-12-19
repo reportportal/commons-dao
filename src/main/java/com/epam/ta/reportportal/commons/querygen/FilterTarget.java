@@ -104,7 +104,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_TYPE, USERS.TYPE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_EXPIRED, USERS.EXPIRED.getQualifiedName().toString(), Boolean.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_PROJECT, DSL.arrayAgg(PROJECT.NAME).toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT, PROJECT.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_LAST_LOGIN,
 					DSL.cast(DSL.field(USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login'"), Timestamp.class)
 							.toString(),
@@ -112,6 +112,14 @@ public enum FilterTarget {
 			)
 
 	)) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID), DSL.arrayAgg(PROJECT.NAME)).getQuery();
+			joinTables(query);
+			query.addGroupBy(idField());
+			return query;
+		}
+
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(USERS.ID,
