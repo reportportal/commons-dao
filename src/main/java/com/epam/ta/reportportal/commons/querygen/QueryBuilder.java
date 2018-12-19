@@ -68,10 +68,7 @@ public class QueryBuilder {
 	 */
 	private SelectQuery<? extends Record> query;
 
-	private static FilterTarget filterTarget;
-
 	private QueryBuilder(FilterTarget target) {
-		filterTarget = target;
 		query = target.getQuery();
 	}
 
@@ -84,7 +81,6 @@ public class QueryBuilder {
 	}
 
 	public static QueryBuilder newBuilder(Queryable queryable) {
-		filterTarget = queryable.getTarget();
 		return new QueryBuilder(queryable.toQuery());
 	}
 
