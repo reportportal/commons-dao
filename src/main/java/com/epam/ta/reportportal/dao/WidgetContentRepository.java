@@ -197,10 +197,11 @@ public interface WidgetContentRepository {
 	 * Loading the most "flaky" test cases content
 	 *
 	 * @param filter {@link Filter}
+	 * @param includeMethods Include or not test item types that have 'METHOD' or 'CLASS'
 	 * @param limit  Results limit
 	 * @return List of {@link FlakyCasesTableContent}
 	 */
-	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, int limit);
+	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit);
 
 	/**
 	 * Loading cumulative trend statistics grouped by {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
@@ -223,7 +224,7 @@ public interface WidgetContentRepository {
 	 * @param customColumns     Map of the custom column name as key and {@link com.epam.ta.reportportal.entity.ItemAttribute#key} as value
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
-	 * @return Map grouped by filter name with {@link com.epam.ta.reportportal.entity.filter.UserFilter#getName()} as key and list of {@link LaunchesStatisticsContent} as value
+	 * @return Map grouped by filter name with {@link com.epam.ta.reportportal.entity.filter.UserFilter#getName()} as key and list of {@link ProductStatusStatisticsContent} as value
 	 */
 	Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
 			List<String> contentFields, Map<String, String> customColumns, boolean isLatest, int limit);

@@ -18,8 +18,9 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
-import com.epam.ta.reportportal.entity.enums.LogLevel;
-import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
+import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.enums.*;
+import com.epam.ta.reportportal.jooq.enums.*;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.BooleanUtils;
@@ -118,6 +119,41 @@ public class CriteriaHolder {
 			castedValue = level.get().toInt();
 			BusinessRule.expect(castedValue, Objects::nonNull)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+		} else if (JStatusEnum.class.isAssignableFrom(getDataType())) {
+
+			Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
+			BusinessRule.expect(status, Optional::isPresent)
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
+			castedValue = JStatusEnum.valueOf(status.get().name());
+
+		} else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
+
+			Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
+			BusinessRule.expect(itemType, Optional::isPresent)
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'", oneValue));
+			castedValue = JTestItemTypeEnum.valueOf(itemType.get().name());
+
+		} else if (JLaunchModeEnum.class.isAssignableFrom(getDataType())) {
+
+			Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
+			BusinessRule.expect(launchMode, Optional::isPresent)
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
+			castedValue = JLaunchModeEnum.valueOf(launchMode.get().name());
+
+		} else if (JActivityEntityEnum.class.isAssignableFrom(getDataType())) {
+
+			Optional<Activity.ActivityEntityType> activityEntityType = Activity.ActivityEntityType.fromString(oneValue);
+			BusinessRule.expect(activityEntityType, Optional::isPresent)
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Activity entity'", oneValue));
+			castedValue = JActivityEntityEnum.valueOf(activityEntityType.get().name());
+
+		} else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
+
+			Optional<IntegrationGroupEnum> integrationGroup = IntegrationGroupEnum.findByName(oneValue);
+			BusinessRule.expect(integrationGroup, Optional::isPresent)
+					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Integration group", oneValue));
+			castedValue = JIntegrationGroupEnum.valueOf(integrationGroup.get().name());
+
 		} else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {
 			castedValue = TestItemIssueGroup.validate(oneValue);
 			BusinessRule.expect(castedValue, Objects::nonNull)

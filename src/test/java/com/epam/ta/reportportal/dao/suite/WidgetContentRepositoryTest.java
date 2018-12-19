@@ -50,7 +50,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
@@ -456,7 +456,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 4);
+		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, false, 4);
 
 		Assert.assertNotNull(flakyCasesStatistics);
 		Assert.assertEquals(4, flakyCasesStatistics.size());
@@ -606,8 +606,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		), new FilterCondition(
 				Condition.EQUALS_ANY,
 				false,
-				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-				CRITERIA_TI_STATUS
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()), CRITERIA_STATUS
 		));
 
 		return new Filter(1L, TestItem.class, conditionSet);

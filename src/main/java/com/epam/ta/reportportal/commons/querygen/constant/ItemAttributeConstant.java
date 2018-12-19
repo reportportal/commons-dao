@@ -19,7 +19,11 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ItemAttributeConstant {
+public final class ItemAttributeConstant {
+
+	private ItemAttributeConstant() {
+		//static only
+	}
 
 	public static final String CRITERIA_ITEM_ATTRIBUTE_KEY = "attributeKey";
 	public static final String CRITERIA_ITEM_ATTRIBUTE_VALUE = "attributeValue";

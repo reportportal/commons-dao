@@ -21,10 +21,16 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  *
  * @author Anton Machulski
  */
-public class LogCriteriaConstant {
-	public static final String CRITERIA_LOG_MESSAGE = "message";
+public final class LogCriteriaConstant {
+
+	private LogCriteriaConstant() {
+		//static only
+	}
+
 	public static final String CRITERIA_TEST_ITEM_ID = "item";
+	public static final String CRITERIA_LOG_MESSAGE = "message";
 	public static final String CRITERIA_LOG_LEVEL = "level";
 	public static final String CRITERIA_LOG_ID = "logId";
 	public static final String CRITERIA_LOG_TIME = "logTime";
+	public static final String CRITERIA_LOG_BINARY_CONTENT = "binaryContent";
 }
