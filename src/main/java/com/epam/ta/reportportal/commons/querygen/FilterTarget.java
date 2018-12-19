@@ -49,8 +49,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeCo
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_COUNT;
-import static com.epam.ta.reportportal.commons.querygen.constant.StatisticsCriteriaConstant.CRITERIA_STATISTICS_FIELD;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
@@ -63,7 +61,7 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_ATTRIBUTE_NAME, ATTRIBUTE.NAME.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_PROJECT_ATTRIBUTE_NAME, ATTRIBUTE.NAME.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -159,8 +157,6 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
 			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), List.class),
 			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), List.class),
-			new CriteriaHolder(CRITERIA_STATISTICS_FIELD, STATISTICS_FIELD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_STATISTICS_COUNT, STATISTICS.S_COUNTER.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
@@ -218,12 +214,12 @@ public enum FilterTarget {
 					new CriteriaHolder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN.getQualifiedName().toString(), Boolean.class),
 
-					new CriteriaHolder(CRITERIA_TI_STATUS, TEST_ITEM_RESULTS.STATUS.getQualifiedName().toString(), JStatusEnum.class),
+					new CriteriaHolder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS.getQualifiedName().toString(), JStatusEnum.class),
 					new CriteriaHolder(CRITERIA_END_TIME, TEST_ITEM_RESULTS.END_TIME.getQualifiedName().toString(), Timestamp.class),
-					new CriteriaHolder(CRITERIA_TI_DURATION, TEST_ITEM_RESULTS.DURATION.getQualifiedName().toString(), Long.class),
+					new CriteriaHolder(CRITERIA_DURATION, TEST_ITEM_RESULTS.DURATION.getQualifiedName().toString(), Long.class),
 
-					new CriteriaHolder(CRITERIA_TI_PARAMETER_KEY, PARAMETER.KEY.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_TI_PARAMETER_VALUE, PARAMETER.VALUE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PARAMETER_KEY, PARAMETER.KEY.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PARAMETER_VALUE, PARAMETER.VALUE.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_ISSUE_AUTO_ANALYZED, ISSUE.AUTO_ANALYZED.getQualifiedName().toString(), Boolean.class),
 					new CriteriaHolder(CRITERIA_ISSUE_IGNORE_ANALYZER, ISSUE.IGNORE_ANALYZER.getQualifiedName().toString(), Boolean.class),
 					new CriteriaHolder(CRITERIA_ISSUE_LOCATOR, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class),
