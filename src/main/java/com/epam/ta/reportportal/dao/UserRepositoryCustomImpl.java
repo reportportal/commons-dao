@@ -31,7 +31,6 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_PROJECT;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
@@ -97,11 +96,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	private Sort normalizeProperties(Sort sort) {
 		if (null != sort) {
-			List<Sort.Order> orders = sort.get()
+			sort.get()
 					.filter(it -> it.getProperty().equalsIgnoreCase(CRITERIA_USER_PROJECT))
-					.map(it -> it.withProperty(JProject.PROJECT.NAME.getQualifiedName().toString()))
-					.collect(Collectors.toList());
-			return Sort.by(orders);
+					.forEach(it -> it.withProperty(JProject.PROJECT.NAME.getQualifiedName().toString()));
+			return sort;
 		}
 		return Sort.unsorted();
 	}
