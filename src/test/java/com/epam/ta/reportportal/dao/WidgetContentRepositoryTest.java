@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TI_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
@@ -633,8 +633,7 @@ public class WidgetContentRepositoryTest {
 				CRITERIA_PROJECT_ID
 		), new FilterCondition(Condition.EQUALS_ANY,
 				false,
-				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-				CRITERIA_TI_STATUS
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()), CRITERIA_STATUS
 		));
 
 		return new Filter(1L, TestItem.class, conditionSet);

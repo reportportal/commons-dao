@@ -48,7 +48,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ATTRIBUTE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -79,7 +79,7 @@ public class ProjectRepositoryTest {
 
 		Filter filter = Filter.builder().withTarget(Project.class).withCondition(new FilterCondition(Condition.EQUALS, false,
 
-				ProjectAttributeEnum.KEEP_LOGS.getAttribute(), CRITERIA_ATTRIBUTE_NAME
+				ProjectAttributeEnum.KEEP_LOGS.getAttribute(), CRITERIA_PROJECT_ATTRIBUTE_NAME
 		)).build();
 
 		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(filter, PageRequest.of(0, 2));

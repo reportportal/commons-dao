@@ -37,7 +37,7 @@ import static com.epam.ta.reportportal.entity.project.email.SendCaseType.LAUNCH_
 public class EmailIntegrationUtil {
 
 	public static final String EMAIL = "email";
-	private static final String RULES = "rules";
+	public static final String RULES = "rules";
 
 	private EmailIntegrationUtil() {
 		//static only

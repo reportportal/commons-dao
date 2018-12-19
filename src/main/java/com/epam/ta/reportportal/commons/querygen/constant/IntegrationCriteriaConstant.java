@@ -20,8 +20,12 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * Search criteria fields for Integration.
  *
  * @author Anton Machulski
- *
  */
-public class IntegrationCriteriaConstant {
+public final class IntegrationCriteriaConstant {
+
+	private IntegrationCriteriaConstant() {
+		//static only
+	}
+
 	public static final String CRITERIA_INTEGRATION_TYPE = "type";
 }

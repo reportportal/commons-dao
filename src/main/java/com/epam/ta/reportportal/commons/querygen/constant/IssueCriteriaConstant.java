@@ -19,12 +19,12 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class IssueCriteriaConstant {
-	public static final String CRITERIA_ISSUE_AUTO_ANALYZED = "autoAnalyzed";
-	public static final String CRITERIA_ISSUE_IGNORE_ANALYZER = "ignoreAnalyzer";
-	public static final String CRITERIA_ISSUE_LOCATOR = "locator";
+public final class IssueCriteriaConstant {
 
 	private IssueCriteriaConstant() {
 		//static only
 	}
+	public static final String CRITERIA_ISSUE_AUTO_ANALYZED = "autoAnalyzed";
+	public static final String CRITERIA_ISSUE_IGNORE_ANALYZER = "ignoreAnalyzer";
+	public static final String CRITERIA_ISSUE_LOCATOR = "locator";
 }

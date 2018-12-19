@@ -22,7 +22,11 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  * @author Ivan Budaev
  *
  */
-public class ActivityCriteriaConstant {
+public final class ActivityCriteriaConstant {
+
+	private ActivityCriteriaConstant() {
+		//static only
+	}
 
 	public static final String CRITERIA_ACTION = "action";
 	public static final String CRITERIA_OBJECT_ID = "objectId";
