@@ -61,7 +61,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
-				QueryBuilder.newBuilder(filter).with(pageable).build().fetch().into(ProjectInfo.class),
+				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).into(ProjectInfo.class),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
