@@ -29,8 +29,8 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static java.util.Optional.ofNullable;
@@ -61,8 +61,12 @@ public class QueryBuilder {
 	/**
 	 * Predicate that checks if filter condition should be applied with HAVING
 	 */
-	public final static Predicate<FilterCondition> HAVING_CONDITION = filterCondition ->
-			HAVING_CONDITIONS.contains(filterCondition.getCondition()) || filterCondition.getSearchCriteria().startsWith(STATISTICS_KEY);
+	public final static BiPredicate<FilterCondition, FilterTarget> HAVING_CONDITION = (filterCondition, target) -> {
+		CriteriaHolder criteria = target.getCriteriaByFilter(filterCondition.getSearchCriteria())
+				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_FILTER_PARAMETERS, filterCondition.getSearchCriteria()));
+		return HAVING_CONDITIONS.contains(filterCondition.getCondition()) || filterCondition.getSearchCriteria().startsWith(STATISTICS_KEY)
+				|| !criteria.getQueryCriteria().equals(criteria.getAggregateCriteria());
+	};
 
 	/**
 	 * JOOQ SQL query representation
