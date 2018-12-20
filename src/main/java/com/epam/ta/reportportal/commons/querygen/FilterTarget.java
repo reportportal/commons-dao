@@ -102,7 +102,10 @@ public enum FilterTarget {
 			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE,
+							PROJECT.CREATION_DATE.getQualifiedName().toString(),
+							Timestamp.class
+					),
 					new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
 					new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
 					new CriteriaHolder(LAUNCHES_QUANTITY,
