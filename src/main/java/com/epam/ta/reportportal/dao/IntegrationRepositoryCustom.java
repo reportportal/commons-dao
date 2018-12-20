@@ -35,4 +35,6 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 
 	Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled);
 
+	Optional<Integration> getGlobalIntegrationById(Long integrationId);
+
 }

@@ -358,6 +358,17 @@ public class RecordMappers {
 		});
 	};
 
+	public static final RecordMapper<? super Record, Integration> GLOBAL_INTEGRATION_RECORD_MAPPER = r -> {
+		Integration integration = new Integration();
+		integration.setId(r.get(INTEGRATION.ID, Long.class));
+		integration.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
+		integration.setEnabled(r.get(INTEGRATION.ENABLED));
+		INTEGRATION_PARAMS_MAPPER.accept(integration, r);
+
+		return integration;
+	};
+
 	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
 
 		LdapConfig ldapConfig = r.into(LdapConfig.class);
