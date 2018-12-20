@@ -16,24 +16,18 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,25 +38,14 @@ import java.util.stream.Stream;
 /**
  * @author Ivan Budaev
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class TestItemRepositoryTest {
+public class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
 	private TestItemRepository testItemRepository;
 
+	@FlywayTest(locationsForMigrate = { "db/fill/item" }, invokeCleanDB = false)
 	@BeforeClass
-	public static void init() throws SQLException {
-		SqlRunner.runSqlScripts("/log/log-down.sql", "/item/item-down.sql", "/launch/launch-down.sql", "/user/user-project-down.sql");
-
-		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql", "/item/item-up.sql", "/log/log-up.sql");
-
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException {
-		SqlRunner.runSqlScripts("/log/log-down.sql", "/item/item-down.sql", "/launch/launch-down.sql", "/user/user-project-down.sql");
+	public static void before() {
 	}
 
 	@Test

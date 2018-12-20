@@ -1,9 +1,5 @@
--- Creates 12 launches
 CREATE OR REPLACE FUNCTION launches_init()
-  RETURNS VOID AS
-$BODY$
-DECLARE   differentLaunchesCounter INT = 1;
-  DECLARE sameLaunchCounter        INT = 1;
+  RETURNS VOID AS $$ DECLARE   differentLaunchesCounter INT = 1; DECLARE sameLaunchCounter INT = 1;
 BEGIN
   WHILE differentLaunchesCounter < 4 LOOP
     raise notice 'Value: %', differentLaunchesCounter;
@@ -25,10 +21,8 @@ BEGIN
     sameLaunchCounter = 1;
     differentLaunchesCounter = differentLaunchesCounter + 1;
   END LOOP;
-END;
-$BODY$
-LANGUAGE plpgsql;
-.;
+END; $$ LANGUAGE plpgsql;
+
 SELECT launches_init();
 
 DROP FUNCTION IF EXISTS launches_init();
