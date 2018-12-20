@@ -1,3 +1,5 @@
+
+
 INSERT INTO statistics_field (sf_id, name) VALUES (1, 'statistics$executions$total');
 INSERT INTO statistics_field (sf_id, name) VALUES (2, 'statistics$executions$passed');
 INSERT INTO statistics_field (sf_id, name) VALUES (3, 'statistics$executions$skipped');

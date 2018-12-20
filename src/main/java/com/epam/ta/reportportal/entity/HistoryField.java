@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity;
 import com.epam.ta.reportportal.commons.JsonbUserType;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Ihar Kahadouski
@@ -71,5 +72,22 @@ public class HistoryField extends JsonbUserType implements Serializable {
 
 	public static HistoryField of(String field, String oldValue, String newValue) {
 		return new HistoryField(field, oldValue, newValue);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		HistoryField that = (HistoryField) o;
+		return Objects.equals(field, that.field) && Objects.equals(oldValue, that.oldValue) && Objects.equals(newValue, that.newValue);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(field, oldValue, newValue);
 	}
 }

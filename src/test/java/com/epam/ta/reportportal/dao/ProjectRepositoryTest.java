@@ -16,11 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -29,23 +28,15 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
-import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
@@ -54,25 +45,11 @@ import static java.util.Optional.ofNullable;
 /**
  * @author Ivan Budaev
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class ProjectRepositoryTest {
+@FlywayTest
+public class ProjectRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ProjectRepository projectRepository;
-
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/user/user-project-down.sql");
-
-		SqlRunner.runSqlScripts("/user/user-project-up.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/user/user-project-down.sql");
-	}
 
 	@Test
 	public void findAllIdsAndProjectAttributesTest() {
@@ -89,7 +66,7 @@ public class ProjectRepositoryTest {
 		projects.getContent().forEach(project -> {
 			Assert.assertNotNull(project.getId());
 			Assert.assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
-			Assert.assertEquals(1, project.getProjectAttributes().size());
+			Assert.assertEquals(11, project.getProjectAttributes().size());
 			Assert.assertTrue(project.getProjectAttributes()
 					.stream()
 					.allMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
@@ -119,19 +96,18 @@ public class ProjectRepositoryTest {
 	@Test
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
-		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(3));
+		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(2));
 		Assert.assertThat("Results don't contain all project",
-				names,
-				Matchers.hasItems("test_user_1_personal", "test_user_2_personal", "test_common_project_1")
+				names, Matchers.hasItems("default_personal", "superadmin_personal")
 		);
 	}
 
 	@Test
 	public void findUserProjectsTest() {
-		List<Project> projects = projectRepository.findUserProjects("qwerty");
+		List<Project> projects = projectRepository.findUserProjects("default");
 
 		Assert.assertNotNull(projects);
-		Assert.assertTrue(projects.size() >= 1);
+		Assert.assertEquals(1, projects.size());
 	}
 
 	@Test
@@ -139,6 +115,6 @@ public class ProjectRepositoryTest {
 		Filter filter = new Filter(Project.class, Sets.newHashSet());
 		Pageable pageable = PageRequest.of(0, 20);
 		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable, "DEFAULT");
-		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
+		Assert.assertNotEquals(0, projectsInfo.getTotalElements());
 	}
 }

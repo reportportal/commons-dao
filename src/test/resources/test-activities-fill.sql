@@ -14,19 +14,19 @@ INSERT INTO activity(id, user_id, project_id, entity, action, details, creation_
     }
   ],
   "objectName": "name"
-}', '2016-06-22 19:10:25-07', 1),
+}', now() - INTERVAL '12 day', 1),
 
 (2,1,1, 'WIDGET', 'widget_create', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",
   "history": null,
   "objectName": "widget test"
-}', '2018-10-05 17:09:32-01', 1),
+}', now() - interval '20 day', 1),
 
 (3, 1, 1, 'FILTER', 'filter_create', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",
   "history": null,
   "objectName": "filter test"
-}', '2018-10-05 17:20:16.501000', 1),
+}', now() - interval '3 day', 1),
 
 (4, 2, 2, 'FILTER', 'filter_update', '{
   "type": "com.epam.ta.reportportal.entity.ActivityDetails",

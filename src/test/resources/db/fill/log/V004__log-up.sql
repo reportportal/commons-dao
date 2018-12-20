@@ -1,7 +1,9 @@
+INSERT INTO test_item(item_id, type, start_time, last_modified) VALUES (1, 'STEP', now(), now());
+
 CREATE OR REPLACE FUNCTION logs_init()
   RETURNS VOID AS
 $BODY$
-DECLARE   stepId      INT = 5;
+DECLARE   stepId      INT = 1;
   DECLARE logsCounter INT = 1;
 BEGIN
   WHILE logsCounter < 4 LOOP
@@ -20,7 +22,7 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
-.;
+
 SELECT logs_init();
 
 DROP FUNCTION IF EXISTS logs_init();
