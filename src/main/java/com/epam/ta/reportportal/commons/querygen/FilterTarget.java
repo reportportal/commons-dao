@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.*;
@@ -53,7 +54,9 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.field;
 
 public enum FilterTarget {
@@ -87,6 +90,69 @@ public enum FilterTarget {
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID));
 			query.addJoin(ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID));
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return PROJECT.ID;
+		}
+	},
+
+	PROJECT_INFO(ProjectInfo.class,
+			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
+					new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
+					new CriteriaHolder(LAUNCHES_QUANTITY,
+							LAUNCHES_QUANTITY,
+							DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
+											.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+									LAUNCH.ID
+							)).toString(),
+							Long.class
+					)
+			)
+	) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+			joinTables(query);
+			query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
+			return query;
+		}
+
+		@Override
+		protected Collection<? extends SelectField> selectFields() {
+			return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
+					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+							LAUNCH.ID
+					))
+							.as(LAUNCHES_QUANTITY),
+					DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
+					PROJECT.ID,
+					PROJECT.CREATION_DATE,
+					PROJECT.NAME,
+					PROJECT.PROJECT_TYPE
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(PROJECT);
+			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
+			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+		}
+
+		@Override
+		public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query) {
+			throw new UnsupportedOperationException("Doesn't supported for Project Info query");
+		}
+
+		@Override
+		public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+			throw new UnsupportedOperationException("Doesn't supported for Project Info query");
 		}
 
 		@Override

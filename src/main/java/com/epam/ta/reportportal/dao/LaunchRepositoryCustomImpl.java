@@ -76,14 +76,14 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<Launch> findByFilter(Queryable filter) {
-		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
 	}
 
 	@Override
 	public Page<Launch> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
-				.withWrapper(filter.getTarget())
+				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}

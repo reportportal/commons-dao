@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -30,25 +29,23 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
-import org.hsqldb.cmdline.SqlToolError;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -62,17 +59,17 @@ public class ProjectRepositoryTest {
 	@Autowired
 	private ProjectRepository projectRepository;
 
-	@BeforeClass
-	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/user/user-project-down.sql");
-
-		SqlRunner.runSqlScripts("/user/user-project-up.sql");
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException, IOException, SqlToolError {
-		SqlRunner.runSqlScripts("/user/user-project-down.sql");
-	}
+	//	@BeforeClass
+	//	public static void init() throws SQLException, ClassNotFoundException, IOException, SqlToolError {
+	//		SqlRunner.runSqlScripts("/user/user-project-down.sql");
+	//
+	//		SqlRunner.runSqlScripts("/user/user-project-up.sql");
+	//	}
+	//
+	//	@AfterClass
+	//	public static void destroy() throws SQLException, IOException, SqlToolError {
+	//		SqlRunner.runSqlScripts("/user/user-project-down.sql");
+	//	}
 
 	@Test
 	public void findAllIdsAndProjectAttributesTest() {
@@ -136,9 +133,11 @@ public class ProjectRepositoryTest {
 
 	@Test
 	public void testProject() {
-		Filter filter = new Filter(Project.class, Sets.newHashSet());
-		Pageable pageable = PageRequest.of(0, 20);
-		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable, "DEFAULT");
+		Filter filter = new Filter(ProjectInfo.class,
+				Sets.newHashSet(new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "2", USERS_QUANTITY))
+		);
+		Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, LAUNCHES_QUANTITY));
+		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable);
 		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
 	}
 }

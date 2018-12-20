@@ -20,8 +20,6 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +28,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
-import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.name;
 
 @Repository
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
-	private static final String USERS_QUANTITY = "usersQuantity";
-	private static final String LAUNCHES_QUANTITY = "launchesQuantity";
-	private static final String LAST_RUN = "lastRun";
 	private static final String FILTERED_PROJECT = "filtered_project";
 
 	@Autowired
@@ -54,65 +46,25 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public List<Project> findByFilter(Queryable filter) {
-		return PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		return PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
 	}
 
 	@Override
 	public Page<Project> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
-				.withWrapper(filter.getTarget())
+				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
 	@Override
-	public Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable, String mode) {
-		return PageableExecutionUtils.getPage(dsl.with(FILTERED_PROJECT)
-				.as(QueryBuilder.newBuilder(filter).with(pageable).build())
-				.select(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
-						DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
-								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
-						DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
-						PROJECT.ID,
-						PROJECT.CREATION_DATE,
-						PROJECT.NAME,
-						PROJECT.PROJECT_TYPE
-				)
-				.from(PROJECT)
-				.leftJoin(PROJECT_USER)
-				.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
-				.leftJoin(LAUNCH)
-				.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
-				.join(DSL.table(name(FILTERED_PROJECT)))
-				.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT.ID))
-				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
-				.fetch()
-				.into(ProjectInfo.class), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
-	}
-
-	@Override
-	public ProjectInfo findProjectInfoFromDate(Long projectId, LocalDateTime fromDate, String mode) {
-		return dsl.select(
-				DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
-				DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
-						.and(LAUNCH.START_TIME.gt(Timestamp.valueOf(fromDate)))
-						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).as(LAUNCHES_QUANTITY),
-				DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
-				PROJECT.ID,
-				PROJECT.CREATION_DATE,
-				PROJECT.NAME,
-				PROJECT.PROJECT_TYPE
-		)
-				.from(PROJECT)
-				.leftJoin(PROJECT_USER)
-				.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
-				.leftJoin(LAUNCH)
-				.on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
-				.where(PROJECT.ID.eq(projectId))
-				.groupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE)
-				.fetchOne()
-				.into(ProjectInfo.class);
+	public Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable) {
+		return PageableExecutionUtils.getPage(
+				QueryBuilder.newBuilder(filter).with(pageable).build().fetch().into(ProjectInfo.class),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 
 	@Override

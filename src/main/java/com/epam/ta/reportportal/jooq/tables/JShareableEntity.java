@@ -45,7 +45,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JShareableEntity extends TableImpl<JShareableEntityRecord> {
 
-    private static final long serialVersionUID = -591305562;
+    private static final long serialVersionUID = -1632620876;
 
     /**
      * The reference instance of <code>public.shareable_entity</code>
@@ -158,7 +158,11 @@ public class JShareableEntity extends TableImpl<JShareableEntityRecord> {
      */
     @Override
     public List<ForeignKey<JShareableEntityRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JShareableEntityRecord, ?>>asList(Keys.SHAREABLE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JShareableEntityRecord, ?>>asList(Keys.SHAREABLE_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY, Keys.SHAREABLE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
+    }
+
+    public JUsers users() {
+        return new JUsers(this, Keys.SHAREABLE_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY);
     }
 
     public JProject project() {

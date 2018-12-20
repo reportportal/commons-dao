@@ -181,10 +181,9 @@ public class QueryBuilder {
 	/**
 	 * Joins inner query to load all columns after filtering
 	 *
-	 * @param filterTarget Filter target
 	 * @return Query builder
 	 */
-	public QueryBuilder withWrapper(FilterTarget filterTarget) {
+	public QueryBuilder wrap() {
 		query = filterTarget.wrapQuery(query);
 		return this;
 	}
@@ -192,10 +191,9 @@ public class QueryBuilder {
 	/**
 	 * Joins inner query to load columns excluding provided fields after filtering
 	 *
-	 * @param filterTarget Filter target
 	 * @return Query builder
 	 */
-	public QueryBuilder withWrapper(FilterTarget filterTarget, String... excludingFields) {
+	public QueryBuilder wrapExcludingFields(String... excludingFields) {
 		query = filterTarget.wrapQuery(query, excludingFields);
 		return this;
 	}

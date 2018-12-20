@@ -78,7 +78,6 @@ public class Indexes {
     public static final Index LAUNCH_PK = Indexes0.LAUNCH_PK;
     public static final Index UNQ_NAME_NUMBER = Indexes0.UNQ_NAME_NUMBER;
     public static final Index LDAP_CONFIG_PK = Indexes0.LDAP_CONFIG_PK;
-    public static final Index LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY = Indexes0.LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY;
     public static final Index LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Indexes0.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK;
     public static final Index LOG_PK = Indexes0.LOG_PK;
     public static final Index ACCESS_TOKENS_PK = Indexes0.ACCESS_TOKENS_PK;
@@ -157,7 +156,6 @@ public class Indexes {
         public static Index LAUNCH_PK = Internal.createIndex("launch_pk", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.ID }, true);
         public static Index UNQ_NAME_NUMBER = Internal.createIndex("unq_name_number", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID }, true);
         public static Index LDAP_CONFIG_PK = Internal.createIndex("ldap_config_pk", JLdapConfig.LDAP_CONFIG, new OrderField[] { JLdapConfig.LDAP_CONFIG.ID }, true);
-        public static Index LDAP_SYNCHRONIZATION_ATTRIBUTES_EMAIL_KEY = Internal.createIndex("ldap_synchronization_attributes_email_key", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, new OrderField[] { JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.EMAIL }, true);
         public static Index LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Internal.createIndex("ldap_synchronization_attributes_pk", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, new OrderField[] { JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.ID }, true);
         public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
         public static Index ACCESS_TOKENS_PK = Internal.createIndex("access_tokens_pk", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID, JOauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_TYPE }, true);

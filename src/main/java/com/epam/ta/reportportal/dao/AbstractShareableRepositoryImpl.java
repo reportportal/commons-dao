@@ -51,8 +51,8 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 						.addCondition(permittedCondition(userName))
 						.with(pageable)
-						.withWrapper(filter.getTarget())
-						.with(pageable.getSort())
+						.wrap()
+						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(permittedCondition(userName)).build())
@@ -66,8 +66,8 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 						.addCondition(ownCondition(userName))
 						.with(pageable)
-						.withWrapper(filter.getTarget())
-						.with(pageable.getSort())
+						.wrap()
+						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(ownCondition(userName)).build())
@@ -80,8 +80,8 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 						.addCondition(sharedCondition(userName))
 						.with(pageable)
-						.withWrapper(filter.getTarget())
-						.with(pageable.getSort())
+						.wrap()
+						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(sharedCondition(userName)).build())
