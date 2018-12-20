@@ -97,10 +97,6 @@ public class ProjectUtilsTest {
 				.collect(Collectors.toMap(it -> it.getKey().getName(), Map.Entry::getValue)));
 	}
 
-	@Test
-	public void getOwner() {
-	}
-
 	private static Project getTestProject() {
 		Project project = new Project();
 		project.setId(1L);

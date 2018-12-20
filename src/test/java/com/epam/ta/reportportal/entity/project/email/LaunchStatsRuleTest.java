@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.*;
 
 /**
@@ -38,7 +37,10 @@ public class LaunchStatsRuleTest {
 
 	@Before
 	public void setUp() throws Exception {
-		allowed = Arrays.stream(LaunchStatsRule.values()).collect(Collectors.toMap(it -> it, it -> permute(it.getRuleString())));
+		allowed = Arrays.stream(LaunchStatsRule.values())
+				.collect(Collectors.toMap(it -> it,
+						it -> Arrays.asList(it.getRuleString(), it.getRuleString().toUpperCase(), it.getRuleString().toLowerCase())
+				));
 		disallowed = Arrays.asList("noSuchRule", "", " ", null);
 	}
 

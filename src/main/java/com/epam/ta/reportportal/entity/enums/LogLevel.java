@@ -91,8 +91,7 @@ public enum LogLevel {
 		return Arrays.stream(LogLevel.values())
 				.sorted((prev, curr) -> Integer.compare(curr.toInt(), prev.toInt()))
 				.filter(l -> l.toInt() <= intLevel)
-				.findFirst()
-				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level =" + intLevel));
+				.findFirst().orElseThrow(() -> new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level = " + intLevel));
 
 	}
 

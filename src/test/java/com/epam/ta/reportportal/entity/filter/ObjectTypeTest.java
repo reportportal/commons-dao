@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,7 +43,8 @@ public class ObjectTypeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		allowed = Arrays.stream(ObjectType.values()).collect(Collectors.toMap(it -> it, it -> permute(it.name())));
+		allowed = Arrays.stream(ObjectType.values())
+				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowed = Arrays.asList("noSuchObjectType", "", " ", null);
 	}
 

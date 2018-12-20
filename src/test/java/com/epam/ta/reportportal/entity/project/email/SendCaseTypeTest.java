@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.*;
 
 /**
@@ -38,7 +37,13 @@ public class SendCaseTypeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		allowed = Arrays.stream(SendCaseType.values()).collect(Collectors.toMap(it -> it, it -> permute(it.getCaseTypeString())));
+		allowed = Arrays.stream(SendCaseType.values())
+				.collect(Collectors.toMap(it -> it,
+						it -> Arrays.asList(it.getCaseTypeString(),
+								it.getCaseTypeString().toUpperCase(),
+								it.getCaseTypeString().toLowerCase()
+						)
+				));
 		disallowed = Arrays.asList("noSuchSendCase", "", " ", null);
 	}
 

@@ -40,7 +40,7 @@ public abstract class AttributeConverterTest {
 
 	@Test
 	public void convertToDatabaseColumn() {
-		doTest();
+		convertToColumnTest();
 	}
 
 	@Test
@@ -54,5 +54,5 @@ public abstract class AttributeConverterTest {
 		converter.convertToEntityAttribute("wrong parameter");
 	}
 
-	protected abstract void doTest();
+	protected abstract void convertToColumnTest();
 }

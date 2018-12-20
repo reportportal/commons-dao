@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.ta.reportportal.entity.enums.LogLevel;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +57,8 @@ public class LogLevelConverterTest {
 
 	@Test
 	public void convertToEntityAttributeFail() {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(ReportPortalException.class);
+		thrown.expectMessage("Error in Save Log Request. Wrong level = -100");
 		converter.convertToEntityAttribute(-100);
 	}
 }

@@ -22,7 +22,6 @@ import org.junit.Before;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -33,11 +32,17 @@ public class SenderCaseTypeConverterTest extends AttributeConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.converter = new SenderCaseTypeConverter();
-		allowedValues = Arrays.stream(SendCaseType.values()).collect(Collectors.toMap(it -> it, it -> permute(it.getCaseTypeString())));
+		allowedValues = Arrays.stream(SendCaseType.values())
+				.collect(Collectors.toMap(it -> it,
+						it -> Arrays.asList(it.getCaseTypeString(),
+								it.getCaseTypeString().toUpperCase(),
+								it.getCaseTypeString().toLowerCase()
+						)
+				));
 	}
 
 	@Override
-	protected void doTest() {
+	protected void convertToColumnTest() {
 		Arrays.stream(SendCaseType.values()).forEach(it -> assertEquals(it.getCaseTypeString(), converter.convertToDatabaseColumn(it)));
 	}
 }

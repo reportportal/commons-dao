@@ -22,7 +22,6 @@ import org.junit.Before;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -33,11 +32,14 @@ public class LaunchStatsRuleConverterTest extends AttributeConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.converter = new LaunchStatsRuleConverter();
-		allowedValues = Arrays.stream(LaunchStatsRule.values()).collect(Collectors.toMap(it -> it, it -> permute(it.getRuleString())));
+		allowedValues = Arrays.stream(LaunchStatsRule.values())
+				.collect(Collectors.toMap(it -> it,
+						it -> Arrays.asList(it.getRuleString(), it.getRuleString().toUpperCase(), it.getRuleString().toLowerCase())
+				));
 	}
 
 	@Override
-	protected void doTest() {
+	protected void convertToColumnTest() {
 		Arrays.stream(LaunchStatsRule.values()).forEach(it -> assertEquals(it.getRuleString(), converter.convertToDatabaseColumn(it)));
 	}
 

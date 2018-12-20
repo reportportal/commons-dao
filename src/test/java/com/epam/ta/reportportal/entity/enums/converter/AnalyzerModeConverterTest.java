@@ -22,7 +22,6 @@ import org.junit.Before;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -33,11 +32,14 @@ public class AnalyzerModeConverterTest extends AttributeConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.converter = new AnalyzerModeConverter();
-		allowedValues = Arrays.stream(AnalyzeMode.values()).collect(Collectors.toMap(it -> it, it -> permute(it.getValue())));
+		allowedValues = Arrays.stream(AnalyzeMode.values())
+				.collect(Collectors.toMap(it -> it,
+						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
+				));
 	}
 
 	@Override
-	public void doTest() {
+	public void convertToColumnTest() {
 		Arrays.stream(AnalyzeMode.values()).forEach(it -> assertEquals(it.getValue(), converter.convertToDatabaseColumn(it)));
 	}
 }

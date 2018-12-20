@@ -25,7 +25,6 @@ import org.junit.rules.ExpectedException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.*;
 
 /**
@@ -43,7 +42,8 @@ public class LogLevelTest {
 
 	@Before
 	public void setUp() throws Exception {
-		allowedNames = Arrays.stream(LogLevel.values()).collect(Collectors.toMap(it -> it, it -> permute(it.name())));
+		allowedNames = Arrays.stream(LogLevel.values())
+				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowedNames = Arrays.asList("NoSuchLogLevel", "", " ", "null", "warrrn");
 		allowedCodes = Arrays.stream(LogLevel.values()).collect(Collectors.toMap(it -> it, LogLevel::toInt));
 		disallowedCodes = Arrays.asList(0, 1500, 999, 7, 102312389);
@@ -107,10 +107,10 @@ public class LogLevelTest {
 
 	@Test
 	public void toLevelIntFail() {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(ReportPortalException.class);
 		Collections.shuffle(disallowedCodes);
 		final Integer code = disallowedCodes.get(0);
-		thrown.expectMessage("Level " + code + " is unknown.");
+		thrown.expectMessage("Error in Save Log Request. Wrong level = " + code);
 		LogLevel.toLevel(code);
 	}
 }

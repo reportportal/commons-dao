@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.entity.enums.EnumTestHelper.permute;
 import static org.junit.Assert.*;
 
 /**
@@ -38,7 +37,10 @@ public class AnalyzeModeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		allowed = Arrays.stream(AnalyzeMode.values()).collect(Collectors.toMap(it -> it, it -> permute(it.getValue())));
+		allowed = Arrays.stream(AnalyzeMode.values())
+				.collect(Collectors.toMap(it -> it,
+						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
+				));
 		disallowed = Arrays.asList("noSuchMode", "", " ", null);
 	}
 
