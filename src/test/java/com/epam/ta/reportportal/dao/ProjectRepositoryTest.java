@@ -97,8 +97,7 @@ public class ProjectRepositoryTest extends BaseTest {
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(2));
-		Assert.assertThat("Results don't contain all project",
-				names, Matchers.hasItems("default_personal", "superadmin_personal")
+		Assert.assertThat("Results don't contain all project", names, Matchers.hasItems("default_personal", "superadmin_personal")
 		);
 	}
 

@@ -230,7 +230,8 @@ public class UserRepositoryTest extends BaseTest {
 	@Test
 	public void searchForUserTest() {
 		Filter filter = Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
 				.build();
 		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
 		Assert.assertNotNull(users);
