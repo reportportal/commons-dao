@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.ta.reportportal.commons.Preconditions;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
 import org.jooq.Condition;
@@ -68,12 +69,16 @@ public class QueryBuilder {
 	 */
 	private SelectQuery<? extends Record> query;
 
+	private FilterTarget filterTarget;
+
 	private QueryBuilder(FilterTarget target) {
+		filterTarget = target;
 		query = target.getQuery();
 	}
 
-	private QueryBuilder(SelectQuery<? extends Record> query) {
-		this.query = query;
+	private QueryBuilder(Queryable query) {
+		filterTarget = query.getTarget();
+		this.query = query.toQuery();
 	}
 
 	public static QueryBuilder newBuilder(FilterTarget target) {
@@ -81,7 +86,7 @@ public class QueryBuilder {
 	}
 
 	public static QueryBuilder newBuilder(Queryable queryable) {
-		return new QueryBuilder(queryable.toQuery());
+		return new QueryBuilder(queryable);
 	}
 
 	/**
@@ -142,8 +147,14 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-			query.addSelect(field(order.getProperty()));
-			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+
+			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
+
+			query.addSelect(field(criteria.getAggregateCriteria()));
+			query.addOrderBy(field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
+					SortOrder.DESC :
+					SortOrder.ASC));
 		}));
 		return this;
 	}
@@ -182,6 +193,16 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder withWrapper(FilterTarget filterTarget, String... excludingFields) {
 		query = filterTarget.wrapQuery(query, excludingFields);
+		return this;
+	}
+
+	public QueryBuilder withWrapperSort(Sort sort) {
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
+			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
+			query.addSelect(field(criteria.getQueryCriteria()));
+			query.addOrderBy(field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+		}));
 		return this;
 	}
 

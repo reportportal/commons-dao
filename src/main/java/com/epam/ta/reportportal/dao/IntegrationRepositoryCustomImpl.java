@@ -65,7 +65,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 		return PageableExecutionUtils.getPage(INTEGRATION_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
-				.with(pageable.getSort())
+				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 

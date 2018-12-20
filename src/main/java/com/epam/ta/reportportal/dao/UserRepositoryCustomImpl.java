@@ -17,25 +17,19 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BinaryData;
-import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_PROJECT;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
 
 /**
@@ -84,7 +78,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget())
-				.with(normalizeProperties(pageable.getSort(), filter.getTarget()))
+				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
@@ -93,21 +87,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
 				.withWrapper(filter.getTarget(), exclude)
-				.with(normalizeProperties(pageable.getSort(), filter.getTarget()))
+				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
-	}
-
-	private Sort normalizeProperties(Sort sort, FilterTarget filterTarget) {
-		if (null != sort) {
-			sort.get()
-					.filter(it -> it.getProperty()
-							.equalsIgnoreCase(filterTarget.getCriteriaByFilter(CRITERIA_USER_PROJECT)
-									.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, CRITERIA_USER_PROJECT))
-									.getQueryCriteria()))
-					.forEach(it -> it.withProperty(JProject.PROJECT.NAME.getQualifiedName().toString()));
-			return sort;
-		}
-		return Sort.unsorted();
 	}
 
 }
