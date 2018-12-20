@@ -57,8 +57,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public List<Activity> findByFilterWithSortingAndLimit(Queryable filter, Sort sort, int limit) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).withWrapper(filter.getTarget()).build())
-				.map(ACTIVITY_MAPPER);
+		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).wrap().build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override

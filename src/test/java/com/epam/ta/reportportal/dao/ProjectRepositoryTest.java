@@ -36,10 +36,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -97,9 +100,7 @@ public class ProjectRepositoryTest extends BaseTest {
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(2));
-		Assert.assertThat("Results don't contain all project",
-				names, Matchers.hasItems("default_personal", "superadmin_personal")
-		);
+		Assert.assertThat("Results don't contain all project", names, Matchers.hasItems("default_personal", "superadmin_personal"));
 	}
 
 	@Test
@@ -112,9 +113,11 @@ public class ProjectRepositoryTest extends BaseTest {
 
 	@Test
 	public void testProject() {
-		Filter filter = new Filter(Project.class, Sets.newHashSet());
-		Pageable pageable = PageRequest.of(0, 20);
-		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable, "DEFAULT");
-		Assert.assertNotEquals(0, projectsInfo.getTotalElements());
+		Filter filter = new Filter(ProjectInfo.class,
+				Sets.newHashSet(new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "2", USERS_QUANTITY))
+		);
+		Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, LAUNCHES_QUANTITY));
+		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable);
+		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
 	}
 }
