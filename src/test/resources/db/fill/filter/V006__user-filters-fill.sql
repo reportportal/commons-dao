@@ -1,16 +1,10 @@
-INSERT INTO public.project (id, name, additional_info, project_type, creation_date, metadata) VALUES (1, 'default_personal', 'additional info', 'PERSONAL', '2018-11-02 10:35:57.411779', null);
-INSERT INTO public.project (id, name, additional_info, project_type, creation_date, metadata) VALUES (2, 'superadmin_personal', 'another additional info', 'PERSONAL', '2018-11-02 10:35:57.411779', null);
+INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (1, false, 'bla', 1);
+INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (2, false, 'bla', 1);
+INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (3, false, 'bla', 1);
 
-INSERT INTO public.users (id, login, password, email, attachment, attachment_thumbnail, role, type, expired, default_project_id, full_name, metadata) VALUES (1, 'default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', null, null, 'USER', 'INTERNAL', false, 1, 'tester', null);
-INSERT INTO public.users (id, login, password, email, attachment, attachment_thumbnail, role, type, expired, default_project_id, full_name, metadata) VALUES (2, 'superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', null, null, 'ADMINISTRATOR', 'INTERNAL', false, 2, 'tester', null);
-
-INSERT INTO public.filter (id, name, project_id, target, description) VALUES (1, 'New_filter', 1, 'Launch', null);
-INSERT INTO public.filter (id, name, project_id, target, description) VALUES (2, 'New_filter', 1, 'Launch', null);
-INSERT INTO public.filter (id, name, project_id, target, description) VALUES (3, 'New_filter', 1, 'Launch', null);
-
-INSERT INTO public.user_filter (id) VALUES (1);
-INSERT INTO public.user_filter (id) VALUES (2);
-INSERT INTO public.user_filter (id) VALUES (3);
+INSERT INTO public.filter (id, name, target, description) VALUES (1, 'New_filter', 'Launch', null);
+INSERT INTO public.filter (id, name, target, description) VALUES (2, 'New_filter', 'Launch', null);
+INSERT INTO public.filter (id, name, target, description) VALUES (3, 'New_filter', 'Launch', null);
 
 INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (1, 1, 'name', 'ASC');
 INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (2, 2, 'name', 'ASC');

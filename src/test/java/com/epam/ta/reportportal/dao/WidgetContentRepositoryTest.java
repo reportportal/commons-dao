@@ -15,11 +15,10 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
-import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -33,20 +32,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
-import org.junit.AfterClass;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,10 +56,7 @@ import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
 /**
  * @author Ivan Budayeu
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class WidgetContentRepositoryTest {
+public class WidgetContentRepositoryTest extends BaseTest {
 
 	public static final String FILTER_START_TIME = "launch.start_time";
 	public static final String FILTER_CREATION_DATE = "activity.creation_date";
@@ -76,34 +67,9 @@ public class WidgetContentRepositoryTest {
 	@Autowired
 	private LaunchRepository launchRepository;
 
+	@FlywayTest(locationsForMigrate = { "db/fill/widget-content" }, invokeCleanDB = false)
 	@BeforeClass
-	public static void init() throws SQLException {
-		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
-				"/widgetcontent/attribute/attribute-down.sql",
-				"/widgetcontent/ticket/ticket-down.sql",
-				"/widgetcontent/filter/filter-down.sql",
-				"/widgetcontent/widget/widget-down.sql",
-				"/widgetcontent/statistics/statistics-down.sql"
-		);
-		SqlRunner.runSqlScripts("/widgetcontent/widget/widget-up.sql",
-				"/widgetcontent/attribute/attribute-up.sql",
-				"/widgetcontent/filter/filter-up.sql",
-				"/widgetcontent/ticket/ticket-up.sql",
-				"/widgetcontent/statistics/statistics-down.sql",
-				"/widgetcontent/statistics/launch-statistics-up.sql",
-				"/widgetcontent/activity/activity-up.sql"
-		);
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException {
-		SqlRunner.runSqlScripts("/widgetcontent/activity/activity-down.sql",
-				"/widgetcontent/ticket/ticket-down.sql",
-				"/widgetcontent/filter/filter-down.sql",
-				"/widgetcontent/attribute/attribute-down.sql",
-				"/widgetcontent/widget/widget-down.sql",
-				"/widgetcontent/statistics/statistics-down.sql"
-		);
+	public static void before() {
 	}
 
 	@Test
@@ -159,7 +125,8 @@ public class WidgetContentRepositoryTest {
 		Assert.assertEquals(4, chartStatisticsContents.size());
 
 		Assert.assertEquals(chartStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
-		Assert.assertEquals(chartStatisticsContents.get(chartStatisticsContents.size() - 1).getValues().get(sortingColumn),
+		Assert.assertEquals(
+				chartStatisticsContents.get(chartStatisticsContents.size() - 1).getValues().get(sortingColumn),
 				String.valueOf(1)
 		);
 	}
@@ -188,7 +155,8 @@ public class WidgetContentRepositoryTest {
 					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)) + Double.parseDouble(res.getValues().get(INVESTIGATED)),
 					0.01
 			);
-			Assert.assertEquals(Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
+			Assert.assertEquals(
+					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
 					BigDecimal.valueOf((double) 100 * stats.get("statistics$defects$to_investigate$total") / sum)
 							.setScale(2, RoundingMode.HALF_UP)
 							.doubleValue(),
@@ -303,7 +271,8 @@ public class WidgetContentRepositoryTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(
+				filter,
 				contentFields,
 				sort,
 				2
@@ -413,7 +382,8 @@ public class WidgetContentRepositoryTest {
 
 		List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
+		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(
+				filter,
 				contentFields,
 				sort,
 				3
@@ -631,7 +601,8 @@ public class WidgetContentRepositoryTest {
 				false,
 				String.valueOf(projectId),
 				CRITERIA_PROJECT_ID
-		), new FilterCondition(Condition.EQUALS_ANY,
+		), new FilterCondition(
+				Condition.EQUALS_ANY,
 				false,
 				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()), CRITERIA_STATUS
 		));
@@ -693,8 +664,7 @@ public class WidgetContentRepositoryTest {
 				CRITERIA_USER,
 				"number",
 				"name",
-				"startTime",
-				"attributes",
+				"startTime", "db/fill/attributes",
 				"statistics$executions$total",
 				"statistics$executions$failed",
 				"statistics$executions$passed",

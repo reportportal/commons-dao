@@ -5,8 +5,16 @@ DECLARE   launchCounter INT = 1;
   DECLARE cur_suite_id  BIGINT;
   DECLARE cur_item_id   BIGINT;
   DECLARE cur_step_id   BIGINT;
-  DECLARE stepCounter INT = 1;
+  DECLARE stepCounter   INT = 1;
 BEGIN
+  WHILE launchCounter < 13 LOOP
+    INSERT INTO launch (id, uuid, project_id, user_id, name, start_time, number, last_modified, mode, status)
+    VALUES (launchCounter, 'uuid ' || launchCounter, 1, 1, 'name ' || launchCounter, now(), 1, now(), 'DEFAULT', 'IN_PROGRESS');
+    launchCounter = launchCounter + 1;
+  END LOOP;
+
+  launchCounter = 1;
+
   WHILE launchCounter < 13 LOOP
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('SUITE ' || launchCounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchCounter, launchCounter);
@@ -14,16 +22,13 @@ BEGIN
 
     UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
 
-    INSERT INTO test_item_results (result_id, status, duration, end_time)
-    VALUES (cur_suite_id, 'FAILED', 0.35, now());
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
     --
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
     VALUES ('First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchCounter, launchCounter, cur_suite_id);
     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
-    UPDATE test_item
-    SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree)
-    where item_id = cur_item_id;
+    UPDATE test_item SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) where item_id = cur_item_id;
 
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
 
@@ -37,14 +42,12 @@ BEGIN
       SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
       where item_id = cur_step_id;
 
-      INSERT INTO test_item_results (result_id, status, duration, end_time)
-      VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
+      INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
 
       IF stepCounter = 1
       THEN
         UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
-        INSERT INTO issue (issue_id, issue_type, issue_description)
-        VALUES (cur_step_id, 1, 'issue description');
+        INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (cur_step_id, 1, 'issue description');
       END IF;
 
       IF stepCounter = 2
@@ -65,7 +68,6 @@ BEGIN
 END
 $BODY$
 LANGUAGE plpgsql;
-.;
 
 SELECT items_init();
 

@@ -15,32 +15,28 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.CompositeFilter;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
 import org.jooq.Operator;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -55,24 +51,16 @@ import static com.epam.ta.reportportal.dao.constant.TestConstants.SUPERADMIN_PER
 /**
  * @author Ivan Budaev
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
-public class LaunchRepositoryTest {
+public class LaunchRepositoryTest extends BaseTest {
 
 	@Autowired
 	private LaunchRepository launchRepository;
 
-	//	@BeforeClass
-	//	public static void init() throws SQLException {
-	//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
-	//		SqlRunner.runSqlScripts("/user/user-project-up.sql", "/launch/launch-up.sql");
-	//	}
-	//
-	//	@AfterClass
-	//	public static void destroy() throws SQLException {
-	//		SqlRunner.runSqlScripts("/launch/launch-down.sql", "/user/user-project-down.sql");
-	//	}
+	@FlywayTest(locationsForMigrate = { "db/fill/launch" }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+
+	}
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
@@ -147,13 +135,6 @@ public class LaunchRepositoryTest {
 
 		Assert.assertNotNull(launchNames);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(launchNames));
-	}
-
-	@Test
-	public void jsonParsingTest() throws JsonProcessingException {
-		Launch launch = launchRepository.findById(2L).get();
-
-		String string = new ObjectMapper().writeValueAsString(launch);
 	}
 
 	@Test

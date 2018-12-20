@@ -35,17 +35,26 @@ INSERT INTO test_item_results (result_id, status, duration, end_time)
       VALUES (6, 'FAILED', 0.35, now());
 
 
-INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (1, floor(random() * 6 + 1), 'issue description');
+INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (1, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (1, 1);
-INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (2, floor(random() * 6 + 1), 'issue description');
+INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (2, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (2, 3);
 
-INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (3, floor(random() * 6 + 1), 'issue description');
+INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (3, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (3, 2);
 
-INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (4, floor(random() * 6 + 1), 'issue description');
+INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (4, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (4, 1);
-INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (5, floor(random() * 6 + 1), 'issue description');
+INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (5, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (5, 2);
-INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (6, floor(random() * 6 + 1), 'issue description');
+INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (6, floor(random() * 5 + 1), 'issue description');
 INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (6, 3);
+
+ALTER SEQUENCE statistics_s_id_seq
+  RESTART WITH 1;
+DELETE
+FROM statistics;
+ALTER SEQUENCE statistics_field_sf_id_seq
+  RESTART WITH 1;
+DELETE
+FROM statistics_field;
