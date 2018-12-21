@@ -21,11 +21,11 @@ import com.google.common.base.Preconditions;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Optional.ofNullable;
 
 /**
  * Some useful utils for working with entities<br>
@@ -39,27 +39,27 @@ public class EntityUtils {
 	private static final String NEW_SEPARATOR = "_";
 
 	private EntityUtils() {
-
+		//static only
 	}
 
-	public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> Optional.ofNullable(date)
-			.map(d -> LocalDateTime.ofInstant(d.toInstant(), ZoneOffset.UTC))
-			.orElse(null);
+	public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> ofNullable(date).map(d -> LocalDateTime.ofInstant(d.toInstant(),
+			ZoneOffset.UTC
+	)).orElse(null);
 
-	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> Optional.ofNullable(localDateTime)
-			.map(l -> Date.from(l.atZone(ZoneOffset.UTC).toInstant()))
-			.orElse(null);
+	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(localDateTime).map(l -> Date.from(l.atZone(
+			ZoneOffset.UTC).toInstant())).orElse(null);
 
 	/**
 	 * Remove leading and trailing spaces from list of string
 	 */
-	public static final Function<String, String> TRIM_FUNCTION = String::trim;
+	public static final Function<String, String> TRIM_FUNCTION = it -> ofNullable(it).map(String::trim).orElse(null);
 	public static final Predicate<String> NOT_EMPTY = s -> !isNullOrEmpty(s);
 
 	/**
 	 * Convert declined symbols on allowed for WS and UI
 	 */
-	public static final Function<String, String> REPLACE_SEPARATOR = s -> s.replace(OLD_SEPARATOR, NEW_SEPARATOR);
+	public static final Function<String, String> REPLACE_SEPARATOR = s -> ofNullable(s).map(it -> it.replace(OLD_SEPARATOR, NEW_SEPARATOR))
+			.orElse(null);
 
 	/**
 	 * Normalize any ID for database ID fields, for example

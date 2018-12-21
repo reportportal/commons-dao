@@ -60,9 +60,8 @@ public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
 	 */
 	public final TableField<JFilterConditionRecord, Long> ID = createField(
 			"id",
-			org.jooq.impl.SQLDataType.BIGINT.nullable(false)
-					.defaultValue(org.jooq.impl.DSL.field(
-							"nextval('filter_condition_id_seq'::regclass)",
+			org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field(
+					"nextval('filter_condition_id_seq'::regclass)",
 							org.jooq.impl.SQLDataType.BIGINT
 					)),
 			this,

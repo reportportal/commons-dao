@@ -33,7 +33,7 @@ public enum ProjectType {
 	UPSA;
 
 	public static Optional<ProjectType> findByName(String name) {
-		return Arrays.stream(ProjectType.values()).filter(type -> type.name().equals(name)).findAny();
+		return Arrays.stream(ProjectType.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
