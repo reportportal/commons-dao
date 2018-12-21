@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.*;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
@@ -52,7 +54,9 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.field;
 
 public enum FilterTarget {
@@ -94,6 +98,72 @@ public enum FilterTarget {
 		}
 	},
 
+	PROJECT_INFO(ProjectInfo.class,
+			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE,
+							PROJECT.CREATION_DATE.getQualifiedName().toString(),
+							Timestamp.class
+					),
+					new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
+					new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
+					new CriteriaHolder(LAUNCHES_QUANTITY,
+							LAUNCHES_QUANTITY,
+							DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
+											.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+									LAUNCH.ID
+							)).toString(),
+							Long.class
+					)
+			)
+	) {
+		@Override
+		public SelectQuery<? extends Record> getQuery() {
+			SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+			joinTables(query);
+			query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
+			return query;
+		}
+
+		@Override
+		protected Collection<? extends SelectField> selectFields() {
+			return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
+					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+							LAUNCH.ID
+					))
+							.as(LAUNCHES_QUANTITY),
+					DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
+					PROJECT.ID,
+					PROJECT.CREATION_DATE,
+					PROJECT.NAME,
+					PROJECT.PROJECT_TYPE
+			);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
+			query.addFrom(PROJECT);
+			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
+			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+		}
+
+		@Override
+		public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query) {
+			throw new UnsupportedOperationException("Doesn't supported for Project Info query");
+		}
+
+		@Override
+		public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+			throw new UnsupportedOperationException("Doesn't supported for Project Info query");
+		}
+
+		@Override
+		protected Field<Long> idField() {
+			return PROJECT.ID;
+		}
+	},
+
 	USER_TARGET(User.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_ID, USERS.ID.getQualifiedName().toString(), Long.class),
@@ -103,7 +173,17 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_ROLE, USERS.ROLE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_TYPE, USERS.TYPE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_EXPIRED, USERS.EXPIRED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID.getQualifiedName().toString(), Long.class)
+			new CriteriaHolder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT,
+					PROJECT.NAME.getQualifiedName().toString(),
+					DSL.arrayAgg(PROJECT.NAME).toString(),
+					List.class
+			),
+			new CriteriaHolder(CRITERIA_LAST_LOGIN,
+					DSL.cast(DSL.field(USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login'"), Timestamp.class)
+							.toString(),
+					Timestamp.class
+			)
 
 	)) {
 		@Override
@@ -155,8 +235,16 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), List.class),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), List.class),
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY,
+					ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(),
+					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString(),
+					List.class
+			),
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
+					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
+					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
+					List.class
+			),
 			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
 	)) {
 		@Override
@@ -170,7 +258,12 @@ public enum FilterTarget {
 					LAUNCH.PROJECT_ID,
 					LAUNCH.USER_ID,
 					LAUNCH.NUMBER,
-					LAUNCH.LAST_MODIFIED, LAUNCH.MODE, LAUNCH.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM,
+					LAUNCH.LAST_MODIFIED,
+					LAUNCH.MODE,
+					LAUNCH.STATUS,
+					ITEM_ATTRIBUTE.KEY,
+					ITEM_ATTRIBUTE.VALUE,
+					ITEM_ATTRIBUTE.SYSTEM,
 					STATISTICS.S_COUNTER,
 					STATISTICS_FIELD.NAME,
 					USERS.ID,
@@ -223,8 +316,16 @@ public enum FilterTarget {
 					new CriteriaHolder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID.getQualifiedName().toString(), Long.class),
 					new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 					new CriteriaHolder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID.getQualifiedName().toString(), Long.class),
-					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(), List.class),
-					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(), List.class),
+					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY,
+							ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(),
+							DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString(),
+							List.class
+					),
+					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
+							ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
+							DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
+							List.class
+					),
 					new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class)
 			)
 	) {
@@ -565,6 +666,16 @@ public enum FilterTarget {
 	}
 
 	public Optional<CriteriaHolder> getCriteriaByFilter(String filterCriteria) {
+		/*
+			creates criteria holder for statistics search criteria cause there
+			can be custom statistics so we can't know it till this moment
+		*/
+		if (filterCriteria != null && filterCriteria.startsWith(STATISTICS_KEY)) {
+			return Optional.of(new CriteriaHolder(filterCriteria,
+					DSL.coalesce(DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(filterCriteria)), 0).toString(),
+					Long.class
+			));
+		}
 		return criteriaHolders.stream().filter(holder -> holder.getFilterCriteria().equals(filterCriteria)).findAny();
 	}
 

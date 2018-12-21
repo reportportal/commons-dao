@@ -117,7 +117,7 @@ public class Filter implements Serializable, Queryable {
 	public Map<ConditionType, org.jooq.Condition> toCondition() {
 		Map<ConditionType, org.jooq.Condition> resultedConditions = new HashMap<>();
 		for (FilterCondition filterCondition : filterConditions) {
-			if (HAVING_CONDITION.test(filterCondition)) {
+			if (HAVING_CONDITION.test(filterCondition, this.target)) {
 				addTransformedCondition(resultedConditions, filterCondition, ConditionType.HAVING);
 			} else {
 				addTransformedCondition(resultedConditions, filterCondition, ConditionType.WHERE);

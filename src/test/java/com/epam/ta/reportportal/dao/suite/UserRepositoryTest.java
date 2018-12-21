@@ -39,12 +39,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 
 /**
@@ -58,6 +61,28 @@ public class UserRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ProjectRepository projectRepository;
+
+	@Test
+	public void loadUserByLastLogin() {
+		//given
+		long now = new Date().getTime();
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN, false, String.valueOf(now), CRITERIA_LAST_LOGIN))
+				.build();
+		//when
+		List<User> users = userRepository.findByFilter(filter);
+		//then
+		Assert.assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
+		users.forEach(user -> Assert.assertThat(
+				"Last login should be lower than in the filer",
+				LocalDateTime.parse((String) users.get(0).getMetadata().getMetadata().get("last_login"))
+						.atZone(ZoneId.systemDefault())
+						.toInstant()
+						.toEpochMilli(),
+				Matchers.lessThan(now)
+		));
+	}
 
 	@Test
 	public void loadUserNameByProject() {
@@ -231,20 +256,32 @@ public class UserRepositoryTest extends BaseTest {
 
 	@Test
 	public void searchForUserTest() {
+		//given
 		Filter filter = Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
 				.build();
+		//when
 		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
-		Assert.assertNotNull(users);
-		Assert.assertTrue(users.getSize() >= 1);
+		//then
+		Assert.assertTrue(users.getTotalElements() >= 1);
 	}
 
 	@Test
 	public void removeUserFromProjectTest() {
-
 		User user = userRepository.findByLogin("default").get();
-
 		userRepository.delete(user);
+	}
+
+	@Test
+	public void usersWithProjectSort() {
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "test", CRITERIA_USER))
+				.build();
+		PageRequest pageRequest = PageRequest.of(0, 5, Sort.Direction.ASC, "project");
+		Page<User> result = userRepository.findByFilter(filter, pageRequest);
+		Assert.assertTrue(result.getTotalElements() >= 1);
 	}
 
 	@Test

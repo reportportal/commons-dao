@@ -61,6 +61,6 @@ public enum ActivityEventType {
 	}
 
 	public static Optional<ActivityEventType> fromString(String string) {
-		return Optional.ofNullable(string).flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equals(str)).findAny());
+		return Optional.ofNullable(string).flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equalsIgnoreCase(str)).findAny());
 	}
 }

@@ -57,21 +57,20 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public List<Activity> findByFilterWithSortingAndLimit(Queryable filter, Sort sort, int limit) {
-		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).withWrapper(filter.getTarget()).build())
-				.map(ACTIVITY_MAPPER);
+		return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).wrap().build()).map(ACTIVITY_MAPPER);
 	}
 
 	@Override
 	public List<Activity> findByFilter(Queryable filter) {
-		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
 	}
 
 	@Override
 	public Page<Activity> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
-				.withWrapper(filter.getTarget())
-				.with(pageable.getSort())
+				.wrap()
+				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 }

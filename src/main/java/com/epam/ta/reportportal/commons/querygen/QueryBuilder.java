@@ -19,22 +19,20 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.ta.reportportal.commons.Preconditions;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
 import org.jooq.Condition;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
-import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -63,20 +61,28 @@ public class QueryBuilder {
 	/**
 	 * Predicate that checks if filter condition should be applied with HAVING
 	 */
-	public final static Predicate<FilterCondition> HAVING_CONDITION = filterCondition ->
-			HAVING_CONDITIONS.contains(filterCondition.getCondition()) || filterCondition.getSearchCriteria().startsWith(STATISTICS_KEY);
+	public final static BiPredicate<FilterCondition, FilterTarget> HAVING_CONDITION = (filterCondition, target) -> {
+		CriteriaHolder criteria = target.getCriteriaByFilter(filterCondition.getSearchCriteria())
+				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_FILTER_PARAMETERS, filterCondition.getSearchCriteria()));
+		return HAVING_CONDITIONS.contains(filterCondition.getCondition()) || filterCondition.getSearchCriteria().startsWith(STATISTICS_KEY)
+				|| !criteria.getQueryCriteria().equals(criteria.getAggregateCriteria());
+	};
 
 	/**
 	 * JOOQ SQL query representation
 	 */
 	private SelectQuery<? extends Record> query;
 
+	private FilterTarget filterTarget;
+
 	private QueryBuilder(FilterTarget target) {
+		filterTarget = target;
 		query = target.getQuery();
 	}
 
-	private QueryBuilder(SelectQuery<? extends Record> query) {
-		this.query = query;
+	private QueryBuilder(Queryable query) {
+		filterTarget = query.getTarget();
+		this.query = query.toQuery();
 	}
 
 	public static QueryBuilder newBuilder(FilterTarget target) {
@@ -84,7 +90,7 @@ public class QueryBuilder {
 	}
 
 	public static QueryBuilder newBuilder(Queryable queryable) {
-		return new QueryBuilder(queryable.toQuery());
+		return new QueryBuilder(queryable);
 	}
 
 	/**
@@ -138,17 +144,21 @@ public class QueryBuilder {
 	}
 
 	/**
-	 * Add sorting {@link Sort}
+	 * Convert properties to query criteria and add sorting {@link Sort}
 	 *
 	 * @param sort Sort condition
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-			query.addSelect(order.getProperty().startsWith(STATISTICS_KEY) ?
-					DSL.max(STATISTICS.S_COUNTER).filterWhere(STATISTICS_FIELD.NAME.eq(order.getProperty())).as(order.getProperty()) :
-					field(order.getProperty()));
-			query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+
+			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
+
+			query.addSelect(field(criteria.getAggregateCriteria()));
+			query.addOrderBy(field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
+					SortOrder.DESC :
+					SortOrder.ASC));
 		}));
 		return this;
 	}
@@ -171,10 +181,9 @@ public class QueryBuilder {
 	/**
 	 * Joins inner query to load all columns after filtering
 	 *
-	 * @param filterTarget Filter target
 	 * @return Query builder
 	 */
-	public QueryBuilder withWrapper(FilterTarget filterTarget) {
+	public QueryBuilder wrap() {
 		query = filterTarget.wrapQuery(query);
 		return this;
 	}
@@ -182,45 +191,27 @@ public class QueryBuilder {
 	/**
 	 * Joins inner query to load columns excluding provided fields after filtering
 	 *
-	 * @param filterTarget Filter target
 	 * @return Query builder
 	 */
-	public QueryBuilder withWrapper(FilterTarget filterTarget, String... excludingFields) {
+	public QueryBuilder wrapExcludingFields(String... excludingFields) {
 		query = filterTarget.wrapQuery(query, excludingFields);
 		return this;
 	}
 
-	/**
-	 * Adds sorting after wrapping filtered query
-	 *
-	 * @param sort Sort
-	 * @return Query builder
-	 */
-	public QueryBuilder withWrappedSort(Sort sort) {
-		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false)
-				.forEach(order -> query.addOrderBy(field(order.getProperty()).sort(order.getDirection().isDescending() ?
-						SortOrder.DESC :
-						SortOrder.ASC))));
+	public QueryBuilder withWrapperSort(Sort sort) {
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
+			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
+			query.addSelect(field(criteria.getQueryCriteria()));
+			query.addOrderBy(field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+		}));
 		return this;
 	}
 
-	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
+	static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
 		return filterCondition -> {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
-
-			/*
-				creates criteria holder for statistics search criteria cause there
-				can be custom statistics so we can't know it till this moment
-			*/
-			if (searchCriteria.startsWith(STATISTICS_KEY)) {
-				criteriaHolder = Optional.of(new CriteriaHolder(
-						searchCriteria,
-						DSL.coalesce(DSL.max(STATISTICS.S_COUNTER)
-								.filterWhere(STATISTICS_FIELD.NAME.eq(filterCondition.getSearchCriteria())), 0).toString(),
-						Long.class
-				));
-			}
 
 			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
 					ErrorType.INCORRECT_FILTER_PARAMETERS,

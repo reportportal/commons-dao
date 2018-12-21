@@ -25,6 +25,8 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_AUTHENTICATION_TYPE;
+
 /**
  * @author Pavel Bortnik
  */
@@ -36,7 +38,8 @@ public class BugTrackingSystemAuthFactory {
 
 	public BugTrackingSystemAuth createAuthObject(BugTrackingSystemAuth auth, CreateIntegrationRQ rq) {
 		Preconditions.checkNotNull(rq, "Provided parameter can't be null");
-		AuthType authType = AuthType.findByName(rq.getExternalSystemAuth());
+		AuthType authType = AuthType.findByName(rq.getExternalSystemAuth())
+				.orElseThrow(() -> new ReportPortalException(INCORRECT_AUTHENTICATION_TYPE, rq.getExternalSystemAuth()));
 		auth = resetFields(auth);
 		auth.setAuthType(authType);
 		switch (authType) {
