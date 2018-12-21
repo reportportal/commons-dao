@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.dao.suite;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.dao.AttributeRepository;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import org.flywaydb.test.annotation.FlywayTest;

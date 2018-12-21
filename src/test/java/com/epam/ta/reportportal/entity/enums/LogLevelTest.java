@@ -46,7 +46,7 @@ public class LogLevelTest {
 				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowedNames = Arrays.asList("NoSuchLogLevel", "", " ", "null", "warrrn");
 		allowedCodes = Arrays.stream(LogLevel.values()).collect(Collectors.toMap(it -> it, LogLevel::toInt));
-		disallowedCodes = Arrays.asList(0, 1500, 999, 7, 102312389);
+		disallowedCodes = Arrays.asList(0, 1500, 999, 7);
 	}
 
 	@Test

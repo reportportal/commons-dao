@@ -235,12 +235,14 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY,
+			new CriteriaHolder(
+					CRITERIA_ITEM_ATTRIBUTE_KEY,
 					ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString(),
 					List.class
 			),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
+			new CriteriaHolder(
+					CRITERIA_ITEM_ATTRIBUTE_VALUE,
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class
