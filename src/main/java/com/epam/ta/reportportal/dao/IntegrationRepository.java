@@ -56,10 +56,10 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
 
 	@Modifying
-	@Query(value = "UPDATE Integration SET Integration.enabled = :enabled WHERE Integration.id = :integrationId")
+	@Query(value = "UPDATE integration SET enabled = :enabled WHERE id = :integrationId", nativeQuery = true)
 	void updateIntegrationEnabledState(@Param("enabled") boolean enabled, @Param("integrationId") Long integrationId);
 
 	@Modifying
-	@Query(value = "UPDATE Integration SET Integration.enabled = :enabled WHERE Integration.type.integrationGroup = :integrationGroup")
-	void updateIntegrationGroupEnabledState(@Param("enabled") boolean enabled, @Param("integrationGroup") IntegrationGroupEnum integrationGroup);
+	@Query(value = "UPDATE integration SET enabled = :enabled WHERE type = :integrationTypeId", nativeQuery = true)
+	void updateIntegrationGroupEnabledState(@Param("enabled") boolean enabled, @Param("integrationTypeId") Long integrationTypeId);
 }
