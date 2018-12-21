@@ -177,7 +177,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT,
 					PROJECT.NAME.getQualifiedName().toString(),
 					DSL.arrayAgg(PROJECT.NAME).toString(),
-					String.class
+					List.class
 			),
 			new CriteriaHolder(CRITERIA_LAST_LOGIN,
 					DSL.cast(DSL.field(USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login'"), Timestamp.class)
