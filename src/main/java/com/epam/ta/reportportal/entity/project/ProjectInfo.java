@@ -20,11 +20,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Not database object. Representation of project info query
+ * Not database object. Representation of the result of project info query
  *
  * @author Pavel Bortnik
  */
 public class ProjectInfo implements Serializable {
+
+	public static final String USERS_QUANTITY = "usersQuantity";
+	public static final String LAUNCHES_QUANTITY = "launchesQuantity";
+	public static final String LAST_RUN = "lastRun";
 
 	private Long id;
 
@@ -33,6 +37,8 @@ public class ProjectInfo implements Serializable {
 	private String name;
 
 	private String projectType;
+
+	private String organization;
 
 	private int usersQuantity;
 
@@ -70,6 +76,14 @@ public class ProjectInfo implements Serializable {
 
 	public void setProjectType(String projectType) {
 		this.projectType = projectType;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 	public int getUsersQuantity() {

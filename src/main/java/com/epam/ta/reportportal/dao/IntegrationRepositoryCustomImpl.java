@@ -57,15 +57,15 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 
 	@Override
 	public List<Integration> findByFilter(Queryable filter) {
-		return INTEGRATION_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).withWrapper(filter.getTarget()).build()));
+		return INTEGRATION_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
 	}
 
 	@Override
 	public Page<Integration> findByFilter(Queryable filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(INTEGRATION_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
 				.with(pageable)
-				.withWrapper(filter.getTarget())
-				.with(pageable.getSort())
+				.wrap()
+				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
 
