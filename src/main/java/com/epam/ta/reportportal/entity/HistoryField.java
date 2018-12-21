@@ -90,4 +90,14 @@ public class HistoryField extends JsonbUserType implements Serializable {
 	public int hashCode() {
 		return Objects.hash(field, oldValue, newValue);
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("HistoryField{");
+		sb.append("field='").append(field).append('\'');
+		sb.append(", oldValue='").append(oldValue).append('\'');
+		sb.append(", newValue='").append(newValue).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }
