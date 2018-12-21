@@ -1,1 +1,0 @@
-INSERT INTO "public".attribute(id, name) VALUES (100, 'present');
