@@ -15,7 +15,9 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -50,4 +52,14 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 			+ " AND i.project_id = :projectId) LIMIT 1", nativeQuery = true)
 	Optional<Integration> findByUrlAndBtsProjectAndProjectId(@Param("url") String url, @Param("btsProject") String btsProject,
 			@Param("projectId") Long projectId);
+
+	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
+
+	@Modifying
+	@Query(value = "UPDATE Integration SET Integration.enabled = :enabled WHERE Integration.id = :integrationId")
+	void updateIntegrationEnabledState(@Param("enabled") boolean enabled, @Param("integrationId") Long integrationId);
+
+	@Modifying
+	@Query(value = "UPDATE Integration SET Integration.enabled = :enabled WHERE Integration.type.integrationGroup = :integrationGroup")
+	void updateIntegrationGroupEnabledState(@Param("enabled") boolean enabled, @Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 }
