@@ -151,9 +151,7 @@ public class ActivityRepositoryTest extends BaseTest {
 	@Test
 	public void findByFilterWithSortingAndLimit() {
 		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
-				new Sort(Sort.Direction.DESC,
-						defaultFilter().getTarget().getCriteriaByFilter(CRITERIA_CREATION_DATE).get().getQueryCriteria()
-				),
+				new Sort(Sort.Direction.DESC, CRITERIA_CREATION_DATE),
 				2
 		);
 

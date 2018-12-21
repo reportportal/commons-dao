@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertNotEquals;
@@ -32,6 +33,8 @@ public class FilePathGeneratorTest {
 	private FilePathGenerator filePathGenerator;
 
 	private DateTimeProvider dateTimeProvider;
+
+	private static final String SEPARATOR = "\\" + File.separator;
 
 	@Before
 	public void setUp() throws Exception {
@@ -49,13 +52,16 @@ public class FilePathGeneratorTest {
 		when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
 
 		//		when:
-		String test21 = new FilePathGenerator(dateTimeProvider).generate();
-		String test22 = new FilePathGenerator(dateTimeProvider).generate();
+		String pathOne = new FilePathGenerator(dateTimeProvider).generate();
+		String pathTwo = new FilePathGenerator(dateTimeProvider).generate();
 
 		//		then:
-		assertNotEquals(test21, test22);
+		assertNotEquals(pathOne, pathTwo);
 
-		Assertions.assertThat(test21).matches("^" + date.getDayOfYear() + "/\\w{2}/\\w{2}/\\w{2}/.*$");
-		Assertions.assertThat(test22).matches("^" + date.getDayOfYear() + "/\\w{2}/\\w{2}/\\w{2}/.*$");
+		final String regex =
+				"^" + date.getDayOfYear() + SEPARATOR + "\\w{2}" + SEPARATOR + "\\w{2}" + SEPARATOR + "\\w{2}" + SEPARATOR + ".*$";
+
+		Assertions.assertThat(pathOne).matches(regex);
+		Assertions.assertThat(pathTwo).matches(regex);
 	}
 }
