@@ -27,7 +27,6 @@ import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_
  */
 public enum ServerSettingsEnum {
 
-	ENABLED("enabled"),
 	HOST("host"),
 	PORT("port"),
 	PROTOCOL("protocol"),
