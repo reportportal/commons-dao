@@ -55,6 +55,13 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 
 	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
 
+	@Query(value = "SELECT * FROM integration i WHERE i.params->'params'->>'project' = :projectName and i.project_id IS NULL", nativeQuery = true)
+	Optional<Integration> selectGlobalBtsIntegrationByLinkedProject(@Param("projectName") String projectName);
+
+	@Query(value = "SELECT * FROM integration i WHERE i.params->'params'->>'project' = :projectName and i.project_id = :projectId ", nativeQuery = true)
+	Optional<Integration> selectProjectBtsIntegrationByLinkedProject(@Param("projectName") String btsProjectName,
+			@Param("projectId") Long projectId);
+
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE id = :integrationId", nativeQuery = true)
 	void updateIntegrationEnabledState(@Param("enabled") boolean enabled, @Param("integrationId") Long integrationId);
