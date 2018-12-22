@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.bts;
 import com.epam.ta.reportportal.entity.enums.AuthType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.externalsystem.CreateIntegrationRQ;
+import com.epam.ta.reportportal.ws.model.externalsystem.CreateBugTrackingSystemRQ;
 import com.google.common.base.Preconditions;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,9 @@ public class BugTrackingSystemAuthFactory {
 	@Autowired
 	private BasicTextEncryptor simpleEncryptor;
 
-	public BugTrackingSystemAuth createAuthObject(BugTrackingSystemAuth auth, CreateIntegrationRQ rq) {
+	public BugTrackingSystemAuth createAuthObject(BugTrackingSystemAuth auth, CreateBugTrackingSystemRQ rq) {
 		Preconditions.checkNotNull(rq, "Provided parameter can't be null");
-		AuthType authType = AuthType.findByName(rq.getExternalSystemAuth());
+		AuthType authType = AuthType.findByName(rq.getSystemAuth());
 		auth = resetFields(auth);
 		auth.setAuthType(authType);
 		switch (authType) {
