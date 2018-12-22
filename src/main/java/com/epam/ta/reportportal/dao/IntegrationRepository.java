@@ -17,6 +17,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -46,6 +47,9 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @return Found integrations
 	 */
 	List<Integration> findAllByProjectId(Long projectId);
+
+	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType")
+	List<Integration> getAllGlobalIntegrationsByType(@Param("integrationType") IntegrationType integrationType);
 
 	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i"
 			+ " WHERE (params->'params'->>'url' = :url AND params->'params'->>'project' = :btsProject"
