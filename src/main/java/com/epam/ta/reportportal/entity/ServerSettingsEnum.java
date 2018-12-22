@@ -21,23 +21,22 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
-import static com.epam.ta.reportportal.entity.ServerSettingsConstants.EMAIL_CONFIG_PREFIX;
 
 /**
  * @author Ivan Budaev
  */
 public enum ServerSettingsEnum {
 
-	ENABLED(EMAIL_CONFIG_PREFIX + "enabled"),
-	HOST(EMAIL_CONFIG_PREFIX + "host"),
-	PORT(EMAIL_CONFIG_PREFIX + "port"),
-	PROTOCOL(EMAIL_CONFIG_PREFIX + "protocol"),
-	AUTH_ENABLED(EMAIL_CONFIG_PREFIX + "auth_enabled"),
-	STAR_TLS_ENABLED(EMAIL_CONFIG_PREFIX + "star_tls_enabled"),
-	SSL_ENABLED(EMAIL_CONFIG_PREFIX + "ssl_enabled"),
-	USERNAME(EMAIL_CONFIG_PREFIX + "username"),
-	PASSWORD(EMAIL_CONFIG_PREFIX + "password"),
-	FROM(EMAIL_CONFIG_PREFIX + "from"),
+	ENABLED("enabled"),
+	HOST("host"),
+	PORT("port"),
+	PROTOCOL("protocol"),
+	AUTH_ENABLED("auth_enabled"),
+	STAR_TLS_ENABLED("starTlsEnabled"),
+	SSL_ENABLED("sslEnabled"),
+	USERNAME("username"),
+	PASSWORD("password"),
+	FROM("from"),
 	ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all");
 
 	private String attribute;
