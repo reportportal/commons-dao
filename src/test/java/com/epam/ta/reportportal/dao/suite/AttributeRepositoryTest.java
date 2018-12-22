@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -36,10 +37,15 @@ import static org.junit.Assert.assertTrue;
  */
 public class AttributeRepositoryTest extends BaseTest {
 
+	private static final String FILL_SCRIPT_PATH = "db/fill/attributes";
+
+	private static final long ATTR_ID = 100L;
+	private static final String ATTR_NAME = "present";
+
 	@Autowired
 	private AttributeRepository attributeRepository;
 
-	@FlywayTest(locationsForMigrate = { "db/fill/attributes" }, invokeCleanDB = false)
+	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
 	@BeforeClass
 	public static void before() {
 	}
@@ -74,5 +80,18 @@ public class AttributeRepositoryTest extends BaseTest {
 	public void getDefaultProjectAttributesTest() {
 		final Set<Attribute> defaultProjectAttributes = attributeRepository.getDefaultProjectAttributes();
 		defaultProjectAttributes.forEach(it -> assertTrue(ProjectAttributeEnum.findByAttributeName(it.getName()).isPresent()));
+	}
+
+	@Test
+	public void findById() {
+		final Optional<Attribute> attrOptional = attributeRepository.findById(ATTR_ID);
+		assertTrue(attrOptional.isPresent());
+		assertEquals(ATTR_NAME, attrOptional.get().getName());
+	}
+
+	@Test
+	public void deleteById() {
+		attributeRepository.deleteById(ATTR_ID);
+		assertEquals(ProjectAttributeEnum.values().length, attributeRepository.findAll().size());
 	}
 }
