@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
@@ -47,6 +48,10 @@ public enum ServerSettingsEnum {
 
 	public String getAttribute() {
 		return attribute;
+	}
+
+	public Optional<String> getAttribute(Map<String, Object> params) {
+		return Optional.ofNullable(params.get(this.attribute)).map(o -> (String) o);
 	}
 
 	public static Optional<ServerSettingsEnum> findByAttribute(String attribute) {
