@@ -31,7 +31,7 @@ public enum ServerSettingsEnum {
 	HOST("host"),
 	PORT("port"),
 	PROTOCOL("protocol"),
-	AUTH_ENABLED("auth_enabled"),
+	AUTH_ENABLED("authEnabled"),
 	STAR_TLS_ENABLED("starTlsEnabled"),
 	SSL_ENABLED("sslEnabled"),
 	USERNAME("username"),
