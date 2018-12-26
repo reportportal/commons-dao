@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
-@Transactional("transactionManager")
+@Transactional
 @ActiveProfiles("test")
 @TestExecutionListeners(listeners = { FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class BaseTest {
