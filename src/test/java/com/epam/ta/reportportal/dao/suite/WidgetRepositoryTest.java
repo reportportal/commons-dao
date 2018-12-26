@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.dao.suite;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.dao.WidgetRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

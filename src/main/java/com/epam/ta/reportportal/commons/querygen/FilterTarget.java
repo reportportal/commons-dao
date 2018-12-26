@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
-import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -235,12 +235,14 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY,
+			new CriteriaHolder(
+					CRITERIA_ITEM_ATTRIBUTE_KEY,
 					ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString(),
 					List.class
 			),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
+			new CriteriaHolder(
+					CRITERIA_ITEM_ATTRIBUTE_VALUE,
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity;
+package com.epam.ta.reportportal.entity.activity;
 
-import com.epam.ta.reportportal.entity.activity.Activity;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,27 +30,27 @@ import static org.junit.Assert.*;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ActivityEntityTypeTest {
+public class ActivityActionTest {
 
-	private Map<Activity.ActivityEntityType, List<String>> allowed;
+	private Map<ActivityAction, List<String>> allowed;
 	private List<String> disallowed;
 
 	@Before
 	public void setUp() throws Exception {
-		allowed = Arrays.stream(Activity.ActivityEntityType.values())
+		allowed = Arrays.stream(ActivityAction.values())
 				.collect(Collectors.toMap(it -> it,
 						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
 				));
-		disallowed = Arrays.asList("noSuchMode", "", " ", null);
+		disallowed = Arrays.asList("noSuchAction", "", " ", null);
 	}
 
 	@Test
-	public void fromStringTest() {
+	public void fromString() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<Activity.ActivityEntityType> optional = Activity.ActivityEntityType.fromString(val);
+			final Optional<ActivityAction> optional = ActivityAction.fromString(val);
 			assertTrue(optional.isPresent());
 			assertEquals(key, optional.get());
 		}));
-		disallowed.forEach(it -> assertFalse(Activity.ActivityEntityType.fromString(it).isPresent()));
+		disallowed.forEach(it -> assertFalse(ActivityAction.fromString(it).isPresent()));
 	}
 }
