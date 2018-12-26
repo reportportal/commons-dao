@@ -55,7 +55,7 @@ public class QueryBuilder {
 	 */
 	private static final List<com.epam.ta.reportportal.commons.querygen.Condition> HAVING_CONDITIONS = ImmutableList.<com.epam.ta.reportportal.commons.querygen.Condition>builder()
 			.add(com.epam.ta.reportportal.commons.querygen.Condition.HAS)
-			.add(com.epam.ta.reportportal.commons.querygen.Condition.OVERLAP)
+			.add(com.epam.ta.reportportal.commons.querygen.Condition.ANY)
 			.build();
 
 	/**
