@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcluding
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -315,14 +316,18 @@ public class RecordMappers {
 		}
 	};
 
-	public static final Function<? super Record, DashboardWidget> DASHBOARD_WIDGET_MAPPER = r -> {
+	public static final Function<? super Record, Optional<DashboardWidget>> DASHBOARD_WIDGET_MAPPER = r -> {
+		Long widgetId = r.get(DASHBOARD_WIDGET.WIDGET_ID);
+		if (widgetId == null) {
+			return empty();
+		}
 		DashboardWidget dashboardWidget = new DashboardWidget();
-		dashboardWidget.setId(new DashboardWidgetId(r.get(DASHBOARD.ID), r.get(DASHBOARD_WIDGET.WIDGET_ID)));
+		dashboardWidget.setId(new DashboardWidgetId(r.get(DASHBOARD.ID), widgetId));
 		dashboardWidget.setPositionX(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_X));
 		dashboardWidget.setPositionY(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_Y));
 		dashboardWidget.setHeight(r.get(DASHBOARD_WIDGET.WIDGET_HEIGHT));
 		dashboardWidget.setWidth(r.get(DASHBOARD_WIDGET.WIDGET_WIDTH));
-		return dashboardWidget;
+		return Optional.of(dashboardWidget);
 	};
 
 	public static final Function<? super Record, SynchronizationAttributes> SYNCHRONIZATION_ATTRIBUTES_MAPPER = r -> {
