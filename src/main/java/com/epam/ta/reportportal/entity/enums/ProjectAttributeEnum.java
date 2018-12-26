@@ -22,6 +22,8 @@ import com.epam.ta.reportportal.entity.project.ProjectAnalyzerConfig;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.entity.project.ProjectUtils.INIT_FROM;
+
 /**
  * Enum with a list of basic required project parameters
  *
@@ -40,7 +42,10 @@ public enum ProjectAttributeEnum {
 	NUMBER_OF_LOG_LINES("analyzer.numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
 	INDEXING_RUNNING("analyzer.indexingRunning", String.valueOf(false)),
 	AUTO_ANALYZER_ENABLED("analyzer.isAutoAnalyzerEnabled", String.valueOf(false)),
-	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
+	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue()),
+
+	EMAIL_ENABLED("email.enabled", String.valueOf(false)),
+	EMAIL_FROM("email.from", INIT_FROM);
 
 	private String attribute;
 	private String defaultValue;
@@ -65,6 +70,6 @@ public enum ProjectAttributeEnum {
 	public static boolean isPresent(String name) {
 		return findByAttributeName(name).isPresent();
 	}
-	}
+}
 
 
