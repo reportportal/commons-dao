@@ -29,9 +29,9 @@ public class EmailSenderCase implements Serializable {
 	private Set<String> launchNames;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "launch_tags", joinColumns = @JoinColumn(name = "email_sender_case_id"))
-	@Column(name = "launch_tag")
-	private Set<String> launchTags;
+	@CollectionTable(name = "launch_attributes", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@Column(name = "launch_attribute")
+	private Set<String> launchAttributes;
 
 	@Column(name = "send_case")
 	private SendCase sendCase;
@@ -43,10 +43,10 @@ public class EmailSenderCase implements Serializable {
 	public EmailSenderCase() {
 	}
 
-	public EmailSenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchTags, SendCase sendCase) {
+	public EmailSenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchAttributes, SendCase sendCase) {
 		this.recipients = recipients;
 		this.launchNames = launchNames;
-		this.launchTags = launchTags;
+		this.launchAttributes = launchAttributes;
 		this.sendCase = sendCase;
 	}
 
@@ -74,12 +74,12 @@ public class EmailSenderCase implements Serializable {
 		this.launchNames = launchNames;
 	}
 
-	public Set<String> getLaunchTags() {
-		return launchTags;
+	public Set<String> getLaunchAttributes() {
+		return launchAttributes;
 	}
 
-	public void setLaunchTags(Set<String> launchTags) {
-		this.launchTags = launchTags;
+	public void setLaunchAttributes(Set<String> launchAttributes) {
+		this.launchAttributes = launchAttributes;
 	}
 
 	public SendCase getSendCase() {
