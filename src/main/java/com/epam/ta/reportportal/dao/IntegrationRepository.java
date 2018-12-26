@@ -48,23 +48,28 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 */
 	List<Integration> findAllByProjectId(Long projectId);
 
+	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
+
 	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType")
 	List<Integration> getAllGlobalIntegrationsByType(@Param("integrationType") IntegrationType integrationType);
 
 	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i"
 			+ " WHERE (params->'params'->>'url' = :url AND params->'params'->>'project' = :btsProject"
 			+ " AND i.project_id = :projectId) LIMIT 1", nativeQuery = true)
-	Optional<Integration> findByUrlAndBtsProjectAndProjectId(@Param("url") String url, @Param("btsProject") String btsProject,
+	Optional<Integration> selectProjectBtsIntegrationByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject,
 			@Param("projectId") Long projectId);
 
-	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
+	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type FROM integration i "
+			+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :projectName AND i.project_id IS NULL", nativeQuery = true)
+	Optional<Integration> selectGlobalBtsIntegrationByUrlAndLinkedProject(@Param("url") String url,
+			@Param("projectName") String projectName);
 
-	@Query(value = "SELECT * FROM integration i WHERE i.params->'params'->>'project' = :projectName and i.project_id IS NULL", nativeQuery = true)
-	Optional<Integration> selectGlobalBtsIntegrationByLinkedProject(@Param("projectName") String projectName);
+	@Query(value =
+			"SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, it.id, it.name, it.auth_flow, it.group_type, it.creation_date, it.details "
+					+ "FROM integration i JOIN integration_type it on i.type = it.id", nativeQuery = true)
+	List<Integration> findGlobalIntegrationsByIntegrationTypeId(@Param("integrationTypeId") Long integrationTypeId);
 
-	@Query(value = "SELECT * FROM integration i WHERE i.params->'params'->>'project' = :projectName and i.project_id = :projectId ", nativeQuery = true)
-	Optional<Integration> selectProjectBtsIntegrationByLinkedProject(@Param("projectName") String btsProjectName,
-			@Param("projectId") Long projectId);
+	List<Integration> findAllByProjectIdAndType(Long projectId, IntegrationType integrationType);
 
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE id = :integrationId", nativeQuery = true)
