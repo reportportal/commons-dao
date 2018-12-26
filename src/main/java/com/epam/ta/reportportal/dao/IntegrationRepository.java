@@ -48,6 +48,8 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 */
 	List<Integration> findAllByProjectId(Long projectId);
 
+	List<Integration> findAllByProjectIdAndType(Long projectId, IntegrationType integrationType);
+
 	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
 
 	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType")
@@ -63,13 +65,6 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 			+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :projectName AND i.project_id IS NULL", nativeQuery = true)
 	Optional<Integration> selectGlobalBtsIntegrationByUrlAndLinkedProject(@Param("url") String url,
 			@Param("projectName") String projectName);
-
-	@Query(value =
-			"SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, it.id, it.name, it.auth_flow, it.group_type, it.creation_date, it.details "
-					+ "FROM integration i JOIN integration_type it on i.type = it.id", nativeQuery = true)
-	List<Integration> findGlobalIntegrationsByIntegrationTypeId(@Param("integrationTypeId") Long integrationTypeId);
-
-	List<Integration> findAllByProjectIdAndType(Long projectId, IntegrationType integrationType);
 
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE id = :integrationId", nativeQuery = true)
