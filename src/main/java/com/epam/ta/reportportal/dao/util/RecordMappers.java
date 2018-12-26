@@ -21,6 +21,8 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
+import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -311,6 +313,16 @@ public class RecordMappers {
 		} else {
 			return Optional.empty();
 		}
+	};
+
+	public static final Function<? super Record, DashboardWidget> DASHBOARD_WIDGET_MAPPER = r -> {
+		DashboardWidget dashboardWidget = new DashboardWidget();
+		dashboardWidget.setId(new DashboardWidgetId(r.get(DASHBOARD.ID), r.get(DASHBOARD_WIDGET.WIDGET_ID)));
+		dashboardWidget.setPositionX(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_X));
+		dashboardWidget.setPositionY(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_Y));
+		dashboardWidget.setHeight(r.get(DASHBOARD_WIDGET.WIDGET_HEIGHT));
+		dashboardWidget.setWidth(r.get(DASHBOARD_WIDGET.WIDGET_WIDTH));
+		return dashboardWidget;
 	};
 
 	public static final Function<? super Record, SynchronizationAttributes> SYNCHRONIZATION_ATTRIBUTES_MAPPER = r -> {
