@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
-import com.epam.ta.reportportal.entity.project.email.SendCaseType;
+import com.epam.ta.reportportal.commons.SendCase;
 import org.junit.Before;
 
 import java.util.Arrays;
@@ -31,18 +31,18 @@ public class SenderCaseTypeConverterTest extends AttributeConverterTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.converter = new SenderCaseTypeConverter();
-		allowedValues = Arrays.stream(SendCaseType.values())
+		this.converter = new SendCaseConverter();
+		allowedValues = Arrays.stream(SendCase.values())
 				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getCaseTypeString(),
-								it.getCaseTypeString().toUpperCase(),
-								it.getCaseTypeString().toLowerCase()
+						it -> Arrays.asList(it.getCaseString(),
+								it.getCaseString().toUpperCase(),
+								it.getCaseString().toLowerCase()
 						)
 				));
 	}
 
 	@Override
 	protected void convertToColumnTest() {
-		Arrays.stream(SendCaseType.values()).forEach(it -> assertEquals(it.getCaseTypeString(), converter.convertToDatabaseColumn(it)));
+		Arrays.stream(SendCase.values()).forEach(it -> assertEquals(it.getCaseString(), converter.convertToDatabaseColumn(it)));
 	}
 }

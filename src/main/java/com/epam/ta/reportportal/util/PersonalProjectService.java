@@ -23,9 +23,9 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.project.ProjectUtils;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.util.integration.email.EmailIntegrationService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +51,13 @@ public final class PersonalProjectService {
 	private final ProjectRepository projectRepository;
 	private final AttributeRepository attributeRepository;
 	private final IssueTypeRepository issueTypeRepository;
-	private final EmailIntegrationService emailIntegrationService;
 
 	@Autowired
 	public PersonalProjectService(ProjectRepository projectRepository, AttributeRepository attributeRepository,
-			IssueTypeRepository issueTypeRepository, EmailIntegrationService emailIntegrationService) {
+			IssueTypeRepository issueTypeRepository) {
 		this.projectRepository = projectRepository;
 		this.attributeRepository = attributeRepository;
 		this.issueTypeRepository = issueTypeRepository;
-		this.emailIntegrationService = emailIntegrationService;
 	}
 
 	/**
@@ -104,7 +102,7 @@ public final class PersonalProjectService {
 		project.setProjectIssueTypes(defaultIssueTypes(project, issueTypeRepository.getDefaultIssueTypes()));
 
 		/* Default email configuration */
-		emailIntegrationService.setDefaultEmailConfiguration(project);
+		ProjectUtils.setDefaultEmailConfiguration(project);
 
 		return project;
 	}
