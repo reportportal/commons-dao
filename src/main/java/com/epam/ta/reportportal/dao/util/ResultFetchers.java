@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -258,6 +258,7 @@ public class ResultFetchers {
 				project.setId(r.get(PROJECT.ID, Long.class));
 				dashboard.setProject(project);
 			}
+			DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(it -> dashboard.getDashboardWidgets().add(it));
 			dashboardMap.put(dashboardId, dashboard);
 		});
 		return Lists.newArrayList(dashboardMap.values());

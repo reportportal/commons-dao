@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
-import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.enums.*;
 import com.epam.ta.reportportal.jooq.enums.*;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -57,11 +57,25 @@ public class CriteriaHolder {
 	 */
 	private String queryCriteria;
 
+	/**
+	 * Aggregate criteria for filtering. Only for fields that should be aggregated.
+	 * If not - used default queryCriteria
+	 */
+	private String aggregateCriteria;
+
 	private Class<?> dataType;
+
+	public CriteriaHolder(String filterCriteria, String queryCriteria, String aggregateCriteria, Class<?> dataType) {
+		this.filterCriteria = filterCriteria;
+		this.queryCriteria = queryCriteria;
+		this.aggregateCriteria = aggregateCriteria;
+		this.dataType = dataType;
+	}
 
 	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
 		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
 		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null");
+		this.aggregateCriteria = queryCriteria;
 		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
 	}
 
@@ -77,6 +91,10 @@ public class CriteriaHolder {
 
 	public String getQueryCriteria() {
 		return queryCriteria;
+	}
+
+	public String getAggregateCriteria() {
+		return aggregateCriteria;
 	}
 
 	public Class<?> getDataType() {

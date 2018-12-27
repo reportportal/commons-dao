@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 /*
  * This file is part of Report Portal.
  *
@@ -33,6 +33,7 @@ package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -50,8 +51,8 @@ public enum ImageFormat {
 		this.value = value;
 	}
 
-	public static ImageFormat fromValue(String value) {
-		return Arrays.stream(ImageFormat.values()).filter(format -> format.value.equalsIgnoreCase(value)).findAny().orElse(null);
+	public static Optional<ImageFormat> fromValue(String value) {
+		return Arrays.stream(ImageFormat.values()).filter(format -> format.value.equalsIgnoreCase(value)).findAny();
 	}
 
 	public static List<String> getValues() {

@@ -16,11 +16,13 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.ActivityDetails;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.activity.Activity;
+import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
+import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -74,6 +76,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcluding
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -311,6 +314,20 @@ public class RecordMappers {
 		} else {
 			return Optional.empty();
 		}
+	};
+
+	public static final Function<? super Record, Optional<DashboardWidget>> DASHBOARD_WIDGET_MAPPER = r -> {
+		Long widgetId = r.get(DASHBOARD_WIDGET.WIDGET_ID);
+		if (widgetId == null) {
+			return empty();
+		}
+		DashboardWidget dashboardWidget = new DashboardWidget();
+		dashboardWidget.setId(new DashboardWidgetId(r.get(DASHBOARD.ID), widgetId));
+		dashboardWidget.setPositionX(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_X));
+		dashboardWidget.setPositionY(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_Y));
+		dashboardWidget.setHeight(r.get(DASHBOARD_WIDGET.WIDGET_HEIGHT));
+		dashboardWidget.setWidth(r.get(DASHBOARD_WIDGET.WIDGET_WIDTH));
+		return Optional.of(dashboardWidget);
 	};
 
 	public static final Function<? super Record, SynchronizationAttributes> SYNCHRONIZATION_ATTRIBUTES_MAPPER = r -> {

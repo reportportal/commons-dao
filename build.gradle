@@ -55,7 +55,6 @@ dependencyManagement {
     }
 }
 
-
 project.ext {
     releaseMode = project.hasProperty("releaseMode")
 }
@@ -139,12 +138,19 @@ jacocoTestReport {
     reports {
         xml.enabled true
     }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ['com/epam/ta/reportportal/jooq/**', 'com/epam/ta/reportportal/config/**'])
+        })
+    }
 }
 
 test {
     testLogging {
         events "failed"
         exceptionFormat "short"
+        exclude 'com/epam/ta/reportportal/dao/suite'
     }
 }
 

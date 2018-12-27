@@ -69,6 +69,9 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private Metadata metadata;
 
+	@Column(name = "organization")
+	private String organization;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
 	private Set<ProjectUser> users;
 
@@ -142,6 +145,14 @@ public class Project implements Serializable {
 
 	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
 		this.projectAttributes = projectAttributes;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 	public Metadata getMetadata() {
