@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -72,8 +75,7 @@ public class DataStoreService {
 
 			BinaryData binaryData = getBinaryData(file);
 
-			String generatedFilePath = filePathGenerator.generate();
-			String commonPath = Paths.get(projectId.toString(), generatedFilePath).toString();
+			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
 			Path targetPath = Paths.get(commonPath, file.getOriginalFilename());
 
 			String thumbnailFilePath = null;
@@ -113,6 +115,49 @@ public class DataStoreService {
 		return maybeResult;
 	}
 
+	public Optional<BinaryDataMetaInfo> save(Long projectId, File file) {
+
+		Optional<BinaryDataMetaInfo> maybeResult = Optional.empty();
+
+		try {
+
+			BinaryData binaryData = getBinaryData(file);
+
+			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
+			Path targetPath = Paths.get(commonPath, file.getName());
+
+			String thumbnailFilePath = null;
+			if (isImage(binaryData.getContentType())) {
+
+				try {
+
+					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-".concat(file.getName()));
+
+					InputStream thumbnailStream = thumbnailator.createThumbnail(new FileInputStream(file));
+
+					thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
+				} catch (IOException e) {
+					// do not propogate. Thumbnail is not so critical
+					LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", file.getName(), e);
+				}
+			}
+
+			/*
+			 * Saves binary data into storage
+			 */
+			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
+
+			maybeResult = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
+					.withFileId(dataEncoder.encode(filePath))
+					.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
+					.build());
+
+		} catch (IOException e) {
+			LOGGER.error("Unable to save binary data", e);
+		}
+		return maybeResult;
+	}
+
 	public InputStream load(String fileId) {
 
 		return dataStore.load(dataEncoder.decode(fileId));
@@ -135,6 +180,23 @@ public class DataStoreService {
 					file.getSize(),
 					file.getInputStream()
 			);
+		}
+		return binaryData;
+	}
+
+	private BinaryData getBinaryData(File file) throws IOException {
+
+		BinaryData binaryData;
+		final String contentType = Files.probeContentType(file.toPath());
+		final FileInputStream inputStream = new FileInputStream(file);
+
+		boolean isContentTypePresented =
+				!Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
+		if (isContentTypePresented) {
+
+			binaryData = new BinaryData(contentType, file.length(), inputStream);
+		} else {
+			binaryData = new BinaryData(contentTypeResolver.detectContentType(inputStream), file.length(), inputStream);
 		}
 		return binaryData;
 	}
