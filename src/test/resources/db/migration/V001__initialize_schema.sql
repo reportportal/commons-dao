@@ -39,6 +39,7 @@ CREATE TABLE project (
   id            BIGSERIAL CONSTRAINT project_pk PRIMARY KEY,
   name          VARCHAR                 NOT NULL UNIQUE,
   project_type  VARCHAR                 NOT NULL,
+  organization  VARCHAR,
   creation_date TIMESTAMP DEFAULT now() NOT NULL,
   metadata      JSONB                   NULL
 );
@@ -236,7 +237,7 @@ CREATE TABLE auth_config (
 CREATE TABLE shareable_entity (
   id         BIGSERIAL CONSTRAINT shareable_pk PRIMARY KEY,
   shared     BOOLEAN NOT NULL DEFAULT false,
-  owner      VARCHAR NOT NULL,
+  owner      VARCHAR NOT NULL REFERENCES users (login) ON DELETE CASCADE,
   project_id BIGINT  NOT NULL REFERENCES project (id) ON DELETE CASCADE
 );
 
@@ -363,12 +364,15 @@ CREATE TABLE parameter (
 CREATE TABLE item_attribute (
   id        BIGSERIAL CONSTRAINT item_attribute_pk PRIMARY KEY,
   key       VARCHAR,
-  value     VARCHAR,
+  value     VARCHAR NOT NULL,
   item_id   BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE,
   launch_id BIGINT REFERENCES launch (id) ON DELETE CASCADE,
   system    BOOLEAN DEFAULT FALSE,
   CHECK ((item_id IS NOT NULL AND launch_id IS NULL) OR (item_id IS NULL AND launch_id IS NOT NULL))
 );
+
+CREATE UNIQUE INDEX item_attribute_unique
+  ON item_attribute (coalesce(key, '-1'), value, system, coalesce(launch_id, -1), coalesce(item_id, -1));
 
 
 CREATE TABLE log (
@@ -476,7 +480,7 @@ CREATE TABLE issue_ticket (
 CREATE TABLE acl_sid (
   id        BIGSERIAL    NOT NULL PRIMARY KEY,
   principal BOOLEAN      NOT NULL,
-  sid       VARCHAR(100) NOT NULL,
+  sid       VARCHAR(100) NOT NULL REFERENCES users (login) ON DELETE CASCADE,
   CONSTRAINT unique_uk_1 UNIQUE (sid, principal)
 );
 
@@ -496,7 +500,7 @@ CREATE TABLE acl_object_identity (
   CONSTRAINT unique_uk_3 UNIQUE (object_id_class, object_id_identity),
   CONSTRAINT foreign_fk_1 FOREIGN KEY (parent_object) REFERENCES acl_object_identity (id),
   CONSTRAINT foreign_fk_2 FOREIGN KEY (object_id_class) REFERENCES acl_class (id),
-  CONSTRAINT foreign_fk_3 FOREIGN KEY (owner_sid) REFERENCES acl_sid (id)
+  CONSTRAINT foreign_fk_3 FOREIGN KEY (owner_sid) REFERENCES acl_sid (id) ON DELETE CASCADE
 );
 
 CREATE TABLE acl_entry (
@@ -509,8 +513,8 @@ CREATE TABLE acl_entry (
   audit_success       BOOLEAN NOT NULL,
   audit_failure       BOOLEAN NOT NULL,
   CONSTRAINT unique_uk_4 UNIQUE (acl_object_identity, ace_order),
-  CONSTRAINT foreign_fk_4 FOREIGN KEY (acl_object_identity) REFERENCES acl_object_identity (id),
-  CONSTRAINT foreign_fk_5 FOREIGN KEY (sid) REFERENCES acl_sid (id)
+  CONSTRAINT foreign_fk_4 FOREIGN KEY (acl_object_identity) REFERENCES acl_object_identity (id) ON DELETE CASCADE,
+  CONSTRAINT foreign_fk_5 FOREIGN KEY (sid) REFERENCES acl_sid (id) ON DELETE CASCADE
 );
 
 ----------------------------------------------------------------------------------------
@@ -597,18 +601,18 @@ BEGIN
                         AND test_item.launch_id = LaunchId)
       WHERE test_item_results.result_id = parentItemId;
 
-            INSERT INTO statistics (statistics_field_id, item_id, launch_id, s_counter)
-            select statistics_field_id, parentItemId, null, sum(s_counter)
-            from statistics
-                   join test_item ti on statistics.item_id = ti.item_id
-            where ti.unique_id = firstItemId
-                  and ti.launch_id = LaunchId
-                  and nlevel(ti.path) = i
-            group by statistics_field_id
-            ON CONFLICT ON CONSTRAINT unique_stats_item
-                                      DO UPDATE
-                                        SET
-                                          s_counter = EXCLUDED.s_counter;
+      INSERT INTO statistics (statistics_field_id, item_id, launch_id, s_counter)
+      select statistics_field_id, parentItemId, null, sum(s_counter)
+      from statistics
+             join test_item ti on statistics.item_id = ti.item_id
+      where ti.unique_id = firstItemId
+        and ti.launch_id = LaunchId
+        and nlevel(ti.path) = i
+      group by statistics_field_id
+      ON CONFLICT ON CONSTRAINT unique_stats_item
+                                DO UPDATE
+                                  SET
+                                    s_counter = EXCLUDED.s_counter;
 
       IF exists(select 1
                 from test_item_results
@@ -637,10 +641,8 @@ BEGIN
           WHERE test_item.path <@ MergingTestItemField.path_value
             AND test_item.path != MergingTestItemField.path_value
             AND nlevel(test_item.path) = i + 1;
-          DELETE
-          from test_item
-          where test_item.path = MergingTestItemField.path_value
-            and test_item.item_id != parentItemId;
+          DELETE from test_item where test_item.path = MergingTestItemField.path_value
+                                  and test_item.item_id != parentItemId;
 
         end if;
 
@@ -660,7 +662,7 @@ BEGIN
   from statistics
          join test_item ti on statistics.item_id = ti.item_id
   where ti.launch_id = LaunchId
-        and ti.parent_id is null
+    and ti.parent_id is null
   group by statistics_field_id
   ON CONFLICT ON CONSTRAINT unique_stats_launch
                             DO UPDATE
@@ -1360,7 +1362,7 @@ BEGIN
     superadminProject := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
     INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired, metadata)
-    VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL', superadminProject, 'tester', FALSE, '{"metadata": {"last_login": "now"}}');
+    VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL', superadminProject, 'tester', FALSE, '{"metadata": {"last_login": "2018-12-27T10:31:15.573"}}');
     superadmin := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role) VALUES (superadmin, superadminProject, 'PROJECT_MANAGER');
@@ -1370,7 +1372,7 @@ BEGIN
     defaultProject := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
     INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired, metadata)
-    VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', 'USER', 'INTERNAL', defaultProject, 'tester', FALSE, '{"metadata": {"last_login": "now"}}');
+    VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', 'USER', 'INTERNAL', defaultProject, 'tester', FALSE, '{"metadata": {"last_login": "2018-12-27T10:31:15.573"}}');
     defaultId := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role) VALUES (defaultId, defaultProject, 'PROJECT_MANAGER');
