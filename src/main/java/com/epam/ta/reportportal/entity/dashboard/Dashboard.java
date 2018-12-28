@@ -45,7 +45,7 @@ public class Dashboard extends ShareableEntity implements Serializable {
 	@Column(name = "creation_date")
 	private LocalDateTime creationDate;
 
-	@OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "dashboard")
 	@Fetch(value = FetchMode.JOIN)
 	private Set<DashboardWidget> widgets = Sets.newHashSet();
 
