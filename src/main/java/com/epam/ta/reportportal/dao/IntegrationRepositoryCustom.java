@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -36,5 +37,7 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 	Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled);
 
 	Optional<Integration> getGlobalIntegrationById(Long integrationId);
+
+	List<Integration> getAllMissedGlobalIntegrations(List<Long> integrationTypeIds);
 
 }

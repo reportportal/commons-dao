@@ -344,8 +344,11 @@ public class RecordMappers {
 		IntegrationType integrationType = new IntegrationType();
 		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
 		integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toLocalDateTime());
-		integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(r.get(INTEGRATION_TYPE.AUTH_FLOW).getLiteral())
-				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		ofNullable(r.get(INTEGRATION_TYPE.AUTH_FLOW)).ifPresent(af -> {
+			integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(af.getLiteral())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		});
+
 		integrationType.setName(r.get(INTEGRATION_TYPE.NAME));
 		integrationType.setIntegrationGroup(IntegrationGroupEnum.findByName(r.get(INTEGRATION_TYPE.GROUP_TYPE).getLiteral())
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
