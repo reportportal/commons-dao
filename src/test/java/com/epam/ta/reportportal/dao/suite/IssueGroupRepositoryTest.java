@@ -40,8 +40,8 @@ public class IssueGroupRepositoryTest extends BaseTest {
 	public void findByTestItemIssueGroup() {
 		Arrays.stream(TestItemIssueGroup.values()).filter(it -> !it.equals(TestItemIssueGroup.NOT_ISSUE_FLAG)).forEach(it -> {
 			final IssueGroup issueGroup = repository.findByTestItemIssueGroup(it);
-			assertEquals(it, issueGroup.getTestItemIssueGroup());
-			assertNotNull(issueGroup.getId());
+			assertEquals("Incorrect issue group", it, issueGroup.getTestItemIssueGroup());
+			assertNotNull("Issue group should have id", issueGroup.getId());
 		});
 	}
 }

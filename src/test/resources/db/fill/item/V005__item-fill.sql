@@ -1,3 +1,5 @@
+-- Generates 13 launches. Each contains suite, test and 4 step items with item results
+
 CREATE OR REPLACE FUNCTION items_init()
   RETURNS VOID AS
 $BODY$

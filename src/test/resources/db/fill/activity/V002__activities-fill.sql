@@ -1,3 +1,5 @@
+-- Inserts into activities table 7 records
+
 INSERT INTO activity(user_id, project_id, entity, action, details, creation_date, object_id) VALUES
 (1, 1, 'DASHBOARD', 'dashboard_update', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",

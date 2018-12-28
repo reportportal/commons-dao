@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.suite;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IssueEntityRepository;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.BeforeClass;
@@ -35,9 +36,6 @@ public class IssueEntityRepositoryTest extends BaseTest {
 
 	private static final String FILL_SCRIPT_PATH_ITEM = "db/fill/issue-entity";
 
-	private static final Long TO_INVESTIGATE_TYPE_ID = 1L;
-	private static final int EXPECTED_SIZE = 12;
-
 	@Autowired
 	private IssueEntityRepository repository;
 
@@ -48,7 +46,16 @@ public class IssueEntityRepositoryTest extends BaseTest {
 
 	@Test
 	public void findAllByIssueId() {
-		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(TO_INVESTIGATE_TYPE_ID);
-		assertEquals(EXPECTED_SIZE, issueEntities.size());
+		final Long toInvestigateTypeId = 1L;
+		final int expectedSize = 12;
+
+		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(toInvestigateTypeId);
+		assertEquals("Incorrect size of issue entities", expectedSize, issueEntities.size());
+		issueEntities.forEach(it -> assertEquals(
+				"Issue entities should be int 'to investigate' group",
+				TestItemIssueGroup.TO_INVESTIGATE,
+				it.getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
 	}
 }

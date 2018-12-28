@@ -38,11 +38,6 @@ public class IssueTypeRepositoryTest extends BaseTest {
 
 	private static final String FILL_SCRIPT_PATH = "db/fill/issue-type";
 
-	private static final Long CUSTOM_ID = 100L;
-	private static final String CUSTOM_LOCATOR = "pb_ajf7d5d";
-	private static final String CUSTOM_LONG_NAME = "Custom";
-	private static final String CUSTOM_SHORT_NAME = "CS";
-	private static final String CUSTOM_HEX_COLOR = "#a3847e";
 	private static final int DEFAULT_ISSUE_TYPES_COUNT = TestItemIssueGroup.values().length - 1;
 
 	@Autowired
@@ -55,14 +50,18 @@ public class IssueTypeRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByLocator() {
-		final IssueType customIssueType = repository.findByLocator(CUSTOM_LOCATOR);
-		assertNotNull(customIssueType);
+		final String customLocator = "pb_ajf7d5d";
+
+		final IssueType customIssueType = repository.findByLocator(customLocator);
+		assertNotNull("Should not be null", customIssueType);
 		assertIssueType(customIssueType);
 	}
 
 	@Test
 	public void findById() {
-		final Optional<IssueType> issueTypeOptional = repository.findById(CUSTOM_ID);
+		final Long customId = 100L;
+
+		final Optional<IssueType> issueTypeOptional = repository.findById(customId);
 		assertTrue(issueTypeOptional.isPresent());
 		assertIssueType(issueTypeOptional.get());
 	}
@@ -75,10 +74,15 @@ public class IssueTypeRepositoryTest extends BaseTest {
 	}
 
 	private static void assertIssueType(IssueType customIssueType) {
-		assertEquals(CUSTOM_LOCATOR, customIssueType.getLocator());
-		assertEquals(CUSTOM_LONG_NAME, customIssueType.getLongName());
-		assertEquals(CUSTOM_SHORT_NAME, customIssueType.getShortName());
-		assertEquals(CUSTOM_HEX_COLOR, customIssueType.getHexColor());
-		assertEquals(TestItemIssueGroup.PRODUCT_BUG, customIssueType.getIssueGroup().getTestItemIssueGroup());
+		final String customLocator = "pb_ajf7d5d";
+		final String customLongName = "Custom";
+		final String customShortName = "CS";
+		final String customHexColor = "#a3847e";
+
+		assertEquals("Incorrect locator", customLocator, customIssueType.getLocator());
+		assertEquals("Incorrect long name", customLongName, customIssueType.getLongName());
+		assertEquals("Incorrect short name", customShortName, customIssueType.getShortName());
+		assertEquals("Incorrect hex color", customHexColor, customIssueType.getHexColor());
+		assertEquals("Unexpected issue group", TestItemIssueGroup.PRODUCT_BUG, customIssueType.getIssueGroup().getTestItemIssueGroup());
 	}
 }

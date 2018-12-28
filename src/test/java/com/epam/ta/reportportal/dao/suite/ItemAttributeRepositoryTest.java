@@ -36,16 +36,6 @@ public class ItemAttributeRepositoryTest extends BaseTest {
 
 	private static final String FILL_SCRIPT_PATH = "db/fill/item-attributes";
 
-	private static final String LAUNCH_KEY_NAME = "key1";
-	private static final Long LAUNCH_ID = 1L;
-	private static final String STEP_KEY = "step";
-
-	private static final String PART_OF_ITEM_VALUE = "val";
-	private static final String PART_OF_ITEM_KEY = "st";
-
-	private static final Long PROJECT_ID = 1L;
-	private static final String PART_OF_LAUNCH_KEY = "ke";
-
 	@Autowired
 	private ItemAttributeRepository repository;
 
@@ -56,42 +46,59 @@ public class ItemAttributeRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByLaunchIdAndKeyAndSystem() {
-		final Optional<ItemAttribute> optionalAttr = repository.findByLaunchIdAndKeyAndSystem(LAUNCH_ID, LAUNCH_KEY_NAME, false);
-		assertTrue(optionalAttr.isPresent());
-		assertEquals(LAUNCH_ID, optionalAttr.get().getId());
-		assertEquals(LAUNCH_KEY_NAME, optionalAttr.get().getKey());
+		final String launchKeyName = "key1";
+		final Long launchId = 1L;
+
+		final Optional<ItemAttribute> optionalAttr = repository.findByLaunchIdAndKeyAndSystem(launchId, launchKeyName, false);
+		assertTrue("Should be present", optionalAttr.isPresent());
+		assertEquals("Unexpected id", launchId, optionalAttr.get().getId());
+		assertEquals("Unexpected key", launchKeyName, optionalAttr.get().getKey());
 	}
 
 	@Test
 	public void findTestItemAttributeValues() {
-		final List<String> values = repository.findTestItemAttributeValues(LAUNCH_ID, STEP_KEY, PART_OF_ITEM_VALUE, false);
+		final Long launchId = 1L;
+		final String stepKey = "step";
+		final String partOfItemValue = "val";
+
+		final List<String> values = repository.findTestItemAttributeValues(launchId, stepKey, partOfItemValue, false);
 		System.out.println();
-		assertNotNull(values);
-		assertTrue(!values.isEmpty());
-		values.forEach(it -> assertTrue(it.contains(PART_OF_ITEM_VALUE)));
+		assertNotNull("Should not be null", values);
+		assertTrue("Should not be empty", !values.isEmpty());
+		values.forEach(it -> assertTrue("Value not matches", it.contains(partOfItemValue)));
 	}
 
 	@Test
 	public void findTestItemAttributeKeys() {
-		final List<String> keys = repository.findTestItemAttributeKeys(LAUNCH_ID, PART_OF_ITEM_KEY, false);
-		assertNotNull(keys);
-		assertTrue(!keys.isEmpty());
-		keys.forEach(it -> assertTrue(it.contains(PART_OF_ITEM_KEY)));
+		final Long launchId = 1L;
+		final String partOfItemKey = "st";
+
+		final List<String> keys = repository.findTestItemAttributeKeys(launchId, partOfItemKey, false);
+		assertNotNull("Should not be null", keys);
+		assertTrue("Should not be empty", !keys.isEmpty());
+		keys.forEach(it -> assertTrue("Key not matches", it.contains(partOfItemKey)));
 	}
 
 	@Test
 	public void findLaunchAttributeKeys() {
-		final List<String> keys = repository.findLaunchAttributeKeys(PROJECT_ID, PART_OF_LAUNCH_KEY, false);
-		assertNotNull(keys);
-		assertTrue(!keys.isEmpty());
-		keys.forEach(it -> assertTrue(it.contains(PART_OF_LAUNCH_KEY)));
+		final Long projectId = 1L;
+		final String partOfLaunchKey = "ke";
+
+		final List<String> keys = repository.findLaunchAttributeKeys(projectId, partOfLaunchKey, false);
+		assertNotNull("Should not be null", keys);
+		assertTrue("Should not be empty", !keys.isEmpty());
+		keys.forEach(it -> assertTrue("Key not matches", it.contains(partOfLaunchKey)));
 	}
 
 	@Test
 	public void findLaunchAttributeValues() {
-		final List<String> values = repository.findLaunchAttributeValues(PROJECT_ID, LAUNCH_KEY_NAME, PART_OF_ITEM_VALUE, false);
-		assertNotNull(values);
-		assertTrue(!values.isEmpty());
-		values.forEach(it -> assertTrue(it.contains(PART_OF_ITEM_VALUE)));
+		final Long projectId = 1L;
+		final String launchKeyName = "key1";
+		final String partOfItemValue = "val";
+
+		final List<String> values = repository.findLaunchAttributeValues(projectId, launchKeyName, partOfItemValue, false);
+		assertNotNull("Should not be null", values);
+		assertTrue("Should not be empty", !values.isEmpty());
+		values.forEach(it -> assertTrue("Value not matches", it.contains(partOfItemValue)));
 	}
 }
