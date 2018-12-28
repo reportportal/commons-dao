@@ -19,17 +19,17 @@ public class EmailSenderCase implements Serializable {
 	private Long id;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "recipient")
 	private Set<String> recipients;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "launch_names", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@CollectionTable(name = "launch_names", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "launch_name")
 	private Set<String> launchNames;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "launch_attributes", joinColumns = @JoinColumn(name = "email_sender_case_id"))
+	@CollectionTable(name = "launch_attributes", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "launch_attribute")
 	private Set<String> launchAttributes;
 
