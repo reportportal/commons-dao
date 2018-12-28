@@ -16,8 +16,11 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
+import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
+
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface DashboardWidgetRepository {
+public interface DashboardWidgetRepository extends ReportPortalRepository<DashboardWidget, DashboardWidgetId> {
 }
