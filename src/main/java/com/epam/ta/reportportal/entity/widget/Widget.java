@@ -62,7 +62,7 @@ public class Widget extends ShareableEntity implements Serializable {
 	@Column(name = "widget_options")
 	private WidgetOptions widgetOptions;
 
-	@OneToMany(mappedBy = "widget", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "widget")
 	@Fetch(value = FetchMode.JOIN)
 	private Set<DashboardWidget> dashboardWidgets = Sets.newHashSet();
 
