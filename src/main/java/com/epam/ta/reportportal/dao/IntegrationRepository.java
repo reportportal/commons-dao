@@ -52,8 +52,8 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 
 	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
 
-	@Query(value = "SELECT i FROM Integration i WHERE i.type NOT IN :integrationTypes")
-	List<Integration> getAllMissedIntegrations(@Param("integrationTypes") List<IntegrationType> integrationTypes);
+	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type NOT IN :integrationTypes")
+	List<Integration> getAllMissedGlobalIntegrations(@Param("integrationTypes") List<IntegrationType> integrationTypes);
 
 	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType")
 	List<Integration> getAllGlobalIntegrationsByType(@Param("integrationType") IntegrationType integrationType);
