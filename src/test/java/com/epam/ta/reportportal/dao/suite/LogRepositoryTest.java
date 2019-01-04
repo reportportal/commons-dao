@@ -46,10 +46,12 @@ import static org.junit.Assert.*;
  */
 public class LogRepositoryTest extends BaseTest {
 
+	private static final String FILL_SCRIPT_PATH = "db/fill/log";
+
 	@Autowired
 	private LogRepository logRepository;
 
-	@FlywayTest(locationsForMigrate = { "db/fill/log" }, invokeCleanDB = false)
+	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
 	@BeforeClass
 	public static void before() {
 	}
@@ -57,7 +59,8 @@ public class LogRepositoryTest extends BaseTest {
 	@Test
 	public void getPageNumberTest() {
 		Filter filter = Filter.builder()
-				.withTarget(Log.class).withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_ITEM_ID))
+				.withTarget(Log.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_ITEM_ID))
 				.build();
 
 		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log.log_time")));
