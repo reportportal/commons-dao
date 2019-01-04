@@ -43,10 +43,12 @@ import static org.junit.Assert.*;
  */
 public class TestItemRepositoryTest extends BaseTest {
 
+	private static final String FILL_SCRIPT_PATH = "db/fill/item";
+
 	@Autowired
 	private TestItemRepository testItemRepository;
 
-	@FlywayTest(locationsForMigrate = { "db/fill/item" }, invokeCleanDB = false)
+	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
 	@BeforeClass
 	public static void before() {
 	}
