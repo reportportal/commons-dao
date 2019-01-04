@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
-import static com.epam.ta.reportportal.dao.constant.TestConstants.STEP_ITEM_WITH_LOGS_ID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Ivan Budaev
@@ -58,10 +56,8 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void getPageNumberTest() {
-
 		Filter filter = Filter.builder()
-				.withTarget(Log.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "5", CRITERIA_TEST_ITEM_ID))
+				.withTarget(Log.class).withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_ITEM_ID))
 				.build();
 
 		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log.log_time")));
@@ -85,10 +81,10 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
-
 		Duration duration = Duration.ofDays(6).plusHours(23);
+		final Long itemId = 1L;
 
-		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(STEP_ITEM_WITH_LOGS_ID, duration);
+		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
 
 		Assert.assertNotNull(logs);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(logs));
@@ -115,10 +111,30 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void deleteByPeriodAndTestItemIdsTest() {
-		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20),
-				Collections.singleton(STEP_ITEM_WITH_LOGS_ID)
-		);
-
+		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(1L));
 		Assert.assertEquals(3, removedLogsCount);
+	}
+
+	@Test
+	public void hasLogsTest() {
+		assertTrue(logRepository.hasLogs(1L));
+		assertFalse(logRepository.hasLogs(100L));
+	}
+
+	@Test
+	public void findByTestItemIdWithLimitTest() {
+		final List<Log> logs = logRepository.findByTestItemId(1L, 2);
+		assertNotNull(logs);
+		assertEquals(2, logs.size());
+		logs.forEach(it -> assertEquals(1L, (long) it.getTestItem().getItemId()));
+	}
+
+	@Test
+	public void findByTestItemId() {
+		final Long itemId = 1L;
+		final List<Log> logs = logRepository.findByTestItemId(itemId);
+		assertNotNull(logs);
+		assertTrue(!logs.isEmpty());
+		logs.forEach(it -> assertEquals(itemId, it.getTestItem().getItemId()));
 	}
 }

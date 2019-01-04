@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.dao.suite.ActivityRepositoryTest;
 import com.epam.ta.reportportal.dao.suite.AttributeRepositoryTest;
+import com.epam.ta.reportportal.dao.suite.LogRepositoryTest;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ import org.junit.runners.Suite;
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class })
+@Suite.SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, LogRepositoryTest.class })
 public class RepositoryTestSuite {
 
 	@FlywayTest
