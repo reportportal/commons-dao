@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.TestItemRepository;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.flywaydb.test.annotation.FlywayTest;
@@ -30,11 +32,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Ivan Budaev
@@ -57,20 +59,19 @@ public class TestItemRepositoryTest extends BaseTest {
 
 		List<Long> ids = stream.collect(Collectors.toList());
 
-		Assert.assertTrue(CollectionUtils.isNotEmpty(ids));
-		Assert.assertEquals(5, ids.size());
+		assertTrue(CollectionUtils.isNotEmpty(ids));
+		assertEquals(5, ids.size());
 	}
 
 	@Test
 	public void hasItemsInStatusAddedLatelyTest() {
 		Duration duration = Duration.ofHours(1);
-
-		Assert.assertTrue(testItemRepository.hasItemsInStatusAddedLately(1L, duration, StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusAddedLately(1L, duration, StatusEnum.FAILED));
 	}
 
 	@Test
 	public void hasLogsTest() {
-		Assert.assertTrue(testItemRepository.hasLogs(1L, Duration.ofDays(12).plusHours(23), StatusEnum.IN_PROGRESS));
+		assertFalse(testItemRepository.hasLogs(1L, Duration.ofDays(12).plusHours(23), StatusEnum.IN_PROGRESS));
 	}
 
 	@Test
@@ -82,16 +83,158 @@ public class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	public void testLoadItemsHistory() {
-		List<TestItem> testItems = testItemRepository.loadItemsHistory(Lists.newArrayList("auto:3d3ef012c6687480d6fb9b4a3fa9471d"),
-				Lists.newArrayList(9L, 10L, 11L, 12L, 13L)
-		);
+		final String uniqueId = "unqIdSTEP7";
+
+		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
+		assertEquals(3, items.size());
+		items.forEach(it -> assertTrue(it.getUniqueId().equals(uniqueId) && (it.getLaunch().getId() == 7L || it.getLaunch().getId() == 8L
+				|| it.getLaunch().getId() == 9L)));
 	}
 
 	@Test
 	public void findTestItemsByLaunchId() {
+		final long launchId = 1L;
 
-		List<TestItem> testItemList = testItemRepository.findTestItemsByLaunchId(1L);
+		List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
+		Assert.assertNotNull(items);
+		assertEquals(5, items.size());
+		items.forEach(it -> assertEquals(launchId, (long) it.getLaunch().getId()));
+	}
 
-		Assert.assertNotNull(testItemList);
+	@Test
+	public void findTestItemsByUniqueId() {
+		final String uniqueId = "unqIdSTEP1";
+		final List<TestItem> items = testItemRepository.findTestItemsByUniqueId(uniqueId);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		items.forEach(it -> assertEquals(uniqueId, it.getUniqueId()));
+	}
+
+	@Test
+	public void findTestItemsByLaunchIdOrderByStartTimeAsc() {
+		final Long launchId = 1L;
+		final List<TestItem> items = testItemRepository.findTestItemsByLaunchIdOrderByStartTimeAsc(launchId);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		assertTrue(Comparators.isInOrder(items, Comparator.comparing(TestItem::getStartTime)));
+	}
+
+	@Test
+	public void hasChildren() {
+		assertTrue(testItemRepository.hasChildren(1L, "1"));
+		assertFalse(testItemRepository.hasChildren(5L, "1.2.5"));
+	}
+
+	@Test
+	public void interruptInProgressItems() {
+		final Long launchId = 1L;
+		testItemRepository.interruptInProgressItems(launchId);
+		final List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
+		items.forEach(it -> assertNotEquals(StatusEnum.IN_PROGRESS, it.getItemResults().getStatus()));
+	}
+
+	@Test
+	public void hasStatusNotEqualsWithoutStepItem() {
+		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, "IN_PROGRESS"));
+	}
+
+	@Test
+	public void selectAllDescendants() {
+		final Long itemId = 2L;
+		final List<TestItem> items = testItemRepository.selectAllDescendants(itemId);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId()));
+	}
+
+	@Test
+	public void selectAllDescendantsWithChildren() {
+		final Long itemId = 1L;
+		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId()));
+	}
+
+	@Test
+	public void selectAllDescendantsWithChildrenNegative() {
+		final Long itemId = 2L;
+		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
+		assertNotNull(items);
+		assertTrue(items.isEmpty());
+	}
+
+	@Test
+	public void selectItemsInStatusByLaunch() {
+		final Long launchId = 1L;
+		final List<TestItem> items = testItemRepository.selectItemsInStatusByLaunch(launchId, StatusEnum.FAILED);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		items.forEach(it -> {
+			assertEquals(launchId, it.getLaunch().getId());
+			assertEquals(StatusEnum.FAILED, it.getItemResults().getStatus());
+		});
+	}
+
+	@Test
+	public void selectItemsInStatusByParent() {
+		final Long parentId = 2L;
+		final List<TestItem> items = testItemRepository.selectItemsInStatusByParent(parentId, StatusEnum.FAILED);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		items.forEach(it -> {
+			assertEquals(parentId, it.getParent().getItemId());
+			assertEquals(StatusEnum.FAILED, it.getItemResults().getStatus());
+		});
+	}
+
+	@Test
+	public void hasItemsInStatusByLaunch() {
+		assertTrue(testItemRepository.hasItemsInStatusByLaunch(1L, StatusEnum.FAILED));
+	}
+
+	@Test
+	public void hasItemsInStatusByParent() {
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, StatusEnum.FAILED));
+	}
+
+	@Test
+	public void selectIdsNotInIssueByLaunch() {
+		final List<Long> ids = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
+		assertNotNull(ids);
+		assertTrue(!ids.isEmpty());
+	}
+
+	@Test
+	public void selectItemsInIssueByLaunch() {
+		final Long launchId = 1L;
+		final String issueType = "ti001";
+		final List<TestItem> items = testItemRepository.selectItemsInIssueByLaunch(launchId, issueType);
+		assertNotNull(items);
+		assertTrue(!items.isEmpty());
+		items.forEach(it -> {
+			assertEquals(launchId, it.getLaunch().getId());
+			//			assertEquals(issueType, it.getItemResults().getIssue().getIssueType().getLocator());
+		});
+	}
+
+	@Test
+	public void identifyStatus() {
+		assertEquals(StatusEnum.FAILED, testItemRepository.identifyStatus(1L));
+	}
+
+	@Test
+	public void selectIssueLocatorsByProject() {
+		final List<IssueType> issueTypes = testItemRepository.selectIssueLocatorsByProject(1L);
+		assertNotNull(issueTypes);
+		assertEquals(5, issueTypes.size());
+	}
+
+	@Test
+	public void selectIssueTypeByLocator() {
+		final String locator = "pb001";
+		final Optional<IssueType> issueType = testItemRepository.selectIssueTypeByLocator(1L, locator);
+		assertTrue(issueType.isPresent());
+		assertEquals(locator, issueType.get().getLocator());
 	}
 }

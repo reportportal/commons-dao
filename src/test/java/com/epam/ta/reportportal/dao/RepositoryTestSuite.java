@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,22 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.dao.suite.ActivityRepositoryTest;
 import com.epam.ta.reportportal.dao.suite.AttributeRepositoryTest;
+import com.epam.ta.reportportal.dao.suite.TestItemRepositoryTest;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class })
+@SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, TestItemRepositoryTest.class })
 public class RepositoryTestSuite {
 
 	@FlywayTest
 	@BeforeClass
 	public static void beforeSuite() {
-
 	}
 }
