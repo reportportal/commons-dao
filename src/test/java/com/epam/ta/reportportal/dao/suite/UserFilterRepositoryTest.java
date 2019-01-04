@@ -43,10 +43,12 @@ import static org.junit.Assert.*;
  */
 public class UserFilterRepositoryTest extends BaseTest {
 
+	private static final String FILL_SCRIPT_PATH = "db/fill/filter";
+
 	@Autowired
 	private UserFilterRepository userFilterRepository;
 
-	@FlywayTest(locationsForMigrate = { "db/fill/filter" }, invokeCleanDB = false)
+	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
 	@BeforeClass
 	public static void before() {
 	}
