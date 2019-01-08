@@ -27,7 +27,8 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class,
-		IssueGroupRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class })
+		IssueGroupRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class,
+		IntegrationTypeRepositoryTest.class, IntegrationRepositoryTest.class })
 public class RepositoryTestSuite {
 
 	@FlywayTest

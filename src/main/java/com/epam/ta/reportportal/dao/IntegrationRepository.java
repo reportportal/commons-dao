@@ -15,7 +15,6 @@
  */
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import org.springframework.data.jpa.repository.Modifying;
@@ -58,11 +57,11 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	List<Integration> findAllByProjectIdAndType(Long projectId, IntegrationType integrationType);
 
 	/**
-	 * Delete all {@link Integration} by integration group
+	 * Delete all {@link Integration} by integration type ID
 	 *
-	 * @param integrationGroup {@link IntegrationType#integrationGroup}
+	 * @param typeId {@link IntegrationType#id}
 	 */
-	void deleteAllByTypeIntegrationGroup(IntegrationGroupEnum integrationGroup);
+	void deleteAllByTypeId(Long typeId);
 
 	/**
 	 * Retrieve all {@link Integration} with {@link Integration#project} == null by integration type

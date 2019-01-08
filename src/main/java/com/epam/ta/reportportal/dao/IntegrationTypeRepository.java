@@ -37,14 +37,6 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	Optional<IntegrationType> findByName(String name);
 
 	/**
-	 * Searches for an integration by group
-	 *
-	 * @param groupType Integration group
-	 * @return Optional of integration
-	 */
-	Optional<IntegrationType> findByIntegrationGroup(IntegrationGroupEnum groupType);
-
-	/**
 	 * Searches for an integration by name and group
 	 *
 	 * @param name      Integration name
