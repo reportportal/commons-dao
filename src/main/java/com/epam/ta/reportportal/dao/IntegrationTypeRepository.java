@@ -52,4 +52,11 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 * @return Optional of integration
 	 */
 	Optional<IntegrationType> findByNameAndIntegrationGroup(String name, IntegrationGroupEnum groupType);
+
+	/**
+	 * Delete integration type by name
+	 *
+	 * @param name {@link IntegrationType#name}
+	 */
+	void deleteByName(String name);
 }
