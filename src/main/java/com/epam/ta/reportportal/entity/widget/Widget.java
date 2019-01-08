@@ -56,6 +56,7 @@ public class Widget extends ShareableEntity implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
 	@Column(name = "field")
+	@OrderBy(value = "id")
 	private Set<String> contentFields = Sets.newLinkedHashSet();
 
 	@Type(type = "widgetOptions")
