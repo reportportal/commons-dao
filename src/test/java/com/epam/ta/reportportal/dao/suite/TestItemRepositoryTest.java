@@ -61,8 +61,8 @@ public class TestItemRepositoryTest extends BaseTest {
 
 		List<Long> ids = stream.collect(Collectors.toList());
 
-		assertTrue(CollectionUtils.isNotEmpty(ids));
-		assertEquals(5, ids.size());
+		assertTrue("Ids not found", CollectionUtils.isNotEmpty(ids));
+		assertEquals("Incorrect ids size", 5, ids.size());
 	}
 
 	@Test
@@ -79,8 +79,8 @@ public class TestItemRepositoryTest extends BaseTest {
 	@Test
 	public void selectPathNames() {
 		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
-		Assert.assertThat(results.getClass(), Matchers.theInstance(LinkedHashMap.class));
-		Assert.assertThat(results.size(), Matchers.equalTo(2));
+		Assert.assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
+		Assert.assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class TestItemRepositoryTest extends BaseTest {
 		final String uniqueId = "unqIdSTEP7";
 
 		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
-		assertEquals(3, items.size());
+		assertEquals("Incorrect items size", 3, items.size());
 		items.forEach(it -> assertTrue(it.getUniqueId().equals(uniqueId) && (it.getLaunch().getId() == 7L || it.getLaunch().getId() == 8L
 				|| it.getLaunch().getId() == 9L)));
 	}
@@ -98,8 +98,8 @@ public class TestItemRepositoryTest extends BaseTest {
 		final long launchId = 1L;
 
 		List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
-		Assert.assertNotNull(items);
-		assertEquals(5, items.size());
+		Assert.assertNotNull("Items should not be null", items);
+		assertEquals("Incorrect items size", 5, items.size());
 		items.forEach(it -> assertEquals(launchId, (long) it.getLaunch().getId()));
 	}
 
@@ -107,18 +107,18 @@ public class TestItemRepositoryTest extends BaseTest {
 	public void findTestItemsByUniqueId() {
 		final String uniqueId = "unqIdSTEP1";
 		final List<TestItem> items = testItemRepository.findTestItemsByUniqueId(uniqueId);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
-		items.forEach(it -> assertEquals(uniqueId, it.getUniqueId()));
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
+		items.forEach(it -> assertEquals("Incorrect uniqueId", uniqueId, it.getUniqueId()));
 	}
 
 	@Test
 	public void findTestItemsByLaunchIdOrderByStartTimeAsc() {
 		final Long launchId = 1L;
 		final List<TestItem> items = testItemRepository.findTestItemsByLaunchIdOrderByStartTimeAsc(launchId);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
-		assertTrue(Comparators.isInOrder(items, Comparator.comparing(TestItem::getStartTime)));
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
+		assertTrue("Incorrect order", Comparators.isInOrder(items, Comparator.comparing(TestItem::getStartTime)));
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class TestItemRepositoryTest extends BaseTest {
 		final Long launchId = 1L;
 		testItemRepository.interruptInProgressItems(launchId);
 		final List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
-		items.forEach(it -> assertNotEquals(StatusEnum.IN_PROGRESS, it.getItemResults().getStatus()));
+		items.forEach(it -> assertNotEquals("Incorrect status", StatusEnum.IN_PROGRESS, it.getItemResults().getStatus()));
 	}
 
 	@Test
@@ -144,17 +144,17 @@ public class TestItemRepositoryTest extends BaseTest {
 	public void selectAllDescendants() {
 		final Long itemId = 2L;
 		final List<TestItem> items = testItemRepository.selectAllDescendants(itemId);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
-		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId()));
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
+		items.forEach(it -> assertEquals("Item has incorrect parent id", itemId, it.getParent().getItemId()));
 	}
 
 	@Test
 	public void selectAllDescendantsWithChildren() {
 		final Long itemId = 1L;
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
 		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId()));
 	}
 
@@ -162,31 +162,33 @@ public class TestItemRepositoryTest extends BaseTest {
 	public void selectAllDescendantsWithChildrenNegative() {
 		final Long itemId = 2L;
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
-		assertNotNull(items);
-		assertTrue(items.isEmpty());
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should be empty", items.isEmpty());
 	}
 
 	@Test
 	public void selectItemsInStatusByLaunch() {
 		final Long launchId = 1L;
-		final List<TestItem> items = testItemRepository.selectItemsInStatusByLaunch(launchId, StatusEnum.FAILED);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
+		final StatusEnum failedStatus = StatusEnum.FAILED;
+		final List<TestItem> items = testItemRepository.selectItemsInStatusByLaunch(launchId, failedStatus);
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
 		items.forEach(it -> {
-			assertEquals(launchId, it.getLaunch().getId());
-			assertEquals(StatusEnum.FAILED, it.getItemResults().getStatus());
+			assertEquals("Incorrect launch id", launchId, it.getLaunch().getId());
+			assertEquals("Incorrect launch status", failedStatus, it.getItemResults().getStatus());
 		});
 	}
 
 	@Test
 	public void selectItemsInStatusByParent() {
 		final Long parentId = 2L;
-		final List<TestItem> items = testItemRepository.selectItemsInStatusByParent(parentId, StatusEnum.FAILED);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
+		final StatusEnum failedStatus = StatusEnum.FAILED;
+		final List<TestItem> items = testItemRepository.selectItemsInStatusByParent(parentId, failedStatus);
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
 		items.forEach(it -> {
-			assertEquals(parentId, it.getParent().getItemId());
-			assertEquals(StatusEnum.FAILED, it.getItemResults().getStatus());
+			assertEquals("Incorrect parent id", parentId, it.getParent().getItemId());
+			assertEquals("Incorrect launch status", failedStatus, it.getItemResults().getStatus());
 		});
 	}
 
@@ -203,8 +205,8 @@ public class TestItemRepositoryTest extends BaseTest {
 	@Test
 	public void selectIdsNotInIssueByLaunch() {
 		final List<Long> ids = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
-		assertNotNull(ids);
-		assertTrue(!ids.isEmpty());
+		assertNotNull("Ids should not be null", ids);
+		assertTrue("Ids should not be empty", !ids.isEmpty());
 	}
 
 	@Test
@@ -212,31 +214,28 @@ public class TestItemRepositoryTest extends BaseTest {
 		final Long launchId = 1L;
 		final String issueType = "ti001";
 		final List<TestItem> items = testItemRepository.selectItemsInIssueByLaunch(launchId, issueType);
-		assertNotNull(items);
-		assertTrue(!items.isEmpty());
-		items.forEach(it -> {
-			assertEquals(launchId, it.getLaunch().getId());
-			//			assertEquals(issueType, it.getItemResults().getIssue().getIssueType().getLocator());
-		});
+		assertNotNull("Items should not be null", items);
+		assertTrue("Items should not be empty", !items.isEmpty());
+		items.forEach(it -> assertEquals("Incorrect launch id", launchId, it.getLaunch().getId()));
 	}
 
 	@Test
 	public void identifyStatus() {
-		assertEquals(StatusEnum.FAILED, testItemRepository.identifyStatus(1L));
+		assertEquals("Incorrect status", StatusEnum.FAILED, testItemRepository.identifyStatus(1L));
 	}
 
 	@Test
 	public void selectIssueLocatorsByProject() {
 		final List<IssueType> issueTypes = testItemRepository.selectIssueLocatorsByProject(1L);
-		assertNotNull(issueTypes);
-		assertEquals(5, issueTypes.size());
+		assertNotNull("IssueTypes should not be null", issueTypes);
+		assertEquals("Incorrect size", 5, issueTypes.size());
 	}
 
 	@Test
 	public void selectIssueTypeByLocator() {
 		final String locator = "pb001";
 		final Optional<IssueType> issueType = testItemRepository.selectIssueTypeByLocator(1L, locator);
-		assertTrue(issueType.isPresent());
-		assertEquals(locator, issueType.get().getLocator());
+		assertTrue("IssueType should be present", issueType.isPresent());
+		assertEquals("Incorrect locator", locator, issueType.get().getLocator());
 	}
 }
