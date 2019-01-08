@@ -95,7 +95,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
-	public Optional<Integration> getGlobalIntegrationById(Long integrationId) {
+	public Optional<Integration> findGlobalById(Long integrationId) {
 		return ofNullable(dsl.select()
 				.from(INTEGRATION)
 				.join(INTEGRATION_TYPE)
@@ -105,7 +105,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
-	public List<Integration> getAllMissedGlobalIntegrations(List<Long> integrationTypeIds) {
+	public List<Integration> findAllGlobalNotInIntegrationTypeIds(List<Long> integrationTypeIds) {
 		return dsl.select()
 				.from(INTEGRATION)
 				.join(INTEGRATION_TYPE)

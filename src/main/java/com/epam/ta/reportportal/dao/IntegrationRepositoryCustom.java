@@ -36,8 +36,20 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 
 	Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled);
 
-	Optional<Integration> getGlobalIntegrationById(Long integrationId);
+	/**
+	 * Retrieve integration with {@link Integration#project} == null by integration ID
+	 *
+	 * @param integrationId {@link Integration#id}
+	 * @return The {@link Integration} wrapped in the {@link Optional}
+	 */
+	Optional<Integration> findGlobalById(Long integrationId);
 
-	List<Integration> getAllMissedGlobalIntegrations(List<Long> integrationTypeIds);
+	/**
+	 * Retrieve integrations with {@link com.epam.ta.reportportal.entity.integration.IntegrationType#id} NOT IN provided integration type IDs
+	 *
+	 * @param integrationTypeIds The {@link List} of the {@link com.epam.ta.reportportal.entity.integration.IntegrationType#id}
+	 * @return The {@link List} of the {@link Integration}
+	 */
+	List<Integration> findAllGlobalNotInIntegrationTypeIds(List<Long> integrationTypeIds);
 
 }
