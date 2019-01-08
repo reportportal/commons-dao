@@ -126,7 +126,9 @@ public class EmailIntegrationService implements IntegrationService {
 					EMAIL
 			));
 			List<Map<String, Object>> rules = getEmailRules(integration.getParams().getParams());
-			rules.forEach(rule -> getRuleValues(rule, RECIPIENTS).removeAll(toExclude));
+			rules.stream()
+					.filter(rule -> rule.get(RECIPIENTS.getCaseTypeString()) != null)
+					.forEach(rule -> getRuleValues(rule, RECIPIENTS).removeAll(toExclude));
 		}
 	}
 
