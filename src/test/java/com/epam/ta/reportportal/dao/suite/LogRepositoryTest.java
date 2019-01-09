@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static org.junit.Assert.*;
 
@@ -63,8 +64,8 @@ public class LogRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_ITEM_ID))
 				.build();
 
-		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "log.log_time")));
-		Assert.assertEquals(1L, (long) number);
+		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_LOG_TIME)));
+		Assert.assertEquals("Unexpected log page number", 1L, (long) number);
 	}
 
 	@Test
@@ -74,11 +75,11 @@ public class LogRepositoryTest extends BaseTest {
 
 		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
 
-		assertTrue(logs != null && logs.size() != 0);
+		assertTrue("Logs should be not null or empty", logs != null && logs.size() != 0);
 		logs.forEach(log -> {
 			Long itemId = log.getTestItem().getItemId();
-			assertEquals(1L, (long) itemId);
-			assertTrue(log.getLogLevel() >= logLevel);
+			assertEquals("Incorrect item id", 1L, (long) itemId);
+			assertTrue("Unexpected log level", log.getLogLevel() >= logLevel);
 		});
 	}
 
@@ -89,9 +90,9 @@ public class LogRepositoryTest extends BaseTest {
 
 		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
 
-		Assert.assertNotNull(logs);
-		Assert.assertTrue(CollectionUtils.isNotEmpty(logs));
-		Assert.assertEquals(3, logs.size());
+		Assert.assertNotNull("Logs should not be null", logs);
+		Assert.assertTrue("Logs should not be empty", CollectionUtils.isNotEmpty(logs));
+		Assert.assertEquals("Incorrect count of logs", 3, logs.size());
 	}
 
 	@Test
@@ -102,20 +103,20 @@ public class LogRepositoryTest extends BaseTest {
 	@Test
 	public void clearLogsAttachmentsAndThumbnailsTest() {
 		ArrayList<Long> logIds = Lists.newArrayList(1L, 2L, 3L);
-		logRepository.clearLogsAttachmentsAndThumbnails(logIds);
 
+		logRepository.clearLogsAttachmentsAndThumbnails(logIds);
 		List<Log> logs = logRepository.findAllById(logIds);
 
 		logs.forEach(log -> {
-			Assert.assertNull(log.getAttachment());
-			Assert.assertNull(log.getAttachmentThumbnail());
+			Assert.assertNull("Attachments should be deleted", log.getAttachment());
+			Assert.assertNull("Attachment thumbnail should be deleted", log.getAttachmentThumbnail());
 		});
 	}
 
 	@Test
 	public void deleteByPeriodAndTestItemIdsTest() {
 		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(1L));
-		Assert.assertEquals(3, removedLogsCount);
+		Assert.assertEquals("Incorrect count of deleted logs", 3, removedLogsCount);
 	}
 
 	@Test
@@ -126,18 +127,23 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByTestItemIdWithLimitTest() {
-		final List<Log> logs = logRepository.findByTestItemId(1L, 2);
-		assertNotNull(logs);
-		assertEquals(2, logs.size());
-		logs.forEach(it -> assertEquals(1L, (long) it.getTestItem().getItemId()));
+		final long itemId = 1L;
+
+		final List<Log> logs = logRepository.findByTestItemId(itemId, 2);
+
+		assertNotNull("Logs should not be null", logs);
+		assertEquals("Unexpected logs count", 2, logs.size());
+		logs.forEach(it -> assertEquals("Log has incorrect item id", itemId, (long) it.getTestItem().getItemId()));
 	}
 
 	@Test
 	public void findByTestItemId() {
 		final Long itemId = 1L;
+
 		final List<Log> logs = logRepository.findByTestItemId(itemId);
-		assertNotNull(logs);
-		assertTrue(!logs.isEmpty());
-		logs.forEach(it -> assertEquals(itemId, it.getTestItem().getItemId()));
+
+		assertNotNull("Logs should not be null", logs);
+		assertTrue("Logs should not be empty", !logs.isEmpty());
+		logs.forEach(it -> assertEquals("Log has incorrect item id", itemId, it.getTestItem().getItemId()));
 	}
 }

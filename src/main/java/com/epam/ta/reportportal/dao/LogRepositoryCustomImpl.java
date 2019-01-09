@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.DISTINCT_LOGS_TABLE;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ROW_NUMBER;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
@@ -130,16 +131,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public Integer getPageNumber(Long id, Filter filter, Pageable pageable) {
 
-		Sort.Order order = ofNullable(pageable.getSort().getOrderFor(LOG.LOG_TIME.getName())).orElseThrow(() -> new ReportPortalException(
+		Sort.Order order = ofNullable(pageable.getSort().getOrderFor(CRITERIA_LOG_TIME)).orElseThrow(() -> new ReportPortalException(
 				ErrorType.INCORRECT_SORTING_PARAMETERS));
 
-		OrderField<?> sortField;
-
-		if (order.getDirection().isAscending()) {
-			sortField = fieldName(LOG.getName(), order.getProperty()).asc();
-		} else {
-			sortField = fieldName(LOG.getName(), order.getProperty()).desc();
-		}
+		OrderField<?> sortField = order.getDirection().isAscending() ? LOG.LOG_TIME.asc() : LOG.LOG_TIME.desc();
 
 		return ofNullable(dsl.select(fieldName(ROW_NUMBER))
 				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as(ROW_NUMBER))
