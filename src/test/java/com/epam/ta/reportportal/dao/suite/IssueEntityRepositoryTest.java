@@ -27,11 +27,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
- */
 /*
  * Uses script in db/fill/item-attribute
+ */
+/**
+ * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class IssueEntityRepositoryTest extends BaseTest {
 
