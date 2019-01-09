@@ -24,10 +24,8 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
-import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,15 +41,8 @@ import static org.junit.Assert.*;
  */
 public class TestItemRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH = "db/fill/item";
-
 	@Autowired
 	private TestItemRepository testItemRepository;
-
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
 
 	@Test
 	public void streamItemIdsTest() {

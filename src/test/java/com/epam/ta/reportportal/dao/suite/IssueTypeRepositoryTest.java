@@ -45,7 +45,7 @@ public class IssueTypeRepositoryTest extends BaseTest {
 
 	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
 	@BeforeClass
-	public static void setUp() throws Exception {
+	public static void before() {
 	}
 
 	@Test
