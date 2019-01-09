@@ -21,14 +21,16 @@ import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+
+import static org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @RunWith(Suite.class)
+// Order of test classes is important
 @SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class, IssueGroupRepositoryTest.class,
-		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class, TestItemRepositoryTest.class })
+		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class })
 public class RepositoryTestSuite {
 
 	@FlywayTest
