@@ -51,26 +51,31 @@ public class UserCreationBidRepositoryTest extends BaseTest {
 	@Test
 	public void findByEmail() {
 		final String email = "superadminemail@domain.com";
+
 		final Optional<UserCreationBid> userBid = repository.findByEmail(email);
-		assertTrue(userBid.isPresent());
-		assertEquals(email, userBid.get().getEmail());
+
+		assertTrue("User bid should exists", userBid.isPresent());
+		assertEquals("Incorrect email", email, userBid.get().getEmail());
 	}
 
 	@Test
 	public void expireBidsOlderThan() {
 		final java.util.Date date = Date.from(LocalDateTime.now().minusDays(20).atZone(ZoneId.systemDefault()).toInstant());
-		repository.expireBidsOlderThan(date);
 
+		repository.expireBidsOlderThan(date);
 		final List<UserCreationBid> bids = repository.findAll();
-		bids.forEach(it -> assertTrue(it.getLastModified().after(date)));
+
+		bids.forEach(it -> assertTrue("Incorrect date", it.getLastModified().after(date)));
 	}
 
 	@Test
 	public void findById() {
 		final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
+
 		final Optional<UserCreationBid> bid = repository.findById(adminUuid);
-		assertTrue(bid.isPresent());
-		assertEquals(adminUuid, bid.get().getUuid());
-		assertEquals("superadminemail@domain.com", bid.get().getEmail());
+
+		assertTrue("User bid should exists", bid.isPresent());
+		assertEquals("Incorrect uuid", adminUuid, bid.get().getUuid());
+		assertEquals("Incorrect email", "superadminemail@domain.com", bid.get().getEmail());
 	}
 }
