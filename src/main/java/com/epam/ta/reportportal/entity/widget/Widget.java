@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class Widget extends ShareableEntity implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
 	@Column(name = "field")
+	@OrderBy(value = "id")
 	private Set<String> contentFields = Sets.newLinkedHashSet();
 
 	@Type(type = "widgetOptions")

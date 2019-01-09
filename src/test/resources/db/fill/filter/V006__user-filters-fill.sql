@@ -1,3 +1,5 @@
+-- Generate 3 test user filters
+
 INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (1, false, 'bla', 1);
 INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (2, false, 'bla', 1);
 INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (3, false, 'bla', 1);
