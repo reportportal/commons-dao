@@ -45,6 +45,14 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 	Optional<Integration> findGlobalById(Long integrationId);
 
 	/**
+	 * Retrieve integrations with {@link com.epam.ta.reportportal.entity.integration.IntegrationType#id} IN provided integration type IDs
+	 *
+	 * @param integrationTypeIds The {@link List} of the {@link com.epam.ta.reportportal.entity.integration.IntegrationType#id}
+	 * @return The {@link List} of the {@link Integration}
+	 */
+	List<Integration> findAllGlobalInIntegrationTypeIds(List<Long> integrationTypeIds);
+
+	/**
 	 * Retrieve integrations with {@link com.epam.ta.reportportal.entity.integration.IntegrationType#id} NOT IN provided integration type IDs
 	 *
 	 * @param integrationTypeIds The {@link List} of the {@link com.epam.ta.reportportal.entity.integration.IntegrationType#id}

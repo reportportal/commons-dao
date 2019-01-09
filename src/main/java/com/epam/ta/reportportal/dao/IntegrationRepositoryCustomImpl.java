@@ -105,12 +105,24 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
+	public List<Integration> findAllGlobalInIntegrationTypeIds(List<Long> integrationTypeIds) {
+		return dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION_TYPE.ID.in(integrationTypeIds))
+				.and(INTEGRATION.PROJECT_ID.isNull())
+				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
+	}
+
+	@Override
 	public List<Integration> findAllGlobalNotInIntegrationTypeIds(List<Long> integrationTypeIds) {
 		return dsl.select()
 				.from(INTEGRATION)
 				.join(INTEGRATION_TYPE)
 				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.where(INTEGRATION_TYPE.ID.notIn(integrationTypeIds))
+				.and(INTEGRATION.PROJECT_ID.isNull())
 				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
 	}
 
