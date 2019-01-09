@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IssueEntityRepository;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,10 +34,6 @@ public class IssueEntityRepositoryTest extends BaseTest {
 
 	@Autowired
 	private IssueEntityRepository repository;
-
-	@BeforeClass
-	public static void setUp() {
-	}
 
 	@Test
 	public void findAllByIssueId() {

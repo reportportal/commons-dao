@@ -30,7 +30,7 @@ import static org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 // Order of test classes is important
 @SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class, IssueGroupRepositoryTest.class,
-		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class })
+		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class, TestItemRepositoryTest.class })
 public class RepositoryTestSuite {
 
 	@FlywayTest
