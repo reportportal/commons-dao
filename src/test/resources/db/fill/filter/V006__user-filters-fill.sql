@@ -40,3 +40,5 @@ INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, gra
 INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (4, 2, 1, 1, 16, true, false, false);
 INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (5, 3, 0, 3, 16, true, false, false);
 INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (6, 4, 0, 3, 16, true, false, false);
+
+INSERT INTO public.user_preference(project_id, user_id, filter_id) VALUES (1, 1, 1), (1, 1, 2), (1, 3, 2), (2, 2, 3);

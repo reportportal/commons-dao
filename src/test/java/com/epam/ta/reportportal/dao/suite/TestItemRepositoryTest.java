@@ -39,6 +39,9 @@ import static org.junit.Assert.*;
 /**
  * @author Ivan Budaev
  */
+/*
+ * Uses script in db/fill/item-attribute
+ */
 public class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired

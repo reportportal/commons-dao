@@ -30,6 +30,9 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
+/*
+ * Uses script in db/fill/item-attribute
+ */
 public class IssueEntityRepositoryTest extends BaseTest {
 
 	@Autowired
