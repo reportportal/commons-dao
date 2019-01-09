@@ -379,6 +379,7 @@ public class RecordMappers {
 	};
 
 	public static final RecordMapper<? super Record, Integration> GLOBAL_INTEGRATION_RECORD_MAPPER = r -> {
+
 		Integration integration = new Integration();
 		integration.setId(r.get(INTEGRATION.ID, Long.class));
 		integration.setType(INTEGRATION_TYPE_MAPPER.apply(r));
@@ -389,13 +390,24 @@ public class RecordMappers {
 		return integration;
 	};
 
+	public static final RecordMapper<? super Record, Integration> PROJECT_INTEGRATION_RECORD_MAPPER = r -> {
+
+		Integration integration = GLOBAL_INTEGRATION_RECORD_MAPPER.map(r);
+
+		Project project = new Project();
+		project.setId(r.get(INTEGRATION.PROJECT_ID));
+
+		integration.setProject(project);
+
+		return integration;
+	};
+
 	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
 
 		LdapConfig ldapConfig = r.into(LdapConfig.class);
 
 		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
 		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-
 		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
 		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
 

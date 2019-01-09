@@ -105,6 +105,17 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
+	public List<Integration> findAllByProjectIdAndInIntegrationTypeIds(Long projectId, List<Long> integrationTypeIds) {
+		return dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION_TYPE.ID.in(integrationTypeIds))
+				.and(INTEGRATION.PROJECT_ID.eq(projectId))
+				.fetch(PROJECT_INTEGRATION_RECORD_MAPPER);
+	}
+
+	@Override
 	public List<Integration> findAllGlobalInIntegrationTypeIds(List<Long> integrationTypeIds) {
 		return dsl.select()
 				.from(INTEGRATION)
