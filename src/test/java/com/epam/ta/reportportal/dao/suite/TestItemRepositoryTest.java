@@ -36,11 +36,9 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
-/*
- * Uses script in db/fill/item-attribute
- */
-
 /**
+ * Uses script in db/fill/item-attribute
+ *
  * @author Ivan Budaev
  */
 public class TestItemRepositoryTest extends BaseTest {

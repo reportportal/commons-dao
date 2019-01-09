@@ -26,11 +26,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/*
- * Uses script in db/fill/filter
- */
-
 /**
+ * Uses script in db/fill/filter
+ *
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class UserPreferenceRepositoryTest extends BaseTest {
