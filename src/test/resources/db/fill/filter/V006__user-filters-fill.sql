@@ -1,35 +1,44 @@
--- Generate 3 test user filters
+-- Generates test filters with different access parameters for 2 projects. Each project has has 2 filters (shared nad not shared).
 
-INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (1, false, 'bla', 1);
-INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (2, false, 'bla', 1);
-INSERT INTO public.shareable_entity(id, shared, owner, project_id) VALUES (3, false, 'bla', 1);
+INSERT INTO public.users (id, login, password, email, attachment, attachment_thumbnail, role, type, expired, default_project_id, full_name, metadata) VALUES (3, 'jaja_user', '7c381f9d81b0e438af4e7094c6cae203', 'jaja@mail.com', null, null, 'USER', 'INTERNAL', false, null, 'Jaja Juja', '{"metadata": {"last_login": 1546605767372}}');
 
-INSERT INTO public.filter (id, name, target, description) VALUES (1, 'New_filter', 'Launch', null);
-INSERT INTO public.filter (id, name, target, description) VALUES (2, 'New_filter', 'Launch', null);
-INSERT INTO public.filter (id, name, target, description) VALUES (3, 'New_filter', 'Launch', null);
+INSERT INTO public.project_user (user_id, project_id, project_role) VALUES (3, 1, 'MEMBER');
+
+INSERT INTO public.shareable_entity (id, shared, owner, project_id) VALUES (1, false, 'superadmin', 1);
+INSERT INTO public.shareable_entity (id, shared, owner, project_id) VALUES (2, true, 'superadmin', 1);
+INSERT INTO public.shareable_entity (id, shared, owner, project_id) VALUES (3, false, 'default', 2);
+INSERT INTO public.shareable_entity (id, shared, owner, project_id) VALUES (4, true, 'default', 2);
+
+INSERT INTO public.filter (id, name, target, description) VALUES (1, 'Admin Filter', 'Launch', null);
+INSERT INTO public.filter (id, name, target, description) VALUES (2, 'Admin shared Filter', 'Launch', null);
+INSERT INTO public.filter (id, name, target, description) VALUES (3, 'Default Filter', 'Launch', null);
+INSERT INTO public.filter (id, name, target, description) VALUES (4, 'Default shared Filter', 'Launch', null);
 
 INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (1, 1, 'name', 'ASC');
 INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (2, 2, 'name', 'ASC');
-INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (3, 3, 'name', 'ASC');
+INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (3, 3, 'name', 'DESC');
+INSERT INTO public.filter_sort (id, filter_id, field, direction) VALUES (4, 4, 'name', 'ASC');
 
-INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (1, 1, 'CONTAINS', 'Kek', 'name1', false);
-INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (2, 1, 'CONTAINS', 'Kek', 'name2', false);
-INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (3, 2, 'CONTAINS', 'Kek', 'name1', false);
-INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (4, 2, 'CONTAINS', 'Kek', 'name2', false);
-INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (5, 3, 'CONTAINS', 'Kek', 'name1', false);
-INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (6, 3, 'CONTAINS', 'Kek', 'name2', false);
+INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (1, 1, 'EQUALS', 'DEFAULT', 'mode', false);
+INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (2, 2, 'CONTAINS', 'val', 'name', false);
+INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (3, 3, 'CONTAINS', 'def', 'name', false);
+INSERT INTO public.filter_condition (id, filter_id, condition, value, search_criteria, negative) VALUES (4, 4, 'CONTAINS', 'asdf', 'name', false);
 
-INSERT INTO public.acl_sid (id, principal, sid) VALUES (1, true, 'default');
-INSERT INTO public.acl_sid (id, principal, sid) VALUES (2, true, 'superadmin');
+INSERT INTO public.acl_sid (id, principal, sid) VALUES (1, true, 'superadmin');
+INSERT INTO public.acl_sid (id, principal, sid) VALUES (2, true, 'jaja_user');
+INSERT INTO public.acl_sid (id, principal, sid) VALUES (3, true, 'default');
 
-INSERT INTO public.acl_class (id, class) VALUES (1, 'com.epam.ta.reportportal.entity.filter.UserFilter');
+INSERT INTO public.acl_class (id, class, class_id_type) VALUES (1, 'com.epam.ta.reportportal.entity.filter.UserFilter', 'java.lang.Long');
 
-INSERT INTO public.acl_object_identity (id, object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting) VALUES (3, 1, '3', null, 1, true);
 INSERT INTO public.acl_object_identity (id, object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting) VALUES (1, 1, '1', null, 1, true);
 INSERT INTO public.acl_object_identity (id, object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting) VALUES (2, 1, '2', null, 1, true);
+INSERT INTO public.acl_object_identity (id, object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting) VALUES (3, 1, '3', null, 3, true);
+INSERT INTO public.acl_object_identity (id, object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting) VALUES (4, 1, '4', null, 3, true);
 
-INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (3, 3, 0, 1, 1, true, false, false);
-INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (4, 1, 0, 2, 1, true, false, false);
-INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (5, 1, 1, 1, 1, true, false, false);
-INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (6, 2, 0, 2, 1, true, false, false);
-INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (7, 2, 1, 1, 1, true, false, false);
+INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (1, 1, 0, 1, 16, true, false, false);
+INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (3, 2, 0, 2, 1, true, false, false);
+INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (4, 2, 1, 1, 16, true, false, false);
+INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (5, 3, 0, 3, 16, true, false, false);
+INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (6, 4, 0, 3, 16, true, false, false);
+
+INSERT INTO public.user_preference(project_id, user_id, filter_id) VALUES (1, 1, 1), (1, 1, 2), (1, 3, 2), (2, 2, 3);

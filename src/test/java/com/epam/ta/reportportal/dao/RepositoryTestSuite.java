@@ -22,18 +22,21 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import static org.junit.runners.Suite.SuiteClasses;
+
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class,
-		IssueGroupRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class,
-		IntegrationTypeRepositoryTest.class, IntegrationRepositoryTest.class })
+// Order of test classes is important
+@SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class, IssueGroupRepositoryTest.class,
+		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class, TestItemRepositoryTest.class, UserFilterRepositoryTest.class,
+		UserPreferenceRepositoryTest.class, UserCreationBidRepositoryTest.class,
+		IntegrationTypeRepositoryTest.class, IntegrationRepositoryTest.class})
 public class RepositoryTestSuite {
 
 	@FlywayTest
 	@BeforeClass
 	public static void beforeSuite() {
-
 	}
 }

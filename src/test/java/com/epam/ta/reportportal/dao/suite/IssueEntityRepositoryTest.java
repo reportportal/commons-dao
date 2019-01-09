@@ -20,8 +20,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IssueEntityRepository;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,19 +28,14 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Uses script in db/fill/item-attribute
+ *
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class IssueEntityRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH_ITEM = "db/fill/issue-entity";
-
 	@Autowired
 	private IssueEntityRepository repository;
-
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH_ITEM }, invokeCleanDB = false)
-	@BeforeClass
-	public static void setUp() {
-	}
 
 	@Test
 	public void findAllByIssueId() {
