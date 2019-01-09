@@ -31,7 +31,7 @@ import static org.junit.runners.Suite.SuiteClasses;
 // Order of test classes is important
 @SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class, IssueGroupRepositoryTest.class,
 		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class, TestItemRepositoryTest.class, UserFilterRepositoryTest.class,
-		UserPreferenceRepositoryTest.class })
+		UserPreferenceRepositoryTest.class, UserCreationBidRepositoryTest.class })
 public class RepositoryTestSuite {
 
 	@FlywayTest
