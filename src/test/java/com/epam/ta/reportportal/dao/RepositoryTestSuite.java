@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,21 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.dao.suite.ActivityRepositoryTest;
-import com.epam.ta.reportportal.dao.suite.AttributeRepositoryTest;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.BeforeClass;
+import com.epam.ta.reportportal.dao.suite.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+
+import static org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class })
+// Order of test classes is important
+@SuiteClasses({ ProjectRepositoryTest.class, ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class,
+		IssueGroupRepositoryTest.class, UserRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class,
+		TestItemRepositoryTest.class, LogRepositoryTest.class, UserFilterRepositoryTest.class, UserPreferenceRepositoryTest.class,
+		UserCreationBidRepositoryTest.class })
 public class RepositoryTestSuite {
 
-	@FlywayTest
-	@BeforeClass
-	public static void beforeSuite() {
-
-	}
 }
