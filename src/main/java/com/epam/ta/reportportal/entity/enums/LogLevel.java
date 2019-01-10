@@ -16,6 +16,9 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -91,7 +94,7 @@ public enum LogLevel {
 				.sorted((prev, curr) -> Integer.compare(curr.toInt(), prev.toInt()))
 				.filter(l -> l.toInt() <= intLevel)
 				.findFirst()
-				.orElse(UNKNOWN);
+				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level = " + intLevel));
 
 	}
 
