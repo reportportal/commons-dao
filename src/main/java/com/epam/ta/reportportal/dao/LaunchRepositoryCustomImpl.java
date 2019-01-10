@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,8 +184,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.join(FILTERED_QUERY)
 				.on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
 				.leftJoin(STATISTICS)
-				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
-				.join(STATISTICS_FIELD)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID)).leftJoin(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.leftJoin(ITEM_ATTRIBUTE)
 				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID)))).stream().findFirst();
