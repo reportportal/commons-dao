@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  */
 public class DashboardRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH = "/db/fill/sharable";
+	private static final String FILL_SCRIPT_PATH = "/db/fill/shareable";
 
 	@Autowired
 	private DashboardRepository repository;
