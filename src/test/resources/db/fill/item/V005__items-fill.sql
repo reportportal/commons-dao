@@ -1,3 +1,5 @@
+-- Generates 13 launches. Each contains suite, test and 4 step items with item results. Launches and items has attributes
+
 CREATE OR REPLACE FUNCTION items_init()
   RETURNS VOID AS
 $BODY$
@@ -10,6 +12,15 @@ BEGIN
   WHILE launchCounter < 13 LOOP
     INSERT INTO launch (id, uuid, project_id, user_id, name, start_time, number, last_modified, mode, status)
     VALUES (launchCounter, 'uuid ' || launchCounter, 1, 1, 'name ' || launchCounter, now(), 1, now(), 'DEFAULT', 'IN_PROGRESS');
+
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
+    VALUES ('key' || launchCounter % 4, 'value' || launchCounter, null, launchCounter, false);
+
+    IF floor(random() * (3 - 1 + 1) + 1) = 2
+    THEN INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
+         VALUES ('systemKey', 'systemValue', null, launchCounter, true);
+    END IF;
+
     launchCounter = launchCounter + 1;
   END LOOP;
 
@@ -20,6 +31,9 @@ BEGIN
     VALUES ('SUITE ' || launchCounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchCounter, launchCounter);
     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
+    VALUES ('suite', 'value' || cur_suite_id, cur_suite_id, null, false);
+
     UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
 
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
@@ -27,6 +41,9 @@ BEGIN
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
     VALUES ('First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchCounter, launchCounter, cur_suite_id);
     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
+    VALUES ('test', 'value' || cur_item_id, cur_item_id, null, false);
 
     UPDATE test_item SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) where item_id = cur_item_id;
 
@@ -37,6 +54,14 @@ BEGIN
       INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id, launch_id)
       VALUES ('Step', 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchCounter, cur_item_id, launchCounter);
       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+      INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
+      VALUES ('step', 'value' || cur_step_id, cur_step_id, null, false);
+
+      IF cur_step_id = 3
+      THEN
+        PERFORM logs_init();
+      END IF;
 
       UPDATE test_item
       SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
@@ -69,6 +94,37 @@ END
 $BODY$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION logs_init()
+  RETURNS VOID AS
+$BODY$
+DECLARE   stepId      INT = 3;
+  DECLARE logsCounter INT = 1;
+BEGIN
+  WHILE logsCounter < 4 LOOP
+
+    INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment, attachment_thumbnail, content_type)
+    VALUES (now(), 'log', stepId, now() - make_interval(days := 14), 40000, 'attach ' || logsCounter, 'attachThumb' || logsCounter, 'MIME');
+    logsCounter = logsCounter + 1;
+  END LOOP;
+
+  WHILE logsCounter > 0 LOOP
+
+    INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment, attachment_thumbnail, content_type)
+    VALUES (now(),
+            'log',
+            stepId,
+            now(),
+            40000,
+            'attach ' || logsCounter || logsCounter,
+            'attachThumb' || logsCounter || logsCounter,
+            'MIME');
+    logsCounter = logsCounter - 1;
+  END LOOP;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
 SELECT items_init();
 
 DROP FUNCTION IF EXISTS items_init();
+DROP FUNCTION IF EXISTS logs_init();
