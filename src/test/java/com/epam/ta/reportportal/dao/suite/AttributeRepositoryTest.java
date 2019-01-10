@@ -39,9 +39,6 @@ public class AttributeRepositoryTest extends BaseTest {
 
 	private static final String FILL_SCRIPT_PATH = "db/fill/attributes";
 
-	private static final long ATTR_ID = 100L;
-	private static final String ATTR_NAME = "present";
-
 	@Autowired
 	private AttributeRepository attributeRepository;
 
@@ -60,7 +57,7 @@ public class AttributeRepositoryTest extends BaseTest {
 		Optional<Attribute> attribute = attributeRepository.findByName(name);
 
 		//then
-		assertTrue(attribute.isPresent());
+		assertTrue("Attribute should exists", attribute.isPresent());
 	}
 
 	@Test
@@ -73,25 +70,32 @@ public class AttributeRepositoryTest extends BaseTest {
 		Optional<Attribute> attribute = attributeRepository.findByName(name);
 
 		//then
-		Assert.assertFalse(attribute.isPresent());
+		Assert.assertFalse("Attribute should not exists", attribute.isPresent());
 	}
 
 	@Test
 	public void getDefaultProjectAttributesTest() {
 		final Set<Attribute> defaultProjectAttributes = attributeRepository.getDefaultProjectAttributes();
-		defaultProjectAttributes.forEach(it -> assertTrue(ProjectAttributeEnum.findByAttributeName(it.getName()).isPresent()));
+		defaultProjectAttributes.forEach(it -> assertTrue(
+				"Attribute should exists",
+				ProjectAttributeEnum.findByAttributeName(it.getName()).isPresent()
+		));
 	}
 
 	@Test
 	public void findById() {
-		final Optional<Attribute> attrOptional = attributeRepository.findById(ATTR_ID);
-		assertTrue(attrOptional.isPresent());
-		assertEquals(ATTR_NAME, attrOptional.get().getName());
+		final Long attrId = 100L;
+		final String attrName = "present";
+
+		final Optional<Attribute> attrOptional = attributeRepository.findById(attrId);
+		assertTrue("Attribute should exists", attrOptional.isPresent());
+		assertEquals("Incorrect attribute name", attrName, attrOptional.get().getName());
 	}
 
 	@Test
 	public void deleteById() {
-		attributeRepository.deleteById(ATTR_ID);
+		final Long attrId = 100L;
+		attributeRepository.deleteById(attrId);
 		assertEquals(ProjectAttributeEnum.values().length, attributeRepository.findAll().size());
 	}
 }
