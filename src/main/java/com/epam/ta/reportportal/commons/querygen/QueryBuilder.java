@@ -127,8 +127,8 @@ public class QueryBuilder {
 	public QueryBuilder with(Pageable p) {
 		if (p.isPaged()) {
 			query.addLimit(p.getPageSize());
-			int offset = Long.valueOf(p.getOffset()).intValue();
-			query.addOffset(offset < 0 ? 0 : offset);
+			long offset = p.getOffset();
+			query.addOffset(offset < 0 ? 0 : offset > Integer.MAX_VALUE ? 0 : (int) offset);
 		}
 		return with(p.getSort());
 	}
