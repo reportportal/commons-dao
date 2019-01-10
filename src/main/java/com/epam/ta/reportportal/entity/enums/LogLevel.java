@@ -16,9 +16,6 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -30,9 +27,11 @@ public enum LogLevel {
 	INFO(LogLevel.INFO_INT), 
 	DEBUG(LogLevel.DEBUG_INT), 
 	TRACE(LogLevel.TRACE_INT),
-	FATAL(LogLevel.FATAL_INT);
+	FATAL(LogLevel.FATAL_INT),
+	UNKNOWN(LogLevel.UNKNOWN_INT);
 	//@formatter:on
 
+	public static final int UNKNOWN_INT = 60000;
 	public static final int FATAL_INT = 50000;
 	public static final int ERROR_INT = 40000;
 	public static final int WARN_INT = 30000;
@@ -77,7 +76,7 @@ public enum LogLevel {
 				int intLevel = Integer.parseInt(levelString);
 				return intLevel < TRACE.toInt() ? TRACE.toInt() : intLevel;
 			} catch (NumberFormatException ex) {
-				throw new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level = " + levelString);
+				return UNKNOWN_INT;
 			}
 
 		});
@@ -92,7 +91,7 @@ public enum LogLevel {
 				.sorted((prev, curr) -> Integer.compare(curr.toInt(), prev.toInt()))
 				.filter(l -> l.toInt() <= intLevel)
 				.findFirst()
-				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST, "Wrong level = " + intLevel));
+				.orElse(UNKNOWN);
 
 	}
 
