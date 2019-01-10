@@ -25,9 +25,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
-import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -47,21 +45,14 @@ import static org.junit.Assert.*;
  */
 public class LogRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH = "db/fill/log";
-
 	@Autowired
 	private LogRepository logRepository;
-
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
 
 	@Test
 	public void getPageNumberTest() {
 		Filter filter = Filter.builder()
 				.withTarget(Log.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_ITEM_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_TEST_ITEM_ID))
 				.build();
 
 		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_LOG_TIME)));
@@ -70,7 +61,7 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByTestItemsAndLogLevel() {
-		ArrayList<Long> ids = Lists.newArrayList(1L);
+		ArrayList<Long> ids = Lists.newArrayList(3L);
 		Integer logLevel = 30000;
 
 		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
@@ -78,7 +69,7 @@ public class LogRepositoryTest extends BaseTest {
 		assertTrue("Logs should be not null or empty", logs != null && logs.size() != 0);
 		logs.forEach(log -> {
 			Long itemId = log.getTestItem().getItemId();
-			assertEquals("Incorrect item id", 1L, (long) itemId);
+			assertEquals("Incorrect item id", 3L, (long) itemId);
 			assertTrue("Unexpected log level", log.getLogLevel() >= logLevel);
 		});
 	}
@@ -86,7 +77,7 @@ public class LogRepositoryTest extends BaseTest {
 	@Test
 	public void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
 		Duration duration = Duration.ofDays(6).plusHours(23);
-		final Long itemId = 1L;
+		final Long itemId = 3L;
 
 		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
 
@@ -97,7 +88,7 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void hasLogsAddedLatelyTest() {
-		Assert.assertTrue(logRepository.hasLogsAddedLately(Duration.ofDays(13).plusHours(23), 1L, StatusEnum.IN_PROGRESS));
+		Assert.assertTrue(logRepository.hasLogsAddedLately(Duration.ofDays(13).plusHours(23), 1L, StatusEnum.FAILED));
 	}
 
 	@Test
@@ -115,19 +106,19 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void deleteByPeriodAndTestItemIdsTest() {
-		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(1L));
+		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(3L));
 		Assert.assertEquals("Incorrect count of deleted logs", 3, removedLogsCount);
 	}
 
 	@Test
 	public void hasLogsTest() {
-		assertTrue(logRepository.hasLogs(1L));
+		assertTrue(logRepository.hasLogs(3L));
 		assertFalse(logRepository.hasLogs(100L));
 	}
 
 	@Test
 	public void findByTestItemIdWithLimitTest() {
-		final long itemId = 1L;
+		final long itemId = 3L;
 
 		final List<Log> logs = logRepository.findByTestItemId(itemId, 2);
 
@@ -138,7 +129,7 @@ public class LogRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByTestItemId() {
-		final Long itemId = 1L;
+		final Long itemId = 3L;
 
 		final List<Log> logs = logRepository.findByTestItemId(itemId);
 
