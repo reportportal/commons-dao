@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.apache.commons.collections.CollectionUtils;
-import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,18 +38,12 @@ import java.util.Optional;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static java.util.Optional.ofNullable;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Ivan Budaev
  */
-@FlywayTest
 public class ProjectRepositoryTest extends BaseTest {
-
-	private static final String DEFAULT_PERSONAL_NAME = "default_personal";
-	private static final String SUPERADMIN_PERSONAL_NAME = "superadmin_personal";
-	private static final String DEFAULT_USER_NAME = "default";
 
 	@Autowired
 	private ProjectRepository projectRepository;
@@ -74,8 +67,7 @@ public class ProjectRepositoryTest extends BaseTest {
 			Assert.assertNotNull(project.getId());
 			assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
 			Assert.assertEquals(ProjectAttributeEnum.values().length, project.getProjectAttributes().size());
-			assertTrue(project.getProjectAttributes()
-					.stream().anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
+			assertTrue(project.getProjectAttributes().stream().anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
 							.getName()
 							.equals(ProjectAttributeEnum.KEEP_LOGS.getAttribute())));
 		});
@@ -83,34 +75,39 @@ public class ProjectRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByName() {
-		final Optional<Project> projectOptional = projectRepository.findByName(DEFAULT_PERSONAL_NAME);
+		final String projectName = "default_personal";
+
+		final Optional<Project> projectOptional = projectRepository.findByName(projectName);
+
 		assertTrue(projectOptional.isPresent());
-		assertEquals(DEFAULT_PERSONAL_NAME, projectOptional.get().getName());
+		assertEquals(projectName, projectOptional.get().getName());
 	}
 
 	@Test
 	public void existsByName() {
-		assertTrue(projectRepository.existsByName(DEFAULT_PERSONAL_NAME));
-		assertTrue(projectRepository.existsByName(SUPERADMIN_PERSONAL_NAME));
+		assertTrue(projectRepository.existsByName("default_personal"));
+		assertTrue(projectRepository.existsByName("superadmin_personal"));
+		assertFalse(projectRepository.existsByName("not_existed"));
 	}
 
 	@Test
 	public void findPersonalProjectName() {
-		final Optional<String> nameOptional = projectRepository.findPersonalProjectName(DEFAULT_USER_NAME);
+		final Optional<String> nameOptional = projectRepository.findPersonalProjectName("default");
+
 		assertTrue(nameOptional.isPresent());
-		assertEquals(DEFAULT_PERSONAL_NAME, nameOptional.get());
+		assertEquals("default_personal", nameOptional.get());
 	}
 
 	@Test
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(2));
-		Assert.assertThat("Results don't contain all project", names, Matchers.hasItems(DEFAULT_PERSONAL_NAME, SUPERADMIN_PERSONAL_NAME));
+		Assert.assertThat("Results don't contain all project", names, Matchers.hasItems("default_personal", "superadmin_personal"));
 	}
 
 	@Test
 	public void findUserProjectsTest() {
-		List<Project> projects = projectRepository.findUserProjects(DEFAULT_USER_NAME);
+		List<Project> projects = projectRepository.findUserProjects("default");
 		Assert.assertNotNull(projects);
 		Assert.assertEquals(1, projects.size());
 
@@ -120,8 +117,7 @@ public class ProjectRepositoryTest extends BaseTest {
 	public void findProjectInfoByFilter() {
 		final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
 				Condition.EQUALS,
-				false,
-				DEFAULT_PERSONAL_NAME,
+				false, "default_personal",
 				CRITERIA_PROJECT_NAME
 		), PageRequest.of(0, 10));
 		assertEquals(1, projectInfoPage.getTotalElements());

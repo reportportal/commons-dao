@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,17 +57,6 @@ public class UserRepositoryTest extends BaseTest {
 
 	private static final String FILL_SCRIPT_PATH = "/db/fill/user";
 
-	private static final Long SUPERADMIN_PERSONAL_ID = 1L;
-	private static final String SUPERADMIN_PERSONAL_NAME = "superadmin_personal";
-	private static final String DEFAULT_LOGIN = "default";
-
-	private static final Long FALCON_PROJECT_ID = 3L;
-	private static final String CHUBAKA_LOGIN = "chubaka";
-	private static final String CHUBAKA_EMAIL = "chybaka@domain.com";
-	private static final String FAKE_CHUBAKA_LOGIN = "fake_chubaka";
-	private static final String HAN_SOLO_LOGIN = "han_solo";
-	private static final String HAN_SOLO_EMAIL = "han_solo@domain.com";
-
 	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
 	@BeforeClass
 	public static void setUp() {
@@ -106,11 +95,11 @@ public class UserRepositoryTest extends BaseTest {
 		//given
 		String term = "admin";
 		//when
-		List<String> userNames = userRepository.findNamesByProject(SUPERADMIN_PERSONAL_ID, term);
+		List<String> userNames = userRepository.findNamesByProject(1L, term);
 		//then
 		Assert.assertThat("User names not found", userNames, Matchers.notNullValue());
 		Assert.assertThat("Incorrect size of user names", userNames, Matchers.hasSize(1));
-		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified 'def' term", name, Matchers.containsString(term)));
+		userNames.forEach(name -> Assert.assertThat("Name doesn't contain specified 'admin' term", name, Matchers.containsString(term)));
 	}
 
 	@Test
@@ -118,7 +107,7 @@ public class UserRepositoryTest extends BaseTest {
 		//given
 		String term = "negative";
 		//when
-		List<String> userNames = userRepository.findNamesByProject(SUPERADMIN_PERSONAL_ID, term);
+		List<String> userNames = userRepository.findNamesByProject(1L, term);
 		//then
 		Assert.assertThat("Result contains user names", userNames, Matchers.empty());
 	}
@@ -127,7 +116,7 @@ public class UserRepositoryTest extends BaseTest {
 	public void loadUsersByFilterForProject() {
 		//given
 		Filter filter = buildDefaultUserFilter();
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(FALCON_PROJECT_ID), CRITERIA_PROJECT_ID));
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_PROJECT_ID));
 		//when
 		List<User> users = userRepository.findByFilterExcluding(filter, PageRequest.of(0, 5), "email").getContent();
 		//then
@@ -138,46 +127,64 @@ public class UserRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByDefaultProjectId() {
-		Optional<User> user = userRepository.findByDefaultProjectId(SUPERADMIN_PERSONAL_ID);
+		final long projectId = 1L;
+
+		Optional<User> user = userRepository.findByDefaultProjectId(projectId);
+
 		Assert.assertTrue("User is not present", user.isPresent());
-		Assert.assertThat("Incorrect default project id", user.get().getDefaultProject().getId(), Matchers.equalTo(SUPERADMIN_PERSONAL_ID));
+		Assert.assertThat("Incorrect default project id", user.get().getDefaultProject().getId(), Matchers.equalTo(projectId));
 	}
 
 	@Test
 	public void findByEmail() {
-		Optional<User> user = userRepository.findByEmail(CHUBAKA_EMAIL);
+		final String email = "chybaka@domain.com";
+
+		Optional<User> user = userRepository.findByEmail(email);
+
 		Assert.assertTrue("User not found", user.isPresent());
-		Assert.assertThat("Emails are not equal", user.get().getEmail(), Matchers.equalTo(CHUBAKA_EMAIL));
+		Assert.assertThat("Emails are not equal", user.get().getEmail(), Matchers.equalTo(email));
 	}
 
 	@Test
 	public void findByLogin() {
-		Optional<User> user = userRepository.findByLogin(HAN_SOLO_LOGIN);
+		final String login = "han_solo";
+
+		Optional<User> user = userRepository.findByLogin(login);
+
 		Assert.assertTrue("User not found", user.isPresent());
-		Assert.assertThat("Emails are not equal", user.get().getLogin(), Matchers.equalTo(HAN_SOLO_LOGIN));
+		Assert.assertThat("Emails are not equal", user.get().getLogin(), Matchers.equalTo(login));
 	}
 
 	@Test
 	public void findAllByEmailIn() {
-		List<User> users = userRepository.findAllByEmailIn(Arrays.asList(HAN_SOLO_EMAIL, CHUBAKA_EMAIL));
+		List<String> emails = Arrays.asList("han_solo@domain.com", "chybaka@domain.com");
+
+		List<User> users = userRepository.findAllByEmailIn(emails);
+
 		Assert.assertThat("Users not found", users, Matchers.notNullValue());
 		Assert.assertThat("Incorrect size of users", users, Matchers.hasSize(2));
-		Assert.assertTrue("Incorrect user email", users.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(HAN_SOLO_EMAIL)));
-		Assert.assertTrue("Incorrect user email", users.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(CHUBAKA_EMAIL)));
+		Assert.assertTrue("Incorrect user email", users.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(emails.get(0))));
+		Assert.assertTrue("Incorrect user email", users.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(emails.get(1))));
 	}
 
 	@Test
 	public void findAllByLoginIn() {
-		List<User> users = userRepository.findAllByLoginIn(Sets.newHashSet(Arrays.asList(CHUBAKA_LOGIN, DEFAULT_LOGIN)));
+		final String hanLogin = "han_solo";
+		final String defaultLogin = "default";
+		Set<String> logins = Sets.newHashSet(Arrays.asList(hanLogin, defaultLogin));
+
+		List<User> users = userRepository.findAllByLoginIn(logins);
+
 		Assert.assertThat("Users not found", users, Matchers.notNullValue());
 		Assert.assertThat("Incorrect size of users", users, Matchers.hasSize(2));
-		Assert.assertTrue("Incorrect user login", users.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(CHUBAKA_LOGIN)));
-		Assert.assertTrue("Incorrect user login", users.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(DEFAULT_LOGIN)));
+		Assert.assertTrue("Incorrect user login", users.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(hanLogin)));
+		Assert.assertTrue("Incorrect user login", users.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(defaultLogin)));
 	}
 
 	@Test
 	public void findAllByRole() {
 		List<User> users = userRepository.findAllByRole(UserRole.USER);
+
 		Assert.assertEquals(3, users.size());
 		users.forEach(it -> assertEquals(UserRole.USER, it.getRole()));
 	}
@@ -185,6 +192,7 @@ public class UserRepositoryTest extends BaseTest {
 	@Test
 	public void findAllByUserTypeAndExpired() {
 		Page<User> users = userRepository.findAllByUserTypeAndExpired(UserType.INTERNAL, false, Pageable.unpaged());
+
 		Assert.assertNotNull(users);
 		Assert.assertEquals(5, users.getNumberOfElements());
 	}
@@ -192,7 +200,8 @@ public class UserRepositoryTest extends BaseTest {
 	@Test
 	public void searchForUserTest() {
 		Filter filter = Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.CONTAINS, false, "chuba", CRITERIA_USER))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "chuba", CRITERIA_USER))
 				.build();
 		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
 		Assert.assertEquals(2, users.getTotalElements());
@@ -201,7 +210,8 @@ public class UserRepositoryTest extends BaseTest {
 	@Test
 	public void usersWithProjectSort() {
 		Filter filter = Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.CONTAINS, false, "chuba", CRITERIA_USER))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "chuba", CRITERIA_USER))
 				.build();
 		PageRequest pageRequest = PageRequest.of(0, 5, Sort.Direction.ASC, CRITERIA_PROJECT);
 		Page<User> result = userRepository.findByFilter(filter, pageRequest);
@@ -224,7 +234,7 @@ public class UserRepositoryTest extends BaseTest {
 		map.put("last_login", new Date());
 		reg.setMetadata(new Metadata(map));
 
-		Project defaultProject = projectRepository.findByName(SUPERADMIN_PERSONAL_NAME).get();
+		Project defaultProject = projectRepository.findByName("superadmin_personal").get();
 		Set<ProjectUser> projectUsers = defaultProject.getUsers();
 
 		projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.CUSTOMER).withUser(reg).withProject(defaultProject));
@@ -238,7 +248,8 @@ public class UserRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultUserFilter() {
 		return Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "10", CRITERIA_ID))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "10", CRITERIA_ID))
 				.build();
 	}
 }
