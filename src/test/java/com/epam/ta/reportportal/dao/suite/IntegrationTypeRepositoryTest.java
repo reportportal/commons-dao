@@ -19,9 +19,12 @@ package com.epam.ta.reportportal.dao.suite;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -37,43 +40,45 @@ public class IntegrationTypeRepositoryTest extends BaseTest {
 	@Test
 	public void shouldFindWhenNameExists() {
 
-		Assert.assertTrue(integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME).isPresent());
+		Assert.assertThat(integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME), is(Matchers.notNullValue()));
 
 	}
 
 	@Test
 	public void shouldNotFindWhenNameExists() {
 
-		Assert.assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
+		Assert.assertThat(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME), is((Matchers.nullValue())));
 	}
 
 	@Test
 	public void shouldFindWhenNameExistsAndIntegrationGroupExists() {
 
-		Assert.assertTrue(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
-				.isPresent());
+		Assert.assertThat(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS),
+				is(Matchers.notNullValue())
+		);
 	}
 
 	@Test
 	public void shouldNotFindWhenIncorrectNameAndIntegrationGroupExists() {
 
-		Assert.assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(WRONG_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
-				.isPresent());
+		Assert.assertThat(integrationTypeRepository.findByNameAndIntegrationGroup(WRONG_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS),
+				is(Matchers.nullValue())
+		);
 	}
 
 	@Test
 	public void shouldNotFindWhenNameExistsAndIntegrationGroupNotExists() {
 
-		Assert.assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME,
+		Assert.assertThat(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME,
 				IntegrationGroupEnum.NOTIFICATION
-		).isPresent());
+		), is(Matchers.nullValue()));
 	}
 
 	@Test
 	public void shouldDeleteByName() {
 
 		integrationTypeRepository.deleteByName(JIRA_INTEGRATION_TYPE_NAME);
-		Assert.assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
+		Assert.assertThat(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME), is(Matchers.nullValue()));
 	}
 
 }
