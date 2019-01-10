@@ -344,8 +344,11 @@ public class RecordMappers {
 		IntegrationType integrationType = new IntegrationType();
 		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
 		integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toLocalDateTime());
-		integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(r.get(INTEGRATION_TYPE.AUTH_FLOW).getLiteral())
-				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		ofNullable(r.get(INTEGRATION_TYPE.AUTH_FLOW)).ifPresent(af -> {
+			integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(af.getLiteral())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
+		});
+
 		integrationType.setName(r.get(INTEGRATION_TYPE.NAME));
 		integrationType.setIntegrationGroup(IntegrationGroupEnum.findByName(r.get(INTEGRATION_TYPE.GROUP_TYPE).getLiteral())
 				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
@@ -375,13 +378,36 @@ public class RecordMappers {
 		});
 	};
 
+	public static final RecordMapper<? super Record, Integration> GLOBAL_INTEGRATION_RECORD_MAPPER = r -> {
+
+		Integration integration = new Integration();
+		integration.setId(r.get(INTEGRATION.ID, Long.class));
+		integration.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
+		integration.setEnabled(r.get(INTEGRATION.ENABLED));
+		INTEGRATION_PARAMS_MAPPER.accept(integration, r);
+
+		return integration;
+	};
+
+	public static final RecordMapper<? super Record, Integration> PROJECT_INTEGRATION_RECORD_MAPPER = r -> {
+
+		Integration integration = GLOBAL_INTEGRATION_RECORD_MAPPER.map(r);
+
+		Project project = new Project();
+		project.setId(r.get(INTEGRATION.PROJECT_ID));
+
+		integration.setProject(project);
+
+		return integration;
+	};
+
 	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
 
 		LdapConfig ldapConfig = r.into(LdapConfig.class);
 
 		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
 		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-
 		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
 		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
 
