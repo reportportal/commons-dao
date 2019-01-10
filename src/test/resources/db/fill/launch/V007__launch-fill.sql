@@ -1,5 +1,8 @@
 -- Generates 12 launches in 'IN_PROGRESS' status on superadmin project and 1 launch with status 'FAILED'
 
+DELETE FROM launch CASCADE;
+DELETE FROM test_item CASCADE;
+
 CREATE OR REPLACE FUNCTION launches_init()
   RETURNS VOID AS $$ DECLARE   differentLaunchesCounter INT = 1; DECLARE sameLaunchCounter INT = 1;
 BEGIN
