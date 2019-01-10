@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.apache.commons.collections.CollectionUtils;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,6 +44,7 @@ import static org.junit.Assert.*;
 /**
  * @author Ivan Budaev
  */
+@FlywayTest
 public class ProjectRepositoryTest extends BaseTest {
 
 	@Autowired
