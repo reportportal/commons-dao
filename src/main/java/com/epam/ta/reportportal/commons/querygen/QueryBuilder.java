@@ -128,7 +128,7 @@ public class QueryBuilder {
 		if (p.isPaged()) {
 			query.addLimit(p.getPageSize());
 			long offset = p.getOffset();
-			query.addOffset(offset < 0 ? 0 : offset > Integer.MAX_VALUE ? 0 : (int) offset);
+			query.addOffset(offset < 0 ? 0 : offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) offset);
 		}
 		return with(p.getSort());
 	}
