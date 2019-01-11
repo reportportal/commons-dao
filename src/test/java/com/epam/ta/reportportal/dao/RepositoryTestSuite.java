@@ -17,8 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.dao.suite.*;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -29,12 +27,11 @@ import static org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 // Order of test classes is important
-@SuiteClasses({ ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class, IssueGroupRepositoryTest.class,
-		ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class, TestItemRepositoryTest.class })
+@SuiteClasses({ ProjectRepositoryTest.class, ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class,
+		IssueGroupRepositoryTest.class, UserRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class,
+		TestItemRepositoryTest.class, LogRepositoryTest.class, LaunchRepositoryTest.class, DashboardRepositoryTest.class,
+		WidgetRepositoryTest.class, UserFilterRepositoryTest.class, UserPreferenceRepositoryTest.class,
+		UserCreationBidRepositoryTest.class })
 public class RepositoryTestSuite {
 
-	@FlywayTest
-	@BeforeClass
-	public static void beforeSuite() {
-	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,8 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
@@ -36,15 +32,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
-import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
-import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static java.util.Optional.ofNullable;
+import static org.junit.Assert.*;
 
 /**
  * @author Ivan Budaev
@@ -57,44 +52,52 @@ public class ProjectRepositoryTest extends BaseTest {
 
 	@Test
 	public void findAllIdsAndProjectAttributesTest() {
-
-		Filter filter = Filter.builder().withTarget(Project.class).withCondition(new FilterCondition(Condition.EQUALS, false,
-
-				ProjectAttributeEnum.KEEP_LOGS.getAttribute(), CRITERIA_PROJECT_ATTRIBUTE_NAME
-		)).build();
+		Filter filter = Filter.builder()
+				.withTarget(Project.class)
+				.withCondition(new FilterCondition(Condition.EQUALS,
+						false,
+						ProjectAttributeEnum.KEEP_LOGS.getAttribute(),
+						CRITERIA_PROJECT_ATTRIBUTE_NAME
+				))
+				.build();
 
 		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(filter, PageRequest.of(0, 2));
 
 		Assert.assertNotNull(projects);
-		Assert.assertTrue(CollectionUtils.isNotEmpty(projects.getContent()));
+		assertTrue(CollectionUtils.isNotEmpty(projects.getContent()));
 		projects.getContent().forEach(project -> {
 			Assert.assertNotNull(project.getId());
-			Assert.assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
-			Assert.assertEquals(11, project.getProjectAttributes().size());
-			Assert.assertTrue(project.getProjectAttributes()
-					.stream()
-					.allMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
+			assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
+			Assert.assertEquals(ProjectAttributeEnum.values().length, project.getProjectAttributes().size());
+			assertTrue(project.getProjectAttributes().stream().anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
 							.getName()
 							.equals(ProjectAttributeEnum.KEEP_LOGS.getAttribute())));
 		});
 	}
 
 	@Test
-	public void test() {
-		Project project = projectRepository.findById(1L).orElseThrow(() -> new ReportPortalException(ErrorType.PROJECT_NOT_FOUND, 1L));
+	public void findByName() {
+		final String projectName = "default_personal";
 
-		Integration email = project.getIntegrations()
-				.stream()
-				.filter(it -> it.getType().getName().equalsIgnoreCase("email"))
-				.findFirst()
-				.get();
+		final Optional<Project> projectOptional = projectRepository.findByName(projectName);
 
-		email.setEnabled(true);
+		assertTrue(projectOptional.isPresent());
+		assertEquals(projectName, projectOptional.get().getName());
+	}
 
-		projectRepository.save(project);
+	@Test
+	public void existsByName() {
+		assertTrue(projectRepository.existsByName("default_personal"));
+		assertTrue(projectRepository.existsByName("superadmin_personal"));
+		assertFalse(projectRepository.existsByName("not_existed"));
+	}
 
-		System.out.println();
+	@Test
+	public void findPersonalProjectName() {
+		final Optional<String> nameOptional = projectRepository.findPersonalProjectName("default");
 
+		assertTrue(nameOptional.isPresent());
+		assertEquals("default_personal", nameOptional.get());
 	}
 
 	@Test
@@ -107,18 +110,18 @@ public class ProjectRepositoryTest extends BaseTest {
 	@Test
 	public void findUserProjectsTest() {
 		List<Project> projects = projectRepository.findUserProjects("default");
-
 		Assert.assertNotNull(projects);
 		Assert.assertEquals(1, projects.size());
+
 	}
 
 	@Test
-	public void testProject() {
-		Filter filter = new Filter(ProjectInfo.class,
-				Sets.newHashSet(new FilterCondition(Condition.GREATER_THAN_OR_EQUALS, false, "2", USERS_QUANTITY))
-		);
-		Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, LAUNCHES_QUANTITY));
-		Page<ProjectInfo> projectsInfo = projectRepository.findProjectInfoByFilter(filter, pageable);
-		Assert.assertNotEquals(projectsInfo.getTotalElements(), 0);
+	public void findProjectInfoByFilter() {
+		final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
+				Condition.EQUALS,
+				false, "default_personal",
+				CRITERIA_PROJECT_NAME
+		), PageRequest.of(0, 10));
+		assertEquals(1, projectInfoPage.getTotalElements());
 	}
 }
