@@ -30,7 +30,8 @@ import static org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ ProjectRepositoryTest.class, ActivityRepositoryTest.class, AttributeRepositoryTest.class, IssueTypeRepositoryTest.class,
 		IssueGroupRepositoryTest.class, UserRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class,
 		TestItemRepositoryTest.class, LogRepositoryTest.class, LaunchRepositoryTest.class, DashboardRepositoryTest.class,
-		UserFilterRepositoryTest.class, UserPreferenceRepositoryTest.class, UserCreationBidRepositoryTest.class })
+		WidgetRepositoryTest.class, UserFilterRepositoryTest.class, UserPreferenceRepositoryTest.class,
+		UserCreationBidRepositoryTest.class })
 public class RepositoryTestSuite {
 
 }
