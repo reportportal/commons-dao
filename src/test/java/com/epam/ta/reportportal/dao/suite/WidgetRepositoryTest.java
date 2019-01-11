@@ -23,8 +23,6 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.dao.WidgetRepository;
 import com.epam.ta.reportportal.entity.widget.Widget;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,19 +36,14 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static org.junit.Assert.*;
 
 /**
+ * Uses script from /db/fill/shareable
+ *
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class WidgetRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH = "/db/fill/shareable";
-
 	@Autowired
 	private WidgetRepository repository;
-
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
 
 	@Test
 	public void findAllByProjectId() {
