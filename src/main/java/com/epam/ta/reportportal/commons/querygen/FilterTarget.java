@@ -500,6 +500,7 @@ public enum FilterTarget {
 
 	DASHBOARD_TARGET(Dashboard.class, Arrays.asList(
 
+			new CriteriaHolder(CRITERIA_ID, DASHBOARD.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),

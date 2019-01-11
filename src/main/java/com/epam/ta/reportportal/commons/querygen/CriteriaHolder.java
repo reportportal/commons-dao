@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.enums.*;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.*;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
@@ -30,6 +31,7 @@ import org.jooq.impl.DSL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -124,10 +126,21 @@ public class CriteriaHolder {
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid positive number", oneValue));
 			castedValue = parsedLong;
 		} else if (Date.class.isAssignableFrom(getDataType())) {
-			/* Verify correct date */
-			BusinessRule.expect(oneValue, FilterRules.dateInMillis())
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue));
-			castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)), ZoneId.systemDefault());
+
+			if (FilterRules.dateInMillis().test(oneValue)) {
+
+				castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)), ZoneId.systemDefault());
+			} else {
+
+				try {
+					Instant instant = Instant.parse(oneValue);
+					castedValue = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+				} catch (DateTimeParseException e) {
+					throw new ReportPortalException(errorType,
+							Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue).get()
+					);
+				}
+			}
 		} else if (boolean.class.equals(getDataType()) || Boolean.class.isAssignableFrom(getDataType())) {
 			castedValue = BooleanUtils.toBoolean(oneValue);
 		} else if (LogLevel.class.isAssignableFrom(getDataType())) {
@@ -184,6 +197,7 @@ public class CriteriaHolder {
 		} else {
 			castedValue = DSL.val(oneValue).cast(getDataType());
 		}
+
 		return castedValue;
 	}
 
