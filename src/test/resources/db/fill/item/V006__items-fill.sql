@@ -58,6 +58,11 @@ BEGIN
       INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
       VALUES ('step', 'value' || cur_step_id, cur_step_id, null, false);
 
+      IF cur_step_id = 3
+      THEN
+        PERFORM logs_init();
+      END IF;
+
       UPDATE test_item
       SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
       where item_id = cur_step_id;
@@ -89,6 +94,37 @@ END
 $BODY$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION logs_init()
+  RETURNS VOID AS
+$BODY$
+DECLARE   stepId      INT = 3;
+  DECLARE logsCounter INT = 1;
+BEGIN
+  WHILE logsCounter < 4 LOOP
+
+    INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment, attachment_thumbnail, content_type)
+    VALUES (now(), 'log', stepId, now() - make_interval(days := 14), 40000, 'attach ' || logsCounter, 'attachThumb' || logsCounter, 'MIME');
+    logsCounter = logsCounter + 1;
+  END LOOP;
+
+  WHILE logsCounter > 0 LOOP
+
+    INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment, attachment_thumbnail, content_type)
+    VALUES (now(),
+            'log',
+            stepId,
+            now(),
+            40000,
+            'attach ' || logsCounter || logsCounter,
+            'attachThumb' || logsCounter || logsCounter,
+            'MIME');
+    logsCounter = logsCounter - 1;
+  END LOOP;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
 SELECT items_init();
 
 DROP FUNCTION IF EXISTS items_init();
+DROP FUNCTION IF EXISTS logs_init();

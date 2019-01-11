@@ -1,5 +1,7 @@
 -- Generates test filters with different access parameters for 2 projects. Each project has has 2 filters (shared nad not shared).
 
+DELETE FROM public.users WHERE id = 3;
+
 INSERT INTO public.users (id, login, password, email, attachment, attachment_thumbnail, role, type, expired, default_project_id, full_name, metadata) VALUES (3, 'jaja_user', '7c381f9d81b0e438af4e7094c6cae203', 'jaja@mail.com', null, null, 'USER', 'INTERNAL', false, null, 'Jaja Juja', '{"metadata": {"last_login": 1546605767372}}');
 
 INSERT INTO public.project_user (user_id, project_id, project_role) VALUES (3, 1, 'MEMBER');
@@ -40,3 +42,5 @@ INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, gra
 INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (4, 2, 1, 1, 16, true, false, false);
 INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (5, 3, 0, 3, 16, true, false, false);
 INSERT INTO public.acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure) VALUES (6, 4, 0, 3, 16, true, false, false);
+
+INSERT INTO public.user_preference(project_id, user_id, filter_id) VALUES (1, 1, 1), (1, 1, 2), (1, 3, 2), (2, 2, 3);
