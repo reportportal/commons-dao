@@ -121,16 +121,16 @@ public class QueryBuilder {
 	/**
 	 * Adds {@link Pageable} conditions
 	 *
-	 * @param p Pageable
+	 * @param pageable Pageable
 	 * @return QueryBuilder
 	 */
-	public QueryBuilder with(Pageable p) {
-		if (p.isPaged()) {
-			query.addLimit(p.getPageSize());
-			long offset = p.getOffset();
-			query.addOffset(offset < 0 ? 0 : offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) offset);
+	public QueryBuilder with(Pageable pageable) {
+		if (pageable.isPaged()) {
+			query.addLimit(pageable.getPageSize());
+			int offset = retrieveOffsetAndApplyBoundaries(pageable);
+			query.addOffset(offset);
 		}
-		return with(p.getSort());
+		return with(pageable.getSort());
 	}
 
 	/**
@@ -228,5 +228,12 @@ public class QueryBuilder {
 
 			return condition;
 		};
+	}
+
+	private int retrieveOffsetAndApplyBoundaries(Pageable pageable) {
+
+		long offset = pageable.getOffset();
+
+		return offset < 0 ? 0 : offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) offset;
 	}
 }
