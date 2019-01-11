@@ -61,7 +61,8 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 *
 	 * @param typeId {@link IntegrationType#id}
 	 */
-	void deleteAllByTypeId(Long typeId);
+	@Query(value = "DELETE FROM integration WHERE type = :typeId", nativeQuery = true)
+	void deleteAllByIntegrationTypeId(@Param("typeId") Long typeId);
 
 	/**
 	 * Retrieve all {@link Integration} with {@link Integration#project} == null by integration type
