@@ -86,7 +86,7 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		integrationRepository.deleteAllByTypeId(integrationType.getId());
+		integrationRepository.deleteAllByIntegrationTypeId(integrationType.getId());
 
 		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(empty()));
 		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
