@@ -1,3 +1,5 @@
+DELETE FROM public.users WHERE id = 3;
+
 INSERT INTO public.users (id, login, password, email, attachment, attachment_thumbnail, role, type, expired, default_project_id, full_name, metadata)
 VALUES (3, 'jaja_user', '7c381f9d81b0e438af4e7094c6cae203', 'jaja@mail.com', null, null, 'USER', 'INTERNAL', false, null, 'Jaja Juja', '{"metadata": {"last_login": 1546605767372}}');
 

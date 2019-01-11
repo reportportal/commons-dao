@@ -23,9 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.dao.UserFilterRepository;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
-import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,15 +41,8 @@ import static org.junit.Assert.*;
  */
 public class UserFilterRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH = "db/fill/filter";
-
 	@Autowired
 	private UserFilterRepository userFilterRepository;
-
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
 
 	@Test
 	public void getSharedFilters() {
@@ -128,7 +119,7 @@ public class UserFilterRepositoryTest extends BaseTest {
 	@Test
 	public void existsByNameAndOwnerAndProjectIdTest() {
 		Assert.assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("Admin Filter", "superadmin", 1L));
-		Assert.assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("Default shared Filter", "default", 2L));
+		Assert.assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("Default Shared Filter", "default", 2L));
 		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "yahoo", 1L));
 		Assert.assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("Admin Filter", "superadmin", 2L));
 	}
