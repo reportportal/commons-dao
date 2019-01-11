@@ -19,6 +19,8 @@ package com.epam.ta.reportportal.dao.suite;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.UserPreferenceRepository;
 import com.epam.ta.reportportal.entity.preference.UserPreference;
+import org.flywaydb.test.annotation.FlywayTest;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,8 +35,15 @@ import static org.junit.Assert.*;
  */
 public class UserPreferenceRepositoryTest extends BaseTest {
 
+	private static final String FILL_SCRIPT_PATH = "/db/fill/user-preference";
+
 	@Autowired
 	private UserPreferenceRepository repository;
+
+	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+	}
 
 	@Test
 	public void findByProjectIdAndUserId() {
