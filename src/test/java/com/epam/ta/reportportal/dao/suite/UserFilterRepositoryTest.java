@@ -37,6 +37,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static org.junit.Assert.*;
 
 /**
+ * Uses script from /db/fill/shareable
+ *
  * @author Ivan Nikitsenka
  */
 public class UserFilterRepositoryTest extends BaseTest {
