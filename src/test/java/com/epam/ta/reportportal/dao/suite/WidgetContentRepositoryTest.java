@@ -26,9 +26,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -60,8 +58,8 @@ import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
  */
 public class WidgetContentRepositoryTest extends BaseTest {
 
-	public static final String FILTER_START_TIME = "launch.start_time";
-	public static final String FILTER_CREATION_DATE = "activity.creation_date";
+	public static final String FILTER_START_TIME = "startTime";
+	public static final String FILTER_CREATION_DATE = "creationDate";
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
@@ -118,7 +116,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
+				new Sort.Order(Sort.Direction.DESC, START_TIME)
+		);
 
 		Sort sort = Sort.by(orderings);
 
@@ -127,8 +127,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Assert.assertEquals(4, chartStatisticsContents.size());
 
 		Assert.assertEquals(chartStatisticsContents.get(0).getValues().get(sortingColumn), String.valueOf(6));
-		Assert.assertEquals(
-				chartStatisticsContents.get(chartStatisticsContents.size() - 1).getValues().get(sortingColumn),
+		Assert.assertEquals(chartStatisticsContents.get(chartStatisticsContents.size() - 1).getValues().get(sortingColumn),
 				String.valueOf(1)
 		);
 	}
@@ -157,8 +156,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)) + Double.parseDouble(res.getValues().get(INVESTIGATED)),
 					0.01
 			);
-			Assert.assertEquals(
-					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
+			Assert.assertEquals(Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
 					BigDecimal.valueOf((double) 100 * stats.get("statistics$defects$to_investigate$total") / sum)
 							.setScale(2, RoundingMode.HALF_UP)
 							.doubleValue(),
@@ -173,7 +171,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME));
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, FILTER_START_TIME),
+				new Sort.Order(Sort.Direction.ASC, "statistics$defects$to_investigate$ti001")
+		);
 
 		Sort sort = Sort.by(orderings);
 
@@ -188,7 +188,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	public void summaryPassStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, FILTER_START_TIME),
+				new Sort.Order(Sort.Direction.ASC, "statistics$defects$to_investigate$ti001")
+		);
 
 		Sort sort = Sort.by(orderings);
 
@@ -205,7 +207,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildDefaultFilter(1L);
 		String executionContentField = "statistics$executions$total";
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, FILTER_START_TIME));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, FILTER_START_TIME),
+				new Sort.Order(Sort.Direction.ASC, "statistics$defects$to_investigate$ti001")
+		);
 
 		Sort sort = Sort.by(orderings);
 
@@ -273,8 +277,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 		Sort sort = Sort.by(orderings);
 
-		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(
-				filter,
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
 				sort,
 				2
@@ -384,8 +387,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 		List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(
-				filter,
+		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
 				contentFields,
 				sort,
 				3
@@ -603,10 +605,10 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				false,
 				String.valueOf(projectId),
 				CRITERIA_PROJECT_ID
-		), new FilterCondition(
-				Condition.EQUALS_ANY,
+		), new FilterCondition(Condition.EQUALS_ANY,
 				false,
-				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()), CRITERIA_STATUS
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+				CRITERIA_STATUS
 		));
 
 		return new Filter(1L, TestItem.class, conditionSet);
@@ -619,15 +621,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	private Filter updateFilterWithLaunchName(Filter filter, String launchName, Long projectId) {
-		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(launchRepository.findLatestByFilter(
-
-				Filter.builder()
-						.withTarget(Launch.class)
-						.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID))
-						.withCondition(new FilterCondition(Condition.EQUALS, false, launchName, CRITERIA_NAME))
-						.build())
-				.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
-				.getId()), CRITERIA_LAUNCH_ID));
+		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(1L), CRITERIA_LAUNCH_ID));
 	}
 
 	private Filter updateFilterWithTestItemTypes(Filter filter, boolean includeMethodsFlag) {
@@ -662,7 +656,12 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$defects$to_investigate$ti001",
 				CRITERIA_END_TIME,
 				CRITERIA_DESCRIPTION,
-				CRITERIA_LAST_MODIFIED, CRITERIA_USER, "number", "name", "startTime", "db/fill/attributes",
+				CRITERIA_LAST_MODIFIED,
+				CRITERIA_USER,
+				"number",
+				"name",
+				"startTime",
+				"attributes",
 				"statistics$executions$total",
 				"statistics$executions$failed",
 				"statistics$executions$passed",
