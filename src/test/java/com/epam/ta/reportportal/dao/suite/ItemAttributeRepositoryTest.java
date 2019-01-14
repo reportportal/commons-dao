@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  */
 public class ItemAttributeRepositoryTest extends BaseTest {
 
-	private static final String FILL_SCRIPT_PATH = "db/fill/item-attributes";
+	private static final String FILL_SCRIPT_PATH = "db/fill/item";
 
 	@Autowired
 	private ItemAttributeRepository repository;
