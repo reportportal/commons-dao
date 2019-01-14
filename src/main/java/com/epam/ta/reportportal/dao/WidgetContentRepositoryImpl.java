@@ -385,15 +385,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						LAUNCH.NUMBER,
 						LAUNCH.START_TIME,
 						field(name(STATISTICS_TABLE, SF_NAME), String.class),
-						round(val(PERCENTAGE_MULTIPLIER).mul(field(name(STATISTICS_TABLE, STATISTICS_COUNTER), Integer.class))
+						when(field(name(STATISTICS_TABLE, SF_NAME)).equalIgnoreCase(EXECUTIONS_TOTAL),
+								field(name(STATISTICS_TABLE, STATISTICS_COUNTER)).cast(Double.class)
+						).otherwise(round(val(PERCENTAGE_MULTIPLIER).mul(field(name(STATISTICS_TABLE, STATISTICS_COUNTER), Integer.class))
 								.div(nullif(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
 										.from(STATISTICS)
 										.join(STATISTICS_FIELD)
 										.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 										.where(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
-										.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)), 0).cast(Double.class)), 2).as(fieldName(STATISTICS_TABLE,
-								STATISTICS_COUNTER
-						))
+										.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)), 0).cast(Double.class)), 2))
+								.as(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
 				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
