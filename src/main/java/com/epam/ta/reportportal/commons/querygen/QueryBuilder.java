@@ -234,6 +234,15 @@ public class QueryBuilder {
 
 		long offset = pageable.getOffset();
 
-		return offset < 0 ? 0 : offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) offset;
+		if (offset < 0) {
+			return 0;
+		}
+
+		if (offset > Integer.MAX_VALUE) {
+			return Integer.MAX_VALUE;
+		} else {
+			return (int) offset;
+		}
+
 	}
 }
