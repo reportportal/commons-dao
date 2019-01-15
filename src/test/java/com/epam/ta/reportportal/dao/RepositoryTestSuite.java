@@ -31,8 +31,7 @@ import static org.junit.runners.Suite.SuiteClasses;
 		IssueGroupRepositoryTest.class, UserRepositoryTest.class, ItemAttributeRepositoryTest.class, IssueEntityRepositoryTest.class,
 		TestItemRepositoryTest.class, LogRepositoryTest.class, LaunchRepositoryTest.class, StatisticsFieldRepositoryTest.class,
 		DashboardRepositoryTest.class, WidgetRepositoryTest.class, UserFilterRepositoryTest.class, UserPreferenceRepositoryTest.class,
-		UserCreationBidRepositoryTest.class, IntegrationTypeRepositoryTest.class,
-		IntegrationRepositoryTest.class })
+		UserCreationBidRepositoryTest.class, IntegrationTypeRepositoryTest.class, IntegrationRepositoryTest.class })
 public class RepositoryTestSuite {
 
 }
