@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,19 +91,17 @@ public class LogLevelTest {
 	}
 
 	@Test
-	public void toCustomLogLevelNamesFail() {
-		thrown.expect(ReportPortalException.class);
+	public void toCustomLogLevelNames() {
 		Collections.shuffle(disallowedNames);
 		final String wrongLogName = disallowedNames.get(0);
-		thrown.expectMessage("Error in Save Log Request. Wrong level = " + wrongLogName);
-		LogLevel.toCustomLogLevel(wrongLogName);
+		Assert.assertEquals(LogLevel.UNKNOWN.toInt(), LogLevel.toCustomLogLevel(wrongLogName));
 	}
 
 	@Test
 	public void toCustomLogLevelCodesFail() {
 
 		final int i = LogLevel.toCustomLogLevel(disallowedCodes.get(0).toString());
-		System.out.println(i);
+		Assert.assertEquals(LogLevel.TRACE.toInt(), i);
 	}
 
 	@Test

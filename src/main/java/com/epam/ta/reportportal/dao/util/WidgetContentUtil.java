@@ -101,7 +101,7 @@ public class WidgetContentUtil {
 				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
-		Optional<Field<Timestamp>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME));
+		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -114,7 +114,7 @@ public class WidgetContentUtil {
 				content.setName(record.get(DSL.field(LAUNCH.NAME.getQualifiedName().toString()), String.class));
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
-				startTimeField.ifPresent(f -> content.setStartTime(record.get(f)));
+				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
 
 			}
 

@@ -17,38 +17,34 @@
 package com.epam.ta.reportportal.dao.suite;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.dao.IssueEntityRepository;
-import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
-import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
+import com.epam.ta.reportportal.dao.StatisticsFieldRepository;
+import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Uses script in db/fill/item
  *
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class IssueEntityRepositoryTest extends BaseTest {
+public class StatisticsFieldRepositoryTest extends BaseTest {
 
 	@Autowired
-	private IssueEntityRepository repository;
+	private StatisticsFieldRepository repository;
 
 	@Test
-	public void findAllByIssueId() {
-		final Long toInvestigateTypeId = 1L;
-		final int expectedSize = 12;
+	public void deleteByName() {
+		final String fieldName = "statistics$executions$failed";
 
-		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(toInvestigateTypeId);
-		assertEquals("Incorrect size of issue entities", expectedSize, issueEntities.size());
-		issueEntities.forEach(it -> assertEquals(
-				"Issue entities should be int 'to investigate' group",
-				TestItemIssueGroup.TO_INVESTIGATE,
-				it.getIssueType().getIssueGroup().getTestItemIssueGroup()
-		));
+		repository.deleteByName(fieldName);
+		final List<StatisticsField> statisticsField = repository.findAll();
 
+		assertEquals(3, statisticsField.size());
+		statisticsField.forEach(it -> assertNotEquals(fieldName, it.getName()));
 	}
 }
