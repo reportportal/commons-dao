@@ -1,14 +1,3 @@
-DELETE FROM bug_tracking_system CASCADE;
-DELETE FROM launch CASCADE;
-DELETE FROM test_item CASCADE;
-DELETE FROM test_item_results CASCADE;
-DELETE FROM issue CASCADE;
-DELETE FROM item_attribute CASCADE;
-DELETE FROM statistics CASCADE;
-DELETE FROM statistics_field CASCADE;
-DELETE FROM ticket CASCADE;
-DELETE FROM issue_ticket CASCADE;
-
 DO $$
 DECLARE   launch1 BIGINT;
   DECLARE launch2 BIGINT;

@@ -106,10 +106,6 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void mostFailedByExecutionCriteria() {
-	}
-
-	@Test
 	public void mostFailedByDefectCriteria() {
 
 		String defect = "statistics$defects$no_defect$nd001";
@@ -131,7 +127,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		List<String> contentFields = buildContentFields();
 
 		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
-				new Sort.Order(Sort.Direction.DESC, START_TIME)
+				new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME)
 		);
 
 		Sort sort = Sort.by(orderings);
@@ -295,18 +291,14 @@ public class WidgetContentRepositoryTest extends BaseTest {
 					.mapToInt(Map.Entry::getValue)
 					.sum();
 
-			currStatistics.keySet()
-					.stream()
-					.filter(key -> key.contains(EXECUTIONS_KEY)).forEach(key -> assertEquals(
+			currStatistics.keySet().stream().filter(key -> key.contains(EXECUTIONS_KEY)).forEach(key -> assertEquals(
 					Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
 							0.01
 					));
-			currStatistics.keySet()
-					.stream()
-					.filter(key -> key.contains(DEFECTS_KEY)).forEach(key -> assertEquals(
+			currStatistics.keySet().stream().filter(key -> key.contains(DEFECTS_KEY)).forEach(key -> assertEquals(
 					Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / defectsSum)
 									.setScale(2, RoundingMode.HALF_UP)
@@ -579,7 +571,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				String.valueOf(projectId),
 				CRITERIA_PROJECT_ID
 		), new FilterCondition(Condition.EQUALS_ANY,
-				false, String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()), CRITERIA_STATUS
+				false,
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+				CRITERIA_STATUS
 		));
 
 		return new Filter(1L, TestItem.class, conditionSet);
