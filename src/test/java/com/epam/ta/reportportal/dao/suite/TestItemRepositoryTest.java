@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -209,7 +209,10 @@ public class TestItemRepositoryTest extends BaseTest {
 		final List<TestItem> items = testItemRepository.selectItemsInIssueByLaunch(launchId, issueType);
 		assertNotNull("Items should not be null", items);
 		assertTrue("Items should not be empty", !items.isEmpty());
-		items.forEach(it -> assertEquals("Incorrect launch id", launchId, it.getLaunch().getId()));
+		items.forEach(it -> {
+			assertEquals("Incorrect launch id", launchId, it.getLaunch().getId());
+			assertEquals("Incorrect item issue", it.getItemResults().getIssue().getIssueType().getId(), Long.valueOf(1L));
+		});
 	}
 
 	@Test

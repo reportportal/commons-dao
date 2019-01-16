@@ -61,7 +61,7 @@ public enum Condition {
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(isNegative, val -> Objects.equals(val, false)).verify(errorType,
-					"Filter is incorrect. '!' can't be used with 'is' - use 'ne' instead"
+					"Filter is incorrect. '!' can't be used with 'eq' - use 'ne' instead"
 			);
 		}
 
