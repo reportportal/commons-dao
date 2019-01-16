@@ -1,3 +1,14 @@
+DELETE FROM bug_tracking_system CASCADE;
+DELETE FROM launch CASCADE;
+DELETE FROM test_item CASCADE;
+DELETE FROM test_item_results CASCADE;
+DELETE FROM issue CASCADE;
+DELETE FROM item_attribute CASCADE;
+DELETE FROM statistics CASCADE;
+DELETE FROM statistics_field CASCADE;
+DELETE FROM ticket CASCADE;
+DELETE FROM issue_ticket CASCADE;
+
 DO $$
 DECLARE   launch1 BIGINT;
   DECLARE launch2 BIGINT;
@@ -126,12 +137,10 @@ BEGIN
   INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
   INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 1);
 
-  ALTER SEQUENCE statistics_s_id_seq
-    RESTART WITH 1;
-  DELETE FROM statistics;
-  ALTER SEQUENCE statistics_field_sf_id_seq
-    RESTART WITH 1;
-  DELETE FROM statistics_field;
+  ALTER SEQUENCE statistics_s_id_seq RESTART WITH 1;
+  DELETE FROM statistics CASCADE;
+  ALTER SEQUENCE statistics_field_sf_id_seq RESTART WITH 1;
+  DELETE FROM statistics_field CASCADE;
 
   INSERT INTO statistics_field (sf_id, name) VALUES (1, 'statistics$executions$total');
   INSERT INTO statistics_field (sf_id, name) VALUES (2, 'statistics$executions$passed');

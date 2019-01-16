@@ -26,9 +26,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -132,7 +130,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
+				new Sort.Order(Sort.Direction.DESC, START_TIME)
+		);
 
 		Sort sort = Sort.by(orderings);
 
@@ -592,15 +592,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	private Filter updateFilterWithLaunchName(Filter filter, String launchName, Long projectId) {
-		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(launchRepository.findLatestByFilter(
-
-				Filter.builder()
-						.withTarget(Launch.class)
-						.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID))
-						.withCondition(new FilterCondition(Condition.EQUALS, false, launchName, CRITERIA_NAME))
-						.build())
-				.orElseThrow(() -> new ReportPortalException(ErrorType.LAUNCH_NOT_FOUND, "No launch with name: " + launchName))
-				.getId()), CRITERIA_LAUNCH_ID));
+		return filter.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(1L), CRITERIA_LAUNCH_ID));
 	}
 
 	private Filter updateFilterWithTestItemTypes(Filter filter, boolean includeMethodsFlag) {
@@ -634,7 +626,13 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$defects$system_issue$si001",
 				"statistics$defects$to_investigate$ti001",
 				CRITERIA_END_TIME,
-				CRITERIA_DESCRIPTION, CRITERIA_LAST_MODIFIED, CRITERIA_USER, "number", "name", "startTime", "attributes",
+				CRITERIA_DESCRIPTION,
+				CRITERIA_LAST_MODIFIED,
+				CRITERIA_USER,
+				"number",
+				"name",
+				"startTime",
+				"attributes",
 				"statistics$executions$total",
 				"statistics$executions$failed",
 				"statistics$executions$passed",
