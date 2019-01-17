@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,6 +109,9 @@ public class ItemAttribute implements Serializable {
 		this.system = system;
 	}
 
+	/*
+	 *	DO NOT REGENERATE EQUALS AND HASHCODE!
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -118,14 +121,28 @@ public class ItemAttribute implements Serializable {
 			return false;
 		}
 		ItemAttribute that = (ItemAttribute) o;
-		return Objects.equals(system, that.system) && Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value,
-				that.value
+
+		return Objects.equals(key, that.key) && Objects.equals(value, that.value) && Objects.equals(system, that.system) && Objects.equals(
+				testItem != null ? "testItem:" + (testItem.getItemId() != null ? testItem.getItemId() : "") : "testItem:",
+				that.testItem != null ? "testItem:" + (that.testItem.getItemId() != null ? that.testItem.getItemId() : "") : "testItem:"
+		) && Objects.equals(
+				launch != null ? "launch:" + (launch.getId() != null ? launch.getId() : "") : "launch:",
+				that.launch != null ? "launch:" + (that.launch.getId() != null ? that.launch.getId() : "") : "launch:"
 		);
 	}
 
+	/*
+	 *	DO NOT REGENERATE EQUALS AND HASHCODE!
+	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, key, value, system);
+		return Objects.hash(
+				key,
+				value,
+				system,
+				testItem != null ? "testItem:" + (testItem.getItemId() != null ? testItem.getItemId() : "") : "testItem:",
+				launch != null ? "launch:" + (launch.getId() != null ? launch.getId() : "") : "launch:"
+		);
 	}
 
 	@Override
@@ -135,6 +152,8 @@ public class ItemAttribute implements Serializable {
 		sb.append(", key='").append(key).append('\'');
 		sb.append(", value='").append(value).append('\'');
 		sb.append(", system=").append(system);
+		sb.append(testItem != null ? ", testItem=" + testItem.getItemId() : "");
+		sb.append(launch != null ? ", launch=" + launch.getId() : "");
 		sb.append('}');
 		return sb.toString();
 	}

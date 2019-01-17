@@ -63,6 +63,15 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Integer countLaunches(Long projectId, String mode, LocalDateTime fromDate);
 
 	/**
+	 * Counts launches with mode for specified project
+	 *
+	 * @param projectId {@link Launch#projectId}
+	 * @param mode      {@link Launch#mode}
+	 * @return Launches count
+	 */
+	Integer countLaunches(Long projectId, String mode);
+
+	/**
 	 * Counts quantity of launches with mode per user for specified project.
 	 *
 	 * @param projectId Project id

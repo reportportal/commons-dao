@@ -29,10 +29,12 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.Result;
 
@@ -74,7 +76,12 @@ public class ResultFetchers {
 					.add(new ProjectAttribute().withProject(project)
 							.withAttribute(ATTRIBUTE_MAPPER.map(record))
 							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
-			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> project.getUsers().add(PROJECT_USER_MAPPER.map(record)));
+			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> {
+
+				Set<ProjectUser> projectUsers = ofNullable(project.getUsers()).orElseGet(Sets::newHashSet);
+				projectUsers.add(PROJECT_USER_MAPPER.map(record));
+				project.setUsers(projectUsers);
+			});
 
 			projects.put(id, project);
 		});
