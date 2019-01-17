@@ -1,4 +1,18 @@
 -- Inserts into activities table 7 records
+ALTER SEQUENCE launch_id_seq RESTART WITH 1;
+DELETE FROM launch CASCADE;
+DELETE FROM item_attribute;
+DELETE FROM bug_tracking_system CASCADE;
+DELETE FROM ticket CASCADE;
+ALTER SEQUENCE test_item_item_id_seq RESTART WITH 1;
+DELETE FROM test_item CASCADE;
+DELETE FROM issue CASCADE;
+ALTER SEQUENCE statistics_s_id_seq RESTART WITH 1;
+DELETE FROM statistics CASCADE;
+ALTER SEQUENCE statistics_field_sf_id_seq RESTART WITH 1;
+DELETE FROM statistics_field CASCADE;
+ALTER SEQUENCE activity_id_seq RESTART WITH 1;
+DELETE FROM activity CASCADE;
 
 INSERT INTO activity(user_id, project_id, entity, action, details, creation_date, object_id) VALUES
 (1, 1, 'DASHBOARD', 'dashboard_update', '{
