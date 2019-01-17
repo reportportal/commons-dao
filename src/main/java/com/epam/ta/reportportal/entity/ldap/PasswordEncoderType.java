@@ -15,6 +15,11 @@
  */
 package com.epam.ta.reportportal.entity.ldap;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+
 /**
  * @author Andrei Varabyeu
  */
@@ -23,6 +28,11 @@ public enum PasswordEncoderType {
 	SHA,
 	LDAP_SHA,
 	MD4,
-	MD5
+	MD5;
+
+	public static Optional<PasswordEncoderType> findByType(String type) {
+
+		return ofNullable(type).flatMap(t -> Arrays.stream(values()).filter(it -> it.name().equalsIgnoreCase(t)).findAny());
+	}
 
 }
