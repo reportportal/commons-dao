@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
-import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
@@ -169,11 +168,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.eq(issueType))
-				.fetch(r -> {
-					TestItem item = TEST_ITEM_RECORD_MAPPER.map(r);
-					item.getItemResults().setIssue(r.into(IssueEntity.class));
-					return item;
-				});
+				.fetch(TEST_ITEM_RECORD_MAPPER::map);
 	}
 
 	@Override
