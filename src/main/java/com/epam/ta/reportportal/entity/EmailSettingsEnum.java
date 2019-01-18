@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,24 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
-
 /**
- * @author Ivan Budaev
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public enum ServerSettingsEnum {
+public enum EmailSettingsEnum {
 
-	ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all");
+	HOST("host"),
+	PORT("port"),
+	PROTOCOL("protocol"),
+	AUTH_ENABLED("authEnabled"),
+	STAR_TLS_ENABLED("starTlsEnabled"),
+	SSL_ENABLED("sslEnabled"),
+	USERNAME("username"),
+	PASSWORD("password"),
+	FROM("from");
 
 	private String attribute;
 
-	ServerSettingsEnum(String attribute) {
+	EmailSettingsEnum(String attribute) {
 		this.attribute = attribute;
 	}
 
@@ -43,7 +49,7 @@ public enum ServerSettingsEnum {
 		return Optional.ofNullable(params.get(this.attribute)).map(o -> (String) o);
 	}
 
-	public static Optional<ServerSettingsEnum> findByAttribute(String attribute) {
+	public static Optional<EmailSettingsEnum> findByAttribute(String attribute) {
 		return Optional.ofNullable(attribute)
 				.flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr)).findAny());
 	}
