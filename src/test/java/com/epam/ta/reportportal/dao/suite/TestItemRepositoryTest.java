@@ -17,6 +17,9 @@
 package com.epam.ta.reportportal.dao.suite;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.commons.querygen.Condition;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.dao.TestItemRepository;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -24,16 +27,20 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
+import org.assertj.core.util.Strings;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_RETRIES;
 import static org.junit.Assert.*;
 
 /**
@@ -233,5 +240,34 @@ public class TestItemRepositoryTest extends BaseTest {
 		final Optional<IssueType> issueType = testItemRepository.selectIssueTypeByLocator(1L, locator);
 		assertTrue("IssueType should be present", issueType.isPresent());
 		assertEquals("Incorrect locator", locator, issueType.get().getLocator());
+	}
+
+	@Test
+	public void retriesFetchingTest() {
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(12L), CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(true), CRITERIA_HAS_RETRIES))
+				.build();
+
+		List<TestItem> items = testItemRepository.findByFilter(filter, PageRequest.of(0, 1)).getContent();
+
+		Assert.assertNotNull(items);
+		Assert.assertEquals(1L, items.size());
+
+		TestItem retriesParent = items.get(0);
+		Set<TestItem> retries = retriesParent.getRetries();
+
+		Assert.assertEquals(3L, retries.size());
+
+		retries.stream().map(TestItem::getLaunch).forEach(Assert::assertNull);
+		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> Assert.assertEquals(retriesParent.getItemId(), retryOf));
+		retries.forEach(retry -> Assert.assertEquals(
+				Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
+				retry.getPath()
+		));
+
+		System.out.println(123);
 	}
 }
