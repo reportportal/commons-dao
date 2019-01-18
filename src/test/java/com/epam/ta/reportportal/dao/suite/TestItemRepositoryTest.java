@@ -267,7 +267,5 @@ public class TestItemRepositoryTest extends BaseTest {
 				Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
 				retry.getPath()
 		));
-
-		System.out.println(123);
 	}
 }
