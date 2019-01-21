@@ -31,11 +31,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -106,24 +103,24 @@ public class DataStoreService {
 		return result;
 	}
 
-	public Optional<BinaryDataMetaInfo> save(Long projectId, File file) {
+	public Optional<BinaryDataMetaInfo> save(Long projectId, InputStream inputStream, String fileName, String contentType) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 
 		try {
-			BinaryData binaryData = getBinaryData(file);
+			BinaryData binaryData = getBinaryData(inputStream, contentType);
 
 			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
-			Path targetPath = Paths.get(commonPath, file.getName());
+			Path targetPath = Paths.get(commonPath, fileName);
 
 			String thumbnailFilePath = null;
 			if (isImage(binaryData.getContentType())) {
 				try {
-					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-".concat(file.getName()));
-					InputStream thumbnailStream = thumbnailator.createThumbnail(new FileInputStream(file));
+					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-".concat(fileName));
+					InputStream thumbnailStream = thumbnailator.createThumbnail(inputStream);
 					thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
 				} catch (IOException e) {
 					// do not propogate. Thumbnail is not so critical
-					LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", file.getName(), e);
+					LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", fileName, e);
 				}
 			}
 			/*
@@ -168,19 +165,15 @@ public class DataStoreService {
 		return binaryData;
 	}
 
-	private BinaryData getBinaryData(File file) throws IOException {
-
+	private BinaryData getBinaryData(InputStream inputStream, String contentType) throws IOException {
 		BinaryData binaryData;
-		final String contentType = Files.probeContentType(file.toPath());
-		final FileInputStream inputStream = new FileInputStream(file);
 
 		boolean isContentTypePresented =
 				!Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
 		if (isContentTypePresented) {
-
-			binaryData = new BinaryData(contentType, file.length(), inputStream);
+			binaryData = new BinaryData(contentType, (long) inputStream.available(), inputStream);
 		} else {
-			binaryData = new BinaryData(contentTypeResolver.detectContentType(inputStream), file.length(), inputStream);
+			binaryData = new BinaryData(contentTypeResolver.detectContentType(inputStream), (long) inputStream.available(), inputStream);
 		}
 		return binaryData;
 	}

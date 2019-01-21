@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.epam.ta.reportportal.entity.ldap;
 
-import java.util.Arrays;
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
+package com.epam.ta.reportportal.entity.jasper;
 
 /**
- * @author Andrei Varabyeu
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public enum PasswordEncoderType {
-	PLAIN,
-	SHA,
-	LDAP_SHA,
-	MD4,
-	MD5;
-
-	public static Optional<PasswordEncoderType> findByType(String type) {
-
-		return ofNullable(type).flatMap(t -> Arrays.stream(values()).filter(it -> it.name().equalsIgnoreCase(t)).findAny());
-	}
-
+public enum ReportType {
+	PROJECT,
+	LAUNCH,
+	USER
 }

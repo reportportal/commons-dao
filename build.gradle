@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ dependencies {
     } else {
         compile('com.github.reportportal:commons:71d4aca')
         compile 'com.github.reportportal:commons-rules:spb2-SNAPSHOT'
-        compile 'com.github.reportportal:commons-model:4116c6c1'
+        compile 'com.github.reportportal:commons-model:9e591ea'
     }
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.3'
@@ -141,7 +141,13 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it,
-                    exclude: ['com/epam/ta/reportportal/jooq/**', 'com/epam/ta/reportportal/config/**'])
+                    exclude: [
+                            'com/epam/ta/reportportal/jooq/**',
+                            'com/epam/ta/reportportal/config/**',
+                            'com/epam/ta/reportportal/commons/accessible',
+                            'com/epam/ta/reportportal/commons/querygen/constant',
+                            'com/epam/ta/reportportal/exception'
+                    ])
         })
     }
 }

@@ -51,7 +51,7 @@ public class ItemAttributeRepositoryTest extends BaseTest {
 
 		final Optional<ItemAttribute> optionalAttr = repository.findByLaunchIdAndKeyAndSystem(launchId, launchKeyName, false);
 		assertTrue("Should be present", optionalAttr.isPresent());
-		assertEquals("Unexpected id", launchId, optionalAttr.get().getId());
+		assertEquals("Unexpected launch id", launchId, optionalAttr.get().getLaunch().getId());
 		assertEquals("Unexpected key", launchKeyName, optionalAttr.get().getKey());
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,15 +121,16 @@ public class QueryBuilder {
 	/**
 	 * Adds {@link Pageable} conditions
 	 *
-	 * @param p Pageable
+	 * @param pageable Pageable
 	 * @return QueryBuilder
 	 */
-	public QueryBuilder with(Pageable p) {
-		if (p.isPaged()) {
-			query.addLimit(p.getPageSize());
-			query.addOffset(Long.valueOf(p.getOffset()).intValue());
+	public QueryBuilder with(Pageable pageable) {
+		if (pageable.isPaged()) {
+			query.addLimit(pageable.getPageSize());
+			int offset = retrieveOffsetAndApplyBoundaries(pageable);
+			query.addOffset(offset);
 		}
-		return with(p.getSort());
+		return with(pageable.getSort());
 	}
 
 	/**
@@ -227,5 +228,21 @@ public class QueryBuilder {
 
 			return condition;
 		};
+	}
+
+	private int retrieveOffsetAndApplyBoundaries(Pageable pageable) {
+
+		long offset = pageable.getOffset();
+
+		if (offset < 0) {
+			return 0;
+		}
+
+		if (offset > Integer.MAX_VALUE) {
+			return Integer.MAX_VALUE;
+		} else {
+			return (int) offset;
+		}
+
 	}
 }

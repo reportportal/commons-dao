@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.dao.IntegrationRepository;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,8 @@ import java.util.Map;
 
 import static com.epam.ta.reportportal.dao.constant.TestConstants.*;
 import static java.util.stream.Collectors.toMap;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -81,18 +82,14 @@ public class IntegrationRepositoryTest extends BaseTest {
 		Assert.assertEquals(2, integrations.size());
 	}
 
-	public void test() {
+	public void shouldDeleteAllByIntegrationTypeId() {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		integrationRepository.deleteAllByTypeId(integrationType.getId());
+		integrationRepository.deleteAllByIntegrationTypeId(integrationType.getId());
 
-		Assert.assertTrue(CollectionUtils.isEmpty(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID,
-				integrationType
-		)));
-		Assert.assertTrue(CollectionUtils.isEmpty(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID,
-				integrationType
-		)));
+		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
 	}
 
 }

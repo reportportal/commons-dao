@@ -41,6 +41,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaCons
 import static org.junit.Assert.*;
 
 /**
+ * Uses script in db/fill/item
+ *
  * @author Ivan Budaev
  */
 public class LogRepositoryTest extends BaseTest {
