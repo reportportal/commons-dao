@@ -601,12 +601,23 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-			String attributePrefix, int limit) {
+			String attributeKey, int limit) {
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
+		SelectQuery<? extends Record> distinctLaunchesTable = QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build();
+
+		Condition cumulativeItemAttributeCondition = ITEM_ATTRIBUTE.ID.in(DSL.select(ITEM_ATTRIBUTE.ID)
+				.from(ITEM_ATTRIBUTE)
+				.where(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.and(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
+				.orderBy(ITEM_ATTRIBUTE.KEY)
+				.limit(limit));
+
+		distinctLaunchesTable.addConditions(cumulativeItemAttributeCondition);
+
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build())
+				.as(distinctLaunchesTable)
 				.select(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
@@ -626,8 +637,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(STATISTICS_FIELD)
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
-						.asTable(STATISTICS_TABLE)).on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class))).groupBy(
-						LAUNCH.ID,
+						.asTable(STATISTICS_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.where(cumulativeItemAttributeCondition)
+				.groupBy(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
 						LAUNCH.START_TIME,
@@ -793,7 +806,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields, Map<String, String> customColumns) {
 
-		List<Condition> conditions = customColumns.values().stream().map(cf -> ITEM_ATTRIBUTE.KEY.like(cf + LIKE_CONDITION_SYMBOL))
+		List<Condition> conditions = customColumns.values()
+				.stream()
+				.map(customColumn -> ofNullable(customColumn).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
 				.collect(Collectors.toList());
 
 		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
