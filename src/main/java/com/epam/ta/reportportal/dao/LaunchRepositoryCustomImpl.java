@@ -184,7 +184,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.join(FILTERED_QUERY)
 				.on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
 				.leftJoin(STATISTICS)
-				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID)).leftJoin(STATISTICS_FIELD)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.leftJoin(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.leftJoin(ITEM_ATTRIBUTE)
 				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID)))).stream().findFirst();
@@ -197,6 +198,16 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				LAUNCH.PROJECT_ID.eq(projectId)
 						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS).and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from))))
+		);
+	}
+
+	@Override
+	public Integer countLaunches(Long projectId, String mode) {
+		return dsl.fetchCount(
+				LAUNCH,
+				LAUNCH.PROJECT_ID.eq(projectId)
+						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
 		);
 	}
 

@@ -33,14 +33,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVE_DIRECTORY_CONFIG_MAPPER;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.LDAP_CONFIG_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
 import static com.epam.ta.reportportal.jooq.tables.JIntegration.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.tables.JIntegrationType.INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
 import static com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Yauheni_Martynau
@@ -72,26 +72,69 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	@Override
 	public Optional<LdapConfig> findLdap() {
 
-		return Optional.ofNullable(buildLdapSelectQuery().fetchAny(LDAP_CONFIG_MAPPER));
+		return ofNullable(buildLdapSelectQuery().fetchAny(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory() {
 
-		return Optional.ofNullable(buildActiveDirectorySelectQuery().fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
+		return ofNullable(buildActiveDirectorySelectQuery().fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<LdapConfig> findLdap(boolean enabled) {
 
-		return Optional.ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchAny(LDAP_CONFIG_MAPPER));
+		return ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchAny(LDAP_CONFIG_MAPPER));
 	}
 
 	@Override
 	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
 
-		return Optional.ofNullable(buildActiveDirectorySelectQuery().where(INTEGRATION.ENABLED.eq(enabled))
+		return ofNullable(buildActiveDirectorySelectQuery().where(INTEGRATION.ENABLED.eq(enabled))
 				.fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
+	}
+
+	@Override
+	public Optional<Integration> findGlobalById(Long integrationId) {
+		return ofNullable(dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION.ID.eq(integrationId.intValue()).and(INTEGRATION.PROJECT_ID.isNull()))
+				.fetchAny(GLOBAL_INTEGRATION_RECORD_MAPPER));
+	}
+
+	@Override
+	public List<Integration> findAllByProjectIdAndInIntegrationTypeIds(Long projectId, List<Long> integrationTypeIds) {
+		return dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION_TYPE.ID.in(integrationTypeIds))
+				.and(INTEGRATION.PROJECT_ID.eq(projectId))
+				.fetch(PROJECT_INTEGRATION_RECORD_MAPPER);
+	}
+
+	@Override
+	public List<Integration> findAllGlobalInIntegrationTypeIds(List<Long> integrationTypeIds) {
+		return dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION_TYPE.ID.in(integrationTypeIds))
+				.and(INTEGRATION.PROJECT_ID.isNull())
+				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
+	}
+
+	@Override
+	public List<Integration> findAllGlobalNotInIntegrationTypeIds(List<Long> integrationTypeIds) {
+		return dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION_TYPE.ID.notIn(integrationTypeIds))
+				.and(INTEGRATION.PROJECT_ID.isNull())
+				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
 	}
 
 	private SelectOnConditionStep<Record> buildLdapSelectQuery() {
