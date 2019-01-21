@@ -68,7 +68,7 @@ CREATE TABLE users (
   role                 VARCHAR NOT NULL,
   type                 VARCHAR NOT NULL,
   expired              BOOLEAN NOT NULL,
-  default_project_id   BIGINT REFERENCES project (id) ON DELETE CASCADE,
+  default_project_id   BIGINT REFERENCES project (id) ON DELETE SET NULL,
   full_name            VARCHAR NOT NULL,
   metadata             JSONB   NULL
 );
@@ -175,7 +175,7 @@ CREATE TABLE defect_form_field_value (
 -------------------------- Integrations -----------------------------
 CREATE TABLE integration_type (
   id            SERIAL CONSTRAINT integration_type_pk PRIMARY KEY,
-  name          VARCHAR(128)               NOT NULL,
+  name          VARCHAR(128)               NOT NULL UNIQUE,
   auth_flow     INTEGRATION_AUTH_FLOW_ENUM,
   creation_date TIMESTAMP DEFAULT now()    NOT NULL,
   group_type    INTEGRATION_GROUP_ENUM     NOT NULL,
@@ -440,7 +440,7 @@ CREATE TABLE statistics (
 );
 
 CREATE TABLE issue_type_project (
-  project_id    BIGINT REFERENCES project,
+  project_id    BIGINT REFERENCES project ON DELETE CASCADE,
   issue_type_id BIGINT REFERENCES issue_type,
   CONSTRAINT issue_type_project_pk PRIMARY KEY (project_id, issue_type_id)
 );
@@ -698,7 +698,7 @@ BEGIN
   WHERE launch_id = newitemlaunchid
     AND unique_id = newitemuniqueid
     AND item_id != newitemid
-  ORDER BY start_time DESC
+  ORDER BY start_time DESC, item_id DESC
   LIMIT 1 INTO itemidwithmaxstarttime, maxstarttime;
 
   IF
@@ -730,8 +730,8 @@ BEGIN
     WHERE item_id = newitemid;
 
     UPDATE test_item ti
-    SET ti.retry_of    = NULL,
-        ti.has_retries = TRUE,
+    SET retry_of    = NULL,
+        has_retries = TRUE,
         path           = ((SELECT path FROM test_item WHERE item_id = ti.parent_id) :: TEXT || '.' || ti.item_id) :: LTREE
     WHERE ti.item_id = itemidwithmaxstarttime;
   END IF;
@@ -792,11 +792,8 @@ BEGIN
       END LOOP;
     END LOOP;
 
-    DELETE FROM statistics WHERE item_id IN (SELECT item_id FROM test_item WHERE retry_of = retry_parents.retry_id);
-
     DELETE FROM issue WHERE issue_id IN (SELECT item_id FROM test_item WHERE retry_of = retry_parents.retry_id);
-
-    UPDATE test_item SET launch_id = NULL WHERE retry_of = retry_parents.retry_id;
+    DELETE FROM statistics WHERE item_id IN (SELECT item_id FROM test_item WHERE retry_of = retry_parents.retry_id);
 
   END LOOP;
   RETURN 0;
@@ -1182,6 +1179,10 @@ DECLARE   cur_id                    BIGINT;
 BEGIN
   cur_launch_id := (SELECT launch_id FROM test_item WHERE test_item.item_id = old.issue_id);
 
+  IF cur_launch_id IS NULL
+  THEN return old;
+  END IF;
+
   defect_field_old_id := (SELECT DISTINCT ON (statistics_field.name) sf_id
                           FROM statistics_field
                           WHERE statistics_field.name =
@@ -1237,6 +1238,10 @@ DECLARE   cur_launch_id         BIGINT;
 BEGIN
 
   cur_launch_id := (SELECT launch_id FROM test_item WHERE item_id = old.result_id);
+
+  IF cur_launch_id IS NULL
+  THEN return old;
+  END IF;
 
   IF exists(SELECT 1 FROM test_item WHERE item_id = old.result_id
                                       AND retry_of IS NOT NULL)

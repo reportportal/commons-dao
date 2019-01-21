@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import org.springframework.data.domain.Sort;
 
@@ -196,9 +197,9 @@ public interface WidgetContentRepository {
 	/**
 	 * Loading the most "flaky" test cases content
 	 *
-	 * @param filter {@link Filter}
+	 * @param filter         {@link Filter}
 	 * @param includeMethods Include or not test item types that have 'METHOD' or 'CLASS'
-	 * @param limit  Results limit
+	 * @param limit          Results limit
 	 * @return List of {@link FlakyCasesTableContent}
 	 */
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit);
@@ -206,15 +207,15 @@ public interface WidgetContentRepository {
 	/**
 	 * Loading cumulative trend statistics grouped by {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
 	 *
-	 * @param filter          {@link Filter}
-	 * @param contentFields   Custom fields for select query building
-	 * @param sort            {@link Sort}
-	 * @param attributePrefix Prefix of the {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
-	 * @param limit           Results limit
+	 * @param filter        {@link Filter}
+	 * @param contentFields Custom fields for select query building
+	 * @param sort          {@link Sort}
+	 * @param attributeKey  {@link ItemAttribute#getKey()} ()}
+	 * @param limit         Attributes limit
 	 * @return Map with {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()} as key and list of {@link CumulativeTrendChartContent} as value
 	 */
 	Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-			String attributePrefix, int limit);
+			String attributeKey, int limit);
 
 	/**
 	 * Loading the product status statistics grouped by one or more {@link Filter}
