@@ -133,8 +133,7 @@ public class ResultFetchers {
 		retriesMap.values()
 				.stream()
 				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toSet()))
-				.entrySet()
-				.forEach(entry -> items.get(entry.getKey()).setRetries(entry.getValue()));
+				.forEach((key, value) -> items.get(key).setRetries(value));
 	};
 
 	/**

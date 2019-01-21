@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.epam.ta.reportportal.entity.ldap;
+
+package com.epam.ta.reportportal.entity.plugin;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-import static java.util.Optional.ofNullable;
-
 /**
- * @author Andrei Varabyeu
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public enum PasswordEncoderType {
-	PLAIN,
-	SHA,
-	LDAP_SHA,
-	MD4,
-	MD5;
+public enum PluginFileExtension {
 
-	public static Optional<PasswordEncoderType> findByType(String type) {
+	JAR(".jar"),
+	ZIP(".zip");
 
-		return ofNullable(type).flatMap(t -> Arrays.stream(values()).filter(it -> it.name().equalsIgnoreCase(t)).findAny());
+	private String extension;
+
+	PluginFileExtension(String extension) {
+		this.extension = extension;
 	}
 
+	public static Optional<PluginFileExtension> findByExtension(String extension) {
+
+		return Arrays.stream(values()).filter(e -> e.getExtension().equals(extension)).findFirst();
+	}
+
+	public String getExtension() {
+		return extension;
+	}
 }

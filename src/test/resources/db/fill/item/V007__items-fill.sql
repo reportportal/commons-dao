@@ -3,11 +3,13 @@
 CREATE OR REPLACE FUNCTION items_init()
   RETURNS VOID AS
 $BODY$
-DECLARE   launchCounter INT = 1;
-  DECLARE cur_suite_id  BIGINT;
-  DECLARE cur_item_id   BIGINT;
-  DECLARE cur_step_id   BIGINT;
-  DECLARE stepCounter   INT = 1;
+DECLARE   launchCounter  INT = 1;
+  DECLARE retriesCounter INT = 1;
+  DECLARE cur_suite_id   BIGINT;
+  DECLARE cur_item_id    BIGINT;
+  DECLARE cur_step_id    BIGINT;
+  DECLARE stepCounter    INT = 1;
+  DECLARE functionResult INT = 0;
 BEGIN
   WHILE launchCounter < 13 LOOP
     INSERT INTO launch (id, uuid, project_id, user_id, name, start_time, number, last_modified, mode, status)
@@ -36,7 +38,8 @@ BEGIN
 
     UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
 
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
+    INSERT INTO test_item_results (result_id, status, duration, end_time)
+    VALUES (cur_suite_id, 'FAILED', 0.35, now());
     --
     INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
     VALUES ('First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchCounter, launchCounter, cur_suite_id);
@@ -45,7 +48,9 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system)
     VALUES ('test', 'value' || cur_item_id, cur_item_id, null, false);
 
-    UPDATE test_item SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) where item_id = cur_item_id;
+    UPDATE test_item
+    SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree)
+    where item_id = cur_item_id;
 
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
 
@@ -67,7 +72,8 @@ BEGIN
       SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
       where item_id = cur_step_id;
 
-      INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
+      INSERT INTO test_item_results (result_id, status, duration, end_time)
+      VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
 
       IF stepCounter = 1
       THEN
@@ -90,6 +96,73 @@ BEGIN
 
     launchCounter = launchCounter + 1;
   END LOOP;
+
+  -- RETRIES --
+
+  INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
+  VALUES ('SUITE ' || launchCounter - 1,
+          'SUITE',
+          now(),
+          'suite with retries',
+          now(),
+          'unqIdSUITE_R' || launchCounter - 1,
+          launchCounter - 1);
+  cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+  UPDATE test_item SET path = cast(cast(cur_suite_id as text) as ltree) where item_id = cur_suite_id;
+
+  INSERT INTO test_item_results (result_id, status, duration, end_time)
+  VALUES (cur_suite_id, 'FAILED', 0.35, now());
+  --
+  INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
+  VALUES ('First test', 'TEST', now(), 'test with retries', now(), 'unqIdTEST_R' || launchCounter - 1, launchCounter - 1, cur_suite_id);
+  cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+  UPDATE test_item
+  SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree)
+  where item_id = cur_item_id;
+
+  INSERT INTO test_item_results (result_id, status, duration, end_time)
+  VALUES (cur_item_id, 'FAILED', 0.35, now());
+
+  INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id, launch_id)
+  VALUES ('Step', 'STEP', now(), 'STEP WITH RETRIES', now(), 'unqIdSTEP_R' || launchCounter - 1, cur_item_id, launchCounter - 1);
+  cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+   UPDATE test_item
+      SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
+      where item_id = cur_step_id;
+
+      INSERT INTO test_item_results (result_id, status, duration, end_time)
+      VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
+
+  WHILE retriesCounter < 4 LOOP
+
+    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, parent_id, launch_id)
+    VALUES ('Step',
+            'STEP',
+            now() - make_interval(secs := retriesCounter),
+            'STEP WITH RETRIES',
+            now() - make_interval(secs := retriesCounter),
+            'unqIdSTEP_R' || launchCounter - 1,
+            cur_item_id,
+            launchCounter - 1);
+    cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+
+    UPDATE test_item
+      SET path = cast(cur_suite_id as text) || cast(cast(cur_item_id as text) as ltree) || cast(cur_step_id as text)
+      where item_id = cur_step_id;
+
+      INSERT INTO test_item_results (result_id, status, duration, end_time)
+      VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
+
+    functionResult := (SELECT handle_retries(cur_step_id));
+
+    retriesCounter = retriesCounter + 1;
+
+  END LOOP;
+
+  functionResult := (SELECT retries_statistics(launchCounter - 1));
 END
 $BODY$
 LANGUAGE plpgsql;
