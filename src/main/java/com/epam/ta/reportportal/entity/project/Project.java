@@ -63,7 +63,7 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
 
 	@Column(name = "creation_date")
