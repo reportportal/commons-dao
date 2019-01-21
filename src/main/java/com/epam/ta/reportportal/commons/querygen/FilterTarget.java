@@ -427,13 +427,17 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME,
+					PROJECT.NAME.getQualifiedName().toString(),
+					DSL.max(PROJECT.NAME).toString(),
+					Long.class
+			),
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), JActivityEntityEnum.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -465,14 +469,20 @@ public enum FilterTarget {
 
 	INTEGRATION_TARGET(Integration.class, Arrays.asList(
 
-			new CriteriaHolder(CRITERIA_PROJECT_ID, INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_INTEGRATION_TYPE,
+			new CriteriaHolder(CRITERIA_PROJECT_ID, INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class), new CriteriaHolder(
+					CRITERIA_INTEGRATION_TYPE,
 					INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(),
+					DSL.arrayAggDistinct(INTEGRATION_TYPE.GROUP_TYPE).toString(),
 					JIntegrationGroupEnum.class
-			),
-			new CriteriaHolder(CRITERIA_NAME, INTEGRATION_TYPE.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class)
-	)) {
+			), new CriteriaHolder(CRITERIA_NAME,
+					INTEGRATION_TYPE.NAME.getQualifiedName().toString(),
+					DSL.max(INTEGRATION_TYPE.NAME).toString(),
+					String.class
+			), new CriteriaHolder(CRITERIA_PROJECT_NAME,
+					PROJECT.NAME.getQualifiedName().toString(),
+					DSL.arrayAgg(PROJECT.NAME).toString(),
+					String.class
+			))) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(INTEGRATION.ID,
@@ -503,9 +513,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, DASHBOARD.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 
 	)) {
 		@Override
@@ -545,9 +567,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, WIDGET.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 
 	)) {
 		@Override
@@ -580,9 +614,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, FILTER.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 
 	)) {
 		@Override
