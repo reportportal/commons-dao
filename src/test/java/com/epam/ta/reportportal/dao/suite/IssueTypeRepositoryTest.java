@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import org.flywaydb.test.annotation.FlywayTest;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,10 +52,9 @@ public class IssueTypeRepositoryTest extends BaseTest {
 	@Test
 	public void findByLocator() {
 		final String customLocator = "pb_ajf7d5d";
-
-		final IssueType customIssueType = repository.findByLocator(customLocator);
-		assertNotNull("Should not be null", customIssueType);
-		assertIssueType(customIssueType);
+		final Optional<IssueType> customIssueType = repository.findByLocator(customLocator);
+		assertThat("IssueType should exist", customIssueType.isPresent(), Matchers.is(true));
+		assertIssueType(customIssueType.get());
 	}
 
 	@Test
