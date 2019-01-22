@@ -44,7 +44,7 @@ public class Activity implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@Column(name = "user_id", nullable = false, precision = 32)
+	@Column(name = "user_id", precision = 32)
 	private Long userId;
 
 	@Column(name = "username")
