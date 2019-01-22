@@ -215,6 +215,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.collect(MoreCollectors.toLinkedMap(r -> r.get(TEST_ITEM.ITEM_ID), r -> r.get(TEST_ITEM.NAME)));
 	}
 
+	@Override
+	public List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId) {
+		return commonTestItemDslSelect().join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(ISSUE.AUTO_ANALYZED.eq(status))
+				.fetch(TEST_ITEM_RECORD_MAPPER::map);
+	}
+
 	/**
 	 * Commons select of an item with it's results and structure
 	 *

@@ -154,4 +154,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return id -> name
 	 */
 	Map<Long, String> selectPathNames(String path);
+
+	/**
+	 * Select items with analyzed status by launch id
+	 *
+	 * @param status   analyzed status
+	 * @param launchId launch id
+	 * @return list of items
+	 */
+	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
 }

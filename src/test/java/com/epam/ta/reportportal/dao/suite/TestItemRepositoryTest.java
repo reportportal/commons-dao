@@ -211,7 +211,14 @@ public class TestItemRepositoryTest extends BaseTest {
 				it.getItemResults().getIssue().getIssueType().getLocator(),
 				Matchers.not(Matchers.equalTo("pb001"))
 		));
+	}
 
+	@Test
+	public void selectByAutoAnalyzedStatus() {
+		List<TestItem> testItems = testItemRepository.selectByAutoAnalyzedStatus(false, 1L);
+		assertNotNull(testItems);
+		assertThat(testItems, Matchers.hasSize(1));
+		testItems.forEach(it -> assertThat(it.getItemResults().getIssue().getAutoAnalyzed(), Matchers.is(false)));
 	}
 
 	@Test
