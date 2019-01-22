@@ -503,10 +503,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, DASHBOARD.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
-
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -545,9 +556,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, WIDGET.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 
 	)) {
 		@Override
@@ -580,10 +603,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, FILTER.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
-
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
