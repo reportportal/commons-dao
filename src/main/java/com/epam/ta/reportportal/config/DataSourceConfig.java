@@ -33,10 +33,10 @@ import java.io.IOException;
 @Configuration
 public class DataSourceConfig {
 
-	@Value("${embedded.data.dir}")
+	@Value("${embedded.dir}")
 	private String dataDir;
 
-	@Value("${embedded.data.dir.clean}")
+	@Value("${embedded.clean}")
 	private boolean clean;
 
 	// A port number of 0 means that the port number is automatically allocated.
