@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.config;
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,15 +32,15 @@ import java.io.IOException;
 @Configuration
 public class DataSourceConfig {
 
-	@Value("${embedded.dir}")
-	private String dataDir;
+	//	@Value("${embedded.dir}")
+	private String dataDir = "/embedded-postgres";
 
-	@Value("#{new Boolean('${embedded.clean}')}")
-	private boolean clean;
+	//	@Value("#{new Boolean('${embedded.clean}')}")
+	private boolean clean = true;
 
 	// A port number of 0 means that the port number is automatically allocated.
-	@Value("#{new Integer('${embedded.port}')}")
-	private int port;
+	//	@Value("#{new Integer('${embedded.port}')}")
+	private int port = 0;
 
 	@Autowired
 	private DataSourceProperties properties;
