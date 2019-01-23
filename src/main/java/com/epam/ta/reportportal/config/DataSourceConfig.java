@@ -36,11 +36,11 @@ public class DataSourceConfig {
 	@Value("${embedded.dir}")
 	private String dataDir;
 
-	@Value("${embedded.clean}")
+	@Value("#{new Boolean('${embedded.clean}')}")
 	private boolean clean;
 
 	// A port number of 0 means that the port number is automatically allocated.
-	@Value("${embedded.port}")
+	@Value("#{new Integer('${embedded.port}')}")
 	private int port;
 
 	@Autowired
