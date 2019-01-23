@@ -42,7 +42,7 @@ public class DataSourceConfig {
 	//	@Value("#{new Integer('${embedded.port}')}")
 	private int port = 0;
 
-	@Autowired
+	@Autowired(required = false)
 	private DataSourceProperties properties;
 
 	@Profile("!unittest")
