@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,13 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
-import com.opentable.db.postgres.embedded.EmbeddedPostgres;
-import org.flywaydb.core.Flyway;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
-
-import javax.sql.DataSource;
-import java.io.IOException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @EnableConfigurationProperties
@@ -38,31 +35,6 @@ import java.io.IOException;
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
 @PropertySource("classpath:test-application.properties")
 public class TestConfiguration {
-
-	@Value("${embedded.data.dir}")
-	private String dataDir;
-
-	@Value("${embedded.data.dir.clean}")
-	private boolean clean;
-
-	// A port number of 0 means that the port number is automatically allocated.
-	@Value("${embedded.port}")
-	private int port;
-
-	@Bean
-	@Profile("test")
-	public DataSource dataSource() throws IOException {
-		final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
-				.setPort(port)
-				.setDataDirectory(System.getProperty("user.dir") + dataDir)
-				.setCleanDataDirectory(clean);
-		return builder.start().getPostgresDatabase();
-	}
-
-	@Bean
-	public Flyway flyway() throws IOException {
-		return Flyway.configure().dataSource(dataSource()).validateOnMigrate(false).load();
-	}
 
 	@Bean
 	public Thumbnailator thumbnailator() {

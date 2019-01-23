@@ -129,8 +129,8 @@ dependencies {
 
     testCompile 'org.testcontainers:postgresql:1.8.0'
 
-    testCompile group: 'com.opentable.components', name: 'otj-pg-embedded', version: '0.12.5'
-    testCompile group: 'org.flywaydb.flyway-test-extensions', name: 'flyway-spring-test', version: '5.2.1'
+    compile group: 'com.opentable.components', name: 'otj-pg-embedded', version: '0.12.5'
+    compile group: 'org.flywaydb.flyway-test-extensions', name: 'flyway-spring-test', version: '5.2.1'
 
 }
 

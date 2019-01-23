@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package com.epam.ta.reportportal.config;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
+import org.flywaydb.core.Flyway;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -48,6 +48,7 @@ import org.springframework.util.Assert;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -62,12 +63,12 @@ import java.util.Properties;
 public class DatabaseConfiguration {
 
 	@Autowired
-	private DataSourceProperties properties;
+	private DataSource dataSource;
 
-	@Profile("!test")
 	@Bean
-	public DataSource dataSource() {
-		return properties.initializeDataSourceBuilder().build();
+	@Profile("unittest")
+	public Flyway flyway() throws IOException {
+		return Flyway.configure().dataSource(dataSource).validateOnMigrate(false).load();
 	}
 
 	@Bean
@@ -79,7 +80,7 @@ public class DatabaseConfiguration {
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan("com.epam.ta.reportportal.commons", "com.epam.ta.reportportal.entity");
-		factory.setDataSource(dataSource());
+		factory.setDataSource(dataSource);
 
 		Properties jpaProperties = new Properties();
 		jpaProperties.setProperty("hibernate.dialect", "com.epam.ta.reportportal.commons.JsonbAwarePostgresDialect");
@@ -100,7 +101,7 @@ public class DatabaseConfiguration {
 
 	@Bean
 	public TransactionAwareDataSourceProxy transactionAwareDataSource() {
-		return new TransactionAwareDataSourceProxy(dataSource());
+		return new TransactionAwareDataSourceProxy(dataSource);
 	}
 
 	@Bean
