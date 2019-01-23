@@ -61,8 +61,9 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 *
 	 * @param typeId {@link IntegrationType#id}
 	 */
+	@Modifying
 	@Query(value = "DELETE FROM integration WHERE type = :typeId", nativeQuery = true)
-	void deleteAllByIntegrationTypeId(@Param("typeId") Long typeId);
+	int deleteAllByIntegrationTypeId(@Param("typeId") Long typeId);
 
 	/**
 	 * Retrieve all {@link Integration} with {@link Integration#project} == null by integration type
@@ -94,7 +95,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param btsProject Bug Tracking System project name
 	 * @return The {@link Integration} wrapped in the {@link Optional}
 	 */
-	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type FROM integration i "
+	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i "
 			+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :btsProject AND i.project_id IS NULL", nativeQuery = true)
 	Optional<Integration> findGlobalBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject);
 
