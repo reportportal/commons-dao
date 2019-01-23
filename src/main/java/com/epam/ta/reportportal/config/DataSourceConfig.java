@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.config;
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,13 +41,15 @@ public class DataSourceConfig {
 	//	@Value("#{new Integer('${embedded.port}')}")
 	private int port = 0;
 
-	@Autowired(required = false)
-	private DataSourceProperties properties;
+	@Bean
+	public DataSourceProperties dataSourceProperties() {
+		return new DataSourceProperties();
+	}
 
 	@Profile("!unittest")
 	@Bean
 	public DataSource dataSource() {
-		return properties.initializeDataSourceBuilder().build();
+		return dataSourceProperties().initializeDataSourceBuilder().build();
 	}
 
 	@Bean
