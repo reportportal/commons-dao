@@ -33,32 +33,24 @@ import java.io.IOException;
 @Configuration
 public class DataSourceConfig {
 
-	@Value("${embedded.datasource.dir}")
-	private String dataDir = "/embedded-postgres";
-
-	@Value("${embedded.datasource.clean}")
-	private Boolean clean = true;
-
-	// A port number of 0 means that the port number is automatically allocated.
-	@Value("${embedded.datasource.port}")
-	private Integer port;
-
-	@Primary
 	@Bean
+	@Profile("!unittest")
 	public DataSourceProperties dataSourceProperties() {
 		return new DataSourceProperties();
 	}
 
 	@Primary
-	@Profile("!unittest")
 	@Bean
+	@Profile("!unittest")
 	public DataSource dataSource() {
 		return dataSourceProperties().initializeDataSourceBuilder().build();
 	}
 
+	@Primary
 	@Bean
 	@Profile("unittest")
-	public DataSource testDataSource() throws IOException {
+	public DataSource testDataSource(@Value("${embedded.datasource.dir}") String dataDir,
+			@Value("${embedded.datasource.clean}") Boolean clean, @Value("${embedded.datasource.port}") Integer port) throws IOException {
 		final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
 				.setPort(port)
 				.setDataDirectory(System.getProperty("user.dir") + dataDir)
