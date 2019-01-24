@@ -33,6 +33,7 @@ import java.io.IOException;
 @Configuration
 public class DataSourceConfig {
 
+	@Primary
 	@Bean
 	@Profile("!unittest")
 	public DataSourceProperties dataSourceProperties() {
