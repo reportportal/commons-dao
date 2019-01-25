@@ -67,6 +67,7 @@ public class Indexes {
     public static final Index FILTER_CONDITION_PK = Indexes0.FILTER_CONDITION_PK;
     public static final Index FILTER_SORT_PK = Indexes0.FILTER_SORT_PK;
     public static final Index INTEGRATION_PK = Indexes0.INTEGRATION_PK;
+    public static final Index INTEGRATION_TYPE_NAME_KEY = Indexes0.INTEGRATION_TYPE_NAME_KEY;
     public static final Index INTEGRATION_TYPE_PK = Indexes0.INTEGRATION_TYPE_PK;
     public static final Index ISSUE_PK = Indexes0.ISSUE_PK;
     public static final Index ISSUE_GROUP_PK = Indexes0.ISSUE_GROUP_PK;
@@ -145,6 +146,7 @@ public class Indexes {
         public static Index FILTER_CONDITION_PK = Internal.createIndex("filter_condition_pk", JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.ID }, true);
         public static Index FILTER_SORT_PK = Internal.createIndex("filter_sort_pk", JFilterSort.FILTER_SORT, new OrderField[] { JFilterSort.FILTER_SORT.ID }, true);
         public static Index INTEGRATION_PK = Internal.createIndex("integration_pk", JIntegration.INTEGRATION, new OrderField[] { JIntegration.INTEGRATION.ID }, true);
+        public static Index INTEGRATION_TYPE_NAME_KEY = Internal.createIndex("integration_type_name_key", JIntegrationType.INTEGRATION_TYPE, new OrderField[] { JIntegrationType.INTEGRATION_TYPE.NAME }, true);
         public static Index INTEGRATION_TYPE_PK = Internal.createIndex("integration_type_pk", JIntegrationType.INTEGRATION_TYPE, new OrderField[] { JIntegrationType.INTEGRATION_TYPE.ID }, true);
         public static Index ISSUE_PK = Internal.createIndex("issue_pk", JIssue.ISSUE, new OrderField[] { JIssue.ISSUE.ISSUE_ID }, true);
         public static Index ISSUE_GROUP_PK = Internal.createIndex("issue_group_pk", JIssueGroup.ISSUE_GROUP, new OrderField[] { JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID }, true);

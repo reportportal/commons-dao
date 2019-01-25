@@ -107,6 +107,7 @@ public class Keys {
     public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = UniqueKeys0.FILTER_SORT_PK;
     public static final UniqueKey<JIntegrationRecord> INTEGRATION_PK = UniqueKeys0.INTEGRATION_PK;
     public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_PK = UniqueKeys0.INTEGRATION_TYPE_PK;
+    public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_NAME_KEY = UniqueKeys0.INTEGRATION_TYPE_NAME_KEY;
     public static final UniqueKey<JIssueRecord> ISSUE_PK = UniqueKeys0.ISSUE_PK;
     public static final UniqueKey<JIssueGroupRecord> ISSUE_GROUP_PK = UniqueKeys0.ISSUE_GROUP_PK;
     public static final UniqueKey<JIssueTicketRecord> ISSUE_TICKET_PK = UniqueKeys0.ISSUE_TICKET_PK;
@@ -288,6 +289,7 @@ public class Keys {
         public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = Internal.createUniqueKey(JFilterSort.FILTER_SORT, "filter_sort_pk", JFilterSort.FILTER_SORT.ID);
         public static final UniqueKey<JIntegrationRecord> INTEGRATION_PK = Internal.createUniqueKey(JIntegration.INTEGRATION, "integration_pk", JIntegration.INTEGRATION.ID);
         public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_PK = Internal.createUniqueKey(JIntegrationType.INTEGRATION_TYPE, "integration_type_pk", JIntegrationType.INTEGRATION_TYPE.ID);
+        public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_NAME_KEY = Internal.createUniqueKey(JIntegrationType.INTEGRATION_TYPE, "integration_type_name_key", JIntegrationType.INTEGRATION_TYPE.NAME);
         public static final UniqueKey<JIssueRecord> ISSUE_PK = Internal.createUniqueKey(JIssue.ISSUE, "issue_pk", JIssue.ISSUE.ISSUE_ID);
         public static final UniqueKey<JIssueGroupRecord> ISSUE_GROUP_PK = Internal.createUniqueKey(JIssueGroup.ISSUE_GROUP, "issue_group_pk", JIssueGroup.ISSUE_GROUP.ISSUE_GROUP_ID);
         public static final UniqueKey<JIssueTicketRecord> ISSUE_TICKET_PK = Internal.createUniqueKey(JIssueTicket.ISSUE_TICKET, "issue_ticket_pk", JIssueTicket.ISSUE_TICKET.ISSUE_ID, JIssueTicket.ISSUE_TICKET.TICKET_ID);
