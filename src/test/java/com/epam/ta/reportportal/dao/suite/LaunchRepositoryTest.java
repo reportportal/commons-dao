@@ -95,8 +95,7 @@ public class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
-		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(
-				1L,
+		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(1L,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
 		assertEquals(12, removedCount);
@@ -105,8 +104,7 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void streamLaunchIdsWithStatusTest() {
 
-		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(
-				1L,
+		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(1L,
 				StatusEnum.IN_PROGRESS,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
@@ -120,8 +118,7 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void streamLaunchIdsTest() {
 
-		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(
-				1L,
+		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(1L,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
 
@@ -133,8 +130,7 @@ public class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByProjectIdAndStartTimeGreaterThanAndMode() {
-		List<Launch> launches = launchRepository.findByProjectIdAndStartTimeGreaterThanAndMode(
-				1L,
+		List<Launch> launches = launchRepository.findByProjectIdAndStartTimeGreaterThanAndMode(1L,
 				LocalDateTime.now().minusMonths(1),
 				LaunchModeEnum.DEFAULT
 		);
@@ -168,7 +164,12 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void getLaunchNamesTest() {
 		final String value = "launch";
-		List<String> launchNames = launchRepository.getLaunchNames(1L, value, LaunchModeEnum.DEFAULT.toString());
+		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(
+				1L,
+				value,
+				LaunchModeEnum.DEFAULT,
+				StatusEnum.CANCELLED
+		);
 
 		Assert.assertNotNull(launchNames);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(launchNames));
@@ -178,8 +179,7 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(
-				new CompositeFilter(buildDefaultFilter(1L), buildDefaultFilter2()),
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(buildDefaultFilter(1L), buildDefaultFilter2()),
 				PageRequest.of(0, 2, sort)
 		);
 		assertNotNull(launches);
@@ -225,11 +225,9 @@ public class LaunchRepositoryTest extends BaseTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				), new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
+		Set<FilterCondition> conditionSet = Sets.newHashSet(
+				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
