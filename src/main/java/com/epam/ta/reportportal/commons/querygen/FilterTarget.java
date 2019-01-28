@@ -576,6 +576,7 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(WIDGET.ID,
 					WIDGET.NAME,
+					WIDGET.WIDGET_TYPE,
 					WIDGET.DESCRIPTION,
 					SHAREABLE_ENTITY.PROJECT_ID,
 					SHAREABLE_ENTITY.SHARED,
