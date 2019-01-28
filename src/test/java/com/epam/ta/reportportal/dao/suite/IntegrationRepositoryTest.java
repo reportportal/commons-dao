@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
-import static com.epam.ta.reportportal.dao.constant.TestConstants.*;
 import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -37,6 +36,12 @@ import static org.hamcrest.Matchers.is;
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class IntegrationRepositoryTest extends BaseTest {
+
+	private static final Long RALLY_INTEGRATION_TYPE_ID = 2L;
+	private static final Long JIRA_INTEGRATION_TYPE_ID = 3L;
+
+	private static final Long RALLY_INTEGRATION_ID = 1L;
+	private static final Long JIRA_INTEGRATION_ID = 2L;
 
 	@Autowired
 	private IntegrationRepository integrationRepository;
@@ -59,13 +64,13 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		Map<Long, Boolean> enabledBefore = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType)
+		Map<Long, Boolean> enabledBefore = integrationRepository.findAllByProjectIdAndType(2L, integrationType)
 				.stream()
 				.collect(toMap(Integration::getId, Integration::isEnabled));
 
 		integrationRepository.updateEnabledStateByIntegrationTypeId(true, integrationType.getId());
 
-		Map<Long, Boolean> enabledAfter = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType)
+		Map<Long, Boolean> enabledAfter = integrationRepository.findAllByProjectIdAndType(2L, integrationType)
 				.stream()
 				.collect(toMap(Integration::getId, Integration::isEnabled));
 
@@ -76,7 +81,7 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
+		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(2L, integrationType);
 
 		Assert.assertNotNull(integrations);
 		Assert.assertEquals(2, integrations.size());
@@ -88,8 +93,8 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		integrationRepository.deleteAllByIntegrationTypeId(integrationType.getId());
 
-		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(empty()));
-		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(2L, integrationType), is(empty()));
+		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(1L, integrationType), is(empty()));
 	}
 
 }
