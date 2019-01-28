@@ -61,7 +61,7 @@ public class TestItemResults implements Serializable {
 	@JoinColumn(name = "item_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@MapsId
 	@JoinColumn(name = "result_id")
 	private TestItem testItem;

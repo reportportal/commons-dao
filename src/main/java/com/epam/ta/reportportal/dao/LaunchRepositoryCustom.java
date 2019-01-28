@@ -44,6 +44,14 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
 
 	/**
+	 * Finds launch ids of project with provided id
+	 *
+	 * @param projectId - Project id
+	 * @return List of ids
+	 */
+	List<Long> findLaunchIdsByProjectId(Long projectId);
+
+	/**
 	 * Finds the last valid launch in project
 	 *
 	 * @param projectId Project id

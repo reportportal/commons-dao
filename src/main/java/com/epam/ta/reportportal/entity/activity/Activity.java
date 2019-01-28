@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,11 @@ public class Activity implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@Column(name = "user_id", nullable = false, precision = 32)
+	@Column(name = "user_id", precision = 32)
 	private Long userId;
+
+	@Column(name = "username")
+	private String username;
 
 	@Column(name = "project_id", nullable = false)
 	private Long projectId;
@@ -82,6 +85,14 @@ public class Activity implements Serializable {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public Long getProjectId() {
