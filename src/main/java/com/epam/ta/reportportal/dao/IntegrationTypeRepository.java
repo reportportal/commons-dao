@@ -47,13 +47,6 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	Optional<IntegrationType> findByNameAndIntegrationGroup(String name, IntegrationGroupEnum groupType);
 
 	/**
-	 * Delete integration type by name
-	 *
-	 * @param name {@link IntegrationType#name}
-	 */
-	void deleteAllByName(String name);
-
-	/**
 	 * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
 	 *
 	 * @param integrationGroup {@link IntegrationType#integrationGroup}

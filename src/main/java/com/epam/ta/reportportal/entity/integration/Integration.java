@@ -45,7 +45,7 @@ public class Integration implements Serializable {
 	@JoinColumn(name = "project_id")
 	private Project project;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne
 	@JoinColumn(name = "type")
 	private IntegrationType type;
 

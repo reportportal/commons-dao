@@ -66,7 +66,7 @@ public class IntegrationType implements Serializable {
 	@Column(name = "details")
 	private IntegrationTypeDetails details;
 
-	@OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "type", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	public Long getId() {

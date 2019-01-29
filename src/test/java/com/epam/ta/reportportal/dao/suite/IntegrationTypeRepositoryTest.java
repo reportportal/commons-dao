@@ -69,11 +69,4 @@ public class IntegrationTypeRepositoryTest extends BaseTest {
 		).isPresent());
 	}
 
-	@Test
-	public void shouldDeleteByName() {
-
-		integrationTypeRepository.deleteAllByName(JIRA_INTEGRATION_TYPE_NAME);
-		Assert.assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
-	}
-
 }
