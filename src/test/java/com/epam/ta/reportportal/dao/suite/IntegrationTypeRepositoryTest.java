@@ -72,7 +72,7 @@ public class IntegrationTypeRepositoryTest extends BaseTest {
 	@Test
 	public void shouldDeleteByName() {
 
-		integrationTypeRepository.deleteByName(JIRA_INTEGRATION_TYPE_NAME);
+		integrationTypeRepository.deleteAllByName(JIRA_INTEGRATION_TYPE_NAME);
 		Assert.assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
 	}
 
