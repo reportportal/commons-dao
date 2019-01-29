@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +53,8 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 *
 	 * @param name {@link IntegrationType#name}
 	 */
-	void deleteByName(String name);
+	@Query(value = "DELETE FROM integration_type WHERE name = :name", nativeQuery = true)
+	void deleteByName(@Param("name") String name);
 
 	/**
 	 * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
