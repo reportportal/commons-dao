@@ -11,8 +11,8 @@ import java.util.Set;
  * @author Ivan Budayeu
  */
 @Entity
-@Table(name = "email_sender_case")
-public class EmailSenderCase implements Serializable {
+@Table(name = "sender_case")
+public class SenderCase implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +40,10 @@ public class EmailSenderCase implements Serializable {
 	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
-	public EmailSenderCase() {
+	public SenderCase() {
 	}
 
-	public EmailSenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchAttributes, SendCase sendCase) {
+	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchAttributes, SendCase sendCase) {
 		this.recipients = recipients;
 		this.launchNames = launchNames;
 		this.launchAttributes = launchAttributes;

@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -64,7 +64,7 @@ public class Project implements Serializable {
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-	private Set<EmailSenderCase> emailCases;
+	private Set<SenderCase> senderCases;
 
 	@Column(name = "creation_date")
 	private Date creationDate;
@@ -151,12 +151,12 @@ public class Project implements Serializable {
 		this.projectAttributes = projectAttributes;
 	}
 
-	public Set<EmailSenderCase> getEmailCases() {
-		return emailCases;
+	public Set<SenderCase> getSenderCases() {
+		return senderCases;
 	}
 
-	public void setEmailCases(Set<EmailSenderCase> emailCases) {
-		this.emailCases = emailCases;
+	public void setSenderCases(Set<SenderCase> senderCases) {
+		this.senderCases = senderCases;
 	}
 
 	public String getOrganization() {

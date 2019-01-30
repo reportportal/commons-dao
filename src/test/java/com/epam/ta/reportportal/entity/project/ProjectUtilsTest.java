@@ -22,7 +22,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
@@ -117,23 +117,23 @@ public class ProjectUtilsTest {
 
 		ProjectUtils.setDefaultEmailConfiguration(project);
 
-		assertThat(project.getEmailCases()).isNotEmpty();
-		assertEquals(1, project.getEmailCases().size());
+		assertThat(project.getSenderCases()).isNotEmpty();
+		assertEquals(1, project.getSenderCases().size());
 
-		project.getEmailCases().forEach(ec -> Assert.assertSame(ec.getProject(), project));
+		project.getSenderCases().forEach(ec -> Assert.assertSame(ec.getProject(), project));
 	}
 
 	@Test
 	public void excludeProjectRecipientsTest() {
 
 		Project project = getProjectWithRecipients();
-		project.setEmailCases(getEmailSenderCasesWithRecipientsOnly());
+		project.setSenderCases(getEmailSenderCasesWithRecipientsOnly());
 
 		Set<User> usersToExclude = project.getUsers().stream().map(ProjectUser::getUser).collect(Collectors.toSet());
 
 		ProjectUtils.excludeProjectRecipients(usersToExclude, project);
 
-		project.getEmailCases().forEach(ec -> {
+		project.getSenderCases().forEach(ec -> {
 			Arrays.stream(userLoginsNotToExclude).forEach(excludedLogin -> Assert.assertTrue(ec.getRecipients().contains(excludedLogin)));
 			Arrays.stream(userEmailsNotToExclude).forEach(excludedLogin -> Assert.assertTrue(ec.getRecipients().contains(excludedLogin)));
 			Arrays.stream(userLoginsToExclude).forEach(excludedLogin -> Assert.assertFalse(ec.getRecipients().contains(excludedLogin)));
@@ -148,11 +148,11 @@ public class ProjectUtilsTest {
 
 		Project project = new Project();
 
-		project.setEmailCases(getEmailSenderCasesWithRecipientsOnly());
+		project.setSenderCases(getEmailSenderCasesWithRecipientsOnly());
 
 		ProjectUtils.updateProjectRecipients(userEmailsNotToExclude[0], newEmail, project);
 
-		project.getEmailCases().forEach(ec -> {
+		project.getSenderCases().forEach(ec -> {
 			Assert.assertTrue(ec.getRecipients().contains(newEmail));
 			Assert.assertFalse(ec.getRecipients().contains(userEmailsNotToExclude[0]));
 		});
@@ -266,12 +266,12 @@ public class ProjectUtilsTest {
 
 	}
 
-	private Set<EmailSenderCase> getEmailSenderCasesWithRecipientsOnly() {
+	private Set<SenderCase> getEmailSenderCasesWithRecipientsOnly() {
 
-		EmailSenderCase firstEmailSenderCase = new EmailSenderCase();
+		SenderCase firstSenderCase = new SenderCase();
 
-		firstEmailSenderCase.setId(1L);
-		firstEmailSenderCase.setRecipients((Stream.of(userLoginsToExclude,
+		firstSenderCase.setId(1L);
+		firstSenderCase.setRecipients((Stream.of(userLoginsToExclude,
 				userEmailsToExclude,
 				userLoginsNotToExclude,
 				userEmailsNotToExclude
@@ -279,10 +279,10 @@ public class ProjectUtilsTest {
 				.flatMap(Arrays::stream)
 				.collect(Collectors.toSet())));
 
-		EmailSenderCase secondEmailSenderCase = new EmailSenderCase();
+		SenderCase secondSenderCase = new SenderCase();
 
-		secondEmailSenderCase.setId(2L);
-		secondEmailSenderCase.setRecipients((Stream.of(userLoginsToExclude,
+		secondSenderCase.setId(2L);
+		secondSenderCase.setRecipients((Stream.of(userLoginsToExclude,
 				userEmailsToExclude,
 				userLoginsNotToExclude,
 				userEmailsNotToExclude
@@ -290,6 +290,6 @@ public class ProjectUtilsTest {
 				.flatMap(Arrays::stream)
 				.collect(Collectors.toSet())));
 
-		return Sets.newHashSet(firstEmailSenderCase, secondEmailSenderCase);
+		return Sets.newHashSet(firstSenderCase, secondSenderCase);
 	}
 }

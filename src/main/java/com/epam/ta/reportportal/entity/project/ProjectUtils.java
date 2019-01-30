@@ -21,7 +21,7 @@ import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -103,13 +103,13 @@ public class ProjectUtils {
 	 * @return project object with default email config
 	 */
 	public static Project setDefaultEmailConfiguration(Project project) {
-		EmailSenderCase defaultEmailSenderCase = new EmailSenderCase(Sets.newHashSet(OWNER),
+		SenderCase defaultSenderCase = new SenderCase(Sets.newHashSet(OWNER),
 				Sets.newHashSet(),
 				Sets.newHashSet(),
 				SendCase.ALWAYS
 		);
-		defaultEmailSenderCase.setProject(project);
-		project.setEmailCases(Sets.newHashSet(defaultEmailSenderCase));
+		defaultSenderCase.setProject(project);
+		project.setSenderCases(Sets.newHashSet(defaultSenderCase));
 		return project;
 	}
 
@@ -126,14 +126,14 @@ public class ProjectUtils {
 					user.getLogin().toLowerCase()
 			)).flatMap(List::stream).collect(toSet());
 			/* Current recipients of specified project */
-			Set<EmailSenderCase> cases = project.getEmailCases();
+			Set<SenderCase> cases = project.getSenderCases();
 			if (null != cases) {
 				cases.stream().forEach(c -> {
 					// saved - list of saved user emails before changes
 					Set<String> saved = c.getRecipients();
 					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(Collectors.toSet()));
 				});
-				project.setEmailCases(cases);
+				project.setSenderCases(cases);
 			}
 		}
 		return project;
@@ -148,7 +148,7 @@ public class ProjectUtils {
 	 * @return
 	 */
 	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
-		Set<EmailSenderCase> cases = project.getEmailCases();
+		Set<SenderCase> cases = project.getSenderCases();
 		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
 			cases.stream().forEach(c -> {
 				Set<String> saved = c.getRecipients();
@@ -159,7 +159,7 @@ public class ProjectUtils {
 					c.getRecipients().add(newEmail);
 				}
 			});
-			project.setEmailCases(cases);
+			project.setSenderCases(cases);
 		}
 		return project;
 	}
