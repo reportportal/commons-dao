@@ -18,7 +18,18 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
+import java.util.Optional;
+
+/**
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
+ */
 public interface IssueTypeRepository extends ReportPortalRepository<IssueType, Long>, IssueTypeRepositoryCustom {
 
-	IssueType findByLocator(String locator);
+	/**
+	 * Find issue type by it's locator
+	 *
+	 * @param locator locator
+	 * @return Optional of IssueType
+	 */
+	Optional<IssueType> findByLocator(String locator);
 }

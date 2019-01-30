@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -235,14 +235,12 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE.getQualifiedName().toString(), JLaunchModeEnum.class),
 			new CriteriaHolder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS.getQualifiedName().toString(), JStatusEnum.class),
-			new CriteriaHolder(
-					CRITERIA_ITEM_ATTRIBUTE_KEY,
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_KEY,
 					ITEM_ATTRIBUTE.KEY.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString(),
 					List.class
 			),
-			new CriteriaHolder(
-					CRITERIA_ITEM_ATTRIBUTE_VALUE,
+			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class
@@ -503,10 +501,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, DASHBOARD.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, DASHBOARD.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
-
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -545,16 +554,31 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, WIDGET.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
+			new CriteriaHolder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(WIDGET.ID,
 					WIDGET.NAME,
+					WIDGET.WIDGET_TYPE,
 					WIDGET.DESCRIPTION,
+					WIDGET.ITEMS_COUNT,
 					SHAREABLE_ENTITY.PROJECT_ID,
 					SHAREABLE_ENTITY.SHARED,
 					SHAREABLE_ENTITY.OWNER
@@ -580,10 +604,21 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, FILTER.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_NAME, FILTER.NAME.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(), Boolean.class),
-			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(), String.class)
-
+			new CriteriaHolder(CRITERIA_SHARED,
+					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
+					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID,
+					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
+					Long.class
+			),
+			new CriteriaHolder(CRITERIA_OWNER,
+					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
+					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
+					String.class
+			)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {

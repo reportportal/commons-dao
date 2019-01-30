@@ -108,7 +108,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	public void mostFailedByDefectCriteria() {
 
-		String defect = "statistics$defects$no_defect$nd001";
+		String defect = "statistics$executions$failed";
 
 		Filter filter = buildDefaultFilter(1L);
 

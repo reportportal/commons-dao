@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,12 +91,12 @@ public class LaunchRepositoryTest extends BaseTest {
 		final List<Long> ids = launchRepository.findLaunchIdsByProjectId(1L);
 		assertNotNull(ids);
 		assertEquals(12, ids.size());
+		assertThat(ids.get(0), Matchers.instanceOf(Long.class));
 	}
 
 	@Test
 	public void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
-		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(
-				1L,
+		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(1L,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
 		assertEquals(12, removedCount);
@@ -105,8 +105,7 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void streamLaunchIdsWithStatusTest() {
 
-		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(
-				1L,
+		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(1L,
 				StatusEnum.IN_PROGRESS,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
@@ -120,8 +119,7 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void streamLaunchIdsTest() {
 
-		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(
-				1L,
+		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(1L,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
 
@@ -133,8 +131,7 @@ public class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByProjectIdAndStartTimeGreaterThanAndMode() {
-		List<Launch> launches = launchRepository.findByProjectIdAndStartTimeGreaterThanAndMode(
-				1L,
+		List<Launch> launches = launchRepository.findByProjectIdAndStartTimeGreaterThanAndMode(1L,
 				LocalDateTime.now().minusMonths(1),
 				LaunchModeEnum.DEFAULT
 		);
@@ -178,8 +175,7 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(
-				new CompositeFilter(buildDefaultFilter(1L), buildDefaultFilter2()),
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(buildDefaultFilter(1L), buildDefaultFilter2()),
 				PageRequest.of(0, 2, sort)
 		);
 		assertNotNull(launches);
@@ -225,11 +221,13 @@ public class LaunchRepositoryTest extends BaseTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(
+						Condition.EQUALS,
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
-				), new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
+				),
+				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);
 	}
