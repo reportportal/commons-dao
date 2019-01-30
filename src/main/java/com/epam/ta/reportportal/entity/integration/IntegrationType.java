@@ -62,6 +62,9 @@ public class IntegrationType implements Serializable {
 	@Column(name = "group_type", nullable = false)
 	private IntegrationGroupEnum integrationGroup;
 
+	@Column(name = "enabled")
+	private boolean enabled;
+
 	@Type(type = "details")
 	@Column(name = "details")
 	private IntegrationTypeDetails details;
@@ -107,6 +110,14 @@ public class IntegrationType implements Serializable {
 
 	public void setIntegrationGroup(IntegrationGroupEnum integrationGroup) {
 		this.integrationGroup = integrationGroup;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public IntegrationTypeDetails getDetails() {
