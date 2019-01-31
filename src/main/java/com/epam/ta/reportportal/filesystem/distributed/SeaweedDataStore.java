@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class SeaweedDataStore implements DataStore {
 			return fileHandleStatus.getFileId();
 		} catch (IOException e) {
 			logger.error("Unable to save log file ", e);
+			e.printStackTrace();
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
 		}
 	}

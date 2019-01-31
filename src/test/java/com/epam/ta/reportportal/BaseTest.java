@@ -19,7 +19,7 @@ package com.epam.ta.reportportal;
 import com.epam.ta.reportportal.config.DataSourceConfig;
 import com.epam.ta.reportportal.config.DatabaseConfiguration;
 import com.epam.ta.reportportal.config.TestConfiguration;
-import org.flywaydb.test.FlywayTestExecutionListener;
+import org.flywaydb.test.junit.FlywayTestExecutionListener;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
