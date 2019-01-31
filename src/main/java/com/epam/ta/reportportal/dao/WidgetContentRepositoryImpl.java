@@ -394,7 +394,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 										.join(STATISTICS_FIELD)
 										.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 										.where(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
-										.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)), 0).cast(Double.class)), 2))
+										.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)
+												.and(STATISTICS_FIELD.NAME.notEqual(EXECUTIONS_TOTAL))), 0).cast(Double.class)), 2))
 								.as(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
 				)
 				.from(LAUNCH)
@@ -547,7 +548,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
 				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
-				.fetch().map(ACTIVITY_MAPPER);
+				.fetch()
+				.map(ACTIVITY_MAPPER);
 
 	}
 
