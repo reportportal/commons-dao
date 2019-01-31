@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -181,7 +182,7 @@ public interface WidgetContentRepository {
 	 * @param limit  Results limit
 	 * @return List of{@link ActivityContent}
 	 */
-	List<ActivityContent> activityStatistics(Filter filter, Sort sort, int limit);
+	List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit);
 
 	/**
 	 * Loading unique bugs content that was produced by Bug Tracking System

@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
+import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import org.jooq.*;
@@ -523,44 +524,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	}
 
-	private SelectSeekStepN<? extends Record> buildLaunchesTableQuery(Collection<Field<?>> selectFields,
-			Collection<String> statisticsFields, Filter filter, Sort sort, int limit, boolean isAttributePresent) {
-
-		SelectOnConditionStep<? extends Record> select = dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.select(selectFields)
-				.from(LAUNCH)
-				.join(LAUNCHES)
-				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
-						.from(STATISTICS)
-						.join(STATISTICS_FIELD)
-						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
-						.asTable(STATISTICS_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.join(USERS)
-				.on(LAUNCH.USER_ID.eq(USERS.ID));
-		if (isAttributePresent) {
-			select = select.leftJoin(ITEM_ATTRIBUTE).on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
-		}
-
-		return select.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
-
-	}
-
 	@Override
-	public List<ActivityContent> activityStatistics(Filter filter, Sort sort, int limit) {
+	public List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit) {
 
 		return dsl.with(ACTIVITIES)
 				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
-				.select(ACTIVITY.ID.as(ID),
-						ACTIVITY.ACTION.as(ACTION_TYPE),
-						ACTIVITY.ENTITY.as(ENTITY),
-						ACTIVITY.CREATION_DATE.as(LAST_MODIFIED),
-						ACTIVITY.PROJECT_ID.as(PROJECT_ID),
-						USERS.LOGIN.as(USER_LOGIN),
-						PROJECT.NAME.as(PROJECT_NAME)
+				.select(ACTIVITY.ID,
+						ACTIVITY.ACTION,
+						ACTIVITY.ENTITY,
+						ACTIVITY.CREATION_DATE,
+						ACTIVITY.DETAILS,
+						ACTIVITY.PROJECT_ID,
+						ACTIVITY.OBJECT_ID,
+						USERS.LOGIN,
+						PROJECT.NAME
 				)
 				.from(ACTIVITY)
 				.join(ACTIVITIES)
@@ -569,7 +546,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ACTIVITY.USER_ID.eq(USERS.ID))
 				.join(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-				.fetchInto(ActivityContent.class);
+				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
+				.fetch().map(ACTIVITY_MAPPER);
 
 	}
 
@@ -722,6 +700,32 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orderBy(fieldName(TEST_ITEM_RESULTS.DURATION).desc())
 				.limit(20)
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
+	}
+
+	private SelectSeekStepN<? extends Record> buildLaunchesTableQuery(Collection<Field<?>> selectFields,
+			Collection<String> statisticsFields, Filter filter, Sort sort, int limit, boolean isAttributePresent) {
+
+		SelectOnConditionStep<? extends Record> select = dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter).with(sort).with(limit).build())
+				.select(selectFields)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
+						.from(STATISTICS)
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
+						.asTable(STATISTICS_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.join(USERS)
+				.on(LAUNCH.USER_ID.eq(USERS.ID));
+		if (isAttributePresent) {
+			select = select.leftJoin(ITEM_ATTRIBUTE).on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
+		}
+
+		return select.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
+
 	}
 
 	private SelectOnConditionStep<? extends Record> buildPassingRateSelect(Filter filter, Sort sort, int limit) {
