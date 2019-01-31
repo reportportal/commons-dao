@@ -17,7 +17,7 @@ INSERT INTO integration (project_id, type, enabled, creation_date)        --inte
 VALUES (1, 3, FALSE, now());
 
 INSERT INTO integration (project_id, type, enabled, params)               --integration id = 3
-VALUES (1, 4, false, '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "Auto_EPM-RPP_Notifications@epam.com", "launchStatsRule": "always"}]}}');
+VALUES (1, 4, false, '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "test@epam.com", "launchStatsRule": "always"}]}}');
 
 INSERT INTO integration (project_id, type, enabled, creation_date)        --integration id = 4
 VALUES (2, 2, FALSE, now());
@@ -26,7 +26,7 @@ INSERT INTO integration (project_id, type, enabled, creation_date)        --inte
 VALUES (2, 3, FALSE, now());
 
 INSERT INTO integration (project_id, type, enabled, params)               --integration id = 6
-VALUES (2, 4, false, '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "Auto_EPM-RPP_Notifications@epam.com", "launchStatsRule": "always"}]}}');
+VALUES (2, 4, false, '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "test@epam.com", "launchStatsRule": "always"}]}}');
 
 INSERT INTO integration (type, enabled, creation_date)                    --integration id = 7 (global email)
 VALUES (4, false, now());
