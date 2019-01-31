@@ -52,7 +52,6 @@ public class SeaweedDataStore implements DataStore {
 			return fileHandleStatus.getFileId();
 		} catch (IOException e) {
 			logger.error("Unable to save log file ", e);
-			e.printStackTrace();
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
 		}
 	}
