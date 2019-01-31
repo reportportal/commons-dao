@@ -142,7 +142,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
-		).from(dsl.with(LAUNCHES).as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).build())
+		)
+				.from(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
@@ -170,7 +172,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.asTable(FLAKY_TABLE_RESULTS))
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
-				).orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID)).limit(20)
+				)
+				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
+				.limit(20)
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
@@ -194,14 +198,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(STATISTICS_FIELD)
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.in(contentFields))
-						.asTable(STATISTICS_TABLE)).on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class))).groupBy(
-						LAUNCH.ID,
+						.asTable(STATISTICS_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.groupBy(LAUNCH.ID,
 						LAUNCH.NUMBER,
 						LAUNCH.START_TIME,
 						LAUNCH.NAME,
 						fieldName(STATISTICS_TABLE, SF_NAME),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER)
-				).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
+				)
+				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
 				.fetch());
 	}
 
@@ -605,7 +611,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
-		SelectQuery<? extends Record> distinctLaunchesTable = QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build();
+		SelectQuery<? extends Record> distinctLaunchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true)
+				.with(sort)
+				.with(LAUNCHES_COUNT)
+				.build();
 
 		Condition cumulativeItemAttributeCondition = ITEM_ATTRIBUTE.ID.in(DSL.select(ITEM_ATTRIBUTE.ID)
 				.from(ITEM_ATTRIBUTE)
@@ -648,7 +657,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ITEM_ATTRIBUTE.VALUE,
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 						fieldName(STATISTICS_TABLE, SF_NAME)
-				).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
+				)
+				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
 				.fetch());
 	}
 
