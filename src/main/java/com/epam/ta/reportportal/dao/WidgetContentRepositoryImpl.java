@@ -546,6 +546,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ACTIVITY.USER_ID.eq(USERS.ID))
 				.join(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
 				.fetch().map(ACTIVITY_MAPPER);
 
 	}
