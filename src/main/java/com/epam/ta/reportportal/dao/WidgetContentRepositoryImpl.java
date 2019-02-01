@@ -174,6 +174,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
+				.having(sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).gt(BigDecimal.ONE))
 				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
 				.limit(20)
 				.fetchInto(FlakyCasesTableContent.class);
@@ -547,7 +548,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
 				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
-				.fetch().map(ACTIVITY_MAPPER);
+				.fetch()
+				.map(ACTIVITY_MAPPER);
 
 	}
 
@@ -814,7 +816,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fields,
 				contentFields,
 				customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(
+				sort,
+				filter.getTarget()
+		));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
