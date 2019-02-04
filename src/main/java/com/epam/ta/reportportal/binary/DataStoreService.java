@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -110,18 +111,18 @@ public class DataStoreService {
 
 		String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
 		Path targetPath = Paths.get(commonPath, fileName);
-
+		final InputStream nonClosingStream = StreamUtils.nonClosing(inputStream);
 
 		/*
 		 * Saves binary data into storage
 		 */
-		String filePath = dataStore.save(targetPath.toString(), inputStream);
+		String filePath = dataStore.save(targetPath.toString(), nonClosingStream);
 
 		String thumbnailFilePath = null;
 		if (isImage(contentType)) {
 			try {
 				Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(fileName));
-				InputStream thumbnailStream = thumbnailator.createThumbnail(inputStream);
+				InputStream thumbnailStream = thumbnailator.createThumbnail(nonClosingStream);
 				thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
 			} catch (IOException e) {
 				// do not propogate. Thumbnail is not so critical
