@@ -76,7 +76,7 @@ public class DataStoreService {
 			String thumbnailFilePath = null;
 			if (isImage(binaryData.getContentType())) {
 				try {
-					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-".concat(file.getName()));
+					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(file.getName()));
 					InputStream thumbnailStream = thumbnailator.createThumbnail(file.getInputStream());
 					thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
 				} catch (IOException e) {
@@ -107,7 +107,7 @@ public class DataStoreService {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 
 		try {
-			BinaryData binaryData = getBinaryData(inputStream, contentType);
+			BinaryData binaryData = new BinaryData(contentType, (long) inputStream.available(), inputStream);
 
 			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
 			Path targetPath = Paths.get(commonPath, fileName);
@@ -115,7 +115,7 @@ public class DataStoreService {
 			String thumbnailFilePath = null;
 			if (isImage(binaryData.getContentType())) {
 				try {
-					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-".concat(fileName));
+					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(fileName));
 					InputStream thumbnailStream = thumbnailator.createThumbnail(inputStream);
 					thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
 				} catch (IOException e) {
