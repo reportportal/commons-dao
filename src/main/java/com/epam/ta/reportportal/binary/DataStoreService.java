@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -104,38 +103,11 @@ public class DataStoreService {
 		return result;
 	}
 
-	public Optional<BinaryDataMetaInfo> save(Long projectId, InputStream inputStream, String fileName, String contentType) {
-		Optional<BinaryDataMetaInfo> result;
-
-		//			BinaryData binaryData = new BinaryData(contentType, (long) inputStream.available(), inputStream);
-
+	public String save(Long projectId, InputStream inputStream, String fileName) {
 		String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
 		Path targetPath = Paths.get(commonPath, fileName);
-		final InputStream nonClosingStream = StreamUtils.nonClosing(inputStream);
 
-		/*
-		 * Saves binary data into storage
-		 */
-		String filePath = dataStore.save(targetPath.toString(), nonClosingStream);
-
-		String thumbnailFilePath = null;
-		if (isImage(contentType)) {
-			try {
-				Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(fileName));
-				InputStream thumbnailStream = thumbnailator.createThumbnail(nonClosingStream);
-				thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
-			} catch (IOException e) {
-				// do not propogate. Thumbnail is not so critical
-				LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", fileName, e);
-			}
-		}
-
-		result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-				.withFileId(dataEncoder.encode(filePath))
-				.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
-				.build());
-
-		return result;
+		return dataEncoder.encode(dataStore.save(targetPath.toString(), inputStream));
 	}
 
 	public InputStream load(String fileId) {
@@ -160,19 +132,6 @@ public class DataStoreService {
 					file.getSize(),
 					file.getInputStream()
 			);
-		}
-		return binaryData;
-	}
-
-	private BinaryData getBinaryData(InputStream inputStream, String contentType) throws IOException {
-		BinaryData binaryData;
-
-		boolean isContentTypePresented =
-				!Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
-		if (isContentTypePresented) {
-			binaryData = new BinaryData(contentType, (long) inputStream.available(), inputStream);
-		} else {
-			binaryData = new BinaryData(contentTypeResolver.detectContentType(inputStream), (long) inputStream.available(), inputStream);
 		}
 		return binaryData;
 	}
