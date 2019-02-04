@@ -104,38 +104,36 @@ public class DataStoreService {
 	}
 
 	public Optional<BinaryDataMetaInfo> save(Long projectId, InputStream inputStream, String fileName, String contentType) {
-		Optional<BinaryDataMetaInfo> result = Optional.empty();
+		Optional<BinaryDataMetaInfo> result;
 
-		try {
-			BinaryData binaryData = new BinaryData(contentType, (long) inputStream.available(), inputStream);
+		//			BinaryData binaryData = new BinaryData(contentType, (long) inputStream.available(), inputStream);
 
-			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
-			Path targetPath = Paths.get(commonPath, fileName);
+		String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
+		Path targetPath = Paths.get(commonPath, fileName);
 
-			String thumbnailFilePath = null;
-			if (isImage(binaryData.getContentType())) {
-				try {
-					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(fileName));
-					InputStream thumbnailStream = thumbnailator.createThumbnail(inputStream);
-					thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
-				} catch (IOException e) {
-					// do not propogate. Thumbnail is not so critical
-					LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", fileName, e);
-				}
+
+		/*
+		 * Saves binary data into storage
+		 */
+		String filePath = dataStore.save(targetPath.toString(), inputStream);
+
+		String thumbnailFilePath = null;
+		if (isImage(contentType)) {
+			try {
+				Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(fileName));
+				InputStream thumbnailStream = thumbnailator.createThumbnail(inputStream);
+				thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
+			} catch (IOException e) {
+				// do not propogate. Thumbnail is not so critical
+				LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", fileName, e);
 			}
-			/*
-			 * Saves binary data into storage
-			 */
-			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
-
-			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(dataEncoder.encode(filePath))
-					.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
-					.build());
-
-		} catch (IOException e) {
-			LOGGER.error("Unable to save binary data", e);
 		}
+
+		result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
+				.withFileId(dataEncoder.encode(filePath))
+				.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
+				.build());
+
 		return result;
 	}
 
