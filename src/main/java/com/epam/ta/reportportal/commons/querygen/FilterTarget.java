@@ -427,7 +427,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), JActivityEntityEnum.class),
+			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),

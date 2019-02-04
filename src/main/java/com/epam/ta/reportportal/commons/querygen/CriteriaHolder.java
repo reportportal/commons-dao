@@ -18,10 +18,12 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
-import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.enums.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.enums.*;
+import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.BooleanUtils;
@@ -170,13 +172,6 @@ public class CriteriaHolder {
 			BusinessRule.expect(launchMode, Optional::isPresent)
 					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
 			castedValue = JLaunchModeEnum.valueOf(launchMode.get().name());
-
-		} else if (JActivityEntityEnum.class.isAssignableFrom(getDataType())) {
-
-			Optional<Activity.ActivityEntityType> activityEntityType = Activity.ActivityEntityType.fromString(oneValue);
-			BusinessRule.expect(activityEntityType, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Activity entity'", oneValue));
-			castedValue = JActivityEntityEnum.valueOf(activityEntityType.get().name());
 
 		} else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
 
