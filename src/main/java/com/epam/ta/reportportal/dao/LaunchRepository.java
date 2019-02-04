@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,5 +55,15 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 
 	@Query(value = "SELECT merge_launch(?1)", nativeQuery = true)
 	void mergeLaunchTestItems(Long launchId);
+
+	/**
+	 * Checks if a {@link Launch} has items with retries.
+	 *
+	 * @param launchId Current {@link Launch#id}
+	 * @return True if has
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM launch JOIN test_item ON launch.id = test_item.launch_id "
+			+ "WHERE launch.id = :launchId AND test_item.has_retries LIMIT 1)", nativeQuery = true)
+	boolean hasRetries(@Param("launchId") Long launchId);
 
 }

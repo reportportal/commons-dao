@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,4 +109,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") String status);
+
+	/**
+	 * Checks if a {@link TestItem} has retries.
+	 *
+	 * @param itemId Current {@link TestItem#itemId}
+	 * @return True if has
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item WHERE test_item.retry_of = :itemId LIMIT 1)", nativeQuery = true)
+	boolean hasRetries(@Param("itemId") Long itemId);
 }

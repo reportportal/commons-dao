@@ -320,6 +320,7 @@ CREATE TABLE launch (
   last_modified TIMESTAMP DEFAULT now()                                             NOT NULL,
   mode          LAUNCH_MODE_ENUM                                                    NOT NULL,
   status        STATUS_ENUM                                                         NOT NULL,
+  status        BOOLEAN                                                             NOT NULL DEFAULT FALSE,
   CONSTRAINT unq_name_number UNIQUE (name, number, project_id, uuid)
 );
 

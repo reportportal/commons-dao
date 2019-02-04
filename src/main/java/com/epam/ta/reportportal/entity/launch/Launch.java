@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,9 @@ public class Launch implements Serializable {
 
 	@Column(name = "number", nullable = false, precision = 32)
 	private Long number;
+
+	@Column(name = "has_retries")
+	private boolean hasRetries;
 
 	@Column(name = "last_modified", nullable = false)
 	@LastModifiedDate
@@ -198,6 +201,14 @@ public class Launch implements Serializable {
 		this.number = number;
 	}
 
+	public boolean isHasRetries() {
+		return hasRetries;
+	}
+
+	public void setHasRetries(boolean hasRetries) {
+		this.hasRetries = hasRetries;
+	}
+
 	public LocalDateTime getLastModified() {
 		return lastModified;
 	}
@@ -234,19 +245,19 @@ public class Launch implements Serializable {
 		return Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId) && Objects.equals(name, launch.name)
 				&& Objects.equals(description, launch.description) && Objects.equals(startTime, launch.startTime) && Objects.equals(endTime,
 				launch.endTime
-		) && Objects.equals(number, launch.number) && mode == launch.mode && status == launch.status;
+		) && Objects.equals(number, launch.number) && hasRetries == launch.isHasRetries() && mode == launch.mode && status == launch.status;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, mode, status);
+		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries, mode, status);
 	}
 
 	@Override
 	public String toString() {
 		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", user=" + user + ", name='" + name + '\''
 				+ ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
-				+ ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status + ", tags=" + attributes + ", statistics="
-				+ statistics + '}';
+				+ ", hasRetries=" + hasRetries + ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status
+				+ ", attributes=" + attributes + ", statistics=" + statistics + '}';
 	}
 }
