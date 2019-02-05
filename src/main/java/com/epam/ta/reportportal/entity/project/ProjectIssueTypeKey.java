@@ -16,39 +16,53 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.item.issue.IssueType;
-
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
  */
+@Embeddable
 public class ProjectIssueTypeKey implements Serializable {
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "project_id", nullable = false, insertable = false, updatable = false)
-	private Project project;
+	@Column(name = "user_id")
+	private Long userId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "issue_type_id", nullable = false, insertable = false, updatable = false)
-	private IssueType issueType;
+	@Column(name = "project_id")
+	private Long projectId;
 
-	public Project getProject() {
-		return project;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
-	public IssueType getIssueType() {
-		return issueType;
+	public Long getProjectId() {
+		return projectId;
 	}
 
-	public void setIssueType(IssueType issueType) {
-		this.issueType = issueType;
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ProjectIssueTypeKey that = (ProjectIssueTypeKey) o;
+		return Objects.equals(userId, that.userId) && Objects.equals(projectId, that.projectId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(userId, projectId);
 	}
 }
