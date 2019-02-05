@@ -27,18 +27,18 @@ import java.util.Objects;
 @Embeddable
 public class ProjectIssueTypeKey implements Serializable {
 
-	@Column(name = "user_id")
-	private Long userId;
+	@Column(name = "issue_type_id")
+	private Long issueTypeId;
 
 	@Column(name = "project_id")
 	private Long projectId;
 
-	public Long getUserId() {
-		return userId;
+	public Long getIssueTypeId() {
+		return issueTypeId;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setIssueTypeId(Long issueTypeId) {
+		this.issueTypeId = issueTypeId;
 	}
 
 	public Long getProjectId() {
@@ -58,11 +58,11 @@ public class ProjectIssueTypeKey implements Serializable {
 			return false;
 		}
 		ProjectIssueTypeKey that = (ProjectIssueTypeKey) o;
-		return Objects.equals(userId, that.userId) && Objects.equals(projectId, that.projectId);
+		return Objects.equals(issueTypeId, that.issueTypeId) && Objects.equals(projectId, that.projectId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(userId, projectId);
+		return Objects.hash(issueTypeId, projectId);
 	}
 }
