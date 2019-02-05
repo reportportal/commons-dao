@@ -33,6 +33,9 @@ public class ProjectIssueTypeKey implements Serializable {
 	@Column(name = "project_id")
 	private Long projectId;
 
+	public ProjectIssueTypeKey() {
+	}
+
 	public Long getIssueTypeId() {
 		return issueTypeId;
 	}
