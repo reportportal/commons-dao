@@ -34,6 +34,7 @@ public class ProjectIssueType implements Serializable {
 
 	@MapsId("typeId")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "issue_type_id")
 	private IssueType issueType;
 
 	@MapsId("projectId")
