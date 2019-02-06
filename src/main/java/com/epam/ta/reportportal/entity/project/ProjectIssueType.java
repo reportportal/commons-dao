@@ -30,21 +30,21 @@ import java.util.Objects;
 public class ProjectIssueType implements Serializable {
 
 	@EmbeddedId
-	private ProjectIssueTypeKey id = new ProjectIssueTypeKey();
+	private ProjectIssueTypeId id = new ProjectIssueTypeId();
 
-	@MapsId("issueTypeId")
-	@ManyToOne
+	@MapsId("typeId")
+	@ManyToOne(fetch = FetchType.LAZY)
 	private IssueType issueType;
 
 	@MapsId("projectId")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Project project;
 
-	public ProjectIssueTypeKey getId() {
+	public ProjectIssueTypeId getId() {
 		return id;
 	}
 
-	public void setId(ProjectIssueTypeKey id) {
+	public void setId(ProjectIssueTypeId id) {
 		this.id = id;
 	}
 
@@ -64,7 +64,7 @@ public class ProjectIssueType implements Serializable {
 		this.project = project;
 	}
 
-	public ProjectIssueType withProjectUserId(ProjectIssueTypeKey id) {
+	public ProjectIssueType withProjectUserId(ProjectIssueTypeId id) {
 		this.id = id;
 		return this;
 	}

@@ -25,23 +25,23 @@ import java.util.Objects;
  * @author Pavel Bortnik
  */
 @Embeddable
-public class ProjectIssueTypeKey implements Serializable {
+public class ProjectIssueTypeId implements Serializable {
 
 	@Column(name = "issue_type_id")
-	private Long issueTypeId;
+	private Long typeId;
 
 	@Column(name = "project_id")
 	private Long projectId;
 
-	public ProjectIssueTypeKey() {
+	public ProjectIssueTypeId() {
 	}
 
-	public Long getIssueTypeId() {
-		return issueTypeId;
+	public Long getTypeId() {
+		return typeId;
 	}
 
-	public void setIssueTypeId(Long issueTypeId) {
-		this.issueTypeId = issueTypeId;
+	public void setTypeId(Long typeId) {
+		this.typeId = typeId;
 	}
 
 	public Long getProjectId() {
@@ -60,12 +60,12 @@ public class ProjectIssueTypeKey implements Serializable {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		ProjectIssueTypeKey that = (ProjectIssueTypeKey) o;
-		return Objects.equals(issueTypeId, that.issueTypeId) && Objects.equals(projectId, that.projectId);
+		ProjectIssueTypeId that = (ProjectIssueTypeId) o;
+		return Objects.equals(typeId, that.typeId) && Objects.equals(projectId, that.projectId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(issueTypeId, projectId);
+		return Objects.hash(typeId, projectId);
 	}
 }
