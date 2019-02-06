@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class Project implements Serializable {
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
+	private Set<ProjectIssueType> projectIssueTypes;
 
 	@Column(name = "creation_date")
 	private Date creationDate;
