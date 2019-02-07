@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,9 @@ public class SeaweedDataStoreTest {
 	private SeaweedDataStore dataStore;
 	private static final Integer port = getFreePort();
 	@ClassRule
-	public static GenericContainer seaweedMaster = new GenericContainer("chrislusf/seaweedfs:latest").withCommand(
-			String.format("server -master.port=%d", port)).withCreateContainerCmdModifier(new Consumer<CreateContainerCmd>() {
+	public static GenericContainer seaweedMaster = new GenericContainer("chrislusf/seaweedfs:latest").withCommand(String.format("server -master.port=%d",
+			port
+	)).withCreateContainerCmdModifier(new Consumer<CreateContainerCmd>() {
 		@Override
 		public void accept(CreateContainerCmd cmd) {
 			cmd.withHostName("localhost");
@@ -70,7 +71,7 @@ public class SeaweedDataStoreTest {
 	@Test
 	public void save_load_delete() throws Exception {
 
-		String savedFilePath = dataStore.save(TEST_FILE, new ByteArrayInputStream("test text".getBytes(Charsets.UTF_8)));
+		String savedFilePath = dataStore.save(TEST_FILE, new ByteArrayInputStream("test text" .getBytes(Charsets.UTF_8)));
 
 		//		and: load it back
 		InputStream loaded = dataStore.load(savedFilePath);
