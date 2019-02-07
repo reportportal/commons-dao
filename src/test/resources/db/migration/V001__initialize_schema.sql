@@ -8,8 +8,6 @@ CREATE TYPE AUTH_TYPE_ENUM AS ENUM ('OAUTH', 'NTLM', 'APIKEY', 'BASIC');
 
 CREATE TYPE ACCESS_TOKEN_TYPE_ENUM AS ENUM ('OAUTH', 'NTLM', 'APIKEY', 'BASIC');
 
-CREATE TYPE ACTIVITY_ENTITY_ENUM AS ENUM ('LAUNCH', 'ITEM', 'DASHBOARD', 'DEFECT_TYPE', 'EMAIL_CONFIG', 'FILTER', 'IMPORT', 'INTEGRATION', 'ITEM_ISSUE', 'PROJECT', 'SHARING', 'TICKET', 'USER', 'WIDGET');
-
 CREATE TYPE TEST_ITEM_TYPE_ENUM AS ENUM ('SUITE', 'STORY', 'TEST', 'SCENARIO', 'STEP', 'BEFORE_CLASS', 'BEFORE_GROUPS', 'BEFORE_METHOD',
   'BEFORE_SUITE', 'BEFORE_TEST', 'AFTER_CLASS', 'AFTER_GROUPS', 'AFTER_METHOD', 'AFTER_SUITE', 'AFTER_TEST');
 
@@ -390,7 +388,7 @@ CREATE TABLE activity (
   user_id       BIGINT REFERENCES users (id) ON DELETE CASCADE,
   username      VARCHAR,
   project_id    BIGINT REFERENCES project (id) ON DELETE CASCADE         NOT NULL,
-  entity        ACTIVITY_ENTITY_ENUM                                     NOT NULL,
+  entity        VARCHAR(128)                                             NOT NULL,
   action        VARCHAR(128)                                             NOT NULL,
   details       JSONB                                                    NULL,
   creation_date TIMESTAMP                                                NOT NULL,
