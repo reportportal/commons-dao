@@ -77,11 +77,11 @@ public class TestItem implements Serializable {
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
-	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Fetch(FetchMode.JOIN)
 	private Set<ItemAttribute> attributes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "testItem", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Log> logs = Sets.newHashSet();
 
 	@Column(name = "path", nullable = false, columnDefinition = "ltree")

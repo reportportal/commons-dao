@@ -54,7 +54,7 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
-	@OneToMany(mappedBy = "issueType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "issueType", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	public IssueType() {

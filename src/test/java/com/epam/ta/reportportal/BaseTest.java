@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal;
 
+import com.epam.ta.reportportal.config.DataSourceConfig;
+import com.epam.ta.reportportal.config.DatabaseConfiguration;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.junit.runner.RunWith;
@@ -29,9 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Pavel Bortnik
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
+@ContextConfiguration(classes = { DataSourceConfig.class, DatabaseConfiguration.class, TestConfiguration.class })
 @Transactional
-@ActiveProfiles("test")
+@ActiveProfiles("unittest")
 @TestExecutionListeners(listeners = { FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class BaseTest {
 

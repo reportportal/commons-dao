@@ -228,7 +228,7 @@ public class ResultFetchers {
 	};
 
 	public static final Function<Result<? extends Record>, List<UserFilter>> USER_FILTER_FETCHER = result -> {
-		Map<Long, UserFilter> userFilterMap = new HashMap<>();
+		Map<Long, UserFilter> userFilterMap = Maps.newLinkedHashMap();
 		result.forEach(r -> {
 			Long userFilterID = r.get(ID, Long.class);
 			UserFilter userFilter;
@@ -250,7 +250,7 @@ public class ResultFetchers {
 	};
 
 	public static final Function<Result<? extends Record>, List<Dashboard>> DASHBOARD_FETCHER = result -> {
-		Map<Long, Dashboard> dashboardMap = new HashMap<>();
+		Map<Long, Dashboard> dashboardMap = Maps.newLinkedHashMap();
 		result.forEach(r -> {
 			Long dashboardId = r.get(ID, Long.class);
 			Dashboard dashboard;
@@ -271,7 +271,7 @@ public class ResultFetchers {
 	};
 
 	public static final Function<Result<? extends Record>, List<Widget>> WIDGET_FETCHER = result -> {
-		Map<Long, Widget> widgetMap = new HashMap<>();
+		Map<Long, Widget> widgetMap = Maps.newLinkedHashMap();
 		result.forEach(r -> {
 			Long widgetId = r.get(ID, Long.class);
 			Widget widget;

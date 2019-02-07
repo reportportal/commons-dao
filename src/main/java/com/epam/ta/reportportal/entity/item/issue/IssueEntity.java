@@ -49,7 +49,7 @@ public class IssueEntity implements Serializable {
 	@Column(name = "ignore_analyzer")
 	private boolean ignoreAnalyzer;
 
-	@OneToOne(mappedBy = "issue")
+	@OneToOne(mappedBy = "issue", fetch = FetchType.LAZY)
 	private TestItemResults testItemResults;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

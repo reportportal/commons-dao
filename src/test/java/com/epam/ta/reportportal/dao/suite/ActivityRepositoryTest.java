@@ -44,7 +44,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
-import static com.epam.ta.reportportal.dao.constant.TestConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
@@ -140,10 +139,9 @@ public class ActivityRepositoryTest extends BaseTest {
 		Duration period = Duration.ofDays(10);
 		LocalDateTime bound = LocalDateTime.now().minus(period);
 
-		repository.deleteModifiedLaterAgo(SUPERADMIN_PERSONAL_PROJECT_ID, period);
+		repository.deleteModifiedLaterAgo(1L, period);
 		List<Activity> all = repository.findAll();
-		all.stream()
-				.filter(a -> a.getProjectId().equals(SUPERADMIN_PERSONAL_PROJECT_ID))
+		all.stream().filter(a -> a.getProjectId().equals(1L))
 				.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
@@ -183,13 +181,12 @@ public class ActivityRepositoryTest extends BaseTest {
 	public void findByProjectId() {
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
-				false,
-				String.valueOf(SUPERADMIN_PERSONAL_PROJECT_ID),
+				false, String.valueOf(1),
 				CRITERIA_PROJECT_ID
 		));
 		assertNotNull(activities);
 		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertEquals(SUPERADMIN_PERSONAL_PROJECT_ID, it.getProjectId()));
+		activities.forEach(it -> assertEquals(1L, (long) it.getProjectId()));
 	}
 
 	@Test
@@ -224,13 +221,12 @@ public class ActivityRepositoryTest extends BaseTest {
 	public void findByUserLogin() {
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
-				false,
-				SUPERADMIN_LOGIN,
+				false, "superadmin",
 				CRITERIA_USER
 		));
 		assertNotNull(activities);
 		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertEquals(SUPERADMIN_ID, it.getUserId()));
+		activities.forEach(it -> assertEquals(1L, (long) it.getUserId()));
 	}
 
 	@Test
@@ -252,8 +248,8 @@ public class ActivityRepositoryTest extends BaseTest {
 		activity.setAction("create_defect");
 		activity.setObjectId(11L);
 		activity.setCreatedAt(LocalDateTime.now());
-		activity.setProjectId(SUPERADMIN_PERSONAL_PROJECT_ID);
-		activity.setUserId(SUPERADMIN_ID);
+		activity.setProjectId(1L);
+		activity.setUserId(1L);
 		activity.setDetails(new ActivityDetails("test defect name"));
 		return activity;
 	}

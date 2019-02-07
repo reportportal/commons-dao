@@ -19,7 +19,15 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
+import com.epam.ta.reportportal.entity.activity.Activity;
+import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ActivityResource;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
@@ -29,19 +37,25 @@ import org.jooq.RecordMapper;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -50,6 +64,14 @@ import static java.util.Optional.ofNullable;
  * @author Pavel Bortnik
  */
 public class WidgetContentUtil {
+
+	private static ObjectMapper objectMapper;
+
+	static {
+		objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
 	private WidgetContentUtil() {
 		//static only
@@ -128,6 +150,30 @@ public class WidgetContentUtil {
 		});
 
 		return new ArrayList<>(resultMap.values());
+
+	};
+
+	public static final RecordMapper<? super Record, ActivityResource> ACTIVITY_MAPPER = r -> {
+
+		ActivityResource activityResource = new ActivityResource();
+		activityResource.setId(r.get(ACTIVITY.ID));
+		activityResource.setUser(r.get(USERS.LOGIN));
+		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
+		activityResource.setProjectName(r.get(PROJECT.NAME));
+		activityResource.setActionType(r.get(ACTIVITY.ACTION));
+		activityResource.setObjectType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class).getValue());
+		activityResource.setLastModified(TO_DATE.apply(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class)));
+		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
+		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
+		ofNullable(detailsJson).ifPresent(s -> {
+			try {
+				ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
+				activityResource.setDetails(details);
+			} catch (IOException e) {
+				throw new ReportPortalException(ErrorType.OBJECT_RETRIEVAL_ERROR, "Activity details");
+			}
+		});
+		return activityResource;
 
 	};
 

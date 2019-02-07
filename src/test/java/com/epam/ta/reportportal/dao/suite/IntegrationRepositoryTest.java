@@ -47,6 +47,12 @@ public class IntegrationRepositoryTest extends BaseTest {
 	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 4L;
 	private static final long GLOBAL_BTS_INTEGRATIONS_COUNT = 2L;
 
+	private static final Long RALLY_INTEGRATION_TYPE_ID = 2L;
+	private static final Long JIRA_INTEGRATION_TYPE_ID = 3L;
+
+	private static final Long RALLY_INTEGRATION_ID = 1L;
+	private static final Long JIRA_INTEGRATION_ID = 2L;
+
 	@Autowired
 	private IntegrationRepository integrationRepository;
 

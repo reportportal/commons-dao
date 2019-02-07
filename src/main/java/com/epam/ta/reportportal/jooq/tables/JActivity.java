@@ -7,7 +7,6 @@ package com.epam.ta.reportportal.jooq.tables;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
-import com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
 
 import java.sql.Timestamp;
@@ -43,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = 1159435428;
+    private static final long serialVersionUID = -2012198392;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -66,7 +65,12 @@ public class JActivity extends TableImpl<JActivityRecord> {
     /**
      * The column <code>public.activity.user_id</code>.
      */
-    public final TableField<JActivityRecord, Long> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JActivityRecord, Long> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.activity.username</code>.
+     */
+    public final TableField<JActivityRecord, String> USERNAME = createField("username", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.activity.project_id</code>.
@@ -76,7 +80,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
     /**
      * The column <code>public.activity.entity</code>.
      */
-    public final TableField<JActivityRecord, JActivityEntityEnum> ENTITY = createField("entity", org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JActivityEntityEnum.class), this, "");
+    public final TableField<JActivityRecord, String> ENTITY = createField("entity", org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
      * The column <code>public.activity.action</code>.

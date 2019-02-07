@@ -87,14 +87,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses);
 
 	/**
-	 * Select ids of items that has different issue from provided for
+	 * Select items that has different issue from provided for
 	 * specified launch.
 	 *
 	 * @param launchId  Launch
 	 * @param issueType Issue type locator
-	 * @return List of item ids
+	 * @return List of items
 	 */
-	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
+	List<TestItem> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
 
 	/**
 	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
@@ -154,4 +154,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return id -> name
 	 */
 	Map<Long, String> selectPathNames(String path);
+
+	/**
+	 * Select items with analyzed status by launch id
+	 *
+	 * @param status   analyzed status
+	 * @param launchId launch id
+	 * @return list of items
+	 */
+	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
 }

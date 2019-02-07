@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -108,7 +109,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	public void mostFailedByDefectCriteria() {
 
-		String defect = "statistics$defects$no_defect$nd001";
+		String defect = "statistics$executions$failed";
 
 		Filter filter = buildDefaultFilter(1L);
 
@@ -160,13 +161,11 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		chartStatisticsContents.forEach(res -> {
 			Map<String, Integer> stats = statistics.get(res.getId());
 			int sum = stats.values().stream().mapToInt(Integer::intValue).sum();
-			assertEquals(
-					100.0,
+			assertEquals(100.0,
 					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)) + Double.parseDouble(res.getValues().get(INVESTIGATED)),
 					0.01
 			);
-			assertEquals(
-					Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
+			assertEquals(Double.parseDouble(res.getValues().get(TO_INVESTIGATE)),
 					BigDecimal.valueOf((double) 100 * stats.get("statistics$defects$to_investigate$total") / sum)
 							.setScale(2, RoundingMode.HALF_UP)
 							.doubleValue(),
@@ -265,8 +264,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		filter = filter.withConditions(Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME)));
 		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
 
-		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(
-				filter,
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
 				contentFields,
 				sort,
 				2
@@ -291,15 +289,19 @@ public class WidgetContentRepositoryTest extends BaseTest {
 					.mapToInt(Map.Entry::getValue)
 					.sum();
 
-			currStatistics.keySet().stream().filter(key -> key.contains(EXECUTIONS_KEY)).forEach(key -> assertEquals(
-					Double.parseDouble(currStatistics.get(key)),
+			currStatistics.keySet()
+					.stream()
+					.filter(key -> key.contains(EXECUTIONS_KEY))
+					.forEach(key -> assertEquals(Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
 							0.01
 					));
-			currStatistics.keySet().stream().filter(key -> key.contains(DEFECTS_KEY)).forEach(key -> assertEquals(
-					Double.parseDouble(currStatistics.get(key)),
+			currStatistics.keySet()
+					.stream()
+					.filter(key -> key.contains(DEFECTS_KEY))
+					.forEach(key -> assertEquals(Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / defectsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
@@ -346,8 +348,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 			Map<String, Integer> testStatistics = preDefinedStatistics.get(content.getId());
 			int executionsSum = testStatistics.entrySet().stream().mapToInt(Map.Entry::getValue).sum();
 
-			assertEquals(
-					Double.parseDouble(currentStatistics.get(NOT_PASSED_STATISTICS_KEY)),
+			assertEquals(Double.parseDouble(currentStatistics.get(NOT_PASSED_STATISTICS_KEY)),
 					BigDecimal.valueOf((double) 100 * (testStatistics.get("statistics$executions$skipped") + testStatistics.get(
 							"statistics$executions$failed")) / executionsSum).setScale(2, RoundingMode.HALF_UP).doubleValue(),
 					0.01
@@ -361,8 +362,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
 		List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(
-				filter,
+		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
 				contentFields,
 				sort,
 				3
@@ -395,7 +395,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
 				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), CRITERIA_ACTION));
 
-		List<ActivityContent> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
+		List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
 
 		Assert.assertNotNull(activityContentList);
 		assertEquals(4, activityContentList.size());
@@ -445,13 +445,11 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 		});
 
-		assertEquals(
-				(long) flakyCasesStatistics.get(0).getFlakyCount(),
+		assertEquals((long) flakyCasesStatistics.get(0).getFlakyCount(),
 				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).max().orElse(Long.MAX_VALUE)
 		);
 
-		assertEquals(
-				(long) flakyCasesStatistics.get(flakyCasesStatistics.size() - 1).getFlakyCount(),
+		assertEquals((long) flakyCasesStatistics.get(flakyCasesStatistics.size() - 1).getFlakyCount(),
 				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).min().orElse(Long.MIN_VALUE)
 		);
 	}
