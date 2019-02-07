@@ -102,7 +102,7 @@ public final class PersonalProjectService {
 		project.setProjectIssueTypes(defaultIssueTypes(project, issueTypeRepository.getDefaultIssueTypes()));
 
 		/* Default email configuration */
-		ProjectUtils.setDefaultEmailConfiguration(project);
+		ProjectUtils.setDefaultNotificationConfiguration(project);
 
 		return project;
 	}

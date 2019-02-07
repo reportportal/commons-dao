@@ -26,7 +26,6 @@ import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +114,7 @@ public class ProjectUtilsTest {
 
 		Project project = new Project();
 
-		ProjectUtils.setDefaultEmailConfiguration(project);
+		ProjectUtils.setDefaultNotificationConfiguration(project);
 
 		assertThat(project.getSenderCases()).isNotEmpty();
 		assertEquals(1, project.getSenderCases().size());
