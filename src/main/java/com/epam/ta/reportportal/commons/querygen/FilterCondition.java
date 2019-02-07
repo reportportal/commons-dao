@@ -16,7 +16,9 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -240,6 +242,8 @@ public class FilterCondition implements Serializable {
 			Preconditions.checkArgument(null != condition, "Condition should not be null");
 			Preconditions.checkArgument(!isNullOrEmpty(value), "Value should not be empty");
 			Preconditions.checkArgument(!isNullOrEmpty(searchCriteria), "Search criteria should not be empty");
+			BusinessRule.expect(condition, c -> c != Condition.EQUALS || !negative)
+					.verify(ErrorType.BAD_REQUEST_ERROR, "Use 'ne' instead of '!eq");
 			return new FilterCondition(condition, negative, value, searchCriteria);
 		}
 	}

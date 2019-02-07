@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.email.SendCaseType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import org.assertj.core.util.Lists;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -144,7 +143,6 @@ public class EmailIntegrationUtilTest {
 		return project;
 	}
 
-	@NotNull
 	private static Map<String, Object> getTestIntegrationParams() {
 		Map<String, Object> params = new HashMap<>();
 		List<Map<String, Object>> rules = new ArrayList<>();
@@ -156,7 +154,6 @@ public class EmailIntegrationUtilTest {
 		return params;
 	}
 
-	@NotNull
 	private static Map<String, Object> getTestRule() {
 		Map<String, Object> rule = new HashMap<>();
 		rule.put("recipients", Lists.newArrayList("owner", "default"));
