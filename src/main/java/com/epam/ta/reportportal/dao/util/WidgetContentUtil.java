@@ -125,7 +125,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
-		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID.getQualifiedName().toString()));
+		Optional<Field<Long>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -139,7 +139,7 @@ public class WidgetContentUtil {
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
 				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
-				itemAttributeIdField.ifPresent(f -> {
+				itemAttributeIdField.ifPresent(f -> ofNullable(record.get(f)).ifPresent(id -> {
 					Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
 
 					ItemAttributeResource attributeResource = new ItemAttributeResource();
@@ -149,7 +149,7 @@ public class WidgetContentUtil {
 					attributes.add(attributeResource);
 
 					content.setAttributes(attributes);
-				});
+				}));
 
 			}
 
