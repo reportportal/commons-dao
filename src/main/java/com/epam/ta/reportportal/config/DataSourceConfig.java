@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.config;
 
-import com.opentable.db.postgres.embedded.EmbeddedPostgres;
+import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -53,8 +54,7 @@ public class DataSourceConfig {
 	public DataSource testDataSource(@Value("${embedded.datasource.dir}") String dataDir,
 			@Value("${embedded.datasource.clean}") Boolean clean, @Value("${embedded.datasource.port}") Integer port) throws IOException {
 		final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
-				.setPort(port)
-				.setDataDirectory(System.getProperty("user.dir") + dataDir)
+				.setPort(port).setDataDirectory(new File(System.getProperty("user.dir") + dataDir))
 				.setCleanDataDirectory(clean);
 		return builder.start().getPostgresDatabase();
 	}
