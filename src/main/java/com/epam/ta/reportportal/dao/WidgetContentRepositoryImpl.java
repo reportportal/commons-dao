@@ -515,7 +515,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Collections.addAll(selectFields, LAUNCH.ID, fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), fieldName(STATISTICS_TABLE, SF_NAME));
 
 		if (isAttributePresent) {
-			Collections.addAll(selectFields, ITEM_ATTRIBUTE.ID, ITEM_ATTRIBUTE.VALUE);
+			Collections.addAll(selectFields, ITEM_ATTRIBUTE.ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
 		}
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
@@ -816,10 +816,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fields,
 				contentFields,
 				customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(
-				sort,
-				filter.getTarget()
-		));
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,

@@ -16,11 +16,13 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.epam.ta.reportportal.ws.model.ItemAttributeResource;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -28,8 +30,19 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LaunchesTableContent extends AbstractLaunchStatisticsContent {
 
+	@JsonProperty(value = "attributes")
+	private Set<ItemAttributeResource> attributes;
+
 	@JsonProperty(value = "values")
 	private Map<String, String> values = new LinkedHashMap<>();
+
+	public Set<ItemAttributeResource> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Set<ItemAttributeResource> attributes) {
+		this.attributes = attributes;
+	}
 
 	public Map<String, String> getValues() {
 		return values;

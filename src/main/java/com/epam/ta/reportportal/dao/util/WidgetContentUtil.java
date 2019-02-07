@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -124,6 +125,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
+		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -137,6 +139,17 @@ public class WidgetContentUtil {
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
 				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+				itemAttributeIdField.ifPresent(f -> {
+					Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
+
+					ItemAttributeResource attributeResource = new ItemAttributeResource();
+					attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
+					attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
+
+					attributes.add(attributeResource);
+
+					content.setAttributes(attributes);
+				});
 
 			}
 
