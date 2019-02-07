@@ -97,12 +97,12 @@ public class ProjectUtils {
 	}
 
 	/**
-	 * Setup default project email configuration
+	 * Setup default project notification configuration
 	 *
-	 * @param project
-	 * @return project object with default email config
+	 * @param project {@link Project}
+	 * @return project object with default notification configuration
 	 */
-	public static Project setDefaultEmailConfiguration(Project project) {
+	public static Project setDefaultNotificationConfiguration(Project project) {
 		SenderCase defaultSenderCase = new SenderCase(Sets.newHashSet(OWNER),
 				Sets.newHashSet(),
 				Sets.newHashSet(),
