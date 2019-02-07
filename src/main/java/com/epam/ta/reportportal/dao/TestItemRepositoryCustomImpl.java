@@ -118,18 +118,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
-				.from(TEST_ITEM)
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(ISSUE)
+	public List<TestItem> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+		return commonTestItemDslSelect().join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
-				.fetchInto(Long.class);
+				.fetch(TEST_ITEM_RECORD_MAPPER::map);
 	}
 
 	@Override
@@ -217,6 +213,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetch()
 				.stream()
 				.collect(MoreCollectors.toLinkedMap(r -> r.get(TEST_ITEM.ITEM_ID), r -> r.get(TEST_ITEM.NAME)));
+	}
+
+	@Override
+	public List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId) {
+		return commonTestItemDslSelect().join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(ISSUE.AUTO_ANALYZED.eq(status))
+				.fetch(TEST_ITEM_RECORD_MAPPER::map);
 	}
 
 	/**

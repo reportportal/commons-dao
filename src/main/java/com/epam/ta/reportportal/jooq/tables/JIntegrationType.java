@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
 
-    private static final long serialVersionUID = 320997220;
+    private static final long serialVersionUID = -1586805614;
 
     /**
      * The reference instance of <code>public.integration_type</code>
@@ -135,7 +135,7 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.INTEGRATION_TYPE_PK);
+        return Arrays.<Index>asList(Indexes.INTEGRATION_TYPE_NAME_KEY, Indexes.INTEGRATION_TYPE_PK);
     }
 
     /**
@@ -159,7 +159,7 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
      */
     @Override
     public List<UniqueKey<JIntegrationTypeRecord>> getKeys() {
-        return Arrays.<UniqueKey<JIntegrationTypeRecord>>asList(Keys.INTEGRATION_TYPE_PK);
+        return Arrays.<UniqueKey<JIntegrationTypeRecord>>asList(Keys.INTEGRATION_TYPE_PK, Keys.INTEGRATION_TYPE_NAME_KEY);
     }
 
     /**

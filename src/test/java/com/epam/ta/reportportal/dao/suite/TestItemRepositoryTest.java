@@ -204,9 +204,21 @@ public class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	public void selectIdsNotInIssueByLaunch() {
-		final List<Long> ids = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
-		assertNotNull("Ids should not be null", ids);
-		assertTrue("Ids should not be empty", !ids.isEmpty());
+		final List<TestItem> testItems = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
+		assertNotNull("Ids should not be null", testItems);
+		assertTrue("Ids should not be empty", !testItems.isEmpty());
+		testItems.forEach(it -> Assert.assertThat("Issue locator shouldn't be 'pb001'",
+				it.getItemResults().getIssue().getIssueType().getLocator(),
+				Matchers.not(Matchers.equalTo("pb001"))
+		));
+	}
+
+	@Test
+	public void selectByAutoAnalyzedStatus() {
+		List<TestItem> testItems = testItemRepository.selectByAutoAnalyzedStatus(false, 1L);
+		assertNotNull(testItems);
+		assertThat(testItems, Matchers.hasSize(1));
+		testItems.forEach(it -> assertThat(it.getItemResults().getIssue().getAutoAnalyzed(), Matchers.is(false)));
 	}
 
 	@Test
@@ -263,8 +275,7 @@ public class TestItemRepositoryTest extends BaseTest {
 
 		retries.stream().map(TestItem::getLaunch).forEach(Assert::assertNull);
 		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> Assert.assertEquals(retriesParent.getItemId(), retryOf));
-		retries.forEach(retry -> Assert.assertEquals(
-				Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
+		retries.forEach(retry -> Assert.assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
 				retry.getPath()
 		));
 	}

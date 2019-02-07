@@ -122,13 +122,12 @@ public class EmailIntegrationService implements IntegrationService {
 			List<String> toExclude = stream(projectUsers.spliterator(), false).map(projectUser -> asList(projectUser.getUser()
 					.getEmail()
 					.toLowerCase(), projectUser.getUser().getLogin().toLowerCase())).flatMap(List::stream).collect(toList());
-			Integration integration = getEmailIntegration(project).orElseThrow(() -> new ReportPortalException(ErrorType.INTEGRATION_NOT_FOUND,
-					EMAIL
-			));
-			List<Map<String, Object>> rules = getEmailRules(integration.getParams().getParams());
-			rules.stream()
-					.filter(rule -> rule.get(RECIPIENTS.getCaseTypeString()) != null)
-					.forEach(rule -> getRuleValues(rule, RECIPIENTS).removeAll(toExclude));
+			getEmailIntegration(project).ifPresent(it -> {
+				List<Map<String, Object>> rules = getEmailRules(it.getParams().getParams());
+				rules.stream()
+						.filter(rule -> rule.get(RECIPIENTS.getCaseTypeString()) != null)
+						.forEach(rule -> getRuleValues(rule, RECIPIENTS).removeAll(toExclude));
+			});
 		}
 	}
 

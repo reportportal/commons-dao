@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright (C) 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,6 +171,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
 						.orderBy(SortUtils.TO_SORT_FIELDS.apply(pageable.getSort(), filter.getTarget())))
 		);
+	}
+
+	@Override
+	public List<Long> findLaunchIdsByProjectId(Long projectId) {
+		return dsl.select(LAUNCH.ID).from(LAUNCH).where(LAUNCH.PROJECT_ID.eq(projectId)).fetchInto(Long.class);
 	}
 
 	@Override

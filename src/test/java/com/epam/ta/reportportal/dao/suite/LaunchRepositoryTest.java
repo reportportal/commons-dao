@@ -91,6 +91,7 @@ public class LaunchRepositoryTest extends BaseTest {
 		final List<Long> ids = launchRepository.findLaunchIdsByProjectId(1L);
 		assertNotNull(ids);
 		assertEquals(12, ids.size());
+		assertThat(ids.get(0), Matchers.instanceOf(Long.class));
 	}
 
 	@Test
