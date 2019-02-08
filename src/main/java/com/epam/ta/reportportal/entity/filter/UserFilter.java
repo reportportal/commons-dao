@@ -52,6 +52,7 @@ public class UserFilter extends ShareableEntity implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "filter_id")
+	@OrderBy(value = "id")
 	private Set<FilterSort> filterSorts = Sets.newLinkedHashSet();
 
 	public Set<FilterCondition> getFilterCondition() {
