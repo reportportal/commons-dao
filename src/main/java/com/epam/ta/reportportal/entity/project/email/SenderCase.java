@@ -33,6 +33,7 @@ public class SenderCase implements Serializable {
 	@Column(name = "launch_attribute")
 	private Set<String> launchAttributes;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "send_case")
 	private SendCase sendCase;
 
