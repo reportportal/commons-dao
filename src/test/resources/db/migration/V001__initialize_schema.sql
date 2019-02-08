@@ -1305,18 +1305,6 @@ BEGIN
     INSERT INTO server_settings (key, value) VALUES ('server.email.host', NULL);
     INSERT INTO server_settings (key, value) VALUES ('server.analytics.asd', 'true');
 
-    INSERT INTO integration_type (name, auth_flow, creation_date, group_type) VALUES ('test integration type', 'LDAP', now(), 'AUTH');
-    ldap := (SELECT currval(pg_get_serial_sequence('integration_type', 'id')));
-
-    INSERT INTO integration_type (name, auth_flow, creation_date, group_type) VALUES ('RALLY', 'OAUTH', now(), 'BTS') ;
-    rally := (SELECT currval(pg_get_serial_sequence('integration_type', 'id')));
-
-    INSERT INTO integration_type (name, auth_flow, creation_date, group_type) VALUES ('JIRA', 'BASIC', now(), 'BTS');
-    jira := (SELECT currval(pg_get_serial_sequence('integration_type', 'id')));
-
-    INSERT INTO integration_type (name, creation_date, group_type) VALUES ('email', now(), 'NOTIFICATION');
-    email := (SELECT currval(pg_get_serial_sequence('integration_type', 'id')));
-
     INSERT INTO issue_group (issue_group_id, issue_group) VALUES (1, 'TO_INVESTIGATE');
     INSERT INTO issue_group (issue_group_id, issue_group) VALUES (2, 'AUTOMATION_BUG');
     INSERT INTO issue_group (issue_group_id, issue_group) VALUES (3, 'PRODUCT_BUG');
@@ -1367,26 +1355,17 @@ BEGIN
     (superadminproject, 1), (superadminproject, 2), (superadminproject, 3), (superadminproject, 4), (superadminproject, 5),
     (defaultproject, 1),(defaultproject, 2),(defaultproject, 3),(defaultproject, 4),(defaultproject, 5);
 
-    INSERT INTO integration (project_id, type, enabled, creation_date) VALUES (superadminproject, rally, FALSE, now()), (defaultproject, rally, FALSE, now());
-    INSERT INTO integration (project_id, type, enabled, creation_date) VALUES (superadminproject, jira, FALSE, now()), (defaultproject, jira, FALSE, now());
-
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (1, '1 day', defaultproject), (1, '1 day', superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (2, '3 months', defaultproject), (2, '3 months', superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (3, '2 weeks', defaultproject), (3, '2 weeks', superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (4, '2 weeks', defaultproject), (4, '2 weeks', superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (5, 7, defaultproject), (5, 7, superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (6, 1, defaultproject), (6, 1, superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (7, 80, defaultproject), (7, 80, superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (8, 2, defaultproject), (8, 2, superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (9, FALSE, defaultproject), (9, FALSE, superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (10, FALSE, defaultproject), (10, FALSE, superadminproject);
-    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (11, 'LAUNCH_NAME', defaultproject), (11, 'LAUNCH_NAME', superadminproject);
-
-    INSERT INTO integration (project_id, type, enabled, params)
-      VALUES (defaultproject, email, FALSE, '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "Auto_EPM-RPP_Notifications@epam.com", "launchStatsRule": "always"}]}}');
-
-    INSERT INTO integration (project_id, type, enabled, params)
-      VALUES (superadminproject, email, FALSE, '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "Auto_EPM-RPP_Notifications@epam.com", "launchStatsRule": "always"}]}}');
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (1, '1 day', defaultProject), (1, '1 day', superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (2, '3 months', defaultProject), (2, '3 months', superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (3, '2 weeks', defaultProject), (3, '2 weeks', superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (4, '2 weeks', defaultProject), (4, '2 weeks', superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (5, 7, defaultProject), (5, 7, superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (6, 1, defaultProject), (6, 1, superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (7, 80, defaultProject), (7, 80, superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (8, 2, defaultProject), (8, 2, superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (9, false, defaultProject), (9, false, superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (10, false, defaultProject), (10, false, superadminProject);
+    INSERT INTO project_attribute (attribute_id, value, project_id) VALUES (11, 'LAUNCH_NAME', defaultProject), (11, 'LAUNCH_NAME', superadminProject);
 
 END
 $$;

@@ -19,17 +19,31 @@ package com.epam.ta.reportportal.dao.suite;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class IntegrationTypeRepositoryTest extends BaseTest {
 
+	private static final String FILL_SCRIPT_PATH = "/db/fill/integration";
+
 	private final static String JIRA_INTEGRATION_TYPE_NAME = "JIRA";
 	private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
+	private static final long BTS_INTEGRATIONS_COUNT = 2L;
+
+
+	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
+	@BeforeClass
+	public static void before() {
+	}
 
 	@Autowired
 	private IntegrationTypeRepository integrationTypeRepository;
@@ -69,4 +83,12 @@ public class IntegrationTypeRepositoryTest extends BaseTest {
 		).isPresent());
 	}
 
+	@Test
+	public void shouldFindAllByIntegrationGroup() {
+
+		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS);
+
+		Assert.assertNotNull(integrationTypes);
+		Assert.assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
+	}
 }

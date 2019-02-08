@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +35,17 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
 	Boolean identifyStatus(Long launchId);
 
-	List<String> getLaunchNames(Long projectId, String value, String mode);
+	/**
+	 * Retrieves names of the launches by provided 'projectId', 'mode', 'value' as a part of the name
+	 * and statuses that are not equal to the provided 'status'
+	 *
+	 * @param projectId {@link Launch#projectId}
+	 * @param value     A part of the {@link Launch#name}
+	 * @param mode      {@link Launch#mode}
+	 * @param status    {@link Launch#status}
+	 * @return The {@link List} of the {@link Launch#name}
+	 */
+	List<String> getLaunchNamesByModeExcludedByStatus(Long projectId, String value, LaunchModeEnum mode, StatusEnum status);
 
 	List<String> getOwnerNames(Long projectId, String value, String mode);
 

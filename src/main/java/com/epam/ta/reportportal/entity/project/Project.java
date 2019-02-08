@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
@@ -60,7 +61,11 @@ public class Project implements Serializable {
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OrderBy
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
+
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	private Set<SenderCase> senderCases;
 
 	@Column(name = "creation_date")
 	private Date creationDate;
@@ -145,6 +150,14 @@ public class Project implements Serializable {
 
 	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
 		this.projectAttributes = projectAttributes;
+	}
+
+	public Set<SenderCase> getSenderCases() {
+		return senderCases;
+	}
+
+	public void setSenderCases(Set<SenderCase> senderCases) {
+		this.senderCases = senderCases;
 	}
 
 	public String getOrganization() {
