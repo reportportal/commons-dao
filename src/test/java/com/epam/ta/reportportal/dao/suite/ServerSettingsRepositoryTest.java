@@ -47,7 +47,7 @@ public class ServerSettingsRepositoryTest extends BaseTest {
 
 	@Test
 	public void findByKeyPositive() {
-		final String key = "key1";
+		final String key = "server.analytics.all";
 		final Optional<ServerSettings> serverSettingsOptional = repository.findByKey(key);
 
 		assertTrue(serverSettingsOptional.isPresent());
@@ -62,7 +62,7 @@ public class ServerSettingsRepositoryTest extends BaseTest {
 	@Test
 	public void streamAll() {
 		final Stream<ServerSettings> serverSettingsStream = repository.streamAll();
-		assertEquals(14, serverSettingsStream.collect(Collectors.toList()).size());
+		assertEquals(11, serverSettingsStream.collect(Collectors.toList()).size());
 	}
 
 	@Test
