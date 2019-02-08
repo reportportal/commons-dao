@@ -377,7 +377,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ChartStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<String> executionStatisticsFields = contentFields.stream().filter(cf -> cf.contains(EXECUTIONS_KEY)).collect(toList());
+		List<String> executionStatisticsFields = contentFields.stream()
+				.filter(cf -> cf.contains(EXECUTIONS_KEY) && !cf.equalsIgnoreCase(EXECUTIONS_TOTAL))
+				.collect(toList());
 		List<String> defectStatisticsFields = contentFields.stream().filter(cf -> cf.contains(DEFECTS_KEY)).collect(toList());
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
