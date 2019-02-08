@@ -1,7 +1,10 @@
 package com.epam.ta.reportportal.entity.project.email;
 
-import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.entity.enums.SendCase;
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +15,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "sender_case")
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 public class SenderCase implements Serializable {
 
 	@Id
@@ -33,7 +37,9 @@ public class SenderCase implements Serializable {
 	@Column(name = "launch_attribute")
 	private Set<String> launchAttributes;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "send_case")
+	@Type(type = "pqsql_enum")
 	private SendCase sendCase;
 
 	@ManyToOne(fetch = FetchType.LAZY)

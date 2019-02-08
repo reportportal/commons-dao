@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
