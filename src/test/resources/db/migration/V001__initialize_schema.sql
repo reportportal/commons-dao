@@ -177,6 +177,7 @@ CREATE TABLE integration_type (
   auth_flow     INTEGRATION_AUTH_FLOW_ENUM,
   creation_date TIMESTAMP DEFAULT now()    NOT NULL,
   group_type    INTEGRATION_GROUP_ENUM     NOT NULL,
+  enabled       BOOLEAN                    NOT NULL DEFAULT FALSE,
   details       JSONB                      NULL
 );
 
@@ -184,7 +185,7 @@ CREATE TABLE integration (
   id            SERIAL CONSTRAINT integration_pk PRIMARY KEY,
   project_id    BIGINT REFERENCES project (id) ON DELETE CASCADE,
   type          INTEGER REFERENCES integration_type (id) ON DELETE CASCADE,
-  enabled       BOOLEAN,
+  enabled       BOOLEAN                 NOT NULL DEFAULT FALSE,
   params        JSONB                   NULL,
   creation_date TIMESTAMP DEFAULT now() NOT NULL
 );

@@ -84,13 +84,6 @@ public class IntegrationTypeRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void shouldDeleteByName() {
-
-		integrationTypeRepository.deleteByName(JIRA_INTEGRATION_TYPE_NAME);
-		Assert.assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
-	}
-
-	@Test
 	public void shouldFindAllByIntegrationGroup() {
 
 		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS);
@@ -98,5 +91,4 @@ public class IntegrationTypeRepositoryTest extends BaseTest {
 		Assert.assertNotNull(integrationTypes);
 		Assert.assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
 	}
-
 }
