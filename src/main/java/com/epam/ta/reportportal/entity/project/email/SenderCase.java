@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.entity.project.email;
 
-import com.epam.ta.reportportal.commons.SendCase;
+import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Type;
