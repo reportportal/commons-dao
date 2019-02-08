@@ -64,8 +64,8 @@ public class Project implements Serializable {
 	@OrderBy
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-	private Set<SenderCase> senderCases;
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.EAGER, orphanRemoval = true)
+	private Set<SenderCase> senderCases = Sets.newHashSet();
 
 	@Column(name = "creation_date")
 	private Date creationDate;
