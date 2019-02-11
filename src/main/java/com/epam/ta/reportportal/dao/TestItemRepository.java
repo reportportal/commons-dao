@@ -110,12 +110,4 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") String status);
 
-	/**
-	 * Checks if a {@link TestItem} has retries.
-	 *
-	 * @param itemId Current {@link TestItem#itemId}
-	 * @return True if has
-	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item WHERE test_item.retry_of = :itemId LIMIT 1)", nativeQuery = true)
-	boolean hasRetries(@Param("itemId") Long itemId);
 }
