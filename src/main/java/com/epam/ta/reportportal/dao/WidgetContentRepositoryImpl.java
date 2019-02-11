@@ -100,7 +100,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.as(QueryBuilder.newBuilder(filter).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
-								DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), "true").otherwise("false"))
+								DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), true).otherwise(false))
 										.orderBy(LAUNCH.NUMBER.asc())
 										.as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
