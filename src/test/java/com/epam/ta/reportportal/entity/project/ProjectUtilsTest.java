@@ -22,14 +22,17 @@ import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -43,10 +46,20 @@ public class ProjectUtilsTest {
 
 	private Set<Attribute> defaultAttributes;
 
+	private String[] userLoginsToExclude;
+	private String[] userEmailsToExclude;
+
+	private String[] userLoginsNotToExclude;
+	private String[] userEmailsNotToExclude;
+
 	@Before
 	public void setUp() throws Exception {
 		project = getTestProject();
 		defaultAttributes = getDefaultAttributes();
+		userLoginsToExclude = new String[] { "exclude", "exclude1", "exclude2" };
+		userEmailsToExclude = new String[] { "exclude@mail.com", "exclude1@mail.com", "exclude2@mail.com" };
+		userLoginsNotToExclude = new String[] { "NOT_exclude", "NOT_exclude1", "NOT_exclude2" };
+		userEmailsNotToExclude = new String[] { "NOT_exclude@mail.com", "NOT_exclude1@mail.com", "NOT_exclude2@mail.com" };
 	}
 
 	@Test
@@ -96,6 +109,55 @@ public class ProjectUtilsTest {
 				.collect(Collectors.toMap(it -> it.getKey().getName(), Map.Entry::getValue)));
 	}
 
+	@Test
+	public void setDefaultEmailConfigurationTest() {
+
+		Project project = new Project();
+
+		ProjectUtils.setDefaultNotificationConfiguration(project);
+
+		assertThat(project.getSenderCases()).isNotEmpty();
+		assertEquals(1, project.getSenderCases().size());
+
+		project.getSenderCases().forEach(ec -> Assert.assertSame(ec.getProject(), project));
+	}
+
+	@Test
+	public void excludeProjectRecipientsTest() {
+
+		Project project = getProjectWithRecipients();
+		project.setSenderCases(getEmailSenderCasesWithRecipientsOnly());
+
+		Set<User> usersToExclude = project.getUsers().stream().map(ProjectUser::getUser).collect(Collectors.toSet());
+
+		ProjectUtils.excludeProjectRecipients(usersToExclude, project);
+
+		project.getSenderCases().forEach(ec -> {
+			Arrays.stream(userLoginsNotToExclude).forEach(excludedLogin -> Assert.assertTrue(ec.getRecipients().contains(excludedLogin)));
+			Arrays.stream(userEmailsNotToExclude).forEach(excludedLogin -> Assert.assertTrue(ec.getRecipients().contains(excludedLogin)));
+			Arrays.stream(userLoginsToExclude).forEach(excludedLogin -> Assert.assertFalse(ec.getRecipients().contains(excludedLogin)));
+			Arrays.stream(userEmailsToExclude).forEach(excludedLogin -> Assert.assertFalse(ec.getRecipients().contains(excludedLogin)));
+		});
+	}
+
+	@Test
+	public void updateProjectRecipientsTest() {
+
+		final String newEmail = "new_email@mail.com";
+
+		Project project = new Project();
+
+		project.setSenderCases(getEmailSenderCasesWithRecipientsOnly());
+
+		ProjectUtils.updateProjectRecipients(userEmailsNotToExclude[0], newEmail, project);
+
+		project.getSenderCases().forEach(ec -> {
+			Assert.assertTrue(ec.getRecipients().contains(newEmail));
+			Assert.assertFalse(ec.getRecipients().contains(userEmailsNotToExclude[0]));
+		});
+
+	}
+
 	private static Project getTestProject() {
 		Project project = new Project();
 		project.setId(1L);
@@ -139,8 +201,7 @@ public class ProjectUtilsTest {
 		IssueGroup siGroup = new IssueGroup();
 		siGroup.setId(5);
 		siGroup.setTestItemIssueGroup(TestItemIssueGroup.SYSTEM_ISSUE);
-		return Arrays.asList(
-				new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
+		return Arrays.asList(new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
 				new IssueType(abGroup, "ab001", "Automation Bug", "AB", "#f7d63e"),
 				new IssueType(pbGroup, "pb001", "Product Bug", "PB", "#ec3900"),
 				new IssueType(ndGroup, "nd001", "No Defect", "ND", "#777777"),
@@ -168,5 +229,65 @@ public class ProjectUtilsTest {
 		attributeMap.put(attr1, "valOne");
 		attributeMap.put(attr2, "valTwo");
 		return attributeMap;
+	}
+
+	private Project getProjectWithRecipients() {
+
+		User firstUser = new User();
+		firstUser.setLogin(userLoginsToExclude[0]);
+		firstUser.setEmail(userEmailsToExclude[0]);
+
+		User secondUser = new User();
+		secondUser.setLogin(userLoginsToExclude[1]);
+		secondUser.setEmail(userEmailsToExclude[1]);
+
+		User thirdUser = new User();
+		thirdUser.setLogin(userLoginsToExclude[2]);
+		thirdUser.setEmail(userEmailsToExclude[2]);
+
+		Set<User> users = Sets.newHashSet(firstUser, secondUser, thirdUser);
+
+		Project project = new Project();
+
+		Set<ProjectUser> projectUsers = users.stream().map(u -> {
+			ProjectUser projectUser = new ProjectUser();
+			projectUser.setUser(u);
+
+			projectUser.setProject(project);
+
+			return projectUser;
+		}).collect(Collectors.toSet());
+
+		project.setUsers(projectUsers);
+
+		return project;
+
+	}
+
+	private Set<SenderCase> getEmailSenderCasesWithRecipientsOnly() {
+
+		SenderCase firstSenderCase = new SenderCase();
+
+		firstSenderCase.setId(1L);
+		firstSenderCase.setRecipients((Stream.of(userLoginsToExclude,
+				userEmailsToExclude,
+				userLoginsNotToExclude,
+				userEmailsNotToExclude
+		)
+				.flatMap(Arrays::stream)
+				.collect(Collectors.toSet())));
+
+		SenderCase secondSenderCase = new SenderCase();
+
+		secondSenderCase.setId(2L);
+		secondSenderCase.setRecipients((Stream.of(userLoginsToExclude,
+				userEmailsToExclude,
+				userLoginsNotToExclude,
+				userEmailsNotToExclude
+		)
+				.flatMap(Arrays::stream)
+				.collect(Collectors.toSet())));
+
+		return Sets.newHashSet(firstSenderCase, secondSenderCase);
 	}
 }

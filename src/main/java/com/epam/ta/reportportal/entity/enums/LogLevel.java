@@ -44,8 +44,8 @@ public enum LogLevel {
 
 	private int intLevel;
 
-	LogLevel(int intlevel) {
-		this.intLevel = intlevel;
+	LogLevel(int intLevel) {
+		this.intLevel = intLevel;
 	}
 
 	public int toInt() {
