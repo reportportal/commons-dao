@@ -669,7 +669,8 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$defects$to_investigate$total",
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
-				"statistics$executions$passed"
+				"statistics$executions$passed",
+				"statistics$executions$total"
 		);
 	}
 
