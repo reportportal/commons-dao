@@ -238,7 +238,7 @@ public class LaunchRepositoryTest extends BaseTest {
 
 		final Long firstLaunchId = 1L;
 
-		final boolean hasRetries = launchRepository.hasRetries(1L);
+		final boolean hasRetries = launchRepository.hasRetries(firstLaunchId);
 		assertFalse(hasRetries);
 
 	}
