@@ -29,7 +29,10 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
-import com.epam.ta.reportportal.jooq.enums.*;
+import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -553,18 +556,14 @@ public enum FilterTarget {
 	WIDGET_TARGET(Widget.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_ID, WIDGET.ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_NAME, WIDGET.NAME.getQualifiedName().toString(), DSL.max(WIDGET.NAME).toString(), String.class),
 			new CriteriaHolder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_SHARED,
 					SHAREABLE_ENTITY.SHARED.getQualifiedName().toString(),
 					DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString(),
 					Boolean.class
 			),
-			new CriteriaHolder(CRITERIA_PROJECT_ID,
-					SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(),
-					DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString(),
-					Long.class
-			),
+			new CriteriaHolder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_OWNER,
 					SHAREABLE_ENTITY.OWNER.getQualifiedName().toString(),
 					DSL.max(SHAREABLE_ENTITY.OWNER).toString(),
