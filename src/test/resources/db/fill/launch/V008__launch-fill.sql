@@ -42,7 +42,7 @@ INSERT INTO public.test_item_results(result_id, status, end_time, duration)
 VALUES (1, 'PASSED', now(), 1);
 
 INSERT INTO public.test_item(item_id, type, start_time, last_modified, has_children, has_retries, parent_id, launch_id)
-VALUES (2, 'STEP', now(), now(), false, false, null, 100);
+VALUES (2, 'STEP', now(), now(), false, true, null, 100);
 
 INSERT INTO public.test_item_results(result_id, status, end_time, duration)
 VALUES (2, 'FAILED', now(), 1);
