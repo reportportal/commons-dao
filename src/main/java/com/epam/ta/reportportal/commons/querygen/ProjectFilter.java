@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstan
 
 public class ProjectFilter extends Filter {
 
-	private ProjectFilter(Long id, Filter filter, Long projectId) {
+	private ProjectFilter(Long id, Queryable filter, Long projectId) {
 		super(id, filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
 				false,
@@ -30,7 +30,7 @@ public class ProjectFilter extends Filter {
 
 	}
 
-	private ProjectFilter(Filter filter, Long projectId) {
+	private ProjectFilter(Queryable filter, Long projectId) {
 		super(filter.getTarget(), filter.getFilterConditions());
 		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
 				false,
@@ -40,11 +40,11 @@ public class ProjectFilter extends Filter {
 
 	}
 
-	public static ProjectFilter of(Filter filter, Long projectId) {
+	public static ProjectFilter of(Queryable filter, Long projectId) {
 		return new ProjectFilter(filter, projectId);
 	}
 
-	public static ProjectFilter of(Long id, Filter filter, Long projectId) {
+	public static ProjectFilter of(Long id, Queryable filter, Long projectId) {
 		return new ProjectFilter(id, filter, projectId);
 	}
 

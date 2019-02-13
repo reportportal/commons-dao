@@ -225,6 +225,24 @@ public class LaunchRepositoryTest extends BaseTest {
 		assertTrue(failed);
 	}
 
+	@Test
+	public void hasRetries() {
+
+		final boolean hasRetries = launchRepository.hasRetries(100L);
+		assertTrue(hasRetries);
+
+	}
+
+	@Test
+	public void hasRetriesNegative() {
+
+		final Long firstLaunchId = 1L;
+
+		final boolean hasRetries = launchRepository.hasRetries(firstLaunchId);
+		assertFalse(hasRetries);
+
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(
 				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),

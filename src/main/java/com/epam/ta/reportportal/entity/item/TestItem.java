@@ -32,6 +32,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -276,5 +277,24 @@ public class TestItem implements Serializable {
 
 	public void setHasRetries(boolean hasRetries) {
 		this.hasRetries = hasRetries;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TestItem testItem = (TestItem) o;
+		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(uniqueId,
+				testItem.uniqueId
+		) && Objects.equals(path, testItem.path) && Objects.equals(retryOf, testItem.retryOf);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(itemId, name, type, uniqueId, path, retryOf);
 	}
 }
