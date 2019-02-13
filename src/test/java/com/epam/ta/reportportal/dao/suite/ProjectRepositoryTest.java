@@ -93,14 +93,6 @@ public class ProjectRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void findPersonalProjectName() {
-		final Optional<String> nameOptional = projectRepository.findPersonalProjectName("default");
-
-		assertTrue(nameOptional.isPresent());
-		assertEquals("default_personal", nameOptional.get());
-	}
-
-	@Test
 	public void findAllProjectNames() {
 		List<String> names = projectRepository.findAllProjectNames();
 		Assert.assertThat("Incorrect projects size", names, Matchers.hasSize(2));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
-import com.epam.ta.reportportal.entity.project.Project;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -56,10 +55,6 @@ public class User implements Serializable {
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
-
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "default_project_id")
-	private Project defaultProject;
 
 	@Column(name = "full_name")
 	private String fullName;
@@ -134,14 +129,6 @@ public class User implements Serializable {
 		this.projects = projects;
 	}
 
-	public Project getDefaultProject() {
-		return this.defaultProject;
-	}
-
-	public void setDefaultProject(Project defaultProjectId) {
-		this.defaultProject = defaultProjectId;
-	}
-
 	public String getFullName() {
 		return this.fullName;
 	}
@@ -202,29 +189,14 @@ public class User implements Serializable {
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
 		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(
-				defaultProject,
-				user.defaultProject
-		) && Objects.equals(fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment,
-				user.attachment
-		) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
+				fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment, user.attachment)
+				&& Objects.equals(
+				attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
 	}
 
 	@Override
 	public int hashCode() {
-
-		return Objects.hash(id,
-				login,
-				password,
-				email,
-				role,
-				defaultProject,
-				fullName,
-				isExpired,
-				metadata,
-				attachment,
-				attachmentThumbnail,
-				userType
-		);
+		return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment, attachmentThumbnail, userType);
 	}
 
 }

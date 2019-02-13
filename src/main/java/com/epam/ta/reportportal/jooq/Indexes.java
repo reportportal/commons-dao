@@ -26,6 +26,7 @@ import org.jooq.impl.Internal;
 
 import javax.annotation.Generated;
 
+
 /**
  * A class modelling indexes of tables of the <code>public</code> schema.
  */
@@ -87,6 +88,7 @@ public class Indexes {
 	public static final Index USERS_PROJECT_PK = Indexes0.USERS_PROJECT_PK;
 	public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
 	public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
+	public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
 	public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
 	public static final Index SERVER_SETTINGS_KEY_KEY = Indexes0.SERVER_SETTINGS_KEY_KEY;
 	public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
@@ -399,6 +401,12 @@ public class Indexes {
 				"restore_password_bid_pk",
 				JRestorePasswordBid.RESTORE_PASSWORD_BID,
 				new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID },
+				true
+		);
+		public static Index SENDER_CASE_PK = Internal.createIndex(
+				"sender_case_pk",
+				JSenderCase.SENDER_CASE,
+				new OrderField[] { JSenderCase.SENDER_CASE.ID },
 				true
 		);
 		public static Index SERVER_SETTINGS_ID = Internal.createIndex(

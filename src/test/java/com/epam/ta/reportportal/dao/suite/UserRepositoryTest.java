@@ -126,16 +126,6 @@ public class UserRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void findByDefaultProjectId() {
-		final long projectId = 1L;
-
-		Optional<User> user = userRepository.findByDefaultProjectId(projectId);
-
-		Assert.assertTrue("User is not present", user.isPresent());
-		Assert.assertThat("Incorrect default project id", user.get().getDefaultProject().getId(), Matchers.equalTo(projectId));
-	}
-
-	@Test
 	public void findByEmail() {
 		final String email = "chybaka@domain.com";
 
