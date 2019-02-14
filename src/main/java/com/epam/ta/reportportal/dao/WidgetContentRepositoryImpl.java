@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
@@ -592,72 +591,61 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
 			String attributeKey, int limit) {
 
-		Condition projectIdCondition = filter.getFilterConditions()
-				.stream()
-				.filter(fc -> CRITERIA_PROJECT_ID.equalsIgnoreCase(fc.getSearchCriteria()))
-				.findAny()
-				.map(c -> QueryBuilder.filterConverter(filter.getTarget()).apply(c))
-				.orElseGet(DSL::noCondition);
-
-		Condition cumulativeItemAttributeCondition = ITEM_ATTRIBUTE.ID.in(DSL.select(ITEM_ATTRIBUTE.ID)
-				.from(ITEM_ATTRIBUTE)
-				.join(LAUNCH)
-				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(projectIdCondition)
-				.and(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
-				.orderBy(ITEM_ATTRIBUTE.VALUE)
-				.limit(limit));
-
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
-		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter)
-						.addCondition(LAUNCH.ID.in(DSL.selectDistinct(LAUNCH.ID)
-								.on(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME)
-								.from(ITEM_ATTRIBUTE)
-								.join(LAUNCH)
-								.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-								.where(cumulativeItemAttributeCondition)
-								.orderBy(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME, LAUNCH.START_TIME.desc())))
-						.with(LAUNCHES_COUNT)
-						.with(sort)
-						.build())
-				.select(LAUNCH.ID,
-						LAUNCH.NAME,
-						LAUNCH.NUMBER,
-						LAUNCH.START_TIME,
-						ITEM_ATTRIBUTE.ID,
-						ITEM_ATTRIBUTE.VALUE,
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-						fieldName(STATISTICS_TABLE, SF_NAME)
-				)
-				.from(LAUNCH)
-				.join(LAUNCHES)
-				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
-				.join(DSL.selectDistinct(LAUNCH.ID.as(LAUNCH_ID), ITEM_ATTRIBUTE.ID.as(ATTR_ID))
-						.on(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME)
-						.from(ITEM_ATTRIBUTE)
-						.join(LAUNCH)
+		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(LAUNCHES_COUNT).with(sort).build();
+
+		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(LAUNCHES_TABLE, LAUNCH_ID),
+				fieldName(LAUNCHES_TABLE, NUMBER),
+				fieldName(LAUNCHES_TABLE, NAME),
+				fieldName(LAUNCHES_TABLE, START_TIME),
+				fieldName(LAUNCHES_TABLE, ATTR_ID),
+				fieldName(LAUNCHES_TABLE, ATTR_VALUE),
+				fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
+				fieldName(STATISTICS_TABLE, SF_NAME)
+		)
+				.from(dsl.with(LAUNCHES)
+						.as(selectQuery)
+						.selectDistinct(LAUNCH.ID.as(LAUNCH_ID),
+								LAUNCH.NAME,
+								LAUNCH.NUMBER,
+								LAUNCH.START_TIME,
+								ITEM_ATTRIBUTE.ID.as(ATTR_ID),
+								ITEM_ATTRIBUTE.VALUE.as(ATTR_VALUE)
+						)
+						.on(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
+						.from(LAUNCH)
+						.join(LAUNCHES)
+						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
+						.join(ITEM_ATTRIBUTE)
 						.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-						.where(cumulativeItemAttributeCondition)
-						.orderBy(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME, LAUNCH.START_TIME.desc())
-						.asTable(ATTR_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)))
-				.join(ITEM_ATTRIBUTE)
-				.on(ITEM_ATTRIBUTE.ID.eq(fieldName(ATTR_TABLE, ATTR_ID).cast(Long.class)))
+						.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
+						.and(ITEM_ATTRIBUTE.VALUE.in(dsl.with(LAUNCHES)
+								.as(selectQuery)
+								.selectDistinct(ITEM_ATTRIBUTE.VALUE)
+								.from(ITEM_ATTRIBUTE)
+								.join(LAUNCHES)
+								.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+								.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
+								.limit(limit)))
+						.orderBy(Lists.newArrayList(LAUNCH.NAME.sort(SortOrder.ASC),
+								ITEM_ATTRIBUTE.VALUE.sort(SortOrder.DESC),
+								LAUNCH.START_TIME.sort(SortOrder.DESC)
+						))
+						.asTable(LAUNCHES_TABLE))
 				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
 						.from(STATISTICS)
 						.join(STATISTICS_FIELD)
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
 						.asTable(STATISTICS_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.groupBy(LAUNCH.ID,
-						LAUNCH.NAME,
-						LAUNCH.NUMBER,
-						LAUNCH.START_TIME,
-						ITEM_ATTRIBUTE.ID,
-						ITEM_ATTRIBUTE.VALUE,
+				.on(fieldName(LAUNCHES_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.groupBy(fieldName(LAUNCHES_TABLE, LAUNCH_ID),
+						fieldName(LAUNCHES_TABLE, NUMBER),
+						fieldName(LAUNCHES_TABLE, NAME),
+						fieldName(LAUNCHES_TABLE, START_TIME),
+						fieldName(LAUNCHES_TABLE, ATTR_ID),
+						fieldName(LAUNCHES_TABLE, ATTR_VALUE),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 						fieldName(STATISTICS_TABLE, SF_NAME)
 				)

@@ -466,7 +466,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				contentFields,
 				sort,
 				"build",
-				4
+				10
 		);
 
 		Assert.assertNotNull(launchesStatisticsContents);

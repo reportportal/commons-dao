@@ -276,7 +276,7 @@ public class WidgetContentUtil {
 		result.forEach(record -> {
 
 			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
-			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
+			String attributeValue = record.get(fieldName(LAUNCHES_TABLE, ATTR_VALUE), String.class);
 			if (attributeMapping.containsKey(attributeValue)) {
 				cumulativeTrendMapper = attributeMapping.get(attributeValue);
 			} else {
@@ -285,12 +285,15 @@ public class WidgetContentUtil {
 			}
 
 			CumulativeTrendChartContent content;
-			Long launchId = record.get(LAUNCH.ID);
+			Long launchId = record.get(fieldName(LAUNCHES_TABLE, LAUNCH_ID), Long.class);
 			if (cumulativeTrendMapper.containsKey(launchId)) {
 				content = cumulativeTrendMapper.get(launchId);
 			} else {
-				content = record.into(CumulativeTrendChartContent.class);
+				content = new CumulativeTrendChartContent();
 				content.setId(launchId);
+				content.setName(record.get(fieldName(LAUNCHES_TABLE, NAME), String.class));
+				content.setNumber(record.get(fieldName(LAUNCHES_TABLE, NUMBER), Integer.class));
+				content.setStartTime(record.get(fieldName(LAUNCHES_TABLE, START_TIME), Timestamp.class));
 				cumulativeTrendMapper.put(launchId, content);
 			}
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()

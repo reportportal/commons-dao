@@ -49,7 +49,6 @@ public class WidgetContentRepositoryConstants {
 	public static final String TARGET = "target";
 	public static final String ID = "id";
 	public static final String NUMBER = "number";
-	public static final String START_TIME = "startTime";
 	public static final String END_TIME = "endTime";
 
 	/* Most failed widget constants */
@@ -97,7 +96,8 @@ public class WidgetContentRepositoryConstants {
 
 	/*Cumulative trend widget constants*/
 	public static final Integer LAUNCHES_COUNT = 150;
-	public static final String LIKE_CONDITION_SYMBOL = "%";
+	public static final String LAUNCHES_TABLE = "launches_table";
+	public static final String START_TIME = "start_time";
 
 	/*Product status widget constants*/
 	public static final String ATTRIBUTE_VALUE = "attribute_value";
