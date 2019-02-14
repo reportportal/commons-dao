@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
@@ -99,7 +100,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
 						.select(TEST_ITEM.UNIQUE_ID,
-								TEST_ITEM.NAME, DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), true).otherwise(false))
+								TEST_ITEM.NAME,
+								DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), true).otherwise(false))
 										.orderBy(LAUNCH.NUMBER.asc())
 										.as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
@@ -590,24 +592,36 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
 			String attributeKey, int limit) {
 
-		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
-
-		SelectQuery<? extends Record> distinctLaunchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true)
-				.with(sort)
-				.with(LAUNCHES_COUNT)
-				.build();
+		Condition projectIdCondition = filter.getFilterConditions()
+				.stream()
+				.filter(fc -> CRITERIA_PROJECT_ID.equalsIgnoreCase(fc.getSearchCriteria()))
+				.findAny()
+				.map(c -> QueryBuilder.filterConverter(filter.getTarget()).apply(c))
+				.orElseGet(DSL::noCondition);
 
 		Condition cumulativeItemAttributeCondition = ITEM_ATTRIBUTE.ID.in(DSL.select(ITEM_ATTRIBUTE.ID)
 				.from(ITEM_ATTRIBUTE)
-				.where(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.join(LAUNCH)
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(projectIdCondition)
 				.and(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
-				.orderBy(ITEM_ATTRIBUTE.KEY)
+				.orderBy(ITEM_ATTRIBUTE.VALUE)
 				.limit(limit));
 
-		distinctLaunchesTable.addConditions(cumulativeItemAttributeCondition);
+		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(distinctLaunchesTable)
+				.as(QueryBuilder.newBuilder(filter)
+						.addCondition(LAUNCH.ID.in(DSL.selectDistinct(LAUNCH.ID)
+								.on(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME)
+								.from(ITEM_ATTRIBUTE)
+								.join(LAUNCH)
+								.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+								.where(cumulativeItemAttributeCondition)
+								.orderBy(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME, LAUNCH.START_TIME.desc())))
+						.with(LAUNCHES_COUNT)
+						.with(sort)
+						.build())
 				.select(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
@@ -620,8 +634,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
+				.join(DSL.selectDistinct(LAUNCH.ID.as(LAUNCH_ID), ITEM_ATTRIBUTE.ID.as(ATTR_ID))
+						.on(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME)
+						.from(ITEM_ATTRIBUTE)
+						.join(LAUNCH)
+						.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+						.where(cumulativeItemAttributeCondition)
+						.orderBy(ITEM_ATTRIBUTE.VALUE, LAUNCH.NAME, LAUNCH.START_TIME.desc())
+						.asTable(ATTR_TABLE))
+				.on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)))
 				.join(ITEM_ATTRIBUTE)
-				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.on(ITEM_ATTRIBUTE.ID.eq(fieldName(ATTR_TABLE, ATTR_ID).cast(Long.class)))
 				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
 						.from(STATISTICS)
 						.join(STATISTICS_FIELD)
@@ -629,7 +652,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.where(cumulativeItemAttributeCondition)
 				.groupBy(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
@@ -817,7 +839,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fields,
 				contentFields,
 				customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(
+				sort,
+				filter.getTarget()
+		));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,

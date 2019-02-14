@@ -96,7 +96,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String FLAKY_COUNT = "flakyCount";
 
 	/*Cumulative trend widget constants*/
-	public static final Integer LAUNCHES_COUNT = 100;
+	public static final Integer LAUNCHES_COUNT = 150;
 	public static final String LIKE_CONDITION_SYMBOL = "%";
 
 	/*Product status widget constants*/
