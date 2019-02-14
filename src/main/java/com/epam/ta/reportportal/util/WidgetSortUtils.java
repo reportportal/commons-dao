@@ -89,7 +89,7 @@ public final class WidgetSortUtils {
 
 	public static final BiFunction<String, SortField<?>, SortField<?>> CUSTOM_TABLE_SORT_CONVERTER = (table, sort) -> {
 
-		if (sort.getName().startsWith(STATISTICS_TABLE)) {
+		if (sort.getName().contains(STATISTICS_TABLE)) {
 			return sort;
 		}
 		String[] qualifiedName = sort.getName().split("\\.");
