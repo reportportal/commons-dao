@@ -19,16 +19,14 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
-
-import javax.annotation.Generated;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Row4;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import javax.annotation.Generated;
 
 
 /**

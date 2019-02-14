@@ -288,8 +288,7 @@ public class TestItem implements Serializable {
 			return false;
 		}
 		TestItem testItem = (TestItem) o;
-		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(
-				uniqueId,
+		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(uniqueId,
 				testItem.uniqueId
 		) && Objects.equals(path, testItem.path) && Objects.equals(retryOf, testItem.retryOf);
 	}

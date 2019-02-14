@@ -19,7 +19,6 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -49,7 +48,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-    private static final long serialVersionUID = 343464502;
+	private static final long serialVersionUID = 343464502;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -124,10 +123,15 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     public final TableField<JLaunchRecord, JStatusEnum> STATUS = createField("status", org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JStatusEnum.class), this, "");
 
-    /**
-     * The column <code>public.launch.has_retries</code>.
-     */
-    public final TableField<JLaunchRecord, Boolean> HAS_RETRIES = createField("has_retries", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+	/**
+	 * The column <code>public.launch.has_retries</code>.
+	 */
+	public final TableField<JLaunchRecord, Boolean> HAS_RETRIES = createField("has_retries",
+			org.jooq.impl.SQLDataType.BOOLEAN.nullable(false)
+					.defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)),
+			this,
+			""
+	);
 
     /**
      * Create a <code>public.launch</code> table reference

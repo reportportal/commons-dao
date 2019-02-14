@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,9 +199,6 @@ public class RecordMappers {
 				throw new ReportPortalException("Error during parsing user metadata");
 			}
 		});
-		Project project = new Project();
-		project.setId(r.get(USERS.DEFAULT_PROJECT_ID));
-		user.setDefaultProject(project);
 		return user;
 	};
 
