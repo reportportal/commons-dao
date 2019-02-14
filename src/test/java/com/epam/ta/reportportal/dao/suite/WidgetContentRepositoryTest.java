@@ -459,7 +459,10 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$nd001"));
+		List<Sort.Order> orderings = Lists.newArrayList(
+				new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$nd001"),
+				new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)
+		);
 
 		Sort sort = Sort.by(orderings);
 		Map<String, List<CumulativeTrendChartContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,

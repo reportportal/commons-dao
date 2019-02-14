@@ -649,7 +649,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 						fieldName(STATISTICS_TABLE, SF_NAME)
 				)
-				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()))
+				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget())
+						.stream()
+						.map(s -> WidgetSortUtils.CUSTOM_TABLE_SORT_CONVERTER.apply(LAUNCHES_TABLE, s))
+						.collect(toList()))
 				.fetch());
 	}
 

@@ -86,4 +86,16 @@ public final class WidgetSortUtils {
 				return field(criteria.getQueryCriteria());
 			})
 			.collect(toList())).orElseGet(Collections::emptyList);
+
+	public static final BiFunction<String, SortField<?>, SortField<?>> CUSTOM_TABLE_SORT_CONVERTER = (table, sort) -> {
+
+		if (sort.getName().startsWith(STATISTICS_TABLE)) {
+			return sort;
+		}
+		String[] qualifiedName = sort.getName().split("\\.");
+		String sortField = qualifiedName[qualifiedName.length - 1];
+
+		return fieldName(table, sortField).sort(sort.getOrder());
+
+	};
 }
