@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -68,7 +69,7 @@ public class ReportPortalUser extends User {
 		return projectDetails;
 	}
 
-	public static class ProjectDetails {
+	public static class ProjectDetails implements Serializable {
 
 		private Long projectId;
 
