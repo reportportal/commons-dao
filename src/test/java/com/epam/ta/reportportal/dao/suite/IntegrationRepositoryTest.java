@@ -22,23 +22,24 @@ import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.TestConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
+@Sql("db/fill/integration/integration-fill.sql")
 public class IntegrationRepositoryTest extends BaseTest {
 
 	public static final String FILL_SCRIPT_PATH = "db/fill/integration";
@@ -59,24 +60,19 @@ public class IntegrationRepositoryTest extends BaseTest {
 	@Autowired
 	private IntegrationTypeRepository integrationTypeRepository;
 
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
-
 	@Test
-	public void shouldUpdateEnabledStateByIntegrationId() {
+	void shouldUpdateEnabledStateByIntegrationId() {
 
 		integrationRepository.updateEnabledStateById(true, RALLY_INTEGRATION_ID);
 
 		Integration after = integrationRepository.findById(RALLY_INTEGRATION_ID).get();
 
-		Assert.assertTrue(after.isEnabled());
+		assertTrue(after.isEnabled());
 
 	}
 
 	@Test
-	public void shouldUpdateEnabledStateByIntegrationTypeId() {
+	void shouldUpdateEnabledStateByIntegrationTypeId() {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
@@ -84,76 +80,76 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		List<Integration> enabledAfter = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
-		enabledAfter.forEach(integration -> Assert.assertTrue(integration.isEnabled()));
+		enabledAfter.forEach(integration -> assertTrue(integration.isEnabled()));
 	}
 
 	@Test
-	public void shouldFindAllByProjectIdAndIntegrationTypeWhenExists() {
+	void shouldFindAllByProjectIdAndIntegrationTypeWhenExists() {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
 		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
-		Assert.assertNotNull(integrations);
-		Assert.assertEquals(1L, integrations.size());
+		assertNotNull(integrations);
+		assertEquals(1L, integrations.size());
 	}
 
 	@Test
-	public void shouldDeleteAllByIntegrationTypeId() {
+	void shouldDeleteAllByIntegrationTypeId() {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
 		integrationRepository.deleteAllByIntegrationTypeId(integrationType.getId());
 
-		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(empty()));
-		Assert.assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
 	}
 
 	@Test
-	public void shouldFindAllGlobalByIntegrationType() {
+	void shouldFindAllGlobalByIntegrationType() {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(EMAIL_INTEGRATION_TYPE_ID).get();
 
 		List<Integration> globalEmailIntegrations = integrationRepository.findAllGlobalByType(integrationType);
 
-		Assert.assertNotNull(globalEmailIntegrations);
-		Assert.assertEquals(GLOBAL_EMAIL_INTEGRATIONS_COUNT, globalEmailIntegrations.size());
+		assertNotNull(globalEmailIntegrations);
+		assertEquals(GLOBAL_EMAIL_INTEGRATIONS_COUNT, globalEmailIntegrations.size());
 
-		globalEmailIntegrations.forEach(i -> Assert.assertNull(i.getProject()));
+		globalEmailIntegrations.forEach(i -> assertNull(i.getProject()));
 	}
 
 	@Test
-	public void shouldFindGlobalBtsIntegrationByUrlAndLinkedProject() {
+	void shouldFindGlobalBtsIntegrationByUrlAndLinkedProject() {
 
 		Optional<Integration> globalBtsIntegration = integrationRepository.findGlobalBtsByUrlAndLinkedProject("bts.com", "bts_project");
 
-		Assert.assertTrue(globalBtsIntegration.isPresent());
-		Assert.assertNull(globalBtsIntegration.get().getProject());
+		assertTrue(globalBtsIntegration.isPresent());
+		assertNull(globalBtsIntegration.get().getProject());
 	}
 
 	@Test
-	public void shouldFindProjectBtsIntegrationByUrlAndLinkedProject() {
+	void shouldFindProjectBtsIntegrationByUrlAndLinkedProject() {
 
 		Optional<Integration> projectBtsIntegration = integrationRepository.findProjectBtsByUrlAndLinkedProject("projectbts.com",
 				"project",
 				SUPERADMIN_PERSONAL_PROJECT_ID
 		);
 
-		Assert.assertTrue(projectBtsIntegration.isPresent());
-		Assert.assertNotNull(projectBtsIntegration.get().getProject());
+		assertTrue(projectBtsIntegration.isPresent());
+		assertNotNull(projectBtsIntegration.get().getProject());
 	}
 
 	@Test
-	public void shouldFindGlobalIntegrationById() {
+	void shouldFindGlobalIntegrationById() {
 
 		Optional<Integration> globalIntegration = integrationRepository.findGlobalById(GLOBAL_EMAIL_INTEGRATION_ID);
 
-		Assert.assertTrue(globalIntegration.isPresent());
-		Assert.assertNull(globalIntegration.get().getProject());
+		assertTrue(globalIntegration.isPresent());
+		assertNull(globalIntegration.get().getProject());
 	}
 
 	@Test
-	public void shouldFindAllProjectIntegrationsByProjectIdAndIntegrationTypeIds() {
+	void shouldFindAllProjectIntegrationsByProjectIdAndIntegrationTypeIds() {
 
 		List<Long> integrationTypeIds = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS)
 				.stream()
@@ -164,14 +160,14 @@ public class IntegrationRepositoryTest extends BaseTest {
 				integrationTypeIds
 		);
 
-		Assert.assertNotNull(integrations);
-		Assert.assertEquals(SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT, integrations.size());
+		assertNotNull(integrations);
+		assertEquals(SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT, integrations.size());
 
-		integrations.forEach(i -> Assert.assertNotNull(i.getProject()));
+		integrations.forEach(i -> assertNotNull(i.getProject()));
 	}
 
 	@Test
-	public void shouldFindAllGlobalInIntegrationTypeIds() {
+	void shouldFindAllGlobalInIntegrationTypeIds() {
 
 		List<Long> integrationTypeIds = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS)
 				.stream()
@@ -180,14 +176,14 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		List<Integration> integrations = integrationRepository.findAllGlobalInIntegrationTypeIds(integrationTypeIds);
 
-		Assert.assertNotNull(integrations);
-		Assert.assertEquals(GLOBAL_BTS_INTEGRATIONS_COUNT, integrations.size());
+		assertNotNull(integrations);
+		assertEquals(GLOBAL_BTS_INTEGRATIONS_COUNT, integrations.size());
 
-		integrations.forEach(i -> Assert.assertNull(i.getProject()));
+		integrations.forEach(i -> assertNull(i.getProject()));
 	}
 
 	@Test
-	public void shouldFindAllGlobalProjectIntegrationsNotInIntegrationTypeIds() {
+	void shouldFindAllGlobalProjectIntegrationsNotInIntegrationTypeIds() {
 
 		List<Long> integrationTypeIds = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS)
 				.stream()
@@ -196,10 +192,10 @@ public class IntegrationRepositoryTest extends BaseTest {
 
 		List<Integration> integrations = integrationRepository.findAllGlobalNotInIntegrationTypeIds(integrationTypeIds);
 
-		Assert.assertNotNull(integrations);
-		Assert.assertEquals(GLOBAL_EMAIL_INTEGRATIONS_COUNT, integrations.size());
+		assertNotNull(integrations);
+		assertEquals(GLOBAL_EMAIL_INTEGRATIONS_COUNT, integrations.size());
 
-		integrations.forEach(i -> Assert.assertNull(i.getProject()));
+		integrations.forEach(i -> assertNull(i.getProject()));
 	}
 
 }

@@ -17,15 +17,15 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.dao.suite.*;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 import static org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-@RunWith(Suite.class)
+@RunWith(JUnitPlatform.class)
 // Order of test classes is important
 @SuiteClasses({ ProjectRepositoryTest.class, WidgetContentRepositoryTest.class, ActivityRepositoryTest.class, AttributeRepositoryTest.class,
 		IssueTypeRepositoryTest.class, IssueGroupRepositoryTest.class, UserRepositoryTest.class, ItemAttributeRepositoryTest.class,

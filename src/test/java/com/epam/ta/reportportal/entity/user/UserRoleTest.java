@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity.user;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,24 +25,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class UserRoleTest {
+class UserRoleTest {
 
 	private Map<UserRole, String> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowed = Arrays.stream(UserRole.values()).collect(Collectors.toMap(it -> it, Enum::name));
 		disallowed = Arrays.asList("MAINTAINER", "CUSTOMER");
 	}
 
 	@Test
-	public void findByName() {
+	void findByName() {
 		allowed.forEach((key, value) -> {
 			final Optional<UserRole> optional = UserRole.findByName(value);
 			assertTrue(optional.isPresent());
@@ -52,7 +52,7 @@ public class UserRoleTest {
 	}
 
 	@Test
-	public void findByAuthority() {
+	void findByAuthority() {
 		allowed.forEach((key, value) -> {
 			final Optional<UserRole> optional = UserRole.findByAuthority(UserRole.ROLE_PREFIX + value);
 			assertTrue(optional.isPresent());

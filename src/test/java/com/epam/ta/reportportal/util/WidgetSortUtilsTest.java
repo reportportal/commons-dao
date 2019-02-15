@@ -20,9 +20,8 @@ import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import org.jooq.Field;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -30,45 +29,46 @@ import java.util.List;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class WidgetSortUtilsTest {
+class WidgetSortUtilsTest {
 
 	private Sort sort;
 	private FilterTarget filterTarget;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 
 		sort = Sort.by("startTime", "name", "statistics$defects$to_investigate$ti001", "statistics$defects$system_issue$si001");
 		filterTarget = FilterTarget.LAUNCH_TARGET;
 	}
 
 	@Test
-	public void widgetSortTest() {
+	void widgetSortTest() {
 		List<SortField<Object>> sortFields = WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filterTarget);
 
-		Assert.assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
-		Assert.assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
+		assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
+		assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
 
-		Assert.assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
+		assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
 				.filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq("statistics$defects$to_investigate$ti001")), 0)
 				.toString(), sortFields.get(2).getName());
 
-		Assert.assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
+		assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
 				.filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq("statistics$defects$system_issue$si001")), 0)
 				.toString(), sortFields.get(3).getName());
 	}
 
 	@Test
-	public void widgetGroupingTest() {
+	void widgetGroupingTest() {
 		List<Field<Object>> sortFields = WidgetSortUtils.TO_GROUP_FIELDS.apply(sort, filterTarget);
 
-		Assert.assertEquals(2, sortFields.size());
-		Assert.assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
-		Assert.assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
+		assertEquals(2, sortFields.size());
+		assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
+		assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
 	}
 
 }

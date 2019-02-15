@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
 package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,47 +26,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ObjectTypeTest {
+class ObjectTypeTest {
 
 	private Map<ObjectType, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowed = Arrays.stream(ObjectType.values())
 				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowed = Arrays.asList("noSuchObjectType", "", " ", null);
 	}
 
 	@Test
-	public void getObjectTypeByName() {
+	void getObjectTypeByName() {
 		allowed.forEach((key, value) -> value.forEach(val -> assertEquals(key, ObjectType.getObjectTypeByName(val))));
 	}
 
 	@Test
-	public void getObjectTypeByNameFail() {
-		thrown.expect(ReportPortalException.class);
+	void getObjectTypeByNameFail() {
 		Collections.shuffle(disallowed);
-		ObjectType.getObjectTypeByName(disallowed.get(0));
+		assertThrows(ReportPortalException.class, () -> ObjectType.getObjectTypeByName(disallowed.get(0)));
 	}
 
 	@Test
-	public void getTypeByName() {
+	void getTypeByName() {
 		allowed.forEach((key, value) -> value.forEach(val -> assertEquals(key.getClassObject(), ObjectType.getTypeByName(val))));
 	}
 
 	@Test
-	public void getTypeByNameFail() {
-		thrown.expect(ReportPortalException.class);
+	void getTypeByNameFail() {
 		Collections.shuffle(disallowed);
-		ObjectType.getTypeByName(disallowed.get(0));
+		assertThrows(ReportPortalException.class, () -> ObjectType.getTypeByName(disallowed.get(0)));
 	}
 }

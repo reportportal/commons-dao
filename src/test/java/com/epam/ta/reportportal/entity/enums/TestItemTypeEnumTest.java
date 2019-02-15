@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,25 +25,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class TestItemTypeEnumTest {
+class TestItemTypeEnumTest {
 
 	private Map<TestItemTypeEnum, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		allowed = Arrays.stream(TestItemTypeEnum.values())
 				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowed = Arrays.asList("noSuchIssueGroup", "", " ", null);
 	}
 
 	@Test
-	public void fromValue() {
+	void fromValue() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<TestItemTypeEnum> optional = TestItemTypeEnum.fromValue(val);
 			assertTrue(optional.isPresent());
@@ -53,7 +53,7 @@ public class TestItemTypeEnumTest {
 	}
 
 	@Test
-	public void sameLevel() {
+	void sameLevel() {
 		final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
 		final TestItemTypeEnum story = TestItemTypeEnum.STORY;
 		final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
@@ -65,7 +65,7 @@ public class TestItemTypeEnumTest {
 	}
 
 	@Test
-	public void higherThan() {
+	void higherThan() {
 		final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
 		final TestItemTypeEnum story = TestItemTypeEnum.STORY;
 		final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
@@ -78,7 +78,7 @@ public class TestItemTypeEnumTest {
 	}
 
 	@Test
-	public void lowerThan() {
+	void lowerThan() {
 		final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
 		final TestItemTypeEnum story = TestItemTypeEnum.STORY;
 		final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;

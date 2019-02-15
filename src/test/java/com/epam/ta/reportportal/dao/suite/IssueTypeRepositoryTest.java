@@ -20,37 +20,32 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import org.flywaydb.test.annotation.FlywayTest;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
+@Sql("db/fill/issue-type/issue-type-fill.sql")
 public class IssueTypeRepositoryTest extends BaseTest {
-
-	private static final String FILL_SCRIPT_PATH = "db/fill/issue-type";
 
 	private static final int DEFAULT_ISSUE_TYPES_COUNT = TestItemIssueGroup.values().length - 1;
 
 	@Autowired
 	private IssueTypeRepository repository;
 
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
-
 	@Test
-	public void findByLocator() {
+	void findByLocator() {
 		final String customLocator = "pb_ajf7d5d";
 		final Optional<IssueType> customIssueType = repository.findByLocator(customLocator);
 		assertThat("IssueType should exist", customIssueType.isPresent(), Matchers.is(true));
@@ -58,7 +53,7 @@ public class IssueTypeRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void findById() {
+	void findById() {
 		final Long customId = 100L;
 
 		final Optional<IssueType> issueTypeOptional = repository.findById(customId);
@@ -67,10 +62,10 @@ public class IssueTypeRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void defaultIssueTypes() {
+	void defaultIssueTypes() {
 		final List<IssueType> defaultIssueTypes = repository.getDefaultIssueTypes();
 		assertEquals(DEFAULT_ISSUE_TYPES_COUNT, defaultIssueTypes.size());
-		defaultIssueTypes.forEach(Assert::assertNotNull);
+		defaultIssueTypes.forEach(Assertions::assertNotNull);
 	}
 
 	private static void assertIssueType(IssueType customIssueType) {
@@ -79,10 +74,10 @@ public class IssueTypeRepositoryTest extends BaseTest {
 		final String customShortName = "CS";
 		final String customHexColor = "#a3847e";
 
-		assertEquals("Incorrect locator", customLocator, customIssueType.getLocator());
-		assertEquals("Incorrect long name", customLongName, customIssueType.getLongName());
-		assertEquals("Incorrect short name", customShortName, customIssueType.getShortName());
-		assertEquals("Incorrect hex color", customHexColor, customIssueType.getHexColor());
-		assertEquals("Unexpected issue group", TestItemIssueGroup.PRODUCT_BUG, customIssueType.getIssueGroup().getTestItemIssueGroup());
+		assertEquals(customLocator, customIssueType.getLocator(), "Incorrect locator");
+		assertEquals(customLongName, customIssueType.getLongName(), "Incorrect long name");
+		assertEquals(customShortName, customIssueType.getShortName(), "Incorrect short name");
+		assertEquals(customHexColor, customIssueType.getHexColor(), "Incorrect hex color");
+		assertEquals(TestItemIssueGroup.PRODUCT_BUG, customIssueType.getIssueGroup().getTestItemIssueGroup(), "Unexpected issue group");
 	}
 }

@@ -20,75 +20,67 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
+@Sql("/db/fill/integration/integration-fill.sql")
 public class IntegrationTypeRepositoryTest extends BaseTest {
-
-	private static final String FILL_SCRIPT_PATH = "/db/fill/integration";
 
 	private final static String JIRA_INTEGRATION_TYPE_NAME = "JIRA";
 	private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
 	private static final long BTS_INTEGRATIONS_COUNT = 2L;
 
-
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
-
 	@Autowired
 	private IntegrationTypeRepository integrationTypeRepository;
 
 	@Test
-	public void shouldFindWhenNameExists() {
+	void shouldFindWhenNameExists() {
 
-		Assert.assertTrue(integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME).isPresent());
+		assertTrue(integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME).isPresent());
 
 	}
 
 	@Test
-	public void shouldNotFindWhenNameExists() {
+	void shouldNotFindWhenNameExists() {
 
-		Assert.assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
+		assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
 	}
 
 	@Test
-	public void shouldFindWhenNameExistsAndIntegrationGroupExists() {
+	void shouldFindWhenNameExistsAndIntegrationGroupExists() {
 
-		Assert.assertTrue(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
+		assertTrue(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
 				.isPresent());
 	}
 
 	@Test
-	public void shouldNotFindWhenIncorrectNameAndIntegrationGroupExists() {
+	void shouldNotFindWhenIncorrectNameAndIntegrationGroupExists() {
 
-		Assert.assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(WRONG_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
+		assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(WRONG_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
 				.isPresent());
 	}
 
 	@Test
-	public void shouldNotFindWhenNameExistsAndIntegrationGroupNotExists() {
+	void shouldNotFindWhenNameExistsAndIntegrationGroupNotExists() {
 
-		Assert.assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME,
-				IntegrationGroupEnum.NOTIFICATION
-		).isPresent());
+		assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.NOTIFICATION)
+				.isPresent());
 	}
 
 	@Test
-	public void shouldFindAllByIntegrationGroup() {
+	void shouldFindAllByIntegrationGroup() {
 
 		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS);
 
-		Assert.assertNotNull(integrationTypes);
-		Assert.assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
+		assertNotNull(integrationTypes);
+		assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
 	}
 }

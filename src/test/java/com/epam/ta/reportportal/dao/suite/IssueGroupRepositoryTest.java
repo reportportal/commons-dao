@@ -20,13 +20,13 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IssueGroupRepository;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -37,11 +37,11 @@ public class IssueGroupRepositoryTest extends BaseTest {
 	private IssueGroupRepository repository;
 
 	@Test
-	public void findByTestItemIssueGroup() {
+	void findByTestItemIssueGroup() {
 		Arrays.stream(TestItemIssueGroup.values()).filter(it -> !it.equals(TestItemIssueGroup.NOT_ISSUE_FLAG)).forEach(it -> {
 			final IssueGroup issueGroup = repository.findByTestItemIssueGroup(it);
-			assertEquals("Incorrect issue group", it, issueGroup.getTestItemIssueGroup());
-			assertNotNull("Issue group should have id", issueGroup.getId());
+			assertEquals(it, issueGroup.getTestItemIssueGroup(), "Incorrect issue group");
+			assertNotNull(issueGroup.getId(), "Issue group should have id");
 		});
 	}
 }

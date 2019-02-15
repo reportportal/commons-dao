@@ -20,35 +20,28 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.AttributeRepository;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * @author Ivan Budaev
  */
+@Sql("db/fill/attributes/attributes-fill.sql")
 public class AttributeRepositoryTest extends BaseTest {
-
-	private static final String FILL_SCRIPT_PATH = "db/fill/attributes";
 
 	@Autowired
 	private AttributeRepository attributeRepository;
 
-	@FlywayTest(locationsForMigrate = { FILL_SCRIPT_PATH }, invokeCleanDB = false)
-	@BeforeClass
-	public static void before() {
-	}
-
 	@Test
-	public void shouldFindWhenNameIsPresent() {
+	void shouldFindWhenNameIsPresent() {
 
 		//given
 		String name = "present";
@@ -61,7 +54,7 @@ public class AttributeRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void shouldNotFindWhenNameIsNotPresent() {
+	void shouldNotFindWhenNameIsNotPresent() {
 
 		//given
 		String name = "not present";
@@ -70,11 +63,11 @@ public class AttributeRepositoryTest extends BaseTest {
 		Optional<Attribute> attribute = attributeRepository.findByName(name);
 
 		//then
-		Assert.assertFalse("Attribute should not exists", attribute.isPresent());
+		assertFalse(attribute.isPresent(), "Attribute should not exists");
 	}
 
 	@Test
-	public void getDefaultProjectAttributesTest() {
+	void getDefaultProjectAttributesTest() {
 		final Set<Attribute> defaultProjectAttributes = attributeRepository.getDefaultProjectAttributes();
 		defaultProjectAttributes.forEach(it -> assertTrue(
 				"Attribute should exists",
@@ -83,7 +76,7 @@ public class AttributeRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void findById() {
+	void findById() {
 		final Long attrId = 100L;
 		final String attrName = "present";
 
@@ -93,7 +86,7 @@ public class AttributeRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteById() {
+	void deleteById() {
 		final Long attrId = 100L;
 		attributeRepository.deleteById(attrId);
 		assertEquals(ProjectAttributeEnum.values().length, attributeRepository.findAll().size());

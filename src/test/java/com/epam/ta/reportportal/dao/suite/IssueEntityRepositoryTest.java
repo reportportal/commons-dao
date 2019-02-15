@@ -20,12 +20,12 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.dao.IssueEntityRepository;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Uses script in db/fill/item
@@ -38,16 +38,16 @@ public class IssueEntityRepositoryTest extends BaseTest {
 	private IssueEntityRepository repository;
 
 	@Test
-	public void findAllByIssueId() {
+	void findAllByIssueId() {
 		final Long toInvestigateTypeId = 1L;
 		final int expectedSize = 12;
 
 		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(toInvestigateTypeId);
-		assertEquals("Incorrect size of issue entities", expectedSize, issueEntities.size());
+		assertEquals(expectedSize, issueEntities.size(), "Incorrect size of issue entities");
 		issueEntities.forEach(it -> assertEquals(
-				"Issue entities should be int 'to investigate' group",
 				TestItemIssueGroup.TO_INVESTIGATE,
-				it.getIssueType().getIssueGroup().getTestItemIssueGroup()
+				it.getIssueType().getIssueGroup().getTestItemIssueGroup(),
+				"Issue entities should be int 'to investigate' group"
 		));
 
 	}

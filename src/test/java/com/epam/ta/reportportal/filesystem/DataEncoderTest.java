@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,25 @@
 
 package com.epam.ta.reportportal.filesystem;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Dzianis_Shybeka
  */
-public class DataEncoderTest {
+class DataEncoderTest {
 
 	private DataEncoder encoder;
 
-	@Before
-	public void setUp() throws Exception {
-
+	@BeforeEach
+	void setUp() {
 		encoder = new DataEncoder();
 	}
 
 	@Test
-	public void encode_decode_with_empty_input() throws Exception {
+	void encode_decode_with_empty_input() throws Exception {
 		//  given:
 		String input = "";
 
@@ -55,7 +54,7 @@ public class DataEncoderTest {
 	}
 
 	@Test
-	public void encode_decode_with_null_input() throws Exception {
+	void encode_decode_with_null_input() throws Exception {
 		//  given:
 		String input = null;
 
@@ -75,7 +74,7 @@ public class DataEncoderTest {
 	}
 
 	@Test
-	public void encode_decode() throws Exception {
+	void encode_decode() throws Exception {
 		//  given:
 		String input = "/data/path/file.ext";
 
