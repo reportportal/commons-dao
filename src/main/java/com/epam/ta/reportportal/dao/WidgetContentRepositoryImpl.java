@@ -595,14 +595,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(LAUNCHES_COUNT).with(sort).build();
 
-		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(LAUNCHES_TABLE, LAUNCH_ID),
+		Map<String, List<CumulativeTrendChartContent>> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(LAUNCHES_TABLE,
+				LAUNCH_ID),
 				fieldName(LAUNCHES_TABLE, NUMBER),
 				fieldName(LAUNCHES_TABLE, NAME),
 				fieldName(LAUNCHES_TABLE, START_TIME),
 				fieldName(LAUNCHES_TABLE, ATTR_ID),
-				fieldName(LAUNCHES_TABLE, ATTR_VALUE),
-				fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-				fieldName(STATISTICS_TABLE, SF_NAME)
+				fieldName(LAUNCHES_TABLE, ATTR_VALUE)
 		)
 				.from(dsl.with(LAUNCHES)
 						.as(selectQuery)
@@ -645,15 +644,35 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						fieldName(LAUNCHES_TABLE, NAME),
 						fieldName(LAUNCHES_TABLE, START_TIME),
 						fieldName(LAUNCHES_TABLE, ATTR_ID),
-						fieldName(LAUNCHES_TABLE, ATTR_VALUE),
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-						fieldName(STATISTICS_TABLE, SF_NAME)
+						fieldName(LAUNCHES_TABLE, ATTR_VALUE)
 				)
 				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget())
 						.stream()
 						.map(s -> WidgetSortUtils.CUSTOM_TABLE_SORT_CONVERTER.apply(LAUNCHES_TABLE, s))
 						.collect(toList()))
 				.fetch());
+
+		CUMULATIVE_STATISTICS_FETCHER.accept(accumulatedLaunches,
+				dsl.select(DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER), TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
+						.from(STATISTICS)
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.join(TEST_ITEM)
+						.on(STATISTICS.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+						.where(TEST_ITEM.HAS_CHILDREN.isFalse())
+						.and(TEST_ITEM.RETRY_OF.isNull())
+						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+						.and(TEST_ITEM.LAUNCH_ID.in(accumulatedLaunches.values()
+								.stream()
+								.flatMap(Collection::stream)
+								.map(CumulativeTrendChartContent::getId)
+								.collect(toList())))
+						.groupBy(TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
+						.fetch()
+		);
+
+		return accumulatedLaunches;
+
 	}
 
 	@Override
