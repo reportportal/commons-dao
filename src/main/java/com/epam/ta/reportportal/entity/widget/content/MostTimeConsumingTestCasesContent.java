@@ -48,7 +48,7 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 	@Column(name = UNIQUE_ID)
 	private String uniqueId;
 
-	@JsonProperty(value = START_TIME)
+	@JsonProperty(value = "startTime")
 	@Column(name = "start_time")
 	private Long startTime;
 
