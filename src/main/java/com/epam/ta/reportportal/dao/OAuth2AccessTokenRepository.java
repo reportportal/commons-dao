@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.OAuth2AccessTokenEntity;
+import com.epam.ta.reportportal.entity.user.StoredAccessToken;
 import org.springframework.stereotype.Repository;
 
 import java.util.stream.Stream;
@@ -25,18 +25,18 @@ import java.util.stream.Stream;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public interface OAuth2AccessTokenRepository extends ReportPortalRepository<OAuth2AccessTokenEntity, Long> {
+public interface OAuth2AccessTokenRepository extends ReportPortalRepository<StoredAccessToken, Long> {
 
-	OAuth2AccessTokenEntity findByTokenId(String tokenId);
+	StoredAccessToken findByTokenId(String tokenId);
 
-	OAuth2AccessTokenEntity findByRefreshToken(String refreshToken);
+	StoredAccessToken findByRefreshToken(String refreshToken);
 
-	OAuth2AccessTokenEntity findByAuthenticationId(String authenticationId);
+	StoredAccessToken findByAuthenticationId(String authenticationId);
 
-	Stream<OAuth2AccessTokenEntity> findByUserName(String userName);
+	Stream<StoredAccessToken> findByUserName(String userName);
 
-	Stream<OAuth2AccessTokenEntity> findByClientIdAndUserName(String clientId, String userName);
+	Stream<StoredAccessToken> findByClientIdAndUserName(String clientId, String userName);
 
-	Stream<OAuth2AccessTokenEntity> findByClientId(String clientId);
+	Stream<StoredAccessToken> findByClientId(String clientId);
 
 }

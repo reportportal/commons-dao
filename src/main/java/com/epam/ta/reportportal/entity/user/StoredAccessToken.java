@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity;
+package com.epam.ta.reportportal.entity.user;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "oauth_access_token", schema = "public")
-public class OAuth2AccessTokenEntity implements Serializable {
+public class StoredAccessToken implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +42,9 @@ public class OAuth2AccessTokenEntity implements Serializable {
 
 	@Column(name = "username")
 	private String userName;
+
+	@Column(name = "user_id")
+	private Long userId;
 
 	@Column(name = "client_id")
 	private String clientId;
@@ -90,6 +93,14 @@ public class OAuth2AccessTokenEntity implements Serializable {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getClientId() {
