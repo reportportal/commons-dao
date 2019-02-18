@@ -57,16 +57,32 @@ public class ReportPortalUser extends User {
 		return userId;
 	}
 
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
 	public UserRole getUserRole() {
 		return userRole;
+	}
+
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public Map<String, ProjectDetails> getProjectDetails() {
 		return projectDetails;
+	}
+
+	public void setProjectDetails(Map<String, ProjectDetails> projectDetails) {
+		this.projectDetails = projectDetails;
 	}
 
 	public static class ProjectDetails implements Serializable {
