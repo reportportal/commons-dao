@@ -377,9 +377,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ChartStatisticsContent> launchesComparisonStatistics(Filter filter, List<String> contentFields, Sort sort, int limit) {
 
-		List<String> executionStatisticsFields = contentFields.stream()
-				.filter(cf -> cf.contains(EXECUTIONS_KEY) && !cf.equalsIgnoreCase(EXECUTIONS_TOTAL))
-				.collect(toList());
+		List<String> executionStatisticsFields = contentFields.stream().filter(cf -> cf.contains(EXECUTIONS_KEY)).collect(toList());
 		List<String> defectStatisticsFields = contentFields.stream().filter(cf -> cf.contains(DEFECTS_KEY)).collect(toList());
 
 		return LAUNCHES_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
@@ -397,7 +395,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 										.join(STATISTICS_FIELD)
 										.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 										.where(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID))
-										.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)), 0).cast(Double.class)), 2))
+										.and(STATISTICS_FIELD.NAME.in(executionStatisticsFields)
+												.and(STATISTICS_FIELD.NAME.notEqual(EXECUTIONS_TOTAL))), 0).cast(Double.class)), 2))
 								.as(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
 				)
 				.from(LAUNCH)

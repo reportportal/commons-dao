@@ -280,7 +280,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 			Map<String, Integer> testStatistics = preDefinedStatistics.get(res.getId());
 			int executionsSum = testStatistics.entrySet()
 					.stream()
-					.filter(entry -> entry.getKey().contains(EXECUTIONS_KEY))
+					.filter(entry -> entry.getKey().contains(EXECUTIONS_KEY) && !entry.getKey().equalsIgnoreCase(EXECUTIONS_TOTAL))
 					.mapToInt(Map.Entry::getValue)
 					.sum();
 			int defectsSum = testStatistics.entrySet()
@@ -291,13 +291,19 @@ public class WidgetContentRepositoryTest extends BaseTest {
 
 			currStatistics.keySet()
 					.stream()
-					.filter(key -> key.contains(EXECUTIONS_KEY))
+					.filter(key -> key.contains(EXECUTIONS_KEY) && !key.equalsIgnoreCase(EXECUTIONS_TOTAL))
 					.forEach(key -> assertEquals(Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
 									.setScale(2, RoundingMode.HALF_UP)
 									.doubleValue(),
 							0.01
 					));
+
+			Assert.assertEquals((double) testStatistics.get(EXECUTIONS_TOTAL),
+					Double.parseDouble(currStatistics.get(EXECUTIONS_TOTAL)),
+					0.01
+			);
+
 			currStatistics.keySet()
 					.stream()
 					.filter(key -> key.contains(DEFECTS_KEY))
@@ -459,8 +465,7 @@ public class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildContentFields();
 
-		List<Sort.Order> orderings = Lists.newArrayList(
-				new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$nd001"),
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$nd001"),
 				new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)
 		);
 
@@ -672,7 +677,8 @@ public class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$defects$to_investigate$total",
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
-				"statistics$executions$passed"
+				"statistics$executions$passed",
+				"statistics$executions$total"
 		);
 	}
 
@@ -739,9 +745,9 @@ public class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	private Map<Long, Map<String, Integer>> buildLaunchesComparisonStatistics() {
-		Map<Long, Map<String, Integer>> investigatedTrendMap = Maps.newLinkedHashMap();
+		Map<Long, Map<String, Integer>> predefinedLaunchesComparisonStatistics = Maps.newLinkedHashMap();
 
-		investigatedTrendMap.put(1L,
+		predefinedLaunchesComparisonStatistics.put(1L,
 				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 2)
 						.put("statistics$defects$system_issue$total", 8)
 						.put("statistics$defects$automation_bug$total", 7)
@@ -750,9 +756,10 @@ public class WidgetContentRepositoryTest extends BaseTest {
 						.put("statistics$executions$passed", 3)
 						.put("statistics$executions$skipped", 4)
 						.put("statistics$executions$failed", 3)
+						.put("statistics$executions$total", 10)
 						.build()
 		);
-		investigatedTrendMap.put(2L,
+		predefinedLaunchesComparisonStatistics.put(2L,
 				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
 						.put("statistics$defects$system_issue$total", 3)
 						.put("statistics$defects$automation_bug$total", 1)
@@ -761,10 +768,11 @@ public class WidgetContentRepositoryTest extends BaseTest {
 						.put("statistics$executions$passed", 2)
 						.put("statistics$executions$skipped", 3)
 						.put("statistics$executions$failed", 6)
+						.put("statistics$executions$total", 11)
 						.build()
 		);
 
-		return investigatedTrendMap;
+		return predefinedLaunchesComparisonStatistics;
 
 	}
 
