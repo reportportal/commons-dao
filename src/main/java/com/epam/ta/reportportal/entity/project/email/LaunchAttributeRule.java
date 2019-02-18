@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.project.email;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "launch_attribute_rules")
-public class LaunchAttributeRule {
+public class LaunchAttributeRule implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
