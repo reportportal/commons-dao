@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
@@ -39,14 +38,6 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 * @return Page of project info objects
 	 */
 	Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable);
-
-	/**
-	 * Find personal project name by user
-	 *
-	 * @param username Login
-	 * @return Optional of String
-	 */
-	Optional<String> findPersonalProjectName(String username);
 
 	/**
 	 * Find all project names

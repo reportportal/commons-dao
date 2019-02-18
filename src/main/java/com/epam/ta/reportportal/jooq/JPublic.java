@@ -19,7 +19,6 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
 import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Catalog;
 import org.jooq.Sequence;
@@ -45,7 +44,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1470446758;
+	private static final long serialVersionUID = 1550138684;
 
     /**
      * The reference instance of <code>public</code>
@@ -187,6 +186,16 @@ public class JPublic extends SchemaImpl {
      */
     public final JLaunch LAUNCH = com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 
+	/**
+	 * The table <code>public.launch_attributes</code>.
+	 */
+	public final JLaunchAttributes LAUNCH_ATTRIBUTES = com.epam.ta.reportportal.jooq.tables.JLaunchAttributes.LAUNCH_ATTRIBUTES;
+
+	/**
+	 * The table <code>public.launch_names</code>.
+	 */
+	public final JLaunchNames LAUNCH_NAMES = com.epam.ta.reportportal.jooq.tables.JLaunchNames.LAUNCH_NAMES;
+
     /**
      * The table <code>public.ldap_config</code>.
      */
@@ -242,10 +251,20 @@ public class JPublic extends SchemaImpl {
      */
     public final JProjectUser PROJECT_USER = com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
 
+	/**
+	 * The table <code>public.recipients</code>.
+	 */
+	public final JRecipients RECIPIENTS = com.epam.ta.reportportal.jooq.tables.JRecipients.RECIPIENTS;
+
     /**
      * The table <code>public.restore_password_bid</code>.
      */
     public final JRestorePasswordBid RESTORE_PASSWORD_BID = com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid.RESTORE_PASSWORD_BID;
+
+	/**
+	 * The table <code>public.sender_case</code>.
+	 */
+	public final JSenderCase SENDER_CASE = com.epam.ta.reportportal.jooq.tables.JSenderCase.SENDER_CASE;
 
     /**
      * The table <code>public.server_settings</code>.
@@ -355,7 +374,7 @@ public class JPublic extends SchemaImpl {
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
-            Sequences.PROJECT_ID_SEQ,
+            Sequences.PROJECT_ID_SEQ, Sequences.SENDER_CASE_ID_SEQ, Sequences.SENDER_CASE_PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
             Sequences.SHAREABLE_ENTITY_ID_SEQ,
             Sequences.STATISTICS_FIELD_SF_ID_SEQ,
@@ -401,7 +420,7 @@ public class JPublic extends SchemaImpl {
             JIssueType.ISSUE_TYPE,
             JIssueTypeProject.ISSUE_TYPE_PROJECT,
             JItemAttribute.ITEM_ATTRIBUTE,
-            JLaunch.LAUNCH,
+            JLaunch.LAUNCH, JLaunchAttributes.LAUNCH_ATTRIBUTES, JLaunchNames.LAUNCH_NAMES,
             JLdapConfig.LDAP_CONFIG,
             JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES,
             JLog.LOG,
@@ -412,8 +431,8 @@ public class JPublic extends SchemaImpl {
             JParameter.PARAMETER,
             JProject.PROJECT,
             JProjectAttribute.PROJECT_ATTRIBUTE,
-            JProjectUser.PROJECT_USER,
-            JRestorePasswordBid.RESTORE_PASSWORD_BID,
+            JProjectUser.PROJECT_USER, JRecipients.RECIPIENTS,
+            JRestorePasswordBid.RESTORE_PASSWORD_BID, JSenderCase.SENDER_CASE,
             JServerSettings.SERVER_SETTINGS,
             JShareableEntity.SHAREABLE_ENTITY,
             JStatistics.STATISTICS,

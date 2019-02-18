@@ -19,32 +19,20 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JIntegrationTypeRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -60,7 +48,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
 
-    private static final long serialVersionUID = -1586805614;
+	private static final long serialVersionUID = 906604102;
 
     /**
      * The reference instance of <code>public.integration_type</code>
@@ -99,6 +87,16 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
      * The column <code>public.integration_type.group_type</code>.
      */
     public final TableField<JIntegrationTypeRecord, JIntegrationGroupEnum> GROUP_TYPE = createField("group_type", org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum.class), this, "");
+
+	/**
+	 * The column <code>public.integration_type.enabled</code>.
+	 */
+	public final TableField<JIntegrationTypeRecord, Boolean> ENABLED = createField(
+			"enabled",
+			org.jooq.impl.SQLDataType.BOOLEAN.nullable(false),
+			this,
+			""
+	);
 
     /**
      * The column <code>public.integration_type.details</code>.

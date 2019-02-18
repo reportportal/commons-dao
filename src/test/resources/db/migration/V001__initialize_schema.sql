@@ -66,7 +66,6 @@ CREATE TABLE users (
   role                 VARCHAR NOT NULL,
   type                 VARCHAR NOT NULL,
   expired              BOOLEAN NOT NULL,
-  default_project_id   BIGINT REFERENCES project (id) ON DELETE SET NULL,
   full_name            VARCHAR NOT NULL,
   metadata             JSONB   NULL
 );
@@ -340,6 +339,7 @@ CREATE TABLE launch (
   last_modified TIMESTAMP DEFAULT now()                                             NOT NULL,
   mode          LAUNCH_MODE_ENUM                                                    NOT NULL,
   status        STATUS_ENUM                                                         NOT NULL,
+  has_retries   BOOLEAN                                                             NOT NULL DEFAULT FALSE,
   CONSTRAINT unq_name_number UNIQUE (name, number, project_id, uuid)
 );
 
@@ -1354,8 +1354,8 @@ BEGIN
     INSERT INTO project (name, project_type, creation_date, metadata) VALUES ('superadmin_personal', 'PERSONAL', now(), '{"metadata": {"additional_info": ""}}');
     superadminproject := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
-    INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired, metadata)
-    VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL', superadminproject, 'tester', FALSE, '{"metadata": {"last_login": "now"}}');
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+    VALUES ('superadmin', '5d39d85bddde885f6579f8121e11eba2', 'superadminemail@domain.com', 'ADMINISTRATOR', 'INTERNAL', 'tester', FALSE, '{"metadata": {"last_login": "now"}}');
     superadmin := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role) VALUES (superadmin, superadminproject, 'PROJECT_MANAGER');
@@ -1364,8 +1364,8 @@ BEGIN
     INSERT INTO project (name, project_type, creation_date, metadata) VALUES ('default_personal', 'PERSONAL', now(), '{"metadata": {"additional_info": ""}}');
     defaultproject := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
-    INSERT INTO users (login, password, email, role, type, default_project_id, full_name, expired, metadata)
-    VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', 'USER', 'INTERNAL', defaultproject, 'tester', FALSE, '{"metadata": {"last_login": "now"}}');
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+    VALUES ('default', '3fde6bb0541387e4ebdadf7c2ff31123', 'defaultemail@domain.com', 'USER', 'INTERNAL', 'tester', FALSE, '{"metadata": {"last_login": "now"}}');
     defaultid := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role) VALUES (defaultid, defaultproject, 'PROJECT_MANAGER');

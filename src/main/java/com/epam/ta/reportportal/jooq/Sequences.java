@@ -19,7 +19,6 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
 
@@ -158,6 +157,24 @@ public class Sequences {
      * The sequence <code>public.project_id_seq</code>
      */
     public static final Sequence<Long> PROJECT_ID_SEQ = new SequenceImpl<Long>("project_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+	/**
+	 * The sequence <code>public.sender_case_id_seq</code>
+	 */
+	public static final Sequence<Long> SENDER_CASE_ID_SEQ = new SequenceImpl<Long>(
+			"sender_case_id_seq",
+			JPublic.PUBLIC,
+			org.jooq.impl.SQLDataType.BIGINT.nullable(false)
+	);
+
+	/**
+	 * The sequence <code>public.sender_case_project_id_seq</code>
+	 */
+	public static final Sequence<Long> SENDER_CASE_PROJECT_ID_SEQ = new SequenceImpl<Long>(
+			"sender_case_project_id_seq",
+			JPublic.PUBLIC,
+			org.jooq.impl.SQLDataType.BIGINT.nullable(false)
+	);
 
     /**
      * The sequence <code>public.server_settings_id_seq</code>
