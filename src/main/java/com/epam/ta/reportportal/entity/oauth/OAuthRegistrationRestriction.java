@@ -26,6 +26,7 @@ import java.util.Objects;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "oauth_registration_restriction", schema = "public")
 public class OAuthRegistrationRestriction implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
