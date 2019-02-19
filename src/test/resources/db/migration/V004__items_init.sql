@@ -12,6 +12,12 @@ DECLARE
   DECLARE stepcounter    INT = 1;
   DECLARE functionresult INT = 0;
 BEGIN
+
+  alter sequence launch_id_seq restart with 1;
+  alter sequence attribute_id_seq restart with 1;
+  alter sequence test_item_item_id_seq restart with 1;
+  alter sequence log_id_seq restart with 1;
+
   WHILE launchcounter < 13
     LOOP
       INSERT INTO launch (id, uuid, project_id, user_id, name, start_time, number, last_modified, mode, status)

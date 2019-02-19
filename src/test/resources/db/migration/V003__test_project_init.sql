@@ -7,6 +7,9 @@ DECLARE
   chubaka      BIGINT;
   fake_chubaka BIGINT;
 BEGIN
+
+  alter sequence project_id_seq restart with 3;
+
   INSERT INTO project (name, project_type, creation_date) VALUES ('millennium_falcon', 'INTERNAL', now());
   falcon := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
@@ -18,14 +21,16 @@ BEGIN
   INSERT INTO project_user (user_id, project_id, project_role) VALUES (han_solo, falcon, 'PROJECT_MANAGER');
 
 
-  INSERT INTO users (login, password, email, role, type, full_name, expired)
-  VALUES ('chubaka', '601c4731aeff3b84f76672ad024bb2a0', 'chybaka@domain.com', 'USER', 'INTERNAL', 'Chubaka', FALSE);
+  INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+  VALUES ('chubaka', '601c4731aeff3b84f76672ad024bb2a0', 'chybaka@domain.com', 'USER', 'INTERNAL', 'Chubaka', FALSE,
+          '{"metadata": {"last_login": "2018-12-26T15:04:25.573"}}');
   chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
   INSERT INTO project_user (user_id, project_id, project_role) VALUES (chubaka, falcon, 'MEMBER');
 
-  INSERT INTO users (login, password, email, role, type, full_name, expired)
-  VALUES ('fake_chubaka', '601c4731aeff3b84f76672ad024bb2a0', 'chybakafake@domain.com', 'USER', 'INTERNAL', 'Chubaka Fake', FALSE);
+  INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+  VALUES ('fake_chubaka', '601c4731aeff3b84f76672ad024bb2a0', 'chybakafake@domain.com', 'USER', 'INTERNAL', 'Chubaka Fake', FALSE,
+          '{"metadata": {"last_login": "2018-12-25T11:21:45.573"}}');
   fake_chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
   INSERT INTO project_user (user_id, project_id, project_role) VALUES (fake_chubaka, falcon, 'MEMBER');

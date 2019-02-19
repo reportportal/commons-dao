@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Ivan Budaev
  */
 @Sql("/db/fill/launch/launch-fill.sql")
-public class LaunchRepositoryTest extends BaseTest {
+class LaunchRepositoryTest extends BaseTest {
 
 	@Autowired
 	private LaunchRepository launchRepository;

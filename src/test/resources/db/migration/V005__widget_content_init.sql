@@ -7,6 +7,14 @@ DECLARE   launch1 BIGINT;
   DECLARE launch4 BIGINT;
   DECLARE itemId  BIGINT;
 BEGIN
+
+  alter sequence launch_id_seq restart with 1;
+  alter sequence item_attribute_id_seq restart with 1;
+  alter sequence bug_tracking_system_id_seq restart with 1;
+  alter sequence test_item_item_id_seq restart with 1;
+  alter sequence ticket_id_seq restart with 1;
+  alter sequence activity_id_seq restart with 1;
+
   INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
   VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
           1,

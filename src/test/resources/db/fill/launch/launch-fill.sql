@@ -1,3 +1,6 @@
+alter sequence launch_id_seq restart with 1;
+alter sequence test_item_item_id_seq restart with 1;
+
 SELECT launches_init();
 
 INSERT INTO public.launch(id, uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status)

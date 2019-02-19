@@ -41,9 +41,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,7 +65,12 @@ class UserRepositoryTest extends BaseTest {
 		long now = new Date().getTime();
 		Filter filter = Filter.builder()
 				.withTarget(User.class)
-				.withCondition(new FilterCondition(Condition.LOWER_THAN, false, String.valueOf(now), CRITERIA_LAST_LOGIN))
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria(CRITERIA_LAST_LOGIN)
+						.withValue(String.valueOf(now))
+						.build())
+				.withCondition(FilterCondition.builder().eq(CRITERIA_PROJECT_ID, "3").build())
 				.build();
 		//when
 		List<User> users = userRepository.findByFilter(filter);
@@ -109,7 +112,7 @@ class UserRepositoryTest extends BaseTest {
 	void loadUsersByFilterForProject() {
 		//given
 		Filter filter = buildDefaultUserFilter();
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "millennium_falcon", CRITERIA_PROJECT_NAME));
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_PROJECT_ID));
 		//when
 		List<User> users = userRepository.findByFilterExcluding(filter, PageRequest.of(0, 5), "email").getContent();
 		//then
@@ -231,8 +234,7 @@ class UserRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultUserFilter() {
 		return Filter.builder()
-				.withTarget(User.class)
-				.withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "10", CRITERIA_ID))
+				.withTarget(User.class).withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "1000", CRITERIA_ID))
 				.build();
 	}
 }
