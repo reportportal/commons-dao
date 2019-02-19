@@ -177,7 +177,12 @@ public class OAuthRegistration implements Serializable {
 	}
 
 	public void setScopes(Set<OAuthRegistrationScope> scopes) {
-		this.scopes = scopes;
+		if (this.scopes == null) {
+			this.scopes = scopes;
+		} else {
+			this.scopes.retainAll(scopes);
+			this.scopes.addAll(scopes);
+		}
 	}
 
 	public Set<OAuthRegistrationRestriction> getRestrictions() {
