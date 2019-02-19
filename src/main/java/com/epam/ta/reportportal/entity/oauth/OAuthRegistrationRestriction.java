@@ -31,6 +31,10 @@ public class OAuthRegistrationRestriction implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
+	@ManyToOne
+	@JoinColumn(name = "oauth_registration_fk")
+	private OAuthRegistration registration;
+
 	@Column(name = "type")
 	private String type;
 
@@ -43,6 +47,14 @@ public class OAuthRegistrationRestriction implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public OAuthRegistration getRegistration() {
+		return registration;
+	}
+
+	public void setRegistration(OAuthRegistration registration) {
+		this.registration = registration;
 	}
 
 	public String getType() {

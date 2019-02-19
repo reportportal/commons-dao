@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.oauth;
 
+import com.google.common.collect.Sets;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -70,11 +71,11 @@ public class OAuthRegistration implements Serializable {
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
 	@JoinColumn(name = "oauth_registration_fk")
-	private Set<OAuthRegistrationScope> scopes;
+	private Set<OAuthRegistrationScope> scopes = Sets.newHashSet();
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
-	@JoinColumn(name = "oauth_registration_fk")
-	private Set<OAuthRegistrationRestriction> restrictions;
+	@OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST,
+			CascadeType.REMOVE }, orphanRemoval = true)
+	private Set<OAuthRegistrationRestriction> restrictions = Sets.newHashSet();
 
 	public String getId() {
 		return id;
