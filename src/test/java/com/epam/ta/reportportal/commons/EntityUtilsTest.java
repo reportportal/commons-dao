@@ -18,11 +18,9 @@ package com.epam.ta.reportportal.commons;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -34,12 +32,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class EntityUtilsTest {
+class EntityUtilsTest {
 
 	private static final String EXPECTED_STRING = "test";
 	private static final String NORMALIZED_STRING = "strange_string";
@@ -48,37 +46,34 @@ public class EntityUtilsTest {
 	private static List<String> strings;
 	private static List<String> toNormalize;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	@BeforeClass
-	public static void setUp() throws Exception {
+	@BeforeAll
+	static void setUp() throws Exception {
 		dates = ImmutableMap.copyOf(Stream.of(1544994000000L, 1545044400000L, 739971000000L, 1539975900000L)
 				.collect(Collectors.toMap(Date::new, it -> LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneOffset.UTC))));
 		strings = ImmutableList.of(" test", "test ", " test ", "\ntest", "test\n", "\ttest", "test\t", "\rtest", "test\r");
 		toNormalize = ImmutableList.of("STRANGE_STRING", "StranGe_StrInG", "Strange_String", "Strange_strinG");
 	}
 
-	@AfterClass
-	public static void tearDown() throws Exception {
+	@AfterAll
+	static void tearDown() throws Exception {
 		dates = null;
 		strings = null;
 	}
 
 	@Test
-	public void toLocalDateTimeTest() {
+	void toLocalDateTimeTest() {
 		assertNull(TO_LOCAL_DATE_TIME.apply(null));
 		dates.forEach((key, value) -> assertEquals(value, TO_LOCAL_DATE_TIME.apply(key)));
 	}
 
 	@Test
-	public void toDateTest() {
+	void toDateTest() {
 		assertNull(TO_DATE.apply(null));
 		dates.forEach((key, value) -> assertEquals(key, TO_DATE.apply(value)));
 	}
 
 	@Test
-	public void trimTest() {
+	void trimTest() {
 		assertNull(TRIM_FUNCTION.apply(null));
 		assertEquals("", TRIM_FUNCTION.apply(""));
 		assertEquals("", TRIM_FUNCTION.apply(" "));
@@ -89,14 +84,14 @@ public class EntityUtilsTest {
 	}
 
 	@Test
-	public void notEmptyTest() {
+	void notEmptyTest() {
 		assertFalse(NOT_EMPTY.test(""));
 		assertTrue(NOT_EMPTY.test(" "));
 		assertFalse(NOT_EMPTY.test(null));
 	}
 
 	@Test
-	public void replaceSeparatorTest() {
+	void replaceSeparatorTest() {
 		assertNull(REPLACE_SEPARATOR.apply(null));
 		assertEquals("one_ two_ three", REPLACE_SEPARATOR.apply("one, two, three"));
 		assertEquals("___", REPLACE_SEPARATOR.apply(",,,"));
@@ -104,13 +99,12 @@ public class EntityUtilsTest {
 	}
 
 	@Test
-	public void normalizeIdTest() {
+	void normalizeIdTest() {
 		toNormalize.forEach(it -> assertEquals(NORMALIZED_STRING, normalizeId(it)));
 	}
 
 	@Test
-	public void normalizeIdFail() {
-		thrown.expect(NullPointerException.class);
-		normalizeId(null);
+	void normalizeIdFail() {
+		assertThrows(NullPointerException.class, () -> normalizeId(null));
 	}
 }

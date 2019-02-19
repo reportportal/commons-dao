@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,26 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class LogLevelTest {
+class LogLevelTest {
 
 	private Map<LogLevel, List<String>> allowedNames;
 	private List<String> disallowedNames;
 	private Map<LogLevel, Integer> allowedCodes;
 	private List<Integer> disallowedCodes;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		allowedNames = Arrays.stream(LogLevel.values())
 				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowedNames = Arrays.asList("NoSuchLogLevel", "", " ", "null", "warrrn");
@@ -51,7 +45,7 @@ public class LogLevelTest {
 	}
 
 	@Test
-	public void isGreaterOrEqual() {
+	void isGreaterOrEqual() {
 		final LogLevel warn = LogLevel.WARN;
 		final LogLevel trace = LogLevel.TRACE;
 		final LogLevel warnSecond = LogLevel.WARN;
@@ -63,7 +57,7 @@ public class LogLevelTest {
 	}
 
 	@Test
-	public void toLevel() {
+	void toLevel() {
 		allowedNames.forEach((key, value) -> value.forEach(val -> {
 			final Optional<LogLevel> optional = LogLevel.toLevel(val);
 			assertTrue(optional.isPresent());
@@ -73,12 +67,12 @@ public class LogLevelTest {
 	}
 
 	@Test
-	public void toLevelInt() {
+	void toLevelInt() {
 		allowedCodes.forEach((key, value) -> assertEquals(key, LogLevel.toLevel(value)));
 	}
 
 	@Test
-	public void toCustomLogLevel() {
+	void toCustomLogLevel() {
 		allowedNames.forEach((key, value) -> value.forEach(val -> assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val))));
 		allowedCodes.forEach((key, val) -> assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val.toString())));
 		disallowedCodes.forEach(it -> {
@@ -91,25 +85,25 @@ public class LogLevelTest {
 	}
 
 	@Test
-	public void toCustomLogLevelNames() {
+	void toCustomLogLevelNames() {
 		Collections.shuffle(disallowedNames);
 		final String wrongLogName = disallowedNames.get(0);
-		Assert.assertEquals(LogLevel.UNKNOWN.toInt(), LogLevel.toCustomLogLevel(wrongLogName));
+		assertEquals(LogLevel.UNKNOWN.toInt(), LogLevel.toCustomLogLevel(wrongLogName));
 	}
 
 	@Test
-	public void toCustomLogLevelCodesFail() {
+	void toCustomLogLevelCodesFail() {
 
 		final int i = LogLevel.toCustomLogLevel(disallowedCodes.get(0).toString());
-		Assert.assertEquals(LogLevel.TRACE.toInt(), i);
+		assertEquals(LogLevel.TRACE.toInt(), i);
 	}
 
 	@Test
-	public void toLevelIntFail() {
-		thrown.expect(ReportPortalException.class);
+	void toLevelIntFail() {
 		Collections.shuffle(disallowedCodes);
 		final Integer code = disallowedCodes.get(0);
-		thrown.expectMessage("Error in Save Log Request. Wrong level = " + code);
-		LogLevel.toLevel(code);
+
+		final ReportPortalException exception = assertThrows(ReportPortalException.class, () -> LogLevel.toLevel(code));
+		assertEquals("Error in Save Log Request. Wrong level = " + code, exception.getMessage());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,29 +25,29 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ExternalSystemTypeTest {
+class ExternalSystemTypeTest {
 
 	private Map<ExternalSystemType, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowed = Arrays.stream(ExternalSystemType.values())
 				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowed = Arrays.asList("noSuchType", " ", "", null);
 	}
 
 	@Test
-	public void knownIssue() {
+	void knownIssue() {
 	}
 
 	@Test
-	public void findByName() {
+	void findByName() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<ExternalSystemType> optional = ExternalSystemType.findByName(val);
 			assertTrue(optional.isPresent());
@@ -57,7 +57,7 @@ public class ExternalSystemTypeTest {
 	}
 
 	@Test
-	public void isPresent() {
+	void isPresent() {
 		allowed.entrySet().stream().flatMap(it -> it.getValue().stream()).forEach(it -> assertTrue(ExternalSystemType.isPresent(it)));
 		disallowed.forEach(it -> assertFalse(ExternalSystemType.isPresent(it)));
 	}

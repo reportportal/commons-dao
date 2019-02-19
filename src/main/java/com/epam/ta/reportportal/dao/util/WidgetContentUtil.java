@@ -317,7 +317,8 @@ public class WidgetContentUtil {
 
 			Long launchId = record.get(TEST_ITEM.LAUNCH_ID);
 
-			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(record.get(Tables.STATISTICS_FIELD.NAME),
+			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(
+					record.get(Tables.STATISTICS_FIELD.NAME),
 					ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
 			));
 		});

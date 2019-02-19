@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class RecordMapperUtilsTest {
+class RecordMapperUtilsTest {
 
 	@Test
-	public void fieldExcludingPredicate() {
+	void fieldExcludingPredicate() {
 
-		Assert.assertFalse(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.LOGIN));
-		Assert.assertTrue(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.FULL_NAME));
+		assertFalse(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.LOGIN));
+		assertTrue(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.FULL_NAME));
 	}
 }

@@ -595,7 +595,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(LAUNCHES_COUNT).with(sort).build();
 
 		Map<String, List<CumulativeTrendChartContent>> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(LAUNCHES_TABLE,
-				LAUNCH_ID),
+				LAUNCH_ID
+				),
 				fieldName(LAUNCHES_TABLE, NUMBER),
 				fieldName(LAUNCHES_TABLE, NAME),
 				fieldName(LAUNCHES_TABLE, START_TIME),
@@ -848,10 +849,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fields,
 				contentFields,
 				customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(
-				sort,
-				filter.getTarget()
-		));
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,

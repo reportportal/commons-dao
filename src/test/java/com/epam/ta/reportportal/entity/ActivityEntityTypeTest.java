@@ -17,8 +17,8 @@
 package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.entity.activity.Activity;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,18 +26,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ActivityEntityTypeTest {
+class ActivityEntityTypeTest {
 
 	private Map<Activity.ActivityEntityType, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		allowed = Arrays.stream(Activity.ActivityEntityType.values())
 				.collect(Collectors.toMap(it -> it,
 						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
@@ -46,7 +46,7 @@ public class ActivityEntityTypeTest {
 	}
 
 	@Test
-	public void fromStringTest() {
+	void fromStringTest() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<Activity.ActivityEntityType> optional = Activity.ActivityEntityType.fromString(val);
 			assertTrue(optional.isPresent());

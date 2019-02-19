@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.base.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
@@ -29,11 +29,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-public class LocalDataStoreTest {
+class LocalDataStoreTest {
 
 	private static final String ROOT_PATH = System.getProperty("java.io.tmpdir");
 	private static final String TEST_FILE = "test-file.txt";
@@ -42,8 +42,8 @@ public class LocalDataStoreTest {
 
 	private FilePathGenerator fileNameGenerator;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 
 		fileNameGenerator = Mockito.mock(FilePathGenerator.class);
 
@@ -51,7 +51,7 @@ public class LocalDataStoreTest {
 	}
 
 	@Test
-	public void save_load_delete() throws Exception {
+	void save_load_delete() throws Exception {
 
 		//  given:
 		String generatedDirectory = "/test";
@@ -67,7 +67,7 @@ public class LocalDataStoreTest {
 		//		then: saved and loaded files should be the same
 		byte[] bytes = IOUtils.toByteArray(loaded);
 		String result = new String(bytes, Charsets.UTF_8);
-		assertEquals("saved and loaded files should be the same", "test text", result);
+		assertEquals("test text", result, "saved and loaded files should be the same");
 
 		//		when: delete saved file
 		localDataStore.delete(savedFilePath);

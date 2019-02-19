@@ -122,7 +122,6 @@ public class IssueType implements Serializable {
 //		this.projectIssueTypes = projectIssueTypes;
 //	}
 
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -132,13 +131,12 @@ public class IssueType implements Serializable {
 			return false;
 		}
 		IssueType issueType = (IssueType) o;
-		return Objects.equals(id, issueType.id) && Objects.equals(issueGroup, issueType.issueGroup) && Objects.equals(
-				locator,
+		return Objects.equals(id, issueType.id) && Objects.equals(issueGroup, issueType.issueGroup) && Objects.equals(locator,
 				issueType.locator
-		) && Objects.equals(longName, issueType.longName) && Objects.equals(shortName, issueType.shortName) && Objects.equals(
-				hexColor,
-				issueType.hexColor
-		);
+		) && Objects.equals(longName, issueType.longName) && Objects.equals(
+				shortName,
+				issueType.shortName
+		) && Objects.equals(hexColor, issueType.hexColor);
 	}
 
 	@Override
