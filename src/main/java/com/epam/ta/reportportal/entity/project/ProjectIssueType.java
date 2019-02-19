@@ -32,13 +32,13 @@ import java.util.Objects;
 public class ProjectIssueType implements Serializable {
 
 	@Id
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "issue_type_id")
 	private IssueType issueType;
 
 	@Id
-	@MapsId("projectId")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
+	@JoinColumn(name = "project_id")
 	private Project project;
 
 	public IssueType getIssueType() {
@@ -55,16 +55,6 @@ public class ProjectIssueType implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
-	}
-
-	public ProjectIssueType withIssueType(IssueType issueType) {
-		this.issueType = issueType;
-		return this;
-	}
-
-	public ProjectIssueType withProject(Project project) {
-		this.project = project;
-		return this;
 	}
 
 	@Override

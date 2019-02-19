@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
-import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,7 +27,6 @@ import java.util.Objects;
 /**
  * @author Pavel Bortnik
  */
-@Embeddable
 public class ProjectIssueTypeKey implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
