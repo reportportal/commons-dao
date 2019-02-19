@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 	@Column(name = UNIQUE_ID)
 	private String uniqueId;
 
-	@JsonProperty(value = START_TIME)
+	@JsonProperty(value = "startTime")
 	@Column(name = "start_time")
 	private Long startTime;
 

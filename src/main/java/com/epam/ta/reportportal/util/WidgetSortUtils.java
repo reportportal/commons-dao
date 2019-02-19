@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
 import org.jooq.SortField;
 import org.jooq.SortOrder;
@@ -39,6 +40,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -86,4 +88,16 @@ public final class WidgetSortUtils {
 				return field(criteria.getQueryCriteria());
 			})
 			.collect(toList())).orElseGet(Collections::emptyList);
+
+	public static final BiFunction<String, SortField<?>, SortField<?>> CUSTOM_TABLE_SORT_CONVERTER = (table, sort) -> {
+
+		if (sort.getName().contains(STATISTICS_TABLE)) {
+			return sort;
+		}
+		String[] qualifiedName = sort.getName().split("\\.");
+		String sortField = StringUtils.remove(qualifiedName[qualifiedName.length - 1], '"');
+
+		return field(name(table, sortField)).sort(sort.getOrder());
+
+	};
 }

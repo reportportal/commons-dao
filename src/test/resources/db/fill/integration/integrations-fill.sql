@@ -1,8 +1,8 @@
-INSERT INTO integration_type (id, name, auth_flow, creation_date, group_type)
-VALUES (1, 'test integration type', 'LDAP', now(), 'AUTH'),
-       (2, 'RALLY', 'OAUTH', now(), 'BTS'),
-       (3, 'JIRA', 'BASIC', now(), 'BTS'),
-       (4, 'EMAIL', null, now(), 'NOTIFICATION');
+INSERT INTO integration_type (id, name, auth_flow, creation_date, group_type, enabled)
+VALUES (1, 'test integration type', 'LDAP', now(), 'AUTH', true),
+       (2, 'RALLY', 'OAUTH', now(), 'BTS', true),
+       (3, 'JIRA', 'BASIC', now(), 'BTS', true),
+       (4, 'EMAIL', null, now(), 'NOTIFICATION', true);
 
 INSERT INTO integration (id, project_id, type, enabled, creation_date)
 VALUES (1, 1, 2, FALSE, now()),
