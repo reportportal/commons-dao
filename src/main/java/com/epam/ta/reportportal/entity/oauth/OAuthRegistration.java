@@ -32,46 +32,48 @@ import java.util.Set;
 public class OAuthRegistration implements Serializable {
 
 	@Id
-	@Column(name = "id", unique = true, nullable = false, length = 64)
+	@Column(name = "id")
 	private String id;
 
-	@Column(name = "client_id", length = 128)
+	@Column(name = "client_id")
 	private String clientId;
 
-	@Column(name = "client_secret", length = 256)
+	@Column(name = "client_secret")
 	private String clientSecret;
 
-	@Column(name = "client_auth_method", length = 64)
+	@Column(name = "client_auth_method")
 	private String clientAuthMethod;
 
-	@Column(name = "auth_grant_type", length = 64)
+	@Column(name = "auth_grant_type")
 	private String authGrantType;
 
-	@Column(name = "redirect_uri_template", length = 256)
+	@Column(name = "redirect_uri_template")
 	private String redirectUrlTemplate;
 
-	@Column(name = "authorization_uri", length = 256)
+	@Column(name = "authorization_uri")
 	private String authorizationUri;
 
-	@Column(name = "token_uri", length = 256)
+	@Column(name = "token_uri")
 	private String tokenUri;
 
-	@Column(name = "user_info_endpoint_uri", length = 256)
+	@Column(name = "user_info_endpoint_uri")
 	private String userInfoEndpointUri;
 
-	@Column(name = "user_info_endpoint_name_attr", length = 256)
+	@Column(name = "user_info_endpoint_name_attr")
 	private String userInfoEndpointNameAttribute;
 
-	@Column(name = "jwk_set_uri", length = 256)
+	@Column(name = "jwk_set_uri")
 	private String jwkSetUri;
 
-	@Column(name = "client_name", length = 128)
+	@Column(name = "client_name")
 	private String clientName;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "registration", cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "registration", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, orphanRemoval = true)
 	private Set<OAuthRegistrationScope> scopes;
 
-	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "registration", cascade = CascadeType.PERSIST)
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "registration", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE })
 	private Set<OAuthRegistrationRestriction> restrictions;
 
 	public String getId() {
@@ -196,15 +198,13 @@ public class OAuthRegistration implements Serializable {
 		}
 		OAuthRegistration that = (OAuthRegistration) o;
 		return Objects.equals(id, that.id) && Objects.equals(clientId, that.clientId) && Objects.equals(clientSecret, that.clientSecret)
-				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(
-				authGrantType,
-				that.authGrantType
-		) && Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(authorizationUri, that.authorizationUri)
-				&& Objects.equals(tokenUri, that.tokenUri) && Objects.equals(
-				userInfoEndpointUri,
-				that.userInfoEndpointUri
-		) && Objects.equals(userInfoEndpointNameAttribute, that.userInfoEndpointNameAttribute) && Objects.equals(jwkSetUri, that.jwkSetUri)
-				&& Objects.equals(clientName, that.clientName);
+				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(authGrantType, that.authGrantType)
+				&& Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(authorizationUri, that.authorizationUri)
+				&& Objects.equals(tokenUri, that.tokenUri) && Objects.equals(userInfoEndpointUri, that.userInfoEndpointUri)
+				&& Objects.equals(
+				userInfoEndpointNameAttribute,
+				that.userInfoEndpointNameAttribute
+		) && Objects.equals(jwkSetUri, that.jwkSetUri) && Objects.equals(clientName, that.clientName);
 	}
 
 	@Override
