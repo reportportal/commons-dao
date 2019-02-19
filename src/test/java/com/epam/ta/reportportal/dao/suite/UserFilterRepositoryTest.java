@@ -31,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
@@ -45,6 +46,34 @@ public class UserFilterRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserFilterRepository userFilterRepository;
+
+	@Test
+	public void shouldFindByIdAndProjectIdWhenExists() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(1L, 1L);
+
+		Assert.assertTrue(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 1L);
+
+		Assert.assertFalse(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(5L, 11L);
+
+		Assert.assertFalse(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 11L);
+
+		Assert.assertFalse(userFilter.isPresent());
+	}
 
 	@Test
 	public void getSharedFilters() {
