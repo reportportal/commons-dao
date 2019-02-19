@@ -131,33 +131,32 @@ dependencies {
 
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-    }
-    afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: [
-                            'com/epam/ta/reportportal/jooq/**',
-                            'com/epam/ta/reportportal/config/**',
-                            'com/epam/ta/reportportal/commons/accessible',
-                            'com/epam/ta/reportportal/commons/querygen/constant',
-                            'com/epam/ta/reportportal/exception',
-                            'com/epam/ta/reportportal/entity/oauth',
-                            'com/epam/ta/reportportal/entity/bts'
-                    ])
-        })
-    }
-}
-
 test {
     useJUnitPlatform()
-    exclude 'com/epam/ta/reportportal/dao/suite'
-    
+
     testLogging {
         events "failed"
         exceptionFormat "short"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+        afterEvaluate {
+            classDirectories = files(classDirectories.files.collect {
+                fileTree(dir: it,
+                        exclude: [
+                                'com/epam/ta/reportportal/jooq/**',
+                                'com/epam/ta/reportportal/config/**',
+                                'com/epam/ta/reportportal/commons/accessible',
+                                'com/epam/ta/reportportal/commons/querygen/constant',
+                                'com/epam/ta/reportportal/exception',
+                                'com/epam/ta/reportportal/entity/oauth',
+                                'com/epam/ta/reportportal/entity/bts'
+                        ])
+            })
+        }
     }
 }
 

@@ -20,6 +20,8 @@ import com.epam.ta.reportportal.config.DataSourceConfig;
 import com.epam.ta.reportportal.config.DatabaseConfiguration;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import org.flywaydb.test.FlywayTestExecutionListener;
+import org.flywaydb.test.annotation.FlywayTest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,4 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 @TestExecutionListeners(listeners = { FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class BaseTest {
 
+	@FlywayTest
+	@BeforeAll
+	static void setUp() {
+	}
 }
