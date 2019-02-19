@@ -68,12 +68,12 @@ public class OAuthRegistration implements Serializable {
 	@Column(name = "client_name")
 	private String clientName;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "registration", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE }, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
+	@JoinColumn(name = "oauth_registration_fk")
 	private Set<OAuthRegistrationScope> scopes;
 
-	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "registration", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE })
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
+	@JoinColumn(name = "oauth_registration_fk")
 	private Set<OAuthRegistrationRestriction> restrictions;
 
 	public String getId() {
@@ -177,12 +177,7 @@ public class OAuthRegistration implements Serializable {
 	}
 
 	public void setScopes(Set<OAuthRegistrationScope> scopes) {
-		if (this.scopes == null) {
-			this.scopes = scopes;
-		} else {
-			this.scopes.clear();
-			this.scopes.addAll(scopes);
-		}
+		this.scopes = scopes;
 	}
 
 	public Set<OAuthRegistrationRestriction> getRestrictions() {
@@ -190,12 +185,7 @@ public class OAuthRegistration implements Serializable {
 	}
 
 	public void setRestrictions(Set<OAuthRegistrationRestriction> restrictions) {
-		if (this.restrictions == null) {
-			this.restrictions = restrictions;
-		} else {
-			this.restrictions.clear();
-			this.restrictions.addAll(restrictions);
-		}
+		this.restrictions = restrictions;
 	}
 
 	@Override
@@ -211,8 +201,7 @@ public class OAuthRegistration implements Serializable {
 				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(authGrantType, that.authGrantType)
 				&& Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(authorizationUri, that.authorizationUri)
 				&& Objects.equals(tokenUri, that.tokenUri) && Objects.equals(userInfoEndpointUri, that.userInfoEndpointUri)
-				&& Objects.equals(userInfoEndpointNameAttribute, that.userInfoEndpointNameAttribute) && Objects.equals(
-				jwkSetUri,
+				&& Objects.equals(userInfoEndpointNameAttribute, that.userInfoEndpointNameAttribute) && Objects.equals(jwkSetUri,
 				that.jwkSetUri
 		) && Objects.equals(clientName, that.clientName);
 	}
