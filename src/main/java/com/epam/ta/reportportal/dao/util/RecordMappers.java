@@ -128,7 +128,8 @@ public class RecordMappers {
 	 * Maps record into {@link Project} object
 	 */
 	public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
-		Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.CREATION_DATE, PROJECT.PROJECT_TYPE).into(Project.class);
+		Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATION_DATE, PROJECT.PROJECT_TYPE)
+				.into(Project.class);
 		ofNullable(r.field(PROJECT.METADATA)).ifPresent(f -> {
 			String metaDataString = r.get(f, String.class);
 			ofNullable(metaDataString).ifPresent(md -> {

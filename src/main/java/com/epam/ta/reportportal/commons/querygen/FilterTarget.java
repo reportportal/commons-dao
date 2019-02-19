@@ -67,6 +67,7 @@ public enum FilterTarget {
 	PROJECT_TARGET(Project.class, Arrays.asList(
 
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ATTRIBUTE_NAME, ATTRIBUTE.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
@@ -83,6 +84,7 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(PROJECT.ID,
 					PROJECT.NAME,
+					PROJECT.ORGANIZATION,
 					PROJECT.PROJECT_TYPE,
 					PROJECT.CREATION_DATE,
 					PROJECT.METADATA,
@@ -114,7 +116,7 @@ public enum FilterTarget {
 	PROJECT_INFO(ProjectInfo.class,
 			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
 					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE,
 							PROJECT.CREATION_DATE.getQualifiedName().toString(),
 							Timestamp.class
