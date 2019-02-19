@@ -75,13 +75,11 @@ public class OAuthRegistrationScope implements Serializable {
 			return false;
 		}
 		OAuthRegistrationScope that = (OAuthRegistrationScope) o;
-		return Objects.equals(registration == null ? null : registration.getId(),
-				that.registration == null ? null : that.registration.getId()
-		) && Objects.equals(scope, that.scope);
+		return Objects.equals(id, that.id) && Objects.equals(scope, that.scope);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(registration.getId(), scope);
+		return Objects.hash(id, scope);
 	}
 }

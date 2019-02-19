@@ -196,20 +196,19 @@ public class OAuthRegistration implements Serializable {
 		}
 		OAuthRegistration that = (OAuthRegistration) o;
 		return Objects.equals(id, that.id) && Objects.equals(clientId, that.clientId) && Objects.equals(clientSecret, that.clientSecret)
-				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(authGrantType, that.authGrantType)
-				&& Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(
-				authorizationUri,
-				that.authorizationUri
-		) && Objects.equals(tokenUri, that.tokenUri) && Objects.equals(userInfoEndpointUri, that.userInfoEndpointUri) && Objects.equals(
-				userInfoEndpointNameAttribute,
-				that.userInfoEndpointNameAttribute
-		) && Objects.equals(jwkSetUri, that.jwkSetUri) && Objects.equals(clientName, that.clientName) && Objects.equals(scopes, that.scopes)
-				&& Objects.equals(restrictions, that.restrictions);
+				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(
+				authGrantType,
+				that.authGrantType
+		) && Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(authorizationUri, that.authorizationUri)
+				&& Objects.equals(tokenUri, that.tokenUri) && Objects.equals(
+				userInfoEndpointUri,
+				that.userInfoEndpointUri
+		) && Objects.equals(userInfoEndpointNameAttribute, that.userInfoEndpointNameAttribute) && Objects.equals(jwkSetUri, that.jwkSetUri)
+				&& Objects.equals(clientName, that.clientName);
 	}
 
 	@Override
 	public int hashCode() {
-
 		return Objects.hash(id,
 				clientId,
 				clientSecret,
@@ -221,9 +220,7 @@ public class OAuthRegistration implements Serializable {
 				userInfoEndpointUri,
 				userInfoEndpointNameAttribute,
 				jwkSetUri,
-				clientName,
-				scopes,
-				restrictions
+				clientName
 		);
 	}
 }
