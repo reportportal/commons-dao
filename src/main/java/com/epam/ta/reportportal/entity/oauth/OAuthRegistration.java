@@ -177,7 +177,12 @@ public class OAuthRegistration implements Serializable {
 	}
 
 	public void setScopes(Set<OAuthRegistrationScope> scopes) {
-		this.scopes = scopes;
+		if (this.scopes == null) {
+			this.scopes = scopes;
+		} else {
+			this.scopes.clear();
+			this.scopes.addAll(scopes);
+		}
 	}
 
 	public Set<OAuthRegistrationRestriction> getRestrictions() {
@@ -185,7 +190,12 @@ public class OAuthRegistration implements Serializable {
 	}
 
 	public void setRestrictions(Set<OAuthRegistrationRestriction> restrictions) {
-		this.restrictions = restrictions;
+		if (this.restrictions == null) {
+			this.restrictions = restrictions;
+		} else {
+			this.restrictions.clear();
+			this.restrictions.addAll(restrictions);
+		}
 	}
 
 	@Override
@@ -201,10 +211,10 @@ public class OAuthRegistration implements Serializable {
 				&& Objects.equals(clientAuthMethod, that.clientAuthMethod) && Objects.equals(authGrantType, that.authGrantType)
 				&& Objects.equals(redirectUrlTemplate, that.redirectUrlTemplate) && Objects.equals(authorizationUri, that.authorizationUri)
 				&& Objects.equals(tokenUri, that.tokenUri) && Objects.equals(userInfoEndpointUri, that.userInfoEndpointUri)
-				&& Objects.equals(
-				userInfoEndpointNameAttribute,
-				that.userInfoEndpointNameAttribute
-		) && Objects.equals(jwkSetUri, that.jwkSetUri) && Objects.equals(clientName, that.clientName);
+				&& Objects.equals(userInfoEndpointNameAttribute, that.userInfoEndpointNameAttribute) && Objects.equals(
+				jwkSetUri,
+				that.jwkSetUri
+		) && Objects.equals(clientName, that.clientName);
 	}
 
 	@Override
