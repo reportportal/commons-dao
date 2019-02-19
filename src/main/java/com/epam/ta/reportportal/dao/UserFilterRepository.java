@@ -36,6 +36,13 @@ public interface UserFilterRepository extends ReportPortalRepository<UserFilter,
 	Optional<UserFilter> findByIdAndProjectId(Long id, Long projectId);
 
 	/**
+	 * @param ids       {@link Iterable} of the filter Ids
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
+	 * @return The {@link List} of the {@link UserFilter}
+	 */
+	List<UserFilter> findAllByIdInAndProjectId(Iterable<Long> ids, Long projectId);
+
+	/**
 	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
 	 * @return The {@link List} of the {@link UserFilter}
 	 */

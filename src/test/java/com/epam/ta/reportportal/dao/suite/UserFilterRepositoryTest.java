@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.dao.UserFilterRepository;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,22 @@ public class UserFilterRepositoryTest extends BaseTest {
 		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 11L);
 
 		Assert.assertFalse(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldFindByIdsAndProjectIdWhenExists() {
+		List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(Lists.newArrayList(1L, 2L), 1L);
+
+		Assert.assertNotNull(userFilters);
+		Assert.assertEquals(2L, userFilters.size());
+	}
+
+	@Test
+	public void shouldNotFindByIdsAndProjectIdWhenProjectIdNotExists() {
+		List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(Lists.newArrayList(1L, 2L), 2L);
+
+		Assert.assertNotNull(userFilters);
+		Assert.assertTrue(userFilters.isEmpty());
 	}
 
 	@Test
