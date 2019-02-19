@@ -17,14 +17,11 @@
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.project.ProjectIssueType;
-import com.google.common.collect.Sets;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -55,8 +52,8 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
-	@OneToMany(mappedBy = "issueType", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
+//	@OneToMany(mappedBy = "issueType", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+//	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	public IssueType() {
 	}
@@ -117,13 +114,13 @@ public class IssueType implements Serializable {
 		this.hexColor = hexColor;
 	}
 
-	public Set<ProjectIssueType> getProjectIssueTypes() {
-		return projectIssueTypes;
-	}
-
-	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
-		this.projectIssueTypes = projectIssueTypes;
-	}
+//	public Set<ProjectIssueType> getProjectIssueTypes() {
+//		return projectIssueTypes;
+//	}
+//
+//	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
+//		this.projectIssueTypes = projectIssueTypes;
+//	}
 
 
 	@Override
