@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -165,7 +165,12 @@ public class LaunchRepositoryTest extends BaseTest {
 	@Test
 	public void getLaunchNamesTest() {
 		final String value = "launch";
-		List<String> launchNames = launchRepository.getLaunchNames(1L, value, LaunchModeEnum.DEFAULT.toString());
+		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(
+				1L,
+				value,
+				LaunchModeEnum.DEFAULT,
+				StatusEnum.CANCELLED
+		);
 
 		Assert.assertNotNull(launchNames);
 		Assert.assertTrue(CollectionUtils.isNotEmpty(launchNames));
@@ -220,13 +225,27 @@ public class LaunchRepositoryTest extends BaseTest {
 		assertTrue(failed);
 	}
 
+	@Test
+	public void hasRetries() {
+
+		final boolean hasRetries = launchRepository.hasRetries(100L);
+		assertTrue(hasRetries);
+
+	}
+
+	@Test
+	public void hasRetriesNegative() {
+
+		final Long firstLaunchId = 1L;
+
+		final boolean hasRetries = launchRepository.hasRetries(firstLaunchId);
+		assertFalse(hasRetries);
+
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(
-						Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				),
+		Set<FilterCondition> conditionSet = Sets.newHashSet(
+				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);

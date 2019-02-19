@@ -23,8 +23,10 @@ import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -41,6 +43,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -55,8 +58,10 @@ import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Util class for widget content repository.
@@ -124,6 +129,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
+		Optional<Field<Long>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -137,6 +143,17 @@ public class WidgetContentUtil {
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
 				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+				itemAttributeIdField.ifPresent(f -> ofNullable(record.get(f)).ifPresent(id -> {
+					Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
+
+					ItemAttributeResource attributeResource = new ItemAttributeResource();
+					attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
+					attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
+
+					attributes.add(attributeResource);
+
+					content.setAttributes(attributes);
+				}));
 
 			}
 
@@ -263,7 +280,7 @@ public class WidgetContentUtil {
 		result.forEach(record -> {
 
 			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
-			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
+			String attributeValue = record.get(fieldName(LAUNCHES_TABLE, ATTR_VALUE), String.class);
 			if (attributeMapping.containsKey(attributeValue)) {
 				cumulativeTrendMapper = attributeMapping.get(attributeValue);
 			} else {
@@ -272,16 +289,15 @@ public class WidgetContentUtil {
 			}
 
 			CumulativeTrendChartContent content;
-			Long launchId = record.get(LAUNCH.ID);
-			if (cumulativeTrendMapper.containsKey(launchId)) {
-				content = cumulativeTrendMapper.get(launchId);
-			} else {
-				content = record.into(CumulativeTrendChartContent.class);
+			Long launchId = record.get(fieldName(LAUNCHES_TABLE, LAUNCH_ID), Long.class);
+			if (!cumulativeTrendMapper.containsKey(launchId)) {
+				content = new CumulativeTrendChartContent();
 				content.setId(launchId);
+				content.setName(record.get(fieldName(LAUNCHES_TABLE, NAME), String.class));
+				content.setNumber(record.get(fieldName(LAUNCHES_TABLE, NUMBER), Integer.class));
+				content.setStartTime(record.get(fieldName(LAUNCHES_TABLE, START_TIME), Timestamp.class));
 				cumulativeTrendMapper.put(launchId, content);
 			}
-			ofNullable(record.get(fieldName(STATISTICS_TABLE, SF_NAME), String.class)).ifPresent(v -> content.getValues()
-					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
 
 		});
 
@@ -289,6 +305,23 @@ public class WidgetContentUtil {
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
 				LinkedHashMap::putAll
 		);
+	};
+
+	public static final BiConsumer<Map<String, List<CumulativeTrendChartContent>>, Result<? extends Record>> CUMULATIVE_STATISTICS_FETCHER = (cumulative, statisticsResult) -> {
+		Map<Long, CumulativeTrendChartContent> cumulativeDataMapping = cumulative.values()
+				.stream()
+				.flatMap(Collection::stream)
+				.collect(toMap(AbstractLaunchStatisticsContent::getId, c -> c, (prev, curr) -> prev));
+
+		statisticsResult.forEach(record -> {
+
+			Long launchId = record.get(TEST_ITEM.LAUNCH_ID);
+
+			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(record.get(Tables.STATISTICS_FIELD.NAME),
+					ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
+			));
+		});
+
 	};
 
 	public static final BiFunction<Result<? extends Record>, String, List<ChartStatisticsContent>> CASES_GROWTH_TREND_FETCHER = (result, contentField) -> {

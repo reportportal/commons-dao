@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,42 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.project.email;
+package com.epam.ta.reportportal.entity.enums;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * @author Pavel Bortnik
+ * Email notification cases enumerator for project settings
+ *
+ * @author Andrei_Ramanchuk
  */
-public enum SendCaseType {
+public enum SendCase {
 
-	RECIPIENTS("recipients"),
-	LAUNCH_STATS_RULE("launchStatsRule"),
-	LAUNCH_NAME_RULE("launchNameRule"),
-	LAUNCH_TAG_RULE("launchTagRule");
+	//@formatter:off
+	ALWAYS("always"),
+	FAILED("failed"),
+	TO_INVESTIGATE("toInvestigate"),
+	MORE_10("more10"),
+	MORE_20("more20"),
+	MORE_50("more50");
+	//@formatter:on
 
 	private final String value;
 
-	SendCaseType(String value) {
+	SendCase(String value) {
 		this.value = value;
 	}
 
-	public static Optional<SendCaseType> findByName(String name) {
-		return Arrays.stream(SendCaseType.values()).filter(val -> val.getCaseTypeString().equalsIgnoreCase(name)).findAny();
+	public static Optional<SendCase> findByName(String name) {
+		return Arrays.stream(SendCase.values()).filter(val -> val.getCaseString().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
 		return findByName(name).isPresent();
 	}
 
-	public String getCaseTypeString() {
+	public String getCaseString() {
 		return value;
 	}
-
 }

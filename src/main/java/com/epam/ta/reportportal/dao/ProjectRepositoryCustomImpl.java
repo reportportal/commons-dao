@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.PROJECT_FETCHER;
@@ -65,16 +64,6 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
-	}
-
-	@Override
-	public Optional<String> findPersonalProjectName(String username) {
-		return Optional.ofNullable(dsl.select()
-				.from(USERS)
-				.join(PROJECT)
-				.on(USERS.DEFAULT_PROJECT_ID.eq(PROJECT.ID))
-				.where(USERS.LOGIN.eq(username))
-				.fetchOne(PROJECT.NAME));
 	}
 
 	@Override

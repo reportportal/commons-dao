@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -85,13 +87,14 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<String> getLaunchNames(Long projectId, String value, String mode) {
+	public List<String> getLaunchNamesByModeExcludedByStatus(Long projectId, String value, LaunchModeEnum mode, StatusEnum status) {
 		return dsl.selectDistinct(LAUNCH.NAME)
 				.from(LAUNCH)
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode.name())))
+				.and(LAUNCH.STATUS.notEqual(JStatusEnum.valueOf(status.name())))
 				.and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
 				.fetch(LAUNCH.NAME);
 	}

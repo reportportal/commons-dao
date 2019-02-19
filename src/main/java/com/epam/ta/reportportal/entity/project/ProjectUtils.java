@@ -16,13 +16,18 @@
 
 package com.epam.ta.reportportal.entity.project;
 
+import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
+import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.sun.javafx.binding.StringFormatter;
 
 import javax.annotation.Nullable;
@@ -30,7 +35,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 
 /**
@@ -87,6 +94,74 @@ public class ProjectUtils {
 					projectIssueTypes.add(projectIssueType);
 				}));
 		return projectIssueTypes;
+	}
+
+	/**
+	 * Setup default project notification configuration
+	 *
+	 * @param project {@link Project}
+	 * @return project object with default notification configuration
+	 */
+	public static Project setDefaultNotificationConfiguration(Project project) {
+		SenderCase defaultSenderCase = new SenderCase(Sets.newHashSet(OWNER),
+				Sets.newHashSet(),
+				Sets.newHashSet(),
+				SendCase.ALWAYS
+		);
+		defaultSenderCase.setProject(project);
+		project.setSenderCases(Sets.newHashSet(defaultSenderCase));
+		return project;
+	}
+
+	/**
+	 * Exclude specified project recipients
+	 *
+	 * @param users
+	 * @param project
+	 * @return
+	 */
+	public static Project excludeProjectRecipients(Iterable<User> users, Project project) {
+		if (users != null) {
+			Set<String> toExclude = stream(users.spliterator(), false).map(user -> asList(user.getEmail().toLowerCase(),
+					user.getLogin().toLowerCase()
+			)).flatMap(List::stream).collect(toSet());
+			/* Current recipients of specified project */
+			Set<SenderCase> cases = project.getSenderCases();
+			if (null != cases) {
+				cases.stream().forEach(c -> {
+					// saved - list of saved user emails before changes
+					Set<String> saved = c.getRecipients();
+					c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase())).collect(Collectors.toSet()));
+				});
+				project.setSenderCases(cases);
+			}
+		}
+		return project;
+	}
+
+	/**
+	 * Update specified project recipient
+	 *
+	 * @param oldEmail
+	 * @param newEmail
+	 * @param project
+	 * @return
+	 */
+	public static Project updateProjectRecipients(String oldEmail, String newEmail, Project project) {
+		Set<SenderCase> cases = project.getSenderCases();
+		if ((null != cases) && (null != oldEmail) && (null != newEmail)) {
+			cases.stream().forEach(c -> {
+				Set<String> saved = c.getRecipients();
+				if (saved.stream().anyMatch(email -> email.equalsIgnoreCase(oldEmail))) {
+					c.setRecipients(saved.stream()
+							.filter(processRecipientsEmails(Lists.newArrayList(oldEmail)))
+							.collect(Collectors.toSet()));
+					c.getRecipients().add(newEmail);
+				}
+			});
+			project.setSenderCases(cases);
+		}
+		return project;
 	}
 
 	/**
