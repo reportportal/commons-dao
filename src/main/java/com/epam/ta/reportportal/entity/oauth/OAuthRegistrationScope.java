@@ -38,6 +38,10 @@ public class OAuthRegistrationScope implements Serializable {
 	@Column(name = "scope")
 	private String scope;
 
+	@ManyToOne
+	@JoinColumn(name = "oauth_registration_fk")
+	private OAuthRegistration registration;
+
 	public Long getId() {
 		return id;
 	}
@@ -52,6 +56,14 @@ public class OAuthRegistrationScope implements Serializable {
 
 	public void setScope(String scope) {
 		this.scope = scope;
+	}
+
+	public OAuthRegistration getRegistration() {
+		return registration;
+	}
+
+	public void setRegistration(OAuthRegistration registration) {
+		this.registration = registration;
 	}
 
 	@Override

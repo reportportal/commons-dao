@@ -68,8 +68,8 @@ public class OAuthRegistration implements Serializable {
 	@Column(name = "client_name")
 	private String clientName;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
-	@JoinColumn(name = "oauth_registration_fk")
+	@OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, orphanRemoval = true)
 	private Set<OAuthRegistrationScope> scopes;
 
 	@OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
