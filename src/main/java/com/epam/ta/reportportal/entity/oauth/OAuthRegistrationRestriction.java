@@ -83,11 +83,11 @@ public class OAuthRegistrationRestriction implements Serializable {
 			return false;
 		}
 		OAuthRegistrationRestriction that = (OAuthRegistrationRestriction) o;
-		return Objects.equals(id, that.id) && Objects.equals(type, that.type) && Objects.equals(value, that.value);
+		return (id == null || that.id == null || Objects.equals(id, that.id)) && Objects.equals(type, that.type) && Objects.equals(value, that.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, type, value);
+		return Objects.hash(type, value);
 	}
 }
