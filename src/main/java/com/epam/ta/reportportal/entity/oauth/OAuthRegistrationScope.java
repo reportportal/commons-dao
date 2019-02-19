@@ -35,7 +35,7 @@ public class OAuthRegistrationScope implements Serializable {
 	@Column(name = "id", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "oauth_registration_fk", nullable = false)
 	private OAuthRegistration registration;
 

@@ -68,10 +68,10 @@ public class OAuthRegistration implements Serializable {
 	@Column(name = "client_name", length = 128)
 	private String clientName;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "registration", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "registration", cascade = CascadeType.PERSIST, orphanRemoval = true)
 	private Set<OAuthRegistrationScope> scopes;
 
-	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "registration", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "registration", cascade = CascadeType.PERSIST)
 	private Set<OAuthRegistrationRestriction> restrictions;
 
 	public String getId() {
