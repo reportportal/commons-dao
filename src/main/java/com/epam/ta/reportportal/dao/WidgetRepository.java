@@ -19,11 +19,21 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.widget.Widget;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
 public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, WidgetRepositoryCustom {
+
+	/**
+	 * Finds widget by 'id' and 'project id'
+	 *
+	 * @param id        {@link Widget#id}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widget will be extracted
+	 * @return {@link Widget} wrapped in the {@link Optional}
+	 */
+	Optional<Widget> findByIdAndProjectId(Long id, Long projectId);
 
 	/**
 	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
