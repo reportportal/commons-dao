@@ -161,7 +161,9 @@ test {
                                 'com/epam/ta/reportportal/commons/querygen/constant',
                                 'com/epam/ta/reportportal/exception',
                                 'com/epam/ta/reportportal/entity/oauth',
-                                'com/epam/ta/reportportal/entity/bts'
+                                'com/epam/ta/reportportal/entity/bts',
+                                'com/epam/ta/reportportal/entity/ldap',
+                                'com/epam/ta/reportportal/entity/widget/content/**'
                         ])
             })
         }
