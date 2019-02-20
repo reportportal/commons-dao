@@ -27,16 +27,36 @@ import java.util.stream.Stream;
 @Repository
 public interface OAuth2AccessTokenRepository extends ReportPortalRepository<StoredAccessToken, Long> {
 
+	/**
+	 * Find entity by token id
+	 *
+	 * @param tokenId token id
+	 * @return {@link StoredAccessToken}
+	 */
 	StoredAccessToken findByTokenId(String tokenId);
 
-	StoredAccessToken findByRefreshToken(String refreshToken);
-
+	/**
+	 * Find entity by authentication id
+	 *
+	 * @param authenticationId authentication id
+	 * @return {@link StoredAccessToken}
+	 */
 	StoredAccessToken findByAuthenticationId(String authenticationId);
 
-	Stream<StoredAccessToken> findByUserName(String userName);
-
+	/**
+	 * Find entity by client id and username
+	 *
+	 * @param clientId Client id
+	 * @param userName Username
+	 * @return Stream of {@link StoredAccessToken}
+	 */
 	Stream<StoredAccessToken> findByClientIdAndUserName(String clientId, String userName);
 
+	/**
+	 * Find entity by client id
+	 * @param clientId client id
+	 * @return Stream of {@link StoredAccessToken}
+	 */
 	Stream<StoredAccessToken> findByClientId(String clientId);
 
 }
