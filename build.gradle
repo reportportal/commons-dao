@@ -57,11 +57,11 @@ dependencyManagement {
 
 project.ext {
     limits = [
-            'instruction': 73,
+            'instruction': 70,
             'branch'     : 36,
-            'line'       : 67,
+            'line'       : 60,
             'complexity' : 49,
-            'method'     : 59,
+            'method'     : 55,
             'class'      : 87
     ]
     releaseMode = project.hasProperty("releaseMode")
