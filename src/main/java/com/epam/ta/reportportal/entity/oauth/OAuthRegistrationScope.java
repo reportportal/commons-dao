@@ -32,15 +32,15 @@ public class OAuthRegistrationScope implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
+	@Column(name = "id")
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "oauth_registration_fk", nullable = false)
-	private OAuthRegistration registration;
-
-	@Column(name = "scope", nullable = false, length = 256)
+	@Column(name = "scope")
 	private String scope;
+
+	@ManyToOne
+	@JoinColumn(name = "oauth_registration_fk")
+	private OAuthRegistration registration;
 
 	public Long getId() {
 		return id;
@@ -50,20 +50,20 @@ public class OAuthRegistrationScope implements Serializable {
 		this.id = id;
 	}
 
-	public OAuthRegistration getRegistration() {
-		return registration;
-	}
-
-	public void setRegistration(OAuthRegistration registration) {
-		this.registration = registration;
-	}
-
 	public String getScope() {
 		return scope;
 	}
 
 	public void setScope(String scope) {
 		this.scope = scope;
+	}
+
+	public OAuthRegistration getRegistration() {
+		return registration;
+	}
+
+	public void setRegistration(OAuthRegistration registration) {
+		this.registration = registration;
 	}
 
 	@Override
@@ -75,13 +75,11 @@ public class OAuthRegistrationScope implements Serializable {
 			return false;
 		}
 		OAuthRegistrationScope that = (OAuthRegistrationScope) o;
-		return Objects.equals(registration == null ? null : registration.getId(),
-				that.registration == null ? null : that.registration.getId()
-		) && Objects.equals(scope, that.scope);
+		return Objects.equals(scope, that.scope);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(registration.getId(), scope);
+		return Objects.hash(scope);
 	}
 }

@@ -16,31 +16,9 @@
 
 package com.epam.ta.reportportal.filesystem.distributed;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.github.dockerjava.api.command.CreateContainerCmd;
-import com.github.dockerjava.api.model.PortBinding;
-import com.google.common.base.Charsets;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.lokra.seaweedfs.core.FileSource;
-import org.testcontainers.containers.GenericContainer;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.util.function.Consumer;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-@Ignore
 public class SeaweedDataStoreTest {
 
-	private static final String TEST_FILE = "test-file.txt";
+	/*private static final String TEST_FILE = "test-file.txt";
 
 	private SeaweedDataStore dataStore;
 	private static final Integer port = getFreePort();
@@ -104,5 +82,5 @@ public class SeaweedDataStoreTest {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
+	}*/
 }

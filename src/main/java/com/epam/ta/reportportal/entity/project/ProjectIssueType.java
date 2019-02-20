@@ -27,27 +27,18 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "issue_type_project")
+@IdClass(ProjectIssueTypeKey.class)
 public class ProjectIssueType implements Serializable {
 
-	@EmbeddedId
-	private ProjectIssueTypeId id = new ProjectIssueTypeId();
-
-	@MapsId("typeId")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@Id
+	@ManyToOne
 	@JoinColumn(name = "issue_type_id")
 	private IssueType issueType;
 
-	@MapsId("projectId")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "project_id")
 	private Project project;
-
-	public ProjectIssueTypeId getId() {
-		return id;
-	}
-
-	public void setId(ProjectIssueTypeId id) {
-		this.id = id;
-	}
 
 	public IssueType getIssueType() {
 		return issueType;
@@ -63,21 +54,6 @@ public class ProjectIssueType implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
-	}
-
-	public ProjectIssueType withProjectUserId(ProjectIssueTypeId id) {
-		this.id = id;
-		return this;
-	}
-
-	public ProjectIssueType withIssueType(IssueType issueType) {
-		this.issueType = issueType;
-		return this;
-	}
-
-	public ProjectIssueType withProject(Project project) {
-		this.project = project;
-		return this;
 	}
 
 	@Override

@@ -19,20 +19,20 @@ package com.epam.ta.reportportal.entity;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ItemAttributeTest {
+class ItemAttributeTest {
 
 	@Test
-	public void equals() {
+	void equals() {
 		final ItemAttribute one = getAttribute(1L, "key", "val", false, 1L, null);
 		final ItemAttribute two = getAttribute(2L, "key", "val", false, 1L, null);
 		final ItemAttribute three = getAttribute(3L, "key", "newVal", false, 1L, null);
@@ -47,7 +47,7 @@ public class ItemAttributeTest {
 	}
 
 	@Test
-	public void hashCodeTest() {
+	void hashCodeTest() {
 		final ItemAttribute one = getAttribute(1L, "key", "val", false, 1L, null);
 		final ItemAttribute two = getAttribute(2L, "key", "val", false, 1L, null);
 		final ItemAttribute three = getAttribute(3L, "key", "newVal", false, 1L, null);
@@ -62,7 +62,7 @@ public class ItemAttributeTest {
 	}
 
 	@Test
-	public void setTest() {
+	void setTest() {
 		final ItemAttribute one = getAttribute(1L, "key", "val", false, 1L, null);
 		final ItemAttribute two = getAttribute(2L, "key", "val", false, 1L, null);
 		final ItemAttribute three = getAttribute(3L, "key", "newVal", false, 1L, null);

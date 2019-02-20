@@ -56,11 +56,19 @@ dependencyManagement {
 }
 
 project.ext {
+    limits = [
+            'instruction': 73,
+            'branch'     : 36,
+            'line'       : 67,
+            'complexity' : 49,
+            'method'     : 59,
+            'class'      : 87
+    ]
     releaseMode = project.hasProperty("releaseMode")
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5'
+    gradleVersion = '4.7'
 }
 
 dependencies {
@@ -113,7 +121,7 @@ dependencies {
 
     /* just for password encoder. To make sure Guava and Spring's Crypto generate the same  hash functions */
     testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'junit:junit:4.12'
+//    testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:2.0.2-beta'
     testCompile 'org.assertj:assertj-core:3.9.0'
 
@@ -123,38 +131,86 @@ dependencies {
     testCompile 'org.springframework.security:spring-security-core'
     testCompile 'org.hibernate:hibernate-validator:6.0.7.Final'
 
-    testCompile group: 'org.testcontainers', name: 'testcontainers', version: '1.10.6'
+//    testCompile group: 'org.testcontainers', name: 'testcontainers', version: '1.10.6'
+
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
 
 
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-    }
-    afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: [
-                            'com/epam/ta/reportportal/jooq/**',
-                            'com/epam/ta/reportportal/config/**',
-                            'com/epam/ta/reportportal/commons/accessible',
-                            'com/epam/ta/reportportal/commons/querygen/constant',
-                            'com/epam/ta/reportportal/exception',
-                            'com/epam/ta/reportportal/entity/oauth',
-                            'com/epam/ta/reportportal/entity/bts'
-                    ])
-        })
-    }
 }
 
 test {
+    useJUnitPlatform()
 
-    exclude 'com/epam/ta/reportportal/dao/suite'
-    
     testLogging {
         events "failed"
         exceptionFormat "short"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+        afterEvaluate {
+            classDirectories = files(classDirectories.files.collect {
+                fileTree(dir: it,
+                        exclude: [
+                                'com/epam/ta/reportportal/jooq/**',
+                                'com/epam/ta/reportportal/config/**',
+                                'com/epam/ta/reportportal/commons/accessible',
+                                'com/epam/ta/reportportal/commons/querygen/constant',
+                                'com/epam/ta/reportportal/exception',
+                                'com/epam/ta/reportportal/entity/oauth',
+                                'com/epam/ta/reportportal/entity/bts'
+                        ])
+            })
+        }
+        doLast {
+            def report = file("${reportsDir}/jacoco/test/jacocoTestReport.xml")
+            logger.lifecycle("Checking coverage results: ${report}")
+
+            def parser = new XmlParser()
+            parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+            parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+            def results = parser.parse(report)
+
+            def percentage = {
+                def covered = it.'@covered' as Double
+                def missed = it.'@missed' as Double
+                ((covered / (covered + missed)) * 100).round(2)
+            }
+
+            def counters = results.counter
+            def metrics = [:]
+            metrics << [
+                    'instruction': percentage(counters.find { (it.'@type' == 'INSTRUCTION') }),
+                    'branch'     : percentage(counters.find { (it.'@type' == 'BRANCH') }),
+                    'line'       : percentage(counters.find { (it.'@type' == 'LINE') }),
+                    'complexity' : percentage(counters.find { (it.'@type' == 'COMPLEXITY') }),
+                    'method'     : percentage(counters.find { (it.'@type' == 'METHOD') }),
+                    'class'      : percentage(counters.find { (it.'@type' == 'CLASS') })
+            ]
+
+
+            def failures = []
+            metrics.each {
+                def limit = limits[it.key]
+                if (it.value < limit) {
+                    failures.add("- ${it.key} coverage rate is: ${it.value}%, minimum is ${limit}%")
+                }
+            }
+
+            if (failures) {
+                logger.quiet("------------------ Code Coverage Failed -----------------------")
+                failures.each {
+                    logger.quiet(it)
+                }
+                logger.quiet("---------------------------------------------------------------")
+                throw new GradleException("Code coverage failed")
+            } else {
+                logger.quiet("Passed Code Coverage Checks")
+            }
+        }
     }
 }
 

@@ -16,9 +16,9 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
@@ -83,7 +83,9 @@ public class ProjectUtils {
 	}
 
 	public static Set<ProjectIssueType> defaultIssueTypes(Project project, List<IssueType> defaultIssueTypes) {
+
 		Map<String, IssueType> issueTypes = defaultIssueTypes.stream().collect(Collectors.toMap(IssueType::getLocator, i -> i));
+
 		Set<ProjectIssueType> projectIssueTypes = new HashSet<>(defaultIssueTypes.size());
 		Arrays.stream(TestItemIssueGroup.values())
 				.map(TestItemIssueGroup::getLocator)
@@ -103,11 +105,7 @@ public class ProjectUtils {
 	 * @return project object with default notification configuration
 	 */
 	public static Project setDefaultNotificationConfiguration(Project project) {
-		SenderCase defaultSenderCase = new SenderCase(Sets.newHashSet(OWNER),
-				Sets.newHashSet(),
-				Sets.newHashSet(),
-				SendCase.ALWAYS
-		);
+		SenderCase defaultSenderCase = new SenderCase(Sets.newHashSet(OWNER), Sets.newHashSet(), Sets.newHashSet(), SendCase.ALWAYS);
 		defaultSenderCase.setProject(project);
 		project.setSenderCases(Sets.newHashSet(defaultSenderCase));
 		return project;

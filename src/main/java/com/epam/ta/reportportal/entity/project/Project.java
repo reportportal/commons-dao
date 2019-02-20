@@ -60,7 +60,7 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@OrderBy
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 

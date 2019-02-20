@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,47 +18,41 @@ package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class LogLevelConverterTest {
+class LogLevelConverterTest {
 
 	private LogLevelConverter converter = new LogLevelConverter();
 	private Map<LogLevel, Integer> allowedValues;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowedValues = Arrays.stream(LogLevel.values()).collect(Collectors.toMap(it -> it, LogLevel::toInt));
 	}
 
 	@Test
-	public void convertToDatabaseColumn() {
+	void convertToDatabaseColumn() {
 		Arrays.stream(LogLevel.values()).forEach(it -> assertEquals(it.toInt(), (int) converter.convertToDatabaseColumn(it)));
 	}
 
 	@Test
-	public void convertToEntityAttribute() {
+	void convertToEntityAttribute() {
 		allowedValues.forEach((key, value) -> assertEquals(key, converter.convertToEntityAttribute(value)));
 	}
 
 	@Test
-	public void convertToEntityAttributeFail() {
-		thrown.expect(ReportPortalException.class);
-		thrown.expectMessage("Error in Save Log Request. Wrong level = -100");
-		converter.convertToEntityAttribute(-100);
+	void convertToEntityAttributeFail() {
+		assertThrows(ReportPortalException.class, () -> converter.convertToEntityAttribute(-100));
 	}
 }

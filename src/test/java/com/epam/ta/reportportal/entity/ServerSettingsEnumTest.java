@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,18 +25,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ServerSettingsEnumTest {
+class ServerSettingsEnumTest {
 
 	private Map<ServerSettingsEnum, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowed = Arrays.stream(ServerSettingsEnum.values())
 				.collect(Collectors.toMap(it -> it,
 						it -> Arrays.asList(it.getAttribute(), it.getAttribute().toUpperCase(), it.getAttribute().toLowerCase())
@@ -45,7 +45,7 @@ public class ServerSettingsEnumTest {
 	}
 
 	@Test
-	public void findByAttribute() {
+	void findByAttribute() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<ServerSettingsEnum> optional = ServerSettingsEnum.findByAttribute(val);
 			assertTrue(optional.isPresent());
@@ -55,7 +55,7 @@ public class ServerSettingsEnumTest {
 	}
 
 	@Test
-	public void isPresent() {
+	void isPresent() {
 		allowed.entrySet().stream().flatMap(it -> it.getValue().stream()).forEach(it -> assertTrue(ServerSettingsEnum.isPresent(it)));
 		disallowed.forEach(it -> assertFalse(ServerSettingsEnum.isPresent(it)));
 	}
