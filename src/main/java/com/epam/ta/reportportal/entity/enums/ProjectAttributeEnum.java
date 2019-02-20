@@ -29,6 +29,8 @@ import java.util.Optional;
  */
 public enum ProjectAttributeEnum {
 
+	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(true)),
+
 	INTERRUPT_JOB_TIME("job.interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
 	KEEP_LAUNCHES("job.keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
 	KEEP_LOGS("job.keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
@@ -47,7 +49,7 @@ public enum ProjectAttributeEnum {
 
 	ProjectAttributeEnum(String attribute, String defaultValue) {
 		this.attribute = attribute;
-		this.defaultValue = String.valueOf(defaultValue);
+		this.defaultValue = defaultValue;
 	}
 
 	public String getAttribute() {

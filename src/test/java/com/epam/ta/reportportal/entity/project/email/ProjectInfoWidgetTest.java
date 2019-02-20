@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,18 +25,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ProjectInfoWidgetTest {
+class ProjectInfoWidgetTest {
 
 	private Map<ProjectInfoWidget, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		allowed = Arrays.stream(ProjectInfoWidget.values())
 				.collect(Collectors.toMap(it -> it,
 						it -> Arrays.asList(it.getWidgetCode(), it.getWidgetCode().toUpperCase(), it.getWidgetCode().toLowerCase())
@@ -45,7 +45,7 @@ public class ProjectInfoWidgetTest {
 	}
 
 	@Test
-	public void findByCode() {
+	void findByCode() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<ProjectInfoWidget> optional = ProjectInfoWidget.findByCode(val);
 			assertTrue(optional.isPresent());

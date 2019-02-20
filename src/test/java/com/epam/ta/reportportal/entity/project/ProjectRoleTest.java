@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class ProjectRoleTest {
+class ProjectRoleTest {
 
 	private Map<ProjectRole, List<String>> allowed;
 	private List<String> disallowed;
@@ -40,36 +40,36 @@ public class ProjectRoleTest {
 	private final ProjectRole MEMBER = ProjectRole.MEMBER;
 	private final ProjectRole PROJECT_MANAGER = ProjectRole.PROJECT_MANAGER;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowed = Arrays.stream(ProjectRole.values())
 				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
 		disallowed = Arrays.asList("noSuchObjectType", "", " ", null);
 	}
 
 	@Test
-	public void higherThan() {
+	void higherThan() {
 		assertFalse(PROJECT_MANAGER.higherThan(PROJECT_MANAGER));
 		assertTrue(PROJECT_MANAGER.higherThan(MEMBER));
 		assertFalse(OPERATOR.higherThan(CUSTOMER));
 	}
 
 	@Test
-	public void lowerThan() {
+	void lowerThan() {
 		assertFalse(PROJECT_MANAGER.lowerThan(PROJECT_MANAGER));
 		assertTrue(MEMBER.lowerThan(PROJECT_MANAGER));
 		assertTrue(CUSTOMER.lowerThan(PROJECT_MANAGER));
 	}
 
 	@Test
-	public void sameOrHigherThan() {
+	void sameOrHigherThan() {
 		assertTrue(PROJECT_MANAGER.sameOrHigherThan(PROJECT_MANAGER));
 		assertTrue(MEMBER.sameOrHigherThan(CUSTOMER));
 		assertFalse(MEMBER.sameOrHigherThan(PROJECT_MANAGER));
 	}
 
 	@Test
-	public void forName() {
+	void forName() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<ProjectRole> optional = ProjectRole.forName(val);
 			assertTrue(optional.isPresent());

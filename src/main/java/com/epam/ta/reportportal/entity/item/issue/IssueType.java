@@ -17,13 +17,11 @@
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.project.ProjectIssueType;
-import com.google.common.collect.Sets;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -54,8 +52,8 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
-	@OneToMany(mappedBy = "issueType", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
+//	@OneToMany(mappedBy = "issueType", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+//	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	public IssueType() {
 	}
@@ -116,11 +114,33 @@ public class IssueType implements Serializable {
 		this.hexColor = hexColor;
 	}
 
-	public Set<ProjectIssueType> getProjectIssueTypes() {
-		return projectIssueTypes;
+//	public Set<ProjectIssueType> getProjectIssueTypes() {
+//		return projectIssueTypes;
+//	}
+//
+//	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
+//		this.projectIssueTypes = projectIssueTypes;
+//	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		IssueType issueType = (IssueType) o;
+		return Objects.equals(id, issueType.id) && Objects.equals(issueGroup, issueType.issueGroup) && Objects.equals(locator,
+				issueType.locator
+		) && Objects.equals(longName, issueType.longName) && Objects.equals(
+				shortName,
+				issueType.shortName
+		) && Objects.equals(hexColor, issueType.hexColor);
 	}
 
-	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
-		this.projectIssueTypes = projectIssueTypes;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, issueGroup, locator, longName, shortName, hexColor);
 	}
 }

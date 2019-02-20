@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.AttributeConverter;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -35,23 +34,20 @@ public abstract class AttributeConverterTest {
 	protected AttributeConverter converter;
 	protected Map<Enum, List<String>> allowedValues;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
 	@Test
-	public void convertToDatabaseColumn() {
+	void convertToDatabaseColumn() {
 		convertToColumnTest();
 	}
 
 	@Test
-	public void convertToEntityAttribute() {
+	void convertToEntityAttribute() {
 		allowedValues.forEach((key, value) -> value.forEach(it -> assertEquals(key, converter.convertToEntityAttribute(it))));
 	}
 
 	@Test
-	public void convertToEntityAttributeFail() {
-		thrown.expect(ReportPortalException.class);
-		converter.convertToEntityAttribute("wrong parameter");
+	void convertToEntityAttributeFail() {
+
+		assertThrows(ReportPortalException.class, () -> converter.convertToEntityAttribute("wrong parameter"));
 	}
 
 	protected abstract void convertToColumnTest();

@@ -1,7 +1,23 @@
+/*
+ * Copyright 2018 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.ta.reportportal.entity.project.email;
 
-import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -32,10 +48,9 @@ public class SenderCase implements Serializable {
 	@Column(name = "launch_name")
 	private Set<String> launchNames;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "launch_attributes", joinColumns = @JoinColumn(name = "sender_case_id"))
-	@Column(name = "launch_attribute")
-	private Set<String> launchAttributes;
+	@OneToMany(mappedBy = "senderCase", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OrderBy
+	private Set<LaunchAttributeRule> launchAttributeRules;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "send_case")
@@ -49,10 +64,10 @@ public class SenderCase implements Serializable {
 	public SenderCase() {
 	}
 
-	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<String> launchAttributes, SendCase sendCase) {
+	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase) {
 		this.recipients = recipients;
 		this.launchNames = launchNames;
-		this.launchAttributes = launchAttributes;
+		this.launchAttributeRules = launchAttributeRules;
 		this.sendCase = sendCase;
 	}
 
@@ -80,12 +95,12 @@ public class SenderCase implements Serializable {
 		this.launchNames = launchNames;
 	}
 
-	public Set<String> getLaunchAttributes() {
-		return launchAttributes;
+	public Set<LaunchAttributeRule> getLaunchAttributeRules() {
+		return launchAttributeRules;
 	}
 
-	public void setLaunchAttributes(Set<String> launchAttributes) {
-		this.launchAttributes = launchAttributes;
+	public void setLaunchAttributeRules(Set<LaunchAttributeRule> launchAttributeRules) {
+		this.launchAttributeRules = launchAttributeRules;
 	}
 
 	public SendCase getSendCase() {

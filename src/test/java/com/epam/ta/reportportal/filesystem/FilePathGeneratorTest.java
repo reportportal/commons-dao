@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package com.epam.ta.reportportal.filesystem;
 
 import com.epam.ta.reportportal.util.DateTimeProvider;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
-public class FilePathGeneratorTest {
+class FilePathGeneratorTest {
 
 	private FilePathGenerator filePathGenerator;
 
@@ -36,8 +36,8 @@ public class FilePathGeneratorTest {
 
 	private static final String SEPARATOR = "\\" + File.separator;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 
 		dateTimeProvider = Mockito.mock(DateTimeProvider.class);
 
@@ -45,7 +45,7 @@ public class FilePathGeneratorTest {
 	}
 
 	@Test
-	public void generate_different_even_for_same_date() {
+	void generate_different_even_for_same_date() {
 
 		//		given:
 		LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,18 +25,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public class TestItemIssueGroupTest {
+class TestItemIssueGroupTest {
 
 	private Map<TestItemIssueGroup, List<String>> allowed;
 	private List<String> disallowed;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		allowed = Arrays.stream(TestItemIssueGroup.values())
 				.collect(Collectors.toMap(it -> it,
 						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
@@ -45,7 +45,7 @@ public class TestItemIssueGroupTest {
 	}
 
 	@Test
-	public void fromValue() {
+	void fromValue() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<TestItemIssueGroup> optional = TestItemIssueGroup.fromValue(val);
 			assertTrue(optional.isPresent());
@@ -55,13 +55,13 @@ public class TestItemIssueGroupTest {
 	}
 
 	@Test
-	public void validate() {
+	void validate() {
 		allowed.forEach((key, value) -> value.forEach(val -> assertEquals(key, TestItemIssueGroup.validate(val))));
 		disallowed.forEach(it -> assertNull(TestItemIssueGroup.validate(it)));
 	}
 
 	@Test
-	public void validValues() {
+	void validValues() {
 		final List<String> strings = TestItemIssueGroup.validValues();
 		assertEquals(strings, Arrays.stream(TestItemIssueGroup.values()).map(TestItemIssueGroup::getValue).collect(Collectors.toList()));
 	}

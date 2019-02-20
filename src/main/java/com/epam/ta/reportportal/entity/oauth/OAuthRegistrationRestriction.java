@@ -26,19 +26,20 @@ import java.util.Objects;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "oauth_registration_restriction", schema = "public")
 public class OAuthRegistrationRestriction implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
+	@Column(name = "id")
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "oauth_registration_fk", nullable = false)
+	@JoinColumn(name = "oauth_registration_fk")
 	private OAuthRegistration registration;
 
-	@Column(name = "type", nullable = false, length = 256)
+	@Column(name = "type")
 	private String type;
 
-	@Column(name = "value", nullable = false, length = 256)
+	@Column(name = "value")
 	private String value;
 
 	public Long getId() {
@@ -82,13 +83,11 @@ public class OAuthRegistrationRestriction implements Serializable {
 			return false;
 		}
 		OAuthRegistrationRestriction that = (OAuthRegistrationRestriction) o;
-		return Objects.equals(registration == null ? null : registration.getId(),
-				that.registration == null ? null : that.registration.getId()
-		) && Objects.equals(type, that.type) && Objects.equals(value, that.value);
+		return Objects.equals(type, that.type) && Objects.equals(value, that.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(registration == null ? null : registration.getId(), type, value);
+		return Objects.hash(type, value);
 	}
 }
