@@ -23,10 +23,6 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import org.junit.jupiter.api.Test;
-import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,28 +49,28 @@ class DashboardRepositoryTest extends BaseTest {
 	public void shouldFindByIdAndProjectIdWhenExists() {
 		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(13L, 1L);
 
-		Assert.assertTrue(dashboard.isPresent());
+		assertTrue(dashboard.isPresent());
 	}
 
 	@Test
 	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
 		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(55L, 1L);
 
-		Assert.assertFalse(dashboard.isPresent());
+		assertFalse(dashboard.isPresent());
 	}
 
 	@Test
 	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
 		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(5L, 11L);
 
-		Assert.assertFalse(dashboard.isPresent());
+		assertFalse(dashboard.isPresent());
 	}
 
 	@Test
 	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
 		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(55L, 11L);
 
-		Assert.assertFalse(dashboard.isPresent());
+		assertFalse(dashboard.isPresent());
 	}
 
 	@Test

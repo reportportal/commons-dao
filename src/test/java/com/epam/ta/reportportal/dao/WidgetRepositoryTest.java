@@ -62,28 +62,28 @@ public class WidgetRepositoryTest extends BaseTest {
 	public void shouldFindByIdAndProjectIdWhenExists() {
 		Optional<Widget> widget = repository.findByIdAndProjectId(5L, 1L);
 
-		Assert.assertTrue(widget.isPresent());
+		assertTrue(widget.isPresent());
 	}
 
 	@Test
 	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
 		Optional<Widget> widget = repository.findByIdAndProjectId(55L, 1L);
 
-		Assert.assertFalse(widget.isPresent());
+		assertFalse(widget.isPresent());
 	}
 
 	@Test
 	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
 		Optional<Widget> widget = repository.findByIdAndProjectId(5L, 11L);
 
-		Assert.assertFalse(widget.isPresent());
+		assertFalse(widget.isPresent());
 	}
 
 	@Test
 	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
 		Optional<Widget> widget = repository.findByIdAndProjectId(55L, 11L);
 
-		Assert.assertFalse(widget.isPresent());
+		assertFalse(widget.isPresent());
 	}
 
 	@Test
