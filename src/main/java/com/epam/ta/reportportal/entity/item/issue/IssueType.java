@@ -52,9 +52,6 @@ public class IssueType implements Serializable {
 	@Column(name = "hex_color", length = 7)
 	private String hexColor;
 
-//	@OneToMany(mappedBy = "issueType", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-//	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
-
 	public IssueType() {
 	}
 
@@ -113,14 +110,6 @@ public class IssueType implements Serializable {
 	public void setHexColor(String hexColor) {
 		this.hexColor = hexColor;
 	}
-
-//	public Set<ProjectIssueType> getProjectIssueTypes() {
-//		return projectIssueTypes;
-//	}
-//
-//	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
-//		this.projectIssueTypes = projectIssueTypes;
-//	}
 
 	@Override
 	public boolean equals(Object o) {

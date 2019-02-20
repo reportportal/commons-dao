@@ -3,29 +3,17 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
-import com.epam.ta.reportportal.jooq.enums.JAccessTokenTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthAccessTokenRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
 
-    private static final long serialVersionUID = -405538744;
+    private static final long serialVersionUID = 1932036644;
 
     /**
      * The reference instance of <code>public.oauth_access_token</code>
@@ -57,19 +45,49 @@ public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
     }
 
     /**
-     * The column <code>public.oauth_access_token.user_id</code>.
+     * The column <code>public.oauth_access_token.id</code>.
      */
-    public final TableField<JOauthAccessTokenRecord, Long> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JOauthAccessTokenRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('oauth_access_token_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.oauth_access_token.token_id</code>.
+     */
+    public final TableField<JOauthAccessTokenRecord, String> TOKEN_ID = createField("token_id", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
 
     /**
      * The column <code>public.oauth_access_token.token</code>.
      */
-    public final TableField<JOauthAccessTokenRecord, String> TOKEN = createField("token", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<JOauthAccessTokenRecord, byte[]> TOKEN = createField("token", org.jooq.impl.SQLDataType.BLOB, this, "");
 
     /**
-     * The column <code>public.oauth_access_token.token_type</code>.
+     * The column <code>public.oauth_access_token.authentication_id</code>.
      */
-    public final TableField<JOauthAccessTokenRecord, JAccessTokenTypeEnum> TOKEN_TYPE = createField("token_type", org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JAccessTokenTypeEnum.class), this, "");
+    public final TableField<JOauthAccessTokenRecord, String> AUTHENTICATION_ID = createField("authentication_id", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.oauth_access_token.username</code>.
+     */
+    public final TableField<JOauthAccessTokenRecord, String> USERNAME = createField("username", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.oauth_access_token.user_id</code>.
+     */
+    public final TableField<JOauthAccessTokenRecord, Long> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.oauth_access_token.client_id</code>.
+     */
+    public final TableField<JOauthAccessTokenRecord, String> CLIENT_ID = createField("client_id", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.oauth_access_token.authentication</code>.
+     */
+    public final TableField<JOauthAccessTokenRecord, byte[]> AUTHENTICATION = createField("authentication", org.jooq.impl.SQLDataType.BLOB, this, "");
+
+    /**
+     * The column <code>public.oauth_access_token.refresh_token</code>.
+     */
+    public final TableField<JOauthAccessTokenRecord, String> REFRESH_TOKEN = createField("refresh_token", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
 
     /**
      * Create a <code>public.oauth_access_token</code> table reference
@@ -117,7 +135,15 @@ public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ACCESS_TOKENS_PK);
+        return Arrays.<Index>asList(Indexes.OAUTH_ACCESS_TOKEN_PKEY, Indexes.USERS_ACCESS_TOKEN_UNIQUE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity<JOauthAccessTokenRecord, Long> getIdentity() {
+        return Keys.IDENTITY_OAUTH_ACCESS_TOKEN;
     }
 
     /**
@@ -125,7 +151,7 @@ public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
      */
     @Override
     public UniqueKey<JOauthAccessTokenRecord> getPrimaryKey() {
-        return Keys.ACCESS_TOKENS_PK;
+        return Keys.OAUTH_ACCESS_TOKEN_PKEY;
     }
 
     /**
@@ -133,7 +159,7 @@ public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
      */
     @Override
     public List<UniqueKey<JOauthAccessTokenRecord>> getKeys() {
-        return Arrays.<UniqueKey<JOauthAccessTokenRecord>>asList(Keys.ACCESS_TOKENS_PK);
+        return Arrays.<UniqueKey<JOauthAccessTokenRecord>>asList(Keys.OAUTH_ACCESS_TOKEN_PKEY, Keys.USERS_ACCESS_TOKEN_UNIQUE);
     }
 
     /**
