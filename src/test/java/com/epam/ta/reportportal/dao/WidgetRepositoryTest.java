@@ -30,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
@@ -55,6 +56,34 @@ public class WidgetRepositoryTest extends BaseTest {
 		assertNotNull(widgets, "Widgets not found");
 		assertEquals(5, widgets.size(), "Unexpected widgets size");
 		widgets.forEach(it -> assertEquals(superadminProjectId, (long) it.getProject().getId(), "Widget has incorrect project id"));
+	}
+
+	@Test
+	public void shouldFindByIdAndProjectIdWhenExists() {
+		Optional<Widget> widget = repository.findByIdAndProjectId(5L, 1L);
+
+		assertTrue(widget.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
+		Optional<Widget> widget = repository.findByIdAndProjectId(55L, 1L);
+
+		assertFalse(widget.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
+		Optional<Widget> widget = repository.findByIdAndProjectId(5L, 11L);
+
+		assertFalse(widget.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
+		Optional<Widget> widget = repository.findByIdAndProjectId(55L, 11L);
+
+		assertFalse(widget.isPresent());
 	}
 
 	@Test

@@ -19,11 +19,21 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
 public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
+
+	/**
+	 * Finds dashboard by 'id' and 'project id'
+	 *
+	 * @param id        {@link Dashboard#id}
+	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose dashboard will be extracted
+	 * @return {@link Dashboard} wrapped in the {@link Optional}
+	 */
+	Optional<Dashboard> findByIdAndProjectId(Long id, Long projectId);
 
 	List<Dashboard> findAllByProjectId(Long projectId);
 
