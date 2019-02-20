@@ -18,9 +18,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Map;
 
 /**
  * @author Pavel Bortnik
@@ -44,5 +47,7 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
 	 * @return Found Paged objects
 	 */
 	Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
+
+	Map<String, ProjectRole> findUsernamesWithProjectRolesByProjectId(Long projectId);
 
 }

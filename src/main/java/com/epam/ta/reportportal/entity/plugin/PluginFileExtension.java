@@ -35,7 +35,7 @@ public enum PluginFileExtension {
 
 	public static Optional<PluginFileExtension> findByExtension(String extension) {
 
-		return Arrays.stream(values()).filter(e -> e.getExtension().equals(extension)).findFirst();
+		return Arrays.stream(values()).filter(e -> e.getExtension().equalsIgnoreCase(extension)).findFirst();
 	}
 
 	public String getExtension() {
