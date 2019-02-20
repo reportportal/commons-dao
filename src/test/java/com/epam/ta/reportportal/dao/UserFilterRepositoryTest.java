@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
@@ -43,6 +45,50 @@ class UserFilterRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserFilterRepository userFilterRepository;
+
+	@Test
+	public void shouldFindByIdAndProjectIdWhenExists() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(1L, 1L);
+
+		assertTrue(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 1L);
+
+		assertFalse(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(5L, 11L);
+
+		assertFalse(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
+		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 11L);
+
+		assertFalse(userFilter.isPresent());
+	}
+
+	@Test
+	public void shouldFindByIdsAndProjectIdWhenExists() {
+		List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(Lists.newArrayList(1L, 2L), 1L);
+
+		assertNotNull(userFilters);
+		assertEquals(2L, userFilters.size());
+	}
+
+	@Test
+	public void shouldNotFindByIdsAndProjectIdWhenProjectIdNotExists() {
+		List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(Lists.newArrayList(1L, 2L), 2L);
+
+		assertNotNull(userFilters);
+		assertTrue(userFilters.isEmpty());
+	}
 
 	@Test
 	void getSharedFilters() {

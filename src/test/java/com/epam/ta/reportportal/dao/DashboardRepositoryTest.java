@@ -30,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
@@ -43,6 +44,34 @@ class DashboardRepositoryTest extends BaseTest {
 
 	@Autowired
 	private DashboardRepository repository;
+
+	@Test
+	public void shouldFindByIdAndProjectIdWhenExists() {
+		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(13L, 1L);
+
+		assertTrue(dashboard.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
+		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(55L, 1L);
+
+		assertFalse(dashboard.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
+		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(5L, 11L);
+
+		assertFalse(dashboard.isPresent());
+	}
+
+	@Test
+	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
+		Optional<Dashboard> dashboard = repository.findByIdAndProjectId(55L, 11L);
+
+		assertFalse(dashboard.isPresent());
+	}
 
 	@Test
 	void findAllByProjectId() {

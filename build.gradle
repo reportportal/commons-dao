@@ -57,11 +57,11 @@ dependencyManagement {
 
 project.ext {
     limits = [
-            'instruction': 73,
+            'instruction': 70,
             'branch'     : 36,
-            'line'       : 67,
+            'line'       : 60,
             'complexity' : 49,
-            'method'     : 59,
+            'method'     : 55,
             'class'      : 87
     ]
     releaseMode = project.hasProperty("releaseMode")
@@ -78,7 +78,7 @@ dependencies {
         compile 'com.epam.reportportal:commons-rules:4.0.1'
     } else {
         compile('com.github.reportportal:commons:71d4aca')
-        compile 'com.github.reportportal:commons-rules:spb2-SNAPSHOT'
+        compile 'com.github.reportportal:commons-rules:574fb3a'
         compile 'com.github.reportportal:commons-model:9d3ad776'
     }
 
