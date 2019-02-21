@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-//@Sql("/db/fill/integration/integrations-fill.sql")
 class IntegrationTypeRepositoryTest extends BaseTest {
 
 	private final static String JIRA_INTEGRATION_TYPE_NAME = "JIRA";
