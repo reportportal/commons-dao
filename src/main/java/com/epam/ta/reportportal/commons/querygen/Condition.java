@@ -63,7 +63,7 @@ public enum Condition {
 			expect(isNegative, val -> Objects.equals(val, false)).verify(errorType,
 					"Filter is incorrect. '!' can't be used with 'eq' - use 'ne' instead"
 			);
-			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(errorType,
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(errorType,
 					"Equals condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
 		}
@@ -89,7 +89,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
 					errorType,
 					"Not equals condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
@@ -209,7 +209,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
 					errorType,
 					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
@@ -236,7 +236,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
 					errorType,
 					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
@@ -267,7 +267,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForAggregation()).verify(errorType,
+			expect(criteriaHolder, filterForArrayAggregation()).verify(errorType,
 					"'HAS' condition applicable only for fields that have to be aggregated."
 			);
 		}
@@ -292,7 +292,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForAggregation()).verify(errorType,
+			expect(criteriaHolder, filterForArrayAggregation()).verify(errorType,
 					"'ANY' condition applicable only for fields that have to be aggregated."
 			);
 		}

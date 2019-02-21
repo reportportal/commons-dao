@@ -105,13 +105,13 @@ class FilterRulesTest {
 	@Test
 	void filterForAggregation() {
 		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", "array_agg(string)", String.class);
-		assertTrue(FilterRules.filterForAggregation().test(criteriaHolder));
+		assertTrue(FilterRules.filterForArrayAggregation().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForAggregationNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", String.class);
-		assertFalse(FilterRules.filterForAggregation().test(criteriaHolder));
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", "max(string)", String.class);
+		assertFalse(FilterRules.filterForArrayAggregation().test(criteriaHolder));
 	}
 
 	@Test

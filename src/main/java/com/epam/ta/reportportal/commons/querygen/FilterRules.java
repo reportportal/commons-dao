@@ -84,12 +84,13 @@ public class FilterRules {
 	}
 
 	/**
-	 * Accepts filtering only for fields that are needed to be aggregated after join
+	 * Accepts filtering only for fields that are needed to be aggregated
+	 * as array_agg after join
 	 *
 	 * @return Predicate
 	 */
-	public static Predicate<CriteriaHolder> filterForAggregation() {
-		return filter -> !filter.getAggregateCriteria().equalsIgnoreCase(filter.getQueryCriteria());
+	public static Predicate<CriteriaHolder> filterForArrayAggregation() {
+		return filter -> filter.getAggregateCriteria().startsWith("array_agg");
 	}
 
 	/**
