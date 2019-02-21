@@ -200,6 +200,7 @@ public enum Condition {
 	IN("in") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
+			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 			return field(criteriaHolder.getAggregateCriteria()).in(castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
@@ -208,7 +209,10 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			// object type validations is not required here
+			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(
+					errorType,
+					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
+			);
 		}
 
 		@Override
@@ -223,6 +227,7 @@ public enum Condition {
 	EQUALS_ANY("ea") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
+			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 			return field(criteriaHolder.getAggregateCriteria()).eq(any(DSL.array(castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
