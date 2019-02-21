@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -232,9 +233,22 @@ class UserRepositoryTest extends BaseTest {
 		assertTrue(created.isPresent());
 	}
 
+	@Test
+	void findUsernamesWithProjectRolesByProjectIdTest() {
+
+		Map<String, ProjectRole> usernamesWithProjectRoles = userRepository.findUsernamesWithProjectRolesByProjectId(3L);
+
+		assertNotNull(usernamesWithProjectRoles);
+		assertFalse(usernamesWithProjectRoles.isEmpty());
+		assertEquals(3L, usernamesWithProjectRoles.size());
+
+		usernamesWithProjectRoles.values().forEach(Assertions::assertNotNull);
+	}
+
 	private Filter buildDefaultUserFilter() {
 		return Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "1000", CRITERIA_ID))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "1000", CRITERIA_ID))
 				.build();
 	}
 }
