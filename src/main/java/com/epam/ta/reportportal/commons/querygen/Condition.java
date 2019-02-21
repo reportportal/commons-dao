@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.Predicates;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
@@ -51,8 +52,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getAggregateCriteria()).eq(this.castValue(
-					criteriaHolder,
+			return field(criteriaHolder.getAggregateCriteria()).eq(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -62,6 +62,9 @@ public enum Condition {
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(isNegative, val -> Objects.equals(val, false)).verify(errorType,
 					"Filter is incorrect. '!' can't be used with 'eq' - use 'ne' instead"
+			);
+			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(errorType,
+					"Equals condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
 		}
 
@@ -77,8 +80,8 @@ public enum Condition {
 	NOT_EQUALS("ne") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getAggregateCriteria()).ne(this.castValue(
-					criteriaHolder,
+			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
+			return field(criteriaHolder.getAggregateCriteria()).ne(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -86,7 +89,10 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			// object type validations is not required here
+			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(
+					errorType,
+					"Not equals condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
+			);
 		}
 
 		@Override
@@ -147,8 +153,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return function("nlevel", Long.class, field(criteriaHolder.getAggregateCriteria())).eq((Long) this.castValue(
-					criteriaHolder,
+			return function("nlevel", Long.class, field(criteriaHolder.getAggregateCriteria())).eq((Long) this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -218,8 +223,7 @@ public enum Condition {
 	EQUALS_ANY("ea") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getAggregateCriteria()).eq(any(DSL.array(castValue(
-					criteriaHolder,
+			return field(criteriaHolder.getAggregateCriteria()).eq(any(DSL.array(castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			))));
@@ -227,7 +231,10 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			// object type validations is not required here
+			expect(criteriaHolder, Predicates.not(filterForAggregation())).verify(
+					errorType,
+					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
+			);
 		}
 
 		@Override
@@ -246,7 +253,8 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only collections */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition(Operator.AND, DSL.field(criteriaHolder.getAggregateCriteria())
+			return DSL.condition(Operator.AND,
+					DSL.field(criteriaHolder.getAggregateCriteria())
 							.contains(DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)))
 			);
 
@@ -254,10 +262,9 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
-					"'HAS' condition applicable only for collection data types. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, filterForAggregation()).verify(errorType,
+					"'HAS' condition applicable only for fields that have to be aggregated."
+			);
 		}
 
 		@Override
@@ -273,18 +280,16 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(
-					DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
+			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
 					DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
 			));
 		}
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForCollections()).verify(errorType, formattedSupplier(
-					"'any' condition applicable only for collection data types. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, filterForAggregation()).verify(errorType,
+					"'ANY' condition applicable only for fields that have to be aggregated."
+			);
 		}
 
 		@Override
@@ -301,8 +306,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getAggregateCriteria()).greaterThan(this.castValue(
-					criteriaHolder,
+			return field(criteriaHolder.getAggregateCriteria()).greaterThan(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -331,8 +335,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getAggregateCriteria()).greaterOrEqual(this.castValue(
-					criteriaHolder,
+			return field(criteriaHolder.getAggregateCriteria()).greaterOrEqual(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -362,8 +365,7 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			return field(criteriaHolder.getAggregateCriteria()).lessThan(this.castValue(
-					criteriaHolder,
+			return field(criteriaHolder.getAggregateCriteria()).lessThan(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
@@ -393,8 +395,7 @@ public enum Condition {
 			/* Validate only numbers & dates */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
 
-			return field(criteriaHolder.getAggregateCriteria()).lessOrEqual(this.castValue(
-					criteriaHolder,
+			return field(criteriaHolder.getAggregateCriteria()).lessOrEqual(this.castValue(criteriaHolder,
 					filter.getValue(),
 					INCORRECT_FILTER_PARAMETERS
 			));
