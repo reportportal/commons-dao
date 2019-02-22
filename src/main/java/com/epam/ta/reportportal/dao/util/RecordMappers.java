@@ -341,6 +341,7 @@ public class RecordMappers {
 	public static final Function<? super Record, IntegrationType> INTEGRATION_TYPE_MAPPER = r -> {
 		IntegrationType integrationType = new IntegrationType();
 		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
+		integrationType.setEnabled(r.get(INTEGRATION_TYPE.ENABLED));
 		integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toLocalDateTime());
 		ofNullable(r.get(INTEGRATION_TYPE.AUTH_FLOW)).ifPresent(af -> {
 			integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(af.getLiteral())
