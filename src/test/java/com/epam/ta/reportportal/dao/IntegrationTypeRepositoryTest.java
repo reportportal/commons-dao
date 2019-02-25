@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql("/db/fill/integration/integrations-fill.sql")
 class IntegrationTypeRepositoryTest extends BaseTest {
 
-	private final static String JIRA_INTEGRATION_TYPE_NAME = "JIRA";
+	private final static String JIRA_INTEGRATION_TYPE_NAME = "jiRA";
 	private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
 	private static final long BTS_INTEGRATIONS_COUNT = 2L;
 

@@ -338,7 +338,7 @@ public class RecordMappers {
 		return synchronizationAttributes;
 	};
 
-	public static final Function<? super Record, IntegrationType> INTEGRATION_TYPE_MAPPER = r -> {
+	public static final RecordMapper<? super Record, IntegrationType> INTEGRATION_TYPE_MAPPER = r -> {
 		IntegrationType integrationType = new IntegrationType();
 		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
 		integrationType.setEnabled(r.get(INTEGRATION_TYPE.ENABLED));
@@ -381,7 +381,7 @@ public class RecordMappers {
 
 		Integration integration = new Integration();
 		integration.setId(r.get(INTEGRATION.ID, Long.class));
-		integration.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		integration.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 		integration.setEnabled(r.get(INTEGRATION.ENABLED));
 		INTEGRATION_PARAMS_MAPPER.accept(integration, r);
@@ -407,7 +407,7 @@ public class RecordMappers {
 
 		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
 		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
 
 		INTEGRATION_PARAMS_MAPPER.accept(ldapConfig, r);
@@ -424,7 +424,7 @@ public class RecordMappers {
 		activeDirectoryConfig.setEnabled(r.get(INTEGRATION.ENABLED));
 		activeDirectoryConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 
-		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.apply(r));
+		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
 
 		INTEGRATION_PARAMS_MAPPER.accept(activeDirectoryConfig, r);
