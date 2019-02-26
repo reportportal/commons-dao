@@ -563,7 +563,8 @@ CREATE TABLE ticket
   ticket_id    VARCHAR(64)                                                   NOT NULL UNIQUE,
   submitter_id BIGINT REFERENCES users (id) ON DELETE CASCADE                NOT NULL,
   submit_date  TIMESTAMP DEFAULT now()                                       NOT NULL,
-  bts_id       INTEGER REFERENCES bug_tracking_system (id) ON DELETE CASCADE NOT NULL,
+  bts_url      VARCHAR(256)                                                  NOT NULL,
+  bts_project  VARCHAR(256)                                                  NOT NULL,
   url          VARCHAR(256)                                                  NOT NULL
 );
 
