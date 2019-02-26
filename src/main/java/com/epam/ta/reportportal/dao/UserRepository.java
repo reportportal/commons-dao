@@ -53,7 +53,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("isExpired") boolean isExpired, Pageable pageable);
 
 	@Modifying
-	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata-> 'metadata' ->> 'last_login' AS TIMESTAMP) < :lastLogin", nativeQuery = true)
+	@Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata-> 'metadata' ->> 'last_login' AS DOUBLE PRECISION) < (extract(EPOCH FROM CAST (:lastLogin AS TIMESTAMP)) * 1000);", nativeQuery = true)
 	void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
 
 	/**
@@ -63,12 +63,12 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	 * @param username  User
 	 */
 	@Modifying
-	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(CAST (:lastLogin AS TIMESTAMP)), true ) WHERE login = :username", nativeQuery = true)
+	@Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(extract(EPOCH FROM CAST (:lastLogin AS TIMESTAMP)) * 1000), TRUE ) WHERE login = :username", nativeQuery = true)
 	void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin, @Param("username") String username);
 
-	@Query(value = "SELECT u.login FROM users u join project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
+	@Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
 	List<String> findNamesByProject(@Param("projectId") Long projectId);
 
-	@Query(value = "SELECT u.login FROM users u join project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId and u.login LIKE %:term%", nativeQuery = true)
+	@Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND u.login LIKE %:term%", nativeQuery = true)
 	List<String> findNamesByProject(@Param("projectId") Long projectId, @Param("term") String term);
 }
