@@ -144,7 +144,7 @@ public class WidgetRepositoryTest extends BaseTest {
 				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
 				adminLogin
 		);
-		assertEquals(1, superadminShared.getTotalElements(), "Unexpected shared widgets count");
+		assertEquals(3, superadminShared.getTotalElements(), "Unexpected shared widgets count");
 		superadminShared.getContent().forEach(it -> assertTrue(it.isShared()));
 
 		final String defaultLogin = "default";
@@ -152,12 +152,12 @@ public class WidgetRepositoryTest extends BaseTest {
 				PageRequest.of(0, 3),
 				defaultLogin
 		);
-		assertEquals(0, defaultShared.getTotalElements(), "Unexpected shared widgets count");
+		assertEquals(1, defaultShared.getTotalElements(), "Unexpected shared widgets count");
 		defaultShared.getContent().forEach(it -> assertTrue(it.isShared()));
 
 		final String jajaLogin = "jaja_user";
 		final Page<Widget> jajaShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3), jajaLogin);
-		assertEquals(2, jajaShared.getTotalElements(), "Unexpected shared widgets count");
+		assertEquals(3, jajaShared.getTotalElements(), "Unexpected shared widgets count");
 		jajaShared.getContent().forEach(it -> assertTrue(it.isShared()));
 	}
 

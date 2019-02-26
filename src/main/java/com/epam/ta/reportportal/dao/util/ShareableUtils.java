@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.jooq.tables.JAclEntry;
 import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
 import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
 
@@ -39,11 +40,7 @@ public class ShareableUtils {
 	 * @return Condition for shared entities
 	 */
 	public static Condition sharedCondition(String userName) {
-		return (JAclEntry.ACL_ENTRY.SID.in(DSL.select(JAclSid.ACL_SID.ID)
-				.from(JAclSid.ACL_SID)
-				.where(JAclSid.ACL_SID.SID.eq(userName)))).and(JAclObjectIdentity.ACL_OBJECT_IDENTITY.OWNER_SID.notIn(DSL.select(JAclSid.ACL_SID.ID)
-				.from(JAclSid.ACL_SID)
-				.where(JAclSid.ACL_SID.SID.eq(userName))));
+		return permittedCondition(userName).and(JShareableEntity.SHAREABLE_ENTITY.SHARED);
 	}
 
 	/**
