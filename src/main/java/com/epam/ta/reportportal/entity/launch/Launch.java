@@ -105,6 +105,9 @@ public class Launch implements Serializable {
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
+	@Column(name = "approximate_duration")
+	private double approximateDuration;
+
 	public Set<ItemAttribute> getAttributes() {
 		return attributes;
 	}
@@ -231,6 +234,14 @@ public class Launch implements Serializable {
 
 	public void setStatus(StatusEnum status) {
 		this.status = status;
+	}
+
+	public double getApproximateDuration() {
+		return approximateDuration;
+	}
+
+	public void setApproximateDuration(double approximateDuration) {
+		this.approximateDuration = approximateDuration;
 	}
 
 	@Override
