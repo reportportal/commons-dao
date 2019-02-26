@@ -76,12 +76,11 @@ public class ResultFetchers {
 					.add(new ProjectAttribute().withProject(project)
 							.withAttribute(ATTRIBUTE_MAPPER.map(record))
 							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
-			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> {
-
+			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).ifPresent(f -> ofNullable(record.get(f)).ifPresent(field -> {
 				Set<ProjectUser> projectUsers = ofNullable(project.getUsers()).orElseGet(Sets::newHashSet);
 				projectUsers.add(PROJECT_USER_MAPPER.map(record));
 				project.setUsers(projectUsers);
-			});
+			}));
 
 			projects.put(id, project);
 		});
