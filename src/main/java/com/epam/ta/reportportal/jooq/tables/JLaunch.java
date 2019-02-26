@@ -32,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-    private static final long serialVersionUID = 343464502;
+    private static final long serialVersionUID = 806501864;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -111,6 +111,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      * The column <code>public.launch.has_retries</code>.
      */
     public final TableField<JLaunchRecord, Boolean> HAS_RETRIES = createField("has_retries", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.launch.approximate_duration</code>.
+     */
+    public final TableField<JLaunchRecord, Double> APPROXIMATE_DURATION = createField("approximate_duration", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0.0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
 
     /**
      * Create a <code>public.launch</code> table reference

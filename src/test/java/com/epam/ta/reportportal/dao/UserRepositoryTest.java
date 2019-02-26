@@ -38,8 +38,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
@@ -79,10 +77,7 @@ class UserRepositoryTest extends BaseTest {
 		assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
 		users.forEach(user -> assertThat(
 				"Last login should be lower than in the filer",
-				LocalDateTime.parse((String) user.getMetadata().getMetadata().get("last_login"))
-						.atZone(ZoneId.systemDefault())
-						.toInstant()
-						.toEpochMilli(),
+				Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
 				Matchers.lessThan(now)
 		));
 	}
