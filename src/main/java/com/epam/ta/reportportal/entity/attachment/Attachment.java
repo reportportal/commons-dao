@@ -33,7 +33,7 @@ public class Attachment implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
 	private Log log;
 
