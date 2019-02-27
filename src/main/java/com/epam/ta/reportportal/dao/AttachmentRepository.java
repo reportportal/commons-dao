@@ -18,17 +18,17 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
-	List<Attachment> findAllByProjectId(Long projectId);
+	Stream<Attachment> findAllByProjectIdIsNull();
 
-	List<Attachment> findAllByLaunchId(Long launchId);
+	Stream<Attachment> findAllByLaunchIdIsNull();
 
-	List<Attachment> findAllByItemId(Long itemId);
+	Stream<Attachment> findAllByItemIdIsNull();
 
 }

@@ -18,12 +18,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -37,24 +37,21 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByProjectId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByProjectId(1L);
+		List<Attachment> attachments = attachmentRepository.findAllByProjectIdIsNull().collect(Collectors.toList());
 
-		Assertions.assertFalse(attachments.isEmpty());
 	}
 
 	@Test
 	void findAllByLaunchId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByLaunchId(1L);
+		List<Attachment> attachments = attachmentRepository.findAllByLaunchIdIsNull().collect(Collectors.toList());
 
-		Assertions.assertFalse(attachments.isEmpty());
 	}
 
 	@Test
 	void findAllByItemId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByItemId(3L);
+		List<Attachment> attachments = attachmentRepository.findAllByItemIdIsNull().collect(Collectors.toList());
 
-		Assertions.assertFalse(attachments.isEmpty());
 	}
 }
