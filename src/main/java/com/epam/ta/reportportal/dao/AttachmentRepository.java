@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.stream.Stream;
 
@@ -25,11 +26,14 @@ import java.util.stream.Stream;
  */
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
-	Stream<Attachment> findByProjectIdIsNull();
+	@Query("SELECT a FROM Attachment a WHERE a.projectId IS NULL")
+	Stream<Attachment> findAllByNullProjectId();
 
-	Stream<Attachment> findByLaunchIdIsNull();
+	@Query("SELECT a FROM Attachment a WHERE a.launchId IS NULL")
+	Stream<Attachment> findAllByNullLaunchId();
 
-	Stream<Attachment> findByItemIdIsNull();
+	@Query("SELECT a FROM Attachment a WHERE a.itemId IS NULL")
+	Stream<Attachment> findAllByNullItemId();
 
 	void deleteAllByIdIsNull();
 
