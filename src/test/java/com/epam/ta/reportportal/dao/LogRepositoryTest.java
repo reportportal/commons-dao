@@ -40,7 +40,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaCons
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *
  * @author Ivan Budaev
  */
 @Sql("/db/fill/item/items-fill.sql")
@@ -90,19 +89,6 @@ class LogRepositoryTest extends BaseTest {
 	@Test
 	void hasLogsAddedLatelyTest() {
 		assertTrue(logRepository.hasLogsAddedLately(Duration.ofDays(13).plusHours(23), 1L, StatusEnum.FAILED));
-	}
-
-	@Test
-	void clearLogsAttachmentsAndThumbnailsTest() {
-		ArrayList<Long> logIds = Lists.newArrayList(1L, 2L, 3L);
-
-		logRepository.clearLogsAttachmentsAndThumbnails(logIds);
-		List<Log> logs = logRepository.findAllById(logIds);
-
-		logs.forEach(log -> {
-			assertNull(log.getAttachment(), "Attachments should be deleted");
-			assertNull(log.getAttachmentThumbnail(), "Attachment thumbnail should be deleted");
-		});
 	}
 
 	@Test

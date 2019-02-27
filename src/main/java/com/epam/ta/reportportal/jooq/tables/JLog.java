@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = 373866109;
+    private static final long serialVersionUID = -1839626050;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -86,21 +86,6 @@ public class JLog extends TableImpl<JLogRecord> {
      * The column <code>public.log.log_level</code>.
      */
     public final TableField<JLogRecord, Integer> LOG_LEVEL = createField("log_level", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
-     * The column <code>public.log.attachment</code>.
-     */
-    public final TableField<JLogRecord, String> ATTACHMENT = createField("attachment", org.jooq.impl.SQLDataType.CLOB, this, "");
-
-    /**
-     * The column <code>public.log.attachment_thumbnail</code>.
-     */
-    public final TableField<JLogRecord, String> ATTACHMENT_THUMBNAIL = createField("attachment_thumbnail", org.jooq.impl.SQLDataType.CLOB, this, "");
-
-    /**
-     * The column <code>public.log.content_type</code>.
-     */
-    public final TableField<JLogRecord, String> CONTENT_TYPE = createField("content_type", org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * Create a <code>public.log</code> table reference

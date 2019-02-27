@@ -403,10 +403,17 @@ CREATE TABLE log (
   log_message          TEXT                                                     NOT NULL,
   item_id              BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE  NOT NULL,
   last_modified        TIMESTAMP                                                NOT NULL,
-  log_level            INTEGER                                                  NOT NULL,
-  attachment           TEXT,
-  attachment_thumbnail TEXT,
-  content_type         TEXT
+  log_level            INTEGER                                                  NOT NULL
+);
+
+CREATE TABLE attachment (
+  id             BIGSERIAL REFERENCES log (id) ON DELETE CASCADE          NOT NULL,
+  path           TEXT                                                     NOT NULL,
+  thumbnail_path TEXT,
+  content_type   TEXT,
+  project_id     BIGINT REFERENCES project (id) ON DELETE CASCADE         NOT NULL,
+  launch_id      BIGINT REFERENCES launch (id) ON DELETE CASCADE          NOT NULL,
+  item_id        BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE  NOT NULL
 );
 
 CREATE TABLE activity (

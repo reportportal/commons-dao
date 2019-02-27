@@ -408,7 +408,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LOG.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LOG_LEVEL, LOG.LOG_LEVEL.getQualifiedName().toString(), LogLevel.class),
 			new CriteriaHolder(CRITERIA_LOG_MESSAGE, LOG.LOG_MESSAGE.getQualifiedName().toString(), String.class),
-			new CriteriaHolder(CRITERIA_LOG_BINARY_CONTENT, LOG.ATTACHMENT.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_LOG_BINARY_CONTENT, ATTACHMENT.PATH.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID.getQualifiedName().toString(), Long.class)
 	)) {
 		@Override
@@ -419,14 +419,19 @@ public enum FilterTarget {
 					LOG.LAST_MODIFIED,
 					LOG.LOG_LEVEL,
 					LOG.ITEM_ID,
-					LOG.ATTACHMENT,
-					LOG.CONTENT_TYPE
+					ATTACHMENT.PATH,
+					ATTACHMENT.THUMBNAIL_PATH,
+					ATTACHMENT.CONTENT_TYPE,
+					ATTACHMENT.PROJECT_ID,
+					ATTACHMENT.LAUNCH_ID,
+					ATTACHMENT.ITEM_ID
 			);
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(LOG);
+			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ID.eq(ATTACHMENT.ID));
 		}
 
 		@Override
