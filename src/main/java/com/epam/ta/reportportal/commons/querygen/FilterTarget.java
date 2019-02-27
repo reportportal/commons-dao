@@ -195,9 +195,8 @@ public enum FilterTarget {
 					List.class
 			),
 			new CriteriaHolder(CRITERIA_LAST_LOGIN,
-					DSL.cast(DSL.field(USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login'"), Timestamp.class)
-							.toString(),
-					Timestamp.class
+					"(" + USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
+					Long.class
 			)
 
 	)) {

@@ -133,11 +133,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
 
-		Select commonSelect = dsl.select(field(name(LAUNCHES, ID)).cast(Long.class))
-				.from(name(LAUNCHES))
-				.orderBy(field(name(LAUNCHES, NUMBER)).desc())
-				.limit(limit);
-
 		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
 				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
@@ -145,31 +140,33 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
 		)
 				.from(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).build())
+						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).with(limit).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM_RESULTS.STATUS,
 								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
-										TEST_ITEM.ITEM_ID
-										)))
-												.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
-														TEST_ITEM.ITEM_ID
-												)))),
-										1
-								).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
+										TEST_ITEM.START_TIME.desc()
+								)))
+										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
+												TEST_ITEM.START_TIME.desc()
+										)))), 1).otherwise(ZERO_QUERY_VALUE)
+										.as(SWITCH_FLAG),
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
+						.join(LAUNCHES)
+						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.where(LAUNCH.ID.in(commonSelect))
-						.and(TEST_ITEM.TYPE.in(includeMethods ?
+						.where(TEST_ITEM.TYPE.in(includeMethods ?
 								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
 								Collections.singletonList(JTestItemTypeEnum.STEP)))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
+						.and(TEST_ITEM.RETRY_OF.isNull())
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
+						.orderBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.START_TIME.desc())
 						.asTable(FLAKY_TABLE_RESULTS))
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))

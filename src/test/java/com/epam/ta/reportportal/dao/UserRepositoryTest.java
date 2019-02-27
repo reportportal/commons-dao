@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,8 +38,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
@@ -77,11 +76,7 @@ class UserRepositoryTest extends BaseTest {
 		//then
 		assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
 		users.forEach(user -> assertThat(
-				"Last login should be lower than in the filer",
-				LocalDateTime.parse((String) user.getMetadata().getMetadata().get("last_login"))
-						.atZone(ZoneId.systemDefault())
-						.toInstant()
-						.toEpochMilli(),
+				"Last login should be lower than in the filer", Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
 				Matchers.lessThan(now)
 		));
 	}
@@ -232,9 +227,22 @@ class UserRepositoryTest extends BaseTest {
 		assertTrue(created.isPresent());
 	}
 
+	@Test
+	void findUsernamesWithProjectRolesByProjectIdTest() {
+
+		Map<String, ProjectRole> usernamesWithProjectRoles = userRepository.findUsernamesWithProjectRolesByProjectId(3L);
+
+		assertNotNull(usernamesWithProjectRoles);
+		assertFalse(usernamesWithProjectRoles.isEmpty());
+		assertEquals(3L, usernamesWithProjectRoles.size());
+
+		usernamesWithProjectRoles.values().forEach(Assertions::assertNotNull);
+	}
+
 	private Filter buildDefaultUserFilter() {
 		return Filter.builder()
-				.withTarget(User.class).withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "1000", CRITERIA_ID))
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "1000", CRITERIA_ID))
 				.build();
 	}
 }

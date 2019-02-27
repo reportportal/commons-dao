@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,16 @@ public class FilterRules {
 	 */
 	public static Predicate<CriteriaHolder> filterForCollections() {
 		return filter -> Collection.class.isAssignableFrom(filter.getDataType());
+	}
+
+	/**
+	 * Accepts filtering only for fields that are needed to be aggregated
+	 * as array_agg after join
+	 *
+	 * @return Predicate
+	 */
+	public static Predicate<CriteriaHolder> filterForArrayAggregation() {
+		return filter -> filter.getAggregateCriteria().startsWith("array_agg");
 	}
 
 	/**
