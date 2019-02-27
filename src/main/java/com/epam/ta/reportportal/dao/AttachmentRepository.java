@@ -31,4 +31,6 @@ public interface AttachmentRepository extends ReportPortalRepository<Attachment,
 
 	Stream<Attachment> findAllByItemIdIsNull();
 
+	void deleteAllByIdIsNull();
+
 }
