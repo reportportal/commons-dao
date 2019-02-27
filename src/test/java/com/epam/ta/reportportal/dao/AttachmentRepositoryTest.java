@@ -37,21 +37,21 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByProjectId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByProjectIdIsNull().collect(Collectors.toList());
+		List<Attachment> attachments = attachmentRepository.findByProjectIdIsNull().collect(Collectors.toList());
 
 	}
 
 	@Test
 	void findAllByLaunchId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByLaunchIdIsNull().collect(Collectors.toList());
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdIsNull().collect(Collectors.toList());
 
 	}
 
 	@Test
 	void findAllByItemId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByItemIdIsNull().collect(Collectors.toList());
+		List<Attachment> attachments = attachmentRepository.findByItemIdIsNull().collect(Collectors.toList());
 
 	}
 }

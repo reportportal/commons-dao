@@ -25,11 +25,11 @@ import java.util.stream.Stream;
  */
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
-	Stream<Attachment> findAllByProjectIdIsNull();
+	Stream<Attachment> findByProjectIdIsNull();
 
-	Stream<Attachment> findAllByLaunchIdIsNull();
+	Stream<Attachment> findByLaunchIdIsNull();
 
-	Stream<Attachment> findAllByItemIdIsNull();
+	Stream<Attachment> findByItemIdIsNull();
 
 	void deleteAllByIdIsNull();
 
