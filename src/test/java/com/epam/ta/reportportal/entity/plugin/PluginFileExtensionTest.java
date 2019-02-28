@@ -46,7 +46,6 @@ class PluginFileExtensionTest {
 
 	@Test
 	void findByExtensionPositive() {
-
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<PluginFileExtension> optional = PluginFileExtension.findByExtension(val);
 			assertTrue(optional.isPresent());
@@ -56,7 +55,6 @@ class PluginFileExtensionTest {
 
 	@Test
 	void findByExtensionNegative() {
-
 		disallowed.forEach(it -> assertFalse(PluginFileExtension.findByExtension(it).isPresent()));
 	}
 }
