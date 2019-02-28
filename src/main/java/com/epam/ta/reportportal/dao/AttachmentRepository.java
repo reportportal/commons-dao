@@ -18,22 +18,36 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 
+import javax.persistence.QueryHint;
 import java.util.stream.Stream;
+
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query("SELECT a FROM Attachment a WHERE a.projectId IS NULL")
 	Stream<Attachment> findAllByNullProjectId();
 
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query("SELECT a FROM Attachment a WHERE a.launchId IS NULL")
 	Stream<Attachment> findAllByNullLaunchId();
 
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query("SELECT a FROM Attachment a WHERE a.itemId IS NULL")
 	Stream<Attachment> findAllByNullItemId();
+
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query("SELECT a FROM Attachment a WHERE a.projectId = ?1")
+	Stream<Attachment> findAllByProjectId(Long projectId);
+
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	Stream<Attachment> streamAllByProjectId(Long projectId);
 
 	void deleteAllByIdIsNull();
 
