@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,27 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
- * Repository for {@link com.epam.ta.reportportal.entity.integration.IntegrationType} entity
- *
- * @author Yauheni_Martynau
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface IntegrationTypeRepository extends ReportPortalRepository<IntegrationType, Long>, IntegrationTypeRepositoryCustom {
+public interface IntegrationTypeRepositoryCustom {
 
 	/**
-	 * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
+	 * Searches for an integration
 	 *
-	 * @param integrationGroup {@link IntegrationType#integrationGroup}
-	 * @return @return The {@link List} of the {@link IntegrationType}
+	 * @param name Integration name (ignoring case)
+	 * @return Optional of integration
 	 */
-	List<IntegrationType> findAllByIntegrationGroup(IntegrationGroupEnum integrationGroup);
+	Optional<IntegrationType> findByName(String name);
+
+	/**
+	 * Searches for an integration by name (ignoring case) and group
+	 *
+	 * @param name      Integration name
+	 * @param groupType Integration group
+	 * @return Optional of integration
+	 */
+	Optional<IntegrationType> findByNameAndIntegrationGroup(String name, IntegrationGroupEnum groupType);
 }
