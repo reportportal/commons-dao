@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 
 import javax.persistence.QueryHint;
 import java.util.stream.Stream;
@@ -31,15 +32,15 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT a.id FROM Attachment a WHERE a.projectId IS NULL")
-	Stream<Long> streamIdsWhereProjectIdIsNull();
+	@Query(value = "SELECT a.id FROM Attachment a WHERE a.projectId = :projectId")
+	Stream<Long> streamIdsByProjectId(@Param("projectId") Long projectId);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT a.id FROM Attachment a WHERE a.launchId IS NULL")
-	Stream<Long> streamIdsWhereLaunchIdIsNull();
+	@Query(value = "SELECT a.id FROM Attachment a WHERE a.launchId = :launchId")
+	Stream<Long> streamIdsByLaunchId(@Param("launchId") Long launchId);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT a.id FROM Attachment a WHERE a.itemId IS NULL")
-	Stream<Long> streamIdsWhereItemIdIsNull();
+	@Query(value = "SELECT a.id FROM Attachment a WHERE a.itemId = :itemId")
+	Stream<Long> streamIdsByItemId(@Param("itemId") Long itemId);
 
 }

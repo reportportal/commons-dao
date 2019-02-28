@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -36,21 +37,27 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByProjectId() {
 
-		List<Long> ids = attachmentRepository.streamIdsWhereProjectIdIsNull().collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.streamIdsByProjectId(1L).collect(Collectors.toList());
+
+		Assertions.assertFalse(ids.isEmpty());
 
 	}
 
 	@Test
 	void findAllByLaunchId() {
 
-		List<Long> ids = attachmentRepository.streamIdsWhereItemIdIsNull().collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.streamIdsByLaunchId(1L).collect(Collectors.toList());
+
+		Assertions.assertFalse(ids.isEmpty());
 
 	}
 
 	@Test
 	void findAllByItemId() {
 
-		List<Long> ids = attachmentRepository.streamIdsWhereItemIdIsNull().collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.streamIdsByItemId(3L).collect(Collectors.toList());
+
+		Assertions.assertFalse(ids.isEmpty());
 
 	}
 }
