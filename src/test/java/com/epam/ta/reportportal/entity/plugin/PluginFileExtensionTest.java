@@ -25,9 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -48,7 +46,6 @@ class PluginFileExtensionTest {
 
 	@Test
 	void findByExtensionPositive() {
-
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<PluginFileExtension> optional = PluginFileExtension.findByExtension(val);
 			assertTrue(optional.isPresent());
@@ -58,7 +55,6 @@ class PluginFileExtensionTest {
 
 	@Test
 	void findByExtensionNegative() {
-
 		disallowed.forEach(it -> assertFalse(PluginFileExtension.findByExtension(it).isPresent()));
 	}
 }
