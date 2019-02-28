@@ -57,7 +57,7 @@ public class Log implements Serializable {
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "log")
+	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "log")
 	private Attachment attachment;
 
 	public Log(Long id, LocalDateTime logTime, String logMessage, LocalDateTime lastModified, Integer logLevel, TestItem testItem,
