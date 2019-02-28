@@ -32,6 +32,10 @@ public interface AttachmentRepository extends ReportPortalRepository<Attachment,
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT id, path, thumbnail_path FROM attachment WHERE project_id IS NULL", nativeQuery = true)
+	Stream<Attachment> getAllByNullProjectId();
+
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query("SELECT a FROM Attachment a WHERE a.projectId IS NULL")
 	Stream<Attachment> findAllByNullProjectId();
 
 	void deleteAllByIdIsNull();

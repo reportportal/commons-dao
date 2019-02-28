@@ -29,11 +29,11 @@ import java.io.Serializable;
 public class Attachment implements Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@OneToOne
-	@MapsId
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "log_id")
 	private Log log;
 
 	@Column(name = "path")

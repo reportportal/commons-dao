@@ -17,13 +17,9 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -37,7 +33,7 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByProjectId() {
 
-		List<Attachment> attachments = attachmentRepository.findAllByNullProjectId().collect(Collectors.toList());
+//		List<Attachment> attachments = attachmentRepository.findAllByNullProjectId().collect(Collectors.toList());
 
 	}
 
