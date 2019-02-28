@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,18 +93,23 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetch());
 	}
 
-	private List<JTestItemTypeEnum> getItemTypeCriteria(boolean includeMethods) {
+	/**
+	 * Returns condition for step level test item types.
+	 * Include before/after methods and classes types depends on {@code includeMethods} param.
+	 *
+	 * @param includeMethods
+	 * @return {@link Condition}
+	 */
+	private Condition itemTypeStepCondition(boolean includeMethods) {
 		List<JTestItemTypeEnum> itemTypes = Lists.newArrayList(JTestItemTypeEnum.STEP);
 		if (includeMethods) {
 			itemTypes.addAll(HAS_METHOD_OR_CLASS);
 		}
-		return itemTypes;
+		return TEST_ITEM.TYPE.in(itemTypes);
 	}
 
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
-		List<JTestItemTypeEnum> itemTypes = getItemTypeCriteria(includeMethods);
-
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
@@ -124,8 +129,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(STATISTICS)
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
-						.join(STATISTICS_FIELD)
-						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)).where(TEST_ITEM.TYPE.in(itemTypes))
+						.join(STATISTICS_FIELD).on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)).where(itemTypeStepCondition(includeMethods))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
@@ -139,7 +143,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
-		List<JTestItemTypeEnum> itemTypes = getItemTypeCriteria(includeMethods);
 
 		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
@@ -165,8 +168,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)).where(TEST_ITEM.TYPE.in(itemTypes))
+						.join(TEST_ITEM_RESULTS).on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)).where(itemTypeStepCondition(includeMethods))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
@@ -711,7 +713,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				customColumns
 		);
 
-		productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
+		if (!productStatusStatisticsResult.isEmpty()) {
+			productStatusStatisticsResult.add(countLaunchTotalStatistics(productStatusStatisticsResult));
+		}
 		return productStatusStatisticsResult;
 	}
 
@@ -848,9 +852,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				sort,
 				limit,
 				fields,
-				contentFields,
-				customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
+				contentFields, customColumns
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()
+		));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
