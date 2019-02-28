@@ -188,7 +188,7 @@ BEGIN
     INSERT INTO log (log_time, log_message, item_id, last_modified, log_level)
     VALUES (now(), 'log', stepid, now() - make_interval(days := 14), 40000);
 
-    INSERT INTO attachment (id, path, thumbnail_path, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment (log_id, path, thumbnail_path, content_type, project_id, launch_id, item_id)
     VALUES ((SELECT currval(pg_get_serial_sequence('log', 'id'))),
             'attach ' || logscounter,
             'attachThumb' || logscounter,
@@ -205,7 +205,7 @@ BEGIN
 
     INSERT INTO log (log_time, log_message, item_id, last_modified, log_level) VALUES (now(), 'log', stepid, now(), 40000);
 
-    INSERT INTO attachment (id, path, thumbnail_path, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment (log_id, path, thumbnail_path, content_type, project_id, launch_id, item_id)
     VALUES ((SELECT currval(pg_get_serial_sequence('log', 'id'))),
             'attach ' || logscounter,
             'attachThumb' || logscounter,

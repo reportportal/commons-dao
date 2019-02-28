@@ -407,13 +407,14 @@ CREATE TABLE log (
 );
 
 CREATE TABLE attachment (
-  id             BIGSERIAL REFERENCES log (id) ON DELETE CASCADE          NOT NULL,
-  path           TEXT                                                     NOT NULL,
+  id             BIGSERIAL CONSTRAINT attachment_pk PRIMARY KEY,
+  path           TEXT NOT NULL,
   thumbnail_path TEXT,
   content_type   TEXT,
-  project_id     BIGINT REFERENCES project (id) ON DELETE CASCADE         NOT NULL,
-  launch_id      BIGINT REFERENCES launch (id) ON DELETE CASCADE          NOT NULL,
-  item_id        BIGINT REFERENCES test_item (item_id) ON DELETE CASCADE  NOT NULL
+  project_id     BIGINT REFERENCES project (id) ON DELETE SET NULL,
+  launch_id      BIGINT REFERENCES launch (id) ON DELETE SET NULL,
+  item_id        BIGINT REFERENCES test_item (item_id) ON DELETE SET NULL,
+  log_id         BIGINT REFERENCES log (id) ON DELETE SET NULL
 );
 
 CREATE TABLE activity (
