@@ -31,7 +31,7 @@ public class Attachment implements Serializable {
 	@Id
 	private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne
 	@MapsId
 	@JoinColumn(name = "id")
 	private Log log;
