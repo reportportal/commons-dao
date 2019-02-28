@@ -21,6 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -33,8 +36,21 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByProjectId() {
 
-//		List<Attachment> attachments = attachmentRepository.findAllByNullProjectId().collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.streamIdsWhereProjectIdIsNull().collect(Collectors.toList());
 
 	}
 
+	@Test
+	void findAllByLaunchId() {
+
+		List<Long> ids = attachmentRepository.streamIdsWhereItemIdIsNull().collect(Collectors.toList());
+
+	}
+
+	@Test
+	void findAllByItemId() {
+
+		List<Long> ids = attachmentRepository.streamIdsWhereItemIdIsNull().collect(Collectors.toList());
+
+	}
 }

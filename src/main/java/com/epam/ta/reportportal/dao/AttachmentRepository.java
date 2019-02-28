@@ -31,15 +31,15 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT id FROM attachment WHERE project_id IS NULL", nativeQuery = true)
+	@Query(value = "SELECT a.id FROM Attachment a WHERE a.projectId IS NULL")
 	Stream<Long> streamIdsWhereProjectIdIsNull();
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT id FROM attachment WHERE launch_id IS NULL", nativeQuery = true)
+	@Query(value = "SELECT a.id FROM Attachment a WHERE a.launchId IS NULL")
 	Stream<Long> streamIdsWhereLaunchIdIsNull();
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT id FROM attachment WHERE item_id IS NULL", nativeQuery = true)
+	@Query(value = "SELECT a.id FROM Attachment a WHERE a.itemId IS NULL")
 	Stream<Long> streamIdsWhereItemIdIsNull();
 
 }
