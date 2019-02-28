@@ -108,8 +108,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		return dsl.select()
 				.from(LOG)
-				.join(ATTACHMENT)
-				.on(LOG.ID.eq(ATTACHMENT.ID))
+				.leftJoin(ATTACHMENT)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
 				.where(LOG.ITEM_ID.eq(itemId))
 				.orderBy(LOG.LOG_TIME.asc())
 				.limit(limit)
@@ -125,8 +125,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		return dsl.select()
 				.from(LOG)
-				.join(ATTACHMENT)
-				.on(LOG.ID.eq(ATTACHMENT.ID))
+				.leftJoin(ATTACHMENT)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
 				.where(LOG.ITEM_ID.eq(itemId))
 				.orderBy(LOG.LOG_TIME.asc())
 				.fetch()
