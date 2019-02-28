@@ -93,8 +93,18 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetch());
 	}
 
+	private List<JTestItemTypeEnum> getItemTypeCriteria(boolean includeMethods) {
+		List<JTestItemTypeEnum> itemTypes = Lists.newArrayList(JTestItemTypeEnum.STEP);
+		if (includeMethods) {
+			itemTypes.addAll(HAS_METHOD_OR_CLASS);
+		}
+		return itemTypes;
+	}
+
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
+		List<JTestItemTypeEnum> itemTypes = getItemTypeCriteria(includeMethods);
+
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
@@ -115,10 +125,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(STATISTICS)
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
 						.join(STATISTICS_FIELD)
-						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-						.where(TEST_ITEM.TYPE.in(includeMethods ?
-								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
-								Collections.singletonList(JTestItemTypeEnum.STEP)))
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)).where(TEST_ITEM.TYPE.in(itemTypes))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
@@ -132,6 +139,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
+		List<JTestItemTypeEnum> itemTypes = getItemTypeCriteria(includeMethods);
 
 		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
@@ -158,10 +166,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.where(TEST_ITEM.TYPE.in(includeMethods ?
-								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
-								Collections.singletonList(JTestItemTypeEnum.STEP)))
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)).where(TEST_ITEM.TYPE.in(itemTypes))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
