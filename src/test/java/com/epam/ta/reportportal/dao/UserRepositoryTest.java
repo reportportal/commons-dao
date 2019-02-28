@@ -76,8 +76,7 @@ class UserRepositoryTest extends BaseTest {
 		//then
 		assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
 		users.forEach(user -> assertThat(
-				"Last login should be lower than in the filer",
-				Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
+				"Last login should be lower than in the filer", Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
 				Matchers.lessThan(now)
 		));
 	}

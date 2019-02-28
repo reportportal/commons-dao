@@ -42,7 +42,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 
 	private static final long GLOBAL_EMAIL_INTEGRATIONS_COUNT = 1L;
-	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 4L;
+	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 6L;
 	private static final long GLOBAL_BTS_INTEGRATIONS_COUNT = 2L;
 
 	private static final Long RALLY_INTEGRATION_TYPE_ID = 2L;
@@ -88,7 +88,7 @@ class IntegrationRepositoryTest extends BaseTest {
 		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
 		assertNotNull(integrations);
-		assertEquals(1L, integrations.size());
+		assertEquals(2L, integrations.size());
 	}
 
 	@Test
