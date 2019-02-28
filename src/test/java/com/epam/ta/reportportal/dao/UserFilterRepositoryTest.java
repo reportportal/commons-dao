@@ -103,7 +103,7 @@ class UserFilterRepositoryTest extends BaseTest {
 				PageRequest.of(0, 3),
 				"default"
 		);
-		assertEquals(0, result2.getTotalElements(), "Unexpected shared filters count");
+		assertEquals(1, result2.getTotalElements(), "Unexpected shared filters count");
 
 		final Page<UserFilter> jajaSharedFilters = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L),
 				PageRequest.of(0, 3),

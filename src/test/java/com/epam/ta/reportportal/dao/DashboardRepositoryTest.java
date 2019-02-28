@@ -145,7 +145,7 @@ class DashboardRepositoryTest extends BaseTest {
 				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
 				adminLogin
 		);
-		assertEquals(1, superadminShared.getTotalElements(), "Unexpected shared dashboards count");
+		assertEquals(2, superadminShared.getTotalElements(), "Unexpected shared dashboards count");
 		superadminShared.getContent().forEach(it -> assertTrue(it.isShared()));
 
 		final String defaultLogin = "default";
@@ -153,7 +153,7 @@ class DashboardRepositoryTest extends BaseTest {
 				PageRequest.of(0, 3),
 				defaultLogin
 		);
-		assertEquals(0, defaultShared.getTotalElements(), "Unexpected shared dashboards count");
+		assertEquals(1, defaultShared.getTotalElements(), "Unexpected shared dashboards count");
 		defaultShared.getContent().forEach(it -> assertTrue(it.isShared()));
 
 		final String jajaLogin = "jaja_user";
@@ -161,7 +161,7 @@ class DashboardRepositoryTest extends BaseTest {
 				PageRequest.of(0, 3),
 				jajaLogin
 		);
-		assertEquals(1, jajaShared.getTotalElements(), "Unexpected shared dashboards count");
+		assertEquals(2, jajaShared.getTotalElements(), "Unexpected shared dashboards count");
 		jajaShared.getContent().forEach(it -> assertTrue(it.isShared()));
 	}
 
