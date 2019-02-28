@@ -16,10 +16,9 @@
 
 package com.epam.ta.reportportal.entity.attachment;
 
-import com.epam.ta.reportportal.entity.log.Log;
-
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -31,10 +30,6 @@ public class Attachment implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@OneToOne
-	@JoinColumn(name = "log_id")
-	private Log log;
 
 	@Column(name = "path")
 	private String path;
@@ -113,11 +108,23 @@ public class Attachment implements Serializable {
 		this.itemId = itemId;
 	}
 
-	public Log getLog() {
-		return log;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Attachment that = (Attachment) o;
+		return Objects.equals(path, that.path) && Objects.equals(thumbnailPath, that.thumbnailPath) && Objects.equals(
+				contentType,
+				that.contentType
+		);
 	}
 
-	public void setLog(Log log) {
-		this.log = log;
+	@Override
+	public int hashCode() {
+		return Objects.hash(path, thumbnailPath, contentType);
 	}
 }

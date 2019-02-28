@@ -10,6 +10,7 @@ import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
 import com.epam.ta.reportportal.jooq.tables.JAclSid;
 import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
 import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
 import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
@@ -89,6 +90,7 @@ public class Indexes {
     public static final Index UNIQUE_UK_1 = Indexes0.UNIQUE_UK_1;
     public static final Index ACTIVE_DIRECTORY_CONFIG_PK = Indexes0.ACTIVE_DIRECTORY_CONFIG_PK;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
+    public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
     public static final Index AUTH_CONFIG_PK = Indexes0.AUTH_CONFIG_PK;
     public static final Index BUG_TRACKING_SYSTEM_PK = Indexes0.BUG_TRACKING_SYSTEM_PK;
@@ -171,6 +173,7 @@ public class Indexes {
         public static Index UNIQUE_UK_1 = Internal.createIndex("unique_uk_1", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL }, true);
         public static Index ACTIVE_DIRECTORY_CONFIG_PK = Internal.createIndex("active_directory_config_pk", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, new OrderField[] { JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.ID }, true);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
+        public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
         public static Index AUTH_CONFIG_PK = Internal.createIndex("auth_config_pk", JAuthConfig.AUTH_CONFIG, new OrderField[] { JAuthConfig.AUTH_CONFIG.ID }, true);
         public static Index BUG_TRACKING_SYSTEM_PK = Internal.createIndex("bug_tracking_system_pk", JBugTrackingSystem.BUG_TRACKING_SYSTEM, new OrderField[] { JBugTrackingSystem.BUG_TRACKING_SYSTEM.ID }, true);

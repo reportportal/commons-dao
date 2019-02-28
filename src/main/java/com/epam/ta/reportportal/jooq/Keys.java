@@ -193,6 +193,7 @@ public class Keys {
     public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = UniqueKeys0.UNIQUE_UK_1;
     public static final UniqueKey<JActiveDirectoryConfigRecord> ACTIVE_DIRECTORY_CONFIG_PK = UniqueKeys0.ACTIVE_DIRECTORY_CONFIG_PK;
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
+    public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = UniqueKeys0.AUTH_CONFIG_PK;
     public static final UniqueKey<JBugTrackingSystemRecord> BUG_TRACKING_SYSTEM_PK = UniqueKeys0.BUG_TRACKING_SYSTEM_PK;
@@ -272,7 +273,6 @@ public class Keys {
     public static final ForeignKey<JActiveDirectoryConfigRecord, JLdapSynchronizationAttributesRecord> ACTIVE_DIRECTORY_CONFIG__ACTIVE_DIRECTORY_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = ForeignKeys0.ACTIVE_DIRECTORY_CONFIG__ACTIVE_DIRECTORY_CONFIG_SYNC_ATTRIBUTES_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_USER_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
-    public static final ForeignKey<JAttachmentRecord, JLogRecord> ATTACHMENT__ATTACHMENT_ID_FKEY = ForeignKeys0.ATTACHMENT__ATTACHMENT_ID_FKEY;
     public static final ForeignKey<JAttachmentRecord, JProjectRecord> ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY = ForeignKeys0.ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY;
     public static final ForeignKey<JAttachmentRecord, JLaunchRecord> ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY = ForeignKeys0.ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY;
     public static final ForeignKey<JAttachmentRecord, JTestItemRecord> ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY = ForeignKeys0.ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY;
@@ -307,6 +307,7 @@ public class Keys {
     public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_ID_FKEY;
     public static final ForeignKey<JLdapConfigRecord, JLdapSynchronizationAttributesRecord> LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY;
     public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = ForeignKeys0.LOG__LOG_ITEM_ID_FKEY;
+    public static final ForeignKey<JLogRecord, JAttachmentRecord> LOG__LOG_ATTACHMENT_ID_FKEY = ForeignKeys0.LOG__LOG_ATTACHMENT_ID_FKEY;
     public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = ForeignKeys0.OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY;
     public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
@@ -389,6 +390,7 @@ public class Keys {
         public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = Internal.createUniqueKey(JAclSid.ACL_SID, "unique_uk_1", JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL);
         public static final UniqueKey<JActiveDirectoryConfigRecord> ACTIVE_DIRECTORY_CONFIG_PK = Internal.createUniqueKey(JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, "active_directory_config_pk", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.ID);
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
+        public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = Internal.createUniqueKey(JAuthConfig.AUTH_CONFIG, "auth_config_pk", JAuthConfig.AUTH_CONFIG.ID);
         public static final UniqueKey<JBugTrackingSystemRecord> BUG_TRACKING_SYSTEM_PK = Internal.createUniqueKey(JBugTrackingSystem.BUG_TRACKING_SYSTEM, "bug_tracking_system_pk", JBugTrackingSystem.BUG_TRACKING_SYSTEM.ID);
@@ -466,7 +468,6 @@ public class Keys {
         public static final ForeignKey<JActiveDirectoryConfigRecord, JLdapSynchronizationAttributesRecord> ACTIVE_DIRECTORY_CONFIG__ACTIVE_DIRECTORY_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK, JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, "active_directory_config__active_directory_config_sync_attributes_id_fkey", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.SYNC_ATTRIBUTES_ID);
         public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JActivity.ACTIVITY, "activity__activity_user_id_fkey", JActivity.ACTIVITY.USER_ID);
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
-        public static final ForeignKey<JAttachmentRecord, JLogRecord> ATTACHMENT__ATTACHMENT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LOG_PK, JAttachment.ATTACHMENT, "attachment__attachment_id_fkey", JAttachment.ATTACHMENT.ID);
         public static final ForeignKey<JAttachmentRecord, JProjectRecord> ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JAttachment.ATTACHMENT, "attachment__attachment_project_id_fkey", JAttachment.ATTACHMENT.PROJECT_ID);
         public static final ForeignKey<JAttachmentRecord, JLaunchRecord> ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JAttachment.ATTACHMENT, "attachment__attachment_launch_id_fkey", JAttachment.ATTACHMENT.LAUNCH_ID);
         public static final ForeignKey<JAttachmentRecord, JTestItemRecord> ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JAttachment.ATTACHMENT, "attachment__attachment_item_id_fkey", JAttachment.ATTACHMENT.ITEM_ID);
@@ -501,6 +502,7 @@ public class Keys {
         public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.INTEGRATION_PK, JLdapConfig.LDAP_CONFIG, "ldap_config__ldap_config_id_fkey", JLdapConfig.LDAP_CONFIG.ID);
         public static final ForeignKey<JLdapConfigRecord, JLdapSynchronizationAttributesRecord> LDAP_CONFIG__LDAP_CONFIG_SYNC_ATTRIBUTES_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK, JLdapConfig.LDAP_CONFIG, "ldap_config__ldap_config_sync_attributes_id_fkey", JLdapConfig.LDAP_CONFIG.SYNC_ATTRIBUTES_ID);
         public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JLog.LOG, "log__log_item_id_fkey", JLog.LOG.ITEM_ID);
+        public static final ForeignKey<JLogRecord, JAttachmentRecord> LOG__LOG_ATTACHMENT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ATTACHMENT_PK, JLog.LOG, "log__log_attachment_id_fkey", JLog.LOG.ATTACHMENT_ID);
         public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JOauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token__oauth_access_token_user_id_fkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
         public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction__oauth_registration_restriction_oauth_registration_fk_fkey", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);

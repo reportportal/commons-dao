@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = -1839626050;
+    private static final long serialVersionUID = -1611887458;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -86,6 +86,11 @@ public class JLog extends TableImpl<JLogRecord> {
      * The column <code>public.log.log_level</code>.
      */
     public final TableField<JLogRecord, Integer> LOG_LEVEL = createField("log_level", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
+     * The column <code>public.log.attachment_id</code>.
+     */
+    public final TableField<JLogRecord, Long> ATTACHMENT_ID = createField("attachment_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.log</code> table reference
@@ -165,11 +170,15 @@ public class JLog extends TableImpl<JLogRecord> {
      */
     @Override
     public List<ForeignKey<JLogRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY);
+        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
     }
 
     public JTestItem testItem() {
         return new JTestItem(this, Keys.LOG__LOG_ITEM_ID_FKEY);
+    }
+
+    public JAttachment attachment() {
+        return new JAttachment(this, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
     }
 
     /**

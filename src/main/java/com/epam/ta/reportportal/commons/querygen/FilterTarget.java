@@ -419,6 +419,8 @@ public enum FilterTarget {
 					LOG.LAST_MODIFIED,
 					LOG.LOG_LEVEL,
 					LOG.ITEM_ID,
+					LOG.ATTACHMENT_ID,
+					ATTACHMENT.ID,
 					ATTACHMENT.PATH,
 					ATTACHMENT.THUMBNAIL_PATH,
 					ATTACHMENT.CONTENT_TYPE,
@@ -431,7 +433,7 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(LOG);
-			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ID.eq(ATTACHMENT.ID));
+			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
 		}
 
 		@Override

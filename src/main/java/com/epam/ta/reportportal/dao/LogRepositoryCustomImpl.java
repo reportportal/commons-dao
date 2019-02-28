@@ -67,6 +67,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	private static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> {
 		Attachment attachment = new Attachment();
+		attachment.setId(r.get(ATTACHMENT.ID));
 		attachment.setPath(r.get(ATTACHMENT.PATH));
 		attachment.setThumbnailPath(r.get(ATTACHMENT.THUMBNAIL_PATH));
 		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));

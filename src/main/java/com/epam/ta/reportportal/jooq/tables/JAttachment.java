@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
@@ -16,11 +17,13 @@ import javax.annotation.Generated;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
@@ -38,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = -1509566270;
+    private static final long serialVersionUID = 1839968789;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -76,17 +79,17 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     /**
      * The column <code>public.attachment.project_id</code>.
      */
-    public final TableField<JAttachmentRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JAttachmentRecord, Long> PROJECT_ID = createField("project_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.attachment.launch_id</code>.
      */
-    public final TableField<JAttachmentRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JAttachmentRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.attachment.item_id</code>.
      */
-    public final TableField<JAttachmentRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JAttachmentRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.attachment</code> table reference
@@ -133,6 +136,14 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
      * {@inheritDoc}
      */
     @Override
+    public List<Index> getIndexes() {
+        return Arrays.<Index>asList(Indexes.ATTACHMENT_PK);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Identity<JAttachmentRecord, Long> getIdentity() {
         return Keys.IDENTITY_ATTACHMENT;
     }
@@ -141,12 +152,24 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
      * {@inheritDoc}
      */
     @Override
-    public List<ForeignKey<JAttachmentRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JAttachmentRecord, ?>>asList(Keys.ATTACHMENT__ATTACHMENT_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY);
+    public UniqueKey<JAttachmentRecord> getPrimaryKey() {
+        return Keys.ATTACHMENT_PK;
     }
 
-    public JLog log() {
-        return new JLog(this, Keys.ATTACHMENT__ATTACHMENT_ID_FKEY);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<UniqueKey<JAttachmentRecord>> getKeys() {
+        return Arrays.<UniqueKey<JAttachmentRecord>>asList(Keys.ATTACHMENT_PK);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ForeignKey<JAttachmentRecord, ?>> getReferences() {
+        return Arrays.<ForeignKey<JAttachmentRecord, ?>>asList(Keys.ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY);
     }
 
     public JProject project() {
