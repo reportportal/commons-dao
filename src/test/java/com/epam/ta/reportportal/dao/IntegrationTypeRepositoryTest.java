@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -30,10 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-@Sql("/db/fill/integration/integrations-fill.sql")
 class IntegrationTypeRepositoryTest extends BaseTest {
 
-	private final static String JIRA_INTEGRATION_TYPE_NAME = "JIRA";
+	private final static String JIRA_INTEGRATION_TYPE_NAME = "jiRA";
 	private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
 	private static final long BTS_INTEGRATIONS_COUNT = 2L;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public final class TestConstants {
 	public static final Long RALLY_INTEGRATION_TYPE_ID = 2L;
 	public static final Long JIRA_INTEGRATION_TYPE_ID = 3L;
 	public static final Long EMAIL_INTEGRATION_TYPE_ID = 4L;
-	public static final Long GLOBAL_EMAIL_INTEGRATION_ID = 7L;
+	public static final Long GLOBAL_EMAIL_INTEGRATION_ID = 17L;
 
 	public static final Long RALLY_INTEGRATION_ID = 1L;
 	public static final Long JIRA_INTEGRATION_ID = 2L;

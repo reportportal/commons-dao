@@ -82,12 +82,12 @@ BEGIN
 
   INSERT INTO bug_tracking_system (id, url, type, bts_project, project_id) VALUES (1, 'test.com', 'TEST TYPE', 'TEST PROJECT', 1);
 
-  INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url)
-  VALUES (1, 'EPMRPP-322', 1, '2018-09-28 12:38:24.374555', 1, 'epam.com');
-  INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url)
-  VALUES (2, 'EPMRPP-123', 1, '2018-09-28 12:38:24.374555', 1, 'epam.com');
-  INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_id, url)
-  VALUES (3, 'QWERTY-100', 1, '2018-09-28 12:38:24.374555', 1, 'epam.com');
+  INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
+  VALUES (1, 'EPMRPP-322', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
+  INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
+  VALUES (2, 'EPMRPP-123', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
+  INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
+  VALUES (3, 'QWERTY-100', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
 
   INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
   VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);

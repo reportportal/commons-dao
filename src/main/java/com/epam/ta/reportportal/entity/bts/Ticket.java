@@ -47,8 +47,11 @@ public class Ticket implements Serializable {
 	@Column(name = "submit_date")
 	private LocalDateTime submitDate;
 
-	@Column(name = "bts_id")
-	private Long bugTrackingSystemId;
+	@Column(name = "bts_url")
+	private String btsUrl;
+
+	@Column(name = "bts_project")
+	private String btsProject;
 
 	@Column(name = "url")
 	private String url;
@@ -91,12 +94,20 @@ public class Ticket implements Serializable {
 		this.submitDate = submitDate;
 	}
 
-	public Long getBugTrackingSystemId() {
-		return bugTrackingSystemId;
+	public String getBtsUrl() {
+		return btsUrl;
 	}
 
-	public void setBugTrackingSystemId(Long bugTrackingSystemId) {
-		this.bugTrackingSystemId = bugTrackingSystemId;
+	public void setBtsUrl(String btsUrl) {
+		this.btsUrl = btsUrl;
+	}
+
+	public String getBtsProject() {
+		return btsProject;
+	}
+
+	public void setBtsProject(String btsProject) {
+		this.btsProject = btsProject;
 	}
 
 	public String getUrl() {
