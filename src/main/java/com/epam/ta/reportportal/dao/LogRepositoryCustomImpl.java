@@ -65,9 +65,9 @@ import static org.jooq.impl.DSL.field;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> {
+	private static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
 		Attachment attachment = new Attachment();
-		attachment.setId(r.get(ATTACHMENT.ID));
+		attachment.setId(id);
 		attachment.setPath(r.get(ATTACHMENT.PATH));
 		attachment.setThumbnailPath(r.get(ATTACHMENT.THUMBNAIL_PATH));
 		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));
@@ -76,7 +76,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
 
 		return attachment;
-	};
+	}).orElse(null);
 
 	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
 			r.get(JLog.LOG.ID, Long.class),
