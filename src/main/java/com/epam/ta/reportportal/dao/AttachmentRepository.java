@@ -31,23 +31,8 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long> {
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query("SELECT a FROM Attachment a WHERE a.projectId IS NULL")
+	@Query(value = "SELECT a.path, a.thumbnail_path FROM attachment a WHERE a.project_id IS NULL", nativeQuery = true)
 	Stream<Attachment> findAllByNullProjectId();
-
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query("SELECT a FROM Attachment a WHERE a.launchId IS NULL")
-	Stream<Attachment> findAllByNullLaunchId();
-
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query("SELECT a FROM Attachment a WHERE a.itemId IS NULL")
-	Stream<Attachment> findAllByNullItemId();
-
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query("SELECT a FROM Attachment a WHERE a.projectId = ?1")
-	Stream<Attachment> findAllByProjectId(Long projectId);
-
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	Stream<Attachment> streamAllByProjectId(Long projectId);
 
 	void deleteAllByIdIsNull();
 

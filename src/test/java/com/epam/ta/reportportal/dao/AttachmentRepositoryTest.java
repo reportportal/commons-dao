@@ -41,17 +41,4 @@ class AttachmentRepositoryTest extends BaseTest {
 
 	}
 
-	@Test
-	void findAllByLaunchId() {
-
-		List<Attachment> attachments = attachmentRepository.findAllByNullLaunchId().collect(Collectors.toList());
-
-	}
-
-	@Test
-	void findAllByItemId() {
-
-		List<Attachment> attachments = attachmentRepository.findAllByNullItemId().collect(Collectors.toList());
-
-	}
 }
