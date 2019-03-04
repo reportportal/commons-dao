@@ -103,7 +103,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<CriteriaHistoryItem> criteriaHistoryItems = widgetContentRepository.topItemsByCriteria(filter, defect, 10, false);
+		List<CriteriaHistoryItem> criteriaHistoryItems = widgetContentRepository.topItemsByCriteria(filter, defect, 10, true);
 
 		System.out.println(123);
 

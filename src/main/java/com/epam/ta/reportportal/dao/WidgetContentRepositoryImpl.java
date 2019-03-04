@@ -95,6 +95,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
+
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).build())
@@ -116,9 +117,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
 						.join(STATISTICS_FIELD)
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-						.where(TEST_ITEM.TYPE.in(includeMethods ?
-								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
-								Collections.singletonList(JTestItemTypeEnum.STEP)))
+						.where(getIncludedTestItemTypesCondition(includeMethods))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
@@ -149,8 +148,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE)
-										.as(SWITCH_FLAG),
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
@@ -160,9 +158,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.where(TEST_ITEM.TYPE.in(includeMethods ?
-								Lists.newArrayList(HAS_METHOD_OR_CLASS, JTestItemTypeEnum.STEP) :
-								Collections.singletonList(JTestItemTypeEnum.STEP)))
+						.where(getIncludedTestItemTypesCondition(includeMethods))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
@@ -734,6 +730,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.fetchInto(MostTimeConsumingTestCasesContent.class);
 	}
 
+	private Condition getIncludedTestItemTypesCondition(boolean includeMethods) {
+
+		if (includeMethods) {
+			List<JTestItemTypeEnum> types = HAS_METHOD_OR_CLASS;
+			types.add(JTestItemTypeEnum.STEP);
+			return TEST_ITEM.TYPE.eq(any(types.toArray(new JTestItemTypeEnum[0])));
+		} else {
+			return TEST_ITEM.TYPE.eq(any(JTestItemTypeEnum.STEP));
+		}
+	}
+
 	private SelectSeekStepN<? extends Record> buildLaunchesTableQuery(Collection<Field<?>> selectFields,
 			Collection<String> statisticsFields, Filter filter, Sort sort, int limit, boolean isAttributePresent) {
 
@@ -846,7 +853,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fields,
 				contentFields,
 				customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(
+				sort,
+				filter.getTarget()
+		));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
