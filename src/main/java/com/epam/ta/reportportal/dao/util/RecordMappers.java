@@ -227,6 +227,7 @@ public class RecordMappers {
 		activity.setUserId(r.get(ACTIVITY.USER_ID));
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setAction(r.get(ACTIVITY.ACTION));
+		activity.setUsername(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.USERNAME)));
 		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
 		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));

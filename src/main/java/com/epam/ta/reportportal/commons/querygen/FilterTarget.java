@@ -444,6 +444,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_LOGIN, ACTIVITY.USERNAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
@@ -452,6 +453,7 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(ACTIVITY.ID,
 					ACTIVITY.PROJECT_ID,
+					ACTIVITY.USERNAME,
 					ACTIVITY.USER_ID,
 					ACTIVITY.ENTITY,
 					ACTIVITY.ACTION,
@@ -466,7 +468,7 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(ACTIVITY);
-			query.addJoin(USERS, JoinType.JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
+			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
 		}
 
