@@ -182,7 +182,7 @@ public class ProjectUtils {
 	 */
 	@Nullable
 	public static ProjectUser findUserConfigByLogin(Project project, String user) {
-		return project.getUsers().stream().filter(it -> user.equals(it.getUser().getLogin())).findAny().orElse(null);
+		return project.getUsers().stream().filter(it -> user.equalsIgnoreCase(it.getUser().getLogin())).findAny().orElse(null);
 	}
 
 	public static Map<String, String> getConfigParameters(Set<ProjectAttribute> projectAttributes) {
