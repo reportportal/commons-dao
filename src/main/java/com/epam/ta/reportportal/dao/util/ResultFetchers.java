@@ -220,7 +220,10 @@ public class ResultFetchers {
 			} else {
 				user = users.get(id);
 			}
-			user.getProjects().add(PROJECT_USER_MAPPER.map(record));
+			if (ofNullable(record.get(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
+				user.getProjects().add(PROJECT_USER_MAPPER.map(record));
+			}
+
 			users.put(id, user);
 		});
 		return new ArrayList<>(users.values());

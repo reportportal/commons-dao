@@ -55,8 +55,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
@@ -71,8 +71,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ATTRIBUTE_NAME, ATTRIBUTE.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
-			new CriteriaHolder(
-					LAUNCHES_QUANTITY,
+			new CriteriaHolder(LAUNCHES_QUANTITY,
 					LAUNCHES_QUANTITY,
 					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
 							LAUNCH.ID
@@ -276,6 +275,7 @@ public enum FilterTarget {
 					LAUNCH.MODE,
 					LAUNCH.STATUS,
 					LAUNCH.HAS_RETRIES,
+					LAUNCH.APPROXIMATE_DURATION,
 					ITEM_ATTRIBUTE.KEY,
 					ITEM_ATTRIBUTE.VALUE,
 					ITEM_ATTRIBUTE.SYSTEM,
@@ -451,6 +451,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_LOGIN, ACTIVITY.USERNAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
@@ -459,6 +460,7 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(ACTIVITY.ID,
 					ACTIVITY.PROJECT_ID,
+					ACTIVITY.USERNAME,
 					ACTIVITY.USER_ID,
 					ACTIVITY.ENTITY,
 					ACTIVITY.ACTION,
@@ -473,7 +475,7 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addFrom(ACTIVITY);
-			query.addJoin(USERS, JoinType.JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
+			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
 		}
 
