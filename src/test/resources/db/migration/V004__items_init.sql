@@ -185,7 +185,7 @@ BEGIN
   WHILE logscounter < 4
   LOOP
 
-    INSERT INTO attachment (path, thumbnail_path, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
     VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
     INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
@@ -197,7 +197,7 @@ BEGIN
   WHILE logscounter > 0
   LOOP
 
-    INSERT INTO attachment (path, thumbnail_path, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
     VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
     INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
