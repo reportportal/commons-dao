@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = -7764277;
+    private static final long serialVersionUID = 1245581260;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -78,9 +78,14 @@ public class JTicket extends TableImpl<JTicketRecord> {
     public final TableField<JTicketRecord, Timestamp> SUBMIT_DATE = createField("submit_date", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
-     * The column <code>public.ticket.bts_id</code>.
+     * The column <code>public.ticket.bts_url</code>.
      */
-    public final TableField<JTicketRecord, Integer> BTS_ID = createField("bts_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<JTicketRecord, String> BTS_URL = createField("bts_url", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+
+    /**
+     * The column <code>public.ticket.bts_project</code>.
+     */
+    public final TableField<JTicketRecord, String> BTS_PROJECT = createField("bts_project", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.url</code>.
@@ -165,15 +170,11 @@ public class JTicket extends TableImpl<JTicketRecord> {
      */
     @Override
     public List<ForeignKey<JTicketRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JTicketRecord, ?>>asList(Keys.TICKET__TICKET_SUBMITTER_ID_FKEY, Keys.TICKET__TICKET_BTS_ID_FKEY);
+        return Arrays.<ForeignKey<JTicketRecord, ?>>asList(Keys.TICKET__TICKET_SUBMITTER_ID_FKEY);
     }
 
     public JUsers users() {
         return new JUsers(this, Keys.TICKET__TICKET_SUBMITTER_ID_FKEY);
-    }
-
-    public JBugTrackingSystem bugTrackingSystem() {
-        return new JBugTrackingSystem(this, Keys.TICKET__TICKET_BTS_ID_FKEY);
     }
 
     /**

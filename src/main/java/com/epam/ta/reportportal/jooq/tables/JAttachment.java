@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = 1839968789;
+    private static final long serialVersionUID = 43593247;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -62,14 +62,14 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     public final TableField<JAttachmentRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('attachment_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>public.attachment.path</code>.
+     * The column <code>public.attachment.file_id</code>.
      */
-    public final TableField<JAttachmentRecord, String> PATH = createField("path", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+    public final TableField<JAttachmentRecord, String> FILE_ID = createField("file_id", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
 
     /**
-     * The column <code>public.attachment.thumbnail_path</code>.
+     * The column <code>public.attachment.thumbnail_id</code>.
      */
-    public final TableField<JAttachmentRecord, String> THUMBNAIL_PATH = createField("thumbnail_path", org.jooq.impl.SQLDataType.CLOB, this, "");
+    public final TableField<JAttachmentRecord, String> THUMBNAIL_ID = createField("thumbnail_id", org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * The column <code>public.attachment.content_type</code>.
@@ -137,7 +137,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ATTACHMENT_PK);
+        return Arrays.<Index>asList(Indexes.ATT_ITEM_IDX, Indexes.ATT_LAUNCH_IDX, Indexes.ATT_PROJECT_IDX, Indexes.ATTACHMENT_PK);
     }
 
     /**
@@ -162,26 +162,6 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     @Override
     public List<UniqueKey<JAttachmentRecord>> getKeys() {
         return Arrays.<UniqueKey<JAttachmentRecord>>asList(Keys.ATTACHMENT_PK);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ForeignKey<JAttachmentRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JAttachmentRecord, ?>>asList(Keys.ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY, Keys.ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY);
-    }
-
-    public JProject project() {
-        return new JProject(this, Keys.ATTACHMENT__ATTACHMENT_PROJECT_ID_FKEY);
-    }
-
-    public JLaunch launch() {
-        return new JLaunch(this, Keys.ATTACHMENT__ATTACHMENT_LAUNCH_ID_FKEY);
-    }
-
-    public JTestItem testItem() {
-        return new JTestItem(this, Keys.ATTACHMENT__ATTACHMENT_ITEM_ID_FKEY);
     }
 
     /**

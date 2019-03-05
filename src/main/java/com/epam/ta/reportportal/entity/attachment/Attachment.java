@@ -31,11 +31,11 @@ public class Attachment implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "path")
-	private String path;
+	@Column(name = "file_id")
+	private String fileId;
 
-	@Column(name = "thumbnail_path")
-	private String thumbnailPath;
+	@Column(name = "thumbnail_id")
+	private String thumbnailId;
 
 	@Column(name = "content_type")
 	private String contentType;
@@ -60,20 +60,20 @@ public class Attachment implements Serializable {
 		this.id = id;
 	}
 
-	public String getPath() {
-		return path;
+	public String getFileId() {
+		return fileId;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
 	}
 
-	public String getThumbnailPath() {
-		return thumbnailPath;
+	public String getThumbnailId() {
+		return thumbnailId;
 	}
 
-	public void setThumbnailPath(String thumbnailPath) {
-		this.thumbnailPath = thumbnailPath;
+	public void setThumbnailId(String thumbnailId) {
+		this.thumbnailId = thumbnailId;
 	}
 
 	public String getContentType() {
@@ -117,14 +117,13 @@ public class Attachment implements Serializable {
 			return false;
 		}
 		Attachment that = (Attachment) o;
-		return Objects.equals(path, that.path) && Objects.equals(thumbnailPath, that.thumbnailPath) && Objects.equals(
-				contentType,
+		return Objects.equals(fileId, that.fileId) && Objects.equals(thumbnailId, that.thumbnailId) && Objects.equals(contentType,
 				that.contentType
 		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(path, thumbnailPath, contentType);
+		return Objects.hash(fileId, thumbnailId, contentType);
 	}
 }

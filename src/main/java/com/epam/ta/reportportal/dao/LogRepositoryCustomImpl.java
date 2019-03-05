@@ -68,8 +68,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	private static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
 		Attachment attachment = new Attachment();
 		attachment.setId(id);
-		attachment.setPath(r.get(ATTACHMENT.PATH));
-		attachment.setThumbnailPath(r.get(ATTACHMENT.THUMBNAIL_PATH));
+		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
+		attachment.setThumbnailId(r.get(ATTACHMENT.THUMBNAIL_ID));
 		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));
 		attachment.setProjectId(r.get(ATTACHMENT.PROJECT_ID));
 		attachment.setLaunchId(r.get(ATTACHMENT.LAUNCH_ID));
@@ -135,12 +135,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
-		return dsl.select(LOG.ID, ATTACHMENT.PATH, ATTACHMENT.THUMBNAIL_PATH)
+		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
 				.from(LOG)
 				.join(ATTACHMENT)
 				.on(LOG.ID.eq(ATTACHMENT.ID))
 				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
-				.and(ATTACHMENT.PATH.isNotNull().or(ATTACHMENT.THUMBNAIL_PATH.isNotNull()))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Log.class);
 	}
 

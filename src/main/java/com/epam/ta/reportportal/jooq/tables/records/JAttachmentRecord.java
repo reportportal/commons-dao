@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> implements Record7<Long, String, String, String, Long, Long, Long> {
 
-    private static final long serialVersionUID = -537767436;
+    private static final long serialVersionUID = -1513176621;
 
     /**
      * Setter for <code>public.attachment.id</code>.
@@ -45,30 +45,30 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
     }
 
     /**
-     * Setter for <code>public.attachment.path</code>.
+     * Setter for <code>public.attachment.file_id</code>.
      */
-    public void setPath(String value) {
+    public void setFileId(String value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>public.attachment.path</code>.
+     * Getter for <code>public.attachment.file_id</code>.
      */
-    public String getPath() {
+    public String getFileId() {
         return (String) get(1);
     }
 
     /**
-     * Setter for <code>public.attachment.thumbnail_path</code>.
+     * Setter for <code>public.attachment.thumbnail_id</code>.
      */
-    public void setThumbnailPath(String value) {
+    public void setThumbnailId(String value) {
         set(2, value);
     }
 
     /**
-     * Getter for <code>public.attachment.thumbnail_path</code>.
+     * Getter for <code>public.attachment.thumbnail_id</code>.
      */
-    public String getThumbnailPath() {
+    public String getThumbnailId() {
         return (String) get(2);
     }
 
@@ -173,7 +173,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public Field<String> field2() {
-        return JAttachment.ATTACHMENT.PATH;
+        return JAttachment.ATTACHMENT.FILE_ID;
     }
 
     /**
@@ -181,7 +181,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public Field<String> field3() {
-        return JAttachment.ATTACHMENT.THUMBNAIL_PATH;
+        return JAttachment.ATTACHMENT.THUMBNAIL_ID;
     }
 
     /**
@@ -229,7 +229,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public String component2() {
-        return getPath();
+        return getFileId();
     }
 
     /**
@@ -237,7 +237,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public String component3() {
-        return getThumbnailPath();
+        return getThumbnailId();
     }
 
     /**
@@ -285,7 +285,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public String value2() {
-        return getPath();
+        return getFileId();
     }
 
     /**
@@ -293,7 +293,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public String value3() {
-        return getThumbnailPath();
+        return getThumbnailId();
     }
 
     /**
@@ -342,7 +342,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public JAttachmentRecord value2(String value) {
-        setPath(value);
+        setFileId(value);
         return this;
     }
 
@@ -351,7 +351,7 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
      */
     @Override
     public JAttachmentRecord value3(String value) {
-        setThumbnailPath(value);
+        setThumbnailId(value);
         return this;
     }
 
@@ -420,12 +420,12 @@ public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> im
     /**
      * Create a detached, initialised JAttachmentRecord
      */
-    public JAttachmentRecord(Long id, String path, String thumbnailPath, String contentType, Long projectId, Long launchId, Long itemId) {
+    public JAttachmentRecord(Long id, String fileId, String thumbnailId, String contentType, Long projectId, Long launchId, Long itemId) {
         super(JAttachment.ATTACHMENT);
 
         set(0, id);
-        set(1, path);
-        set(2, thumbnailPath);
+        set(1, fileId);
+        set(2, thumbnailId);
         set(3, contentType);
         set(4, projectId);
         set(5, launchId);

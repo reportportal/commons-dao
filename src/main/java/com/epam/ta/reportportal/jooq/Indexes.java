@@ -90,6 +90,9 @@ public class Indexes {
     public static final Index UNIQUE_UK_1 = Indexes0.UNIQUE_UK_1;
     public static final Index ACTIVE_DIRECTORY_CONFIG_PK = Indexes0.ACTIVE_DIRECTORY_CONFIG_PK;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
+    public static final Index ATT_ITEM_IDX = Indexes0.ATT_ITEM_IDX;
+    public static final Index ATT_LAUNCH_IDX = Indexes0.ATT_LAUNCH_IDX;
+    public static final Index ATT_PROJECT_IDX = Indexes0.ATT_PROJECT_IDX;
     public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
     public static final Index AUTH_CONFIG_PK = Indexes0.AUTH_CONFIG_PK;
@@ -173,6 +176,9 @@ public class Indexes {
         public static Index UNIQUE_UK_1 = Internal.createIndex("unique_uk_1", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL }, true);
         public static Index ACTIVE_DIRECTORY_CONFIG_PK = Internal.createIndex("active_directory_config_pk", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, new OrderField[] { JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.ID }, true);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
+        public static Index ATT_ITEM_IDX = Internal.createIndex("att_item_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ITEM_ID }, false);
+        public static Index ATT_LAUNCH_IDX = Internal.createIndex("att_launch_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.LAUNCH_ID }, false);
+        public static Index ATT_PROJECT_IDX = Internal.createIndex("att_project_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID }, false);
         public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
         public static Index AUTH_CONFIG_PK = Internal.createIndex("auth_config_pk", JAuthConfig.AUTH_CONFIG, new OrderField[] { JAuthConfig.AUTH_CONFIG.ID }, true);
