@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.activity.HistoryField;
@@ -233,6 +234,23 @@ class ActivityRepositoryTest extends BaseTest {
 		assertNotNull(activities);
 		assertTrue(!activities.isEmpty());
 		activities.forEach(it -> assertEquals(4L, (long) it.getObjectId()));
+	}
+
+	@Test
+	void objectNameCriteriaTest() {
+		String term = "filter";
+
+		List<Activity> activities = repository.findByFilter(Filter.builder()
+				.withTarget(Activity.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.CONTAINS)
+						.withSearchCriteria(CRITERIA_OBJECT_NAME)
+						.withValue(term)
+						.build())
+				.build());
+
+		assertTrue(!activities.isEmpty());
+		activities.forEach(it -> assertTrue(it.getDetails().getObjectName().contains(term)));
 	}
 
 	private Activity generateActivity() {
