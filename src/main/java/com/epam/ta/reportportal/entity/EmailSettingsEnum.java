@@ -46,7 +46,7 @@ public enum EmailSettingsEnum {
 	}
 
 	public Optional<String> getAttribute(Map<String, Object> params) {
-		return Optional.ofNullable(params.get(this.attribute)).map(o -> (String) o);
+		return Optional.ofNullable(params.get(this.attribute)).map(String::valueOf);
 	}
 
 	public static Optional<EmailSettingsEnum> findByAttribute(String attribute) {
