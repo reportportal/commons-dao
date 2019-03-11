@@ -3,12 +3,64 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
+
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttachment;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
+import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserPreference;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+
+import javax.annotation.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -38,6 +90,10 @@ public class Indexes {
     public static final Index UNIQUE_UK_1 = Indexes0.UNIQUE_UK_1;
     public static final Index ACTIVE_DIRECTORY_CONFIG_PK = Indexes0.ACTIVE_DIRECTORY_CONFIG_PK;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
+    public static final Index ATT_ITEM_IDX = Indexes0.ATT_ITEM_IDX;
+    public static final Index ATT_LAUNCH_IDX = Indexes0.ATT_LAUNCH_IDX;
+    public static final Index ATT_PROJECT_IDX = Indexes0.ATT_PROJECT_IDX;
+    public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
     public static final Index AUTH_CONFIG_PK = Indexes0.AUTH_CONFIG_PK;
     public static final Index BUG_TRACKING_SYSTEM_PK = Indexes0.BUG_TRACKING_SYSTEM_PK;
@@ -120,6 +176,10 @@ public class Indexes {
         public static Index UNIQUE_UK_1 = Internal.createIndex("unique_uk_1", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL }, true);
         public static Index ACTIVE_DIRECTORY_CONFIG_PK = Internal.createIndex("active_directory_config_pk", JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG, new OrderField[] { JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG.ID }, true);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
+        public static Index ATT_ITEM_IDX = Internal.createIndex("att_item_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ITEM_ID }, false);
+        public static Index ATT_LAUNCH_IDX = Internal.createIndex("att_launch_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.LAUNCH_ID }, false);
+        public static Index ATT_PROJECT_IDX = Internal.createIndex("att_project_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID }, false);
+        public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
         public static Index AUTH_CONFIG_PK = Internal.createIndex("auth_config_pk", JAuthConfig.AUTH_CONFIG, new OrderField[] { JAuthConfig.AUTH_CONFIG.ID }, true);
         public static Index BUG_TRACKING_SYSTEM_PK = Internal.createIndex("bug_tracking_system_pk", JBugTrackingSystem.BUG_TRACKING_SYSTEM, new OrderField[] { JBugTrackingSystem.BUG_TRACKING_SYSTEM.ID }, true);

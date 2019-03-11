@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -52,6 +53,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -63,6 +65,19 @@ import static org.jooq.impl.DSL.field;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
+	private static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
+		Attachment attachment = new Attachment();
+		attachment.setId(id);
+		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
+		attachment.setThumbnailId(r.get(ATTACHMENT.THUMBNAIL_ID));
+		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));
+		attachment.setProjectId(r.get(ATTACHMENT.PROJECT_ID));
+		attachment.setLaunchId(r.get(ATTACHMENT.LAUNCH_ID));
+		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
+
+		return attachment;
+	}).orElse(null);
+
 	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
 			r.get(JLog.LOG.ID, Long.class),
 			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
@@ -70,9 +85,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
 			r.get(JLog.LOG.LOG_LEVEL, Integer.class),
 			r.into(TestItem.class),
-			r.get(JLog.LOG.ATTACHMENT, String.class),
-			r.get(JLog.LOG.ATTACHMENT_THUMBNAIL, String.class),
-			r.get(JLog.LOG.CONTENT_TYPE, String.class)
+			ATTACHMENT_MAPPER.map(r)
 	);
 
 	private DSLContext dsl;
@@ -93,7 +106,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			return new ArrayList<>();
 		}
 
-		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).limit(limit).fetch().map(LOG_MAPPER);
+		return dsl.select()
+				.from(LOG)
+				.leftJoin(ATTACHMENT)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.where(LOG.ITEM_ID.eq(itemId))
+				.orderBy(LOG.LOG_TIME.asc())
+				.limit(limit)
+				.fetch()
+				.map(LOG_MAPPER);
 	}
 
 	@Override
@@ -102,15 +123,24 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			return new ArrayList<>();
 		}
 
-		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).orderBy(LOG.LOG_TIME.asc()).fetch().map(LOG_MAPPER);
+		return dsl.select()
+				.from(LOG)
+				.leftJoin(ATTACHMENT)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.where(LOG.ITEM_ID.eq(itemId))
+				.orderBy(LOG.LOG_TIME.asc())
+				.fetch()
+				.map(LOG_MAPPER);
 	}
 
 	@Override
 	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
-		return dsl.select(LOG.ID, LOG.ATTACHMENT, LOG.ATTACHMENT_THUMBNAIL)
+		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
 				.from(LOG)
+				.join(ATTACHMENT)
+				.on(LOG.ID.eq(ATTACHMENT.ID))
 				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
-				.and(LOG.ATTACHMENT.isNotNull().or(LOG.ATTACHMENT_THUMBNAIL.isNotNull()))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Log.class);
 	}
 
@@ -170,11 +200,6 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return dsl.deleteFrom(LOG)
 				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.execute();
-	}
-
-	@Override
-	public void clearLogsAttachmentsAndThumbnails(Collection<Long> ids) {
-		dsl.update(LOG).set(LOG.ATTACHMENT_THUMBNAIL, (String) null).set(LOG.ATTACHMENT, (String) null).where(LOG.ID.in(ids)).execute();
 	}
 
 	private List<SortField<Object>> buildSortFields(Sort sort) {

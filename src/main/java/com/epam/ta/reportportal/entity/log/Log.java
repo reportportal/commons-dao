@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.log;
 
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,17 +57,12 @@ public class Log implements Serializable {
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
-	@Column(name = "attachment")
-	private String attachment;
-
-	@Column(name = "attachment_thumbnail")
-	private String attachmentThumbnail;
-
-	@Column(name = "content_type")
-	private String contentType;
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "attachment_id")
+	private Attachment attachment;
 
 	public Log(Long id, LocalDateTime logTime, String logMessage, LocalDateTime lastModified, Integer logLevel, TestItem testItem,
-			String attachment, String attachmentThumbnail, String contentType) {
+			Attachment attachment) {
 		this.id = id;
 		this.logTime = logTime;
 		this.logMessage = logMessage;
@@ -74,8 +70,6 @@ public class Log implements Serializable {
 		this.logLevel = logLevel;
 		this.testItem = testItem;
 		this.attachment = attachment;
-		this.attachmentThumbnail = attachmentThumbnail;
-		this.contentType = contentType;
 	}
 
 	public Log() {
@@ -129,28 +123,12 @@ public class Log implements Serializable {
 		this.logLevel = logLevel;
 	}
 
-	public String getAttachment() {
+	public Attachment getAttachment() {
 		return attachment;
 	}
 
-	public void setAttachment(String attachment) {
+	public void setAttachment(Attachment attachment) {
 		this.attachment = attachment;
-	}
-
-	public String getAttachmentThumbnail() {
-		return attachmentThumbnail;
-	}
-
-	public void setAttachmentThumbnail(String attachmentThumbnail) {
-		this.attachmentThumbnail = attachmentThumbnail;
-	}
-
-	public String getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
 	}
 
 	@Override

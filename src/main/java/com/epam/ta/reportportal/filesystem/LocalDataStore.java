@@ -85,7 +85,7 @@ public class LocalDataStore implements DataStore {
 
 		try {
 
-			Files.delete(Paths.get(filePath));
+			Files.deleteIfExists(Paths.get(filePath));
 		} catch (IOException e) {
 
 			logger.error("Unable to delete file ", e);

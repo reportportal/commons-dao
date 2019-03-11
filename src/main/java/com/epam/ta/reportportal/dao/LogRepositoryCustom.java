@@ -64,7 +64,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 *
 	 * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
 	 * @param period {@link Duration}
-	 * @return List of {@link Log} with {@link Log#id}, {@link Log#attachment} and {@link Log#attachmentThumbnail} that were modified before the specified time period
+	 * @return List of {@link Log} with {@link Log#id}, {@link Log#attachment} and {@link Log#attachment} that were modified before the specified time period
 	 */
 	List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period);
 
@@ -96,10 +96,4 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
 
-	/**
-	 * Clear {@link Log#attachment} and {@link Log#attachmentThumbnail} of the specified logs
-	 *
-	 * @param ids Collection of the {@link Log#id} to specify logs which attachments and thumbnails will be cleared
-	 */
-	void clearLogsAttachmentsAndThumbnails(Collection<Long> ids);
 }
