@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunchAttributeRules extends TableImpl<JLaunchAttributeRulesRecord> {
 
-    private static final long serialVersionUID = 1125548988;
+    private static final long serialVersionUID = 1762297551;
 
     /**
      * The reference instance of <code>public.launch_attribute_rules</code>
@@ -122,7 +122,7 @@ public class JLaunchAttributeRules extends TableImpl<JLaunchAttributeRulesRecord
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LAUNCH_ATTRIBUTE_RULES_PK);
+        return Arrays.<Index>asList(Indexes.L_ATTR_RL_SEND_CASE_IDX, Indexes.LAUNCH_ATTRIBUTE_RULES_PK);
     }
 
     /**

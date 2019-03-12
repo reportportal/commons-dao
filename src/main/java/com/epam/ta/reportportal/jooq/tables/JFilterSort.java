@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterSort extends TableImpl<JFilterSortRecord> {
 
-    private static final long serialVersionUID = -1690043550;
+    private static final long serialVersionUID = -471324172;
 
     /**
      * The reference instance of <code>public.filter_sort</code>
@@ -123,7 +123,7 @@ public class JFilterSort extends TableImpl<JFilterSortRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.FILTER_SORT_PK);
+        return Arrays.<Index>asList(Indexes.FILTER_SORT_FILTER_IDX, Indexes.FILTER_SORT_PK);
     }
 
     /**

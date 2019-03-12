@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
 
-    private static final long serialVersionUID = 1932036644;
+    private static final long serialVersionUID = -1485859835;
 
     /**
      * The reference instance of <code>public.oauth_access_token</code>
@@ -147,7 +147,7 @@ public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.OAUTH_ACCESS_TOKEN_PKEY, Indexes.USERS_ACCESS_TOKEN_UNIQUE);
+        return Arrays.<Index>asList(Indexes.OAUTH_ACCESS_TOKEN_PKEY, Indexes.OAUTH_AT_USER_IDX, Indexes.USERS_ACCESS_TOKEN_UNIQUE);
     }
 
     /**

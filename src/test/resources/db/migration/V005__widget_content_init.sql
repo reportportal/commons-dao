@@ -10,7 +10,6 @@ BEGIN
 
   alter sequence launch_id_seq restart with 1;
   alter sequence item_attribute_id_seq restart with 1;
-  alter sequence bug_tracking_system_id_seq restart with 1;
   alter sequence test_item_item_id_seq restart with 1;
   alter sequence ticket_id_seq restart with 1;
   alter sequence activity_id_seq restart with 1;
@@ -79,8 +78,6 @@ BEGIN
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3.2.3', null, launch3, false);
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.3', null, launch4, false);
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.3.2', null, launch2, false);
-
-  INSERT INTO bug_tracking_system (id, url, type, bts_project, project_id) VALUES (1, 'test.com', 'TEST TYPE', 'TEST PROJECT', 1);
 
   INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
   VALUES (1, 'EPMRPP-322', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');

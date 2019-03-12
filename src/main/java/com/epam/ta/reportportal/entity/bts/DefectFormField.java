@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright (C) 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,52 +18,25 @@ package com.epam.ta.reportportal.entity.bts;
 
 import com.google.common.collect.Sets;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
 /**
  * @author Pavel Bortnik
  */
-@Entity
-@Table(name = "defect_form_field", schema = "public")
 public class DefectFormField implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
-
-	@Column(name = "field_id")
 	private String fieldId;
 
-	@ManyToOne
-	@JoinColumn(name = "bug_tracking_system_id", nullable = false)
-	private BugTrackingSystem bugTrackingSystem;
-
-	@Column(name = "type")
 	private String type;
 
-	@Column(name = "required")
 	private boolean isRequired;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "defect_form_field_value", joinColumns = @JoinColumn(name = "id"))
-	@Column(name = "values")
 	private Set<String> values;
 
-	@OneToMany(mappedBy = "defectFormField", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private Set<DefectFieldAllowedValue> defectFieldAllowedValues = Sets.newHashSet();
 
 	public DefectFormField() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getFieldId() {
@@ -72,14 +45,6 @@ public class DefectFormField implements Serializable {
 
 	public void setFieldId(String fieldId) {
 		this.fieldId = fieldId;
-	}
-
-	public BugTrackingSystem getBugTrackingSystem() {
-		return bugTrackingSystem;
-	}
-
-	public void setBugTrackingSystem(BugTrackingSystem bugTrackingSystem) {
-		this.bugTrackingSystem = bugTrackingSystem;
 	}
 
 	public String getType() {
@@ -113,6 +78,5 @@ public class DefectFormField implements Serializable {
 	public void setDefectFieldAllowedValues(Set<DefectFieldAllowedValue> defectFieldAllowedValues) {
 		this.defectFieldAllowedValues.clear();
 		this.defectFieldAllowedValues.addAll(defectFieldAllowedValues);
-		this.defectFieldAllowedValues.forEach(it -> it.setDefectFormField(this));
 	}
 }

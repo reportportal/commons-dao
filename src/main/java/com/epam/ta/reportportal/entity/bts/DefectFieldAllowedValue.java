@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,23 @@
 
 package com.epam.ta.reportportal.entity.bts;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
  */
-@Entity
-@Table(name = "defect_field_allowed_value", schema = "public")
 public class DefectFieldAllowedValue implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
-
-	@Column(name = "value_id")
 	private String valueId;
 
-	@Column(name = "value_name")
 	private String valueName;
-
-	@ManyToOne
-	@JoinColumn(name = "defect_form_field", nullable = false)
-	private DefectFormField defectFormField;
 
 	public DefectFieldAllowedValue() {
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public DefectFieldAllowedValue(String valueId, String valueName) {
+		this.valueId = valueId;
+		this.valueName = valueName;
 	}
 
 	public String getValueId() {
@@ -66,13 +49,5 @@ public class DefectFieldAllowedValue implements Serializable {
 
 	public void setValueName(String valueName) {
 		this.valueName = valueName;
-	}
-
-	public DefectFormField getDefectFormField() {
-		return defectFormField;
-	}
-
-	public void setDefectFormField(DefectFormField defectFormField) {
-		this.defectFormField = defectFormField;
 	}
 }

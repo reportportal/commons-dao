@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = 1245581260;
+    private static final long serialVersionUID = 2094315254;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -138,7 +138,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TICKET_PK, Indexes.TICKET_TICKET_ID_KEY);
+        return Arrays.<Index>asList(Indexes.TICKET_PK, Indexes.TICKET_SUBMITTER_IDX, Indexes.TICKET_TICKET_ID_KEY);
     }
 
     /**
