@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
@@ -40,6 +41,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import com.epam.ta.reportportal.entity.ldap.SynchronizationAttributes;
+import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
@@ -50,6 +52,7 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
+import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -75,6 +78,7 @@ import java.util.function.Function;
 import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -164,6 +168,29 @@ public class RecordMappers {
 		statistics.setCounter(ofNullable(r.get(Tables.STATISTICS.S_COUNTER)).orElse(0));
 		return statistics;
 	};
+
+	public static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
+		Attachment attachment = new Attachment();
+		attachment.setId(id);
+		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
+		attachment.setThumbnailId(r.get(ATTACHMENT.THUMBNAIL_ID));
+		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));
+		attachment.setProjectId(r.get(ATTACHMENT.PROJECT_ID));
+		attachment.setLaunchId(r.get(ATTACHMENT.LAUNCH_ID));
+		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
+
+		return attachment;
+	}).orElse(null);
+
+	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
+			r.get(JLog.LOG.ID, Long.class),
+			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
+			r.get(JLog.LOG.LOG_MESSAGE, String.class),
+			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
+			r.get(JLog.LOG.LOG_LEVEL, Integer.class),
+			r.into(TestItem.class),
+			ATTACHMENT_MAPPER.map(r)
+	);
 
 	/**
 	 * Maps record into {@link TestItem} object
