@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAclSid extends TableImpl<JAclSidRecord> {
 
-    private static final long serialVersionUID = 647732454;
+    private static final long serialVersionUID = -949386545;
 
     /**
      * The reference instance of <code>public.acl_sid</code>
@@ -117,7 +117,7 @@ public class JAclSid extends TableImpl<JAclSidRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ACL_SID_PKEY, Indexes.UNIQUE_UK_1);
+        return Arrays.<Index>asList(Indexes.ACL_SID_IDX, Indexes.ACL_SID_PKEY, Indexes.UNIQUE_UK_1);
     }
 
     /**

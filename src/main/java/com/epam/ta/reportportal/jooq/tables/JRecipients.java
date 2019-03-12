@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JRecipientsRecord;
@@ -15,6 +16,7 @@ import javax.annotation.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Schema;
@@ -37,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRecipients extends TableImpl<JRecipientsRecord> {
 
-    private static final long serialVersionUID = 1651715184;
+    private static final long serialVersionUID = -1950909017;
 
     /**
      * The reference instance of <code>public.recipients</code>
@@ -101,6 +103,14 @@ public class JRecipients extends TableImpl<JRecipientsRecord> {
     @Override
     public Schema getSchema() {
         return JPublic.PUBLIC;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Index> getIndexes() {
+        return Arrays.<Index>asList(Indexes.RCPNT_SEND_CASE_IDX);
     }
 
     /**

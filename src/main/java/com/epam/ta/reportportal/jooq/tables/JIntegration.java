@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegration extends TableImpl<JIntegrationRecord> {
 
-    private static final long serialVersionUID = 856185477;
+    private static final long serialVersionUID = -508524256;
 
     /**
      * The reference instance of <code>public.integration</code>
@@ -133,7 +133,7 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.INTEGRATION_PK);
+        return Arrays.<Index>asList(Indexes.INTEGR_PROJECT_IDX, Indexes.INTEGRATION_PK);
     }
 
     /**

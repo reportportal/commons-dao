@@ -13,13 +13,9 @@ import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
 import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormField;
-import com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
@@ -86,7 +82,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1392246161;
+    private static final long serialVersionUID = 1606565295;
 
     /**
      * The reference instance of <code>public</code>
@@ -139,11 +135,6 @@ public class JPublic extends SchemaImpl {
     public final JAuthConfig AUTH_CONFIG = com.epam.ta.reportportal.jooq.tables.JAuthConfig.AUTH_CONFIG;
 
     /**
-     * The table <code>public.bug_tracking_system</code>.
-     */
-    public final JBugTrackingSystem BUG_TRACKING_SYSTEM = com.epam.ta.reportportal.jooq.tables.JBugTrackingSystem.BUG_TRACKING_SYSTEM;
-
-    /**
      * The table <code>public.content_field</code>.
      */
     public final JContentField CONTENT_FIELD = com.epam.ta.reportportal.jooq.tables.JContentField.CONTENT_FIELD;
@@ -157,21 +148,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.dashboard_widget</code>.
      */
     public final JDashboardWidget DASHBOARD_WIDGET = com.epam.ta.reportportal.jooq.tables.JDashboardWidget.DASHBOARD_WIDGET;
-
-    /**
-     * The table <code>public.defect_field_allowed_value</code>.
-     */
-    public final JDefectFieldAllowedValue DEFECT_FIELD_ALLOWED_VALUE = com.epam.ta.reportportal.jooq.tables.JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE;
-
-    /**
-     * The table <code>public.defect_form_field</code>.
-     */
-    public final JDefectFormField DEFECT_FORM_FIELD = com.epam.ta.reportportal.jooq.tables.JDefectFormField.DEFECT_FORM_FIELD;
-
-    /**
-     * The table <code>public.defect_form_field_value</code>.
-     */
-    public final JDefectFormFieldValue DEFECT_FORM_FIELD_VALUE = com.epam.ta.reportportal.jooq.tables.JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE;
 
     /**
      * The table <code>public.filter</code>.
@@ -405,9 +381,6 @@ public class JPublic extends SchemaImpl {
             Sequences.ACTIVITY_ID_SEQ,
             Sequences.ATTACHMENT_ID_SEQ,
             Sequences.ATTRIBUTE_ID_SEQ,
-            Sequences.BUG_TRACKING_SYSTEM_ID_SEQ,
-            Sequences.DEFECT_FIELD_ALLOWED_VALUE_ID_SEQ,
-            Sequences.DEFECT_FORM_FIELD_ID_SEQ,
             Sequences.FILTER_CONDITION_ID_SEQ,
             Sequences.FILTER_SORT_ID_SEQ,
             Sequences.INTEGRATION_ID_SEQ,
@@ -455,13 +428,9 @@ public class JPublic extends SchemaImpl {
             JAttachment.ATTACHMENT,
             JAttribute.ATTRIBUTE,
             JAuthConfig.AUTH_CONFIG,
-            JBugTrackingSystem.BUG_TRACKING_SYSTEM,
             JContentField.CONTENT_FIELD,
             JDashboard.DASHBOARD,
             JDashboardWidget.DASHBOARD_WIDGET,
-            JDefectFieldAllowedValue.DEFECT_FIELD_ALLOWED_VALUE,
-            JDefectFormField.DEFECT_FORM_FIELD,
-            JDefectFormFieldValue.DEFECT_FORM_FIELD_VALUE,
             JFilter.FILTER,
             JFilterCondition.FILTER_CONDITION,
             JFilterSort.FILTER_SORT,

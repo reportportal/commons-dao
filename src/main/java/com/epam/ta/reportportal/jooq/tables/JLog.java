@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = -1611887458;
+    private static final long serialVersionUID = 1715221774;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -138,7 +138,7 @@ public class JLog extends TableImpl<JLogRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LOG_PK);
+        return Arrays.<Index>asList(Indexes.LOG_PK, Indexes.LOG_TI_IDX);
     }
 
     /**

@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JItemAttribute extends TableImpl<JItemAttributeRecord> {
 
-    private static final long serialVersionUID = 1329868034;
+    private static final long serialVersionUID = 368890262;
 
     /**
      * The reference instance of <code>public.item_attribute</code>
@@ -132,7 +132,7 @@ public class JItemAttribute extends TableImpl<JItemAttributeRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ITEM_ATTRIBUTE_PK);
+        return Arrays.<Index>asList(Indexes.ITEM_ATTR_LAUNCH_IDX, Indexes.ITEM_ATTR_TI_IDX, Indexes.ITEM_ATTRIBUTE_PK);
     }
 
     /**

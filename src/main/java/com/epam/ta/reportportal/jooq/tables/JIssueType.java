@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssueType extends TableImpl<JIssueTypeRecord> {
 
-    private static final long serialVersionUID = -1883703023;
+    private static final long serialVersionUID = 1882880465;
 
     /**
      * The reference instance of <code>public.issue_type</code>
@@ -132,7 +132,7 @@ public class JIssueType extends TableImpl<JIssueTypeRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ISSUE_TYPE_LOCATOR_KEY, Indexes.ISSUE_TYPE_PK);
+        return Arrays.<Index>asList(Indexes.ISSUE_TYPE_GROUP_IDX, Indexes.ISSUE_TYPE_LOCATOR_KEY, Indexes.ISSUE_TYPE_PK);
     }
 
     /**

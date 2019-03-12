@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JShareableEntity extends TableImpl<JShareableEntityRecord> {
 
-    private static final long serialVersionUID = -1632620876;
+    private static final long serialVersionUID = -611460910;
 
     /**
      * The reference instance of <code>public.shareable_entity</code>
@@ -122,7 +122,7 @@ public class JShareableEntity extends TableImpl<JShareableEntityRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SHAREABLE_PK);
+        return Arrays.<Index>asList(Indexes.SHAREABLE_PK, Indexes.SHARED_ENTITY_OWNERX, Indexes.SHARED_ENTITY_PROJECT_IDX);
     }
 
     /**

@@ -59,21 +59,6 @@ public class Sequences {
     public static final Sequence<Long> ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.bug_tracking_system_id_seq</code>
-     */
-    public static final Sequence<Long> BUG_TRACKING_SYSTEM_ID_SEQ = new SequenceImpl<Long>("bug_tracking_system_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.defect_field_allowed_value_id_seq</code>
-     */
-    public static final Sequence<Long> DEFECT_FIELD_ALLOWED_VALUE_ID_SEQ = new SequenceImpl<Long>("defect_field_allowed_value_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.defect_form_field_id_seq</code>
-     */
-    public static final Sequence<Long> DEFECT_FORM_FIELD_ID_SEQ = new SequenceImpl<Long>("defect_form_field_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.filter_condition_id_seq</code>
      */
     public static final Sequence<Long> FILTER_CONDITION_ID_SEQ = new SequenceImpl<Long>("filter_condition_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
