@@ -55,8 +55,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
@@ -691,6 +691,7 @@ public enum FilterTarget {
 		SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
 		joinTables(query);
 		query.addGroupBy(idField());
+		query.addOrderBy(idField());
 		return query;
 	}
 
