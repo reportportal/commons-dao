@@ -163,13 +163,9 @@ public class ResultFetchers {
 		Map<Long, Log> logs = Maps.newLinkedHashMap();
 		records.forEach(record -> {
 			Long id = record.get(LOG.ID);
-			Log log;
 			if (!logs.containsKey(id)) {
-				log = record.into(Log.class);
-			} else {
-				log = logs.get(id);
+				logs.put(id, LOG_MAPPER.map(record));
 			}
-			logs.put(id, log);
 		});
 		return new ArrayList<>(logs.values());
 	};
