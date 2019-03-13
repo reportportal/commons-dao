@@ -20,15 +20,15 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
-import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.OrderField;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,7 +40,6 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -50,6 +49,7 @@ import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.DISTI
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ROW_NUMBER;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
@@ -64,29 +64,6 @@ import static org.jooq.impl.DSL.field;
  */
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
-
-	private static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
-		Attachment attachment = new Attachment();
-		attachment.setId(id);
-		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
-		attachment.setThumbnailId(r.get(ATTACHMENT.THUMBNAIL_ID));
-		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));
-		attachment.setProjectId(r.get(ATTACHMENT.PROJECT_ID));
-		attachment.setLaunchId(r.get(ATTACHMENT.LAUNCH_ID));
-		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
-
-		return attachment;
-	}).orElse(null);
-
-	private static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
-			r.get(JLog.LOG.ID, Long.class),
-			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
-			r.get(JLog.LOG.LOG_MESSAGE, String.class),
-			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
-			r.get(JLog.LOG.LOG_LEVEL, Integer.class),
-			r.into(TestItem.class),
-			ATTACHMENT_MAPPER.map(r)
-	);
 
 	private DSLContext dsl;
 

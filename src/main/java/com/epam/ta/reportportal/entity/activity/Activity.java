@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
-
 
 /**
  * Activity table entity
@@ -174,5 +174,27 @@ public class Activity implements Serializable {
 			return Optional.ofNullable(string)
 					.flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equalsIgnoreCase(str)).findAny());
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Activity activity = (Activity) o;
+		return Objects.equals(id, activity.id) && Objects.equals(userId, activity.userId) && Objects.equals(username, activity.username)
+				&& Objects.equals(projectId, activity.projectId) && activityEntityType == activity.activityEntityType && Objects.equals(action,
+				activity.action
+		) && Objects.equals(details, activity.details) && Objects.equals(createdAt, activity.createdAt) && Objects.equals(objectId,
+				activity.objectId
+		);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, userId, username, projectId, activityEntityType, action, details, createdAt, objectId);
 	}
 }
