@@ -691,7 +691,6 @@ public enum FilterTarget {
 		SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
 		joinTables(query);
 		query.addGroupBy(idField());
-		query.addOrderBy(idField());
 		return query;
 	}
 
