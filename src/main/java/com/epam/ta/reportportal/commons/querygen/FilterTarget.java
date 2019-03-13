@@ -64,8 +64,7 @@ import static org.jooq.impl.DSL.field;
 
 public enum FilterTarget {
 
-	PROJECT_TARGET(Project.class, Arrays.asList(
-
+	PROJECT_TARGET(Project.class, Arrays.asList(new CriteriaHolder(CRITERIA_ID, PROJECT.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
@@ -112,26 +111,21 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT_INFO(ProjectInfo.class,
-			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE,
-							PROJECT.CREATION_DATE.getQualifiedName().toString(),
-							Timestamp.class
-					),
-					new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
-					new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
-					new CriteriaHolder(LAUNCHES_QUANTITY,
-							LAUNCHES_QUANTITY,
-							DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-											.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
-									LAUNCH.ID
-							)).toString(),
-							Long.class
-					)
+	PROJECT_INFO(ProjectInfo.class, Arrays.asList(new CriteriaHolder(CRITERIA_ID, PROJECT.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
+			new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
+			new CriteriaHolder(LAUNCHES_QUANTITY,
+					LAUNCHES_QUANTITY,
+					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+							LAUNCH.ID
+					)).toString(),
+					Long.class
 			)
-	) {
+	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
@@ -404,6 +398,7 @@ public enum FilterTarget {
 
 	LOG_TARGET(Log.class, Arrays.asList(
 
+			new CriteriaHolder(CRITERIA_ID, LOG.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOG_ID, LOG.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOG_TIME, LOG.LOG_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LOG.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
@@ -488,6 +483,7 @@ public enum FilterTarget {
 
 	INTEGRATION_TARGET(Integration.class, Arrays.asList(
 
+			new CriteriaHolder(CRITERIA_ID, INTEGRATION.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_INTEGRATION_TYPE,
 					INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(),
