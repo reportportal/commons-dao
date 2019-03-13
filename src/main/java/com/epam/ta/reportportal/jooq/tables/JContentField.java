@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JContentFieldRecord;
@@ -15,11 +16,13 @@ import javax.annotation.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
@@ -37,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JContentField extends TableImpl<JContentFieldRecord> {
 
-    private static final long serialVersionUID = -994714408;
+    private static final long serialVersionUID = -1317513276;
 
     /**
      * The reference instance of <code>public.content_field</code>
@@ -55,7 +58,7 @@ public class JContentField extends TableImpl<JContentFieldRecord> {
     /**
      * The column <code>public.content_field.id</code>.
      */
-    public final TableField<JContentFieldRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JContentFieldRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.content_field.field</code>.
@@ -107,12 +110,36 @@ public class JContentField extends TableImpl<JContentFieldRecord> {
      * {@inheritDoc}
      */
     @Override
+    public List<Index> getIndexes() {
+        return Arrays.<Index>asList(Indexes.CONTENT_FIELD_PKEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UniqueKey<JContentFieldRecord> getPrimaryKey() {
+        return Keys.CONTENT_FIELD_PKEY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<UniqueKey<JContentFieldRecord>> getKeys() {
+        return Arrays.<UniqueKey<JContentFieldRecord>>asList(Keys.CONTENT_FIELD_PKEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<ForeignKey<JContentFieldRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JContentFieldRecord, ?>>asList(Keys.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY);
+        return Arrays.<ForeignKey<JContentFieldRecord, ?>>asList(Keys.CONTENT_FIELD__CONTENT_FIELD_ID_FK);
     }
 
     public JWidget widget() {
-        return new JWidget(this, Keys.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY);
+        return new JWidget(this, Keys.CONTENT_FIELD__CONTENT_FIELD_ID_FK);
     }
 
     /**

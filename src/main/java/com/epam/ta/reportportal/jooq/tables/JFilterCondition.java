@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
 
-    private static final long serialVersionUID = -291300073;
+    private static final long serialVersionUID = 2142430245;
 
     /**
      * The reference instance of <code>public.filter_condition</code>
@@ -133,7 +133,7 @@ public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.FILTER_CONDITION_PK);
+        return Arrays.<Index>asList(Indexes.FILTER_COND_FILTER_IDX, Indexes.FILTER_CONDITION_PK);
     }
 
     /**

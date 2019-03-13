@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = -979048760;
+    private static final long serialVersionUID = 1440818123;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -127,7 +127,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.USER_CREATION_BID_EMAIL_KEY, Indexes.USER_CREATION_BID_PK);
+        return Arrays.<Index>asList(Indexes.USER_BID_PROJECT_IDX, Indexes.USER_CREATION_BID_EMAIL_KEY, Indexes.USER_CREATION_BID_PK);
     }
 
     /**

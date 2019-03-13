@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JSenderCase extends TableImpl<JSenderCaseRecord> {
 
-    private static final long serialVersionUID = -581718869;
+    private static final long serialVersionUID = -52594229;
 
     /**
      * The reference instance of <code>public.sender_case</code>
@@ -117,7 +117,7 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SENDER_CASE_PK);
+        return Arrays.<Index>asList(Indexes.SENDER_CASE_PK, Indexes.SENDER_CASE_PROJECT_IDX);
     }
 
     /**

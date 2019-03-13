@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatistics extends TableImpl<JStatisticsRecord> {
 
-    private static final long serialVersionUID = 1785704078;
+    private static final long serialVersionUID = -1096861860;
 
     /**
      * The reference instance of <code>public.statistics</code>
@@ -127,7 +127,7 @@ public class JStatistics extends TableImpl<JStatisticsRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.STATISTICS_PK, Indexes.UNIQUE_STATS_ITEM, Indexes.UNIQUE_STATS_LAUNCH);
+        return Arrays.<Index>asList(Indexes.STATISTICS_LAUNCH_IDX, Indexes.STATISTICS_PK, Indexes.STATISTICS_TI_IDX, Indexes.UNIQUE_STATS_ITEM, Indexes.UNIQUE_STATS_LAUNCH);
     }
 
     /**
