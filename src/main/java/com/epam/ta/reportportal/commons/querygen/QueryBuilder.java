@@ -33,6 +33,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -152,11 +153,11 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
-
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
-
-			query.addSelect(field(criteria.getAggregateCriteria()));
+			if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID)) {
+				query.addSelect(field(criteria.getAggregateCriteria()));
+			}
 			query.addOrderBy(field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
 					SortOrder.DESC :
 					SortOrder.ASC));
