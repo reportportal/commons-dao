@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.TestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Sql("/db/fill/integration/integrations-fill.sql")
 class IntegrationRepositoryTest extends BaseTest {
-
 
 	private static final long GLOBAL_EMAIL_INTEGRATIONS_COUNT = 1L;
 	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 6L;
@@ -92,14 +90,27 @@ class IntegrationRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void shouldDeleteAllByIntegrationTypeId() {
+	void shouldDeleteAllGlobalByIntegrationTypeId() {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		integrationRepository.deleteAllByIntegrationTypeId(integrationType.getId());
+		integrationRepository.deleteAllGlobalByIntegrationTypeId(integrationType.getId());
 
-		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		assertThat(integrationRepository.findAllGlobalByType(integrationType), is(empty()));
+
+		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+	}
+
+	@Test
+	void shouldDeleteAllByProjectIdAndIntegrationTypeId() {
+
+		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
+
+		integrationRepository.deleteAllByProjectIdAndIntegrationTypeId(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType.getId());
+
 		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
 	}
 
 	@Test
