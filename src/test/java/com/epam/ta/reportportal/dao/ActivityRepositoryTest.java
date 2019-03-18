@@ -186,13 +186,12 @@ class ActivityRepositoryTest extends BaseTest {
 	void findByEntityType() {
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
-				false,
-				"LAUNCH",
+				false, "launch",
 				CRITERIA_ENTITY
 		));
 		assertNotNull(activities);
 		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertEquals(Activity.ActivityEntityType.LAUNCH, it.getActivityEntityType()));
+		activities.forEach(it -> assertEquals(Activity.ActivityEntityType.LAUNCH.getValue(), it.getActivityEntityType()));
 	}
 
 	@Test
@@ -255,7 +254,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	private Activity generateActivity() {
 		Activity activity = new Activity();
-		activity.setActivityEntityType(Activity.ActivityEntityType.DEFECT_TYPE);
+		activity.setActivityEntityType(Activity.ActivityEntityType.DEFECT_TYPE.getValue());
 		activity.setAction("create_defect");
 		activity.setObjectId(11L);
 		activity.setCreatedAt(LocalDateTime.now());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,7 +255,7 @@ public class RecordMappers {
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setAction(r.get(ACTIVITY.ACTION));
 		activity.setUsername(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.USERNAME)));
-		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class));
+		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, String.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
 		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);

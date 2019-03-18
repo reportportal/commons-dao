@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,12 +54,12 @@ class ServerSettingsRepositoryTest extends BaseTest {
 	@Test
 	void streamAll() {
 		final Stream<ServerSettings> serverSettingsStream = repository.streamAll();
-		assertEquals(14, serverSettingsStream.collect(Collectors.toList()).size());
+		assertEquals(5, serverSettingsStream.collect(Collectors.toList()).size());
 	}
 
 	@Test
 	void name() {
 		repository.deleteAllByTerm("key");
-		assertEquals(11, repository.findAll().size());
+		assertEquals(2, repository.findAll().size());
 	}
 }
