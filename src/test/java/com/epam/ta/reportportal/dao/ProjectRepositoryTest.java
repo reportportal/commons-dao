@@ -97,6 +97,13 @@ class ProjectRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findAllProjectNamesByTerm() {
+		List<String> names = projectRepository.findAllProjectNamesByTerm("UpEr");
+		assertThat("Incorrect projects size", names, Matchers.hasSize(1));
+		assertThat("Results don't contain all project", names, Matchers.hasItems("superadmin_personal"));
+	}
+
+	@Test
 	void findUserProjectsTest() {
 		List<Project> projects = projectRepository.findUserProjects("default");
 		assertNotNull(projects);

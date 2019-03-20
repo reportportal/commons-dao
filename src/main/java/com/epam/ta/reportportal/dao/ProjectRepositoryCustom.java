@@ -47,6 +47,13 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	List<String> findAllProjectNames();
 
 	/**
+	 * Find all project names, which contain provided term
+	 *
+	 * @return List of project names
+	 */
+	List<String> findAllProjectNamesByTerm(String term);
+
+	/**
 	 * Get {@link Page} of {@link Project#id} with attributes
 	 *
 	 * @param filter   {@link Filter}
