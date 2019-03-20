@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 
 import java.time.Duration;
 import java.util.List;
@@ -163,4 +164,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return list of items
 	 */
 	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
+
+	/**
+	 * Update test items' statuses of the specified launch with new status
+	 *
+	 * @param changeFrom Status which should be updated
+	 * @param changeTo   New status
+	 * @param launchId   ID of the launch which test items will be updated
+	 * @return Count of updated rows
+	 */
+	int changeStatusFromToByLaunchId(JStatusEnum changeFrom, JStatusEnum changeTo, Long launchId);
 }

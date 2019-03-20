@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -207,8 +208,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final List<TestItem> testItems = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
 		assertNotNull(testItems, "Ids should not be null");
 		assertTrue(!testItems.isEmpty(), "Ids should not be empty");
-		testItems.forEach(it -> assertThat(
-				"Issue locator shouldn't be 'pb001'",
+		testItems.forEach(it -> assertThat("Issue locator shouldn't be 'pb001'",
 				it.getItemResults().getIssue().getIssueType().getLocator(),
 				Matchers.not(Matchers.equalTo("pb001"))
 		));
@@ -220,6 +220,14 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(testItems);
 		assertThat(testItems, Matchers.hasSize(1));
 		testItems.forEach(it -> assertThat(it.getItemResults().getIssue().getAutoAnalyzed(), Matchers.is(false)));
+	}
+
+	@Test
+	void changeStatusFromToByLaunchId() {
+
+		int updatedCount = testItemRepository.changeStatusFromToByLaunchId(JStatusEnum.FAILED, JStatusEnum.IN_PROGRESS, 1L);
+
+		Assertions.assertEquals(3, updatedCount);
 	}
 
 	@Test
@@ -276,8 +284,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		retries.stream().map(TestItem::getLaunch).forEach(Assertions::assertNull);
 		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> assertEquals(retriesParent.getItemId(), retryOf));
-		retries.forEach(retry -> assertEquals(
-				Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
+		retries.forEach(retry -> assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
 				retry.getPath()
 		));
 	}
