@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -33,7 +34,7 @@ import java.util.Optional;
  */
 public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
-	Boolean identifyStatus(Long launchId);
+	Boolean hasItemsInStatuses(Long launchId, List<JStatusEnum> statuses);
 
 	/**
 	 * Retrieves names of the launches by provided 'projectId', 'mode', 'value' as a part of the name
