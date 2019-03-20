@@ -69,6 +69,13 @@ class ProjectRoleTest {
 	}
 
 	@Test
+	void sameOrLowerThan() {
+		assertTrue(PROJECT_MANAGER.sameOrLowerThan(PROJECT_MANAGER));
+		assertTrue(CUSTOMER.sameOrLowerThan(MEMBER));
+		assertFalse(PROJECT_MANAGER.sameOrLowerThan(MEMBER));
+	}
+
+	@Test
 	void forName() {
 		allowed.forEach((key, value) -> value.forEach(val -> {
 			final Optional<ProjectRole> optional = ProjectRole.forName(val);

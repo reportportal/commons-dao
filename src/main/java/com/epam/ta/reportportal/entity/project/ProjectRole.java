@@ -47,6 +47,10 @@ public enum ProjectRole implements Comparable<ProjectRole> {
 		return this.roleLevel >= other.roleLevel;
 	}
 
+	public boolean sameOrLowerThan(ProjectRole other) {
+		return this.roleLevel <= other.roleLevel;
+	}
+
 	public static Optional<ProjectRole> forName(final String name) {
 		return Arrays.stream(ProjectRole.values()).filter(role -> role.name().equalsIgnoreCase(name)).findAny();
 	}
