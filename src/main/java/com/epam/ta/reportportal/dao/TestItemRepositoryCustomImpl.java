@@ -230,23 +230,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public int changeStatusFromToByLaunchId(JStatusEnum changeFrom, JStatusEnum changeTo, Long launchId) {
-		return dsl.update(TEST_ITEM_RESULTS)
-				.set(TEST_ITEM_RESULTS.STATUS, changeTo)
-				.where(TEST_ITEM_RESULTS.RESULT_ID.in(dsl.select(TEST_ITEM_RESULTS.RESULT_ID)
-						.from(TEST_ITEM_RESULTS)
-						.join(TEST_ITEM)
-						.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
-						.leftJoin(TEST_ITEM.as(RETRIES_TABLE))
-						.on(TEST_ITEM.RETRY_OF.eq(fieldName(TestItemRepositoryConstants.RETRIES_TABLE,
-								TestItemRepositoryConstants.ITEM_ID
-						).cast(Long.class)))
-						.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
-								.or(TEST_ITEM.LAUNCH_ID.isNull()
-										.and(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.LAUNCH_ID).cast(Long.class)
-												.eq(launchId))))
-						.and(TEST_ITEM_RESULTS.STATUS.eq(changeFrom))))
-				.execute();
+	public List<Long> findIdsWithoutChildrenByLaunchIdAndStatus(Long launchId, JStatusEnum status) {
+
+		return dsl.select(TEST_ITEM_RESULTS.RESULT_ID)
+				.from(TEST_ITEM_RESULTS)
+				.join(TEST_ITEM)
+				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
+				.leftJoin(TEST_ITEM.as(RETRIES_TABLE))
+				.on(TEST_ITEM.RETRY_OF.eq(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.ITEM_ID).cast(Long.class)))
+				.where((TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM.HAS_CHILDREN.isFalse())).or(TEST_ITEM.LAUNCH_ID.isNull()
+						.and(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.ITEM_ID).cast(Long.class)
+								.eq(launchId)
+								.and(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.HAS_CHILDREN).cast(Boolean.class).isFalse()))))
+				.and(TEST_ITEM_RESULTS.STATUS.eq(status))
+				.fetchInto(Long.class);
+
 	}
 
 	/**
@@ -284,7 +282,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
 
 		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
-			RETRIES_FETCHER.accept(items,
+			RETRIES_FETCHER.accept(
+					items,
 					dsl.select()
 							.from(TEST_ITEM)
 							.join(TEST_ITEM_RESULTS)

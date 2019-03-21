@@ -223,11 +223,11 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void changeStatusFromToByLaunchId() {
+	void findIdsWithoutChildrenByLaunchIdAndStatus() {
 
-		int updatedCount = testItemRepository.changeStatusFromToByLaunchId(JStatusEnum.FAILED, JStatusEnum.IN_PROGRESS, 1L);
+		List<Long> itemIds = testItemRepository.findIdsWithoutChildrenByLaunchIdAndStatus(1L, JStatusEnum.FAILED);
 
-		Assertions.assertEquals(3, updatedCount);
+		Assertions.assertEquals(3, itemIds.size());
 	}
 
 	@Test

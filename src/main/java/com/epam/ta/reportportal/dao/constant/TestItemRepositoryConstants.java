@@ -23,6 +23,7 @@ public final class TestItemRepositoryConstants {
 
 	public static final String LAUNCH_ID = "launch_id";
 	public static final String ITEM_ID = "item_id";
+	public static final String HAS_CHILDREN = "has_children";
 	public static final String RETRIES_TABLE = "retries";
 
 	private TestItemRepositoryConstants() {
