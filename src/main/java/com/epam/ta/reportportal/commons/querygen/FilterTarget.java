@@ -55,8 +55,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
@@ -251,8 +251,7 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class
-			),
-			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
+			), new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -442,14 +441,18 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME,
+					PROJECT.NAME.getQualifiedName().toString(),
+					DSL.max(PROJECT.NAME).toString(),
+					Long.class
+			),
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_LOGIN, ACTIVITY.USERNAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class),
 			new CriteriaHolder(CRITERIA_OBJECT_NAME, ACTIVITY.DETAILS.getQualifiedName().toString() + " ->> 'objectName'", String.class)
 	)) {
 		@Override
