@@ -165,5 +165,12 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
 
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID and {@link JStatusEnum}
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param status   {@link JStatusEnum}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 */
 	List<Long> findIdsWithoutChildrenByLaunchIdAndStatus(Long launchId, JStatusEnum status);
 }

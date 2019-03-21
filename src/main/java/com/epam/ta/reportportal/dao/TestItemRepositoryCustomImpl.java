@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -44,8 +43,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.RETRIES_TABLE;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
@@ -236,13 +233,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.from(TEST_ITEM_RESULTS)
 				.join(TEST_ITEM)
 				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
-				.leftJoin(TEST_ITEM.as(RETRIES_TABLE))
-				.on(TEST_ITEM.RETRY_OF.eq(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.ITEM_ID).cast(Long.class)))
-				.where((TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM.HAS_CHILDREN.isFalse())).or(TEST_ITEM.LAUNCH_ID.isNull()
-						.and(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.ITEM_ID).cast(Long.class)
-								.eq(launchId)
-								.and(fieldName(RETRIES_TABLE, TestItemRepositoryConstants.HAS_CHILDREN).cast(Boolean.class).isFalse()))))
-				.and(TEST_ITEM_RESULTS.STATUS.eq(status))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM.HAS_CHILDREN.isFalse()).and(TEST_ITEM_RESULTS.STATUS.eq(status)))
 				.fetchInto(Long.class);
 
 	}
