@@ -246,7 +246,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(TEST_ITEM)
 				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM.HAS_CHILDREN.isTrue()).and(TEST_ITEM_RESULTS.STATUS.eq(status)))
-				.orderBy(field("nlevel(" + TEST_ITEM.PATH.getQualifiedName().toString() + ")"))
+				.orderBy(field("nlevel(" + TEST_ITEM.PATH.getQualifiedName().toString() + ")").desc())
 				.fetchInto(Long.class);
 	}
 
