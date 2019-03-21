@@ -166,11 +166,22 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
 
 	/**
-	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID and {@link JStatusEnum}
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link JStatusEnum} and {@link TestItem#hasChildren} == false
 	 *
 	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
 	 * @param status   {@link JStatusEnum}
 	 * @return the {@link List} of the {@link TestItem#itemId}
 	 */
 	List<Long> findIdsWithoutChildrenByLaunchIdAndStatus(Long launchId, JStatusEnum status);
+
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link JStatusEnum} and {@link TestItem#hasChildren} == true
+	 * ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param status   {@link JStatusEnum}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+	 */
+	List<Long> findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel(Long launchId, JStatusEnum status);
 }

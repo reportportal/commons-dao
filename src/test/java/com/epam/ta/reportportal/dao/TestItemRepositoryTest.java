@@ -231,6 +231,14 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel() {
+
+		List<Long> itemIds = testItemRepository.findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel(1L, JStatusEnum.FAILED);
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
 	void selectItemsInIssueByLaunch() {
 		final Long launchId = 1L;
 		final String issueType = "ti001";

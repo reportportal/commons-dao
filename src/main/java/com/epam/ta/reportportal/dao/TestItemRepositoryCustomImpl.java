@@ -52,6 +52,7 @@ import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.stream.Collectors.toList;
+import static org.jooq.impl.DSL.field;
 
 /**
  * @author Pavel Bortnik
@@ -236,6 +237,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM.HAS_CHILDREN.isFalse()).and(TEST_ITEM_RESULTS.STATUS.eq(status)))
 				.fetchInto(Long.class);
 
+	}
+
+	@Override
+	public List<Long> findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel(Long launchId, JStatusEnum status) {
+		return dsl.select(TEST_ITEM_RESULTS.RESULT_ID)
+				.from(TEST_ITEM_RESULTS)
+				.join(TEST_ITEM)
+				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(TEST_ITEM.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM.HAS_CHILDREN.isTrue()).and(TEST_ITEM_RESULTS.STATUS.eq(status)))
+				.orderBy(field("nlevel(" + TEST_ITEM.PATH.getQualifiedName().toString() + ")"))
+				.fetchInto(Long.class);
 	}
 
 	/**

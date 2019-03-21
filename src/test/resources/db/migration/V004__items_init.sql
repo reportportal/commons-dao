@@ -43,8 +43,8 @@ BEGIN
 
   WHILE launchcounter < 13
   LOOP
-    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('SUITE ' || launchcounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchcounter, launchcounter);
+    INSERT INTO test_item (has_children, name, type, start_time, description, last_modified, unique_id, launch_id)
+    VALUES (true, 'SUITE ' || launchcounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchcounter, launchcounter);
     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     INSERT INTO item_attribute (key, value, item_id, launch_id, system)
