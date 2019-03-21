@@ -59,15 +59,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
-	/**
-	 * Execute sql-function that removes statistics of {@link TestItem} with non-null {@link TestItem#retryOf} value
-	 * of {@link Launch} with provided 'launchId'
-	 *
-	 * @param launchId Id of the {@link com.epam.ta.reportportal.entity.launch.Launch} to perform retries statistics recalculation
-	 */
-	@Query(value = "SELECT retries_statistics(:launchId)", nativeQuery = true)
-	void handleRetriesStatistics(@Param("launchId") Long launchId);
-
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
