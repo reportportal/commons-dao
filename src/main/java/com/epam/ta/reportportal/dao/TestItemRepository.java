@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import javax.persistence.QueryHint;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -48,7 +49,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
 			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:status as status_enum)", nativeQuery = true)
-	Stream<Long> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") String status);
+	Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") String status);
 
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
@@ -63,7 +64,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
 			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:status as status_enum)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
-	Stream<Long> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
+	Stream<BigInteger> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
 			@Param("status") String status);
 
 	/**
@@ -76,7 +77,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
 			+ " WHERE test_item.parent_id = :parentId AND NOT test_item.has_children AND result.status = cast(:status as status_enum)", nativeQuery = true)
-	Stream<Long> streamIdsByNotHasChildrenAndParentIdAndStatus(@Param("parentId") Long parentId, @Param("status") String status);
+	Stream<BigInteger> streamIdsByNotHasChildrenAndParentIdAndStatus(@Param("parentId") Long parentId, @Param("status") String status);
 
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
@@ -91,7 +92,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
 			+ " WHERE test_item.parent_id = :parentId AND test_item.has_children AND result.status = cast(:status as status_enum)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
-	Stream<Long> streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(@Param("parentId") Long parentId,
+	Stream<BigInteger> streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(@Param("parentId") Long parentId,
 			@Param("status") String status);
 
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);

@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -225,7 +226,8 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, JStatusEnum.FAILED.name())
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED.name())
+				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
 		Assertions.assertEquals(1, itemIds.size());
@@ -235,6 +237,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
+				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
 		Assertions.assertEquals(2, itemIds.size());
@@ -244,6 +247,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByNotHasChildrenAndParentIdAndStatus() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, JStatusEnum.FAILED.name())
+				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
 		Assertions.assertEquals(1, itemIds.size());
@@ -253,6 +257,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
+				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
 		Assertions.assertEquals(1, itemIds.size());
