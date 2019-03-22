@@ -225,15 +225,17 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void findIdsWithoutChildrenByLaunchIdAndStatus() {
 
-		List<Long> itemIds = testItemRepository.findIdsWithoutChildrenByLaunchIdAndStatus(1L, JStatusEnum.FAILED);
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, JStatusEnum.FAILED.name())
+				.collect(Collectors.toList());
 
-		Assertions.assertEquals(3, itemIds.size());
+		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
 	void findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel() {
 
-		List<Long> itemIds = testItemRepository.findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel(1L, JStatusEnum.FAILED);
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
+				.collect(Collectors.toList());
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
