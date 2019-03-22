@@ -223,18 +223,36 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findIdsWithoutChildrenByLaunchIdAndStatus() {
+	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, JStatusEnum.FAILED.name())
+				.collect(Collectors.toList());
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
 				.collect(Collectors.toList());
 
 		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
-	void findIdsWithChildrenByLaunchIdAndStatusOrderedByNlevel() {
+	void streamIdsByNotHasChildrenAndParentIdAndStatus() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, JStatusEnum.FAILED.name())
+				.collect(Collectors.toList());
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
 				.collect(Collectors.toList());
 
 		Assertions.assertEquals(1, itemIds.size());
