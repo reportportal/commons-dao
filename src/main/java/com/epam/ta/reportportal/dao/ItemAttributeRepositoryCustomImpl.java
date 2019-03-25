@@ -16,10 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.TableField;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
+import com.epam.ta.reportportal.jooq.tables.records.JItemAttributeRecord;
+import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -100,6 +99,17 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.columns(ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.SYSTEM)
 				.values(key, value, itemId, isSystem)
 				.execute();
+	}
+
+	@Override
+	public int saveMultipleByItemId(List<ItemAttributePojo> itemAttributePojos) {
+
+		InsertValuesStep4<JItemAttributeRecord, Long, String, String, Boolean> columns = dslContext.insertInto(ITEM_ATTRIBUTE)
+				.columns(ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM);
+
+		itemAttributePojos.forEach(pojo -> columns.values(pojo.getItemId(), pojo.getKey(), pojo.getValue(), pojo.isSystem()));
+
+		return columns.execute();
 	}
 
 	private Condition prepareFetchingValuesCondition(TableField<? extends Record, Long> field, Long id, String key, String value,

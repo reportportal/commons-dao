@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 
 import java.util.List;
 
@@ -77,4 +78,6 @@ public interface ItemAttributeRepositoryCustom {
 	 * @return 1 if inserted, otherwise 0
 	 */
 	int saveByItemId(Long itemId, String key, String value, boolean isSystem);
+
+	int saveMultipleByItemId(List<ItemAttributePojo> itemAttributePojos);
 }
