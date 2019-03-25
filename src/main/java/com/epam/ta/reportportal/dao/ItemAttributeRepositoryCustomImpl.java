@@ -94,6 +94,14 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 
+	@Override
+	public int saveByItemId(Long itemId, String key, String value, boolean isSystem) {
+		return dslContext.insertInto(ITEM_ATTRIBUTE)
+				.columns(ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.SYSTEM)
+				.values(key, value, itemId, isSystem)
+				.execute();
+	}
+
 	private Condition prepareFetchingValuesCondition(TableField<? extends Record, Long> field, Long id, String key, String value,
 			boolean system) {
 		Condition condition = field.eq(id)
