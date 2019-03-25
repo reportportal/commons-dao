@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -336,8 +337,8 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void getStatusByItemId() {
 
-		StatusEnum status = testItemRepository.getStatusByItemId(1L);
+		TestItemTypeEnum type = testItemRepository.getTypeByItemId(1L);
 
-		Assertions.assertEquals(StatusEnum.FAILED, status);
+		Assertions.assertEquals(TestItemTypeEnum.SUITE, type);
 	}
 }

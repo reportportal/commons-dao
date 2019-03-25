@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -176,8 +177,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
 	/**
 	 * @param itemId {@link TestItem#itemId}
-	 * @return {@link StatusEnum}
+	 * @return {@link TestItemTypeEnum}
 	 */
-	StatusEnum getStatusByItemId(Long itemId);
+	TestItemTypeEnum getTypeByItemId(Long itemId);
 
 }

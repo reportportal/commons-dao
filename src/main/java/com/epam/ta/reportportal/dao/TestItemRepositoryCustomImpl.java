@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -246,11 +247,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public StatusEnum getStatusByItemId(Long itemId) {
-		return dsl.select(TEST_ITEM_RESULTS.STATUS)
-				.from(TEST_ITEM_RESULTS)
-				.where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId))
-				.fetchOneInto(StatusEnum.class);
+	public TestItemTypeEnum getTypeByItemId(Long itemId) {
+		return dsl.select(TEST_ITEM.TYPE)
+				.from(TEST_ITEM)
+				.where(TEST_ITEM.ITEM_ID.eq(itemId))
+				.fetchOneInto(TestItemTypeEnum.class);
 	}
 
 	/**
