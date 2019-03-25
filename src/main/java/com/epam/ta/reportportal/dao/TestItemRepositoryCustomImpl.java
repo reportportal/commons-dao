@@ -245,6 +245,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.execute();
 	}
 
+	@Override
+	public StatusEnum getStatusByItemId(Long itemId) {
+		return dsl.select(TEST_ITEM_RESULTS.STATUS)
+				.from(TEST_ITEM_RESULTS)
+				.where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId))
+				.fetchOneInto(StatusEnum.class);
+	}
+
 	/**
 	 * Commons select of an item with it's results and structure
 	 *

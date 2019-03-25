@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -50,5 +51,12 @@ class IssueEntityRepositoryTest extends BaseTest {
 				"Issue entities should be int 'to investigate' group"
 		));
 
+	}
+
+	@Test
+	void insertByItemIdAndIssueTypeId() {
+		int result = repository.insertByItemIdAndIssueTypeId(1L, 1L, "description", false, false);
+
+		Assertions.assertEquals(1, result);
 	}
 }

@@ -174,4 +174,10 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
 
+	/**
+	 * @param itemId {@link TestItem#itemId}
+	 * @return {@link StatusEnum}
+	 */
+	StatusEnum getStatusByItemId(Long itemId);
+
 }

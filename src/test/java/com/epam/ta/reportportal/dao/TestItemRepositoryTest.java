@@ -332,4 +332,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Assertions.assertEquals(StatusEnum.CANCELLED, testItemRepository.findById(1L).get().getItemResults().getStatus());
 	}
+
+	@Test
+	void getStatusByItemId() {
+
+		StatusEnum status = testItemRepository.getStatusByItemId(1L);
+
+		Assertions.assertEquals(StatusEnum.FAILED, status);
+	}
 }
