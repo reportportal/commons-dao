@@ -326,7 +326,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void updateStatusAndEndTimeAndDurationById() {
 
-		int result = testItemRepository.updateStatusAndEndTimeAndDurationById(1L, JStatusEnum.CANCELLED, LocalDateTime.now(), 0.25D);
+		int result = testItemRepository.updateStatusAndEndTimeById(1L, JStatusEnum.CANCELLED, LocalDateTime.now());
 
 		Assertions.assertEquals(1, result);
 

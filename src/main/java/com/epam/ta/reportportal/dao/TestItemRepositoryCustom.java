@@ -167,12 +167,11 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
 
 	/**
-	 * @param itemId   {@link TestItem#itemId}
-	 * @param status   New status
-	 * @param endTime  {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
-	 * @param duration {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
+	 * @param itemId  {@link TestItem#itemId}
+	 * @param status  New status
+	 * @param endTime {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
 	 * @return 1 if updated, otherwise 0
 	 */
-	int updateStatusAndEndTimeAndDurationById(Long itemId, JStatusEnum status, LocalDateTime endTime, double duration);
+	int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
 
 }

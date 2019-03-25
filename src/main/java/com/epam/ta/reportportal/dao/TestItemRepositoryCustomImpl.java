@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.DSLContext;
+import org.jooq.DatePart;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
@@ -229,11 +230,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public int updateStatusAndEndTimeAndDurationById(Long itemId, JStatusEnum status, LocalDateTime endTime, double duration) {
+	public int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime) {
+
 		return dsl.update(TEST_ITEM_RESULTS)
 				.set(TEST_ITEM_RESULTS.STATUS, status)
 				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
-				.set(TEST_ITEM_RESULTS.DURATION, duration)
+				.set(
+						TEST_ITEM_RESULTS.DURATION,
+						dsl.select(DSL.extract(endTime, DatePart.EPOCH)
+								.minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
+								.cast(Double.class)).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId))
+				)
 				.where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId))
 				.execute();
 	}
