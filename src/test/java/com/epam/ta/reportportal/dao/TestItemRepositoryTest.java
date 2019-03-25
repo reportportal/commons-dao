@@ -37,6 +37,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigInteger;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -323,9 +324,9 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void updateStatusByIdTest() {
+	void updateStatusAndEndTimeAndDurationById() {
 
-		int result = testItemRepository.updateStatusById(1L, JStatusEnum.CANCELLED);
+		int result = testItemRepository.updateStatusAndEndTimeAndDurationById(1L, JStatusEnum.CANCELLED, LocalDateTime.now(), 0.25D);
 
 		Assertions.assertEquals(1, result);
 

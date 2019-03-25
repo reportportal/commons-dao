@@ -36,7 +36,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -227,8 +229,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public int updateStatusById(Long itemId, JStatusEnum status) {
-		return dsl.update(TEST_ITEM_RESULTS).set(TEST_ITEM_RESULTS.STATUS, status).where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId)).execute();
+	public int updateStatusAndEndTimeAndDurationById(Long itemId, JStatusEnum status, LocalDateTime endTime, double duration) {
+		return dsl.update(TEST_ITEM_RESULTS)
+				.set(TEST_ITEM_RESULTS.STATUS, status)
+				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
+				.set(TEST_ITEM_RESULTS.DURATION, duration)
+				.where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId))
+				.execute();
 	}
 
 	/**

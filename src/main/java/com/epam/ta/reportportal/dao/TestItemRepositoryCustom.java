@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -166,10 +167,12 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
 
 	/**
-	 * @param itemId {@link TestItem#itemId}
-	 * @param status New status
+	 * @param itemId   {@link TestItem#itemId}
+	 * @param status   New status
+	 * @param endTime  {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
+	 * @param duration {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
 	 * @return 1 if updated, otherwise 0
 	 */
-	int updateStatusById(Long itemId, JStatusEnum status);
+	int updateStatusAndEndTimeAndDurationById(Long itemId, JStatusEnum status, LocalDateTime endTime, double duration);
 
 }
