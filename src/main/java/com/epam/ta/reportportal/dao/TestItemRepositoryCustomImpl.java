@@ -226,6 +226,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetch(TEST_ITEM_RECORD_MAPPER::map);
 	}
 
+	@Override
+	public int updateStatusById(Long itemId, JStatusEnum status) {
+		return dsl.update(TEST_ITEM_RESULTS).set(TEST_ITEM_RESULTS.STATUS, status).where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId)).execute();
+	}
+
 	/**
 	 * Commons select of an item with it's results and structure
 	 *

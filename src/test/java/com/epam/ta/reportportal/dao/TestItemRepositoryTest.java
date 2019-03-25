@@ -321,4 +321,14 @@ class TestItemRepositoryTest extends BaseTest {
 				retry.getPath()
 		));
 	}
+
+	@Test
+	void updateStatusByIdTest() {
+
+		int result = testItemRepository.updateStatusById(1L, JStatusEnum.CANCELLED);
+
+		Assertions.assertEquals(1, result);
+
+		Assertions.assertEquals(StatusEnum.CANCELLED, testItemRepository.findById(1L).get().getItemResults().getStatus());
+	}
 }
