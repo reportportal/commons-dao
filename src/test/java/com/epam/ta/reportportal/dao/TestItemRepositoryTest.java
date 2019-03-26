@@ -279,8 +279,8 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void identifyStatus() {
-		assertEquals(StatusEnum.FAILED, testItemRepository.identifyStatus(1L), "Incorrect status");
+	void hasDescendantsWithStatusNotEqual() {
+		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, JStatusEnum.PASSED), "Incorrect status");
 	}
 
 	@Test

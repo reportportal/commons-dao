@@ -29,7 +29,6 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
-import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,8 +158,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void getLaunchNamesTest() {
 		final String value = "launch";
-		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(
-				1L,
+		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(1L,
 				value,
 				LaunchModeEnum.DEFAULT,
 				StatusEnum.CANCELLED
@@ -214,11 +212,7 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatuses() {
-		final Boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
-				100L,
-				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
-		);
-		assertNotNull(hasItemsInStatuses);
+		final boolean hasItemsInStatuses = launchRepository.hasItemsWithStatusNotEqual(100L, JStatusEnum.FAILED);
 		assertTrue(hasItemsInStatuses);
 	}
 
@@ -240,8 +234,11 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(
-				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);

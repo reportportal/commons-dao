@@ -172,14 +172,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public StatusEnum identifyStatus(Long testItemId) {
+	public boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status) {
 		return dsl.fetchExists(dsl.selectOne()
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.where(TEST_ITEM.PARENT_ID.eq(testItemId).and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.PASSED)))) ?
-				StatusEnum.FAILED :
-				StatusEnum.PASSED;
+				.where(TEST_ITEM.PARENT_ID.eq(parentId).and(TEST_ITEM_RESULTS.STATUS.notEqual(status))));
 	}
 
 	@Override
@@ -248,10 +246,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public TestItemTypeEnum getTypeByItemId(Long itemId) {
-		return dsl.select(TEST_ITEM.TYPE)
-				.from(TEST_ITEM)
-				.where(TEST_ITEM.ITEM_ID.eq(itemId))
-				.fetchOneInto(TestItemTypeEnum.class);
+		return dsl.select(TEST_ITEM.TYPE).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId)).fetchOneInto(TestItemTypeEnum.class);
 	}
 
 	/**
