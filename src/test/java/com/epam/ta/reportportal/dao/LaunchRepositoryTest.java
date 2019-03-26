@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,6 +213,15 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatuses() {
+		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
+				100L,
+				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
+		);
+		assertTrue(hasItemsInStatuses);
+	}
+
+	@Test
+	void hasItemsWithStatusNotEqual() {
 		final boolean hasItemsInStatuses = launchRepository.hasItemsWithStatusNotEqual(100L, JStatusEnum.FAILED);
 		assertTrue(hasItemsInStatuses);
 	}

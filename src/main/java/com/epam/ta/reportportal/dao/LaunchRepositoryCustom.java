@@ -34,6 +34,8 @@ import java.util.Optional;
  */
 public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
+	boolean hasItemsInStatuses(Long launchId, List<JStatusEnum> statuses);
+
 	boolean hasItemsWithStatusNotEqual(Long launchId, JStatusEnum status);
 
 	/**
