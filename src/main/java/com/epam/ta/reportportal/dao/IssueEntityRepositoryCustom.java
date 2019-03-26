@@ -16,18 +16,20 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.item.issue.IssueEntityPojo;
+
+import java.util.List;
+
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public interface IssueEntityRepositoryCustom {
 
 	/**
-	 * @param itemId           {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
-	 * @param issueTypeId      {@link com.epam.ta.reportportal.entity.item.issue.IssueType#id}
-	 * @param description      {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity#issueDescription}
-	 * @param isAutoAnalyzed   {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity#autoAnalyzed}
-	 * @param isIgnoreAnalyzer {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity#ignoreAnalyzer}
-	 * @return 1 if inserted, otherwise 0
+	 * Method for batch inserting of the {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity}. Used for performance improvement
+	 *
+	 * @param issueEntities {@link IssueEntityPojo}
+	 * @return Number of inserted rows
 	 */
-	int insertByItemIdAndIssueTypeId(Long itemId, Long issueTypeId, String description, boolean isAutoAnalyzed, boolean isIgnoreAnalyzer);
+	int saveMultiple(List<IssueEntityPojo> issueEntities);
 }

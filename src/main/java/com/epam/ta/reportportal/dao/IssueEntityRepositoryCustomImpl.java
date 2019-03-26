@@ -16,9 +16,14 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.item.issue.IssueEntityPojo;
+import com.epam.ta.reportportal.jooq.tables.records.JIssueRecord;
 import org.jooq.DSLContext;
+import org.jooq.InsertValuesStep5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 
@@ -29,15 +34,22 @@ import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 public class IssueEntityRepositoryCustomImpl implements IssueEntityRepositoryCustom {
 
 	@Autowired
-	private DSLContext dsl;
+	private DSLContext dslContext;
 
 	@Override
-	public int insertByItemIdAndIssueTypeId(Long itemId, Long issueTypeId, String description, boolean isAutoAnalyzed, boolean isIgnoreAnalyzer) {
+	public int saveMultiple(List<IssueEntityPojo> issueEntities) {
 
-		return dsl.insertInto(ISSUE)
-				.columns(ISSUE.ISSUE_ID, ISSUE.ISSUE_TYPE, ISSUE.ISSUE_DESCRIPTION, ISSUE.AUTO_ANALYZED, ISSUE.IGNORE_ANALYZER)
-				.values(itemId, issueTypeId, description, isAutoAnalyzed, isIgnoreAnalyzer)
-				.execute();
+		InsertValuesStep5<JIssueRecord, Long, Long, String, Boolean, Boolean> columns = dslContext.insertInto(ISSUE)
+				.columns(ISSUE.ISSUE_ID, ISSUE.ISSUE_TYPE, ISSUE.ISSUE_DESCRIPTION, ISSUE.AUTO_ANALYZED, ISSUE.IGNORE_ANALYZER);
+
+		issueEntities.forEach(issue -> columns.values(issue.getItemId(),
+				issue.getIssueTypeId(),
+				issue.getDescription(),
+				issue.isAutoAnalyzed(),
+				issue.isIgnoreAnalyzer()
+		));
+
+		return columns.execute();
 
 	}
 }

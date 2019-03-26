@@ -79,5 +79,11 @@ public interface ItemAttributeRepositoryCustom {
 	 */
 	int saveByItemId(Long itemId, String key, String value, boolean isSystem);
 
-	int saveMultipleByItemId(List<ItemAttributePojo> itemAttributePojos);
+	/**
+	 * Method for batch inserting of the {@link ItemAttribute}. Used for performance improvement
+	 *
+	 * @param itemAttributes The {@link List} of the {@link ItemAttributePojo}
+	 * @return Number of inserted records
+	 */
+	int saveMultiple(List<ItemAttributePojo> itemAttributes);
 }

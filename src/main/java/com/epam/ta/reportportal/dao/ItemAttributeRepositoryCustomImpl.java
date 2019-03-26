@@ -102,12 +102,12 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public int saveMultipleByItemId(List<ItemAttributePojo> itemAttributePojos) {
+	public int saveMultiple(List<ItemAttributePojo> itemAttributes) {
 
 		InsertValuesStep4<JItemAttributeRecord, Long, String, String, Boolean> columns = dslContext.insertInto(ITEM_ATTRIBUTE)
 				.columns(ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.SYSTEM);
 
-		itemAttributePojos.forEach(pojo -> columns.values(pojo.getItemId(), pojo.getKey(), pojo.getValue(), pojo.isSystem()));
+		itemAttributes.forEach(pojo -> columns.values(pojo.getItemId(), pojo.getKey(), pojo.getValue(), pojo.isSystem()));
 
 		return columns.execute();
 	}
