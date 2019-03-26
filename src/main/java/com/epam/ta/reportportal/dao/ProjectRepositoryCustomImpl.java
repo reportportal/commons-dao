@@ -72,6 +72,11 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
+	public List<String> findAllProjectNamesByTerm(String term) {
+		return dsl.select(PROJECT.NAME).from(PROJECT).where(PROJECT.NAME.likeIgnoreCase("%" + term + "%")).fetchInto(String.class);
+	}
+
+	@Override
 	public Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(
