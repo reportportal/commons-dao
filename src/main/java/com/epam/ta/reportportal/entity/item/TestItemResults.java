@@ -52,7 +52,7 @@ public class TestItemResults implements Serializable {
 	@Column(name = "duration")
 	private Double duration;
 
-	@OneToOne(mappedBy = "testItemResults", cascade = { CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE })
+	@OneToOne(mappedBy = "testItemResults", cascade = CascadeType.ALL)
 	private IssueEntity issue;
 
 	@OneToMany(fetch = FetchType.LAZY)

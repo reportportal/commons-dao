@@ -49,7 +49,7 @@ public class IssueEntity implements Serializable {
 	@Column(name = "ignore_analyzer")
 	private boolean ignoreAnalyzer;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.MERGE)
 	@MapsId
 	@JoinColumn(name = "issue_id")
 	private TestItemResults testItemResults;
