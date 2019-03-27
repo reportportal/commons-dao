@@ -49,7 +49,9 @@ public class IssueEntity implements Serializable {
 	@Column(name = "ignore_analyzer")
 	private boolean ignoreAnalyzer;
 
-	@OneToOne(mappedBy = "issue", fetch = FetchType.LAZY)
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "issue_id")
 	private TestItemResults testItemResults;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
