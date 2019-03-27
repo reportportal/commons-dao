@@ -341,4 +341,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Assertions.assertEquals(TestItemTypeEnum.SUITE, type);
 	}
+
+	@Test
+	void hasParentWithStatus() {
+
+		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", JStatusEnum.FAILED.name());
+
+		Assertions.assertTrue(hasParentWithStatus);
+	}
 }

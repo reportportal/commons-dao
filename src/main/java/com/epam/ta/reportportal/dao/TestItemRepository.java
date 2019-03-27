@@ -134,6 +134,18 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
+	 * Checks does test item have parent with provided status.
+	 *
+	 * @param itemId   Cuttent item id
+	 * @param itemPath Current item path in a tree
+	 * @param status   {@link StatusEnum}
+	 * @return 'True' if has, otherwise 'false'
+	 */
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:status AS status_enum) LIMIT 1)", nativeQuery = true)
+	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") String status);
+
+	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
 	 * launch with provided launchId.
 	 * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
