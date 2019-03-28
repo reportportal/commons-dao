@@ -129,7 +129,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(STATISTICS)
 						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
-						.join(STATISTICS_FIELD).on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)).where(itemTypeStepCondition(includeMethods))
+						.join(STATISTICS_FIELD)
+						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.where(itemTypeStepCondition(includeMethods))
 						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
@@ -160,8 +162,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE)
-										.as(SWITCH_FLAG),
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
 								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
 						)
 						.from(LAUNCH)
@@ -169,7 +170,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS).on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)).where(itemTypeStepCondition(includeMethods))
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.where(itemTypeStepCondition(includeMethods))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
@@ -389,7 +392,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.select(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
-						LAUNCH.START_TIME,
+						LAUNCH.START_TIME, LAUNCH.STATUS,
 						field(name(STATISTICS_TABLE, SF_NAME), String.class),
 						when(field(name(STATISTICS_TABLE, SF_NAME)).equalIgnoreCase(EXECUTIONS_TOTAL),
 								field(name(STATISTICS_TABLE, STATISTICS_COUNTER)).cast(Double.class)
@@ -417,7 +420,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.unionAll(DSL.select(LAUNCH.ID,
 						LAUNCH.NAME,
 						LAUNCH.NUMBER,
-						LAUNCH.START_TIME,
+						LAUNCH.START_TIME, LAUNCH.STATUS,
 						field(name(STATISTICS_TABLE, SF_NAME), String.class),
 						round(val(PERCENTAGE_MULTIPLIER).mul(field(name(STATISTICS_TABLE, STATISTICS_COUNTER), Integer.class))
 								.div(nullif(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
@@ -852,10 +855,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				isLatest,
 				sort,
 				limit,
-				fields,
-				contentFields, customColumns
-		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()
-		));
+				fields, contentFields, customColumns
+		).orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget()));
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
