@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.widget.content;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,8 +29,20 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChartStatisticsContent extends AbstractLaunchStatisticsContent {
 
+	@Column(name = "status")
+	@JsonProperty(value = "status")
+	private String status;
+
 	@JsonProperty(value = "values")
 	private Map<String, String> values = new LinkedHashMap<>();
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public Map<String, String> getValues() {
 		return values;
