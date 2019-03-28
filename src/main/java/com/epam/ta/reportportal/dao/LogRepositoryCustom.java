@@ -59,6 +59,8 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	List<Log> findByTestItemId(Long itemId);
 
+	List<Long> findIdsByTestItemId(Long testItemId);
+
 	/**
 	 * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
 	 *
