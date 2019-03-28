@@ -160,13 +160,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
-	 * Select items with analyzed status by launch id
+	 * Select item IDs by analyzed status and launch id
 	 *
-	 * @param status   analyzed status
-	 * @param launchId launch id
-	 * @return list of items
+	 * @param status   {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
+	 * @param launchId {@link TestItem#launch} ID
+	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
+	List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}
