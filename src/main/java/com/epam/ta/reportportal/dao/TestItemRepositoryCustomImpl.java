@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
@@ -188,6 +189,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(PROJECT.ID.eq(ISSUE_TYPE_PROJECT.PROJECT_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+				.join(ISSUE_GROUP)
+				.on(Tables.ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
 				.where(PROJECT.ID.eq(projectId))
 				.fetch(ISSUE_TYPE_RECORD_MAPPER);
 	}
@@ -195,12 +198,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
 		return Optional.ofNullable(dsl.select()
-				.from(PROJECT)
+				.from(ISSUE_TYPE)
 				.join(ISSUE_TYPE_PROJECT)
-				.on(PROJECT.ID.eq(ISSUE_TYPE_PROJECT.PROJECT_ID))
-				.join(ISSUE_TYPE)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-				.where(PROJECT.ID.eq(projectId))
+				.join(ISSUE_GROUP)
+				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+				.where(ISSUE_TYPE_PROJECT.PROJECT_ID.eq(projectId))
 				.and(ISSUE_TYPE.LOCATOR.eq(locator))
 				.fetchOne(ISSUE_TYPE_RECORD_MAPPER));
 	}
