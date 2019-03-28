@@ -156,7 +156,7 @@ public class QueryBuilder {
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
 			if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID)) {
-				query.addSelect(field(criteria.getAggregateCriteria()));
+				query.addSelect(field(criteria.getAggregateCriteria()).as(criteria.getFilterCriteria()));
 			}
 			query.addOrderBy(field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
 					SortOrder.DESC :

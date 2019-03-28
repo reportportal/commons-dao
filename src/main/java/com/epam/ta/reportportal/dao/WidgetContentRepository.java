@@ -180,7 +180,7 @@ public interface WidgetContentRepository {
 	 * @param filter {@link Filter}
 	 * @param sort   {@link Sort}
 	 * @param limit  Results limit
-	 * @return List of{@link ActivityContent}
+	 * @return List of{@link ActivityResource}
 	 */
 	List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit);
 
