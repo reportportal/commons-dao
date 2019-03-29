@@ -72,15 +72,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasItemsWithStatusNotEqual(Long launchId, JStatusEnum status) {
-		return dsl.fetchExists(dsl.selectOne()
-				.from(TEST_ITEM)
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM_RESULTS.STATUS.notEqual(status))));
-	}
-
-	@Override
 	public List<Launch> findByFilter(Queryable filter) {
 		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
 	}

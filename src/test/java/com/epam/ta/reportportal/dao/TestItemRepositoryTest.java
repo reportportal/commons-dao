@@ -141,7 +141,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasStatusNotEqualsWithoutStepItem() {
-		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, "IN_PROGRESS"));
+		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, StatusEnum.IN_PROGRESS));
 	}
 
 	@Test
@@ -227,7 +227,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED.name())
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
@@ -237,7 +237,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
@@ -247,7 +247,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByNotHasChildrenAndParentIdAndStatus() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, JStatusEnum.FAILED.name())
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
@@ -257,7 +257,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, JStatusEnum.FAILED.name())
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
 				.collect(Collectors.toList());
 
@@ -344,7 +344,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void hasParentWithStatus() {
 
-		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", JStatusEnum.FAILED.name());
+		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", StatusEnum.FAILED);
 
 		Assertions.assertTrue(hasParentWithStatus);
 	}

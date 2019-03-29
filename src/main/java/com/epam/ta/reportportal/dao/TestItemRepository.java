@@ -48,8 +48,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:status as status_enum)", nativeQuery = true)
-	Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") String status);
+			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
@@ -62,10 +62,10 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:status as status_enum)"
+			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
 	Stream<BigInteger> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
-			@Param("status") String status);
+			@Param("status") StatusEnum status);
 
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
@@ -76,8 +76,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.parent_id = :parentId AND NOT test_item.has_children AND result.status = cast(:status as status_enum)", nativeQuery = true)
-	Stream<BigInteger> streamIdsByNotHasChildrenAndParentIdAndStatus(@Param("parentId") Long parentId, @Param("status") String status);
+			+ " WHERE test_item.parent_id = :parentId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndParentIdAndStatus(@Param("parentId") Long parentId, @Param("status") StatusEnum status);
 
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
@@ -90,10 +90,10 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.parent_id = :parentId AND test_item.has_children AND result.status = cast(:status as status_enum)"
+			+ " WHERE test_item.parent_id = :parentId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
 	Stream<BigInteger> streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(@Param("parentId") Long parentId,
-			@Param("status") String status);
+			@Param("status") StatusEnum status);
 
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
@@ -142,8 +142,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return 'True' if has, otherwise 'false'
 	 */
 	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
-			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:status AS status_enum) LIMIT 1)", nativeQuery = true)
-	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") String status);
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS status_enum) LIMIT 1)", nativeQuery = true)
+	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
@@ -171,8 +171,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return True if has
 	 */
 	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
-			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
+			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:#{#status.name()} as status_enum))", nativeQuery = true)
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
-			@Param("status") String status);
+			@Param("status") StatusEnum status);
 
 }

@@ -220,7 +220,7 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsWithStatusNotEqual() {
-		final boolean hasItemsInStatuses = launchRepository.hasItemsWithStatusNotEqual(100L, JStatusEnum.FAILED);
+		final boolean hasItemsInStatuses = launchRepository.hasItemsWithStatusNotEqual(100L, StatusEnum.FAILED);
 		assertTrue(hasItemsInStatuses);
 	}
 
