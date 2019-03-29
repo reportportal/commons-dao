@@ -22,6 +22,8 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.*;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +31,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
@@ -152,11 +155,16 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Sort sort) {
+
+		Set<Pair<String, Sort.Direction>> sortingSelect = Sets.newHashSet();
+
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
-			if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID)) {
+			Pair<String, Sort.Direction> sorting = Pair.of(criteria.getFilterCriteria(), order.getDirection());
+			if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID) && !sortingSelect.contains(sorting)) {
 				query.addSelect(field(criteria.getAggregateCriteria()).as(criteria.getFilterCriteria()));
+				sortingSelect.add(sorting);
 			}
 			query.addOrderBy(field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
 					SortOrder.DESC :
