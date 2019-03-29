@@ -130,7 +130,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
@@ -141,7 +141,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   {@link StatusEnum}
 	 * @return 'True' if has, otherwise 'false'
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
 			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
@@ -170,8 +170,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   status {@link com.epam.ta.reportportal.entity.enums.StatusEnum}
 	 * @return True if has
 	 */
-	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
-			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:#{#status.name()} as status_enum))", nativeQuery = true)
+	@Query(value = "select exists(select 1 from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
+			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") StatusEnum status);
 
