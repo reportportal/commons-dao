@@ -123,7 +123,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+	public List<TestItem> findAllNotInIssueByLaunch(Long launchId, String issueType) {
 		return commonTestItemDslSelect().join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE_TYPE)
@@ -131,6 +131,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
 				.fetch(TEST_ITEM_RECORD_MAPPER::map);
+	}
+
+	@Override
+	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
+				.fetchInto(Long.class);
 	}
 
 	@Override

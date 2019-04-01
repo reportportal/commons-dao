@@ -97,7 +97,17 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param issueType Issue type locator
 	 * @return List of items
 	 */
-	List<TestItem> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
+	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String issueType);
+
+	/**
+	 * Select items that has different issue from provided for
+	 * specified launch.
+	 *
+	 * @param launchId  Launch
+	 * @param issueType Issue type locator
+	 * @return List of items
+	 */
+	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
 
 	/**
 	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'

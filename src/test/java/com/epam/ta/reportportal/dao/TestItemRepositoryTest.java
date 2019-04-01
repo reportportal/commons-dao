@@ -207,14 +207,21 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void selectIdsNotInIssueByLaunch() {
-		final List<TestItem> testItems = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
+	void findAllNotInIssueByLaunch() {
+		final List<TestItem> testItems = testItemRepository.findAllNotInIssueByLaunch(1L, "pb001");
 		assertNotNull(testItems, "Ids should not be null");
 		assertTrue(!testItems.isEmpty(), "Ids should not be empty");
 		testItems.forEach(it -> assertThat("Issue locator shouldn't be 'pb001'",
 				it.getItemResults().getIssue().getIssueType().getLocator(),
 				Matchers.not(Matchers.equalTo("pb001"))
 		));
+	}
+
+	@Test
+	void selectIdsNotInIssueByLaunch() {
+		final List<Long> itemIds = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
+		assertNotNull(itemIds, "Ids should not be null");
+		assertTrue(!itemIds.isEmpty(), "Ids should not be empty");
 	}
 
 	@Test
