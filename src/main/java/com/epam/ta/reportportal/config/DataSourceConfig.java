@@ -16,9 +16,11 @@
 
 package com.epam.ta.reportportal.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -32,20 +34,14 @@ import java.io.IOException;
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @Configuration
-public class DataSourceConfig {
-
-	@Primary
-	@Bean
-	@Profile("!unittest")
-	public DataSourceProperties dataSourceProperties() {
-		return new DataSourceProperties();
-	}
+@ConfigurationProperties(prefix = "rp.datasource")
+public class DataSourceConfig extends HikariConfig {
 
 	@Primary
 	@Bean
 	@Profile("!unittest")
 	public DataSource dataSource() {
-		return dataSourceProperties().initializeDataSourceBuilder().build();
+		return new HikariDataSource(this);
 	}
 
 	@Primary
