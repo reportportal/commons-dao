@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.dao.constant;
 
-import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
+/**
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
+ */
+public final class TestItemRepositoryConstants {
 
-import java.util.List;
+	public static final String LAUNCH_ID = "launch_id";
+	public static final String ITEM_ID = "item_id";
+	public static final String HAS_CHILDREN = "has_children";
+	public static final String RETRIES_TABLE = "retries";
 
-public interface IssueEntityRepository extends ReportPortalRepository<IssueEntity, Long>, IssueEntityRepositoryCustom {
-
-	List<IssueEntity> findAllByIssueTypeId(Long id);
+	private TestItemRepositoryConstants() {
+		//static only
+	}
 }

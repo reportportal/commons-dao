@@ -17,10 +17,13 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,7 +97,17 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param issueType Issue type locator
 	 * @return List of items
 	 */
-	List<TestItem> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
+	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String issueType);
+
+	/**
+	 * Select items that has different issue from provided for
+	 * specified launch.
+	 *
+	 * @param launchId  Launch
+	 * @param issueType Issue type locator
+	 * @return List of items
+	 */
+	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
 
 	/**
 	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
@@ -128,12 +141,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
 
 	/**
-	 * Identifies status of the provided item using it's children.
+	 * Check for existence of descendants with statuses NOT EQUAL to provided status
 	 *
-	 * @param testItemId Test Item
-	 * @return Status of test item
+	 * @param parentId {@link TestItem#parent} ID
+	 * @param status   {@link JStatusEnum}
+	 * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
 	 */
-	StatusEnum identifyStatus(Long testItemId);
+	boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status);
 
 	//TODO move to project repo
 	List<IssueType> selectIssueLocatorsByProject(Long projectId);
@@ -156,11 +170,26 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
-	 * Select items with analyzed status by launch id
+	 * Select item IDs by analyzed status and launch id
 	 *
-	 * @param status   analyzed status
-	 * @param launchId launch id
-	 * @return list of items
+	 * @param status   {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
+	 * @param launchId {@link TestItem#launch} ID
+	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId);
+	List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId);
+
+	/**
+	 * @param itemId  {@link TestItem#itemId}
+	 * @param status  New status
+	 * @param endTime {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
+	 * @return 1 if updated, otherwise 0
+	 */
+	int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
+
+	/**
+	 * @param itemId {@link TestItem#itemId}
+	 * @return {@link TestItemTypeEnum}
+	 */
+	TestItemTypeEnum getTypeByItemId(Long itemId);
+
 }

@@ -21,8 +21,10 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -34,7 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.math.BigInteger;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -137,7 +141,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasStatusNotEqualsWithoutStepItem() {
-		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, "IN_PROGRESS"));
+		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, StatusEnum.IN_PROGRESS));
 	}
 
 	@Test
@@ -203,23 +207,68 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void selectIdsNotInIssueByLaunch() {
-		final List<TestItem> testItems = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
+	void findAllNotInIssueByLaunch() {
+		final List<TestItem> testItems = testItemRepository.findAllNotInIssueByLaunch(1L, "pb001");
 		assertNotNull(testItems, "Ids should not be null");
 		assertTrue(!testItems.isEmpty(), "Ids should not be empty");
-		testItems.forEach(it -> assertThat(
-				"Issue locator shouldn't be 'pb001'",
+		testItems.forEach(it -> assertThat("Issue locator shouldn't be 'pb001'",
 				it.getItemResults().getIssue().getIssueType().getLocator(),
 				Matchers.not(Matchers.equalTo("pb001"))
 		));
 	}
 
 	@Test
+	void selectIdsNotInIssueByLaunch() {
+		final List<Long> itemIds = testItemRepository.selectIdsNotInIssueByLaunch(1L, "pb001");
+		assertNotNull(itemIds, "Ids should not be null");
+		assertTrue(!itemIds.isEmpty(), "Ids should not be empty");
+	}
+
+	@Test
 	void selectByAutoAnalyzedStatus() {
-		List<TestItem> testItems = testItemRepository.selectByAutoAnalyzedStatus(false, 1L);
-		assertNotNull(testItems);
-		assertThat(testItems, Matchers.hasSize(1));
-		testItems.forEach(it -> assertThat(it.getItemResults().getIssue().getAutoAnalyzed(), Matchers.is(false)));
+		List<Long> itemIds = testItemRepository.selectIdsByAutoAnalyzedStatus(false, 1L);
+		assertNotNull(itemIds);
+		assertThat(itemIds, Matchers.hasSize(1));
+	}
+
+	@Test
+	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED)
+				.map(BigInteger::longValue)
+				.collect(Collectors.toList());
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
+				.map(BigInteger::longValue)
+				.collect(Collectors.toList());
+
+		Assertions.assertEquals(2, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByNotHasChildrenAndParentIdAndStatus() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, StatusEnum.FAILED)
+				.map(BigInteger::longValue)
+				.collect(Collectors.toList());
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
+				.map(BigInteger::longValue)
+				.collect(Collectors.toList());
+
+		Assertions.assertEquals(1, itemIds.size());
 	}
 
 	@Test
@@ -236,8 +285,8 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void identifyStatus() {
-		assertEquals(StatusEnum.FAILED, testItemRepository.identifyStatus(1L), "Incorrect status");
+	void hasDescendantsWithStatusNotEqual() {
+		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, JStatusEnum.PASSED), "Incorrect status");
 	}
 
 	@Test
@@ -276,9 +325,34 @@ class TestItemRepositoryTest extends BaseTest {
 
 		retries.stream().map(TestItem::getLaunch).forEach(Assertions::assertNull);
 		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> assertEquals(retriesParent.getItemId(), retryOf));
-		retries.forEach(retry -> assertEquals(
-				Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
+		retries.forEach(retry -> assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
 				retry.getPath()
 		));
+	}
+
+	@Test
+	void updateStatusAndEndTimeAndDurationById() {
+
+		int result = testItemRepository.updateStatusAndEndTimeById(1L, JStatusEnum.CANCELLED, LocalDateTime.now());
+
+		Assertions.assertEquals(1, result);
+
+		Assertions.assertEquals(StatusEnum.CANCELLED, testItemRepository.findById(1L).get().getItemResults().getStatus());
+	}
+
+	@Test
+	void getStatusByItemId() {
+
+		TestItemTypeEnum type = testItemRepository.getTypeByItemId(1L);
+
+		Assertions.assertEquals(TestItemTypeEnum.SUITE, type);
+	}
+
+	@Test
+	void hasParentWithStatus() {
+
+		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", StatusEnum.FAILED);
+
+		Assertions.assertTrue(hasParentWithStatus);
 	}
 }
