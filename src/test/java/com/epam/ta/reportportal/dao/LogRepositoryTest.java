@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,5 +134,11 @@ class LogRepositoryTest extends BaseTest {
 		assertNotNull(logIds, "Log ids should not be null");
 		assertTrue(!logIds.isEmpty(), "Log ids should not be empty");
 		assertEquals(7, logIds.size());
+	}
+
+	@Test
+	void findByLaunchId() {
+		List<Long> logIdsByLaunch = logRepository.findLogIdsByLaunch(1L);
+		assertEquals(7, logIdsByLaunch.size());
 	}
 }
