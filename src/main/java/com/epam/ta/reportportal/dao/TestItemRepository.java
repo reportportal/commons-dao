@@ -21,8 +21,10 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ucar.units.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -36,6 +38,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
+
+	Optional<TestItem> findTestItemByUuid(String uuid);
 
 	/**
 	 * Finds all {@link TestItem} by specified launch id

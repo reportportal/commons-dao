@@ -49,6 +49,9 @@ public class TestItem implements Serializable {
 	@Column(name = "item_id")
 	private Long itemId;
 
+	@Column(name = "uuid")
+	private String uuid;
+
 	@Column(name = "name", length = 256)
 	private String name;
 
@@ -157,6 +160,14 @@ public class TestItem implements Serializable {
 
 	public void setItemId(Long itemId) {
 		this.itemId = itemId;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {

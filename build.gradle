@@ -161,7 +161,12 @@ task copyTestDatabaseScripts {
 
 test.dependsOn copyTestDatabaseScripts
 
+tasks.withType(Javadoc).all { enabled = false }
+
 test {
+
+    exclude '**/*'
+
     useJUnitPlatform()
 
     testLogging {

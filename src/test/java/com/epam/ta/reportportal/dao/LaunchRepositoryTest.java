@@ -77,6 +77,15 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByUuid() {
+		final String uuid = "uuid 11";
+		final Optional<Launch> launch = launchRepository.findByUuid(uuid);
+		assertNotNull(launch);
+		assertTrue(launch.isPresent());
+		assertEquals(uuid, launch.get().getUuid());
+	}
+
+	@Test
 	void findLaunchIdsByProjectId() {
 		final List<Long> ids = launchRepository.findLaunchIdsByProjectId(1L);
 		assertNotNull(ids);
