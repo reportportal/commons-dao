@@ -105,6 +105,14 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	List<Integration> findAllGlobalByGroup(@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 
 	/**
+	 * Retrieve all {@link Integration} with {@link Integration#project} == null
+	 *
+	 * @return @return The {@link List} of the global {@link Integration}
+	 */
+	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL")
+	List<Integration> findAllGlobal();
+
+	/**
 	 * Find BTS integration by BTS url, BTS project name and Report Portal project id
 	 *
 	 * @param url        Bug Tracking System url

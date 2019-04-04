@@ -115,6 +115,13 @@ class IntegrationRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findAllGlobal() {
+		List<Integration> global = integrationRepository.findAllGlobal();
+		assertThat(global, hasSize(3));
+		global.forEach(it -> assertThat(it.getProject(), equalTo(null)));
+	}
+
+	@Test
 	void findAllGlobalByIntegrationGroup() {
 		List<Integration> integrations = integrationRepository.findAllGlobalByGroup(IntegrationGroupEnum.BTS);
 		assertThat(integrations, hasSize(2));
