@@ -39,7 +39,7 @@ public class IntegrationTypeRepositoryCustomImpl implements IntegrationTypeRepos
 	private DSLContext dsl;
 
 	@Override
-	public Optional<IntegrationType> findByName(String name) {
+	public Optional<IntegrationType> findAnyLike(String name) {
 		return ofNullable(dsl.select()
 				.from(INTEGRATION_TYPE)
 				.where(INTEGRATION_TYPE.NAME.likeIgnoreCase(name))
@@ -47,7 +47,7 @@ public class IntegrationTypeRepositoryCustomImpl implements IntegrationTypeRepos
 	}
 
 	@Override
-	public Optional<IntegrationType> findByNameAndIntegrationGroup(String name, IntegrationGroupEnum groupType) {
+	public Optional<IntegrationType> findAnyLikeByGroupType(String name, IntegrationGroupEnum groupType) {
 		return ofNullable(dsl.select()
 				.from(INTEGRATION_TYPE)
 				.where(INTEGRATION_TYPE.NAME.likeIgnoreCase(name))

@@ -41,34 +41,34 @@ class IntegrationTypeRepositoryTest extends BaseTest {
 	@Test
 	void shouldFindWhenNameExists() {
 
-		assertTrue(integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME).isPresent());
+		assertTrue(integrationTypeRepository.findAnyLike(JIRA_INTEGRATION_TYPE_NAME).isPresent());
 
 	}
 
 	@Test
 	void shouldNotFindWhenNameExists() {
 
-		assertFalse(integrationTypeRepository.findByName(WRONG_INTEGRATION_TYPE_NAME).isPresent());
+		assertFalse(integrationTypeRepository.findAnyLike(WRONG_INTEGRATION_TYPE_NAME).isPresent());
 	}
 
 	@Test
 	void shouldFindWhenNameExistsAndIntegrationGroupExists() {
 
-		assertTrue(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
+		assertTrue(integrationTypeRepository.findAnyLikeByGroupType(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
 				.isPresent());
 	}
 
 	@Test
 	void shouldNotFindWhenIncorrectNameAndIntegrationGroupExists() {
 
-		assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(WRONG_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
+		assertFalse(integrationTypeRepository.findAnyLikeByGroupType(WRONG_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.BTS)
 				.isPresent());
 	}
 
 	@Test
 	void shouldNotFindWhenNameExistsAndIntegrationGroupNotExists() {
 
-		assertFalse(integrationTypeRepository.findByNameAndIntegrationGroup(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.NOTIFICATION)
+		assertFalse(integrationTypeRepository.findAnyLikeByGroupType(JIRA_INTEGRATION_TYPE_NAME, IntegrationGroupEnum.NOTIFICATION)
 				.isPresent());
 	}
 

@@ -32,7 +32,7 @@ public interface IntegrationTypeRepositoryCustom {
 	 * @param name Integration name (ignoring case)
 	 * @return Optional of integration
 	 */
-	Optional<IntegrationType> findByName(String name);
+	Optional<IntegrationType> findAnyLike(String name);
 
 	/**
 	 * Searches for an integration by name (ignoring case) and group
@@ -41,5 +41,5 @@ public interface IntegrationTypeRepositoryCustom {
 	 * @param groupType Integration group
 	 * @return Optional of integration
 	 */
-	Optional<IntegrationType> findByNameAndIntegrationGroup(String name, IntegrationGroupEnum groupType);
+	Optional<IntegrationType> findAnyLikeByGroupType(String name, IntegrationGroupEnum groupType);
 }

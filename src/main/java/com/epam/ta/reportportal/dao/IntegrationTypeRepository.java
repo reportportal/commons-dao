@@ -35,4 +35,5 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 * @return @return The {@link List} of the {@link IntegrationType}
 	 */
 	List<IntegrationType> findAllByIntegrationGroup(IntegrationGroupEnum integrationGroup);
+
 }
