@@ -163,12 +163,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
 						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
-						.select()
+						.selectOne()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
 						.join(LAUNCHES)
-						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
-						.orderBy(SortUtils.TO_SORT_FIELDS.apply(pageable.getSort(), filter.getTarget())))
+						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID)))
 		);
 	}
 

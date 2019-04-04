@@ -31,6 +31,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -43,10 +44,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -165,6 +168,20 @@ class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void timelineInvestigatedStatistics() {
+
+		Filter filter = buildDefaultFilter(1L);
+
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_ITEM_ATTRIBUTE_KEY));
+
+		Sort sort = Sort.by(orderings);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.timelineInvestigatedStatistics(filter, sort, 4);
+		assertNotNull(chartStatisticsContents);
+		assertEquals(4, chartStatisticsContents.size());
+	}
+
+	@Test
 	void launchPassPerLaunchStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 
@@ -269,7 +286,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 			Map<String, Integer> testStatistics = preDefinedStatistics.get(res.getId());
 			int executionsSum = testStatistics.entrySet()
-					.stream().filter(entry -> entry.getKey().contains(EXECUTIONS_KEY) && !entry.getKey().equalsIgnoreCase(EXECUTIONS_TOTAL))
+					.stream()
+					.filter(entry -> entry.getKey().contains(EXECUTIONS_KEY) && !entry.getKey().equalsIgnoreCase(EXECUTIONS_TOTAL))
 					.mapToInt(Map.Entry::getValue)
 					.sum();
 			int defectsSum = testStatistics.entrySet()
@@ -279,7 +297,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 					.sum();
 
 			currStatistics.keySet()
-					.stream().filter(key -> key.contains(EXECUTIONS_KEY) && !key.equalsIgnoreCase(EXECUTIONS_TOTAL))
+					.stream()
+					.filter(key -> key.contains(EXECUTIONS_KEY) && !key.equalsIgnoreCase(EXECUTIONS_TOTAL))
 					.forEach(key -> assertEquals(Double.parseDouble(currStatistics.get(key)),
 							BigDecimal.valueOf((double) 100 * testStatistics.get(key) / executionsSum)
 									.setScale(2, RoundingMode.HALF_UP)
@@ -458,7 +477,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		Map<String, List<CumulativeTrendChartContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
 				contentFields,
 				sort,
-				"build", 10
+				"build",
+				10
 		);
 
 		assertNotNull(launchesStatisticsContents);
@@ -518,6 +538,378 @@ class WidgetContentRepositoryTest extends BaseTest {
 				filter);
 
 		assertNotNull(mostTimeConsumingTestCasesContents);
+	}
+
+	@Test
+	void overallStatisticsContentSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildContentFields();
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		OverallStatisticsContent overallStatisticsContent = widgetContentRepository.overallStatisticsContent(filter,
+				sort,
+				contentFields,
+				false,
+				4
+		);
+
+		assertNotNull(overallStatisticsContent);
+	}
+
+	@Test
+	void launchStatisticsSorting() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildContentFields();
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchStatistics(filter, contentFields, sort, 4);
+		assertNotNull(chartStatisticsContents);
+		assertEquals(4, chartStatisticsContents.size());
+	}
+
+	@Test
+	void investigatedStatisticsSorting() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter filter = buildDefaultFilter(1L);
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.investigatedStatistics(filter, sort, 4);
+		assertNotNull(chartStatisticsContents);
+		assertEquals(4, chartStatisticsContents.size());
+	}
+
+	@Test
+	void timelineInvestigatedStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter filter = buildDefaultFilter(1L);
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.timelineInvestigatedStatistics(filter, sort, 4);
+		assertNotNull(chartStatisticsContents);
+		assertEquals(4, chartStatisticsContents.size());
+	}
+
+	@Test
+	void launchPassPerLaunchStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name 1", CRITERIA_NAME));
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter, sort, 1);
+
+		assertNotNull(passStatisticsResult);
+	}
+
+	@Test
+	void summaryPassStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, sort, 4);
+
+		assertNotNull(passStatisticsResult);
+	}
+
+	@Test
+	void casesTrendStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		String executionContentField = "statistics$executions$total";
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.casesTrendStatistics(filter,
+				executionContentField,
+				sort,
+				4
+		);
+
+		assertNotNull(chartStatisticsContents);
+		assertEquals(4, chartStatisticsContents.size());
+
+	}
+
+	@Test
+	void bugTrendStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildTotalDefectsContentFields();
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.bugTrendStatistics(filter, contentFields, sort, 4);
+
+		assertNotNull(chartStatisticsContents);
+		assertEquals(4, chartStatisticsContents.size());
+	}
+
+	@Test
+	void launchesComparisonStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildTotalContentFields();
+		filter = filter.withConditions(Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME)));
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
+				contentFields,
+				sort,
+				2
+		);
+
+		assertNotNull(chartStatisticsContents);
+		assertEquals(2, chartStatisticsContents.size());
+
+	}
+
+	@Test
+	void launchesDurationStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<LaunchesDurationContent> launchesDurationContents = widgetContentRepository.launchesDurationStatistics(filter, sort, false, 4);
+
+		assertNotNull(launchesDurationContents);
+		assertEquals(4, launchesDurationContents.size());
+
+	}
+
+	@Test
+	void notPassedCasesStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		List<NotPassedCasesContent> notPassedCasesContents = widgetContentRepository.notPassedCasesStatistics(filter, sort, 3);
+
+		assertNotNull(notPassedCasesContents);
+		assertEquals(3, notPassedCasesContents.size());
+	}
+
+	@Test
+	void launchesTableStatisticsSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+		List<String> contentFields = buildLaunchesTableContentFields();
+
+		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
+				contentFields,
+				sort,
+				3
+		);
+		assertNotNull(launchStatisticsContents);
+		assertEquals(3, launchStatisticsContents.size());
+
+	}
+
+	@Test
+	void activityStatisticsSorting() {
+		Filter filter = buildDefaultActivityFilter(1L);
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		Sort sort = Sort.by(orders);
+		List<String> contentFields = buildActivityContentFields();
+
+		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
+				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), CRITERIA_ACTION));
+
+		List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
+
+		assertNotNull(activityContentList);
+		assertEquals(4, activityContentList.size());
+	}
+
+	@Test
+	void uniqueBugStatisticsSorting() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+
+		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
+
+		assertNotNull(uniqueBugStatistics);
+		assertEquals(3, uniqueBugStatistics.size());
+
+	}
+
+	@Test
+	@Disabled
+	void cumulativeTrendChartSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultFilter(1L);
+		List<String> contentFields = buildContentFields();
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+		Map<String, List<CumulativeTrendChartContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+				contentFields,
+				sort,
+				"build",
+				10
+		);
+
+		assertNotNull(launchesStatisticsContents);
+	}
+
+	@Test
+	void productStatusFilterGroupedWidgetSorting() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter filter = buildDefaultFilter(1L);
+
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+		Map<Filter, Sort> filterSortMapping = Maps.newLinkedHashMap();
+
+		filterSortMapping.put(buildDefaultFilter(1L), sort);
+		filterSortMapping.put(buildDefaultTestFilter(1L), sort);
+
+		Map<String, String> tags = new LinkedHashMap<>();
+		tags.put("firstColumn", "build");
+		tags.put("secondColumn", "hello");
+
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+				buildProductStatusContentFields(),
+				tags,
+				false,
+				10
+		);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	void productStatusLaunchGroupedWidgetSorting() {
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+		Filter filter = buildDefaultTestFilter(1L);
+		List<Sort.Order> orders = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+				.collect(Collectors.toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+		Sort sort = Sort.by(orders);
+		Map<String, String> tags = new LinkedHashMap<>();
+		tags.put("firstColumn", "build");
+		tags.put("secondColumn", "hello");
+
+		List<ProductStatusStatisticsContent> result = widgetContentRepository.productStatusGroupedByLaunchesStatistics(filter,
+				buildProductStatusContentFields(),
+				tags,
+				sort,
+				false,
+				10
+		);
+
+		assertNotNull(result);
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
@@ -660,7 +1052,9 @@ class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$defects$system_issue$total",
 				"statistics$defects$to_investigate$total",
 				"statistics$executions$failed",
-				"statistics$executions$skipped", "statistics$executions$passed", "statistics$executions$total"
+				"statistics$executions$skipped",
+				"statistics$executions$passed",
+				"statistics$executions$total"
 		);
 	}
 
@@ -729,8 +1123,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	private Map<Long, Map<String, Integer>> buildLaunchesComparisonStatistics() {
 		Map<Long, Map<String, Integer>> predefinedLaunchesComparisonStatistics = Maps.newLinkedHashMap();
 
-		predefinedLaunchesComparisonStatistics.put(
-				1L,
+		predefinedLaunchesComparisonStatistics.put(1L,
 				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 2)
 						.put("statistics$defects$system_issue$total", 8)
 						.put("statistics$defects$automation_bug$total", 7)
@@ -738,11 +1131,11 @@ class WidgetContentRepositoryTest extends BaseTest {
 						.put("statistics$defects$no_defect$total", 2)
 						.put("statistics$executions$passed", 3)
 						.put("statistics$executions$skipped", 4)
-						.put("statistics$executions$failed", 3).put("statistics$executions$total", 10)
+						.put("statistics$executions$failed", 3)
+						.put("statistics$executions$total", 10)
 						.build()
 		);
-		predefinedLaunchesComparisonStatistics.put(
-				2L,
+		predefinedLaunchesComparisonStatistics.put(2L,
 				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
 						.put("statistics$defects$system_issue$total", 3)
 						.put("statistics$defects$automation_bug$total", 1)
@@ -750,7 +1143,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 						.put("statistics$defects$no_defect$total", 2)
 						.put("statistics$executions$passed", 2)
 						.put("statistics$executions$skipped", 3)
-						.put("statistics$executions$failed", 6).put("statistics$executions$total", 11)
+						.put("statistics$executions$failed", 6)
+						.put("statistics$executions$total", 11)
 						.build()
 		);
 
