@@ -147,7 +147,9 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllLatestLaunchesTest() {
-		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2));
+		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L),
+				PageRequest.of(0, 2, new Sort(Sort.Direction.ASC, "number"))
+		);
 		assertNotNull(allLatestByFilter);
 		assertEquals(2, allLatestByFilter.getNumberOfElements());
 	}
@@ -155,8 +157,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void getLaunchNamesTest() {
 		final String value = "launch";
-		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(
-				1L,
+		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(1L,
 				value,
 				LaunchModeEnum.DEFAULT,
 				StatusEnum.CANCELLED
@@ -248,8 +249,11 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(
-				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);
