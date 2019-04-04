@@ -16,6 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
+
 import java.util.List;
 
 /**
@@ -58,10 +61,29 @@ public interface ItemAttributeRepositoryCustom {
 	 * Retrieves test item attribute values by launch, specified key and part of value.
 	 * Used for autocompletion functionality
 	 *
-	 * @param launchId    Id of launch
-	 * @param key       Specified key
-	 * @param value     Part of value
+	 * @param launchId Id of launch
+	 * @param key      Specified key
+	 * @param value    Part of value
 	 * @return List of matched attribute values
 	 */
 	List<String> findTestItemAttributeValues(Long launchId, String key, String value, boolean system);
+
+	/**
+	 * Save item attribute by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
+	 *
+	 * @param itemId   {@link ItemAttribute#testItem} ID
+	 * @param key      {@link ItemAttribute#key}
+	 * @param value    {@link ItemAttribute#value}
+	 * @param isSystem {@link ItemAttribute#system}
+	 * @return 1 if inserted, otherwise 0
+	 */
+	int saveByItemId(Long itemId, String key, String value, boolean isSystem);
+
+	/**
+	 * Method for batch inserting of the {@link ItemAttribute}. Used for performance improvement
+	 *
+	 * @param itemAttributes The {@link List} of the {@link ItemAttributePojo}
+	 * @return Number of inserted records
+	 */
+	int saveMultiple(List<ItemAttributePojo> itemAttributes);
 }
