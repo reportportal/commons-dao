@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.ItemAttribute;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -92,5 +93,18 @@ class ItemAttributeRepositoryTest extends BaseTest {
 		assertNotNull(values, "Should not be null");
 		assertTrue(!values.isEmpty(), "Should not be empty");
 		values.forEach(it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
+	}
+
+	@Test
+	void saveItemAttributeByItemId() {
+		int result = repository.saveByItemId(1L, "new key", "new value", false);
+
+		Assertions.assertEquals(1, result);
+
+		List<String> attributeKeys = repository.findTestItemAttributeKeys(1L, "new", false);
+
+		Assertions.assertNotNull(attributeKeys);
+		Assertions.assertFalse(attributeKeys.isEmpty());
+		Assertions.assertTrue(attributeKeys.stream().anyMatch(k -> k.equals("new key")));
 	}
 }

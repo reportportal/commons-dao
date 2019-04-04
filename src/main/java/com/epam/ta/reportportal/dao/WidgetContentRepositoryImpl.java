@@ -111,34 +111,41 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter).build())
+						.as(QueryBuilder.newBuilder(filter).with(limit).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
-								DSL.arrayAgg(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), true).otherwise(false))
+								DSL.arrayAgg(when(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class).ge(1),
+										true
+								).otherwise(false))
 										.orderBy(LAUNCH.NUMBER.asc())
 										.as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
-								DSL.sum(DSL.when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA),
-								DSL.count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
+								DSL.sum(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
+								DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
 						)
 						.from(LAUNCH)
+						.join(LAUNCHES)
+						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.join(STATISTICS)
-						.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
-						.join(STATISTICS_FIELD)
-						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+						.join(dsl.select(STATISTICS.ITEM_ID,
+								sum(when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG)
+						)
+								.from(STATISTICS)
+								.join(STATISTICS_FIELD)
+								.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+								.where(STATISTICS.ITEM_ID.isNotNull())
+								.groupBy(STATISTICS.ITEM_ID)
+								.asTable(CRITERIA_TABLE))
+						.on(TEST_ITEM.ITEM_ID.eq(fieldName(CRITERIA_TABLE, ITEM_ID).cast(Long.class)))
 						.where(itemTypeStepCondition(includeMethods))
-						.and(TEST_ITEM.LAUNCH_ID.in(dsl.select(field(name(LAUNCHES, ID)).cast(Long.class)).from(name(LAUNCHES))))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
 				.from(DSL.table(DSL.name(HISTORY)))
 				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(ZERO_QUERY_VALUE))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
-				.limit(limit)
+				.limit(MOST_FAILED_CRITERIA_LIMIT)
 				.fetchInto(CriteriaHistoryItem.class);
 	}
 
@@ -182,7 +189,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				)
 				.having(sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).gt(BigDecimal.ONE))
 				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
-				.limit(20)
+				.limit(FLAKY_CASES_LIMIT)
 				.fetchInto(FlakyCasesTableContent.class);
 	}
 
