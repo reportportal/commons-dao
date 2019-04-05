@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.activity.HistoryField;
+import com.google.common.collect.Comparators;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
@@ -185,14 +183,12 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	void findByEntityType() {
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
-				Condition.EQUALS,
-				false,
-				"LAUNCH",
+				Condition.EQUALS, false, "launch",
 				CRITERIA_ENTITY
 		));
 		assertNotNull(activities);
 		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertEquals(Activity.ActivityEntityType.LAUNCH, it.getActivityEntityType()));
+		activities.forEach(it -> assertEquals(Activity.ActivityEntityType.LAUNCH.getValue(), it.getActivityEntityType()));
 	}
 
 	@Test
@@ -255,7 +251,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	private Activity generateActivity() {
 		Activity activity = new Activity();
-		activity.setActivityEntityType(Activity.ActivityEntityType.DEFECT_TYPE);
+		activity.setActivityEntityType(Activity.ActivityEntityType.DEFECT_TYPE.getValue());
 		activity.setAction("create_defect");
 		activity.setObjectId(11L);
 		activity.setCreatedAt(LocalDateTime.now());
@@ -270,6 +266,14 @@ class ActivityRepositoryTest extends BaseTest {
 		details.setObjectName("test");
 		details.setHistory((Arrays.asList(HistoryField.of("test field", "old", "new"), HistoryField.of("test field 2", "old", "new"))));
 		return details;
+	}
+
+	@Test
+	void sortingByJoinedColumnTest() {
+		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, CRITERIA_USER));
+		Page<Activity> activitiesPage = repository.findByFilter(defaultFilter(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(activitiesPage.getContent(), Comparator.comparing(Activity::getUsername).reversed()));
 	}
 
 	private Filter filterById(long id) {

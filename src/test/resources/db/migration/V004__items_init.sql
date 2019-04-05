@@ -43,8 +43,8 @@ BEGIN
 
   WHILE launchcounter < 13
   LOOP
-    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('SUITE ' || launchcounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchcounter, launchcounter);
+    INSERT INTO test_item (has_children, name, type, start_time, description, last_modified, unique_id, launch_id)
+    VALUES (true, 'SUITE ' || launchcounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchcounter, launchcounter);
     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     INSERT INTO item_attribute (key, value, item_id, launch_id, system)
@@ -54,8 +54,8 @@ BEGIN
 
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
     --
-    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
-    VALUES ('First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchcounter, launchcounter, cur_suite_id);
+    INSERT INTO test_item (has_children, name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
+    VALUES (true, 'First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchcounter, launchcounter, cur_suite_id);
     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     INSERT INTO item_attribute (key, value, item_id, launch_id, system)

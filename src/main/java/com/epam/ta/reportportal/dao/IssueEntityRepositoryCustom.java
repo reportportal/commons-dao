@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,20 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
+import com.epam.ta.reportportal.entity.item.issue.IssueEntityPojo;
 
 import java.util.List;
 
-public interface IssueEntityRepository extends ReportPortalRepository<IssueEntity, Long>, IssueEntityRepositoryCustom {
+/**
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
+ */
+public interface IssueEntityRepositoryCustom {
 
-	List<IssueEntity> findAllByIssueTypeId(Long id);
+	/**
+	 * Method for batch inserting of the {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity}. Used for performance improvement
+	 *
+	 * @param issueEntities {@link IssueEntityPojo}
+	 * @return Number of inserted rows
+	 */
+	int saveMultiple(List<IssueEntityPojo> issueEntities);
 }

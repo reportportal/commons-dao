@@ -21,13 +21,15 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
+import static com.epam.ta.reportportal.entity.ServerSettingsConstants.SERVER_DETAILS_CONFIG_PREFIX;
 
 /**
  * @author Ivan Budaev
  */
 public enum ServerSettingsEnum {
 
-	ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all");
+	ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all"),
+	INSTANCE(SERVER_DETAILS_CONFIG_PREFIX + "instance");
 
 	private String attribute;
 

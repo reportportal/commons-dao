@@ -64,8 +64,7 @@ import static org.jooq.impl.DSL.field;
 
 public enum FilterTarget {
 
-	PROJECT_TARGET(Project.class, Arrays.asList(
-
+	PROJECT_TARGET(Project.class, Arrays.asList(new CriteriaHolder(CRITERIA_ID, PROJECT.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
@@ -97,8 +96,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(PROJECT);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID));
@@ -112,29 +115,25 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT_INFO(ProjectInfo.class,
-			Arrays.asList(new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
-					new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE,
-							PROJECT.CREATION_DATE.getQualifiedName().toString(),
-							Timestamp.class
-					),
-					new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
-					new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
-					new CriteriaHolder(LAUNCHES_QUANTITY,
-							LAUNCHES_QUANTITY,
-							DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-											.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
-									LAUNCH.ID
-							)).toString(),
-							Long.class
-					)
+	PROJECT_INFO(ProjectInfo.class, Arrays.asList(new CriteriaHolder(CRITERIA_ID, PROJECT.ID.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
+			new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
+			new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
+			new CriteriaHolder(LAUNCHES_QUANTITY,
+					LAUNCHES_QUANTITY,
+					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+							LAUNCH.ID
+					)).toString(),
+					Long.class
 			)
-	) {
+	)) {
 		@Override
 		public SelectQuery<? extends Record> getQuery() {
 			SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+			addFrom(query);
 			joinTables(query);
 			query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
 			return query;
@@ -156,8 +155,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(PROJECT);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
 			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
 		}
@@ -225,8 +228,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(USERS);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
 			query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
 		}
@@ -261,8 +268,7 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class
-			),
-			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class)
+			), new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -291,8 +297,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(LAUNCH);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, LAUNCH.USER_ID.eq(USERS.ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
@@ -386,13 +396,17 @@ public enum FilterTarget {
 		}
 
 		@Override
+		protected void addFrom(SelectQuery<? extends Record> query) {
+			query.addFrom(TEST_ITEM);
+		}
+
+		@Override
 		protected Field<Long> idField() {
 			return TEST_ITEM.ITEM_ID;
 		}
 
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
-			query.addFrom(TEST_ITEM);
 			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID));
 			query.addJoin(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID));
@@ -408,6 +422,7 @@ public enum FilterTarget {
 
 	LOG_TARGET(Log.class, Arrays.asList(
 
+			new CriteriaHolder(CRITERIA_ID, LOG.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOG_ID, LOG.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_LOG_TIME, LOG.LOG_TIME.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_LAST_MODIFIED, LOG.LAST_MODIFIED.getQualifiedName().toString(), Timestamp.class),
@@ -436,8 +451,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(LOG);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
 		}
 
@@ -451,14 +470,18 @@ public enum FilterTarget {
 
 			new CriteriaHolder(CRITERIA_ID, ACTIVITY.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_PROJECT_NAME, PROJECT.NAME.getQualifiedName().toString(), Long.class),
+			new CriteriaHolder(CRITERIA_PROJECT_NAME,
+					PROJECT.NAME.getQualifiedName().toString(),
+					DSL.max(PROJECT.NAME).toString(),
+					Long.class
+			),
 			new CriteriaHolder(CRITERIA_USER_ID, ACTIVITY.USER_ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_ENTITY, ACTIVITY.ENTITY.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_ACTION, ACTIVITY.ACTION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_LOGIN, ACTIVITY.USERNAME.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID.getQualifiedName().toString(), Long.class),
-			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), String.class),
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class),
 			new CriteriaHolder(CRITERIA_OBJECT_NAME, ACTIVITY.DETAILS.getQualifiedName().toString() + " ->> 'objectName'", String.class)
 	)) {
 		@Override
@@ -478,8 +501,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(ACTIVITY);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
 		}
@@ -492,6 +519,7 @@ public enum FilterTarget {
 
 	INTEGRATION_TARGET(Integration.class, Arrays.asList(
 
+			new CriteriaHolder(CRITERIA_ID, INTEGRATION.ID.getQualifiedName().toString(), Long.class),
 			new CriteriaHolder(CRITERIA_PROJECT_ID, INTEGRATION.PROJECT_ID.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_INTEGRATION_TYPE,
 					INTEGRATION_TYPE.GROUP_TYPE.getQualifiedName().toString(),
@@ -514,8 +542,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(INTEGRATION);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(INTEGRATION_TYPE, JoinType.JOIN, INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, INTEGRATION.PROJECT_ID.eq(PROJECT.ID));
 		}
@@ -564,8 +596,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(DASHBOARD);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(DASHBOARD_WIDGET, JoinType.LEFT_OUTER_JOIN, DASHBOARD.ID.eq(DASHBOARD_WIDGET.DASHBOARD_ID));
 			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, DASHBOARD.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
@@ -611,8 +647,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(WIDGET);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
 			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
@@ -664,8 +704,12 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(SelectQuery<? extends Record> query) {
+		protected void addFrom(SelectQuery<? extends Record> query) {
 			query.addFrom(FILTER);
+		}
+
+		@Override
+		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
 			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
@@ -693,6 +737,7 @@ public enum FilterTarget {
 
 	public SelectQuery<? extends Record> getQuery() {
 		SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
+		addFrom(query);
 		joinTables(query);
 		query.addGroupBy(idField());
 		return query;
@@ -700,17 +745,20 @@ public enum FilterTarget {
 
 	protected abstract Collection<? extends SelectField> selectFields();
 
+	protected abstract void addFrom(SelectQuery<? extends Record> query);
+
 	protected abstract void joinTables(SelectQuery<? extends Record> query);
 
 	protected abstract Field<Long> idField();
 
 	public SelectQuery<? extends Record> wrapQuery(SelectQuery<? extends Record> query) {
 		SelectQuery<Record> wrappedQuery = DSL.with(FILTERED_QUERY).as(query).select(selectFields()).getQuery();
-		joinTables(wrappedQuery);
+		addFrom(wrappedQuery);
 		wrappedQuery.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
 				JoinType.JOIN,
 				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
 		);
+		joinTables(wrappedQuery);
 		return wrappedQuery;
 	}
 
@@ -720,11 +768,12 @@ public enum FilterTarget {
 				.filter(it -> !excludingFields.contains(it.getName()))
 				.collect(Collectors.toList());
 		SelectQuery<Record> wrappedQuery = DSL.with(FILTERED_QUERY).as(query).select(fields).getQuery();
-		joinTables(wrappedQuery);
+		addFrom(wrappedQuery);
 		wrappedQuery.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
 				JoinType.JOIN,
 				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
 		);
+		joinTables(wrappedQuery);
 		return wrappedQuery;
 	}
 

@@ -124,4 +124,15 @@ class LogRepositoryTest extends BaseTest {
 		assertTrue(!logs.isEmpty(), "Logs should not be empty");
 		logs.forEach(it -> assertEquals(itemId, it.getTestItem().getItemId(), "Log has incorrect item id"));
 	}
+
+	@Test
+	void findIdsByTestItemId() {
+		final long itemId = 3L;
+
+		final List<Long> logIds = logRepository.findIdsByTestItemId(itemId);
+
+		assertNotNull(logIds, "Log ids should not be null");
+		assertTrue(!logIds.isEmpty(), "Log ids should not be empty");
+		assertEquals(7, logIds.size());
+	}
 }

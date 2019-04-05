@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,15 +182,19 @@ public class RecordMappers {
 		return attachment;
 	}).orElse(null);
 
-	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> new Log(
-			r.get(JLog.LOG.ID, Long.class),
-			r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
-			r.get(JLog.LOG.LOG_MESSAGE, String.class),
-			r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
-			r.get(JLog.LOG.LOG_LEVEL, Integer.class),
-			r.into(TestItem.class),
-			ATTACHMENT_MAPPER.map(r)
-	);
+	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
+		TestItem testItem = new TestItem();
+		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
+		return new Log(
+				r.get(JLog.LOG.ID, Long.class),
+				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
+				r.get(JLog.LOG.LOG_MESSAGE, String.class),
+				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
+				r.get(JLog.LOG.LOG_LEVEL, Integer.class),
+				testItem,
+				ATTACHMENT_MAPPER.map(r)
+		);
+	};
 
 	/**
 	 * Maps record into {@link TestItem} object
@@ -255,7 +259,7 @@ public class RecordMappers {
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setAction(r.get(ACTIVITY.ACTION));
 		activity.setUsername(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.USERNAME)));
-		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class));
+		activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, String.class));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
 		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,12 @@ import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.google.common.collect.Comparators;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +41,14 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -149,7 +149,9 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllLatestLaunchesTest() {
-		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2));
+		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L),
+				PageRequest.of(0, 2, new Sort(Sort.Direction.ASC, "number"))
+		);
 		assertNotNull(allLatestByFilter);
 		assertEquals(2, allLatestByFilter.getNumberOfElements());
 	}
@@ -157,8 +159,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void getLaunchNamesTest() {
 		final String value = "launch";
-		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(
-				1L,
+		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(1L,
 				value,
 				LaunchModeEnum.DEFAULT,
 				StatusEnum.CANCELLED
@@ -211,10 +212,18 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void identifyStatus() {
-		final Boolean failed = launchRepository.identifyStatus(100L);
-		assertNotNull(failed);
-		assertTrue(failed);
+	void hasItemsInStatuses() {
+		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
+				100L,
+				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
+		);
+		assertTrue(hasItemsInStatuses);
+	}
+
+	@Test
+	void hasItemsWithStatusNotEqual() {
+		final boolean hasItemsWithStatusNotEqual = launchRepository.hasItemsWithStatusNotEqual(100L, StatusEnum.PASSED);
+		assertTrue(hasItemsWithStatusNotEqual);
 	}
 
 	@Test
@@ -234,9 +243,27 @@ class LaunchRepositoryTest extends BaseTest {
 
 	}
 
+	@Test
+	void sortingByJoinedColumnTest() {
+		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_USER));
+		Page<Launch> launchesPage = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria(CRITERIA_ID)
+						.withValue("100")
+						.build())
+				.build(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(
-				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);

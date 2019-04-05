@@ -22,6 +22,8 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.*;
 import org.springframework.data.domain.Pageable;
@@ -29,10 +31,12 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -151,12 +155,17 @@ public class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public QueryBuilder with(Sort sort) {
-		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
 
+		Set<Pair<String, Sort.Direction>> sortingSelect = Sets.newHashSet();
+
+		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
-
-			query.addSelect(field(criteria.getAggregateCriteria()));
+			Pair<String, Sort.Direction> sorting = Pair.of(criteria.getFilterCriteria(), order.getDirection());
+			if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID) && !sortingSelect.contains(sorting)) {
+				query.addSelect(field(criteria.getAggregateCriteria()).as(criteria.getFilterCriteria()));
+				sortingSelect.add(sorting);
+			}
 			query.addOrderBy(field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
 					SortOrder.DESC :
 					SortOrder.ASC));
@@ -165,7 +174,11 @@ public class QueryBuilder {
 	}
 
 	public QueryBuilder with(Field<?> field, SortOrder sort) {
-		query.addSelect(field);
+		if (query.getSelect()
+				.stream()
+				.noneMatch(f -> String.valueOf(f.getQualifiedName()).equalsIgnoreCase(String.valueOf(field.getQualifiedName())))) {
+			query.addSelect(field);
+		}
 		query.addOrderBy(field.sort(sort));
 		return this;
 	}

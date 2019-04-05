@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -178,7 +177,7 @@ public class WidgetContentUtil {
 		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activityResource.setProjectName(r.get(PROJECT.NAME));
 		activityResource.setActionType(r.get(ACTIVITY.ACTION));
-		activityResource.setObjectType(r.get(ACTIVITY.ENTITY, Activity.ActivityEntityType.class).getValue());
+		activityResource.setObjectType(r.get(ACTIVITY.ENTITY));
 		activityResource.setLastModified(TO_DATE.apply(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class)));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
@@ -317,8 +316,7 @@ public class WidgetContentUtil {
 
 			Long launchId = record.get(TEST_ITEM.LAUNCH_ID);
 
-			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(
-					record.get(Tables.STATISTICS_FIELD.NAME),
+			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(record.get(Tables.STATISTICS_FIELD.NAME),
 					ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
 			));
 		});

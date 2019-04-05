@@ -56,12 +56,17 @@ public class WidgetContentRepositoryConstants {
 	public static final String CRITERIA = "criteria";
 	public static final String STATUS_HISTORY = "statusHistory";
 	public static final String START_TIME_HISTORY = "startTimeHistory";
+	public static final String CRITERIA_TABLE = "criteria_table";
+	public static final String CRITERIA_FLAG = "criteria_flag";
+	public static final String ITEM_ID = "item_id";
+	public static final Integer MOST_FAILED_CRITERIA_LIMIT = 20;
 
 	/* Overall statistics widget constants */
 	public static final String LAUNCHES = "launches";
 
 	/*Flaky test table widget constants*/
 	public static final String FLAKY_TABLE_RESULTS = "flaky";
+	public static final Integer FLAKY_CASES_LIMIT = 20;
 
 	/*Activity table widget constants*/
 	public static final String ACTIVITIES = "activities";

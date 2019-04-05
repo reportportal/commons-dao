@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.activity;
 
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -37,7 +36,6 @@ import java.util.Optional;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "activity", schema = "public")
 @TypeDef(name = "activityDetails", typeClass = ActivityDetails.class)
-@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 public class Activity implements Serializable {
 
 	@Id
@@ -54,10 +52,8 @@ public class Activity implements Serializable {
 	@Column(name = "project_id", nullable = false)
 	private Long projectId;
 
-	@Enumerated(EnumType.STRING)
 	@Column(name = "entity", unique = true, nullable = false)
-	@Type(type = "pqsql_enum")
-	private ActivityEntityType activityEntityType;
+	private String activityEntityType;
 
 	@Column(name = "action", nullable = false)
 	private String action;
@@ -104,11 +100,11 @@ public class Activity implements Serializable {
 		this.projectId = projectId;
 	}
 
-	public ActivityEntityType getActivityEntityType() {
+	public String getActivityEntityType() {
 		return activityEntityType;
 	}
 
-	public void setActivityEntityType(ActivityEntityType activityEntityType) {
+	public void setActivityEntityType(String activityEntityType) {
 		this.activityEntityType = activityEntityType;
 	}
 

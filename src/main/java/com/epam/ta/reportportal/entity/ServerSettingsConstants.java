@@ -22,6 +22,7 @@ package com.epam.ta.reportportal.entity;
 public final class ServerSettingsConstants {
 
 	public static final String ANALYTICS_CONFIG_PREFIX = "server.analytics.";
+	public static final String SERVER_DETAILS_CONFIG_PREFIX = "server.details.";
 
 	private ServerSettingsConstants() {
 		//static only
