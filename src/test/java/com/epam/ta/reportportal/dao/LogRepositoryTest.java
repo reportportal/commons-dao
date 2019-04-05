@@ -139,7 +139,7 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findLogIdsByLaunch(1L);
+		List<Long> logIdsByLaunch = logRepository.findIdsByLaunchId(1L);
 		assertEquals(7, logIdsByLaunch.size());
 	}
 

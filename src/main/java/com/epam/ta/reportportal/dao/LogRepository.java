@@ -17,8 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.log.Log;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -31,7 +29,4 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 
 	List<Log> findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(List<Long> testItemIds, Integer logLevel);
-
-	@Query("SELECT lo.id FROM Log lo JOIN lo.testItem ti JOIN ti.launch la WHERE la.id =:launchId")
-	List<Long> findLogIdsByLaunch(@Param("launchId") Long launchId);
 }

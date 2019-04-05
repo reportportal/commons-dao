@@ -51,8 +51,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
-import static com.epam.ta.reportportal.jooq.Tables.LOG;
-import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static java.util.Optional.ofNullable;
@@ -118,6 +117,30 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public List<Long> findIdsByTestItemIds(List<Long> itemIds) {
 		return dsl.select().from(LOG).where(LOG.ITEM_ID.in(itemIds)).fetch(LOG.ID, Long.class);
+	}
+
+	@Override
+	public List<Long> findIdsByLaunchId(Long launchId) {
+		return dsl.select()
+				.from(LOG)
+				.leftJoin(TEST_ITEM)
+				.onKey()
+				.join(LAUNCH)
+				.onKey()
+				.where(LAUNCH.ID.eq(launchId))
+				.fetch(LOG.ID, Long.class);
+	}
+
+	@Override
+	public List<Long> findIdsByLaunchIds(List<Long> launchIds) {
+		return dsl.select()
+				.from(LOG)
+				.leftJoin(TEST_ITEM)
+				.onKey()
+				.join(LAUNCH)
+				.onKey()
+				.where(LAUNCH.ID.in(launchIds))
+				.fetch(LOG.ID, Long.class);
 	}
 
 	@Override
