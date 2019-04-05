@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,6 +113,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public List<Long> findIdsByTestItemId(Long testItemId) {
 		return dsl.select(LOG.ID).from(LOG).where(LOG.ITEM_ID.eq(testItemId)).fetchInto(Long.class);
+	}
+
+	@Override
+	public List<Long> findIdsByTestItemIds(List<Long> itemIds) {
+		return dsl.select().from(LOG).where(LOG.ITEM_ID.in(itemIds)).fetch(LOG.ID, Long.class);
 	}
 
 	@Override

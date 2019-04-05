@@ -32,6 +32,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -140,5 +141,11 @@ class LogRepositoryTest extends BaseTest {
 	void findByLaunchId() {
 		List<Long> logIdsByLaunch = logRepository.findLogIdsByLaunch(1L);
 		assertEquals(7, logIdsByLaunch.size());
+	}
+
+	@Test
+	void findByItemIds() {
+		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
+		assertEquals(7, idsByTestItemIds.size());
 	}
 }
