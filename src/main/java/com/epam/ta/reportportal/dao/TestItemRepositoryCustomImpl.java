@@ -21,12 +21,15 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.DSLContext;
+import org.jooq.DatePart;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
@@ -36,7 +39,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +123,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+	public List<TestItem> findAllNotInIssueByLaunch(Long launchId, String issueType) {
 		return commonTestItemDslSelect().join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE_TYPE)
@@ -126,6 +131,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
 				.fetch(TEST_ITEM_RECORD_MAPPER::map);
+	}
+
+	@Override
+	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
+				.fetchInto(Long.class);
 	}
 
 	@Override
@@ -168,14 +188,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public StatusEnum identifyStatus(Long testItemId) {
+	public boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status) {
 		return dsl.fetchExists(dsl.selectOne()
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.where(TEST_ITEM.PARENT_ID.eq(testItemId).and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.PASSED)))) ?
-				StatusEnum.FAILED :
-				StatusEnum.PASSED;
+				.where(TEST_ITEM.PARENT_ID.eq(parentId).and(TEST_ITEM_RESULTS.STATUS.notEqual(status))));
 	}
 
 	@Override
@@ -186,6 +204,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(PROJECT.ID.eq(ISSUE_TYPE_PROJECT.PROJECT_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
+				.join(ISSUE_GROUP)
+				.on(Tables.ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
 				.where(PROJECT.ID.eq(projectId))
 				.fetch(ISSUE_TYPE_RECORD_MAPPER);
 	}
@@ -193,12 +213,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
 		return Optional.ofNullable(dsl.select()
-				.from(PROJECT)
+				.from(ISSUE_TYPE)
 				.join(ISSUE_TYPE_PROJECT)
-				.on(PROJECT.ID.eq(ISSUE_TYPE_PROJECT.PROJECT_ID))
-				.join(ISSUE_TYPE)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
-				.where(PROJECT.ID.eq(projectId))
+				.join(ISSUE_GROUP)
+				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+				.where(ISSUE_TYPE_PROJECT.PROJECT_ID.eq(projectId))
 				.and(ISSUE_TYPE.LOCATOR.eq(locator))
 				.fetchOne(ISSUE_TYPE_RECORD_MAPPER));
 	}
@@ -216,14 +236,37 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> selectByAutoAnalyzedStatus(boolean status, Long launchId) {
-		return commonTestItemDslSelect().join(ISSUE)
+	public List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(ISSUE_TYPE)
-				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE.AUTO_ANALYZED.eq(status))
-				.fetch(TEST_ITEM_RECORD_MAPPER::map);
+				.fetchInto(Long.class);
+	}
+
+	@Override
+	public int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime) {
+
+		return dsl.update(TEST_ITEM_RESULTS)
+				.set(TEST_ITEM_RESULTS.STATUS, status)
+				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
+				.set(
+						TEST_ITEM_RESULTS.DURATION,
+						dsl.select(DSL.extract(endTime, DatePart.EPOCH)
+								.minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
+								.cast(Double.class)).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId))
+				)
+				.where(TEST_ITEM_RESULTS.RESULT_ID.eq(itemId))
+				.execute();
+	}
+
+	@Override
+	public TestItemTypeEnum getTypeByItemId(Long itemId) {
+		return dsl.select(TEST_ITEM.TYPE).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId)).fetchOneInto(TestItemTypeEnum.class);
 	}
 
 	/**

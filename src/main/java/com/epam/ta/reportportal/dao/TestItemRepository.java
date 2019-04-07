@@ -16,16 +16,22 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import ucar.units.Test;
 
+import javax.persistence.QueryHint;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 /**
  * @author Pavel Bortnik
@@ -34,6 +40,62 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
 	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launch.id = :launchId")
 	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
+
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param status   {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
+			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
+	 * ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param status   {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
+			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
+			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
+	Stream<BigInteger> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
+			@Param("status") StatusEnum status);
+
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
+	 *
+	 * @param parentId {@link TestItem#parent} ID
+	 * @param status   {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
+			+ " WHERE test_item.parent_id = :parentId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndParentIdAndStatus(@Param("parentId") Long parentId, @Param("status") StatusEnum status);
+
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
+	 * ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
+	 *
+	 * @param parentId {@link TestItem#parent} ID
+	 * @param status   {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
+			+ " WHERE test_item.parent_id = :parentId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
+			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
+	Stream<BigInteger> streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(@Param("parentId") Long parentId,
+			@Param("status") StatusEnum status);
 
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
@@ -63,15 +125,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
-	/**
-	 * Execute sql-function that removes statistics of {@link TestItem} with non-null {@link TestItem#retryOf} value
-	 * of {@link Launch} with provided 'launchId'
-	 *
-	 * @param launchId Id of the {@link com.epam.ta.reportportal.entity.launch.Launch} to perform retries statistics recalculation
-	 */
-	@Query(value = "SELECT retries_statistics(:launchId)", nativeQuery = true)
-	void handleRetriesStatistics(@Param("launchId") Long launchId);
-
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
@@ -81,8 +134,20 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
+
+	/**
+	 * Checks does test item have parent with provided status.
+	 *
+	 * @param itemId   Cuttent item id
+	 * @param itemPath Current item path in a tree
+	 * @param status   {@link StatusEnum}
+	 * @return 'True' if has, otherwise 'false'
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS status_enum) LIMIT 1)", nativeQuery = true)
+	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
@@ -109,9 +174,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   status {@link com.epam.ta.reportportal.entity.enums.StatusEnum}
 	 * @return True if has
 	 */
-	@Query(value = "select exists(select from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
-			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:status as status_enum))", nativeQuery = true)
+	@Query(value = "select exists(select 1 from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
+			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
-			@Param("status") String status);
+			@Param("status") StatusEnum status);
 
 }

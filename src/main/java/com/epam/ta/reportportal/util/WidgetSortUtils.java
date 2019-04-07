@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
@@ -50,6 +51,37 @@ public final class WidgetSortUtils {
 	private WidgetSortUtils() {
 
 		//static only
+	}
+
+	public static BiFunction<Sort, String, List<SortField<Object>>> sortingTransformer(FilterTarget filterTarget) {
+		return (sort, tableName) -> ofNullable(sort).map(s -> StreamSupport.stream(sort.spliterator(), false)
+				.map(order -> transformToField(filterTarget, order, tableName).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
+	}
+
+	public static BiFunction<Sort, String, List<Field<Object>>> fieldTransformer(FilterTarget filterTarget) {
+		return (sort, tableName) -> ofNullable(sort).map(s -> StreamSupport.stream(sort.spliterator(), false)
+				.map(order -> transformToField(filterTarget, order, tableName))
+				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
+	}
+
+	private static Field<Object> transformToField(FilterTarget filterTarget, Sort.Order order, String tableName) {
+		BusinessRule.expect(filterTarget, Objects::nonNull)
+				.verify(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Provided value shouldn't be null");
+
+		String filterCriteria;
+
+		if (order.getProperty().startsWith(STATISTICS_KEY)) {
+			filterCriteria = order.getProperty();
+		} else {
+			filterCriteria = filterTarget.getCriteriaByFilter(order.getProperty())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()))
+					.getFilterCriteria();
+		}
+
+		return field(name(tableName, filterCriteria));
 	}
 
 	public static final BiFunction<Sort, FilterTarget, List<SortField<Object>>> TO_SORT_FIELDS = (sort, filterTarget) -> ofNullable(sort).map(
@@ -74,20 +106,6 @@ public final class WidgetSortUtils {
 
 				return field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC);
 			}).collect(toList())).orElseGet(Collections::emptyList);
-
-	public static final BiFunction<Sort, FilterTarget, List<Field<Object>>> TO_GROUP_FIELDS = (sort, filterTarget) -> ofNullable(sort).map(s -> StreamSupport
-			.stream(s.spliterator(), false)
-			.filter(order -> !order.getProperty().startsWith(STATISTICS_KEY))
-			.map(order -> {
-				BusinessRule.expect(filterTarget, Objects::nonNull)
-						.verify(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Provided value shouldn't be null");
-
-				CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
-						.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
-
-				return field(criteria.getQueryCriteria());
-			})
-			.collect(toList())).orElseGet(Collections::emptyList);
 
 	public static final BiFunction<String, SortField<?>, SortField<?>> CUSTOM_TABLE_SORT_CONVERTER = (table, sort) -> {
 

@@ -49,7 +49,8 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
-	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status, @Param("before") LocalDateTime before);
+	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status,
+			@Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
 			+ "AND l.project_id = :projectId ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
@@ -68,5 +69,9 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	@Query(value = "SELECT exists(SELECT 1 FROM launch JOIN test_item ON launch.id = test_item.launch_id "
 			+ "WHERE launch.id = :launchId AND test_item.has_retries LIMIT 1)", nativeQuery = true)
 	boolean hasRetries(@Param("launchId") Long launchId);
+
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
+			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
+	boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 }

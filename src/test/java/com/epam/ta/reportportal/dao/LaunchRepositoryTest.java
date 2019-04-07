@@ -25,10 +25,12 @@ import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Comparators;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +158,9 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllLatestLaunchesTest() {
-		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L), PageRequest.of(0, 2));
+		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L),
+				PageRequest.of(0, 2, new Sort(Sort.Direction.ASC, "number"))
+		);
 		assertNotNull(allLatestByFilter);
 		assertEquals(2, allLatestByFilter.getNumberOfElements());
 	}
@@ -164,8 +168,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void getLaunchNamesTest() {
 		final String value = "launch";
-		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(
-				1L,
+		List<String> launchNames = launchRepository.getLaunchNamesByModeExcludedByStatus(1L,
 				value,
 				LaunchModeEnum.DEFAULT,
 				StatusEnum.CANCELLED
@@ -218,10 +221,18 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void identifyStatus() {
-		final Boolean failed = launchRepository.identifyStatus(100L);
-		assertNotNull(failed);
-		assertTrue(failed);
+	void hasItemsInStatuses() {
+		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
+				100L,
+				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
+		);
+		assertTrue(hasItemsInStatuses);
+	}
+
+	@Test
+	void hasItemsWithStatusNotEqual() {
+		final boolean hasItemsWithStatusNotEqual = launchRepository.hasItemsWithStatusNotEqual(100L, StatusEnum.PASSED);
+		assertTrue(hasItemsWithStatusNotEqual);
 	}
 
 	@Test
@@ -257,8 +268,11 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(
-				new FilterCondition(Condition.EQUALS, false, String.valueOf(projectId), CRITERIA_PROJECT_ID),
+		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
 		return new Filter(Launch.class, conditionSet);

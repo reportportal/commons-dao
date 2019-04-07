@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.util;
 
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import org.jooq.Field;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,15 +59,6 @@ class WidgetSortUtilsTest {
 		assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
 				.filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq("statistics$defects$system_issue$si001")), 0)
 				.toString(), sortFields.get(3).getName());
-	}
-
-	@Test
-	void widgetGroupingTest() {
-		List<Field<Object>> sortFields = WidgetSortUtils.TO_GROUP_FIELDS.apply(sort, filterTarget);
-
-		assertEquals(2, sortFields.size());
-		assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
-		assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
 	}
 
 }
