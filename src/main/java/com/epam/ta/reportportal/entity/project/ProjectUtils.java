@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -33,6 +34,7 @@ import com.sun.javafx.binding.StringFormatter;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -47,6 +49,9 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class ProjectUtils {
 	public static final String INIT_FROM = "reportportal@example.com";
+	public static final String PERSONAL_PROJECT_POSTFIX_REGEX = "_personal[0-9]*$";
+	public static final String LINE_START_SYMBOL = "^";
+
 	private static final String OWNER = "OWNER";
 
 	private ProjectUtils() {
@@ -188,6 +193,12 @@ public class ProjectUtils {
 	public static Map<String, String> getConfigParameters(Set<ProjectAttribute> projectAttributes) {
 		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
 				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
+	}
+
+	public static boolean isPersonalForUser(ProjectType projectType, String projectName, String username) {
+		return projectType == ProjectType.PERSONAL && Pattern.compile(LINE_START_SYMBOL + username + PERSONAL_PROJECT_POSTFIX_REGEX)
+				.matcher(projectName)
+				.matches();
 	}
 
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {
