@@ -24,10 +24,18 @@ BEGIN
                   'DEFAULT',
                   'IN_PROGRESS');
           sameLaunchCounter = sameLaunchCounter + 1;
+          IF sameLaunchCounter % 4 = 0
+          THEN
+            INSERT INTO item_attribute(key, value, system, launch_id)
+            VALUES ('key', 'value', true, currval(pg_get_serial_sequence('launch', 'id')));
+          ELSE
+            INSERT INTO item_attribute(key, value, system, launch_id)
+            VALUES ('key', 'value', false, currval(pg_get_serial_sequence('launch', 'id')));
+          END IF;
         END LOOP;
       sameLaunchCounter = 1;
       differentLaunchesCounter = differentLaunchesCounter + 1;
     END LOOP;
 END;
 $$
-LANGUAGE plpgsql;
+  LANGUAGE plpgsql;
