@@ -133,7 +133,7 @@ class IntegrationRepositoryTest extends BaseTest {
 		Project project = new Project();
 		project.setId(1L);
 		List<Integration> integrations = integrationRepository.findAllProjectByGroup(project, IntegrationGroupEnum.BTS);
-		assertThat(integrations, hasSize(6));
+		assertThat(integrations, hasSize(4));
 	}
 
 	@Test
