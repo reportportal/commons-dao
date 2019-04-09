@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class Project implements Serializable {
 	private String organization;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
-	private Set<ProjectUser> users;
+	private Set<ProjectUser> users = Sets.newHashSet();
 
 	public Project(Long id, String name) {
 		this.id = id;

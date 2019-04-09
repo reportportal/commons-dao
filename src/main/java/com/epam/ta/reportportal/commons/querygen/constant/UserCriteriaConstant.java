@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ public final class UserCriteriaConstant {
 	public static final String CRITERIA_EMAIL = "email";
 	public static final String CRITERIA_EXPIRED = "expired";
 	public static final String CRITERIA_LAST_LOGIN = "lastLogin";
+	public static final String CRITERIA_SYNCHRONIZATION_DATE = "synchronizationDate";
 	public static final String CRITERIA_USER_PROJECT = "project";
 
 	private UserCriteriaConstant() {
