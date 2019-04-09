@@ -121,7 +121,7 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION.getQualifiedName().toString(), String.class),
 			new CriteriaHolder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE.getQualifiedName().toString(), Timestamp.class),
 			new CriteriaHolder(USERS_QUANTITY, USERS_QUANTITY, DSL.countDistinct(PROJECT_USER.USER_ID).toString(), Long.class),
-			new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Long.class),
+			new CriteriaHolder(LAST_RUN, LAST_RUN, DSL.max(LAUNCH.START_TIME).toString(), Timestamp.class),
 			new CriteriaHolder(LAUNCHES_QUANTITY,
 					LAUNCHES_QUANTITY,
 					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
