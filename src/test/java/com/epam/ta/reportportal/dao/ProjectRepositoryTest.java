@@ -128,7 +128,7 @@ class ProjectRepositoryTest extends BaseTest {
 	@Sql("/db/fill/project/expired-project-fill.sql")
 	@Test
 	void deleteOneByTypeAndLastRunBefore() {
-		int count = projectRepository.deleteOneByTypeAndLastLaunchRunBefore(ProjectType.UPSA, LocalDateTime.now().minusDays(11));
+		int count = projectRepository.deleteByTypeAndLastLaunchRunBefore(ProjectType.UPSA, LocalDateTime.now().minusDays(11), 1);
 		assertEquals(count, 1);
 		assertFalse(projectRepository.findById(100L).isPresent());
 	}

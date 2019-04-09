@@ -99,16 +99,14 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
-	public int deleteOneByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound) {
-		return dsl.deleteFrom(PROJECT)
-				.where(PROJECT.ID.eq(dsl.select(PROJECT.ID)
+	public int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound, int limit) {
+		return dsl.deleteFrom(PROJECT).where(PROJECT.ID.in(dsl.select(PROJECT.ID)
 						.from(PROJECT)
 						.join(LAUNCH)
 						.onKey()
 						.where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
 						.groupBy(PROJECT.ID, LAUNCH.ID)
-						.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound)))
-						.limit(1)))
+						.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound))).limit(limit)))
 				.execute();
 	}
 

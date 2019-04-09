@@ -67,11 +67,12 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable);
 
 	/**
-	 * Delete one project with specified {@code projectType} and last launch run before {@code bound}
+	 * Delete {@code limit} project with specified {@code projectType} and last launch run before {@code bound}
 	 *
 	 * @param projectType
 	 * @param bound
-	 * @return count of deleted projects
+	 * @param limit
+	 * @return number of deleted projects
 	 */
-	int deleteOneByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound);
+	int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound, int limit);
 }
