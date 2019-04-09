@@ -199,6 +199,10 @@ public enum FilterTarget {
 			new CriteriaHolder(CRITERIA_LAST_LOGIN,
 					"(" + USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
 					Long.class
+			), new CriteriaHolder(
+					CRITERIA_SYNCHRONIZATION_DATE,
+					"(" + USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'synchronizationDate')::DOUBLE PRECISION ",
+					Long.class
 			)
 
 	)) {

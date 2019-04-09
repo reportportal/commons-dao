@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,7 +82,6 @@ class LogRepositoryTest extends BaseTest {
 
 		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
 
-		assertNotNull(logs, "Logs should not be null");
 		assertTrue(CollectionUtils.isNotEmpty(logs), "Logs should not be empty");
 		assertEquals(3, logs.size(), "Incorrect count of logs");
 	}
@@ -134,5 +134,17 @@ class LogRepositoryTest extends BaseTest {
 		assertNotNull(logIds, "Log ids should not be null");
 		assertTrue(!logIds.isEmpty(), "Log ids should not be empty");
 		assertEquals(7, logIds.size());
+	}
+
+	@Test
+	void findByLaunchId() {
+		List<Long> logIdsByLaunch = logRepository.findIdsByLaunchId(1L);
+		assertEquals(7, logIdsByLaunch.size());
+	}
+
+	@Test
+	void findIdsByItemIds() {
+		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
+		assertEquals(7, idsByTestItemIds.size());
 	}
 }
