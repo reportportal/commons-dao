@@ -82,7 +82,6 @@ class LogRepositoryTest extends BaseTest {
 
 		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
 
-		assertNotNull(logs, "Logs should not be null");
 		assertTrue(CollectionUtils.isNotEmpty(logs), "Logs should not be empty");
 		assertEquals(3, logs.size(), "Incorrect count of logs");
 	}
