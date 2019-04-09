@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -111,6 +112,28 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
 		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+	}
+
+	@Test
+	void findAllGlobal() {
+		List<Integration> global = integrationRepository.findAllGlobal();
+		assertThat(global, hasSize(3));
+		global.forEach(it -> assertThat(it.getProject(), equalTo(null)));
+	}
+
+	@Test
+	void findAllGlobalByIntegrationGroup() {
+		List<Integration> integrations = integrationRepository.findAllGlobalByGroup(IntegrationGroupEnum.BTS);
+		assertThat(integrations, hasSize(2));
+		integrations.forEach(it -> assertThat(it.getType().getIntegrationGroup(), equalTo(IntegrationGroupEnum.BTS)));
+	}
+
+	@Test
+	void findAllProjectByIntegrationGroup() {
+		Project project = new Project();
+		project.setId(1L);
+		List<Integration> integrations = integrationRepository.findAllProjectByGroup(project, IntegrationGroupEnum.BTS);
+		assertThat(integrations, hasSize(4));
 	}
 
 	@Test

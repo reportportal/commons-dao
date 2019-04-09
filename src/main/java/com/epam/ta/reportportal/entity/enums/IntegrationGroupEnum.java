@@ -23,7 +23,8 @@ public enum IntegrationGroupEnum {
 
 	BTS,
 	NOTIFICATION,
-	AUTH;
+	AUTH,
+	OTHER;
 
 	public static Optional<IntegrationGroupEnum> findByName(String name) {
 		return Arrays.stream(IntegrationGroupEnum.values()).filter(i -> i.name().equalsIgnoreCase(name)).findAny();

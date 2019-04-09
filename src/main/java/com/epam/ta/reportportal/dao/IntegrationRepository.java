@@ -15,8 +15,10 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -84,6 +86,33 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	List<Integration> findAllGlobalByType(@Param("integrationType") IntegrationType integrationType);
 
 	/**
+	 * Retrieve all {@link Integration} with {@link Integration#project} by integration group
+	 *
+	 * @param integrationGroup {@link IntegrationType#integrationGroup}
+	 * @return @return The {@link List} of the {@link Integration}
+	 */
+	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project = :project AND t.integrationGroup = :integrationGroup")
+	List<Integration> findAllProjectByGroup(@Param("project") Project project,
+			@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
+
+	/**
+	 * Retrieve all {@link Integration} with {@link Integration#project} == null by integration group
+	 *
+	 * @param integrationGroup {@link IntegrationType#integrationGroup}
+	 * @return @return The {@link List} of the {@link Integration}
+	 */
+	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project IS NULL AND t.integrationGroup = :integrationGroup")
+	List<Integration> findAllGlobalByGroup(@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
+
+	/**
+	 * Retrieve all {@link Integration} with {@link Integration#project} == null
+	 *
+	 * @return @return The {@link List} of the global {@link Integration}
+	 */
+	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL")
+	List<Integration> findAllGlobal();
+
+	/**
 	 * Find BTS integration by BTS url, BTS project name and Report Portal project id
 	 *
 	 * @param url        Bug Tracking System url
@@ -91,7 +120,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param projectId  {@link com.epam.ta.reportportal.entity.project.Project#id}
 	 * @return The {@link Integration} wrapped in the {@link Optional}
 	 */
-	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i"
+	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i"
 			+ " WHERE (params->'params'->>'url' = :url AND params->'params'->>'project' = :btsProject"
 			+ " AND i.project_id = :projectId) LIMIT 1", nativeQuery = true)
 	Optional<Integration> findProjectBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject,
@@ -104,7 +133,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param btsProject Bug Tracking System project name
 	 * @return The {@link Integration} wrapped in the {@link Optional}
 	 */
-	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 as clazz_ FROM integration i "
+	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i "
 			+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :btsProject AND i.project_id IS NULL", nativeQuery = true)
 	Optional<Integration> findGlobalBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject);
 
