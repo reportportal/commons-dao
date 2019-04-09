@@ -143,7 +143,7 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByItemIds() {
+	void findIdsByItemIds() {
 		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
 		assertEquals(7, idsByTestItemIds.size());
 	}
