@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -40,13 +41,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class IntegrationRepositoryTest extends BaseTest {
 
 	private static final long GLOBAL_EMAIL_INTEGRATIONS_COUNT = 1L;
-	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 6L;
+	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 4L;
 	private static final long GLOBAL_BTS_INTEGRATIONS_COUNT = 2L;
 
 	private static final Long RALLY_INTEGRATION_TYPE_ID = 2L;
-	private static final Long JIRA_INTEGRATION_TYPE_ID = 3L;
+	private static final Long JIRA_INTEGRATION_TYPE_ID = 4L;
 
-	private static final Long RALLY_INTEGRATION_ID = 1L;
+	private static final Long RALLY_INTEGRATION_ID = 7L;
 	private static final Long JIRA_INTEGRATION_ID = 2L;
 
 	@Autowired
@@ -86,7 +87,7 @@ class IntegrationRepositoryTest extends BaseTest {
 		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
 		assertNotNull(integrations);
-		assertEquals(2L, integrations.size());
+		assertEquals(1L, integrations.size());
 	}
 
 	@Test
@@ -111,6 +112,28 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
 		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+	}
+
+	@Test
+	void findAllGlobal() {
+		List<Integration> global = integrationRepository.findAllGlobal();
+		assertThat(global, hasSize(3));
+		global.forEach(it -> assertThat(it.getProject(), equalTo(null)));
+	}
+
+	@Test
+	void findAllGlobalByIntegrationGroup() {
+		List<Integration> integrations = integrationRepository.findAllGlobalByGroup(IntegrationGroupEnum.BTS);
+		assertThat(integrations, hasSize(2));
+		integrations.forEach(it -> assertThat(it.getType().getIntegrationGroup(), equalTo(IntegrationGroupEnum.BTS)));
+	}
+
+	@Test
+	void findAllProjectByIntegrationGroup() {
+		Project project = new Project();
+		project.setId(1L);
+		List<Integration> integrations = integrationRepository.findAllProjectByGroup(project, IntegrationGroupEnum.BTS);
+		assertThat(integrations, hasSize(4));
 	}
 
 	@Test
