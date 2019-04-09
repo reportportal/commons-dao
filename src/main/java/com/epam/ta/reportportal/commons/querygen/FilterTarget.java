@@ -263,8 +263,12 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class
+			), new CriteriaHolder(
+					CRITERIA_ITEM_ATTRIBUTE_SYSTEM,
+					ITEM_ATTRIBUTE.SYSTEM.getQualifiedName().toString(),
+					DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString(),
+					Boolean.class
 			),
-			new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM.getQualifiedName().toString(), Boolean.class),
 			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class)
 	)) {
 		@Override
@@ -352,8 +356,12 @@ public enum FilterTarget {
 							ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 							DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 							List.class
+					), new CriteriaHolder(
+							CRITERIA_ITEM_ATTRIBUTE_SYSTEM,
+							ITEM_ATTRIBUTE.SYSTEM.getQualifiedName().toString(),
+							DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString(),
+							Boolean.class
 					),
-					new CriteriaHolder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM.getQualifiedName().toString(), Boolean.class),
 					new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class)
 			)
 	) {
