@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,7 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,9 +117,19 @@ class ProjectRepositoryTest extends BaseTest {
 	@Test
 	void findProjectInfoByFilter() {
 		final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
-				Condition.EQUALS, false, "default_personal",
+				Condition.EQUALS,
+				false,
+				"default_personal",
 				CRITERIA_PROJECT_NAME
 		), PageRequest.of(0, 10));
 		assertEquals(1, projectInfoPage.getTotalElements());
+	}
+
+	@Sql("/db/fill/project/expired-project-fill.sql")
+	@Test
+	void deleteOneByTypeAndLastRunBefore() {
+		int count = projectRepository.deleteOneByTypeAndLastLaunchRunBefore(ProjectType.UPSA, LocalDateTime.now().minusDays(11));
+		assertEquals(count, 1);
+		assertFalse(projectRepository.findById(100L).isPresent());
 	}
 }

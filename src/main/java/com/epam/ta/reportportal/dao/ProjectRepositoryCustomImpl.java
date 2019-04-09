@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.jooq.DSLContext;
@@ -28,6 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -94,4 +97,19 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
+
+	@Override
+	public int deleteOneByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound) {
+		return dsl.deleteFrom(PROJECT)
+				.where(PROJECT.ID.eq(dsl.select(PROJECT.ID)
+						.from(PROJECT)
+						.join(LAUNCH)
+						.onKey()
+						.where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
+						.groupBy(PROJECT.ID, LAUNCH.ID)
+						.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound)))
+						.limit(1)))
+				.execute();
+	}
+
 }
