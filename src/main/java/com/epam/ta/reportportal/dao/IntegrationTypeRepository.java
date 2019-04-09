@@ -20,13 +20,14 @@ import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository for {@link com.epam.ta.reportportal.entity.integration.IntegrationType} entity
  *
  * @author Yauheni_Martynau
  */
-public interface IntegrationTypeRepository extends ReportPortalRepository<IntegrationType, Long>, IntegrationTypeRepositoryCustom {
+public interface IntegrationTypeRepository extends ReportPortalRepository<IntegrationType, Long> {
 
 	/**
 	 * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
@@ -35,4 +36,13 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 * @return @return The {@link List} of the {@link IntegrationType}
 	 */
 	List<IntegrationType> findAllByIntegrationGroup(IntegrationGroupEnum integrationGroup);
+
+	/**
+	 * Find integration by name
+	 *
+	 * @param name Integration name
+	 * @return @return The {@link Optional} of the {@link IntegrationType}
+	 */
+	Optional<IntegrationType> findByName(String name);
+
 }
