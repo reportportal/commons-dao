@@ -29,20 +29,20 @@ import java.util.Optional;
  */
 public enum ProjectAttributeEnum {
 
-	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(true)),
+	NOTIFICATIONS_ENABLED("notifications$enabled", String.valueOf(true)),
 
-	INTERRUPT_JOB_TIME("job.interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
-	KEEP_LAUNCHES("job.keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
-	KEEP_LOGS("job.keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
-	KEEP_SCREENSHOTS("job.keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
+	INTERRUPT_JOB_TIME("job$interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
+	KEEP_LAUNCHES("job$keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
+	KEEP_LOGS("job$keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
+	KEEP_SCREENSHOTS("job$keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
 
-	MIN_DOC_FREQ("analyzer.minDocFreq", String.valueOf(ProjectAnalyzerConfig.MIN_DOC_FREQ)),
-	MIN_TERM_FREQ("analyzer.minTermFreq", String.valueOf(ProjectAnalyzerConfig.MIN_TERM_FREQ)),
-	MIN_SHOULD_MATCH("analyzer.minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
-	NUMBER_OF_LOG_LINES("analyzer.numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
-	INDEXING_RUNNING("analyzer.indexingRunning", String.valueOf(false)),
-	AUTO_ANALYZER_ENABLED("analyzer.isAutoAnalyzerEnabled", String.valueOf(false)),
-	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
+	MIN_DOC_FREQ("analyzer$minDocFreq", String.valueOf(ProjectAnalyzerConfig.MIN_DOC_FREQ)),
+	MIN_TERM_FREQ("analyzer$minTermFreq", String.valueOf(ProjectAnalyzerConfig.MIN_TERM_FREQ)),
+	MIN_SHOULD_MATCH("analyzer$minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
+	NUMBER_OF_LOG_LINES("analyzer$numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
+	INDEXING_RUNNING("analyzer$indexingRunning", String.valueOf(false)),
+	AUTO_ANALYZER_ENABLED("analyzer$isAutoAnalyzerEnabled", String.valueOf(false)),
+	AUTO_ANALYZER_MODE("analyzer$autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
 
 	private String attribute;
 	private String defaultValue;
