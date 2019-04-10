@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.apache.commons.collections.CollectionUtils;
@@ -108,13 +109,22 @@ class ProjectRepositoryTest extends BaseTest {
 		List<Project> projects = projectRepository.findUserProjects("default");
 		assertNotNull(projects);
 		assertEquals(1, projects.size());
+	}
 
+	@Test
+	void findUserProjectByLoginAndType() {
+		List<Project> userProjects = projectRepository.findUserProjects("superadmin", "PERSONAL");
+		assertNotNull(userProjects);
+		assertEquals(1, userProjects.size());
+		assertEquals(ProjectType.PERSONAL, userProjects.get(0).getProjectType());
 	}
 
 	@Test
 	void findProjectInfoByFilter() {
 		final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
-				Condition.EQUALS, false, "default_personal",
+				Condition.EQUALS,
+				false,
+				"default_personal",
 				CRITERIA_PROJECT_NAME
 		), PageRequest.of(0, 10));
 		assertEquals(1, projectInfoPage.getTotalElements());

@@ -187,7 +187,7 @@ BEGIN
   WHILE logscounter < 4
   LOOP
 
-    INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment(file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
     VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
     INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
@@ -199,12 +199,11 @@ BEGIN
   WHILE logscounter > 0
   LOOP
 
-    INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment(file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
     VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
-    INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
+    INSERT INTO log(log_time, log_message, item_id, last_modified, log_level, attachment_id)
     VALUES (now(), 'log', stepid, now(), 40000, (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
-
 
     logscounter = logscounter - 1;
   END LOOP;
