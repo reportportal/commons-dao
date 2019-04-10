@@ -105,8 +105,9 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						.join(LAUNCH)
 						.onKey()
 						.where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
-						.groupBy(PROJECT.ID, LAUNCH.ID)
-						.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound))).limit(limit)))
+				.groupBy(PROJECT.ID)
+				.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound)))
+				.limit(limit)))
 				.execute();
 	}
 
