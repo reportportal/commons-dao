@@ -74,8 +74,14 @@ BEGIN
       VALUES ('Step', 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchcounter, cur_item_id, launchcounter);
       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
-      INSERT INTO item_attribute (key, value, item_id, launch_id, system)
-      VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, FALSE);
+      IF stepcounter % 2 = 0
+      THEN
+        INSERT INTO item_attribute (key, value, item_id, launch_id, system)
+        VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, TRUE);
+      ELSE
+        INSERT INTO item_attribute (key, value, item_id, launch_id, system)
+        VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, FALSE);
+      END IF;
 
       IF cur_step_id = 3
       THEN

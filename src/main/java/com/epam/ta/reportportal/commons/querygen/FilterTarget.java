@@ -49,8 +49,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
@@ -268,7 +267,13 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 					DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 					List.class
-			), new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class)
+			), new CriteriaHolder(
+					CRITERIA_ITEM_ATTRIBUTE_SYSTEM,
+					ITEM_ATTRIBUTE.SYSTEM.getQualifiedName().toString(),
+					DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString(),
+					Boolean.class
+			),
+			new CriteriaHolder(CRITERIA_USER, USERS.LOGIN.getQualifiedName().toString(), DSL.max(USERS.LOGIN).toString(), String.class)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -355,6 +360,11 @@ public enum FilterTarget {
 							ITEM_ATTRIBUTE.VALUE.getQualifiedName().toString(),
 							DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString(),
 							List.class
+					), new CriteriaHolder(
+							CRITERIA_ITEM_ATTRIBUTE_SYSTEM,
+							ITEM_ATTRIBUTE.SYSTEM.getQualifiedName().toString(),
+							DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString(),
+							Boolean.class
 					),
 					new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR.getQualifiedName().toString(), String.class)
 			)
