@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,13 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -63,4 +65,14 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 * and {@link com.epam.ta.reportportal.entity.project.ProjectAttribute#value}
 	 */
 	Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable);
+
+	/**
+	 * Delete {@code limit} project with specified {@code projectType} and last launch run before {@code bound}
+	 *
+	 * @param projectType
+	 * @param bound
+	 * @param limit
+	 * @return number of deleted projects
+	 */
+	int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound, int limit);
 }

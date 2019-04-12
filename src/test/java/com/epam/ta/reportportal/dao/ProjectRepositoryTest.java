@@ -30,7 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,5 +130,13 @@ class ProjectRepositoryTest extends BaseTest {
 				CRITERIA_PROJECT_NAME
 		), PageRequest.of(0, 10));
 		assertEquals(1, projectInfoPage.getTotalElements());
+	}
+
+	@Sql("/db/fill/project/expired-project-fill.sql")
+	@Test
+	void deleteOneByTypeAndLastRunBefore() {
+		int count = projectRepository.deleteByTypeAndLastLaunchRunBefore(ProjectType.UPSA, LocalDateTime.now().minusDays(11), 1);
+		assertEquals(count, 1);
+		assertFalse(projectRepository.findById(100L).isPresent());
 	}
 }
