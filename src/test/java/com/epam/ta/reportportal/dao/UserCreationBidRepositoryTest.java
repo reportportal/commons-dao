@@ -54,9 +54,10 @@ class UserCreationBidRepositoryTest extends BaseTest {
 	void expireBidsOlderThan() {
 		final java.util.Date date = Date.from(LocalDateTime.now().minusDays(20).atZone(ZoneId.systemDefault()).toInstant());
 
-		repository.expireBidsOlderThan(date);
+		int deletedCount = repository.expireBidsOlderThan(date);
 		final List<UserCreationBid> bids = repository.findAll();
 
+		assertEquals(1, deletedCount);
 		bids.forEach(it -> assertTrue(it.getLastModified().after(date), "Incorrect date"));
 	}
 
@@ -69,5 +70,11 @@ class UserCreationBidRepositoryTest extends BaseTest {
 		assertTrue(bid.isPresent(), "User bid should exists");
 		assertEquals(adminUuid, bid.get().getUuid(), "Incorrect uuid");
 		assertEquals("superadminemail@domain.com", bid.get().getEmail(), "Incorrect email");
+	}
+
+	@Test
+	void deleteAllByEmail() {
+		int deletedCount = repository.deleteAllByEmail("defaultemail@domain.com");
+		assertEquals(2, deletedCount);
 	}
 }
