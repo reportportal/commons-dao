@@ -57,7 +57,7 @@ public class LocalDataStore implements DataStore {
 
 			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-			return targetPath.toString();
+			return Paths.get(filePath).toString();
 		} catch (IOException e) {
 
 			logger.error("Unable to save log file ", e);
@@ -71,7 +71,7 @@ public class LocalDataStore implements DataStore {
 
 		try {
 
-			return Files.newInputStream(Paths.get(filePath));
+			return Files.newInputStream(Paths.get(storageRootPath, filePath));
 		} catch (IOException e) {
 
 			logger.error("Unable to find file ", e);
@@ -85,7 +85,7 @@ public class LocalDataStore implements DataStore {
 
 		try {
 
-			Files.deleteIfExists(Paths.get(filePath));
+			Files.deleteIfExists(Paths.get(storageRootPath, filePath));
 		} catch (IOException e) {
 
 			logger.error("Unable to delete file ", e);
@@ -96,6 +96,6 @@ public class LocalDataStore implements DataStore {
 
 	@Override
 	public boolean exists(String filePath) {
-		return Files.exists(Paths.get(filePath));
+		return Files.exists(Paths.get(storageRootPath, filePath));
 	}
 }
