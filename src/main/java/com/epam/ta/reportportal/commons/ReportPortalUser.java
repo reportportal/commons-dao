@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.commons;
 
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -87,10 +88,13 @@ public class ReportPortalUser extends User {
 
 	public static class ProjectDetails implements Serializable {
 
+		@JsonProperty(value = "id")
 		private Long projectId;
 
+		@JsonProperty(value = "name")
 		private String projectName;
 
+		@JsonProperty("role")
 		private ProjectRole projectRole;
 
 		public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole) {
