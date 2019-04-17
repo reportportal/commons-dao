@@ -93,4 +93,14 @@ class DataEncoderTest {
 		assertFalse(decoded.isEmpty());
 		assertEquals(input, decoded);
 	}
+
+	@Test
+	void encodeTheSameInput() {
+		String input = "/data/path/file.ext";
+
+		String encoded1 = encoder.encode(input);
+		String encoded2 = encoder.encode(input);
+
+		assertEquals(encoded1, encoded2);
+	}
 }

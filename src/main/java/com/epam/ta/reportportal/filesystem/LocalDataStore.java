@@ -93,4 +93,9 @@ public class LocalDataStore implements DataStore {
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
 		}
 	}
+
+	@Override
+	public boolean exists(String filePath) {
+		return Files.exists(Paths.get(filePath));
+	}
 }

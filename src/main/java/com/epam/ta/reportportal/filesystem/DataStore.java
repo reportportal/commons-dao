@@ -28,4 +28,6 @@ public interface DataStore {
 	InputStream load(String filePath);
 
 	void delete(String filePath);
+
+	boolean exists(String filePath);
 }

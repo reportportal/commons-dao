@@ -23,6 +23,7 @@ import org.lokra.seaweedfs.core.FileSource;
 import org.lokra.seaweedfs.core.FileTemplate;
 import org.lokra.seaweedfs.core.file.FileHandleStatus;
 import org.lokra.seaweedfs.core.http.StreamResponse;
+import org.lokra.seaweedfs.exception.SeaweedfsFileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +64,7 @@ public class SeaweedDataStore implements DataStore {
 		try {
 
 			StreamResponse fileHandleStatus = fileTemplate.getFileStream(filePath);
+
 			return fileHandleStatus.getInputStream();
 		} catch (IOException e) {
 			logger.error("Unable to find file ", e);
@@ -81,5 +83,18 @@ public class SeaweedDataStore implements DataStore {
 			logger.error("Unable to delete file ", e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
 		}
+	}
+
+	@Override
+	public boolean exists(String filePath) {
+		FileTemplate fileTemplate = new FileTemplate(fileSource.getConnection());
+		try {
+			fileTemplate.getFileStream(filePath);
+		} catch (SeaweedfsFileNotFoundException e) {
+			return false;
+		} catch (IOException e) {
+			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST);
+		}
+		return true;
 	}
 }
