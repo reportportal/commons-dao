@@ -47,7 +47,7 @@ public class Indexes {
     public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
     public static final Index AUTH_CONFIG_PK = Indexes0.AUTH_CONFIG_PK;
-    public static final Index CONTENT_FIELD_PKEY = Indexes0.CONTENT_FIELD_PKEY;
+    public static final Index CONTENT_FIELD_WIDGET_IDX = Indexes0.CONTENT_FIELD_WIDGET_IDX;
     public static final Index DASHBOARD_PKEY = Indexes0.DASHBOARD_PKEY;
     public static final Index DASHBOARD_WIDGET_PK = Indexes0.DASHBOARD_WIDGET_PK;
     public static final Index WIDGET_ON_DASHBOARD_UNQ = Indexes0.WIDGET_ON_DASHBOARD_UNQ;
@@ -124,7 +124,6 @@ public class Indexes {
     public static final Index TICKET_SUBMITTER_IDX = Indexes0.TICKET_SUBMITTER_IDX;
     public static final Index TICKET_TICKET_ID_KEY = Indexes0.TICKET_TICKET_ID_KEY;
     public static final Index USER_BID_PROJECT_IDX = Indexes0.USER_BID_PROJECT_IDX;
-    public static final Index USER_CREATION_BID_EMAIL_KEY = Indexes0.USER_CREATION_BID_EMAIL_KEY;
     public static final Index USER_CREATION_BID_PK = Indexes0.USER_CREATION_BID_PK;
     public static final Index USER_PREFERENCE_PK = Indexes0.USER_PREFERENCE_PK;
     public static final Index USER_PREFERENCE_UQ = Indexes0.USER_PREFERENCE_UQ;
@@ -157,7 +156,7 @@ public class Indexes {
         public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
         public static Index AUTH_CONFIG_PK = Internal.createIndex("auth_config_pk", JAuthConfig.AUTH_CONFIG, new OrderField[] { JAuthConfig.AUTH_CONFIG.ID }, true);
-        public static Index CONTENT_FIELD_PKEY = Internal.createIndex("content_field_pkey", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.ID }, true);
+        public static Index CONTENT_FIELD_WIDGET_IDX = Internal.createIndex("content_field_widget_idx", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.ID }, false);
         public static Index DASHBOARD_PKEY = Internal.createIndex("dashboard_pkey", JDashboard.DASHBOARD, new OrderField[] { JDashboard.DASHBOARD.ID }, true);
         public static Index DASHBOARD_WIDGET_PK = Internal.createIndex("dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID }, true);
         public static Index WIDGET_ON_DASHBOARD_UNQ = Internal.createIndex("widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME }, true);
@@ -234,7 +233,6 @@ public class Indexes {
         public static Index TICKET_SUBMITTER_IDX = Internal.createIndex("ticket_submitter_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.SUBMITTER_ID }, false);
         public static Index TICKET_TICKET_ID_KEY = Internal.createIndex("ticket_ticket_id_key", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, true);
         public static Index USER_BID_PROJECT_IDX = Internal.createIndex("user_bid_project_idx", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID }, false);
-        public static Index USER_CREATION_BID_EMAIL_KEY = Internal.createIndex("user_creation_bid_email_key", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.EMAIL }, true);
         public static Index USER_CREATION_BID_PK = Internal.createIndex("user_creation_bid_pk", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.UUID }, true);
         public static Index USER_PREFERENCE_PK = Internal.createIndex("user_preference_pk", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.ID }, true);
         public static Index USER_PREFERENCE_UQ = Internal.createIndex("user_preference_uq", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID }, true);
