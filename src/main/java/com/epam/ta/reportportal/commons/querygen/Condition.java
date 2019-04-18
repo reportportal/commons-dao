@@ -112,7 +112,7 @@ public enum Condition {
 			/* Validate only strings */
 
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getAggregateCriteria()).likeIgnoreCase("%" + filter.getValue() + "%");
+			return field(criteriaHolder.getAggregateCriteria()).likeIgnoreCase(DSL.inline("%" + filter.getValue() + "%"));
 		}
 
 		@Override
@@ -134,7 +134,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			validate(criteriaHolder, filter.getValue(), false, INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition("\'" + filter.getValue() + "\'" + " @> " + criteriaHolder.getAggregateCriteria());
+			return DSL.condition("\'" + DSL.inline(filter.getValue()) + "\'" + " @> " + criteriaHolder.getAggregateCriteria());
 		}
 
 		@Override
@@ -615,5 +615,4 @@ public enum Condition {
 			castedValues = values;
 		}
 		return castedValues;
-	}
-}
+	}}

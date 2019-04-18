@@ -32,8 +32,8 @@ public interface UserCreationBidRepository extends ReportPortalRepository<UserCr
 	Optional<UserCreationBid> findByEmail(String email);
 
 	@Modifying
-	@Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :lastLogin")
-	void expireBidsOlderThan(@Param("lastLogin") Date lastLogin);
+	@Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :date")
+	int expireBidsOlderThan(@Param("date") Date date);
 
-
+	int deleteAllByEmail(String email);
 }
