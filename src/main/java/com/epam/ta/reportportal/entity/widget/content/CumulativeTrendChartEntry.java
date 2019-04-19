@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -10,6 +11,8 @@ public class CumulativeTrendChartEntry {
 	private String attributeValue;
 
 	private Collection<CumulativeTrendChartContent> content;
+
+	private List<CumulativeTrendChartEntry> subLevel;
 
 	public CumulativeTrendChartEntry() {
 	}
@@ -33,5 +36,13 @@ public class CumulativeTrendChartEntry {
 
 	public void setContent(Collection<CumulativeTrendChartContent> content) {
 		this.content = content;
+	}
+
+	public List<CumulativeTrendChartEntry> getSubLevel() {
+		return subLevel;
+	}
+
+	public void setSubLevel(List<CumulativeTrendChartEntry> subLevel) {
+		this.subLevel = subLevel;
 	}
 }
