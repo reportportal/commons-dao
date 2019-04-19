@@ -215,8 +215,8 @@ public interface WidgetContentRepository {
 	 * @param limit         Attributes limit
 	 * @return Map with {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()} as key and list of {@link CumulativeTrendChartContent} as value
 	 */
-	Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-			String attributeKey, int limit);
+	List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, String attributeKey,
+			int limit);
 
 	/**
 	 * Loading the product status statistics grouped by one or more {@link Filter}

@@ -70,14 +70,20 @@ BEGIN
           'FAILED');
   launch4 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
-  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.3', null, launch1, false);
-  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.3.1', null, launch2, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.12.3', null, launch1, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.9.1', null, launch2, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'passed', null, launch3, false);
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.5', null, launch3, false);
-  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.1.3', null, launch1, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.1.7.15.3', null, launch1, false);
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.3', null, launch2, false);
-  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3.2.3', null, launch3, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3.2.4.3', null, launch3, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'skipped', null, launch1, false);
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.3', null, launch4, false);
+  INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'failed', null, launch2, false);
   INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.3.2', null, launch2, false);
+
+
+
 
   INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
   VALUES (1, 'EPMRPP-322', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');

@@ -273,7 +273,7 @@ public class WidgetContentUtil {
 		return new ArrayList<>(productStatusMapping.values());
 	};
 
-	public static final Function<Result<? extends Record>, Map<String, List<CumulativeTrendChartContent>>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
+	public static final Function<Result<? extends Record>, List<CumulativeTrendChartEntry>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
 		Map<String, Map<Long, CumulativeTrendChartContent>> attributeMapping = new LinkedHashMap<>();
 
 		result.forEach(record -> {
@@ -300,17 +300,16 @@ public class WidgetContentUtil {
 
 		});
 
-		return attributeMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return attributeMapping.entrySet()
+				.stream()
+				.map(it -> new CumulativeTrendChartEntry(it.getKey(), it.getValue().values()))
+				.collect(Collectors.toCollection(LinkedList::new));
 	};
 
-	public static final BiConsumer<Map<String, List<CumulativeTrendChartContent>>, Result<? extends Record>> CUMULATIVE_STATISTICS_FETCHER = (cumulative, statisticsResult) -> {
-		Map<Long, CumulativeTrendChartContent> cumulativeDataMapping = cumulative.values()
-				.stream()
-				.flatMap(Collection::stream)
-				.collect(toMap(AbstractLaunchStatisticsContent::getId, c -> c, (prev, curr) -> prev));
+	public static final BiConsumer<List<CumulativeTrendChartEntry>, Result<? extends Record>> CUMULATIVE_STATISTICS_FETCHER = (cumulative, statisticsResult) -> {
+		Map<Long, CumulativeTrendChartContent> cumulativeDataMapping = cumulative.stream()
+				.flatMap(it -> it.getContent().stream())
+				.collect(toMap(AbstractLaunchStatisticsContent::getId, c -> c, (prev, curr) -> curr));
 
 		statisticsResult.forEach(record -> {
 

@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -626,14 +627,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<CumulativeTrendChartContent>> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+	public List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
 			String attributeKey, int limit) {
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
 		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(LAUNCHES_COUNT).with(sort).build();
 
-		Map<String, List<CumulativeTrendChartContent>> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(LAUNCHES_TABLE,
+		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(
+				fieldName(
+						LAUNCHES_TABLE,
 				LAUNCH_ID
 				),
 				fieldName(LAUNCHES_TABLE, NUMBER),
@@ -684,11 +687,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						fieldName(LAUNCHES_TABLE, START_TIME),
 						fieldName(LAUNCHES_TABLE, ATTR_ID),
 						fieldName(LAUNCHES_TABLE, ATTR_VALUE)
-				)
-				.orderBy(WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filter.getTarget())
-						.stream()
-						.map(s -> WidgetSortUtils.CUSTOM_TABLE_SORT_CONVERTER.apply(LAUNCHES_TABLE, s))
-						.collect(toList()))
+				).orderBy(DSL.when(
+						fieldName(LAUNCHES_TABLE, ATTR_VALUE).cast(String.class).likeRegex("^(\\d)(\\.\\d)*"),
+						PostgresDSL.stringToArray(fieldName(LAUNCHES_TABLE, ATTR_VALUE).cast(String.class), ".").cast(Integer[].class)
+				), fieldName(LAUNCHES_TABLE, ATTR_VALUE))
 				.fetch());
 
 		CUMULATIVE_STATISTICS_FETCHER.accept(accumulatedLaunches,
@@ -701,9 +703,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(TEST_ITEM.HAS_CHILDREN.isFalse())
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.and(TEST_ITEM.LAUNCH_ID.in(accumulatedLaunches.values()
-								.stream()
-								.flatMap(Collection::stream)
+						.and(TEST_ITEM.LAUNCH_ID.in(accumulatedLaunches.stream().flatMap(it -> it.getContent().stream())
 								.map(CumulativeTrendChartContent::getId)
 								.collect(toList())))
 						.groupBy(TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)

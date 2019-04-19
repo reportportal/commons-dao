@@ -474,7 +474,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		);
 
 		Sort sort = Sort.by(orderings);
-		Map<String, List<CumulativeTrendChartContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+		List<CumulativeTrendChartEntry> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(
+				filter,
 				contentFields,
 				sort,
 				"build",
@@ -843,7 +844,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 				.collect(Collectors.toList());
 		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
 		Sort sort = Sort.by(orders);
-		Map<String, List<CumulativeTrendChartContent>> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
+		List<CumulativeTrendChartEntry> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(
+				filter,
 				contentFields,
 				sort,
 				"build",
