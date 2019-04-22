@@ -5,12 +5,11 @@ package com.epam.ta.reportportal.jooq.enums;
 
 
 import com.epam.ta.reportportal.jooq.JPublic;
-
-import javax.annotation.Generated;
-
 import org.jooq.Catalog;
 import org.jooq.EnumType;
 import org.jooq.Schema;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -30,7 +29,9 @@ public enum JIntegrationGroupEnum implements EnumType {
 
     NOTIFICATION("NOTIFICATION"),
 
-    AUTH("AUTH");
+    AUTH("AUTH"),
+
+    OTHER("OTHER");
 
     private final String literal;
 

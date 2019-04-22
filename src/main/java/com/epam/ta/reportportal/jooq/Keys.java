@@ -185,7 +185,6 @@ public class Keys {
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = UniqueKeys0.AUTH_CONFIG_PK;
-    public static final UniqueKey<JContentFieldRecord> CONTENT_FIELD_PKEY = UniqueKeys0.CONTENT_FIELD_PKEY;
     public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = UniqueKeys0.DASHBOARD_PKEY;
     public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = UniqueKeys0.DASHBOARD_WIDGET_PK;
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
@@ -236,7 +235,6 @@ public class Keys {
     public static final UniqueKey<JTicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
     public static final UniqueKey<JTicketRecord> TICKET_TICKET_ID_KEY = UniqueKeys0.TICKET_TICKET_ID_KEY;
     public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_PK = UniqueKeys0.USER_CREATION_BID_PK;
-    public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_EMAIL_KEY = UniqueKeys0.USER_CREATION_BID_EMAIL_KEY;
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_PK = UniqueKeys0.USER_PREFERENCE_PK;
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = UniqueKeys0.USER_PREFERENCE_UQ;
     public static final UniqueKey<JUsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
@@ -261,7 +259,7 @@ public class Keys {
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JAuthConfigRecord, JLdapConfigRecord> AUTH_CONFIG__AUTH_CONFIG_LDAP_CONFIG_ID_FKEY = ForeignKeys0.AUTH_CONFIG__AUTH_CONFIG_LDAP_CONFIG_ID_FKEY;
     public static final ForeignKey<JAuthConfigRecord, JActiveDirectoryConfigRecord> AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY = ForeignKeys0.AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY;
-    public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FK = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FK;
+    public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
     public static final ForeignKey<JDashboardRecord, JShareableEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
     public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY;
     public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY;
@@ -368,7 +366,6 @@ public class Keys {
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = Internal.createUniqueKey(JAuthConfig.AUTH_CONFIG, "auth_config_pk", JAuthConfig.AUTH_CONFIG.ID);
-        public static final UniqueKey<JContentFieldRecord> CONTENT_FIELD_PKEY = Internal.createUniqueKey(JContentField.CONTENT_FIELD, "content_field_pkey", JContentField.CONTENT_FIELD.ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pkey", JDashboard.DASHBOARD.ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME);
@@ -419,7 +416,6 @@ public class Keys {
         public static final UniqueKey<JTicketRecord> TICKET_PK = Internal.createUniqueKey(JTicket.TICKET, "ticket_pk", JTicket.TICKET.ID);
         public static final UniqueKey<JTicketRecord> TICKET_TICKET_ID_KEY = Internal.createUniqueKey(JTicket.TICKET, "ticket_ticket_id_key", JTicket.TICKET.TICKET_ID);
         public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_PK = Internal.createUniqueKey(JUserCreationBid.USER_CREATION_BID, "user_creation_bid_pk", JUserCreationBid.USER_CREATION_BID.UUID);
-        public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_EMAIL_KEY = Internal.createUniqueKey(JUserCreationBid.USER_CREATION_BID, "user_creation_bid_email_key", JUserCreationBid.USER_CREATION_BID.EMAIL);
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_PK = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_pk", JUserPreference.USER_PREFERENCE.ID);
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_uq", JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID);
         public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, "users_pk", JUsers.USERS.ID);
@@ -442,7 +438,7 @@ public class Keys {
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
         public static final ForeignKey<JAuthConfigRecord, JLdapConfigRecord> AUTH_CONFIG__AUTH_CONFIG_LDAP_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LDAP_CONFIG_PK, JAuthConfig.AUTH_CONFIG, "auth_config__auth_config_ldap_config_id_fkey", JAuthConfig.AUTH_CONFIG.LDAP_CONFIG_ID);
         public static final ForeignKey<JAuthConfigRecord, JActiveDirectoryConfigRecord> AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACTIVE_DIRECTORY_CONFIG_PK, JAuthConfig.AUTH_CONFIG, "auth_config__auth_config_active_directory_config_id_fkey", JAuthConfig.AUTH_CONFIG.ACTIVE_DIRECTORY_CONFIG_ID);
-        public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fk", JContentField.CONTENT_FIELD.ID);
+        public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
         public static final ForeignKey<JDashboardRecord, JShareableEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
         public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DASHBOARD_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_dashboard_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID);
         public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_widget_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
