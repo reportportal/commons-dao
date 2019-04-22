@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAclSid extends TableImpl<JAclSidRecord> {
 
-    private static final long serialVersionUID = -949386545;
+    private static final long serialVersionUID = 2014159433;
 
     /**
      * The reference instance of <code>public.acl_sid</code>
@@ -69,7 +69,7 @@ public class JAclSid extends TableImpl<JAclSidRecord> {
     /**
      * The column <code>public.acl_sid.sid</code>.
      */
-    public final TableField<JAclSidRecord, String> SID = createField("sid", org.jooq.impl.SQLDataType.VARCHAR(100).nullable(false), this, "");
+    public final TableField<JAclSidRecord, String> SID = createField("sid", org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
      * Create a <code>public.acl_sid</code> table reference
