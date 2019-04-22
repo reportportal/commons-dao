@@ -254,8 +254,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return dsl.update(TEST_ITEM_RESULTS)
 				.set(TEST_ITEM_RESULTS.STATUS, status)
 				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
-				.set(
-						TEST_ITEM_RESULTS.DURATION,
+				.set(TEST_ITEM_RESULTS.DURATION,
 						dsl.select(DSL.extract(endTime, DatePart.EPOCH)
 								.minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
 								.cast(Double.class)).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId))
@@ -267,6 +266,46 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public TestItemTypeEnum getTypeByItemId(Long itemId) {
 		return dsl.select(TEST_ITEM.TYPE).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId)).fetchOneInto(TestItemTypeEnum.class);
+	}
+
+	@Override
+	public List<Long> selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern(Long launchId, Long issueTypeId,
+			Integer logLevel, String pattern) {
+
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
+						.and(ISSUE.ISSUE_TYPE.eq(issueTypeId))
+						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+						.and(LOG.LOG_MESSAGE.like("%" + pattern + "%")))
+				.fetchInto(Long.class);
+
+	}
+
+	@Override
+	public List<Long> selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern(Long launchId, Long issueTypeId,
+			Integer logLevel, String pattern) {
+
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
+						.and(ISSUE.ISSUE_TYPE.eq(issueTypeId))
+						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+						.and(LOG.LOG_MESSAGE.likeRegex(pattern)))
+				.fetchInto(Long.class);
+
 	}
 
 	/**
@@ -304,8 +343,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
 
 		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
-			RETRIES_FETCHER.accept(
-					items,
+			RETRIES_FETCHER.accept(items,
 					dsl.select()
 							.from(TEST_ITEM)
 							.join(TEST_ITEM_RESULTS)

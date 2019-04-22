@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -102,6 +103,9 @@ public class TestItem implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "retry_of")
 	private Set<TestItem> retries = Sets.newLinkedHashSet();
+
+	@OneToMany(mappedBy = "testItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<PatternTemplateTestItem> patternTemplateTestItems = Sets.newHashSet();
 
 	@Column(name = "has_children")
 	private boolean hasChildren;
@@ -269,6 +273,14 @@ public class TestItem implements Serializable {
 
 	public void setRetries(Set<TestItem> retries) {
 		this.retries = retries;
+	}
+
+	public Set<PatternTemplateTestItem> getPatternTemplateTestItems() {
+		return patternTemplateTestItems;
+	}
+
+	public void setPatternTemplateTestItems(Set<PatternTemplateTestItem> patternTemplateTestItems) {
+		this.patternTemplateTestItems = patternTemplateTestItems;
 	}
 
 	public boolean isHasRetries() {

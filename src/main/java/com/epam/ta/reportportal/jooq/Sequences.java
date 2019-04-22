@@ -129,6 +129,11 @@ public class Sequences {
     public static final Sequence<Integer> OAUTH_REGISTRATION_SCOPE_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_scope_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
 
     /**
+     * The sequence <code>public.pattern_template_id_seq</code>
+     */
+    public static final Sequence<Long> PATTERN_TEMPLATE_ID_SEQ = new SequenceImpl<Long>("pattern_template_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
      * The sequence <code>public.project_attribute_attribute_id_seq</code>
      */
     public static final Sequence<Long> PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("project_attribute_attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));

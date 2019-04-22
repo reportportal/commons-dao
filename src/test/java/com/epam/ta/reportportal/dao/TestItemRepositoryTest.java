@@ -147,6 +147,28 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern() {
+		List<Long> itemIds = testItemRepository.selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern(1L,
+				1L,
+				40000,
+				"%o%"
+		);
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
+	void selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern() {
+		List<Long> itemIds = testItemRepository.selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern(1L,
+				1L,
+				40000,
+				"[a-z]{3,3}"
+		);
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
 	void selectAllDescendants() {
 		final Long itemId = 2L;
 		final List<TestItem> items = testItemRepository.selectAllDescendants(itemId);
