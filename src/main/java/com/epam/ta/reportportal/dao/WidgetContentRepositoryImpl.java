@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
-import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -644,54 +643,36 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(LAUNCHES_TABLE, START_TIME),
 				fieldName(LAUNCHES_TABLE, ATTR_ID),
 				fieldName(LAUNCHES_TABLE, ATTR_VALUE)
-		)
-				.from(dsl.with(LAUNCHES)
+		).from(dsl.with(LAUNCHES)
+				.as(selectQuery)
+				.selectDistinct(LAUNCH.ID.as(LAUNCH_ID),
+						LAUNCH.NAME,
+						LAUNCH.NUMBER,
+						LAUNCH.START_TIME,
+						ITEM_ATTRIBUTE.ID.as(ATTR_ID),
+						ITEM_ATTRIBUTE.VALUE.as(ATTR_VALUE)
+				)
+				.on(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
+				.from(LAUNCH)
+				.join(LAUNCHES)
+				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
+				.join(ITEM_ATTRIBUTE)
+				.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
+				.and(ITEM_ATTRIBUTE.VALUE.in(dsl.with(LAUNCHES)
 						.as(selectQuery)
-						.selectDistinct(LAUNCH.ID.as(LAUNCH_ID),
-								LAUNCH.NAME,
-								LAUNCH.NUMBER,
-								LAUNCH.START_TIME,
-								ITEM_ATTRIBUTE.ID.as(ATTR_ID),
-								ITEM_ATTRIBUTE.VALUE.as(ATTR_VALUE)
-						)
-						.on(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
-						.from(LAUNCH)
+						.selectDistinct(ITEM_ATTRIBUTE.VALUE)
+						.from(ITEM_ATTRIBUTE)
 						.join(LAUNCHES)
-						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
-						.join(ITEM_ATTRIBUTE)
-						.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 						.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
-						.and(ITEM_ATTRIBUTE.VALUE.in(dsl.with(LAUNCHES)
-								.as(selectQuery)
-								.selectDistinct(ITEM_ATTRIBUTE.VALUE)
-								.from(ITEM_ATTRIBUTE)
-								.join(LAUNCHES)
-								.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-								.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
-								.limit(limit)))
-						.orderBy(Lists.newArrayList(LAUNCH.NAME.sort(SortOrder.ASC),
-								ITEM_ATTRIBUTE.VALUE.sort(SortOrder.DESC),
-								LAUNCH.START_TIME.sort(SortOrder.DESC)
-						))
-						.asTable(LAUNCHES_TABLE))
-				.leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER), STATISTICS_FIELD.NAME.as(SF_NAME))
-						.from(STATISTICS)
-						.join(STATISTICS_FIELD)
-						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-						.where(STATISTICS_FIELD.NAME.in(statisticsFields))
-						.asTable(STATISTICS_TABLE))
-				.on(fieldName(LAUNCHES_TABLE, LAUNCH_ID).cast(Long.class).eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.groupBy(fieldName(LAUNCHES_TABLE, LAUNCH_ID),
-						fieldName(LAUNCHES_TABLE, NUMBER),
-						fieldName(LAUNCHES_TABLE, NAME),
-						fieldName(LAUNCHES_TABLE, START_TIME),
-						fieldName(LAUNCHES_TABLE, ATTR_ID),
-						fieldName(LAUNCHES_TABLE, ATTR_VALUE)
-				).orderBy(DSL.when(
-						fieldName(LAUNCHES_TABLE, ATTR_VALUE).cast(String.class).likeRegex("^(\\d)(\\.\\d)*"),
-						PostgresDSL.stringToArray(fieldName(LAUNCHES_TABLE, ATTR_VALUE).cast(String.class), ".").cast(Integer[].class)
-				), fieldName(LAUNCHES_TABLE, ATTR_VALUE))
-				.fetch());
+						.orderBy(ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
+						.limit(limit)))
+				.orderBy(Lists.newArrayList(LAUNCH.NAME.sort(SortOrder.ASC),
+						ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC),
+						LAUNCH.START_TIME.sort(SortOrder.DESC)
+				))
+				.asTable(LAUNCHES_TABLE)).fetch());
 
 		CUMULATIVE_STATISTICS_FETCHER.accept(accumulatedLaunches,
 				dsl.select(DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER), TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
