@@ -277,9 +277,8 @@ public class WidgetContentUtil {
 		Map<String, Map<Long, CumulativeTrendChartContent>> attributeMapping = new LinkedHashMap<>();
 
 		result.forEach(record -> {
-
 			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
-			String attributeValue = record.get(fieldName(LAUNCHES_TABLE, ATTR_VALUE), String.class);
+			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
 			if (attributeMapping.containsKey(attributeValue)) {
 				cumulativeTrendMapper = attributeMapping.get(attributeValue);
 			} else {
@@ -288,16 +287,15 @@ public class WidgetContentUtil {
 			}
 
 			CumulativeTrendChartContent content;
-			Long launchId = record.get(fieldName(LAUNCHES_TABLE, LAUNCH_ID), Long.class);
+			Long launchId = record.get(LAUNCH.ID, Long.class);
 			if (!cumulativeTrendMapper.containsKey(launchId)) {
 				content = new CumulativeTrendChartContent();
 				content.setId(launchId);
-				content.setName(record.get(fieldName(LAUNCHES_TABLE, NAME), String.class));
-				content.setNumber(record.get(fieldName(LAUNCHES_TABLE, NUMBER), Integer.class));
-				content.setStartTime(record.get(fieldName(LAUNCHES_TABLE, START_TIME), Timestamp.class));
+				content.setName(record.get(LAUNCH.NAME, String.class));
+				content.setNumber(record.get(LAUNCH.NUMBER, Integer.class));
+				content.setStartTime(record.get(LAUNCH.START_TIME, Timestamp.class));
 				cumulativeTrendMapper.put(launchId, content);
 			}
-
 		});
 
 		return attributeMapping.entrySet()

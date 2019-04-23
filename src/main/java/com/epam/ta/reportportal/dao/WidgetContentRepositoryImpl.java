@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -629,30 +630,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
 			String attributeKey, int limit) {
 
-		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
+		String versionPattern = "^(\\d)(\\.d)*";
+		String versionDelimiter = ".";
 
 		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(LAUNCHES_COUNT).with(sort).build();
 
-		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(
-				fieldName(
-						LAUNCHES_TABLE,
-				LAUNCH_ID
-				),
-				fieldName(LAUNCHES_TABLE, NUMBER),
-				fieldName(LAUNCHES_TABLE, NAME),
-				fieldName(LAUNCHES_TABLE, START_TIME),
-				fieldName(LAUNCHES_TABLE, ATTR_ID),
-				fieldName(LAUNCHES_TABLE, ATTR_VALUE)
-		).from(dsl.with(LAUNCHES)
-				.as(selectQuery)
-				.selectDistinct(LAUNCH.ID.as(LAUNCH_ID),
-						LAUNCH.NAME,
-						LAUNCH.NUMBER,
-						LAUNCH.START_TIME,
-						ITEM_ATTRIBUTE.ID.as(ATTR_ID),
-						ITEM_ATTRIBUTE.VALUE.as(ATTR_VALUE)
-				)
-				.on(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
+		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(selectQuery).select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, LAUNCH.START_TIME, ITEM_ATTRIBUTE.VALUE)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
@@ -661,18 +645,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
 				.and(ITEM_ATTRIBUTE.VALUE.in(dsl.with(LAUNCHES)
 						.as(selectQuery)
-						.selectDistinct(ITEM_ATTRIBUTE.VALUE)
+						.select(ITEM_ATTRIBUTE.VALUE)
 						.from(ITEM_ATTRIBUTE)
 						.join(LAUNCHES)
 						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 						.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
-						.orderBy(ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
-						.limit(limit)))
-				.orderBy(Lists.newArrayList(LAUNCH.NAME.sort(SortOrder.ASC),
-						ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC),
+						.groupBy(ITEM_ATTRIBUTE.VALUE)
+						.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
+								PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
+						), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
+						.limit(limit))).groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE, LAUNCH.ID).orderBy(Lists.newArrayList(DSL.when(
+						ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
+						PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
+						),
+						ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC), LAUNCH.NAME.sort(SortOrder.ASC),
 						LAUNCH.START_TIME.sort(SortOrder.DESC)
-				))
-				.asTable(LAUNCHES_TABLE)).fetch());
+				)).fetch());
 
 		CUMULATIVE_STATISTICS_FETCHER.accept(accumulatedLaunches,
 				dsl.select(DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER), TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
