@@ -103,6 +103,7 @@ public class WidgetContentRepositoryConstants {
 	public static final Integer LAUNCHES_COUNT = 150;
 	public static final String LAUNCHES_TABLE = "launches_table";
 	public static final String START_TIME = "start_time";
+	public static final String LATEST_NUMBER = "latest_number";
 
 	/*Product status widget constants*/
 	public static final String ATTRIBUTE_VALUE = "attribute_value";

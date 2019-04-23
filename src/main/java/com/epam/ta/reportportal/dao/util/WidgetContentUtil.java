@@ -278,7 +278,7 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
-			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+			String attributeValue = record.get(fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE), String.class);
 			if (attributeMapping.containsKey(attributeValue)) {
 				cumulativeTrendMapper = attributeMapping.get(attributeValue);
 			} else {
