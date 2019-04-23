@@ -25,8 +25,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -43,5 +41,21 @@ class PatternTemplateRepositoryTest extends BaseTest {
 
 		Assertions.assertNotNull(allByProjectIdAndEnabled);
 		Assertions.assertEquals(2, allByProjectIdAndEnabled.size());
+	}
+
+	@Test
+	void existsByProjectIdAndNameIgnoreCasePositive() {
+
+		boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "nAmE1");
+
+		Assertions.assertTrue(exists);
+	}
+
+	@Test
+	void existsByProjectIdAndNameIgnoreCaseNagative() {
+
+		boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "name1 ");
+
+		Assertions.assertFalse(exists);
 	}
 }

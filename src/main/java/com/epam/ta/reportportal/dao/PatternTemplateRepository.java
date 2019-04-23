@@ -26,4 +26,6 @@ import java.util.List;
 public interface PatternTemplateRepository extends ReportPortalRepository<PatternTemplate, Long>, PatternTemplateRepositoryCustom {
 
 	List<PatternTemplate> findAllByProjectIdAndEnabled(Long projectId, boolean enabled);
+
+	boolean existsByProjectIdAndNameIgnoreCase(Long projectId, String name);
 }
