@@ -16,14 +16,32 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface PatternTemplateRepository extends ReportPortalRepository<PatternTemplate, Long>, PatternTemplateRepositoryCustom {
+@Sql("/db/fill/pattern/pattern-fill.sql")
+class PatternTemplateRepositoryTest extends BaseTest {
 
-	List<PatternTemplate> findAllByProjectIdAndEnabled(Long projectId, boolean enabled);
+	@Autowired
+	private PatternTemplateRepository patternTemplateRepository;
+
+	@Test
+	void findAllByProjectIdAndEnabled() {
+
+		List<PatternTemplate> allByProjectIdAndEnabled = patternTemplateRepository.findAllByProjectIdAndEnabled(1L, true);
+
+		Assertions.assertNotNull(allByProjectIdAndEnabled);
+		Assertions.assertEquals(2, allByProjectIdAndEnabled.size());
+	}
 }

@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPatternTemplate extends TableImpl<JPatternTemplateRecord> {
 
-    private static final long serialVersionUID = 1194587283;
+    private static final long serialVersionUID = -219503783;
 
     /**
      * The reference instance of <code>public.pattern_template</code>
@@ -75,6 +75,11 @@ public class JPatternTemplate extends TableImpl<JPatternTemplateRecord> {
      * The column <code>public.pattern_template.type</code>.
      */
     public final TableField<JPatternTemplateRecord, String> TYPE = createField("type", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.pattern_template.enabled</code>.
+     */
+    public final TableField<JPatternTemplateRecord, Boolean> ENABLED = createField("enabled", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false), this, "");
 
     /**
      * The column <code>public.pattern_template.project_id</code>.

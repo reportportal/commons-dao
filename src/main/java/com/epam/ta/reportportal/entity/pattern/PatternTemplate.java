@@ -24,6 +24,9 @@ public class PatternTemplate implements Serializable {
 	@Column(name = "type")
 	private PatternTemplateType templateType;
 
+	@Column(name = "enabled")
+	private boolean enabled;
+
 	@Column(name = "project_id")
 	private Long projectId;
 
@@ -70,4 +73,11 @@ public class PatternTemplate implements Serializable {
 		this.projectId = projectId;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 }

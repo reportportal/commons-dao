@@ -133,6 +133,7 @@ public class Indexes {
     public static final Index LN_SEND_CASE_IDX = Indexes0.LN_SEND_CASE_IDX;
     public static final Index LDAP_CONFIG_PK = Indexes0.LDAP_CONFIG_PK;
     public static final Index LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Indexes0.LDAP_SYNCHRONIZATION_ATTRIBUTES_PK;
+    public static final Index LOG_MESSAGE_TRGM_IDX = Indexes0.LOG_MESSAGE_TRGM_IDX;
     public static final Index LOG_PK = Indexes0.LOG_PK;
     public static final Index LOG_TI_IDX = Indexes0.LOG_TI_IDX;
     public static final Index OAUTH_ACCESS_TOKEN_PKEY = Indexes0.OAUTH_ACCESS_TOKEN_PKEY;
@@ -243,6 +244,7 @@ public class Indexes {
         public static Index LN_SEND_CASE_IDX = Internal.createIndex("ln_send_case_idx", JLaunchNames.LAUNCH_NAMES, new OrderField[] { JLaunchNames.LAUNCH_NAMES.SENDER_CASE_ID }, false);
         public static Index LDAP_CONFIG_PK = Internal.createIndex("ldap_config_pk", JLdapConfig.LDAP_CONFIG, new OrderField[] { JLdapConfig.LDAP_CONFIG.ID }, true);
         public static Index LDAP_SYNCHRONIZATION_ATTRIBUTES_PK = Internal.createIndex("ldap_synchronization_attributes_pk", JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES, new OrderField[] { JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES.ID }, true);
+        public static Index LOG_MESSAGE_TRGM_IDX = Internal.createIndex("log_message_trgm_idx", JLog.LOG, new OrderField[] { JLog.LOG.LOG_MESSAGE }, false);
         public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
         public static Index LOG_TI_IDX = Internal.createIndex("log_ti_idx", JLog.LOG, new OrderField[] { JLog.LOG.ITEM_ID }, false);
         public static Index OAUTH_ACCESS_TOKEN_PKEY = Internal.createIndex("oauth_access_token_pkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID }, true);
