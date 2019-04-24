@@ -44,6 +44,10 @@ public class BinaryDataMetaInfo {
 		return thumbnailFileId;
 	}
 
+	public String getContentType() {
+		return contentType;
+	}
+
 	public static final class BinaryDataMetaInfoBuilder {
 		private String fileId;
 		private String thumbnailFileId;
