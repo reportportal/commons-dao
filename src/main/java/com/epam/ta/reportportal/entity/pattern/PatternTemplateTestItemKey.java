@@ -2,33 +2,26 @@ package com.epam.ta.reportportal.entity.pattern;
 
 import com.epam.ta.reportportal.entity.item.TestItem;
 
-import javax.persistence.*;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-@Entity
-@Table(name = "pattern_template_test_item")
-@IdClass(value = PatternTemplateTestItemKey.class)
-public class PatternTemplateTestItem implements Serializable {
+public class PatternTemplateTestItemKey implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "pattern_id")
 	private PatternTemplate patternTemplate;
 
-	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
-	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem testItem) {
-		this.patternTemplate = patternTemplate;
-		this.testItem = testItem;
+	public PatternTemplateTestItemKey() {
 	}
 
 	public PatternTemplate getPatternTemplate() {
@@ -55,7 +48,7 @@ public class PatternTemplateTestItem implements Serializable {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PatternTemplateTestItem that = (PatternTemplateTestItem) o;
+		PatternTemplateTestItemKey that = (PatternTemplateTestItemKey) o;
 		return Objects.equals(patternTemplate, that.patternTemplate) && Objects.equals(testItem, that.testItem);
 	}
 
