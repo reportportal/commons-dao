@@ -21,6 +21,14 @@ BEGIN
     restart with 1;
   alter sequence log_id_seq
     restart with 1;
+  alter sequence pattern_template_id_seq
+    restart with 1;
+
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (1,'name1', 'qwe', 'STRING', true, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (2,'name2', 'qw', 'STRING', true, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (3,'name3', 'qwee', 'STRING', false, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (4,'name4', '[a-z]{2,4}', 'REGEX', false, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (5,'name5_p2', '^*+', 'REGEX', true, 2);
 
   WHILE launchcounter < 13
   LOOP
@@ -98,16 +106,20 @@ BEGIN
       THEN
         UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
         INSERT INTO issue (issue_id, issue_type, auto_analyzed, issue_description) VALUES (cur_step_id, 1, FALSE, 'issue description');
+        INSERT INTO pattern_template_test_item(pattern_id, item_id) VALUES (1, cur_step_id);
       END IF;
 
       IF stepcounter = 2
       THEN
         UPDATE test_item SET last_modified = '2018-11-08 12:00:00' WHERE item_id = cur_step_id;
+        INSERT INTO pattern_template_test_item(pattern_id, item_id) VALUES (2, cur_step_id);
+        INSERT INTO pattern_template_test_item(pattern_id, item_id) VALUES (3, cur_step_id);
       END IF;
 
       IF stepcounter = 3
       THEN
         UPDATE test_item SET last_modified = now() - make_interval(days := 14) WHERE item_id = cur_step_id;
+        INSERT INTO pattern_template_test_item(pattern_id, item_id) VALUES (3, cur_step_id);
       END IF;
       stepcounter = stepcounter + 1;
     END LOOP;

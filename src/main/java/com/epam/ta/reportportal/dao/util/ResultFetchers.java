@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -151,6 +152,8 @@ public class ResultFetchers {
 			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+			testItem.getPatternTemplateTestItems()
+					.add(new PatternTemplateTestItem(PATTERN_TEMPLATE_NAME_RECORD_MAPPER.map(record), testItem));
 			testItems.put(id, testItem);
 		});
 		return new ArrayList<>(testItems.values());

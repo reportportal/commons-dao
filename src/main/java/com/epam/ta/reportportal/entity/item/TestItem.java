@@ -105,7 +105,8 @@ public class TestItem implements Serializable {
 	private Set<TestItem> retries = Sets.newLinkedHashSet();
 
 	@OneToMany(mappedBy = "testItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<PatternTemplateTestItem> patternTemplateTestItems = Sets.newHashSet();
+	@OrderBy(value = "pattern_id")
+	private Set<PatternTemplateTestItem> patternTemplateTestItems = Sets.newLinkedHashSet();
 
 	@Column(name = "has_children")
 	private boolean hasChildren;

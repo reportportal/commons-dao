@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.entity.pattern;
 import com.epam.ta.reportportal.entity.item.TestItem;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -62,5 +63,24 @@ public class PatternTemplateTestItem {
 		this.testItem = testItem;
 		this.id.setItemId(testItem.getItemId());
 		return this;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		PatternTemplateTestItem that = (PatternTemplateTestItem) o;
+		return Objects.equals(id, that.id) && Objects.equals(patternTemplate, that.patternTemplate) && Objects.equals(testItem,
+				that.testItem
+		);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, patternTemplate, testItem);
 	}
 }

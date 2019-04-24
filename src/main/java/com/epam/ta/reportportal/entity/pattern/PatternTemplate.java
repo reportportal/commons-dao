@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.pattern;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -79,5 +80,24 @@ public class PatternTemplate implements Serializable {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		PatternTemplate that = (PatternTemplate) o;
+		return enabled == that.enabled && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(value,
+				that.value
+		) && templateType == that.templateType && Objects.equals(projectId, that.projectId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, value, templateType, enabled, projectId);
 	}
 }
