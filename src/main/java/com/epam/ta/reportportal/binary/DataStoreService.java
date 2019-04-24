@@ -116,8 +116,9 @@ public class DataStoreService {
 	}
 
 	public void delete(String filePath) {
-
-		dataStore.delete(dataEncoder.decode(filePath));
+		if (filePath != null) {
+			dataStore.delete(dataEncoder.decode(filePath));
+		}
 	}
 
 	private BinaryData getBinaryData(MultipartFile file) throws IOException {
