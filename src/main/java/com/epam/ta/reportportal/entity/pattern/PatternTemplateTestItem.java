@@ -20,7 +20,7 @@ public class PatternTemplateTestItem {
 	private PatternTemplate patternTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId(value = "testItemId")
+	@MapsId(value = "itemId")
 	private TestItem testItem;
 
 	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem testItem) {
@@ -47,7 +47,7 @@ public class PatternTemplateTestItem {
 
 	public PatternTemplateTestItem withPatternTemplate(PatternTemplate patternTemplate) {
 		this.patternTemplate = patternTemplate;
-		this.id.setTemplatePatternId(patternTemplate.getId());
+		this.id.setPatternTemplateId(patternTemplate.getId());
 		return this;
 	}
 
