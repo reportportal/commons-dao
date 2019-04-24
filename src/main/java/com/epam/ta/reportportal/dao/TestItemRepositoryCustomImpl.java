@@ -125,17 +125,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<TestItem> findAllNotInIssueByLaunch(Long launchId, String issueType) {
+	public List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator) {
 		return commonTestItemDslSelect().join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE_TYPE.LOCATOR.ne(issueType)).fetch(TEST_ITEM_RECORD_MAPPER);
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)).and(ISSUE_TYPE.LOCATOR.ne(locator)).fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
-	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType) {
+	public List<Long> selectIdsNotInIssueByLaunch(Long launchId, String locator) {
 		return dsl.select(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
@@ -144,11 +143,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE_TYPE)
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)).and(ISSUE_TYPE.LOCATOR.ne(locator))
 				.fetchInto(Long.class);
 	}
 
+	@Override
 	public List<TestItem> findAllNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup) {
 		return dsl.select()
 				.from(TEST_ITEM)
@@ -160,11 +159,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.join(ISSUE_GROUP)
 				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(ISSUE_GROUP.ISSUE_GROUP_.eq(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(ISSUE_GROUP.ISSUE_GROUP_.ne(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
 				.fetch(TEST_ITEM_RECORD_MAPPER);
 
 	}
 
+	@Override
 	public List<Long> selectIdsNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup) {
 		return dsl.select(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
@@ -176,7 +176,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.join(ISSUE_GROUP)
 				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(ISSUE_GROUP.ISSUE_GROUP_.eq(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(ISSUE_GROUP.ISSUE_GROUP_.ne(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
 				.fetchInto(Long.class);
 	}
 
