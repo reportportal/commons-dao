@@ -12,7 +12,7 @@ import java.util.Objects;
 public class PatternTemplateTestItemId implements Serializable {
 
 	@Column(name = "pattern_id")
-	private Long patternTemplateId;
+	private Long patternId;
 
 	@Column(name = "item_id")
 	private Long itemId;
@@ -20,17 +20,17 @@ public class PatternTemplateTestItemId implements Serializable {
 	public PatternTemplateTestItemId() {
 	}
 
-	public PatternTemplateTestItemId(Long itemId, Long patternTemplateId) {
+	public PatternTemplateTestItemId(Long itemId, Long patternId) {
 		this.itemId = itemId;
-		this.patternTemplateId = patternTemplateId;
+		this.patternId = patternId;
 	}
 
-	public Long getPatternTemplateId() {
-		return patternTemplateId;
+	public Long getPatternId() {
+		return patternId;
 	}
 
-	public void setPatternTemplateId(Long patternTemplateId) {
-		this.patternTemplateId = patternTemplateId;
+	public void setPatternId(Long patternId) {
+		this.patternId = patternId;
 	}
 
 	public Long getItemId() {
@@ -50,11 +50,11 @@ public class PatternTemplateTestItemId implements Serializable {
 			return false;
 		}
 		PatternTemplateTestItemId that = (PatternTemplateTestItemId) o;
-		return Objects.equals(patternTemplateId, that.patternTemplateId) && Objects.equals(itemId, that.itemId);
+		return Objects.equals(patternId, that.patternId) && Objects.equals(itemId, that.itemId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(patternTemplateId, itemId);
+		return Objects.hash(patternId, itemId);
 	}
 }

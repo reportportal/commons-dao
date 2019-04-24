@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.entity.pattern;
 import com.epam.ta.reportportal.entity.item.TestItem;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -10,23 +11,26 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "pattern_template_test_item")
-public class PatternTemplateTestItem {
+public class PatternTemplateTestItem implements Serializable {
 
 	@EmbeddedId
-	private PatternTemplateTestItemId id;
+	private PatternTemplateTestItemId id = new PatternTemplateTestItemId();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId(value = "patternTemplateId")
+	@MapsId(value = "patternId")
 	private PatternTemplate patternTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId(value = "itemId")
-	private TestItem testItem;
+	private TestItem item;
 
-	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem testItem) {
+	public PatternTemplateTestItem() {
+	}
+
+	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem item) {
 		this.patternTemplate = patternTemplate;
-		this.testItem = testItem;
-		this.id = new PatternTemplateTestItemId(patternTemplate.getId(), testItem.getItemId());
+		this.item = item;
+		this.id = new PatternTemplateTestItemId(patternTemplate.getId(), item.getItemId());
 	}
 
 	public PatternTemplateTestItemId getId() {
@@ -47,20 +51,20 @@ public class PatternTemplateTestItem {
 
 	public PatternTemplateTestItem withPatternTemplate(PatternTemplate patternTemplate) {
 		this.patternTemplate = patternTemplate;
-		this.id.setPatternTemplateId(patternTemplate.getId());
+		this.id.setPatternId(patternTemplate.getId());
 		return this;
 	}
 
-	public TestItem getTestItem() {
-		return testItem;
+	public TestItem getItem() {
+		return item;
 	}
 
-	public void setTestItem(TestItem testItem) {
-		this.testItem = testItem;
+	public void setItem(TestItem item) {
+		this.item = item;
 	}
 
 	public PatternTemplateTestItem withTestItem(TestItem testItem) {
-		this.testItem = testItem;
+		this.item = testItem;
 		this.id.setItemId(testItem.getItemId());
 		return this;
 	}
@@ -74,13 +78,13 @@ public class PatternTemplateTestItem {
 			return false;
 		}
 		PatternTemplateTestItem that = (PatternTemplateTestItem) o;
-		return Objects.equals(id, that.id) && Objects.equals(patternTemplate, that.patternTemplate) && Objects.equals(testItem,
-				that.testItem
+		return Objects.equals(id, that.id) && Objects.equals(patternTemplate, that.patternTemplate) && Objects.equals(item,
+				that.item
 		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, patternTemplate, testItem);
+		return Objects.hash(id, patternTemplate, item);
 	}
 }
