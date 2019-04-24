@@ -22,15 +22,18 @@ public class BinaryDataMetaInfo {
 
 	private final String thumbnailFileId;
 
+	private final String contentType;
+
 	/**
 	 * Object to hold information about saved file.
 	 *
 	 * @param fileId
 	 * @param thumbnailFileId
 	 */
-	public BinaryDataMetaInfo(String fileId, String thumbnailFileId) {
+	public BinaryDataMetaInfo(String fileId, String thumbnailFileId, String contentType) {
 		this.fileId = fileId;
 		this.thumbnailFileId = thumbnailFileId;
+		this.contentType = contentType;
 	}
 
 	public String getFileId() {
@@ -44,6 +47,7 @@ public class BinaryDataMetaInfo {
 	public static final class BinaryDataMetaInfoBuilder {
 		private String fileId;
 		private String thumbnailFileId;
+		private String contentType;
 
 		private BinaryDataMetaInfoBuilder() {
 		}
@@ -62,8 +66,13 @@ public class BinaryDataMetaInfo {
 			return this;
 		}
 
+		public BinaryDataMetaInfoBuilder withContentType(String contentType) {
+			this.contentType = contentType;
+			return this;
+		}
+
 		public BinaryDataMetaInfo build() {
-			return new BinaryDataMetaInfo(fileId, thumbnailFileId);
+			return new BinaryDataMetaInfo(fileId, thumbnailFileId, contentType);
 		}
 	}
 }

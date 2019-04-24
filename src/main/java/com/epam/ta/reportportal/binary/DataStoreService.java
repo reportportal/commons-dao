@@ -92,6 +92,7 @@ public class DataStoreService {
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(dataEncoder.encode(filePath))
 					.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
+					.withContentType(file.getContentType())
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
