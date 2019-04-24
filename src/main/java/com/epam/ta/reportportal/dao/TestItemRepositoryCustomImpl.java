@@ -21,10 +21,12 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
+import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
@@ -129,8 +131,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(ISSUE_TYPE)
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
-				.fetch(TEST_ITEM_RECORD_MAPPER::map);
+				.and(ISSUE_TYPE.LOCATOR.ne(issueType)).fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
@@ -145,6 +146,37 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE_TYPE.LOCATOR.ne(issueType))
+				.fetchInto(Long.class);
+	}
+
+	public List<TestItem> findAllNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup) {
+		return dsl.select()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.join(ISSUE_GROUP)
+				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(ISSUE_GROUP.ISSUE_GROUP_.eq(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
+				.fetch(TEST_ITEM_RECORD_MAPPER);
+
+	}
+
+	public List<Long> selectIdsNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.join(ISSUE_GROUP)
+				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).and(ISSUE_GROUP.ISSUE_GROUP_.eq(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
 				.fetchInto(Long.class);
 	}
 
