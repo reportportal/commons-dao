@@ -22,15 +22,15 @@ public class PatternTemplateTestItem implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId(value = "itemId")
-	private TestItem item;
+	private TestItem testItem;
 
 	public PatternTemplateTestItem() {
 	}
 
-	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem item) {
+	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem testItem) {
 		this.patternTemplate = patternTemplate;
-		this.item = item;
-		this.id = new PatternTemplateTestItemId(patternTemplate.getId(), item.getItemId());
+		this.testItem = testItem;
+		this.id = new PatternTemplateTestItemId(patternTemplate.getId(), testItem.getItemId());
 	}
 
 	public PatternTemplateTestItemId getId() {
@@ -55,16 +55,16 @@ public class PatternTemplateTestItem implements Serializable {
 		return this;
 	}
 
-	public TestItem getItem() {
-		return item;
+	public TestItem getTestItem() {
+		return testItem;
 	}
 
-	public void setItem(TestItem item) {
-		this.item = item;
+	public void setTestItem(TestItem testItem) {
+		this.testItem = testItem;
 	}
 
 	public PatternTemplateTestItem withTestItem(TestItem testItem) {
-		this.item = testItem;
+		this.testItem = testItem;
 		this.id.setItemId(testItem.getItemId());
 		return this;
 	}
@@ -78,13 +78,13 @@ public class PatternTemplateTestItem implements Serializable {
 			return false;
 		}
 		PatternTemplateTestItem that = (PatternTemplateTestItem) o;
-		return Objects.equals(id, that.id) && Objects.equals(patternTemplate, that.patternTemplate) && Objects.equals(item,
-				that.item
+		return Objects.equals(id, that.id) && Objects.equals(patternTemplate, that.patternTemplate) && Objects.equals(testItem,
+				that.testItem
 		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, patternTemplate, item);
+		return Objects.hash(id, patternTemplate, testItem);
 	}
 }

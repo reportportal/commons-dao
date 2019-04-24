@@ -211,12 +211,13 @@ public class RecordMappers {
 	/**
 	 * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link PatternTemplate#name} fields)
 	 */
-	public static final RecordMapper<? super Record, PatternTemplate> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> {
+	public static final Function<? super Record, Optional<PatternTemplate>> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> ofNullable(r.get(
+			PATTERN_TEMPLATE.NAME)).map(name -> {
 		PatternTemplate patternTemplate = new PatternTemplate();
 		patternTemplate.setId(r.get(PATTERN_TEMPLATE.ID));
-		patternTemplate.setName(r.get(PATTERN_TEMPLATE.NAME));
+		patternTemplate.setName(name);
 		return patternTemplate;
-	};
+	});
 
 	/**
 	 * Maps record into {@link Launch} object

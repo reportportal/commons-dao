@@ -1,4 +1,4 @@
--- Generates 13 launches. Each contains suite, test and 4 step items with item results. Launches and items has attributes
+-- Generates 13 launches. Each contains suite, test and 4 step items with testItem results. Launches and items has attributes
 
 CREATE OR REPLACE FUNCTION items_init()
   RETURNS VOID AS

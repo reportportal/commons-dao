@@ -152,8 +152,9 @@ public class ResultFetchers {
 			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
-			testItem.getPatternTemplateTestItems()
-					.add(new PatternTemplateTestItem(PATTERN_TEMPLATE_NAME_RECORD_MAPPER.map(record), testItem));
+			PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(record)
+					.ifPresent(patternTemplate -> testItem.getPatternTemplateTestItems()
+							.add(new PatternTemplateTestItem(patternTemplate, testItem)));
 			testItems.put(id, testItem);
 		});
 		return new ArrayList<>(testItems.values());

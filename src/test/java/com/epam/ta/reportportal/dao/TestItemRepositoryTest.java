@@ -180,6 +180,11 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void deleteByIdTest() {
+		testItemRepository.deleteById(1L);
+	}
+
+	@Test
 	void selectAllDescendantsWithChildren() {
 		final Long itemId = 1L;
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
