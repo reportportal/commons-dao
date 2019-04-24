@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRepositoryCustom {
 
-	Optional<Launch> findByUuid(String uuid);
+	Optional<Log> findByUuid(String uuid);
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 
