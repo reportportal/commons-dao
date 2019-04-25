@@ -439,4 +439,17 @@ class TestItemRepositoryTest extends BaseTest {
 						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
 				));
 	}
+
+	@Test
+	void findAllInIssueGroupByLaunch() {
+		List<TestItem> withToInvestigate = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		withToInvestigate.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withProductBug = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		withProductBug.forEach(it -> assertEquals(TestItemIssueGroup.PRODUCT_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+	}
 }
