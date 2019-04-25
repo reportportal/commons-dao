@@ -28,6 +28,7 @@ import com.epam.ta.reportportal.util.WidgetSortUtils;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
@@ -628,7 +629,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-			String attributeKey, int limit) {
+			String primaryAttributeKey, String subAttributeKey, int limit) {
 
 		String versionPattern = "^(\\d)(\\.d)*";
 		String versionDelimiter = ".";
@@ -649,14 +650,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
 						.join(ITEM_ATTRIBUTE)
 						.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-						.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
+						.where(ITEM_ATTRIBUTE.KEY.eq(primaryAttributeKey))
 						.and(ITEM_ATTRIBUTE.VALUE.in(dsl.with(LAUNCHES)
 								.as(selectQuery)
 								.select(ITEM_ATTRIBUTE.VALUE)
 								.from(ITEM_ATTRIBUTE)
 								.join(LAUNCHES)
 								.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-								.where(ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
+								.where(ITEM_ATTRIBUTE.KEY.eq(primaryAttributeKey))
 								.groupBy(ITEM_ATTRIBUTE.VALUE)
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
@@ -673,6 +674,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				), fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
 				.fetch());
 
+		List<Long> accumulatedLaunchesIds = accumulatedLaunches.stream()
+				.flatMap(it -> it.getContent().stream())
+				.map(CumulativeTrendChartContent::getId)
+				.collect(toList());
+
+		if (!StringUtils.isEmpty(subAttributeKey)) {
+			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
+					dsl.select(LAUNCH.ID, ITEM_ATTRIBUTE.VALUE)
+							.from(ITEM_ATTRIBUTE)
+							.join(LAUNCH)
+							.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
+							.where(ITEM_ATTRIBUTE.KEY.eq(subAttributeKey).and(LAUNCH.ID.in(accumulatedLaunchesIds)))
+							.fetch()
+			);
+		}
+
 		CUMULATIVE_STATISTICS_FETCHER.accept(accumulatedLaunches,
 				dsl.select(DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER), TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
 						.from(STATISTICS)
@@ -683,9 +700,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(TEST_ITEM.HAS_CHILDREN.isFalse())
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.and(TEST_ITEM.LAUNCH_ID.in(accumulatedLaunches.stream().flatMap(it -> it.getContent().stream())
-								.map(CumulativeTrendChartContent::getId)
-								.collect(toList())))
+						.and(TEST_ITEM.LAUNCH_ID.in(accumulatedLaunchesIds))
 						.groupBy(TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
 						.fetch()
 		);
@@ -888,11 +903,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
 		if (combinedTagCondition.isPresent()) {
-			Collections.addAll(fields, fieldName(ATTR_TABLE, ATTR_ID), fieldName(ATTR_TABLE, ATTR_VALUE), fieldName(ATTR_TABLE, ATTR_KEY));
+			Collections.addAll(fields,
+					fieldName(ATTR_TABLE, ATTR_ID),
+					fieldName(ATTR_TABLE, ATTRIBUTE_VALUE),
+					fieldName(ATTR_TABLE, ATTRIBUTE_KEY)
+			);
 			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields).leftJoin(DSL.select(ITEM_ATTRIBUTE.ID.as(
 					ATTR_ID),
-					ITEM_ATTRIBUTE.VALUE.as(ATTR_VALUE),
-					ITEM_ATTRIBUTE.KEY.as(ATTR_KEY),
+					ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE),
+					ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
 					ITEM_ATTRIBUTE.LAUNCH_ID.as(LAUNCH_ID)
 			).from(ITEM_ATTRIBUTE).where(combinedTagCondition.get()).asTable(ATTR_TABLE))
 					.on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)));

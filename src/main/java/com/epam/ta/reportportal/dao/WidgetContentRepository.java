@@ -208,15 +208,15 @@ public interface WidgetContentRepository {
 	/**
 	 * Loading cumulative trend statistics grouped by {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
 	 *
-	 * @param filter        {@link Filter}
-	 * @param contentFields Custom fields for select query building
-	 * @param sort          {@link Sort}
-	 * @param attributeKey  {@link ItemAttribute#getKey()} ()}
-	 * @param limit         Attributes limit
+	 * @param filter              {@link Filter}
+	 * @param contentFields       Custom fields for select query building
+	 * @param sort                {@link Sort}
+	 * @param primaryAttributeKey {@link ItemAttribute#getKey()} ()}
+	 * @param limit               Attributes limit
 	 * @return Map with {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()} as key and list of {@link CumulativeTrendChartContent} as value
 	 */
-	List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort, String attributeKey,
-			int limit);
+	List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
+			String primaryAttributeKey, String subAttributeKey, int limit);
 
 	/**
 	 * Loading the product status statistics grouped by one or more {@link Filter}

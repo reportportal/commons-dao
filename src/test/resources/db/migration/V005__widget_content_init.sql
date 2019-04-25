@@ -72,10 +72,15 @@ BEGIN
     launch4 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.12.3', null, launch1, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('level', '1', null, launch1, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3', null, launch1, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.9.1', null, launch2, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('level', '1', null, launch2, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('level', '2', null, launch2, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'passed', null, launch3, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.5', null, launch3, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('level', '2', null, launch3, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('level', '3', null, launch3, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1', null, launch3, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.1.7.15.3', null, launch1, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.3', null, launch2, false);
