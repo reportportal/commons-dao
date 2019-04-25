@@ -18,11 +18,13 @@ package com.epam.ta.reportportal.commons;
 
 public class BinaryDataMetaInfo {
 
-	private final String fileId;
+	private String fileId;
 
-	private final String thumbnailFileId;
+	private String thumbnailFileId;
 
-	private final String contentType;
+	private String contentType;
+
+	public BinaryDataMetaInfo() {}
 
 	/**
 	 * Object to hold information about saved file.
@@ -46,6 +48,18 @@ public class BinaryDataMetaInfo {
 
 	public String getContentType() {
 		return contentType;
+	}
+
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
+
+	public void setThumbnailFileId(String thumbnailFileId) {
+		this.thumbnailFileId = thumbnailFileId;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 
 	public static final class BinaryDataMetaInfoBuilder {
