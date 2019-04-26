@@ -674,7 +674,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(TEST_ITEM.HAS_CHILDREN.eq(Boolean.FALSE)
-						.and(TEST_ITEM.HAS_RETRIES.isNull())
+						.and(TEST_ITEM.RETRY_OF.isNull())
 						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP)))
 				.groupBy(LAUNCH.ID, STATISTICS_FIELD.NAME, fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE))
 				.orderBy(DSL.when(fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE).likeRegex(versionPattern),
