@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -96,7 +97,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final String uniqueId = "unqIdSTEP7";
 
 		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
-		assertEquals(3, items.size(), "Incorrect items size");
+		assertEquals(7, items.size(), "Incorrect items size");
 		items.forEach(it -> assertTrue(it.getUniqueId().equals(uniqueId) && (it.getLaunch().getId() == 7L || it.getLaunch().getId() == 8L
 				|| it.getLaunch().getId() == 9L)));
 	}
@@ -289,7 +290,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.map(BigInteger::longValue)
 				.collect(toList());
 
-		Assertions.assertEquals(1, itemIds.size());
+		Assertions.assertEquals(5, itemIds.size());
 	}
 
 	@Test
@@ -405,6 +406,80 @@ class TestItemRepositoryTest extends BaseTest {
 		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", StatusEnum.FAILED);
 
 		Assertions.assertTrue(hasParentWithStatus);
+	}
+
+	@Test
+	void findAllNotInIssueGroupByLaunch() {
+		List<TestItem> withoutProductBug = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		withoutProductBug.forEach(it -> assertNotEquals(TestItemIssueGroup.PRODUCT_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutAutomationBug = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.AUTOMATION_BUG);
+		withoutAutomationBug.forEach(it -> assertNotEquals(TestItemIssueGroup.AUTOMATION_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutSystemIssue = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.SYSTEM_ISSUE);
+		withoutSystemIssue.forEach(it -> assertNotEquals(TestItemIssueGroup.SYSTEM_ISSUE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutToInvestigate = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		withoutToInvestigate.forEach(it -> assertNotEquals(TestItemIssueGroup.TO_INVESTIGATE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutNoDefect = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.NO_DEFECT);
+		withoutNoDefect.forEach(it -> assertNotEquals(TestItemIssueGroup.NO_DEFECT,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+	}
+
+	@Test
+	void selectIdsNotInIssueGroupByLaunch() {
+		List<Long> withoutProductBug = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		testItemRepository.findAllById(withoutProductBug)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.PRODUCT_BUG,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutAutomationBug = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.AUTOMATION_BUG);
+		testItemRepository.findAllById(withoutAutomationBug)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.AUTOMATION_BUG,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutSystemIssue = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.SYSTEM_ISSUE);
+		testItemRepository.findAllById(withoutSystemIssue)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.SYSTEM_ISSUE,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutToInvestigate = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		testItemRepository.findAllById(withoutToInvestigate)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.TO_INVESTIGATE,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutNoDefect = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.NO_DEFECT);
+		testItemRepository.findAllById(withoutNoDefect)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.NO_DEFECT,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+	}
+
+	@Test
+	void findAllInIssueGroupByLaunch() {
+		List<TestItem> withToInvestigate = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		withToInvestigate.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withProductBug = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		withProductBug.forEach(it -> assertEquals(TestItemIssueGroup.PRODUCT_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
 	}
 
 	@Test

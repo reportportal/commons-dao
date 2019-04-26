@@ -38,6 +38,7 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static java.util.Optional.ofNullable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -123,6 +124,17 @@ class ProjectRepositoryTest extends BaseTest {
 
 	@Test
 	void findProjectInfoByFilter() {
+		final List<ProjectInfo> projectInfos = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
+				Condition.GREATER_THAN_OR_EQUALS,
+				false,
+				"1",
+				USERS_QUANTITY
+		));
+		assertEquals(2, projectInfos.size());
+	}
+
+	@Test
+	void findProjectInfoByFilterWithPagination() {
 		final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
 				Condition.EQUALS,
 				false,

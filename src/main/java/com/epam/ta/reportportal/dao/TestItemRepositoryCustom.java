@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -93,21 +94,27 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * Select items that has different issue from provided for
 	 * specified launch.
 	 *
-	 * @param launchId  Launch
-	 * @param issueType Issue type locator
+	 * @param launchId Launch
+	 * @param locator  Issue type locator
 	 * @return List of items
 	 */
-	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String issueType);
+	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator);
 
 	/**
 	 * Select items that has different issue from provided for
 	 * specified launch.
 	 *
-	 * @param launchId  Launch
-	 * @param issueType Issue type locator
+	 * @param launchId Launch
+	 * @param locator  Issue type locator
 	 * @return List of items
 	 */
-	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String issueType);
+	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String locator);
+
+	List<TestItem> findAllNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
+
+	List<Long> selectIdsNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
+
+	List<TestItem> findAllInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
 
 	/**
 	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'

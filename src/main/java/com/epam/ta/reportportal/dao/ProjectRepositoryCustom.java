@@ -33,6 +33,14 @@ import java.util.List;
 public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 
 	/**
+	 * Find projects info by filter
+	 *
+	 * @param filter Filter
+	 * @return List of project info objects
+	 */
+	List<ProjectInfo> findProjectInfoByFilter(Queryable filter);
+
+	/**
 	 * Find projects info by filter with paging
 	 *
 	 * @param filter   Filter

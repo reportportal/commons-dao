@@ -61,9 +61,13 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
+	public List<ProjectInfo> findProjectInfoByFilter(Queryable filter) {
+		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).into(ProjectInfo.class);
+	}
+
+	@Override
 	public Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).into(ProjectInfo.class),
+		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).into(ProjectInfo.class),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
@@ -82,8 +86,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable) {
 
-		return PageableExecutionUtils.getPage(
-				PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
+		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
 						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
 						.select(PROJECT.ID, ATTRIBUTE.NAME, PROJECT_ATTRIBUTE.VALUE)
 						.from(PROJECT)
@@ -100,14 +103,15 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound, int limit) {
-		return dsl.deleteFrom(PROJECT).where(PROJECT.ID.in(dsl.select(PROJECT.ID)
+		return dsl.deleteFrom(PROJECT)
+				.where(PROJECT.ID.in(dsl.select(PROJECT.ID)
 						.from(PROJECT)
 						.join(LAUNCH)
 						.onKey()
 						.where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
-				.groupBy(PROJECT.ID)
-				.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound)))
-				.limit(limit)))
+						.groupBy(PROJECT.ID)
+						.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound)))
+						.limit(limit)))
 				.execute();
 	}
 
