@@ -152,7 +152,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
 		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
-				1L,
+				1,
 				40000,
 				"%o%"
 		);
@@ -163,7 +163,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void selectIdsByRegexPatternMatchedLogMessage() {
 		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L,
-				1L,
+				1,
 				40000,
 				"[a-z]{3,3}"
 		);

@@ -320,8 +320,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByStringPatternMatchedLogMessage(Long launchId, Long issueTypeId,
-			Integer logLevel, String pattern) {
+	public List<Long> selectIdsByStringPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern) {
 
 		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
@@ -329,10 +328,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE)
 				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.join(LOG)
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
-						.and(ISSUE.ISSUE_TYPE.eq(issueTypeId))
+						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
 						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 						.and(LOG.LOG_MESSAGE.like("%" + pattern + "%")))
 				.fetchInto(Long.class);
@@ -340,8 +341,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Long issueTypeId,
-			Integer logLevel, String pattern) {
+	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern) {
 
 		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
@@ -349,10 +349,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE)
 				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
 				.join(LOG)
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
-						.and(ISSUE.ISSUE_TYPE.eq(issueTypeId))
+						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
 						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 						.and(LOG.LOG_MESSAGE.likeRegex(pattern)))
 				.fetchInto(Long.class);
