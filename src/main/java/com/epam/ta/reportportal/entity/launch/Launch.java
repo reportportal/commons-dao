@@ -70,7 +70,7 @@ public class Launch implements Serializable {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "start_time", nullable = false, updatable = false)
+	@Column(name = "start_time", nullable = false)
 	private LocalDateTime startTime;
 
 	@Column(name = "end_time")
