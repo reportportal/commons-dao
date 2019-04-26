@@ -1,10 +1,5 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.google.common.collect.Sets;
-
-import java.util.Collection;
-import java.util.Set;
-
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
@@ -12,14 +7,12 @@ public class CumulativeTrendChartEntry {
 
 	private String attributeValue;
 
-	private Collection<CumulativeTrendChartContent> content;
-
-	private Set<String> tooltipContent = Sets.newHashSet();
+	private CumulativeTrendChartContent content;
 
 	public CumulativeTrendChartEntry() {
 	}
 
-	public CumulativeTrendChartEntry(String attributeValue, Collection<CumulativeTrendChartContent> content) {
+	public CumulativeTrendChartEntry(String attributeValue, CumulativeTrendChartContent content) {
 		this.attributeValue = attributeValue;
 		this.content = content;
 	}
@@ -32,19 +25,11 @@ public class CumulativeTrendChartEntry {
 		this.attributeValue = attributeValue;
 	}
 
-	public Collection<CumulativeTrendChartContent> getContent() {
+	public CumulativeTrendChartContent getContent() {
 		return content;
 	}
 
-	public void setContent(Collection<CumulativeTrendChartContent> content) {
+	public void setContent(CumulativeTrendChartContent content) {
 		this.content = content;
-	}
-
-	public Set<String> getTooltipContent() {
-		return tooltipContent;
-	}
-
-	public void setTooltipContent(Set<String> tooltipContent) {
-		this.tooltipContent = tooltipContent;
 	}
 }

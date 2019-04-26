@@ -22,7 +22,6 @@ import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.ItemAttributeResource;
@@ -30,6 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
@@ -57,10 +57,8 @@ import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
-import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Util class for widget content repository.
@@ -274,33 +272,26 @@ public class WidgetContentUtil {
 	};
 
 	public static final Function<Result<? extends Record>, List<CumulativeTrendChartEntry>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
-		Map<String, Map<Long, CumulativeTrendChartContent>> attributeMapping = new LinkedHashMap<>();
+		Map<String, CumulativeTrendChartContent> attributesMapping = Maps.newLinkedHashMap();
 
 		result.forEach(record -> {
-			Map<Long, CumulativeTrendChartContent> cumulativeTrendMapper;
 			String attributeValue = record.get(fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE), String.class);
-			if (attributeMapping.containsKey(attributeValue)) {
-				cumulativeTrendMapper = attributeMapping.get(attributeValue);
-			} else {
-				cumulativeTrendMapper = new LinkedHashMap<>();
-				attributeMapping.put(attributeValue, cumulativeTrendMapper);
-			}
-
-			CumulativeTrendChartContent content;
 			Long launchId = record.get(LAUNCH.ID, Long.class);
-			if (!cumulativeTrendMapper.containsKey(launchId)) {
-				content = new CumulativeTrendChartContent();
-				content.setId(launchId);
-				content.setName(record.get(LAUNCH.NAME, String.class));
-				content.setNumber(record.get(LAUNCH.NUMBER, Integer.class));
-				content.setStartTime(record.get(LAUNCH.START_TIME, Timestamp.class));
-				cumulativeTrendMapper.put(launchId, content);
-			}
+			String statistics = record.get(STATISTICS_FIELD.NAME, String.class);
+			Integer counter = record.get(STATISTICS_COUNTER, Integer.class);
+
+			CumulativeTrendChartContent content = attributesMapping.getOrDefault(attributeValue, new CumulativeTrendChartContent());
+
+			content.getLaunchIds().add(launchId);
+			content.getStatistics().putIfAbsent(statistics, counter);
+			content.getStatistics().computeIfPresent(statistics, (k, v) -> v + counter);
+
+			attributesMapping.put(attributeValue, content);
 		});
 
-		return attributeMapping.entrySet()
+		return attributesMapping.entrySet()
 				.stream()
-				.map(it -> new CumulativeTrendChartEntry(it.getKey(), it.getValue().values()))
+				.map(entry -> new CumulativeTrendChartEntry(entry.getKey(), entry.getValue()))
 				.collect(Collectors.toCollection(LinkedList::new));
 	};
 
@@ -309,27 +300,12 @@ public class WidgetContentUtil {
 			Long launchId = record.get(LAUNCH.ID);
 			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
 			cumulative.forEach(it -> it.getContent()
+					.getLaunchIds()
 					.stream()
-					.filter(content -> content.getId().equals(launchId))
+					.filter(id -> id.equals(launchId))
 					.findAny()
-					.ifPresent(content -> it.getTooltipContent().add(attributeValue)));
+					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeValue)));
 		});
-	};
-
-	public static final BiConsumer<List<CumulativeTrendChartEntry>, Result<? extends Record>> CUMULATIVE_STATISTICS_FETCHER = (cumulative, statisticsResult) -> {
-		Map<Long, CumulativeTrendChartContent> cumulativeDataMapping = cumulative.stream()
-				.flatMap(it -> it.getContent().stream())
-				.collect(toMap(AbstractLaunchStatisticsContent::getId, c -> c, (prev, curr) -> curr));
-
-		statisticsResult.forEach(record -> {
-
-			Long launchId = record.get(TEST_ITEM.LAUNCH_ID);
-
-			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(record.get(Tables.STATISTICS_FIELD.NAME),
-					ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
-			));
-		});
-
 	};
 
 	public static final BiFunction<Result<? extends Record>, String, List<ChartStatisticsContent>> CASES_GROWTH_TREND_FETCHER = (result, contentField) -> {

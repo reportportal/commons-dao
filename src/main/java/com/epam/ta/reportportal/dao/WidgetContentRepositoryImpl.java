@@ -637,10 +637,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(LAUNCHES_COUNT).with(sort).build();
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(LAUNCH.ID,
-				LAUNCH.NAME,
-				LAUNCH.NUMBER,
-				LAUNCH.START_TIME,
-				fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE)
+				fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE),
+				STATISTICS_FIELD.NAME,
+				DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
 		)
 				.from(dsl.with(LAUNCHES)
 						.as(selectQuery)
@@ -667,17 +666,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.asTable(LAUNCHES_TABLE))
 				.join(LAUNCH)
 				.on(field(name(LAUNCHES_TABLE, NAME)).eq(LAUNCH.NAME))
-				.where(field(name(LAUNCHES_TABLE, LATEST_NUMBER)).eq(LAUNCH.NUMBER))
+				.and(field(name(LAUNCHES_TABLE, LATEST_NUMBER)).eq(LAUNCH.NUMBER))
+				.join(TEST_ITEM)
+				.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
+				.join(STATISTICS)
+				.on(STATISTICS.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(TEST_ITEM.HAS_CHILDREN.eq(Boolean.FALSE)
+						.and(TEST_ITEM.HAS_RETRIES.isNull())
+						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP)))
+				.groupBy(LAUNCH.ID, STATISTICS_FIELD.NAME, fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE))
 				.orderBy(DSL.when(fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE).likeRegex(versionPattern),
 						PostgresDSL.stringToArray(field(name(LAUNCHES_TABLE, ATTRIBUTE_VALUE), String.class), versionDelimiter)
 								.cast(Integer[].class)
 				), fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
 				.fetch());
-
-		List<Long> accumulatedLaunchesIds = accumulatedLaunches.stream()
-				.flatMap(it -> it.getContent().stream())
-				.map(CumulativeTrendChartContent::getId)
-				.collect(toList());
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
 			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
@@ -685,25 +689,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							.from(ITEM_ATTRIBUTE)
 							.join(LAUNCH)
 							.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-							.where(ITEM_ATTRIBUTE.KEY.eq(subAttributeKey).and(LAUNCH.ID.in(accumulatedLaunchesIds)))
+							.where(ITEM_ATTRIBUTE.KEY.eq(subAttributeKey)
+									.and(LAUNCH.ID.in(accumulatedLaunches.stream()
+											.flatMap(it -> it.getContent().getLaunchIds().stream())
+											.collect(toList()))))
 							.fetch()
 			);
 		}
-
-		CUMULATIVE_STATISTICS_FETCHER.accept(accumulatedLaunches,
-				dsl.select(DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER), TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
-						.from(STATISTICS)
-						.join(STATISTICS_FIELD)
-						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-						.join(TEST_ITEM)
-						.on(STATISTICS.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
-						.where(TEST_ITEM.HAS_CHILDREN.isFalse())
-						.and(TEST_ITEM.RETRY_OF.isNull())
-						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.and(TEST_ITEM.LAUNCH_ID.in(accumulatedLaunchesIds))
-						.groupBy(TEST_ITEM.LAUNCH_ID, STATISTICS_FIELD.NAME)
-						.fetch()
-		);
 
 		return accumulatedLaunches;
 
