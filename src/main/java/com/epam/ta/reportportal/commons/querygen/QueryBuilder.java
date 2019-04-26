@@ -218,7 +218,15 @@ public class QueryBuilder {
 		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
-			query.addOrderBy(fieldName(FILTERED_QUERY, criteria.getFilterCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+			if (criteria.getFilterCriteria().startsWith(STATISTICS_KEY)) {
+				query.addOrderBy(fieldName(FILTERED_QUERY, criteria.getFilterCriteria()).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC));
+			} else {
+				query.addOrderBy(field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ?
+						SortOrder.DESC :
+						SortOrder.ASC));
+			}
 		}));
 		return this;
 	}
@@ -228,10 +236,10 @@ public class QueryBuilder {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
 
-			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
-					ErrorType.INCORRECT_FILTER_PARAMETERS,
-					Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
-			);
+			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT)
+					.verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
+							Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
+					);
 
 			Condition condition = filterCondition.getCondition().toCondition(filterCondition, criteriaHolder.get());
 
