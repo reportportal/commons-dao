@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,13 @@ public interface PatternTemplateRepository extends ReportPortalRepository<Patter
 	List<PatternTemplate> findAllByProjectIdAndEnabled(Long projectId, boolean enabled);
 
 	boolean existsByProjectIdAndNameIgnoreCase(Long projectId, String name);
+
+	/**
+	 * Required for regex validation on database level. Some regex patterns can be compiled by Java {@link java.util.regex.Pattern} being
+	 * incorrect for PostgreSQL regex syntax and vice versa
+	 *
+	 * @param regex Regex pattern
+	 */
+	@Query(value = "SELECT '' ~ :regex", nativeQuery = true)
+	void validateRegex(@Param("regex") String regex);
 }

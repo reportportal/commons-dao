@@ -23,8 +23,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -66,5 +69,11 @@ class PatternTemplateRepositoryTest extends BaseTest {
 		boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "name1 ");
 
 		Assertions.assertFalse(exists);
+	}
+
+	@Test
+	void validateWrongRegex() {
+
+		assertThrows(PersistenceException.class, () -> patternTemplateRepository.validateRegex("{1,}"));
 	}
 }
