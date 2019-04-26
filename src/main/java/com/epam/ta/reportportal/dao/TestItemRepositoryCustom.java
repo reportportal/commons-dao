@@ -209,7 +209,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param pattern     CASE SENSITIVE STRING pattern for log message search
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern(Long launchId, Long issueTypeId, Integer logLevel,
+	List<Long> selectIdsByStringPatternMatchedLogMessage(Long launchId, Long issueTypeId, Integer logLevel,
 			String pattern);
 
 	/**
@@ -222,7 +222,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param pattern     REGEX pattern for log message search
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern(Long launchId, Long issueTypeId, Integer logLevel,
+	List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Long issueTypeId, Integer logLevel,
 			String pattern);
 
 }

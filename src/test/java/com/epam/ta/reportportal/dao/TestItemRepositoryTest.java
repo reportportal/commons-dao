@@ -150,8 +150,8 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern() {
-		List<Long> itemIds = testItemRepository.selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern(1L,
+	void selectIdsByStringPatternMatchedLogMessage() {
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
 				1L,
 				40000,
 				"%o%"
@@ -161,8 +161,8 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern() {
-		List<Long> itemIds = testItemRepository.selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern(1L,
+	void selectIdsByRegexPatternMatchedLogMessage() {
+		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L,
 				1L,
 				40000,
 				"[a-z]{3,3}"
@@ -290,7 +290,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.map(BigInteger::longValue)
 				.collect(toList());
 
-		Assertions.assertEquals(5, itemIds.size());
+		Assertions.assertEquals(1, itemIds.size());
 	}
 
 	@Test

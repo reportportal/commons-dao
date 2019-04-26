@@ -44,7 +44,7 @@ class StatisticsFieldRepositoryTest extends BaseTest {
 		repository.deleteByName(fieldName);
 		final List<StatisticsField> statisticsField = repository.findAll();
 
-		assertEquals(11, statisticsField.size());
+		assertEquals(3, statisticsField.size());
 		statisticsField.forEach(it -> assertNotEquals(fieldName, it.getName()));
 	}
 }

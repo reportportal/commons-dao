@@ -320,7 +320,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageStringPattern(Long launchId, Long issueTypeId,
+	public List<Long> selectIdsByStringPatternMatchedLogMessage(Long launchId, Long issueTypeId,
 			Integer logLevel, String pattern) {
 
 		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
@@ -340,7 +340,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByLaunchIdAndIssueTypeIdAndLogLevelAndLogMessageRegexPattern(Long launchId, Long issueTypeId,
+	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Long issueTypeId,
 			Integer logLevel, String pattern) {
 
 		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
