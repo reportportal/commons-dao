@@ -196,7 +196,7 @@ public enum FilterTarget {
 					Long.class
 			),
 			new CriteriaHolder(CRITERIA_SYNCHRONIZATION_DATE,
-					"(" + USERS.METADATA + "-> 'metadata' ->> 'synchronizationDate')::DOUBLE PRECISION ",
+					"(" + USERS.METADATA.getQualifiedName().toString() + "-> 'metadata' ->> 'synchronizationDate')::DOUBLE PRECISION ",
 					Long.class
 			)
 
@@ -358,7 +358,12 @@ public enum FilterTarget {
 					DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString(),
 					Boolean.class
 			),
-			new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR, String.class)
+			new CriteriaHolder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR, String.class),
+			new CriteriaHolder(CRITERIA_PATTERN_TEMPLATE_NAME,
+					PATTERN_TEMPLATE.NAME,
+					DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString(),
+					List.class
+			)
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -392,7 +397,9 @@ public enum FilterTarget {
 					ISSUE_TYPE.ABBREVIATION,
 					ISSUE_TYPE.HEX_COLOR,
 					ISSUE_TYPE.ISSUE_NAME,
-					ISSUE_GROUP.ISSUE_GROUP_
+					ISSUE_GROUP.ISSUE_GROUP_,
+					PATTERN_TEMPLATE.ID,
+					PATTERN_TEMPLATE.NAME
 			);
 		}
 
@@ -417,6 +424,8 @@ public enum FilterTarget {
 			query.addJoin(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID));
 			query.addJoin(ISSUE_TYPE, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID));
 			query.addJoin(ISSUE_GROUP, JoinType.LEFT_OUTER_JOIN, ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID));
+			query.addJoin(PATTERN_TEMPLATE_TEST_ITEM, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID));
+			query.addJoin(PATTERN_TEMPLATE, JoinType.LEFT_OUTER_JOIN, PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID.eq(PATTERN_TEMPLATE.ID));
 
 		}
 	},

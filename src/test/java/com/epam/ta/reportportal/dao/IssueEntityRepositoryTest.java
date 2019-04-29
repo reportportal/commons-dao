@@ -42,7 +42,7 @@ class IssueEntityRepositoryTest extends BaseTest {
 	@Test
 	void findAllByIssueId() {
 		final Long toInvestigateTypeId = 1L;
-		final int expectedSize = 12;
+		final int expectedSize = 11;
 
 		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(toInvestigateTypeId);
 		assertEquals(expectedSize, issueEntities.size(), "Incorrect size of issue entities");
