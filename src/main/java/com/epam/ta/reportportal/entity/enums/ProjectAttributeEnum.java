@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 public enum ProjectAttributeEnum {
 
-	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(true)),
+	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(false)),
 
 	PATTERN_ANALYSIS_ENABLED("pattern.analysis.enabled", String.valueOf(false)),
 
