@@ -75,7 +75,7 @@ public class CriteriaHolder {
 	 */
 	private Table associatedTable;
 
-	private Condition joinCondition;
+	private org.jooq.Condition joinCondition;
 
 	private Class<?> dataType;
 
@@ -113,6 +113,10 @@ public class CriteriaHolder {
 		return aggregateCriteria;
 	}
 
+	public org.jooq.Condition getJoinCondition() {
+		return joinCondition;
+	}
+
 	public Class<?> getDataType() {
 		return dataType;
 	}
@@ -121,7 +125,7 @@ public class CriteriaHolder {
 		this.aggregateCriteria = aggregateCriteria;
 	}
 
-	public void setJoinCondition(Condition joinCondition) {
+	public void setJoinCondition(org.jooq.Condition joinCondition) {
 		this.joinCondition = joinCondition;
 	}
 

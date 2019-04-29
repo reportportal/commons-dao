@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 
 import java.util.function.Supplier;

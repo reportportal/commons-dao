@@ -29,9 +29,7 @@ import org.jooq.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
@@ -39,6 +37,9 @@ import java.util.stream.StreamSupport;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 
@@ -91,12 +92,22 @@ public class QueryBuilder {
 		this.query = query.toQuery();
 	}
 
+	private QueryBuilder(Queryable queryable, Set<String> fields) {
+		filterTarget = queryable.getTarget();
+		this.query = queryable.toQuery();
+		addJoinsToQuery(this.query, filterTarget, fields);
+	}
+
 	public static QueryBuilder newBuilder(FilterTarget target) {
 		return new QueryBuilder(target);
 	}
 
 	public static QueryBuilder newBuilder(Queryable queryable) {
 		return new QueryBuilder(queryable);
+	}
+
+	public static QueryBuilder newBuilder(Queryable queryable, Set<String> fields) {
+		return new QueryBuilder(queryable, fields);
 	}
 
 	/**
@@ -266,5 +277,21 @@ public class QueryBuilder {
 			return (int) offset;
 		}
 
+	}
+
+	private void addJoinsToQuery(SelectQuery<? extends Record> query, FilterTarget filterTarget, Set<String> fields) {
+		Map<Table, Condition> joinTables = new LinkedHashMap<>();
+		fields.forEach(it -> {
+			if (!joinTables.containsKey(STATISTICS) && it.startsWith(STATISTICS_KEY)) {
+				joinTables.put(STATISTICS, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
+				joinTables.put(STATISTICS_FIELD, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
+			} else {
+				CriteriaHolder criteriaHolder = filterTarget.getCriteriaByFilter(it).get();
+				if (!joinTables.containsKey(criteriaHolder.getAssociatedTable()) && criteriaHolder.getJoinCondition() != null) {
+					joinTables.put(criteriaHolder.getAssociatedTable(), criteriaHolder.getJoinCondition());
+				}
+			}
+		});
+		joinTables.forEach((key, value) -> query.addJoin(key, JoinType.LEFT_OUTER_JOIN, value));
 	}
 }

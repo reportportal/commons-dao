@@ -47,7 +47,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -215,8 +217,7 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatuses() {
-		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
-				100L,
+		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(100L,
 				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
 		);
 		assertTrue(hasItemsInStatuses);

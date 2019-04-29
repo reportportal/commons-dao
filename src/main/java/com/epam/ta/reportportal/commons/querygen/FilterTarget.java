@@ -262,18 +262,22 @@ public enum FilterTarget {
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY, List.class)
 					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString())
+					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE, List.class)
 					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString())
+					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM, Boolean.class)
 					.withAggregateCriteria(DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString())
+					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
 					.withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
+					.withJoinCondition(LAUNCH.USER_ID.eq(USERS.ID))
 					.get()
 	)) {
 		@Override
@@ -313,6 +317,10 @@ public enum FilterTarget {
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, LAUNCH.USER_ID.eq(USERS.ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
 			query.addJoin(STATISTICS_FIELD, JoinType.LEFT_OUTER_JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
+		}
+
+		@Override
+		protected void joinTablesForFilter(SelectQuery<? extends Record> query) {
 		}
 
 		@Override
@@ -737,7 +745,7 @@ public enum FilterTarget {
 	public SelectQuery<? extends Record> getQuery() {
 		SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
 		addFrom(query);
-		joinTables(query);
+		joinTablesForFilter(query);
 		query.addGroupBy(idField());
 		return query;
 	}
@@ -747,6 +755,10 @@ public enum FilterTarget {
 	protected abstract void addFrom(SelectQuery<? extends Record> query);
 
 	protected abstract void joinTables(SelectQuery<? extends Record> query);
+
+	protected void joinTablesForFilter(SelectQuery<? extends Record> query) {
+		joinTables(query);
+	}
 
 	protected abstract Field<Long> idField();
 
