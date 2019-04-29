@@ -189,6 +189,16 @@ class UserRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void searchForUserTestWithNoResults() {
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "_ub", CRITERIA_USER))
+				.build();
+		Page<User> users = userRepository.findByFilter(filter, PageRequest.of(0, 5));
+		assertEquals(0, users.getTotalElements());
+	}
+
+	@Test
 	void usersWithProjectSort() {
 		Filter filter = Filter.builder()
 				.withTarget(User.class)

@@ -112,7 +112,7 @@ public enum Condition {
 			/* Validate only strings */
 
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getAggregateCriteria()).likeIgnoreCase(DSL.inline("%" + filter.getValue() + "%"));
+			return field(criteriaHolder.getAggregateCriteria()).likeIgnoreCase(DSL.inline("%" + filter.getValue().replaceAll("_", "\\\\_") + "%"));
 		}
 
 		@Override
