@@ -236,10 +236,10 @@ public class QueryBuilder {
 			String searchCriteria = filterCondition.getSearchCriteria();
 			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
 
-			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT)
-					.verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
-							Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
-					);
+			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT).verify(
+					ErrorType.INCORRECT_FILTER_PARAMETERS,
+					Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
+			);
 
 			Condition condition = filterCondition.getCondition().toCondition(filterCondition, criteriaHolder.get());
 

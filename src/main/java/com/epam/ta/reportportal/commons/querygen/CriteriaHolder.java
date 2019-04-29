@@ -75,6 +75,8 @@ public class CriteriaHolder {
 	 */
 	private Table associatedTable;
 
+	private Condition joinCondition;
+
 	private Class<?> dataType;
 
 	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
@@ -95,32 +97,6 @@ public class CriteriaHolder {
 		}
 	}
 
-	public CriteriaHolder(String filterCriteria, String queryCriteria, String aggregateCriteria, Class<?> dataType) {
-		this.filterCriteria = filterCriteria;
-		this.queryCriteria = queryCriteria;
-		this.aggregateCriteria = aggregateCriteria;
-		this.dataType = dataType;
-	}
-
-	public CriteriaHolder(String filterCriteria, Field queryCriteria, String aggregateCriteria, Class<?> dataType) {
-		this.filterCriteria = filterCriteria;
-		this.queryCriteria = queryCriteria.getQualifiedName().toString();
-		this.aggregateCriteria = aggregateCriteria;
-		this.dataType = dataType;
-
-		if (queryCriteria instanceof TableField) {
-			associatedTable = ((TableField) queryCriteria).getTable();
-		}
-	}
-
-	public CriteriaHolder(CriteriaHolder holder) {
-		this.filterCriteria = holder.getFilterCriteria();
-		this.queryCriteria = holder.getQueryCriteria();
-		this.aggregateCriteria = holder.getAggregateCriteria();
-		this.dataType = holder.getDataType();
-		this.associatedTable = holder.getAssociatedTable();
-	}
-
 	public Table getAssociatedTable() {
 		return associatedTable;
 	}
@@ -139,6 +115,14 @@ public class CriteriaHolder {
 
 	public Class<?> getDataType() {
 		return dataType;
+	}
+
+	public void setAggregateCriteria(String aggregateCriteria) {
+		this.aggregateCriteria = aggregateCriteria;
+	}
+
+	public void setJoinCondition(Condition joinCondition) {
+		this.joinCondition = joinCondition;
 	}
 
 	public Object castValue(String oneValue) {

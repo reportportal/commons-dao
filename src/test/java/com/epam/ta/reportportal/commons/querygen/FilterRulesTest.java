@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.entity.enums.LogLevel;
-import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -33,85 +32,87 @@ class FilterRulesTest {
 
 	@Test
 	void filterForString() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), java.lang.String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", java.lang.String.class);
 		assertTrue(FilterRules.filterForString().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForStringNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), Number.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", Number.class);
 		assertFalse(FilterRules.filterForString().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForBoolean() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), Boolean.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", Boolean.class);
 		assertTrue(FilterRules.filterForBoolean().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForBooleanNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", String.class);
 		assertFalse(FilterRules.filterForBoolean().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForLogLevel() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), LogLevel.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", LogLevel.class);
 		assertTrue(FilterRules.filterForLogLevel().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForLogLevelNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), Number.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", Number.class);
 		assertFalse(FilterRules.filterForLogLevel().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForNumbers() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), Long.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", Long.class);
 		assertTrue(FilterRules.filterForNumbers().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForNumbersNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", String.class);
 		assertFalse(FilterRules.filterForNumbers().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForLtree() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("path", DSL.field("string"), String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("path", "string", String.class);
 		assertTrue(FilterRules.filterForLtree().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForLtreeNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("notPath", DSL.field("string"), String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("notPath", "string", String.class);
 		assertFalse(FilterRules.filterForLtree().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForCollections() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("path", DSL.field("string"), List.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("path", "string", List.class);
 		assertTrue(FilterRules.filterForCollections().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForCollectionsNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("path", DSL.field("string"), String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("path", "string", String.class);
 		assertFalse(FilterRules.filterForCollections().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForAggregation() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), "array_agg(string)", String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolderBuilder().newBuilder("string", "string", String.class)
+				.withAggregateCriteria("array_agg(string)")
+				.get();
 		assertTrue(FilterRules.filterForArrayAggregation().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForAggregationNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), "max(string)", String.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolderBuilder().newBuilder("string", "string", String.class).get();
 		assertFalse(FilterRules.filterForArrayAggregation().test(criteriaHolder));
 	}
 
@@ -147,13 +148,13 @@ class FilterRulesTest {
 
 	@Test
 	void filterForDates() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), Date.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", Date.class);
 		assertTrue(FilterRules.filterForDates().test(criteriaHolder));
 	}
 
 	@Test
 	void filterForDatesNegative() {
-		CriteriaHolder criteriaHolder = new CriteriaHolder("string", DSL.field("string"), Long.class);
+		CriteriaHolder criteriaHolder = new CriteriaHolder("string", "string", Long.class);
 		assertFalse(FilterRules.filterForDates().test(criteriaHolder));
 	}
 
