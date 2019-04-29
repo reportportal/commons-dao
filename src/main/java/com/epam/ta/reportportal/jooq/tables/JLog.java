@@ -3,30 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -42,7 +30,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = 1715221774;
+    private static final long serialVersionUID = -1365788713;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -138,7 +126,7 @@ public class JLog extends TableImpl<JLogRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LOG_PK, Indexes.LOG_TI_IDX);
+        return Arrays.<Index>asList(Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_TI_IDX);
     }
 
     /**

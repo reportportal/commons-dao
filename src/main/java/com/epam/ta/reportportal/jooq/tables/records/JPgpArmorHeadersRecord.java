@@ -3,7 +3,6 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
-
 import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
 import org.jooq.Field;
 import org.jooq.Record2;

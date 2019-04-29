@@ -42,6 +42,7 @@ import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import com.epam.ta.reportportal.entity.ldap.SynchronizationAttributes;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
@@ -185,8 +186,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
 		TestItem testItem = new TestItem();
 		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
-		return new Log(
-				r.get(JLog.LOG.ID, Long.class),
+		return new Log(r.get(JLog.LOG.ID, Long.class),
 				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 				r.get(JLog.LOG.LOG_MESSAGE, String.class),
 				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
@@ -207,6 +207,17 @@ public class RecordMappers {
 		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
 		return testItem;
 	};
+
+	/**
+	 * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link PatternTemplate#name} fields)
+	 */
+	public static final Function<? super Record, Optional<PatternTemplate>> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> ofNullable(r.get(
+			PATTERN_TEMPLATE.NAME)).map(name -> {
+		PatternTemplate patternTemplate = new PatternTemplate();
+		patternTemplate.setId(r.get(PATTERN_TEMPLATE.ID));
+		patternTemplate.setName(name);
+		return patternTemplate;
+	});
 
 	/**
 	 * Maps record into {@link Launch} object
