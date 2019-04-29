@@ -157,11 +157,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.orderBy(field(name(FLAKY_TABLE_RESULTS, START_TIME)))
 						.as(START_TIME_HISTORY),
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-				sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).as(TOTAL)
+				count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).as(TOTAL)
 		)
 				.from(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter).with(LAUNCH.NUMBER, SortOrder.DESC).with(limit).build())
-						.select(TEST_ITEM.UNIQUE_ID,
+						.select(TEST_ITEM.ITEM_ID,
+								TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								TEST_ITEM.START_TIME,
 								TEST_ITEM_RESULTS.STATUS,
@@ -170,8 +171,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG),
-								count(TEST_ITEM_RESULTS.STATUS).as(TOTAL)
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -189,7 +189,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
 						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName()))
 				)
-				.having(sum(field(name(FLAKY_TABLE_RESULTS, TOTAL)).cast(Long.class)).gt(BigDecimal.ONE))
+				.having(count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).gt(BigDecimal.ONE.intValue()))
 				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
 				.limit(FLAKY_CASES_LIMIT)
 				.fetchInto(FlakyCasesTableContent.class);
