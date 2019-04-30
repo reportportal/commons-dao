@@ -28,6 +28,9 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jooq.Field;
+import org.jooq.Table;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import java.time.Instant;
@@ -67,14 +70,14 @@ public class CriteriaHolder {
 	 */
 	private String aggregateCriteria;
 
-	private Class<?> dataType;
+	/**
+	 * Table than contains a queryCriteria field in it
+	 */
+	private Table associatedTable;
 
-	public CriteriaHolder(String filterCriteria, String queryCriteria, String aggregateCriteria, Class<?> dataType) {
-		this.filterCriteria = filterCriteria;
-		this.queryCriteria = queryCriteria;
-		this.aggregateCriteria = aggregateCriteria;
-		this.dataType = dataType;
-	}
+	private org.jooq.Condition joinCondition;
+
+	private Class<?> dataType;
 
 	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
 		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
@@ -83,10 +86,19 @@ public class CriteriaHolder {
 		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
 	}
 
-	public CriteriaHolder(CriteriaHolder holder) {
-		this.filterCriteria = holder.getFilterCriteria();
-		this.queryCriteria = holder.getQueryCriteria();
-		this.dataType = holder.getDataType();
+	public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType) {
+		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
+		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null").getQualifiedName().toString();
+		this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
+		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+
+		if (queryCriteria instanceof TableField) {
+			associatedTable = ((TableField) queryCriteria).getTable();
+		}
+	}
+
+	public Table getAssociatedTable() {
+		return associatedTable;
 	}
 
 	public String getFilterCriteria() {
@@ -101,8 +113,20 @@ public class CriteriaHolder {
 		return aggregateCriteria;
 	}
 
+	public org.jooq.Condition getJoinCondition() {
+		return joinCondition;
+	}
+
 	public Class<?> getDataType() {
 		return dataType;
+	}
+
+	public void setAggregateCriteria(String aggregateCriteria) {
+		this.aggregateCriteria = aggregateCriteria;
+	}
+
+	public void setJoinCondition(org.jooq.Condition joinCondition) {
+		this.joinCondition = joinCondition;
 	}
 
 	public Object castValue(String oneValue) {

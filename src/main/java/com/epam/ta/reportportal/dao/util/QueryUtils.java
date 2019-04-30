@@ -17,13 +17,18 @@
 package com.epam.ta.reportportal.dao.util;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
+import org.springframework.data.domain.Sort;
+
+import java.util.Set;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static java.util.stream.Collectors.toSet;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 
@@ -36,9 +41,9 @@ public final class QueryUtils {
 		//static only
 	}
 
-	public static QueryBuilder createQueryBuilderWithLatestLaunchesOption(Filter filter, boolean isLatest) {
+	public static QueryBuilder createQueryBuilderWithLatestLaunchesOption(Filter filter, Sort sort, boolean isLatest) {
 
-		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter);
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort));
 
 		if (isLatest) {
 			queryBuilder.with(LAUNCH.NUMBER, SortOrder.DESC)
@@ -54,6 +59,12 @@ public final class QueryUtils {
 
 		return queryBuilder;
 
+	}
+
+	public static Set<String> collectJoinFields(Filter filter, Sort sort) {
+		Set<String> joinFields = filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(toSet());
+		joinFields.addAll(sort.get().map(Sort.Order::getProperty).collect(toSet()));
+		return joinFields;
 	}
 
 }

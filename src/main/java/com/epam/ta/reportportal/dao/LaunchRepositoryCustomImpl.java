@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
@@ -33,15 +34,14 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
@@ -73,12 +73,19 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<Launch> findByFilter(Queryable filter) {
-		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
+		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter,
+				filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(Collectors.toSet())
+		)
+				.wrap()
+				.build()));
 	}
 
 	@Override
 	public Page<Launch> findByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+		Set<String> fields = filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(Collectors.toSet());
+		fields.addAll(pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
+
+		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
 				.with(pageable)
 				.wrap()
 				.withWrapperSort(pageable.getSort())
@@ -133,7 +140,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Optional<Launch> findLatestByFilter(Filter filter) {
 		return ofNullable(dsl.with(LAUNCHES)
-				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, Sort.unsorted(), true).build())
 				.select()
 				.from(LAUNCH)
 				.join(LAUNCHES)
@@ -145,9 +152,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
 
-		return PageableExecutionUtils.getPage(
-				LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
-						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).with(pageable).build())
+		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, Sort.unsorted(), true).with(pageable).build())
 						.select()
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -162,7 +168,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
-						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, true).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, Sort.unsorted(), true).build())
 						.selectOne()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
@@ -199,8 +205,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Integer countLaunches(Long projectId, String mode, LocalDateTime from) {
-		return dsl.fetchCount(
-				LAUNCH,
+		return dsl.fetchCount(LAUNCH,
 				LAUNCH.PROJECT_ID.eq(projectId)
 						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS).and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from))))
@@ -209,8 +214,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Integer countLaunches(Long projectId, String mode) {
-		return dsl.fetchCount(
-				LAUNCH,
+		return dsl.fetchCount(LAUNCH,
 				LAUNCH.PROJECT_ID.eq(projectId)
 						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 						.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
