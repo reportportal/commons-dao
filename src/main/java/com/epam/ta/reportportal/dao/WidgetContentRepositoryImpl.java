@@ -89,7 +89,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(contentFields))
 				.groupBy(STATISTICS_FIELD.NAME)
-				.fetch());
+				.fetch(), contentFields);
 	}
 
 	/**

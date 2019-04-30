@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
@@ -102,8 +103,9 @@ public class WidgetContentUtil {
 		return resultMap;
 	};
 
-	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
-		Map<String, Long> values = new HashMap<>();
+	public static final BiFunction<Result<? extends Record>, Collection<String>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = (result, contentFields) -> {
+		Map<String, Long> values = Maps.newHashMapWithExpectedSize(contentFields.size());
+		contentFields.forEach(cf -> values.put(cf, 0L));
 
 		result.forEach(record -> ofNullable(record.get(STATISTICS_FIELD.NAME)).ifPresent(v -> values.put(v,
 				ofNullable(record.get(fieldName(SUM), Long.class)).orElse(0L)
@@ -248,10 +250,12 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return filterMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -300,10 +304,12 @@ public class WidgetContentUtil {
 
 		});
 
-		return attributeMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return attributeMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiConsumer<Map<String, List<CumulativeTrendChartContent>>, Result<? extends Record>> CUMULATIVE_STATISTICS_FETCHER = (cumulative, statisticsResult) -> {
@@ -316,9 +322,10 @@ public class WidgetContentUtil {
 
 			Long launchId = record.get(TEST_ITEM.LAUNCH_ID);
 
-			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(record.get(Tables.STATISTICS_FIELD.NAME),
-					ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
-			));
+			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues()
+					.put(record.get(Tables.STATISTICS_FIELD.NAME),
+							ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
+					));
 		});
 
 	};
@@ -331,8 +338,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
