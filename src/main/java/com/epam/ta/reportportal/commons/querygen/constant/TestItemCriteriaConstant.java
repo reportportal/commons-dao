@@ -33,5 +33,6 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_DURATION = "duration";
 	public static final String CRITERIA_PARAMETER_KEY = "key";
 	public static final String CRITERIA_PARAMETER_VALUE = "value";
+	public static final String CRITERIA_PATTERN_TEMPLATE_NAME = "patternName";
 
 }

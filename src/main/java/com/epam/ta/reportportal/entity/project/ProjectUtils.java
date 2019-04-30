@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
+import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -29,7 +30,6 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.sun.javafx.binding.StringFormatter;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -76,7 +76,7 @@ public class ProjectUtils {
 
 					projectAttribute.setValue(ProjectAttributeEnum.findByAttributeName(pa)
 							.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-									StringFormatter.format("Attribute - {} was not found", pa)
+									Suppliers.formattedSupplier("Attribute - {} was not found", pa).get()
 							))
 							.getDefaultValue());
 

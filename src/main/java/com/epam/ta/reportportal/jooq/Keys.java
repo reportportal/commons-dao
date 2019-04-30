@@ -38,6 +38,8 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
@@ -90,6 +92,8 @@ import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JParameterRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateTestItemRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectAttributeRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
@@ -156,6 +160,7 @@ public class Keys {
     public static final Identity<JOauthAccessTokenRecord, Long> IDENTITY_OAUTH_ACCESS_TOKEN = Identities0.IDENTITY_OAUTH_ACCESS_TOKEN;
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
+    public static final Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Identities0.IDENTITY_PATTERN_TEMPLATE;
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Identities0.IDENTITY_PROJECT_ATTRIBUTE;
     public static final Identity<JSenderCaseRecord, Long> IDENTITY_SENDER_CASE = Identities0.IDENTITY_SENDER_CASE;
@@ -185,7 +190,6 @@ public class Keys {
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = UniqueKeys0.AUTH_CONFIG_PK;
-    public static final UniqueKey<JContentFieldRecord> CONTENT_FIELD_PKEY = UniqueKeys0.CONTENT_FIELD_PKEY;
     public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = UniqueKeys0.DASHBOARD_PKEY;
     public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = UniqueKeys0.DASHBOARD_WIDGET_PK;
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
@@ -216,6 +220,7 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
+    public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = UniqueKeys0.PATTERN_TEMPLATE_PK;
     public static final UniqueKey<JProjectRecord> PROJECT_PK = UniqueKeys0.PROJECT_PK;
     public static final UniqueKey<JProjectRecord> PROJECT_NAME_KEY = UniqueKeys0.PROJECT_NAME_KEY;
     public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = UniqueKeys0.UNIQUE_ATTRIBUTE_PER_PROJECT;
@@ -236,7 +241,6 @@ public class Keys {
     public static final UniqueKey<JTicketRecord> TICKET_PK = UniqueKeys0.TICKET_PK;
     public static final UniqueKey<JTicketRecord> TICKET_TICKET_ID_KEY = UniqueKeys0.TICKET_TICKET_ID_KEY;
     public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_PK = UniqueKeys0.USER_CREATION_BID_PK;
-    public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_EMAIL_KEY = UniqueKeys0.USER_CREATION_BID_EMAIL_KEY;
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_PK = UniqueKeys0.USER_PREFERENCE_PK;
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = UniqueKeys0.USER_PREFERENCE_UQ;
     public static final UniqueKey<JUsersRecord> USERS_PK = UniqueKeys0.USERS_PK;
@@ -261,7 +265,7 @@ public class Keys {
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JAuthConfigRecord, JLdapConfigRecord> AUTH_CONFIG__AUTH_CONFIG_LDAP_CONFIG_ID_FKEY = ForeignKeys0.AUTH_CONFIG__AUTH_CONFIG_LDAP_CONFIG_ID_FKEY;
     public static final ForeignKey<JAuthConfigRecord, JActiveDirectoryConfigRecord> AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY = ForeignKeys0.AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY;
-    public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FK = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FK;
+    public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
     public static final ForeignKey<JDashboardRecord, JShareableEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
     public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY;
     public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY;
@@ -291,6 +295,9 @@ public class Keys {
     public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JParameterRecord, JTestItemRecord> PARAMETER__PARAMETER_ITEM_ID_FKEY = ForeignKeys0.PARAMETER__PARAMETER_ITEM_ID_FKEY;
+    public static final ForeignKey<JPatternTemplateRecord, JProjectRecord> PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY = ForeignKeys0.PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY;
+    public static final ForeignKey<JPatternTemplateTestItemRecord, JPatternTemplateRecord> PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_PATTERN_ID_FKEY = ForeignKeys0.PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_PATTERN_ID_FKEY;
+    public static final ForeignKey<JPatternTemplateTestItemRecord, JTestItemRecord> PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_ITEM_ID_FKEY = ForeignKeys0.PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_ITEM_ID_FKEY;
     public static final ForeignKey<JProjectAttributeRecord, JAttributeRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_ATTRIBUTE_ID_FKEY = ForeignKeys0.PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_ATTRIBUTE_ID_FKEY;
     public static final ForeignKey<JProjectAttributeRecord, JProjectRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY = ForeignKeys0.PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY;
     public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = ForeignKeys0.PROJECT_USER__PROJECT_USER_USER_ID_FKEY;
@@ -341,6 +348,7 @@ public class Keys {
         public static Identity<JOauthAccessTokenRecord, Long> IDENTITY_OAUTH_ACCESS_TOKEN = Internal.createIdentity(JOauthAccessToken.OAUTH_ACCESS_TOKEN, JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID);
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
+        public static Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Internal.createIdentity(JPatternTemplate.PATTERN_TEMPLATE, JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Internal.createIdentity(JProjectAttribute.PROJECT_ATTRIBUTE, JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
         public static Identity<JSenderCaseRecord, Long> IDENTITY_SENDER_CASE = Internal.createIdentity(JSenderCase.SENDER_CASE, JSenderCase.SENDER_CASE.ID);
@@ -368,7 +376,6 @@ public class Keys {
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = Internal.createUniqueKey(JAuthConfig.AUTH_CONFIG, "auth_config_pk", JAuthConfig.AUTH_CONFIG.ID);
-        public static final UniqueKey<JContentFieldRecord> CONTENT_FIELD_PKEY = Internal.createUniqueKey(JContentField.CONTENT_FIELD, "content_field_pkey", JContentField.CONTENT_FIELD.ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pkey", JDashboard.DASHBOARD.ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME);
@@ -399,6 +406,7 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createUniqueKey(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
+        public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static final UniqueKey<JProjectRecord> PROJECT_PK = Internal.createUniqueKey(JProject.PROJECT, "project_pk", JProject.PROJECT.ID);
         public static final UniqueKey<JProjectRecord> PROJECT_NAME_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_name_key", JProject.PROJECT.NAME);
         public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createUniqueKey(JProjectAttribute.PROJECT_ATTRIBUTE, "unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);
@@ -419,7 +427,6 @@ public class Keys {
         public static final UniqueKey<JTicketRecord> TICKET_PK = Internal.createUniqueKey(JTicket.TICKET, "ticket_pk", JTicket.TICKET.ID);
         public static final UniqueKey<JTicketRecord> TICKET_TICKET_ID_KEY = Internal.createUniqueKey(JTicket.TICKET, "ticket_ticket_id_key", JTicket.TICKET.TICKET_ID);
         public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_PK = Internal.createUniqueKey(JUserCreationBid.USER_CREATION_BID, "user_creation_bid_pk", JUserCreationBid.USER_CREATION_BID.UUID);
-        public static final UniqueKey<JUserCreationBidRecord> USER_CREATION_BID_EMAIL_KEY = Internal.createUniqueKey(JUserCreationBid.USER_CREATION_BID, "user_creation_bid_email_key", JUserCreationBid.USER_CREATION_BID.EMAIL);
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_PK = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_pk", JUserPreference.USER_PREFERENCE.ID);
         public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, "user_preference_uq", JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID);
         public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, "users_pk", JUsers.USERS.ID);
@@ -442,7 +449,7 @@ public class Keys {
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
         public static final ForeignKey<JAuthConfigRecord, JLdapConfigRecord> AUTH_CONFIG__AUTH_CONFIG_LDAP_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LDAP_CONFIG_PK, JAuthConfig.AUTH_CONFIG, "auth_config__auth_config_ldap_config_id_fkey", JAuthConfig.AUTH_CONFIG.LDAP_CONFIG_ID);
         public static final ForeignKey<JAuthConfigRecord, JActiveDirectoryConfigRecord> AUTH_CONFIG__AUTH_CONFIG_ACTIVE_DIRECTORY_CONFIG_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACTIVE_DIRECTORY_CONFIG_PK, JAuthConfig.AUTH_CONFIG, "auth_config__auth_config_active_directory_config_id_fkey", JAuthConfig.AUTH_CONFIG.ACTIVE_DIRECTORY_CONFIG_ID);
-        public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fk", JContentField.CONTENT_FIELD.ID);
+        public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
         public static final ForeignKey<JDashboardRecord, JShareableEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
         public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DASHBOARD_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_dashboard_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID);
         public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_widget_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
@@ -472,6 +479,9 @@ public class Keys {
         public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction__oauth_registration_restriction_oauth_registration_fk_fkey", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JParameterRecord, JTestItemRecord> PARAMETER__PARAMETER_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JParameter.PARAMETER, "parameter__parameter_item_id_fkey", JParameter.PARAMETER.ITEM_ID);
+        public static final ForeignKey<JPatternTemplateRecord, JProjectRecord> PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JPatternTemplate.PATTERN_TEMPLATE, "pattern_template__pattern_template_project_id_fkey", JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
+        public static final ForeignKey<JPatternTemplateTestItemRecord, JPatternTemplateRecord> PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_PATTERN_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PATTERN_TEMPLATE_PK, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_template_test_item__pattern_template_test_item_pattern_id_fkey", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID);
+        public static final ForeignKey<JPatternTemplateTestItemRecord, JTestItemRecord> PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_template_test_item__pattern_template_test_item_item_id_fkey", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID);
         public static final ForeignKey<JProjectAttributeRecord, JAttributeRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_ATTRIBUTE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ATTRIBUTE_PK, JProjectAttribute.PROJECT_ATTRIBUTE, "project_attribute__project_attribute_attribute_id_fkey", JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
         public static final ForeignKey<JProjectAttributeRecord, JProjectRecord> PROJECT_ATTRIBUTE__PROJECT_ATTRIBUTE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JProjectAttribute.PROJECT_ATTRIBUTE, "project_attribute__project_attribute_project_id_fkey", JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);
         public static final ForeignKey<JProjectUserRecord, JUsersRecord> PROJECT_USER__PROJECT_USER_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JProjectUser.PROJECT_USER, "project_user__project_user_user_id_fkey", JProjectUser.PROJECT_USER.USER_ID);

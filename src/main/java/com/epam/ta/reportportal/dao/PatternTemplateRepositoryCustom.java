@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.commons.querygen.constant;
+package com.epam.ta.reportportal.dao;
+
+import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItemPojo;
+
+import java.util.List;
 
 /**
- * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public final class ItemAttributeConstant {
+public interface PatternTemplateRepositoryCustom {
 
-	private ItemAttributeConstant() {
-		//static only
-	}
-
-	public static final String CRITERIA_ITEM_ATTRIBUTE_KEY = "attributeKey";
-	public static final String CRITERIA_ITEM_ATTRIBUTE_VALUE = "attributeValue";
-	public static final String CRITERIA_ITEM_ATTRIBUTE_SYSTEM = "attributeSystem";
+	int saveInBatch(List<PatternTemplateTestItemPojo> patternTemplateTestItemPojos);
 }

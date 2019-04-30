@@ -30,7 +30,9 @@ public enum JIntegrationGroupEnum implements EnumType {
 
     NOTIFICATION("NOTIFICATION"),
 
-    AUTH("AUTH");
+    AUTH("AUTH"),
+
+    OTHER("OTHER");
 
     private final String literal;
 

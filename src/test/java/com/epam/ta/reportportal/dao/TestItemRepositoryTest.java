@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -34,17 +36,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_RETRIES;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PATTERN_TEMPLATE_NAME;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,7 +68,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		assertNotNull(stream);
 
-		List<Long> ids = stream.collect(Collectors.toList());
+		List<Long> ids = stream.collect(toList());
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
 		assertEquals(5, ids.size(), "Incorrect ids size");
@@ -92,7 +97,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final String uniqueId = "unqIdSTEP7";
 
 		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
-		assertEquals(3, items.size(), "Incorrect items size");
+		assertEquals(7, items.size(), "Incorrect items size");
 		items.forEach(it -> assertTrue(it.getUniqueId().equals(uniqueId) && (it.getLaunch().getId() == 7L || it.getLaunch().getId() == 8L
 				|| it.getLaunch().getId() == 9L)));
 	}
@@ -153,12 +158,39 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectIdsByStringPatternMatchedLogMessage() {
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
+				1,
+				40000,
+				"%o%"
+		);
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
+	void selectIdsByRegexPatternMatchedLogMessage() {
+		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L,
+				1,
+				40000,
+				"[a-z]{3,3}"
+		);
+
+		Assertions.assertEquals(1, itemIds.size());
+	}
+
+	@Test
 	void selectAllDescendants() {
 		final Long itemId = 2L;
 		final List<TestItem> items = testItemRepository.selectAllDescendants(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId(), "Item has incorrect parent id"));
+	}
+
+	@Test
+	void deleteByIdTest() {
+		testItemRepository.deleteById(1L);
 	}
 
 	@Test
@@ -244,7 +276,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -254,7 +286,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		Assertions.assertEquals(2, itemIds.size());
 	}
@@ -264,7 +296,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -274,7 +306,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
 				.map(BigInteger::longValue)
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -357,10 +389,121 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findWithUserAttributes() {
+		List<TestItem> withoutSystemAttrs = testItemRepository.findByFilter(Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.FALSE.toString()).build())
+				.build());
+		assertTrue(CollectionUtils.isNotEmpty(withoutSystemAttrs));
+		withoutSystemAttrs.forEach(it -> assertFalse(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
+	}
+
+	@Test
+	void findWithSystemAttributes() {
+		List<TestItem> withoutUserAttrs = testItemRepository.findByFilter(Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.TRUE.toString()).build())
+				.build());
+		assertTrue(CollectionUtils.isNotEmpty(withoutUserAttrs));
+		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
+	}
+
+	@Test
 	void hasParentWithStatus() {
 
 		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", StatusEnum.FAILED);
 
 		Assertions.assertTrue(hasParentWithStatus);
+	}
+
+	@Test
+	void findAllNotInIssueGroupByLaunch() {
+		List<TestItem> withoutProductBug = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		withoutProductBug.forEach(it -> assertNotEquals(TestItemIssueGroup.PRODUCT_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutAutomationBug = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.AUTOMATION_BUG);
+		withoutAutomationBug.forEach(it -> assertNotEquals(TestItemIssueGroup.AUTOMATION_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutSystemIssue = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.SYSTEM_ISSUE);
+		withoutSystemIssue.forEach(it -> assertNotEquals(TestItemIssueGroup.SYSTEM_ISSUE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutToInvestigate = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		withoutToInvestigate.forEach(it -> assertNotEquals(TestItemIssueGroup.TO_INVESTIGATE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withoutNoDefect = testItemRepository.findAllNotInIssueGroupByLaunch(3L, TestItemIssueGroup.NO_DEFECT);
+		withoutNoDefect.forEach(it -> assertNotEquals(TestItemIssueGroup.NO_DEFECT,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+	}
+
+	@Test
+	void selectIdsNotInIssueGroupByLaunch() {
+		List<Long> withoutProductBug = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		testItemRepository.findAllById(withoutProductBug)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.PRODUCT_BUG,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutAutomationBug = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.AUTOMATION_BUG);
+		testItemRepository.findAllById(withoutAutomationBug)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.AUTOMATION_BUG,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutSystemIssue = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.SYSTEM_ISSUE);
+		testItemRepository.findAllById(withoutSystemIssue)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.SYSTEM_ISSUE,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutToInvestigate = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		testItemRepository.findAllById(withoutToInvestigate)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.TO_INVESTIGATE,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+
+		List<Long> withoutNoDefect = testItemRepository.selectIdsNotInIssueGroupByLaunch(3L, TestItemIssueGroup.NO_DEFECT);
+		testItemRepository.findAllById(withoutNoDefect)
+				.forEach(it -> assertNotEquals(TestItemIssueGroup.NO_DEFECT,
+						it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+				));
+	}
+
+	@Test
+	void findAllInIssueGroupByLaunch() {
+		List<TestItem> withToInvestigate = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
+		withToInvestigate.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+
+		List<TestItem> withProductBug = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.PRODUCT_BUG);
+		withProductBug.forEach(it -> assertEquals(TestItemIssueGroup.PRODUCT_BUG,
+				it.getItemResults().getIssue().getIssueType().getIssueGroup().getTestItemIssueGroup()
+		));
+	}
+
+	@Test
+	void searchByPatternNameTest() {
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.ANY, false, "name2, name3, name4", CRITERIA_PATTERN_TEMPLATE_NAME))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_PATTERN_TEMPLATE_NAME)));
+
+		List<TestItem> items = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
+
+		assertNotNull(items);
+		assertEquals(20L, items.size());
+
 	}
 }

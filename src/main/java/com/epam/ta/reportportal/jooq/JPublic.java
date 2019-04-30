@@ -38,6 +38,9 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
+import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
@@ -56,6 +59,7 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.records.JPgpArmorHeadersRecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +68,9 @@ import java.util.List;
 import javax.annotation.Generated;
 
 import org.jooq.Catalog;
+import org.jooq.Configuration;
+import org.jooq.Field;
+import org.jooq.Result;
 import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
@@ -82,7 +89,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 1606565295;
+    private static final long serialVersionUID = -1101899414;
 
     /**
      * The reference instance of <code>public</code>
@@ -260,6 +267,42 @@ public class JPublic extends SchemaImpl {
     public final JParameter PARAMETER = com.epam.ta.reportportal.jooq.tables.JParameter.PARAMETER;
 
     /**
+     * The table <code>public.pattern_template</code>.
+     */
+    public final JPatternTemplate PATTERN_TEMPLATE = com.epam.ta.reportportal.jooq.tables.JPatternTemplate.PATTERN_TEMPLATE;
+
+    /**
+     * The table <code>public.pattern_template_test_item</code>.
+     */
+    public final JPatternTemplateTestItem PATTERN_TEMPLATE_TEST_ITEM = com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM;
+
+    /**
+     * The table <code>public.pgp_armor_headers</code>.
+     */
+    public final JPgpArmorHeaders PGP_ARMOR_HEADERS = com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS;
+
+    /**
+     * Call <code>public.pgp_armor_headers</code>.
+     */
+    public static Result<JPgpArmorHeadersRecord> PGP_ARMOR_HEADERS(Configuration configuration, String __1) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS.call(__1)).fetch();
+    }
+
+    /**
+     * Get <code>public.pgp_armor_headers</code> as a table.
+     */
+    public static JPgpArmorHeaders PGP_ARMOR_HEADERS(String __1) {
+        return com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS.call(__1);
+    }
+
+    /**
+     * Get <code>public.pgp_armor_headers</code> as a table.
+     */
+    public static JPgpArmorHeaders PGP_ARMOR_HEADERS(Field<String> __1) {
+        return com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS.call(__1);
+    }
+
+    /**
      * The table <code>public.project</code>.
      */
     public final JProject PROJECT = com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -395,6 +438,7 @@ public class JPublic extends SchemaImpl {
             Sequences.OAUTH_ACCESS_TOKEN_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
+            Sequences.PATTERN_TEMPLATE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
             Sequences.PROJECT_ID_SEQ,
@@ -453,6 +497,9 @@ public class JPublic extends SchemaImpl {
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JParameter.PARAMETER,
+            JPatternTemplate.PATTERN_TEMPLATE,
+            JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM,
+            JPgpArmorHeaders.PGP_ARMOR_HEADERS,
             JProject.PROJECT,
             JProjectAttribute.PROJECT_ATTRIBUTE,
             JProjectUser.PROJECT_USER,

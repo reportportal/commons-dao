@@ -38,6 +38,9 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
+import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
@@ -56,8 +59,13 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.records.JPgpArmorHeadersRecord;
 
 import javax.annotation.Generated;
+
+import org.jooq.Configuration;
+import org.jooq.Field;
+import org.jooq.Result;
 
 
 /**
@@ -242,6 +250,42 @@ public class Tables {
      * The table <code>public.parameter</code>.
      */
     public static final JParameter PARAMETER = com.epam.ta.reportportal.jooq.tables.JParameter.PARAMETER;
+
+    /**
+     * The table <code>public.pattern_template</code>.
+     */
+    public static final JPatternTemplate PATTERN_TEMPLATE = com.epam.ta.reportportal.jooq.tables.JPatternTemplate.PATTERN_TEMPLATE;
+
+    /**
+     * The table <code>public.pattern_template_test_item</code>.
+     */
+    public static final JPatternTemplateTestItem PATTERN_TEMPLATE_TEST_ITEM = com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM;
+
+    /**
+     * The table <code>public.pgp_armor_headers</code>.
+     */
+    public static final JPgpArmorHeaders PGP_ARMOR_HEADERS = com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS;
+
+    /**
+     * Call <code>public.pgp_armor_headers</code>.
+     */
+    public static Result<JPgpArmorHeadersRecord> PGP_ARMOR_HEADERS(Configuration configuration, String __1) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS.call(__1)).fetch();
+    }
+
+    /**
+     * Get <code>public.pgp_armor_headers</code> as a table.
+     */
+    public static JPgpArmorHeaders PGP_ARMOR_HEADERS(String __1) {
+        return com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS.call(__1);
+    }
+
+    /**
+     * Get <code>public.pgp_armor_headers</code> as a table.
+     */
+    public static JPgpArmorHeaders PGP_ARMOR_HEADERS(Field<String> __1) {
+        return com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders.PGP_ARMOR_HEADERS.call(__1);
+    }
 
     /**
      * The table <code>public.project</code>.

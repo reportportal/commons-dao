@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import org.jooq.DSLContext;
@@ -28,6 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -58,9 +61,13 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
+	public List<ProjectInfo> findProjectInfoByFilter(Queryable filter) {
+		return dsl.fetch(QueryBuilder.newBuilder(filter).build()).into(ProjectInfo.class);
+	}
+
+	@Override
 	public Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).into(ProjectInfo.class),
+		return PageableExecutionUtils.getPage(dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).into(ProjectInfo.class),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
@@ -79,8 +86,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	@Override
 	public Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable) {
 
-		return PageableExecutionUtils.getPage(
-				PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
+		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
 						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
 						.select(PROJECT.ID, ATTRIBUTE.NAME, PROJECT_ATTRIBUTE.VALUE)
 						.from(PROJECT)
@@ -94,4 +100,19 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
+
+	@Override
+	public int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound, int limit) {
+		return dsl.deleteFrom(PROJECT)
+				.where(PROJECT.ID.in(dsl.select(PROJECT.ID)
+						.from(PROJECT)
+						.join(LAUNCH)
+						.onKey()
+						.where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
+						.groupBy(PROJECT.ID)
+						.having(DSL.max(LAUNCH.START_TIME).le(Timestamp.valueOf(bound)))
+						.limit(limit)))
+				.execute();
+	}
+
 }

@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAclClass extends TableImpl<JAclClassRecord> {
 
-    private static final long serialVersionUID = 1563041081;
+    private static final long serialVersionUID = -1071514375;
 
     /**
      * The reference instance of <code>public.acl_class</code>
@@ -64,12 +64,12 @@ public class JAclClass extends TableImpl<JAclClassRecord> {
     /**
      * The column <code>public.acl_class.class</code>.
      */
-    public final TableField<JAclClassRecord, String> CLASS = createField("class", org.jooq.impl.SQLDataType.VARCHAR(100).nullable(false), this, "");
+    public final TableField<JAclClassRecord, String> CLASS = createField("class", org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
      * The column <code>public.acl_class.class_id_type</code>.
      */
-    public final TableField<JAclClassRecord, String> CLASS_ID_TYPE = createField("class_id_type", org.jooq.impl.SQLDataType.VARCHAR(100), this, "");
+    public final TableField<JAclClassRecord, String> CLASS_ID_TYPE = createField("class_id_type", org.jooq.impl.SQLDataType.VARCHAR(128), this, "");
 
     /**
      * Create a <code>public.acl_class</code> table reference
