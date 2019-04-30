@@ -43,12 +43,13 @@ public final class QueryUtils {
 
 	public static QueryBuilder createQueryBuilderWithLatestLaunchesOption(Filter filter, Sort sort, boolean isLatest) {
 
-		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort));
+		Set<String> joinFields = collectJoinFields(filter, sort);
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter, joinFields);
 
 		if (isLatest) {
 			queryBuilder.with(LAUNCH.NUMBER, SortOrder.DESC)
 					.addCondition(LAUNCH.ID.in(DSL.with(LAUNCHES)
-							.as(QueryBuilder.newBuilder(filter).build())
+							.as(QueryBuilder.newBuilder(filter, joinFields).build())
 							.selectDistinct(LAUNCH.ID)
 							.on(LAUNCH.NAME)
 							.from(LAUNCH)
