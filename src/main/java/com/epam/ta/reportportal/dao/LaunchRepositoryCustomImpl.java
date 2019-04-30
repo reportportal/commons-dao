@@ -89,7 +89,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.with(pageable)
 				.wrap()
 				.withWrapperSort(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
 	}
 
 	@Override
@@ -164,6 +164,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.leftJoin(ITEM_ATTRIBUTE)
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+						.leftJoin(USERS)
+						.on(LAUNCH.USER_ID.eq(USERS.ID))
 						.orderBy(SortUtils.TO_SORT_FIELDS.apply(pageable.getSort(), filter.getTarget()))
 						.fetch()),
 				pageable,
