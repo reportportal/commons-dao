@@ -116,7 +116,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.where(LAUNCH.PROJECT_ID.eq(projectId))
 				.and(LAUNCH.ID.in(ids))
 				.fetch()
-				.intoMap(record -> String.valueOf(record.component1()), record -> record.component2().getName());
+				.intoMap(record -> String.valueOf(record.component1()), record -> record.component2().getLiteral());
 	}
 
 	@Override
