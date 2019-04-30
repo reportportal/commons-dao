@@ -153,7 +153,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
-						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, Sort.unsorted(), true).with(pageable).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, pageable.getSort(), true).with(pageable).build())
 						.select()
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -168,7 +168,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
-						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, Sort.unsorted(), true).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, pageable.getSort(), true).build())
 						.selectOne()
 						.distinctOn(LAUNCH.NAME)
 						.from(LAUNCH)
