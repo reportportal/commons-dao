@@ -16,15 +16,19 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
 public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRepositoryCustom {
+
+	Optional<Log> findByUuid(String uuid);
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 

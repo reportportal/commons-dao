@@ -18,9 +18,13 @@ package com.epam.ta.reportportal.commons;
 
 public class BinaryDataMetaInfo {
 
-	private final String fileId;
+	private String fileId;
 
-	private final String thumbnailFileId;
+	private String thumbnailFileId;
+
+	private String contentType;
+
+	public BinaryDataMetaInfo() {}
 
 	/**
 	 * Object to hold information about saved file.
@@ -28,9 +32,10 @@ public class BinaryDataMetaInfo {
 	 * @param fileId
 	 * @param thumbnailFileId
 	 */
-	public BinaryDataMetaInfo(String fileId, String thumbnailFileId) {
+	public BinaryDataMetaInfo(String fileId, String thumbnailFileId, String contentType) {
 		this.fileId = fileId;
 		this.thumbnailFileId = thumbnailFileId;
+		this.contentType = contentType;
 	}
 
 	public String getFileId() {
@@ -41,9 +46,26 @@ public class BinaryDataMetaInfo {
 		return thumbnailFileId;
 	}
 
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
+
+	public void setThumbnailFileId(String thumbnailFileId) {
+		this.thumbnailFileId = thumbnailFileId;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	public static final class BinaryDataMetaInfoBuilder {
 		private String fileId;
 		private String thumbnailFileId;
+		private String contentType;
 
 		private BinaryDataMetaInfoBuilder() {
 		}
@@ -62,8 +84,13 @@ public class BinaryDataMetaInfo {
 			return this;
 		}
 
+		public BinaryDataMetaInfoBuilder withContentType(String contentType) {
+			this.contentType = contentType;
+			return this;
+		}
+
 		public BinaryDataMetaInfo build() {
-			return new BinaryDataMetaInfo(fileId, thumbnailFileId);
+			return new BinaryDataMetaInfo(fileId, thumbnailFileId, contentType);
 		}
 	}
 }

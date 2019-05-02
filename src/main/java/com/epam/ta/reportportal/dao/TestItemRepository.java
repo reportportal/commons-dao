@@ -23,10 +23,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
+import ucar.units.Test;
 
 import javax.persistence.QueryHint;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
@@ -98,6 +100,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
+
+	Optional<TestItem> findByUuid(String uuid);
 
 	/**
 	 * Finds all {@link TestItem} by specified launch id
