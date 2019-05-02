@@ -109,19 +109,6 @@ class ProjectUtilsTest {
 	}
 
 	@Test
-	void setDefaultEmailConfigurationTest() {
-
-		Project project = new Project();
-
-		ProjectUtils.setDefaultNotificationConfiguration(project);
-
-		assertThat(project.getSenderCases()).isNotEmpty();
-		assertEquals(1, project.getSenderCases().size());
-
-		project.getSenderCases().forEach(ec -> assertSame(ec.getProject(), project));
-	}
-
-	@Test
 	void excludeProjectRecipientsTest() {
 
 		Project project = getProjectWithRecipients();
