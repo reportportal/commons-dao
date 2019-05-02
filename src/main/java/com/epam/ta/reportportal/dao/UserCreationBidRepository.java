@@ -27,13 +27,11 @@ import java.util.Optional;
 /**
  * @author Ivan Budaev
  */
-public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String> {
+public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String>, UserCreationBidRepositoryCustom {
 
 	Optional<UserCreationBid> findByEmail(String email);
 
 	@Modifying
 	@Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :date")
 	int expireBidsOlderThan(@Param("date") Date date);
-
-	int deleteAllByEmail(String email);
 }
