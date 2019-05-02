@@ -47,9 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -80,6 +78,15 @@ class LaunchRepositoryTest extends BaseTest {
 		assertNotNull(launches);
 		assertTrue(!launches.isEmpty());
 		launches.forEach(it -> assertEquals(launchName, it.getName()));
+	}
+
+	@Test
+	void findByUuid() {
+		final String uuid = "uuid 11";
+		final Optional<Launch> launch = launchRepository.findByUuid(uuid);
+		assertNotNull(launch);
+		assertTrue(launch.isPresent());
+		assertEquals(uuid, launch.get().getUuid());
 	}
 
 	@Test
@@ -250,6 +257,21 @@ class LaunchRepositoryTest extends BaseTest {
 	void sortingByJoinedColumnTest() {
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_USER));
 		Page<Launch> launchesPage = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria(CRITERIA_ID)
+						.withValue("100")
+						.build())
+				.build(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+	}
+
+	@Test
+	void sortingByJoinedColumnLatestTest() {
+		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "statistics$defects$product_bug$pb001"));
+		Page<Launch> launchesPage = launchRepository.findAllLatestByFilter(Filter.builder()
 				.withTarget(Launch.class)
 				.withCondition(FilterCondition.builder()
 						.withCondition(Condition.LOWER_THAN)

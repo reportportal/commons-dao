@@ -152,12 +152,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
 
-		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.with(LAUNCHES)
+		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.with(FILTERED_QUERY)
 						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, pageable.getSort(), true).with(pageable).build())
 						.select()
 						.from(LAUNCH)
-						.join(LAUNCHES)
-						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
+						.join(FILTERED_QUERY)
+						.on(field(name(FILTERED_QUERY, ID), Long.class).eq(LAUNCH.ID))
 						.leftJoin(STATISTICS)
 						.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 						.leftJoin(STATISTICS_FIELD)
@@ -199,6 +199,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
 				.leftJoin(STATISTICS)
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.leftJoin(USERS)
+				.on(LAUNCH.USER_ID.eq(USERS.ID))
 				.leftJoin(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.leftJoin(ITEM_ATTRIBUTE)
