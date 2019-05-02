@@ -92,6 +92,7 @@ public class DataStoreService {
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(dataEncoder.encode(filePath))
 					.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
+					.withContentType(file.getContentType())
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
@@ -116,8 +117,9 @@ public class DataStoreService {
 	}
 
 	public void delete(String filePath) {
-
-		dataStore.delete(dataEncoder.decode(filePath));
+		if (filePath != null) {
+			dataStore.delete(dataEncoder.decode(filePath));
+		}
 	}
 
 	private BinaryData getBinaryData(MultipartFile file) throws IOException {

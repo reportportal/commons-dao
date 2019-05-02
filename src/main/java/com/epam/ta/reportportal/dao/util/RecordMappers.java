@@ -186,7 +186,8 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
 		TestItem testItem = new TestItem();
 		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
-		return new Log(r.get(JLog.LOG.ID, Long.class),
+		return new Log(
+				r.get(JLog.LOG.ID, Long.class),
 				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 				r.get(JLog.LOG.LOG_MESSAGE, String.class),
 				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
@@ -226,7 +227,10 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-		launch.setUser(r.into(User.class));
+
+		User user = new User();
+		user.setLogin(r.get(USERS.LOGIN));
+		launch.setUser(user);
 		return launch;
 	};
 

@@ -94,7 +94,7 @@ public class WidgetContentRepositoryConstants {
 
 	/*Flaky cases table widget constants*/
 	public static final String UNIQUE_ID = "unique_id";
-	public static final String ITEM_NAME = "item_Name";
+	public static final String ITEM_NAME = "item_name";
 	public static final String STATUSES = "statuses";
 	public static final String SWITCH_FLAG = "switchFlag";
 	public static final String FLAKY_COUNT = "flakyCount";

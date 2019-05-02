@@ -108,9 +108,9 @@ public class Filter implements Serializable, Queryable {
 
 	@Override
 	public SelectQuery<? extends Record> toQuery() {
-		QueryBuilder query = QueryBuilder.newBuilder(this.target);
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(this.target);
 		Map<ConditionType, org.jooq.Condition> conditions = toCondition();
-		return query.addCondition(conditions.get(ConditionType.WHERE)).addHavingCondition(conditions.get(ConditionType.HAVING)).build();
+		return queryBuilder.addCondition(conditions.get(ConditionType.WHERE)).addHavingCondition(conditions.get(ConditionType.HAVING)).build();
 	}
 
 	@Override
