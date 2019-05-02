@@ -81,6 +81,15 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByUuid() {
+		final String uuid = "uuid 11";
+		final Optional<Launch> launch = launchRepository.findByUuid(uuid);
+		assertNotNull(launch);
+		assertTrue(launch.isPresent());
+		assertEquals(uuid, launch.get().getUuid());
+	}
+
+	@Test
 	void findLaunchIdsByProjectId() {
 		final List<Long> ids = launchRepository.findLaunchIdsByProjectId(1L);
 		assertNotNull(ids);
@@ -215,8 +224,7 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatuses() {
-		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
-				100L,
+		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(100L,
 				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
 		);
 		assertTrue(hasItemsInStatuses);
@@ -249,6 +257,21 @@ class LaunchRepositoryTest extends BaseTest {
 	void sortingByJoinedColumnTest() {
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_USER));
 		Page<Launch> launchesPage = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria(CRITERIA_ID)
+						.withValue("100")
+						.build())
+				.build(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+	}
+
+	@Test
+	void sortingByJoinedColumnLatestTest() {
+		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "statistics$defects$product_bug$pb001"));
+		Page<Launch> launchesPage = launchRepository.findAllLatestByFilter(Filter.builder()
 				.withTarget(Launch.class)
 				.withCondition(FilterCondition.builder()
 						.withCondition(Condition.LOWER_THAN)

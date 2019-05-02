@@ -113,6 +113,14 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByUuid() {
+		final String uuid = "uuid 1_1";
+		final Optional<TestItem> item = testItemRepository.findByUuid(uuid);
+		assertTrue(item.isPresent(), "Item should not be empty");
+		assertEquals(uuid, item.get().getUuid(), "Incorrect uniqueId");
+	}
+
+	@Test
 	void findTestItemsByUniqueId() {
 		final String uniqueId = "unqIdSTEP1";
 		final List<TestItem> items = testItemRepository.findTestItemsByUniqueId(uniqueId);

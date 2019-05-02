@@ -25,6 +25,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -35,6 +36,8 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	void deleteByProjectId(Long projectId);
 
 	List<Launch> findAllByName(String name);
+
+	Optional<Launch> findByUuid(String uuid);
 
 	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
 

@@ -31,6 +31,9 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.StreamSupport;
 
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
@@ -44,12 +47,21 @@ public final class SortUtils {
 		//static only
 	}
 
-	public static final BiFunction<Sort, FilterTarget, List<SortField<Object>>> TO_SORT_FIELDS = (sort, filterTarget) -> ofNullable(sort).map(
-			s -> StreamSupport.stream(s.spliterator(), false).map(order -> {
+	public static final BiFunction<Sort, FilterTarget, List<SortField<?>>> TO_SORT_FIELDS = (sort, filterTarget) -> ofNullable(sort).map(s -> StreamSupport
+			.stream(s.spliterator(), false)
+			.map(order -> {
 				BusinessRule.expect(filterTarget, Objects::nonNull)
 						.verify(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Provided value shouldn't be null");
 				CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 						.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
-				return field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC);
-			}).collect(toList())).orElseGet(Collections::emptyList);
+
+				if (criteria.getFilterCriteria().startsWith(STATISTICS_KEY)) {
+					return fieldName(FILTERED_QUERY, criteria.getFilterCriteria()).sort(order.getDirection().isDescending() ?
+							SortOrder.DESC :
+							SortOrder.ASC);
+				} else {
+					return field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC);
+				}
+			})
+			.collect(toList())).orElseGet(Collections::emptyList);
 }
