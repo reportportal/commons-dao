@@ -26,8 +26,6 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.util.SortUtils;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -40,7 +38,10 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
@@ -121,20 +122,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Map<String, String> getStatuses(Long projectId, Long[] ids) {
-
-		JLaunch l = LAUNCH.as("l");
-		JProject p = PROJECT.as("p");
-
-		//		return dsl.select()
-		//				.from(l)
-		//				.leftJoin(p)
-		//				.on(l.PROJECT_ID.eq(p.ID))
-		//				.where(p.ID.eq(projectId))
-		//				.and(l.ID.in(ids))
-		//				.fetch(LAUNCH_MAPPER)
-		//				.stream()
-		//				.collect(Collectors.toMap(launch -> String.valueOf(launch.getId()), launch -> launch.getStatus().toString()));
-		return Collections.emptyMap();
+		return dsl.select(LAUNCH.ID, LAUNCH.STATUS)
+				.from(LAUNCH)
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.ID.in(ids))
+				.fetch()
+				.intoMap(record -> String.valueOf(record.component1()), record -> record.component2().getLiteral());
 	}
 
 	@Override
