@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
@@ -80,6 +81,10 @@ public class Project implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
 	private Set<ProjectUser> users = Sets.newHashSet();
 
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@JoinColumn(name = "project_id")
+	private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
+
 	public Project(Long id, String name) {
 		this.id = id;
 		this.name = name;
@@ -118,6 +123,14 @@ public class Project implements Serializable {
 
 	public void setUsers(Set<ProjectUser> users) {
 		this.users = users;
+	}
+
+	public Set<PatternTemplate> getPatternTemplates() {
+		return patternTemplates;
+	}
+
+	public void setPatternTemplates(Set<PatternTemplate> patternTemplates) {
+		this.patternTemplates = patternTemplates;
 	}
 
 	public String getName() {
