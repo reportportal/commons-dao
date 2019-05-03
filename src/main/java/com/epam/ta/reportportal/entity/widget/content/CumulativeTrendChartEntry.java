@@ -2,6 +2,8 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
+ *
+ * Not a database entity. It is used to represent widget data
  */
 public class CumulativeTrendChartEntry {
 

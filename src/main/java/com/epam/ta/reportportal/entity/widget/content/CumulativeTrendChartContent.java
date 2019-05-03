@@ -25,6 +25,8 @@ import java.util.Set;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
+ *
+ * Not a database entity. It is used to represent widget data
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CumulativeTrendChartContent {
