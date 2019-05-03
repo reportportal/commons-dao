@@ -41,6 +41,9 @@ public class Integration implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
+	@Column(name = "name")
+	private String name;
+
 	@ManyToOne
 	@JoinColumn(name = "project_id")
 	private Project project;
@@ -77,6 +80,14 @@ public class Integration implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Project getProject() {
