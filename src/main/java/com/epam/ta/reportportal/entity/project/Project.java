@@ -81,8 +81,8 @@ public class Project implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
 	private Set<ProjectUser> users = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-	@JoinColumn(name = "project_id")
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "project_id", updatable = false)
 	private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
 
 	public Project(Long id, String name) {
