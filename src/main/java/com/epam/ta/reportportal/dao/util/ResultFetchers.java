@@ -241,7 +241,7 @@ public class ResultFetchers {
 				userFilter.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
 				userFilter.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
-				project.setId(r.get(PROJECT.ID, Long.class));
+				project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
 				userFilter.setProject(project);
 			}
 			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
@@ -263,7 +263,7 @@ public class ResultFetchers {
 				dashboard.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
 				dashboard.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
-				project.setId(r.get(PROJECT.ID, Long.class));
+				project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
 				dashboard.setProject(project);
 			}
 			DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(it -> dashboard.getDashboardWidgets().add(it));
@@ -284,7 +284,7 @@ public class ResultFetchers {
 				widget.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
 				widget.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
-				project.setId(r.get(PROJECT.ID, Long.class));
+				project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
 				widget.setProject(project);
 			}
 			widgetMap.put(widgetId, widget);
