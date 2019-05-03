@@ -552,6 +552,7 @@ public enum FilterTarget {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(INTEGRATION.ID,
+					INTEGRATION.NAME,
 					INTEGRATION.PROJECT_ID,
 					INTEGRATION.TYPE,
 					INTEGRATION.PARAMS,

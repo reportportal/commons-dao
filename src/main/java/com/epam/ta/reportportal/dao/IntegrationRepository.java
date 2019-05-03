@@ -120,7 +120,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param projectId  {@link com.epam.ta.reportportal.entity.project.Project#id}
 	 * @return The {@link Integration} wrapped in the {@link Optional}
 	 */
-	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i"
+	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i"
 			+ " WHERE (params->'params'->>'url' = :url AND params->'params'->>'project' = :btsProject"
 			+ " AND i.project_id = :projectId) LIMIT 1", nativeQuery = true)
 	Optional<Integration> findProjectBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject,
@@ -133,7 +133,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param btsProject Bug Tracking System project name
 	 * @return The {@link Integration} wrapped in the {@link Optional}
 	 */
-	@Query(value = "SELECT i.id, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i "
+	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i "
 			+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :btsProject AND i.project_id IS NULL", nativeQuery = true)
 	Optional<Integration> findGlobalBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject);
 
