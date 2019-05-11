@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,9 +39,9 @@ import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilena
 
 /**
  * Stores file in GridFS
- * 
+ *
  * @author Andrei Varabyeu
- * 
+ *
  */
 public class GridFSDataStorage implements DataStorage {
 
@@ -57,7 +57,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.epam.ta.reportportal.database.DataStorage#saveData(com.epam.ta.
 	 * reportportal.database.BinaryData, java.lang.String)
 	 */
@@ -68,7 +68,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.epam.ta.reportportal.database.DataStorage#saveData(com.epam.ta.
 	 * reportportal.database.BinaryData, java.lang.String, java.lang.Object)
 	 */
@@ -79,19 +79,18 @@ public class GridFSDataStorage implements DataStorage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.epam.ta.reportportal.database.DataStorage#findModifiedLaterAgo(
 	 * com.epam.ta.reportportal.util.Time, java.lang.String)
 	 */
 	@Override
 	public List<GridFSDBFile> findModifiedLaterAgo(Duration period, String project) {
-		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project)
-				.addCriteria(where("filename").not().regex(PHOTO_PREFIX)));
+		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project));
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.epam.ta.reportportal.database.DataStorage#fetchData(java.lang.String)
 	 */
@@ -103,7 +102,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.epam.ta.reportportal.database.DataStorage#findByFilename(java.lang
 	 * .String)
@@ -117,7 +116,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.epam.ta.reportportal.database.DataStorage#deleteData(java.lang.String
 	 * )
@@ -129,7 +128,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.epam.ta.reportportal.database.DataStorage#deleteAll()
 	 */
 	@Override
@@ -149,7 +148,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/**
 	 * Returns empty query which should find all objects
-	 * 
+	 *
 	 * @return Mongo's Query
 	 */
 	private Query queryForAll() {
@@ -158,7 +157,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/**
 	 * Find by ID query
-	 * 
+	 *
 	 * @param id Object ID
 	 * @return Mongo's Query
 	 */
@@ -168,7 +167,7 @@ public class GridFSDataStorage implements DataStorage {
 
 	/**
 	 * Find by name query
-	 * 
+	 *
 	 * @param filename Filename
 	 * @return Mongo's Query
 	 */
