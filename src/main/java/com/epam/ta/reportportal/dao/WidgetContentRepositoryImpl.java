@@ -160,7 +160,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.orderBy(field(name(FLAKY_TABLE_RESULTS, START_TIME)))
 						.as(START_TIME_HISTORY),
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-				count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).as(TOTAL)
+				count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
 		)
 				.from(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted()))
