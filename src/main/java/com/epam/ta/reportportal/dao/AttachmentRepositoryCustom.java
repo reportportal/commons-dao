@@ -19,6 +19,8 @@ package com.epam.ta.reportportal.dao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
+
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -29,4 +31,6 @@ public interface AttachmentRepositoryCustom {
 	Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable);
 
 	Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable);
+
+	int deleteAllByIds(Collection<Long> ids);
 }

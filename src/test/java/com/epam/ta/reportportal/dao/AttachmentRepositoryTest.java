@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,13 @@ class AttachmentRepositoryTest extends BaseTest {
 
 		Assertions.assertFalse(ids.isEmpty());
 
+	}
+
+	@Test
+	void deleteAllByIds() {
+
+		int count = attachmentRepository.deleteAllByIds(Lists.newArrayList(2L, 9L, 16L, 23L));
+
+		Assertions.assertNotEquals(0, count);
 	}
 }

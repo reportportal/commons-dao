@@ -24,6 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 
 /**
@@ -72,5 +74,10 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				pageable,
 				() -> dsl.fetchCount(dsl.select(ATTACHMENT.ID).from(ATTACHMENT).where(ATTACHMENT.ITEM_ID.eq(itemId)))
 		);
+	}
+
+	@Override
+	public int deleteAllByIds(Collection<Long> ids) {
+		return dsl.deleteFrom(ATTACHMENT).where(ATTACHMENT.ID.in(ids)).execute();
 	}
 }
