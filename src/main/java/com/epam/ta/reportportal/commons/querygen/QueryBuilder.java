@@ -263,7 +263,7 @@ public class QueryBuilder {
 		};
 	}
 
-	private int retrieveOffsetAndApplyBoundaries(Pageable pageable) {
+	public static int retrieveOffsetAndApplyBoundaries(Pageable pageable) {
 
 		long offset = pageable.getOffset();
 
