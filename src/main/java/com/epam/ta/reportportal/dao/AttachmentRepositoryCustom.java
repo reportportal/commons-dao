@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,17 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.attachment.Attachment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long>, AttachmentRepositoryCustom {
+public interface AttachmentRepositoryCustom {
 
+	Page<Long> findIdsByProjectId(Long projectId, Pageable pageable);
+
+	Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable);
+
+	Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable);
 }
