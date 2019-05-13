@@ -165,6 +165,11 @@ class DashboardRepositoryTest extends BaseTest {
 		jajaShared.getContent().forEach(it -> assertTrue(it.isShared()));
 	}
 
+	@Test
+	void shouldFindBySpecifiedNameAndProjectId() {
+		assertTrue(repository.existsByNameAndProjectId("test admin dashboard", 1L));
+	}
+
 	private Filter buildDefaultFilter() {
 		return Filter.builder()
 				.withTarget(Dashboard.class)
