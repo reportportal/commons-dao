@@ -61,6 +61,7 @@ public class ServerSettings implements Serializable, Modifiable {
 	private ServerEmailDetails serverEmailDetails;
 
 	private Map<String, OAuth2LoginDetails> oAuth2LoginDetails;
+	private Map<String, SamlProviderDetails> samlProviderDetails;
 
 	private Map<String, AnalyticsDetails> analyticsDetails;
 
@@ -126,5 +127,13 @@ public class ServerSettings implements Serializable, Modifiable {
 
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
+	}
+
+	public Map<String, SamlProviderDetails> getSamlProviderDetails() {
+		return samlProviderDetails;
+	}
+
+	public void setSamlProviderDetails(Map<String, SamlProviderDetails> samlProviderDetails) {
+		this.samlProviderDetails = samlProviderDetails;
 	}
 }
