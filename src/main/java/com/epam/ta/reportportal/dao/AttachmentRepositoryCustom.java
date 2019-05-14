@@ -16,21 +16,21 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.log.Log;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 
 /**
- * @author Pavel Bortnik
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRepositoryCustom {
+public interface AttachmentRepositoryCustom {
 
-	Optional<Log> findByUuid(String uuid);
+	Page<Long> findIdsByProjectId(Long projectId, Pageable pageable);
 
-	List<Log> findLogsByLogTime(Timestamp timestamp);
+	Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable);
 
-	List<Log> findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(List<Long> testItemIds, Integer logLevel);
+	Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable);
+
+	int deleteAllByIds(Collection<Long> ids);
 }

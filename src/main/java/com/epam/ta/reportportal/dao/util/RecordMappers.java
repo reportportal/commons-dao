@@ -226,7 +226,10 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-		launch.setUser(r.into(User.class));
+
+		User user = new User();
+		user.setLogin(r.get(USERS.LOGIN));
+		launch.setUser(user);
 		return launch;
 	};
 
@@ -424,6 +427,7 @@ public class RecordMappers {
 
 		Integration integration = new Integration();
 		integration.setId(r.get(INTEGRATION.ID, Long.class));
+		integration.setName(r.get(INTEGRATION.NAME));
 		integration.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 		integration.setEnabled(r.get(INTEGRATION.ENABLED));

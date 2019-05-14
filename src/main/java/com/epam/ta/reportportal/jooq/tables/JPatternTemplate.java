@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPatternTemplate extends TableImpl<JPatternTemplateRecord> {
 
-    private static final long serialVersionUID = -219503783;
+    private static final long serialVersionUID = -1170951659;
 
     /**
      * The reference instance of <code>public.pattern_template</code>
@@ -132,7 +132,7 @@ public class JPatternTemplate extends TableImpl<JPatternTemplateRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PATTERN_TEMPLATE_PK);
+        return Arrays.<Index>asList(Indexes.PATTERN_TEMPLATE_PK, Indexes.UNQ_NAME_PROJECTID);
     }
 
     /**
@@ -156,7 +156,7 @@ public class JPatternTemplate extends TableImpl<JPatternTemplateRecord> {
      */
     @Override
     public List<UniqueKey<JPatternTemplateRecord>> getKeys() {
-        return Arrays.<UniqueKey<JPatternTemplateRecord>>asList(Keys.PATTERN_TEMPLATE_PK);
+        return Arrays.<UniqueKey<JPatternTemplateRecord>>asList(Keys.PATTERN_TEMPLATE_PK, Keys.UNQ_NAME_PROJECTID);
     }
 
     /**

@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateTestItemRecord;
@@ -15,11 +16,13 @@ import javax.annotation.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
@@ -37,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPatternTemplateTestItem extends TableImpl<JPatternTemplateTestItemRecord> {
 
-    private static final long serialVersionUID = -1995352225;
+    private static final long serialVersionUID = 908389424;
 
     /**
      * The reference instance of <code>public.pattern_template_test_item</code>
@@ -101,6 +104,30 @@ public class JPatternTemplateTestItem extends TableImpl<JPatternTemplateTestItem
     @Override
     public Schema getSchema() {
         return JPublic.PUBLIC;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Index> getIndexes() {
+        return Arrays.<Index>asList(Indexes.PATTERN_ITEM_ITEM_ID_IDX, Indexes.PATTERN_ITEM_PATTERN_ID_IDX, Indexes.PATTERN_ITEM_UNQ);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UniqueKey<JPatternTemplateTestItemRecord> getPrimaryKey() {
+        return Keys.PATTERN_ITEM_UNQ;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<UniqueKey<JPatternTemplateTestItemRecord>> getKeys() {
+        return Arrays.<UniqueKey<JPatternTemplateTestItemRecord>>asList(Keys.PATTERN_ITEM_UNQ);
     }
 
     /**

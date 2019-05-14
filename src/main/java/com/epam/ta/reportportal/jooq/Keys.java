@@ -221,6 +221,8 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
     public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = UniqueKeys0.PATTERN_TEMPLATE_PK;
+    public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = UniqueKeys0.UNQ_NAME_PROJECTID;
+    public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = UniqueKeys0.PATTERN_ITEM_UNQ;
     public static final UniqueKey<JProjectRecord> PROJECT_PK = UniqueKeys0.PROJECT_PK;
     public static final UniqueKey<JProjectRecord> PROJECT_NAME_KEY = UniqueKeys0.PROJECT_NAME_KEY;
     public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = UniqueKeys0.UNIQUE_ATTRIBUTE_PER_PROJECT;
@@ -407,6 +409,8 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE.ID);
+        public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
+        public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = Internal.createUniqueKey(JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID);
         public static final UniqueKey<JProjectRecord> PROJECT_PK = Internal.createUniqueKey(JProject.PROJECT, "project_pk", JProject.PROJECT.ID);
         public static final UniqueKey<JProjectRecord> PROJECT_NAME_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_name_key", JProject.PROJECT.NAME);
         public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createUniqueKey(JProjectAttribute.PROJECT_ATTRIBUTE, "unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);

@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
-import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
@@ -29,7 +28,6 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -101,19 +99,6 @@ public class ProjectUtils {
 					projectIssueTypes.add(projectIssueType);
 				}));
 		return projectIssueTypes;
-	}
-
-	/**
-	 * Setup default project notification configuration
-	 *
-	 * @param project {@link Project}
-	 * @return project object with default notification configuration
-	 */
-	public static Project setDefaultNotificationConfiguration(Project project) {
-		SenderCase defaultSenderCase = new SenderCase(Sets.newHashSet(OWNER), Sets.newHashSet(), Sets.newHashSet(), SendCase.ALWAYS);
-		defaultSenderCase.setProject(project);
-		project.setSenderCases(Sets.newHashSet(defaultSenderCase));
-		return project;
 	}
 
 	/**
