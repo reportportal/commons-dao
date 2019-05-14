@@ -76,9 +76,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	public List<Launch> findByFilter(Queryable filter) {
 		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter,
 				filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(Collectors.toSet())
-		)
-				.wrap()
-				.build()));
+		).wrap().build()));
 	}
 
 	@Override
@@ -102,7 +100,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.where(PROJECT.ID.eq(projectId))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode.name())))
 				.and(LAUNCH.STATUS.notEqual(JStatusEnum.valueOf(status.name())))
-				.and(LAUNCH.NAME.likeIgnoreCase("%" + value + "%"))
+				.and(LAUNCH.NAME.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(LAUNCH.NAME);
 	}
 
@@ -115,7 +113,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.leftJoin(USERS)
 				.on(LAUNCH.USER_ID.eq(USERS.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(USERS.LOGIN.likeIgnoreCase("%" + value + "%"))
+				.and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 				.fetch(USERS.LOGIN);
 	}
