@@ -47,8 +47,7 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_RETRIES;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PATTERN_TEMPLATE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +70,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<Long> ids = stream.collect(toList());
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
-		assertEquals(5, ids.size(), "Incorrect ids size");
+		assertEquals(6, ids.size(), "Incorrect ids size");
 	}
 
 	@Test
@@ -108,7 +107,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
 		assertNotNull(items, "Items should not be null");
-		assertEquals(5, items.size(), "Incorrect items size");
+		assertEquals(6, items.size(), "Incorrect items size");
 		items.forEach(it -> assertEquals(launchId, (long) it.getLaunch().getId()));
 	}
 
@@ -141,7 +140,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void hasChildren() {
 		assertTrue(testItemRepository.hasChildren(1L, "1"));
-		assertFalse(testItemRepository.hasChildren(5L, "1.2.5"));
+		assertFalse(testItemRepository.hasChildren(3L, "1.2.3"));
 	}
 
 	@Test
@@ -204,7 +203,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectAllDescendantsWithChildrenNegative() {
-		final Long itemId = 2L;
+		final Long itemId = 3L;
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(items.isEmpty(), "Items should be empty");
@@ -278,7 +277,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.map(BigInteger::longValue)
 				.collect(toList());
 
-		Assertions.assertEquals(1, itemIds.size());
+		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
@@ -288,27 +287,27 @@ class TestItemRepositoryTest extends BaseTest {
 				.map(BigInteger::longValue)
 				.collect(toList());
 
+		Assertions.assertEquals(3, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByNotHasChildrenAndParentPathAndStatus() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED)
+				.map(BigInteger::longValue)
+				.collect(toList());
+
 		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
-	void streamIdsByNotHasChildrenAndParentIdAndStatus() {
+	void streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, StatusEnum.FAILED)
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED)
 				.map(BigInteger::longValue)
 				.collect(toList());
 
-		Assertions.assertEquals(1, itemIds.size());
-	}
-
-	@Test
-	void streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel() {
-
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
-
-		Assertions.assertEquals(1, itemIds.size());
+		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
