@@ -154,7 +154,8 @@ public class Activity implements Serializable {
 		SHARING("sharing"),
 		TICKET("ticket"),
 		USER("user"),
-		WIDGET("widget");
+		WIDGET("widget"),
+		PATTERN("pattern");
 
 		private String value;
 
