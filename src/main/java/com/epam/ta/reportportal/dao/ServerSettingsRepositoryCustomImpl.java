@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +38,6 @@ public class ServerSettingsRepositoryCustomImpl implements ServerSettingsReposit
 
 	@Override
 	public void deleteAllByTerm(String term) {
-		dsl.deleteFrom(SERVER_SETTINGS).where(SERVER_SETTINGS.KEY.like(term + "%")).execute();
+		dsl.deleteFrom(SERVER_SETTINGS).where(SERVER_SETTINGS.KEY.like(DSL.escape(term, '\\') + "%")).execute();
 	}
 }

@@ -161,7 +161,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
 				1,
 				40000,
-				"%o%"
+				"o"
 		);
 
 		Assertions.assertEquals(1, itemIds.size());

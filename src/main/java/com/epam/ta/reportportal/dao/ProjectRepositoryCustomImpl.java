@@ -80,7 +80,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public List<String> findAllProjectNamesByTerm(String term) {
-		return dsl.select(PROJECT.NAME).from(PROJECT).where(PROJECT.NAME.likeIgnoreCase("%" + term + "%")).fetchInto(String.class);
+		return dsl.select(PROJECT.NAME)
+				.from(PROJECT)
+				.where(PROJECT.NAME.likeIgnoreCase("%" + DSL.escape(term, '\\') + "%"))
+				.fetchInto(String.class);
 	}
 
 	@Override
