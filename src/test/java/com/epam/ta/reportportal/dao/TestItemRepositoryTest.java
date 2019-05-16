@@ -61,6 +61,21 @@ class TestItemRepositoryTest extends BaseTest {
 	@Autowired
 	private TestItemRepository testItemRepository;
 
+	@Autowired
+	private TicketRepository ticketRepository;
+
+	@Test
+	void findTicketsByTerm() {
+		List<String> tickets = ticketRepository.findByTerm(1l, "ticket");
+		Assertions.assertFalse(tickets.isEmpty());
+	}
+
+	@Test
+	void findTicketsByTermNegative() {
+		List<String> tickets = ticketRepository.findByTerm(1l, "unknown");
+		Assertions.assertTrue(tickets.isEmpty());
+	}
+
 	@Test
 	void streamItemIdsTest() {
 		Stream<Long> stream = testItemRepository.streamTestItemIdsByLaunchId(1L);
@@ -158,11 +173,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
-				1,
-				40000,
-				"o"
-		);
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L, 1, 40000, "o");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
