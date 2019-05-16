@@ -47,8 +47,7 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_RETRIES;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PATTERN_TEMPLATE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -159,22 +158,14 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
-				1,
-				40000,
-				"%o%"
-		);
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L, 1, 40000, "%o%");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
 
 	@Test
 	void selectIdsByRegexPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L,
-				1,
-				40000,
-				"[a-z]{3,3}"
-		);
+		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L, 1, 40000, "[a-z]{3,3}");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -504,6 +495,18 @@ class TestItemRepositoryTest extends BaseTest {
 
 		assertNotNull(items);
 		assertEquals(20L, items.size());
+
+	}
+
+	@Test
+	void searchTicket() {
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.ANY, false, "ticket_id_3", CRITERIA_TICKET_ID))
+				.build();
+		List<TestItem> items = testItemRepository.findByFilter(filter);
+		assertNotNull(items);
+		assertEquals(1L, items.size());
 
 	}
 }

@@ -214,7 +214,7 @@ public enum Condition {
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
 			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
 					errorType,
-					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
+					"In condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
 		}
 
