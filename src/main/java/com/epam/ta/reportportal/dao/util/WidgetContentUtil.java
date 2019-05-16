@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.CaseFormat;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
@@ -103,9 +102,8 @@ public class WidgetContentUtil {
 		return resultMap;
 	};
 
-	public static final BiFunction<Result<? extends Record>, Collection<String>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = (result, contentFields) -> {
-		Map<String, Long> values = Maps.newHashMapWithExpectedSize(contentFields.size());
-		contentFields.forEach(cf -> values.put(cf, 0L));
+	public static final Function<Result<? extends Record>, OverallStatisticsContent> OVERALL_STATISTICS_FETCHER = result -> {
+		Map<String, Long> values = new HashMap<>();
 
 		result.forEach(record -> ofNullable(record.get(STATISTICS_FIELD.NAME)).ifPresent(v -> values.put(v,
 				ofNullable(record.get(fieldName(SUM), Long.class)).orElse(0L)
