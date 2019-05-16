@@ -54,7 +54,11 @@ public enum ActivityAction {
 	DELETE_INDEX("deleteIndex"),
 	GENERATE_INDEX("generateIndex"),
 	START_IMPORT("startImport"),
-	FINISH_IMPORT("finishImport");
+	FINISH_IMPORT("finishImport"),
+	CREATE_PATTERN("createPattern"),
+	UPDATE_PATTERN("updatePattern"),
+	DELETE_PATTERN("deletePattern"),
+	PATTERN_MATCHED("patternMatched");
 
 	private String value;
 
