@@ -177,6 +177,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
+	 * Select ids and statuses of all items in a tree till current in ascending order (to root).
+	 *
+	 * @param path itemPath
+	 * @return id -> status
+	 */
+	Map<Long, StatusEnum> selectPathStatusesAscending(String path);
+
+	/**
 	 * Select item IDs by analyzed status and launch id
 	 *
 	 * @param status   {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}

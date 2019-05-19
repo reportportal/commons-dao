@@ -66,6 +66,8 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
+	private static final String NLEVEL_TEMPLATE = "nlevel(%s) DESC";
+
 	private DSLContext dsl;
 
 	@Autowired
@@ -284,6 +286,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetch()
 				.stream()
 				.collect(MoreCollectors.toLinkedMap(r -> r.get(TEST_ITEM.ITEM_ID), r -> r.get(TEST_ITEM.NAME)));
+	}
+
+	@Override
+	public Map<Long, StatusEnum> selectPathStatusesAscending(String path) {
+		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(DSL.sql(TEST_ITEM.PATH + " @> cast(? AS LTREE)", path))
+				.and(DSL.sql(TEST_ITEM.PATH + " != cast(? AS LTREE)", path))
+				.orderBy(DSL.field(String.format(NLEVEL_TEMPLATE, TEST_ITEM.PATH), String.class))
+				.fetch()
+				.stream()
+				.collect(MoreCollectors.toLinkedMap(r -> r.get(TEST_ITEM.ITEM_ID),
+						r -> StatusEnum.valueOf(r.get(TEST_ITEM_RESULTS.STATUS).getLiteral())));
 	}
 
 	@Override
