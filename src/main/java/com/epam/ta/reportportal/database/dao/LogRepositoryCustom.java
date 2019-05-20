@@ -46,6 +46,13 @@ public interface LogRepositoryCustom {
 	void removeBinaryContent(String fileId);
 
 	/**
+	 * Removes binary content field for specified fileIds
+	 *
+	 * @param fileIds List of ID files
+	 */
+	void removeBinaryContent(List<String> fileIds);
+
+	/**
 	 * Finds logs for specified test steps
 	 *
 	 * @param testStep
