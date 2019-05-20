@@ -23,6 +23,8 @@ package com.epam.ta.reportportal.database;
 
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.google.common.base.Preconditions;
+import com.mongodb.DBCursor;
+import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Query;
@@ -41,18 +43,18 @@ import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilena
  * Stores file in GridFS
  *
  * @author Andrei Varabyeu
- *
  */
 public class GridFSDataStorage implements DataStorage {
 
 	private static final String ID_FIELD = "_id";
 
-	private static final String PHOTO_PREFIX = "^(photo_)";
+	private final GridFsOperations gridFsOperations;
 
-	private final GridFsOperations gridFs;
+	private final GridFS gridFS;
 
-	public GridFSDataStorage(GridFsOperations gridFs) {
-		this.gridFs = Preconditions.checkNotNull(gridFs, "GridFS Template shouldn't be null");
+	public GridFSDataStorage(GridFsOperations gridFsOperations, GridFS gridFS) {
+		this.gridFsOperations = Preconditions.checkNotNull(gridFsOperations, "GridFS Template shouldn't be null");
+		this.gridFS = Preconditions.checkNotNull(gridFS, "GridFS shouldn't be null");
 	}
 
 	/*
@@ -63,7 +65,7 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public String saveData(BinaryData binaryData, String filename) {
-		return gridFs.store(binaryData.getInputStream(), filename, binaryData.getContentType()).getId().toString();
+		return gridFsOperations.store(binaryData.getInputStream(), filename, binaryData.getContentType()).getId().toString();
 	}
 
 	/*
@@ -74,7 +76,7 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public String saveData(BinaryData binaryData, String filename, Map<String, String> metainfo) {
-		return gridFs.store(binaryData.getInputStream(), filename, binaryData.getContentType(), metainfo).getId().toString();
+		return gridFsOperations.store(binaryData.getInputStream(), filename, binaryData.getContentType(), metainfo).getId().toString();
 	}
 
 	/*
@@ -84,8 +86,9 @@ public class GridFSDataStorage implements DataStorage {
 	 * com.epam.ta.reportportal.util.Time, java.lang.String)
 	 */
 	@Override
-	public List<GridFSDBFile> findModifiedLaterAgo(Duration period, String project) {
-		return gridFs.find(ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project));
+	public DBCursor findModifiedLaterAgo(Duration period, String project) {
+		Query query = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project);
+		return gridFS.getFileList(query.getQueryObject());
 	}
 
 	/*
@@ -96,7 +99,7 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public BinaryData fetchData(String dataId) {
-		GridFSDBFile file = gridFs.findOne(findByIdQuery(new ObjectId(dataId)));
+		GridFSDBFile file = gridFsOperations.findOne(findByIdQuery(new ObjectId(dataId)));
 		return null == file ? null : new BinaryData(file.getContentType(), file.getLength(), file.getInputStream());
 	}
 
@@ -109,7 +112,8 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public List<BinaryData> findByFilename(String filename) {
-		return gridFs.find(findByFilenameQuery(filename)).stream()
+		return gridFsOperations.find(findByFilenameQuery(filename))
+				.stream()
 				.map(file -> new BinaryData(file.getContentType(), file.getLength(), file.getInputStream()))
 				.collect(Collectors.toList());
 	}
@@ -123,7 +127,7 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public void deleteData(String dataId) {
-		gridFs.delete(findByIdQuery(new ObjectId(dataId)));
+		gridFsOperations.delete(findByIdQuery(new ObjectId(dataId)));
 	}
 
 	/*
@@ -133,17 +137,17 @@ public class GridFSDataStorage implements DataStorage {
 	 */
 	@Override
 	public void deleteAll() {
-		gridFs.delete(queryForAll());
+		gridFsOperations.delete(queryForAll());
 	}
 
 	@Override
 	public void delete(List<String> ids) {
-		gridFs.delete(query(where("_id").in(ids)));
+		gridFsOperations.delete(query(where("_id").in(ids)));
 	}
 
 	@Override
 	public void deleteByFilename(String filename) {
-		gridFs.delete(findByFilenameQuery(filename));
+		gridFsOperations.delete(findByFilenameQuery(filename));
 	}
 
 	/**

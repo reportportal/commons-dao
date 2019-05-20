@@ -1,26 +1,27 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.epam.ta.reportportal.database;
 
+import com.mongodb.DBCursor;
 import com.mongodb.gridfs.GridFSDBFile;
 
 import java.time.Duration;
@@ -69,7 +70,6 @@ public interface DataStorage {
 	 */
 	List<BinaryData> findByFilename(String filename);
 
-
 	/**
 	 * Get project out-dated files from storage except photos
 	 *
@@ -77,7 +77,7 @@ public interface DataStorage {
 	 * @param project Project name
 	 * @return List of {@link GridFSDBFile}
 	 */
-	List<GridFSDBFile> findModifiedLaterAgo(Duration period, String project);
+	DBCursor findModifiedLaterAgo(Duration period, String project);
 
 	/**
 	 * Deletes some data from storage
