@@ -1,20 +1,20 @@
 /*
  * Copyright 2016 EPAM Systems
- * 
- * 
+ *
+ *
  * This file is part of EPAM Report Portal.
  * https://github.com/reportportal/commons-dao
- * 
+ *
  * Report Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Report Portal is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,7 +50,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 /**
  * Log Repository Custom implementation. Adds several custom methods to default
  * interface
- * 
+ *
  * @author Andrei Varabyeu
  * @author Andrei_Ramanchuk
  */
@@ -91,7 +91,8 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public List<Log> findModifiedLaterAgo(Duration time, Iterable<TestItem> testItems) {
 		return mongoTemplate.find(findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(DbUtils.toIds(testItems))),
-				Log.class);
+				Log.class
+		);
 	}
 
 	@Override
@@ -130,12 +131,11 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Log> findTestItemErrorLogs(String testItemId, int limit) {
-		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(LogLevel.ERROR_INT))
-                .limit(limit);
+		Query query = query(where(ITEM_REFERENCE).is(testItemId)).addCriteria(where(LOG_LEVEL).gte(LogLevel.ERROR_INT)).limit(limit);
 		return mongoTemplate.find(query, Log.class);
 	}
 
-    @Override
+	@Override
 	public List<String> findLogIdsByItemRefs(List<String> ids) {
 		Aggregation aggregation = newAggregation(match(where("testItemRef").in(ids)), group("id"));
 		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
@@ -145,7 +145,8 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public List<String> findBinaryIdsByLogRefs(List<String> ids) {
 		Aggregation aggregation = newAggregation(match(where("id").in(ids).andOperator(where("binaryContent").exists(true))),
-				group("binaryContent.binaryDataId", "binaryContent.thumbnailId"));
+				group("binaryContent.binaryDataId", "binaryContent.thumbnailId")
+		);
 		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
 		return results.getMappedResults().stream().flatMap(it -> (Stream<String>) it.values().stream()).collect(toList());
 	}
@@ -153,7 +154,8 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	@Override
 	public List<String> findBinaryIdsByItemRefs(List<String> ids) {
 		Aggregation aggregation = newAggregation(match(where("testItemRef").in(ids).andOperator(where("binaryContent").exists(true))),
-				group("binaryContent.binaryDataId", "binaryContent.thumbnailId"));
+				group("binaryContent.binaryDataId", "binaryContent.thumbnailId")
+		);
 		AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, Log.class, Map.class);
 		return results.getMappedResults().stream().flatMap(it -> (Stream<String>) it.values().stream()).collect(toList());
 	}
@@ -168,11 +170,19 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		Query query = query(where(BINARY_CONTENT_ID).is(fileId));
 		Update update = new Update();
 		update.unset(BINARY_CONTENT);
-		mongoTemplate.findAndModify(query,update, Log.class);
+		mongoTemplate.findAndModify(query, update, Log.class);
 	}
 
 	@Override
-	public long deleteByPeriodAndItemsRef(Duration time, List<String> itemsRef){
+	public void removeBinaryContent(List<String> fileIds) {
+		Query query = query(where(BINARY_CONTENT_ID).in(fileIds));
+		Update update = new Update();
+		update.unset(BINARY_CONTENT);
+		mongoTemplate.findAndModify(query, update, Log.class);
+	}
+
+	@Override
+	public long deleteByPeriodAndItemsRef(Duration time, List<String> itemsRef) {
 		Query query = findModifiedLaterThanPeriod(time).addCriteria(where(ITEM_REFERENCE).in(itemsRef));
 		return mongoTemplate.remove(query, Log.class).getN();
 	}

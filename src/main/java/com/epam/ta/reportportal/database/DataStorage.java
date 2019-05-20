@@ -89,6 +89,13 @@ public interface DataStorage {
 	void deleteData(String dataId);
 
 	/**
+	 * Deletes a list of data from storage
+	 *
+	 * @param dataIds Data ids
+	 */
+	void deleteData(List<String> dataIds);
+
+	/**
 	 * Deletes all data from storage. Full clean up
 	 */
 	void deleteAll();

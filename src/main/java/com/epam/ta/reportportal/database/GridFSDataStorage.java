@@ -137,6 +137,11 @@ public class GridFSDataStorage implements DataStorage {
 		gridFsOperations.delete(findByIdQuery(new ObjectId(dataId)));
 	}
 
+	@Override
+	public void deleteData(List<String> dataIds) {
+		gridFsOperations.delete(query(where(ID_FIELD).in(dataIds)));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
