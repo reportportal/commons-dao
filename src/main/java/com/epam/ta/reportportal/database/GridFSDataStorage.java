@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.database;
 
 import com.epam.ta.reportportal.database.search.ModifiableQueryBuilder;
 import com.google.common.base.Preconditions;
+import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import org.bson.types.ObjectId;
@@ -88,9 +89,9 @@ public class GridFSDataStorage implements DataStorage {
 	 * com.epam.ta.reportportal.util.Time, java.lang.String)
 	 */
 	@Override
-	public Page<GridFSDBFile> findModifiedLaterAgo(Duration period, String project, Pageable pageable) {
+	public Page<DBObject> findModifiedLaterAgo(Duration period, String project, Pageable pageable) {
 		Query query = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project).with(pageable);
-		return new PageImpl<>(gridFsOperations.find(query));
+		return new PageImpl<>(gridFS.getFileList(query.getQueryObject()).skip(query.getSkip()).limit(query.getLimit()).toArray());
 	}
 
 	/*

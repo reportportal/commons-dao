@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.database;
 
+import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSDBFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,7 +79,7 @@ public interface DataStorage {
 	 * @param project Project name
 	 * @return List of {@link GridFSDBFile}
 	 */
-	Page<GridFSDBFile> findModifiedLaterAgo(Duration period, String project, Pageable pageable);
+	Page<DBObject> findModifiedLaterAgo(Duration period, String project, Pageable pageable);
 
 	/**
 	 * Deletes some data from storage
