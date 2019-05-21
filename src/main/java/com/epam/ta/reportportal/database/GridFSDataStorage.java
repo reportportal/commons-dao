@@ -94,7 +94,7 @@ public class GridFSDataStorage implements DataStorage {
 		return new PageImpl<>(
 				gridFS.getFileList(query.getQueryObject()).skip(query.getSkip()).limit(query.getLimit()).toArray(),
 				pageable,
-				gridFS.find(query.getQueryObject()).size()
+				gridFS.getFileList(query.getQueryObject()).count()
 		);
 	}
 
