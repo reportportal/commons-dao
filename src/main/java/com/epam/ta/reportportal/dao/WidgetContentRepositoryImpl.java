@@ -90,7 +90,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(STATISTICS_FIELD.NAME.in(contentFields))
 				.groupBy(STATISTICS_FIELD.NAME)
-				.fetch(), contentFields);
+				.fetch());
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		groupingFields.addAll(WidgetSortUtils.fieldTransformer(filter.getTarget()).apply(sort, LAUNCHES));
 
-		return dsl.with(LAUNCHES)
+		return INVESTIGATED_STATISTICS_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(LAUNCH.ID,
 						LAUNCH.NUMBER,
@@ -286,7 +286,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
 				.groupBy(groupingFields)
 				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES))
-				.fetch(INVESTIGATED_STATISTICS_RECORD_MAPPER);
+				.fetch());
 
 	}
 

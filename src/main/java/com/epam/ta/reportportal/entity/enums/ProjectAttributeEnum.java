@@ -33,18 +33,18 @@ public enum ProjectAttributeEnum {
 
 	PATTERN_ANALYSIS_ENABLED("pattern.analysis.enabled", String.valueOf(false)),
 
-	INTERRUPT_JOB_TIME("job.interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
-	KEEP_LAUNCHES("job.keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
-	KEEP_LOGS("job.keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
-	KEEP_SCREENSHOTS("job.keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
+	INTERRUPT_JOB_TIME(Prefix.JOB + "interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
+	KEEP_LAUNCHES(Prefix.JOB + "keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
+	KEEP_LOGS(Prefix.JOB + "keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
+	KEEP_SCREENSHOTS(Prefix.JOB + "keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
 
-	MIN_DOC_FREQ("analyzer.minDocFreq", String.valueOf(ProjectAnalyzerConfig.MIN_DOC_FREQ)),
-	MIN_TERM_FREQ("analyzer.minTermFreq", String.valueOf(ProjectAnalyzerConfig.MIN_TERM_FREQ)),
-	MIN_SHOULD_MATCH("analyzer.minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
-	NUMBER_OF_LOG_LINES("analyzer.numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
-	INDEXING_RUNNING("analyzer.indexingRunning", String.valueOf(false)),
-	AUTO_ANALYZER_ENABLED("analyzer.isAutoAnalyzerEnabled", String.valueOf(false)),
-	AUTO_ANALYZER_MODE("analyzer.autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
+	MIN_DOC_FREQ(Prefix.ANALYZER + "minDocFreq", String.valueOf(ProjectAnalyzerConfig.MIN_DOC_FREQ)),
+	MIN_TERM_FREQ(Prefix.ANALYZER + "minTermFreq", String.valueOf(ProjectAnalyzerConfig.MIN_TERM_FREQ)),
+	MIN_SHOULD_MATCH(Prefix.ANALYZER + "minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
+	NUMBER_OF_LOG_LINES(Prefix.ANALYZER + "numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
+	INDEXING_RUNNING(Prefix.ANALYZER + "indexingRunning", String.valueOf(false)),
+	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(false)),
+	AUTO_ANALYZER_MODE(Prefix.ANALYZER + "autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
 
 	private String attribute;
 	private String defaultValue;
@@ -68,6 +68,11 @@ public enum ProjectAttributeEnum {
 
 	public static boolean isPresent(String name) {
 		return findByAttributeName(name).isPresent();
+	}
+
+	public static class Prefix {
+		public static final String ANALYZER = "analyzer.";
+		public static final String JOB = "job.";
 	}
 }
 
