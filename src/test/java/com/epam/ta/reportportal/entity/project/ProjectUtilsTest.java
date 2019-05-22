@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.MapUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -106,6 +107,16 @@ class ProjectUtilsTest {
 		assertThat(configParameters).isEqualTo(getAttributeWithValuesMap().entrySet()
 				.stream()
 				.collect(Collectors.toMap(it -> it.getKey().getName(), Map.Entry::getValue)));
+	}
+
+	@Test
+	void getConfigParametersByPrefix() {
+		Map<String, String> configParameters = ProjectUtils.getConfigParametersByPrefix(getProjectAttributes(),
+				ProjectAttributeEnum.Prefix.ANALYZER
+		);
+
+		assertTrue(MapUtils.isNotEmpty(configParameters));
+		configParameters.forEach((key, value) -> assertTrue(key.startsWith(ProjectAttributeEnum.Prefix.ANALYZER)));
 	}
 
 	@Test
@@ -211,8 +222,7 @@ class ProjectUtilsTest {
 		IssueGroup siGroup = new IssueGroup();
 		siGroup.setId(5);
 		siGroup.setTestItemIssueGroup(TestItemIssueGroup.SYSTEM_ISSUE);
-		return Arrays.asList(
-				new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
+		return Arrays.asList(new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
 				new IssueType(abGroup, "ab001", "Automation Bug", "AB", "#f7d63e"),
 				new IssueType(pbGroup, "pb001", "Product Bug", "PB", "#ec3900"),
 				new IssueType(ndGroup, "nd001", "No Defect", "ND", "#777777"),
@@ -236,9 +246,14 @@ class ProjectUtilsTest {
 		attr2.setId(1L);
 		attr2.setName("two");
 
+		Attribute attr3 = new Attribute();
+		attr3.setId(1L);
+		attr3.setName("analyzer.param");
+
 		Map<Attribute, String> attributeMap = new HashMap<>();
 		attributeMap.put(attr1, "valOne");
 		attributeMap.put(attr2, "valTwo");
+		attributeMap.put(attr3, "value");
 		return attributeMap;
 	}
 
