@@ -25,7 +25,7 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
+import com.epam.ta.reportportal.ws.model.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -249,10 +249,12 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return filterMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -301,10 +303,12 @@ public class WidgetContentUtil {
 
 		});
 
-		return attributeMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return attributeMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiConsumer<Map<String, List<CumulativeTrendChartContent>>, Result<? extends Record>> CUMULATIVE_STATISTICS_FETCHER = (cumulative, statisticsResult) -> {
@@ -317,9 +321,10 @@ public class WidgetContentUtil {
 
 			Long launchId = record.get(TEST_ITEM.LAUNCH_ID);
 
-			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues().put(record.get(Tables.STATISTICS_FIELD.NAME),
-					ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
-			));
+			ofNullable(cumulativeDataMapping.get(launchId)).ifPresent(data -> data.getValues()
+					.put(record.get(Tables.STATISTICS_FIELD.NAME),
+							ofNullable(record.get(fieldName(STATISTICS_COUNTER), String.class)).orElse("0")
+					));
 		});
 
 	};
@@ -332,8 +337,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
