@@ -344,12 +344,19 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
+							.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
+							.get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_END_TIME, TEST_ITEM_RESULTS.END_TIME, Timestamp.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_DURATION, TEST_ITEM_RESULTS.DURATION, Long.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_KEY, PARAMETER.KEY, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_VALUE, PARAMETER.VALUE, String.class).get(),
+
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR, String.class)
+							.withAggregateCriteria(DSL.max(ISSUE_TYPE.LOCATOR).toString())
+							.get(),
+
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_AUTO_ANALYZED, ISSUE.AUTO_ANALYZED, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_IGNORE_ANALYZER, ISSUE.IGNORE_ANALYZER, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_COMMENT, ISSUE.ISSUE_DESCRIPTION, String.class).get(),
@@ -370,8 +377,6 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM, Boolean.class)
 							.withAggregateCriteria(DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString())
 							.get(),
-
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR, String.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME, PATTERN_TEMPLATE.NAME, List.class)
 							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString())

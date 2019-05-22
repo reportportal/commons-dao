@@ -395,6 +395,22 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findOrderedByStatus() {
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_LAUNCH_ID))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_STATUS)));
+
+		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
+
+		assertThat(testItems.get(0).getItemResults().getStatus().name(),
+				Matchers.lessThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
+		);
+	}
+
+	@Test
 	void findWithUserAttributes() {
 		List<TestItem> withoutSystemAttrs = testItemRepository.findByFilter(Filter.builder()
 				.withTarget(TestItem.class)

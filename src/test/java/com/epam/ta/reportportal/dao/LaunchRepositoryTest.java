@@ -303,6 +303,21 @@ class LaunchRepositoryTest extends BaseTest {
 		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
 	}
 
+	@Test
+	void testNegativeContainConditionNullDescription() {
+		List<Launch> launch = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.CONTAINS)
+						.withNegative(true)
+						.withSearchCriteria(CRITERIA_DESCRIPTION)
+						.withValue("description")
+						.build())
+				.build());
+		assertThat(launch, Matchers.hasSize(1));
+		assertThat(launch.get(0).getDescription(), Matchers.nullValue());
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
