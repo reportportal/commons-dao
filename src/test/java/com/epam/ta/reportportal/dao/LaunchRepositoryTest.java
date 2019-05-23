@@ -284,26 +284,6 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findLaunchesWithUserAttributes() {
-		List<Launch> withoutSystemAttrs = launchRepository.findByFilter(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.FALSE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutSystemAttrs));
-		withoutSystemAttrs.forEach(it -> assertFalse(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
-	}
-
-	@Test
-	void findLaunchesWithSystemAttributes() {
-		List<Launch> withoutUserAttrs = launchRepository.findByFilter(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.TRUE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutUserAttrs));
-		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
-	}
-
-	@Test
 	void testNegativeContainConditionNullDescription() {
 		List<Launch> launch = launchRepository.findByFilter(Filter.builder()
 				.withTarget(Launch.class)

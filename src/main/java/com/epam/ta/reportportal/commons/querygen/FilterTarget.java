@@ -270,11 +270,6 @@ public enum FilterTarget {
 					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM, Boolean.class)
-					.withAggregateCriteria(DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString())
-					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-					.get(),
-
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
 					.withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
 					.withJoinCondition(LAUNCH.USER_ID.eq(USERS.ID))
