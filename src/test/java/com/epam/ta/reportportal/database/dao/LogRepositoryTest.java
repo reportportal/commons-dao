@@ -104,6 +104,14 @@ public class LogRepositoryTest extends BaseDaoTest {
 		Assert.assertTrue(logs.contains(saved));
 	}
 
+	@Test
+	public void removeBinaryContent() {
+		List<Log> all = logRepository.findAll();
+		logRepository.removeBinaryContent(all.stream().map(it -> it.getBinaryContent().getBinaryDataId()).collect(toList()));
+		List<Log> res = logRepository.findAll();
+		res.forEach(it -> Assert.assertNull(it.getBinaryContent()));
+	}
+
 	@After
 	public void cleanup() {
 		logRepository.deleteAll();
