@@ -88,7 +88,6 @@ public class GridFSDataStorage implements DataStorage {
 	@Override
 	public List<DBObject> findFirstModifiedLater(Duration period, String project, int size) {
 		Query query = ModifiableQueryBuilder.findModifiedLaterThanPeriod(period, project);
-		query.fields().include(ID_FIELD);
 		return gridFS.getFileList(query.getQueryObject()).limit(size).toArray();
 	}
 
