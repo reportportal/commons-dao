@@ -178,7 +178,7 @@ class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		Query query = query(where(BINARY_CONTENT_ID).in(fileIds));
 		Update update = new Update();
 		update.unset(BINARY_CONTENT);
-		mongoTemplate.findAndModify(query, update, Log.class);
+		mongoTemplate.updateMulti(query, update, Log.class);
 	}
 
 	@Override

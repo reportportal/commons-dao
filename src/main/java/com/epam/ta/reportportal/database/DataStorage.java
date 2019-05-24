@@ -23,8 +23,6 @@ package com.epam.ta.reportportal.database;
 
 import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSDBFile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
 import java.util.List;
@@ -73,13 +71,14 @@ public interface DataStorage {
 	List<BinaryData> findByFilename(String filename);
 
 	/**
-	 * Get project out-dated files from storage except photos
+	 * Get first number of project out-dated files from storage except photos
 	 *
 	 * @param period  Time period
 	 * @param project Project name
+	 * @param limit   Number of files
 	 * @return List of {@link GridFSDBFile}
 	 */
-	Page<DBObject> findModifiedLaterAgo(Duration period, String project, Pageable pageable);
+	List<DBObject> findFirstModifiedLater(Duration period, String project, int limit);
 
 	/**
 	 * Deletes some data from storage
