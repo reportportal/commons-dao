@@ -249,7 +249,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatusByParent() {
-		assertTrue(testItemRepository.hasChildrenWithStatus(2L, "1.2", StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED));
 	}
 
 	@Test

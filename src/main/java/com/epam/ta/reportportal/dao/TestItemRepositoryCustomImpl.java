@@ -30,10 +30,7 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
-import org.jooq.DSLContext;
-import org.jooq.DatePart;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -112,6 +109,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(TEST_ITEM_RESULTS)
 				.onKey()
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
+				.limit(1));
+	}
+
+	@Override
+	public Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses) {
+		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
+		return dsl.fetchExists(commonTestItemDslSelect()
+				.where(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", parentPath))
+				.and(TEST_ITEM.ITEM_ID.ne(parentId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
 				.limit(1));
 	}
