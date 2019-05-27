@@ -81,16 +81,6 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
 	/**
-	 * True if the provided parent item contains any items with
-	 * a specified status.
-	 *
-	 * @param parentId Checking launch id
-	 * @param statuses Checking statuses
-	 * @return True if contains, false if not
-	 */
-	Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses);
-
-	/**
 	 * Select items that has different issue from provided for
 	 * specified launch.
 	 *

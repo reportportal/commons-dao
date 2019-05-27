@@ -117,11 +117,11 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	/**
 	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
 	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
-	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of other {@link TestItem}
-	 * with the same {@link TestItem#uniqueId} then all those test items becomes retries of the new-inserted one:
-	 * theirs {@link TestItem#hasRetries} flag sets to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
+	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of the other {@link TestItem}
+	 * with the same {@link TestItem#uniqueId} then all those test items become retries of the new-inserted one:
+	 * theirs {@link TestItem#hasRetries} flag is set to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
 	 * The same operation applies to the new-inserted {@link TestItem} if its {@link TestItem#startTime} is less than
-	 * MAX {@link TestItem#startTime} of other {@link TestItem} with the same {@link TestItem#uniqueId}
+	 * MAX {@link TestItem#startTime} of the other {@link TestItem} with the same {@link TestItem#uniqueId}
 	 *
 	 * @param itemId The new-inserted {@link TestItem#itemId}
 	 */
@@ -151,6 +151,18 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
 			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
+
+	/**
+	 * True if the parent item has any child items with provided status.
+	 *
+	 * @param parentPath parent item {@link TestItem#path}
+	 * @param status     child item {@link com.epam.ta.reportportal.entity.item.TestItemResults#status}
+	 * @return True if contains, false if not
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item t JOIN test_item_results tir ON t.item_id = tir.result_id "
+			+ " WHERE t.path <@ cast(:parentPath AS LTREE) AND t.item_id != :parentId AND tir.status=cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
+	boolean hasChildrenWithStatus(@Param("parentId") Long parentId, @Param("parentPath") String parentPath,
+			@Param("status") StatusEnum status);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
