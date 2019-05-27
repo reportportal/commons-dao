@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.Predicates;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.apache.commons.lang3.BooleanUtils;
+import org.jooq.Field;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
@@ -37,6 +39,8 @@ import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAM
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
 import static org.jooq.impl.DSL.*;
+import static org.jooq.util.postgres.PostgresDSL.arrayLength;
+import static org.jooq.util.postgres.PostgresDSL.arrayRemove;
 
 /**
  * Types of supported filtering
@@ -89,8 +93,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
-					errorType,
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(errorType,
 					"Not equals condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
 		}
@@ -139,10 +142,11 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, filterForLtree()).verify(errorType, formattedSupplier(
-					"'Under' condition is applicable only for 'path' filter condition. Type of field is '{}'",
-					criteriaHolder.getFilterCriteria()
-			));
+			expect(criteriaHolder, filterForLtree()).verify(errorType,
+					formattedSupplier("'Under' condition is applicable only for 'path' filter condition. Type of field is '{}'",
+							criteriaHolder.getFilterCriteria()
+					)
+			);
 		}
 
 		@Override
@@ -163,10 +167,12 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForLtree())).verify(errorType, formattedSupplier(
-					"'Level' condition is applicable only for positive Numbers and 'path' filter condition. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, or(filterForNumbers(), filterForLtree())).verify(errorType,
+					formattedSupplier(
+							"'Level' condition is applicable only for positive Numbers and 'path' filter condition. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -181,7 +187,15 @@ public enum Condition {
 	EXISTS("ex") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getAggregateCriteria()).isNotNull();
+			if (criteriaHolder.getQueryCriteria().equals(criteriaHolder.getAggregateCriteria())) {
+				return field(criteriaHolder.getAggregateCriteria()).isNotNull();
+			} else {
+				boolean exists = BooleanUtils.toBoolean(filter.getValue());
+				Field<Integer> aggregatedCount = DSL.coalesce(arrayLength(arrayRemove(DSL.arrayAgg(field(criteriaHolder.getQueryCriteria())),
+						(String) null
+				)), 0);
+				return exists ? aggregatedCount.gt(0) : aggregatedCount.eq(0);
+			}
 		}
 
 		@Override
@@ -237,8 +251,7 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
-					errorType,
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(errorType,
 					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
 		}
@@ -259,8 +272,7 @@ public enum Condition {
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			/* Validate only collections */
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition(
-					Operator.AND,
+			return DSL.condition(Operator.AND,
 					DSL.field(criteriaHolder.getAggregateCriteria())
 							.contains(DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS)))
 			);
@@ -287,9 +299,11 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
-					DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
-			));
+			return DSL.condition(Operator.AND,
+					PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
+							DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
+					)
+			);
 		}
 
 		@Override
@@ -322,10 +336,11 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Greater than' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
+					formattedSupplier("'Greater than' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -351,10 +366,12 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Greater than or equals' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
+					formattedSupplier(
+							"'Greater than or equals' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -381,10 +398,11 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Lower than' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
+					formattedSupplier("'Lower than' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -411,10 +429,12 @@ public enum Condition {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType, formattedSupplier(
-					"'Lower than or equals' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
-					criteriaHolder.getDataType().getSimpleName()
-			));
+			expect(criteriaHolder, or(filterForNumbers(), filterForDates(), filterForLogLevel())).verify(errorType,
+					formattedSupplier(
+							"'Lower than or equals' condition applicable only for positive Numbers or Dates. Type of field is '{}'",
+							criteriaHolder.getDataType().getSimpleName()
+					)
+			);
 		}
 
 		@Override
@@ -441,10 +461,12 @@ public enum Condition {
 			} else if (value.contains(TIMESTAMP_SEPARATOR)) {
 				final String[] values = value.split(TIMESTAMP_SEPARATOR);
 
-				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType, formattedSupplier(
-						"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
-						value
-				));
+				expect(values, countOfValues(BETWEEN_FILTER_VALUES_COUNT)).verify(errorType,
+						formattedSupplier(
+								"Incorrect between filter format. Expected='TIMESTAMP_CONSTANT;TimeZoneOffset'. Provided filter is '{}'",
+								value
+						)
+				);
 				expect(values[ZONE_OFFSET_INDEX], zoneOffset()).verify(errorType,
 						formattedSupplier("Incorrect zoneOffset. Expected='+h, +hh, +hh:mm'. Provided value is '{}'",
 								values[ZONE_OFFSET_INDEX]
@@ -457,10 +479,12 @@ public enum Condition {
 						formattedSupplier("Incorrect timestamp. Expected number. Provided value is '{}'", values[FIRST_TIMESTAMP_INDEX])
 				);
 			} else {
-				fail().withError(errorType, formattedSupplier(
-						"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
-						value
-				));
+				fail().withError(errorType,
+						formattedSupplier(
+								"Incorrect between filter format. Filter value should be separated by ',' or ';'. Provided filter is '{}'",
+								value
+						)
+				);
 			}
 		}
 
