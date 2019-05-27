@@ -190,7 +190,7 @@ public enum Condition {
 			if (criteriaHolder.getQueryCriteria().equals(criteriaHolder.getAggregateCriteria())) {
 				return field(criteriaHolder.getAggregateCriteria()).isNotNull();
 			} else {
-				boolean exists = filter.isNegative() != BooleanUtils.toBoolean(filter.getValue());
+				boolean exists = BooleanUtils.toBoolean(filter.getValue());
 				Field<Integer> aggregatedCount = DSL.coalesce(arrayLength(arrayRemove(DSL.arrayAgg(field(criteriaHolder.getQueryCriteria())),
 						(String) null
 				)), 0);
