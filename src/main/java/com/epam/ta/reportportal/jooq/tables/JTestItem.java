@@ -9,14 +9,25 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -32,7 +43,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = 1679089033;
+    private static final long serialVersionUID = -1923643390;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -51,6 +62,11 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      * The column <code>public.test_item.item_id</code>.
      */
     public final TableField<JTestItemRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('test_item_item_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.test_item.uuid</code>.
+     */
+    public final TableField<JTestItemRecord, String> UUID = createField("uuid", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.test_item.name</code>.
@@ -163,7 +179,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
+        return Arrays.<Index>asList(Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX, Indexes.TI_UUID_IDX);
     }
 
     /**

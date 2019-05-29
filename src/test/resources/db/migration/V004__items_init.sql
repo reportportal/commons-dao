@@ -1,4 +1,4 @@
--- Generates 13 launches. Each contains suite, test and 4 step items with item results. Launches and items has attributes
+-- Generates 13 launches. Each contains suite, test and 4 step items with testItem results. Launches and items has attributes
 
 CREATE OR REPLACE FUNCTION items_init()
   RETURNS VOID AS
@@ -21,6 +21,14 @@ BEGIN
     restart with 1;
   alter sequence log_id_seq
     restart with 1;
+  alter sequence pattern_template_id_seq
+    restart with 1;
+
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (1, 'name1', 'qwe', 'STRING', true, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (2, 'name2', 'qw', 'STRING', true, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (3, 'name3', 'qwee', 'STRING', false, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (4, 'name4', '[a-z]{2,4}', 'REGEX', false, 1);
+  INSERT INTO pattern_template (id, name, value, type, enabled, project_id) VALUES (5, 'name5_p2', '^*+', 'REGEX', true, 2);
 
   WHILE launchcounter < 13
   LOOP
@@ -43,8 +51,8 @@ BEGIN
 
   WHILE launchcounter < 13
   LOOP
-    INSERT INTO test_item (has_children, name, type, start_time, description, last_modified, unique_id, launch_id)
-    VALUES (true, 'SUITE ' || launchcounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchcounter, launchcounter);
+    INSERT INTO test_item (has_children, name, uuid, type, start_time, description, last_modified, unique_id, launch_id)
+    VALUES (true, 'SUITE ' || launchcounter, 'uuid 1_' || launchcounter, 'SUITE', now(), 'description', now(), 'unqIdSUITE' || launchcounter, launchcounter);
     cur_suite_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     INSERT INTO item_attribute (key, value, item_id, launch_id, system)
@@ -54,8 +62,8 @@ BEGIN
 
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
     --
-    INSERT INTO test_item (has_children, name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
-    VALUES (true, 'First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchcounter, launchcounter, cur_suite_id);
+    INSERT INTO test_item (has_children, name, uuid, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
+    VALUES (true, 'uuid 2_' || launchcounter, 'First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchcounter, launchcounter, cur_suite_id);
     cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
     INSERT INTO item_attribute (key, value, item_id, launch_id, system)
@@ -67,17 +75,25 @@ BEGIN
 
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
 
-    WHILE stepcounter < 4
+    WHILE stepcounter < 8
     LOOP
       --
-      INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
-      VALUES ('Step', 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchcounter, cur_item_id, launchcounter);
+
+      IF launchcounter = 1 AND stepcounter > 3
+      THEN
+        launchcounter = launchcounter + 1;
+        CONTINUE;
+      END IF;
+
+      INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+      VALUES ('Step', 'uuid 3_' || launchcounter, 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchcounter, cur_item_id, launchcounter);
       cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
       IF stepcounter % 2 = 0
       THEN
         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, TRUE);
+
       ELSE
         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, FALSE);
@@ -98,28 +114,45 @@ BEGIN
       THEN
         UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
         INSERT INTO issue (issue_id, issue_type, auto_analyzed, issue_description) VALUES (cur_step_id, 1, FALSE, 'issue description');
+
+        INSERT INTO ticket (ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
+        VALUES (concat('ticket_id_', cur_step_id), 1, now(), 'jira.com', 'project', concat('http://example.com/tickets/ticket_id_', cur_step_id));
+        INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (cur_step_id, (SELECT currval(pg_get_serial_sequence('ticket', 'id'))));
+
+        INSERT INTO pattern_template_test_item (pattern_id, item_id) VALUES (1, cur_step_id);
       END IF;
 
       IF stepcounter = 2
       THEN
         UPDATE test_item SET last_modified = '2018-11-08 12:00:00' WHERE item_id = cur_step_id;
+        INSERT INTO pattern_template_test_item (pattern_id, item_id) VALUES (2, cur_step_id);
+        INSERT INTO pattern_template_test_item (pattern_id, item_id) VALUES (3, cur_step_id);
       END IF;
 
       IF stepcounter = 3
       THEN
         UPDATE test_item SET last_modified = now() - make_interval(days := 14) WHERE item_id = cur_step_id;
+        INSERT INTO pattern_template_test_item (pattern_id, item_id) VALUES (3, cur_step_id);
       END IF;
       stepcounter = stepcounter + 1;
     END LOOP;
     stepcounter = 1;
+
+    IF stepcounter > 3
+                    THEN
+                        UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
+                        INSERT INTO issue (issue_id, issue_type, auto_analyzed, issue_description)
+                        VALUES (cur_step_id, floor(random() * 4 + 2), FALSE, 'issue description');
+                    END IF;
 
     launchcounter = launchcounter + 1;
   END LOOP;
 
   -- RETRIES --
 
-  INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id)
+  INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, launch_id)
   VALUES ('SUITE ' || launchcounter - 1,
+          'uuid 4_' || launchcounter,
           'SUITE',
           now(),
           'suite with retries',
@@ -132,16 +165,16 @@ BEGIN
 
   INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
   --
-  INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
-  VALUES ('First test', 'TEST', now(), 'test with retries', now(), 'unqIdTEST_R' || launchcounter - 1, launchcounter - 1, cur_suite_id);
+  INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
+  VALUES ('First test', 'uuid 5_' || launchcounter, 'TEST', now(), 'test with retries', now(), 'unqIdTEST_R' || launchcounter - 1, launchcounter - 1, cur_suite_id);
   cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
   UPDATE test_item SET path = cast(cur_suite_id AS TEXT) || cast(cast(cur_item_id AS TEXT) AS LTREE) WHERE item_id = cur_item_id;
 
   INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
 
-  INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
-  VALUES ('Step', 'STEP', now(), 'STEP WITH RETRIES', now(), 'unqIdSTEP_R' || launchcounter - 1, cur_item_id, launchcounter - 1);
+  INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+  VALUES ('Step', 'uuid 6_' || launchcounter, 'STEP', now(), 'STEP WITH RETRIES', now(), 'unqIdSTEP_R' || launchcounter - 1, cur_item_id, launchcounter - 1);
   cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
   UPDATE test_item
@@ -153,8 +186,9 @@ BEGIN
   WHILE retriescounter < 4
   LOOP
 
-    INSERT INTO test_item (name, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+    INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
     VALUES ('Step',
+            'uuid 7_' || launchcounter,
             'STEP',
             now() - make_interval(secs := retriescounter),
             'STEP WITH RETRIES',
@@ -177,7 +211,15 @@ BEGIN
   END LOOP;
 
   functionresult := (SELECT retries_statistics(launchcounter - 1));
-END
+
+  INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+  VALUES ('Step', 'uuid 6_' || launchcounter, 'STEP', now(), 'Descendant', now(), 'unqIdSTEP_R' || launchcounter - 1, 5, 1);
+  cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+   UPDATE test_item SET path =  cast('1.2.5.' || cast(cur_step_id AS TEXT) AS LTREE) WHERE item_id = cur_step_id;
+   UPDATE test_item SET has_children = true WHERE item_id = 5;
+   UPDATE test_item_results SET status = 'FAILED' WHERE result_id = 5;
+  INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES ((SELECT currval(pg_get_serial_sequence('test_item', 'item_id'))), 'FAILED', 0.35, now());
+END;
 $$
 LANGUAGE plpgsql;
 
@@ -191,7 +233,7 @@ BEGIN
   WHILE logscounter < 4
   LOOP
 
-    INSERT INTO attachment(file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
     VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
     INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
@@ -203,10 +245,10 @@ BEGIN
   WHILE logscounter > 0
   LOOP
 
-    INSERT INTO attachment(file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
+    INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
     VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
-    INSERT INTO log(log_time, log_message, item_id, last_modified, log_level, attachment_id)
+    INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
     VALUES (now(), 'log', stepid, now(), 40000, (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
 
     logscounter = logscounter - 1;

@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegration extends TableImpl<JIntegrationRecord> {
 
-    private static final long serialVersionUID = -508524256;
+    private static final long serialVersionUID = 678487208;
 
     /**
      * The reference instance of <code>public.integration</code>
@@ -61,6 +61,11 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
      * The column <code>public.integration.id</code>.
      */
     public final TableField<JIntegrationRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('integration_id_seq'::regclass)", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>public.integration.name</code>.
+     */
+    public final TableField<JIntegrationRecord, String> NAME = createField("name", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.integration.project_id</code>.

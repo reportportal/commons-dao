@@ -63,7 +63,7 @@ dependencies {
     } else {
         compile('com.github.reportportal:commons:71d4aca')
         compile 'com.github.reportportal:commons-rules:574fb3a'
-        compile 'com.github.reportportal:commons-model:9d3ad776'
+        compile 'com.github.reportportal:commons-model:e524307'
     }
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.3'
@@ -144,6 +144,8 @@ task copyTestDatabaseScripts {
 }
 
 test.dependsOn copyTestDatabaseScripts
+
+tasks.withType(Javadoc).all { enabled = false }
 
 test {
     useJUnitPlatform()

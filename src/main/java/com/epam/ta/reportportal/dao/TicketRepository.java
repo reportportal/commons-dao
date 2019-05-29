@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * @author Pavel Bortnik
  */
-public interface TicketRepository extends ReportPortalRepository<Ticket, Long> {
+public interface TicketRepository extends ReportPortalRepository<Ticket, Long>, TicketRepositoryCustom {
 
 	Optional<Ticket> findByTicketId(String ticketId);
 

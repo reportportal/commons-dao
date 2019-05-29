@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
@@ -42,6 +43,7 @@ import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
 import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import com.epam.ta.reportportal.entity.ldap.SynchronizationAttributes;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
@@ -125,6 +127,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
 		IssueEntity issueEntity = r.into(IssueEntity.class);
 		issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+		issueEntity.getTickets();
 		return issueEntity;
 	};
 
@@ -209,13 +212,27 @@ public class RecordMappers {
 	};
 
 	/**
+	 * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link PatternTemplate#name} fields)
+	 */
+	public static final Function<? super Record, Optional<PatternTemplate>> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> ofNullable(r.get(
+			PATTERN_TEMPLATE.NAME)).map(name -> {
+		PatternTemplate patternTemplate = new PatternTemplate();
+		patternTemplate.setId(r.get(PATTERN_TEMPLATE.ID));
+		patternTemplate.setName(name);
+		return patternTemplate;
+	});
+
+	/**
 	 * Maps record into {@link Launch} object
 	 */
 	public static final RecordMapper<? super Record, Launch> LAUNCH_RECORD_MAPPER = r -> {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-		launch.setUser(r.into(User.class));
+
+		User user = new User();
+		user.setLogin(r.get(USERS.LOGIN));
+		launch.setUser(user);
 		return launch;
 	};
 
@@ -346,6 +363,14 @@ public class RecordMappers {
 		}
 	};
 
+	public static final Function<? super Record, Optional<Ticket>> TICKET_MAPPER = r -> {
+		String ticketId = r.get(TICKET.TICKET_ID);
+		if (ticketId != null) {
+			return Optional.of(r.into(Ticket.class));
+		}
+		return Optional.empty();
+	};
+
 	public static final Function<? super Record, Optional<DashboardWidget>> DASHBOARD_WIDGET_MAPPER = r -> {
 		Long widgetId = r.get(DASHBOARD_WIDGET.WIDGET_ID);
 		if (widgetId == null) {
@@ -357,6 +382,8 @@ public class RecordMappers {
 		dashboardWidget.setPositionY(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_Y));
 		dashboardWidget.setHeight(r.get(DASHBOARD_WIDGET.WIDGET_HEIGHT));
 		dashboardWidget.setWidth(r.get(DASHBOARD_WIDGET.WIDGET_WIDTH));
+		dashboardWidget.setCreatedOn(r.get(DASHBOARD_WIDGET.IS_CREATED_ON));
+		dashboardWidget.setWidgetOwner(r.get(DASHBOARD_WIDGET.WIDGET_OWNER));
 		return Optional.of(dashboardWidget);
 	};
 
@@ -413,6 +440,7 @@ public class RecordMappers {
 
 		Integration integration = new Integration();
 		integration.setId(r.get(INTEGRATION.ID, Long.class));
+		integration.setName(r.get(INTEGRATION.NAME));
 		integration.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 		integration.setEnabled(r.get(INTEGRATION.ENABLED));

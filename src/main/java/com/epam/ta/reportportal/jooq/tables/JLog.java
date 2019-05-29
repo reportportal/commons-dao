@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = 1715221774;
+    private static final long serialVersionUID = 2043209929;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -61,6 +61,11 @@ public class JLog extends TableImpl<JLogRecord> {
      * The column <code>public.log.id</code>.
      */
     public final TableField<JLogRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('log_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.log.uuid</code>.
+     */
+    public final TableField<JLogRecord, String> UUID = createField("uuid", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.log.log_time</code>.
@@ -138,7 +143,7 @@ public class JLog extends TableImpl<JLogRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LOG_PK, Indexes.LOG_TI_IDX);
+        return Arrays.<Index>asList(Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_TI_IDX, Indexes.LOG_UUID_IDX);
     }
 
     /**

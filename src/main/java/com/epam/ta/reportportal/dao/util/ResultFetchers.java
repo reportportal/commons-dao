@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -151,6 +152,12 @@ public class ResultFetchers {
 			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
 			testItem.getParameters().add(record.into(Parameter.class));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+			PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(record)
+					.ifPresent(patternTemplate -> testItem.getPatternTemplateTestItems()
+							.add(new PatternTemplateTestItem(patternTemplate, testItem)));
+			if (testItem.getItemResults().getIssue() != null) {
+				TICKET_MAPPER.apply(record).ifPresent(ticket -> testItem.getItemResults().getIssue().getTickets().add(ticket));
+			}
 			testItems.put(id, testItem);
 		});
 		return new ArrayList<>(testItems.values());
@@ -237,7 +244,7 @@ public class ResultFetchers {
 				userFilter.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
 				userFilter.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
-				project.setId(r.get(PROJECT.ID, Long.class));
+				project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
 				userFilter.setProject(project);
 			}
 			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
@@ -259,7 +266,7 @@ public class ResultFetchers {
 				dashboard.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
 				dashboard.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
-				project.setId(r.get(PROJECT.ID, Long.class));
+				project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
 				dashboard.setProject(project);
 			}
 			DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(it -> dashboard.getDashboardWidgets().add(it));
@@ -280,7 +287,7 @@ public class ResultFetchers {
 				widget.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
 				widget.setShared(r.get(SHAREABLE_ENTITY.SHARED));
 				Project project = new Project();
-				project.setId(r.get(PROJECT.ID, Long.class));
+				project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
 				widget.setProject(project);
 			}
 			widgetMap.put(widgetId, widget);

@@ -81,6 +81,15 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByUuid() {
+		final String uuid = "uuid 11";
+		final Optional<Launch> launch = launchRepository.findByUuid(uuid);
+		assertNotNull(launch);
+		assertTrue(launch.isPresent());
+		assertEquals(uuid, launch.get().getUuid());
+	}
+
+	@Test
 	void findLaunchIdsByProjectId() {
 		final List<Long> ids = launchRepository.findLaunchIdsByProjectId(1L);
 		assertNotNull(ids);
@@ -215,8 +224,7 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatuses() {
-		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(
-				100L,
+		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(100L,
 				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
 		);
 		assertTrue(hasItemsInStatuses);
@@ -261,23 +269,33 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findLaunchesWithUserAttributes() {
-		List<Launch> withoutSystemAttrs = launchRepository.findByFilter(Filter.builder()
+	void sortingByJoinedColumnLatestTest() {
+		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "statistics$defects$product_bug$pb001"));
+		Page<Launch> launchesPage = launchRepository.findAllLatestByFilter(Filter.builder()
 				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.FALSE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutSystemAttrs));
-		withoutSystemAttrs.forEach(it -> assertFalse(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria(CRITERIA_ID)
+						.withValue("100")
+						.build())
+				.build(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
 	}
 
 	@Test
-	void findLaunchesWithSystemAttributes() {
-		List<Launch> withoutUserAttrs = launchRepository.findByFilter(Filter.builder()
+	void testNegativeContainConditionNullDescription() {
+		List<Launch> launch = launchRepository.findByFilter(Filter.builder()
 				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.TRUE.toString()).build())
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.CONTAINS)
+						.withNegative(true)
+						.withSearchCriteria(CRITERIA_DESCRIPTION)
+						.withValue("description")
+						.build())
 				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutUserAttrs));
-		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
+		assertThat(launch, Matchers.hasSize(1));
+		assertThat(launch.get(0).getDescription(), Matchers.nullValue());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

@@ -23,7 +23,6 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.epam.ta.reportportal.entity.project.ProjectUtils;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
@@ -100,9 +99,6 @@ public final class PersonalProjectService {
 
 		project.setProjectAttributes(defaultProjectAttributes(project, attributeRepository.getDefaultProjectAttributes()));
 		project.setProjectIssueTypes(defaultIssueTypes(project, issueTypeRepository.getDefaultIssueTypes()));
-
-		/* Default email configuration */
-		ProjectUtils.setDefaultNotificationConfiguration(project);
 
 		return project;
 	}

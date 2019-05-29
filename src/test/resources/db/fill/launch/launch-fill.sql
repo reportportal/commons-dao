@@ -3,8 +3,8 @@ alter sequence test_item_item_id_seq restart with 1;
 
 SELECT launches_init();
 
-INSERT INTO public.launch(id, uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status)
-VALUES (100, 'uuid', 2, 2, 'finished launch', 'description', now(), now(), now(), 'DEFAULT', 'FAILED');
+INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified, mode, status)
+VALUES (100, 'uuid', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
 
 INSERT INTO public.test_item(item_id, type, start_time, last_modified, has_children, has_retries, parent_id, launch_id)
 VALUES (1, 'STEP', now(), now(), false, false, null, 100);
