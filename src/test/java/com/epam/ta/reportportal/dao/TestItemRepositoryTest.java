@@ -530,6 +530,17 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void patternTemplateFilteringTest() {
+
+		List<TestItem> collect = testItemRepository.findAll()
+				.stream()
+				.filter(i -> CollectionUtils.isNotEmpty(i.getPatternTemplateTestItems()))
+				.collect(toList());
+
+		Assertions.assertTrue(CollectionUtils.isNotEmpty(collect));
+	}
+
+	@Test
 	void searchTicket() {
 		Filter filter = Filter.builder()
 				.withTarget(TestItem.class)
