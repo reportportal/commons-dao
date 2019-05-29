@@ -186,17 +186,21 @@ public class RecordMappers {
 	}).orElse(null);
 
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
-		TestItem testItem = new TestItem();
-		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
-		return new Log(
-				r.get(JLog.LOG.ID, Long.class),
-				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
-				r.get(JLog.LOG.LOG_MESSAGE, String.class),
-				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
-				r.get(JLog.LOG.LOG_LEVEL, Integer.class),
-				testItem,
-				ATTACHMENT_MAPPER.map(r)
-		);
+		Log log = new Log();
+		log.setId(r.get(LOG.ID, Long.class));
+		log.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
+		log.setLogMessage(r.get(LOG.LOG_MESSAGE, String.class));
+		log.setLastModified(r.get(LOG.LAST_MODIFIED, LocalDateTime.class));
+		log.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+
+		log.setAttachment(ATTACHMENT_MAPPER.map(r));
+
+		TestItem testItem = new TestItem(r.get(LOG.ITEM_ID));
+		log.setTestItem(testItem);
+
+		Launch launch = new Launch(r.get(LOG.LAUNCH_ID));
+		log.setLaunch(launch);
+		return log;
 	};
 
 	/**

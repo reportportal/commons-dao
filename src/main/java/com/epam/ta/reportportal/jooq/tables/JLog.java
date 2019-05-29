@@ -3,30 +3,18 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -42,7 +30,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = 2043209929;
+	private static final long serialVersionUID = 829551498;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -80,7 +68,12 @@ public class JLog extends TableImpl<JLogRecord> {
     /**
      * The column <code>public.log.item_id</code>.
      */
-    public final TableField<JLogRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+	public final TableField<JLogRecord, Long> ITEM_ID = createField("item_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+	/**
+	 * The column <code>public.log.launch_id</code>.
+	 */
+	public final TableField<JLogRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.log.last_modified</code>.
@@ -175,12 +168,20 @@ public class JLog extends TableImpl<JLogRecord> {
      */
     @Override
     public List<ForeignKey<JLogRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
+		return Arrays.<ForeignKey<JLogRecord, ?>>asList(
+				Keys.LOG__LOG_ITEM_ID_FKEY,
+				Keys.LOG__LOG_LAUNCH_ID_FKEY,
+				Keys.LOG__LOG_ATTACHMENT_ID_FKEY
+		);
     }
 
     public JTestItem testItem() {
         return new JTestItem(this, Keys.LOG__LOG_ITEM_ID_FKEY);
     }
+
+	public JLaunch launch() {
+		return new JLaunch(this, Keys.LOG__LOG_LAUNCH_ID_FKEY);
+	}
 
     public JAttachment attachment() {
         return new JAttachment(this, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);

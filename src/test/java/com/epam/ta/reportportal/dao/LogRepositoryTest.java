@@ -137,10 +137,17 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findIdsByLaunchId(1L);
+	void findItemLogIdsByLaunchId() {
+		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchId(1L);
 		assertEquals(7, logIdsByLaunch.size());
 	}
+
+	@Test
+	void findItemLogIdsByLaunchIds() {
+		List<Long> logIds = logRepository.findItemLogIdsByLaunchIds(Arrays.asList(1L, 2L));
+		assertEquals(7, logIds.size());
+	}
+
 
 	@Test
 	void findIdsByItemIds() {

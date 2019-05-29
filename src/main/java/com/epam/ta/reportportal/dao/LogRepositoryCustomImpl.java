@@ -120,25 +120,23 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> findIdsByLaunchId(Long launchId) {
+	public List<Long> findItemLogIdsByLaunchId(Long launchId) {
 		return dsl.select()
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
 				.onKey()
-				.join(LAUNCH)
-				.onKey()
+				.join(LAUNCH).on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
 				.fetch(LOG.ID, Long.class);
 	}
 
 	@Override
-	public List<Long> findIdsByLaunchIds(List<Long> launchIds) {
+	public List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds) {
 		return dsl.select()
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
 				.onKey()
-				.join(LAUNCH)
-				.onKey()
+				.join(LAUNCH).on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(launchIds))
 				.fetch(LOG.ID, Long.class);
 	}
