@@ -541,6 +541,14 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void qwe() {
+		Optional<TestItem> parent = testItemRepository.findParentByChildId(2L);
+
+		Assertions.assertTrue(parent.isPresent());
+		Assertions.assertEquals(1L, (long) parent.get().getItemId());
+	}
+
+	@Test
 	void searchTicket() {
 		Filter filter = Filter.builder()
 				.withTarget(TestItem.class)
