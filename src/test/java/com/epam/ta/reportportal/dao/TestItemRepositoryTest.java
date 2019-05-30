@@ -541,7 +541,7 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void qwe() {
+	void findParentByChildIdTest() {
 		Optional<TestItem> parent = testItemRepository.findParentByChildId(2L);
 
 		Assertions.assertTrue(parent.isPresent());
