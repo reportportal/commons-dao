@@ -530,6 +530,25 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void patternTemplateFilteringTest() {
+
+		List<TestItem> collect = testItemRepository.findAll()
+				.stream()
+				.filter(i -> CollectionUtils.isNotEmpty(i.getPatternTemplateTestItems()))
+				.collect(toList());
+
+		Assertions.assertTrue(CollectionUtils.isNotEmpty(collect));
+	}
+
+	@Test
+	void qwe() {
+		Optional<TestItem> parent = testItemRepository.findParentByStatusNotEqualAndChildId(StatusEnum.IN_PROGRESS, 2L);
+
+		Assertions.assertTrue(parent.isPresent());
+		Assertions.assertEquals(1L, (long) parent.get().getItemId());
+	}
+
+	@Test
 	void searchTicket() {
 		Filter filter = Filter.builder()
 				.withTarget(TestItem.class)

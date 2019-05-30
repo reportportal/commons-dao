@@ -40,6 +40,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launch.id = :launchId")
 	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
 
+	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent JOIN parent.itemResults itemResults WHERE itemResults.status != :status AND child.itemId = :childId")
+	Optional<TestItem> findParentByStatusNotEqualAndChildId(@Param("status") StatusEnum status, @Param("childId") Long childId);
+
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
 	 *
