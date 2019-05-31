@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
@@ -126,6 +127,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
 		IssueEntity issueEntity = r.into(IssueEntity.class);
 		issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+		issueEntity.getTickets();
 		return issueEntity;
 	};
 
@@ -186,7 +188,8 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
 		TestItem testItem = new TestItem();
 		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
-		return new Log(r.get(JLog.LOG.ID, Long.class),
+		return new Log(
+				r.get(JLog.LOG.ID, Long.class),
 				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
 				r.get(JLog.LOG.LOG_MESSAGE, String.class),
 				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
@@ -360,6 +363,14 @@ public class RecordMappers {
 		}
 	};
 
+	public static final Function<? super Record, Optional<Ticket>> TICKET_MAPPER = r -> {
+		String ticketId = r.get(TICKET.TICKET_ID);
+		if (ticketId != null) {
+			return Optional.of(r.into(Ticket.class));
+		}
+		return Optional.empty();
+	};
+
 	public static final Function<? super Record, Optional<DashboardWidget>> DASHBOARD_WIDGET_MAPPER = r -> {
 		Long widgetId = r.get(DASHBOARD_WIDGET.WIDGET_ID);
 		if (widgetId == null) {
@@ -371,6 +382,8 @@ public class RecordMappers {
 		dashboardWidget.setPositionY(r.get(DASHBOARD_WIDGET.WIDGET_POSITION_Y));
 		dashboardWidget.setHeight(r.get(DASHBOARD_WIDGET.WIDGET_HEIGHT));
 		dashboardWidget.setWidth(r.get(DASHBOARD_WIDGET.WIDGET_WIDTH));
+		dashboardWidget.setCreatedOn(r.get(DASHBOARD_WIDGET.IS_CREATED_ON));
+		dashboardWidget.setWidgetOwner(r.get(DASHBOARD_WIDGET.WIDGET_OWNER));
 		return Optional.of(dashboardWidget);
 	};
 

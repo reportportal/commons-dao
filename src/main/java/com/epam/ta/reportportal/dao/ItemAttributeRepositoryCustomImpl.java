@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.epam.ta.reportportal.jooq.tables.records.JItemAttributeRecord;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -48,8 +49,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
-				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system)).and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
@@ -75,8 +75,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
-				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + value + "%"))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system)).and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
@@ -116,7 +115,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 			boolean system) {
 		Condition condition = field.eq(id)
 				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
-				.and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + (value == null ? "" : value) + "%"));
+				.and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + (value == null ? "" : DSL.escape(value, '\\') + "%")));
 		if (key != null) {
 			condition = condition.and(ITEM_ATTRIBUTE.KEY.eq(key));
 		}

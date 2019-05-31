@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,21 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.bts.Ticket;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 
 /**
- * @author Pavel Bortnik
+ * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface TicketRepository extends ReportPortalRepository<Ticket, Long>, TicketRepositoryCustom {
+public interface AttachmentRepositoryCustom {
 
-	Optional<Ticket> findByTicketId(String ticketId);
+	Page<Long> findIdsByProjectId(Long projectId, Pageable pageable);
 
-	List<Ticket> findByTicketIdIn(List<String> ticketId);
+	Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable);
+
+	Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable);
+
+	int deleteAllByIds(Collection<Long> ids);
 }

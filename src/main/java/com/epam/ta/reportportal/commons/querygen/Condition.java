@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.Predicates;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import org.apache.commons.lang3.BooleanUtils;
+import org.jooq.Field;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
@@ -37,6 +39,8 @@ import static com.epam.ta.reportportal.ws.model.ErrorType.INCORRECT_FILTER_PARAM
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
 import static org.jooq.impl.DSL.*;
+import static org.jooq.util.postgres.PostgresDSL.arrayLength;
+import static org.jooq.util.postgres.PostgresDSL.arrayRemove;
 
 /**
  * Types of supported filtering
@@ -112,7 +116,8 @@ public enum Condition {
 			/* Validate only strings */
 
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return field(criteriaHolder.getAggregateCriteria()).likeIgnoreCase(DSL.inline("%" + filter.getValue() + "%"));
+			return field(criteriaHolder.getAggregateCriteria()).likeIgnoreCase(DSL.inline("%" + DSL.escape(filter.getValue(), '\\') + "%"))
+					.and(field(criteriaHolder.getAggregateCriteria()).isNotNull());
 		}
 
 		@Override
@@ -182,7 +187,15 @@ public enum Condition {
 	EXISTS("ex") {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
-			return field(criteriaHolder.getAggregateCriteria()).isNotNull();
+			if (criteriaHolder.getQueryCriteria().equals(criteriaHolder.getAggregateCriteria())) {
+				return field(criteriaHolder.getAggregateCriteria()).isNotNull();
+			} else {
+				boolean exists = BooleanUtils.toBoolean(filter.getValue());
+				Field<Integer> aggregatedCount = DSL.coalesce(arrayLength(arrayRemove(DSL.arrayAgg(field(criteriaHolder.getQueryCriteria())),
+						(String) null
+				)), 0);
+				return exists ? aggregatedCount.gt(0) : aggregatedCount.eq(0);
+			}
 		}
 
 		@Override
@@ -212,9 +225,8 @@ public enum Condition {
 
 		@Override
 		public void validate(CriteriaHolder criteriaHolder, String value, boolean isNegative, ErrorType errorType) {
-			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(
-					errorType,
-					"Equals any condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
+			expect(criteriaHolder, Predicates.not(filterForArrayAggregation())).verify(errorType,
+					"In condition not applicable for fields that have to be aggregated before filtering. Use 'HAS' or 'ANY'"
 			);
 		}
 
@@ -288,8 +300,7 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
-			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(
-					DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
+			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
 					DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
 			));
 		}
@@ -615,4 +626,5 @@ public enum Condition {
 			castedValues = values;
 		}
 		return castedValues;
-	}}
+	}
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,20 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.bts.Ticket;
-
 import java.util.List;
-import java.util.Optional;
 
 /**
- * @author Pavel Bortnik
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface TicketRepository extends ReportPortalRepository<Ticket, Long>, TicketRepositoryCustom {
+public interface TicketRepositoryCustom {
 
-	Optional<Ticket> findByTicketId(String ticketId);
+	/**
+	 * Find tickets that contains a term as a part inside for specified launch
+	 *
+	 * @param launchId Launch id
+	 * @param term     A part of ticket id
+	 * @return List of ticket ids
+	 */
+	List<String> findByTerm(Long launchId, String term);
 
-	List<Ticket> findByTicketIdIn(List<String> ticketId);
 }

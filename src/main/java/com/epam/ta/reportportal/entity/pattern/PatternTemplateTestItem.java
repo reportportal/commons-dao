@@ -14,8 +14,6 @@ import java.util.Objects;
 @IdClass(value = PatternTemplateTestItemKey.class)
 public class PatternTemplateTestItem implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "pattern_id")
@@ -25,6 +23,9 @@ public class PatternTemplateTestItem implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
+
+	public PatternTemplateTestItem() {
+	}
 
 	public PatternTemplateTestItem(PatternTemplate patternTemplate, TestItem testItem) {
 		this.patternTemplate = patternTemplate;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,31 @@ package com.epam.ta.reportportal.dao;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
-import static com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
+import java.util.List;
+
+import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
- * @author Ivan Budaev
+ * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-@Repository
-public class ServerSettingsRepositoryCustomImpl implements ServerSettingsRepositoryCustom {
-
-	private final DSLContext dsl;
+public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
 
 	@Autowired
-	public ServerSettingsRepositoryCustomImpl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+	private DSLContext dsl;
 
 	@Override
-	public void deleteAllByTerm(String term) {
-		dsl.deleteFrom(SERVER_SETTINGS).where(SERVER_SETTINGS.KEY.like(DSL.escape(term, '\\') + "%")).execute();
+	public List<String> findByTerm(Long launchId, String term) {
+		return dsl.select(TICKET.TICKET_ID)
+				.from(TICKET)
+				.join(ISSUE_TICKET)
+				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
+				.join(ISSUE)
+				.on(ISSUE_TICKET.ISSUE_ID.eq(ISSUE.ISSUE_ID))
+				.join(TEST_ITEM)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM.ITEM_ID))
+				.where(TICKET.TICKET_ID.likeIgnoreCase("%" + DSL.escape(term, '\\') + "%"))
+				.and(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.fetchInto(String.class);
 	}
 }

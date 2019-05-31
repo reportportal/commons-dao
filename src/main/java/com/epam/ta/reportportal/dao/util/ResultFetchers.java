@@ -155,6 +155,9 @@ public class ResultFetchers {
 			PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(record)
 					.ifPresent(patternTemplate -> testItem.getPatternTemplateTestItems()
 							.add(new PatternTemplateTestItem(patternTemplate, testItem)));
+			if (testItem.getItemResults().getIssue() != null) {
+				TICKET_MAPPER.apply(record).ifPresent(ticket -> testItem.getItemResults().getIssue().getTickets().add(ticket));
+			}
 			testItems.put(id, testItem);
 		});
 		return new ArrayList<>(testItems.values());

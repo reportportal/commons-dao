@@ -69,31 +69,35 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			@Param("status") StatusEnum status);
 
 	/**
-	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
+	 * Retrieve the {@link Stream} of the {@link TestItem#itemId} under parent {@link TestItem#path}, {@link StatusEnum#name()}
+	 * and {@link TestItem#hasChildren} == false
 	 *
-	 * @param parentId {@link TestItem#parent} ID
-	 * @param status   {@link StatusEnum#name()}
+	 * @param parentPath {@link TestItem#path} of the parent item
+	 * @param status     {@link StatusEnum#name()}
 	 * @return the {@link List} of the {@link TestItem#itemId}
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.parent_id = :parentId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
-	Stream<BigInteger> streamIdsByNotHasChildrenAndParentIdAndStatus(@Param("parentId") Long parentId, @Param("status") StatusEnum status);
+			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
+			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath,
+			@Param("status") StatusEnum status);
 
 	/**
-	 * Retrieve the {@link List} of the {@link TestItem#itemId} by {@link TestItem#parent} ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
-	 * ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
+	 * Retrieve the {@link Stream} of the {@link TestItem#itemId} under parent {@link TestItem#path}, {@link StatusEnum#name()}
+	 * and {@link TestItem#hasChildren} == true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
 	 *
-	 * @param parentId {@link TestItem#parent} ID
-	 * @param status   {@link StatusEnum#name()}
+	 * @param parentPath {@link TestItem#path} of the parent item
+	 * @param status     {@link StatusEnum#name()}
 	 * @return the {@link List} of the {@link TestItem#itemId}
 	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.parent_id = :parentId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
+			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
+			+ " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
-	Stream<BigInteger> streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(@Param("parentId") Long parentId,
+	Stream<BigInteger> streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
 			@Param("status") StatusEnum status);
 
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);

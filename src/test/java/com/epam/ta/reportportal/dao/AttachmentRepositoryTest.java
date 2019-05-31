@@ -17,13 +17,14 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -37,7 +38,7 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByProjectId() {
 
-		List<Long> ids = attachmentRepository.streamIdsByProjectId(1L).collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.findIdsByProjectId(1L, PageRequest.of(0, 50)).getContent();
 
 		Assertions.assertFalse(ids.isEmpty());
 
@@ -46,7 +47,7 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByLaunchId() {
 
-		List<Long> ids = attachmentRepository.streamIdsByLaunchId(1L).collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.findIdsByLaunchId(1L, PageRequest.of(0, 50)).getContent();
 
 		Assertions.assertFalse(ids.isEmpty());
 
@@ -55,9 +56,17 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByItemId() {
 
-		List<Long> ids = attachmentRepository.streamIdsByItemId(3L).collect(Collectors.toList());
+		List<Long> ids = attachmentRepository.findIdsByTestItemId(3L, PageRequest.of(0, 50)).getContent();
 
 		Assertions.assertFalse(ids.isEmpty());
 
+	}
+
+	@Test
+	void deleteAllByIds() {
+
+		int count = attachmentRepository.deleteAllByIds(Lists.newArrayList(2L, 9L, 16L, 23L));
+
+		Assertions.assertNotEquals(0, count);
 	}
 }

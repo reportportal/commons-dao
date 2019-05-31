@@ -93,6 +93,7 @@ BEGIN
       THEN
         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, TRUE);
+
       ELSE
         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, FALSE);
@@ -113,6 +114,12 @@ BEGIN
       THEN
         UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
         INSERT INTO issue (issue_id, issue_type, auto_analyzed, issue_description) VALUES (cur_step_id, 1, FALSE, 'issue description');
+
+        INSERT INTO ticket (ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
+        VALUES (concat('ticket_id_', cur_step_id), 1, now(), 'jira.com', 'project',
+                concat('http://example.com/tickets/ticket_id_', cur_step_id));
+        INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (cur_step_id, (SELECT currval(pg_get_serial_sequence('ticket', 'id'))));
+
         INSERT INTO pattern_template_test_item (pattern_id, item_id) VALUES (1, cur_step_id);
       END IF;
 
@@ -205,7 +212,16 @@ BEGIN
   END LOOP;
 
   functionresult := (SELECT retries_statistics(launchcounter - 1));
-END
+
+  INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+  VALUES ('Step', 'uuid 6_' || launchcounter, 'STEP', now(), 'Descendant', now(), 'unqIdSTEP_R' || launchcounter - 1, 5, 1);
+  cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
+  UPDATE test_item SET path = cast('1.2.5.' || cast(cur_step_id AS TEXT) AS LTREE) WHERE item_id = cur_step_id;
+  UPDATE test_item SET has_children = true WHERE item_id = 5;
+  UPDATE test_item_results SET status = 'FAILED' WHERE result_id = 5;
+  INSERT INTO test_item_results (result_id, status, duration, end_time)
+  VALUES ((SELECT currval(pg_get_serial_sequence('test_item', 'item_id'))), 'FAILED', 0.35, now());
+END;
 $$
 LANGUAGE plpgsql;
 

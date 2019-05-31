@@ -47,8 +47,7 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_RETRIES;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PATTERN_TEMPLATE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +61,21 @@ class TestItemRepositoryTest extends BaseTest {
 	@Autowired
 	private TestItemRepository testItemRepository;
 
+	@Autowired
+	private TicketRepository ticketRepository;
+
+	@Test
+	void findTicketsByTerm() {
+		List<String> tickets = ticketRepository.findByTerm(1l, "ticket");
+		Assertions.assertFalse(tickets.isEmpty());
+	}
+
+	@Test
+	void findTicketsByTermNegative() {
+		List<String> tickets = ticketRepository.findByTerm(1l, "unknown");
+		Assertions.assertTrue(tickets.isEmpty());
+	}
+
 	@Test
 	void streamItemIdsTest() {
 		Stream<Long> stream = testItemRepository.streamTestItemIdsByLaunchId(1L);
@@ -71,7 +85,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<Long> ids = stream.collect(toList());
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
-		assertEquals(5, ids.size(), "Incorrect ids size");
+		assertEquals(6, ids.size(), "Incorrect ids size");
 	}
 
 	@Test
@@ -108,7 +122,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
 		assertNotNull(items, "Items should not be null");
-		assertEquals(5, items.size(), "Incorrect items size");
+		assertEquals(6, items.size(), "Incorrect items size");
 		items.forEach(it -> assertEquals(launchId, (long) it.getLaunch().getId()));
 	}
 
@@ -141,7 +155,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void hasChildren() {
 		assertTrue(testItemRepository.hasChildren(1L, "1"));
-		assertFalse(testItemRepository.hasChildren(5L, "1.2.5"));
+		assertFalse(testItemRepository.hasChildren(3L, "1.2.3"));
 	}
 
 	@Test
@@ -159,22 +173,14 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L,
-				1,
-				40000,
-				"%o%"
-		);
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L, 1, 40000, "o");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
 
 	@Test
 	void selectIdsByRegexPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L,
-				1,
-				40000,
-				"[a-z]{3,3}"
-		);
+		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L, 1, 40000, "[a-z]{3,3}");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -204,7 +210,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectAllDescendantsWithChildrenNegative() {
-		final Long itemId = 2L;
+		final Long itemId = 3L;
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(items.isEmpty(), "Items should be empty");
@@ -278,7 +284,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.map(BigInteger::longValue)
 				.collect(toList());
 
-		Assertions.assertEquals(1, itemIds.size());
+		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
@@ -288,27 +294,27 @@ class TestItemRepositoryTest extends BaseTest {
 				.map(BigInteger::longValue)
 				.collect(toList());
 
+		Assertions.assertEquals(3, itemIds.size());
+	}
+
+	@Test
+	void streamIdsByNotHasChildrenAndParentPathAndStatus() {
+
+		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED)
+				.map(BigInteger::longValue)
+				.collect(toList());
+
 		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
-	void streamIdsByNotHasChildrenAndParentIdAndStatus() {
+	void streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentIdAndStatus(2L, StatusEnum.FAILED)
+		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED)
 				.map(BigInteger::longValue)
 				.collect(toList());
 
-		Assertions.assertEquals(1, itemIds.size());
-	}
-
-	@Test
-	void streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel() {
-
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
-
-		Assertions.assertEquals(1, itemIds.size());
+		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
@@ -386,6 +392,23 @@ class TestItemRepositoryTest extends BaseTest {
 		TestItemTypeEnum type = testItemRepository.getTypeByItemId(1L);
 
 		Assertions.assertEquals(TestItemTypeEnum.SUITE, type);
+	}
+
+	@Test
+	void findOrderedByStatus() {
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_LAUNCH_ID))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_STATUS)));
+
+		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
+
+		assertThat(
+				testItems.get(0).getItemResults().getStatus().name(),
+				Matchers.lessThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
+		);
 	}
 
 	@Test
@@ -504,6 +527,29 @@ class TestItemRepositoryTest extends BaseTest {
 
 		assertNotNull(items);
 		assertEquals(20L, items.size());
+
+	}
+
+	@Test
+	void patternTemplateFilteringTest() {
+
+		List<TestItem> collect = testItemRepository.findAll()
+				.stream()
+				.filter(i -> CollectionUtils.isNotEmpty(i.getPatternTemplateTestItems()))
+				.collect(toList());
+
+		Assertions.assertTrue(CollectionUtils.isNotEmpty(collect));
+	}
+
+	@Test
+	void searchTicket() {
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.ANY, false, "ticket_id_3", CRITERIA_TICKET_ID))
+				.build();
+		List<TestItem> items = testItemRepository.findByFilter(filter);
+		assertNotNull(items);
+		assertEquals(1L, items.size());
 
 	}
 }

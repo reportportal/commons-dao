@@ -180,6 +180,12 @@ public class ProjectUtils {
 				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
 
+	public static Map<String, String> getConfigParametersByPrefix(Set<ProjectAttribute> projectAttributes, String prefix) {
+		return ofNullable(projectAttributes).map(it -> it.stream()
+				.filter(pa -> pa.getAttribute().getName().startsWith(prefix))
+				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
+	}
+
 	public static boolean isPersonalForUser(ProjectType projectType, String projectName, String username) {
 		return projectType == ProjectType.PERSONAL && Pattern.compile(LINE_START_SYMBOL + username + PERSONAL_PROJECT_POSTFIX_REGEX)
 				.matcher(projectName)

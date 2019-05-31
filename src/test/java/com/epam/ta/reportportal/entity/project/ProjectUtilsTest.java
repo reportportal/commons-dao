@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.MapUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -106,6 +107,30 @@ class ProjectUtilsTest {
 		assertThat(configParameters).isEqualTo(getAttributeWithValuesMap().entrySet()
 				.stream()
 				.collect(Collectors.toMap(it -> it.getKey().getName(), Map.Entry::getValue)));
+	}
+
+	private static List<IssueType> getDefaultIssueTypes() {
+		IssueGroup tiGroup = new IssueGroup();
+		tiGroup.setId(1);
+		tiGroup.setTestItemIssueGroup(TestItemIssueGroup.TO_INVESTIGATE);
+		IssueGroup abGroup = new IssueGroup();
+		abGroup.setId(2);
+		abGroup.setTestItemIssueGroup(TestItemIssueGroup.AUTOMATION_BUG);
+		IssueGroup pbGroup = new IssueGroup();
+		pbGroup.setId(3);
+		pbGroup.setTestItemIssueGroup(TestItemIssueGroup.PRODUCT_BUG);
+		IssueGroup ndGroup = new IssueGroup();
+		ndGroup.setId(4);
+		ndGroup.setTestItemIssueGroup(TestItemIssueGroup.NO_DEFECT);
+		IssueGroup siGroup = new IssueGroup();
+		siGroup.setId(5);
+		siGroup.setTestItemIssueGroup(TestItemIssueGroup.SYSTEM_ISSUE);
+		return Arrays.asList(new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
+				new IssueType(abGroup, "ab001", "Automation Bug", "AB", "#f7d63e"),
+				new IssueType(pbGroup, "pb001", "Product Bug", "PB", "#ec3900"),
+				new IssueType(ndGroup, "nd001", "No Defect", "ND", "#777777"),
+				new IssueType(siGroup, "si001", "System Issue", "SI", "#0274d1")
+		);
 	}
 
 	@Test
@@ -195,38 +220,6 @@ class ProjectUtilsTest {
 		}).collect(Collectors.toSet());
 	}
 
-	private static List<IssueType> getDefaultIssueTypes() {
-		IssueGroup tiGroup = new IssueGroup();
-		tiGroup.setId(1);
-		tiGroup.setTestItemIssueGroup(TestItemIssueGroup.TO_INVESTIGATE);
-		IssueGroup abGroup = new IssueGroup();
-		abGroup.setId(2);
-		abGroup.setTestItemIssueGroup(TestItemIssueGroup.AUTOMATION_BUG);
-		IssueGroup pbGroup = new IssueGroup();
-		pbGroup.setId(3);
-		pbGroup.setTestItemIssueGroup(TestItemIssueGroup.PRODUCT_BUG);
-		IssueGroup ndGroup = new IssueGroup();
-		ndGroup.setId(4);
-		ndGroup.setTestItemIssueGroup(TestItemIssueGroup.NO_DEFECT);
-		IssueGroup siGroup = new IssueGroup();
-		siGroup.setId(5);
-		siGroup.setTestItemIssueGroup(TestItemIssueGroup.SYSTEM_ISSUE);
-		return Arrays.asList(
-				new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
-				new IssueType(abGroup, "ab001", "Automation Bug", "AB", "#f7d63e"),
-				new IssueType(pbGroup, "pb001", "Product Bug", "PB", "#ec3900"),
-				new IssueType(ndGroup, "nd001", "No Defect", "ND", "#777777"),
-				new IssueType(siGroup, "si001", "System Issue", "SI", "#0274d1")
-		);
-	}
-
-	private static Set<ProjectAttribute> getProjectAttributes() {
-		return getAttributeWithValuesMap().entrySet()
-				.stream()
-				.map(it -> new ProjectAttribute().withAttribute(it.getKey()).withProject(getTestProject()).withValue(it.getValue()))
-				.collect(Collectors.toSet());
-	}
-
 	private static Map<Attribute, String> getAttributeWithValuesMap() {
 		final Attribute attr1 = new Attribute();
 		attr1.setId(1L);
@@ -236,10 +229,32 @@ class ProjectUtilsTest {
 		attr2.setId(1L);
 		attr2.setName("two");
 
+		Attribute attr3 = new Attribute();
+		attr3.setId(1L);
+		attr3.setName("analyzer.param");
+
 		Map<Attribute, String> attributeMap = new HashMap<>();
 		attributeMap.put(attr1, "valOne");
 		attributeMap.put(attr2, "valTwo");
+		attributeMap.put(attr3, "value");
 		return attributeMap;
+	}
+
+	private static Set<ProjectAttribute> getProjectAttributes() {
+		return getAttributeWithValuesMap().entrySet()
+				.stream()
+				.map(it -> new ProjectAttribute().withAttribute(it.getKey()).withProject(getTestProject()).withValue(it.getValue()))
+				.collect(Collectors.toSet());
+	}
+
+	@Test
+	void getConfigParametersByPrefix() {
+		Map<String, String> configParameters = ProjectUtils.getConfigParametersByPrefix(getProjectAttributes(),
+				ProjectAttributeEnum.Prefix.ANALYZER
+		);
+
+		assertTrue(MapUtils.isNotEmpty(configParameters));
+		configParameters.forEach((key, value) -> assertTrue(key.startsWith(ProjectAttributeEnum.Prefix.ANALYZER)));
 	}
 
 	private Project getProjectWithRecipients() {

@@ -334,8 +334,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
 						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
-						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-						.and(LOG.LOG_MESSAGE.like("%" + pattern + "%")))
+						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)).and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
 				.fetchInto(Long.class);
 
 	}
