@@ -25,35 +25,43 @@ import java.util.Optional;
  */
 public enum WidgetType {
 
-	OLD_LINE_CHART("oldLineChart"),
-	INVESTIGATED_TREND("investigatedTrend"),
-	LAUNCH_STATISTICS("launchStatistics"),
-	STATISTIC_TREND("statisticTrend"),
-	CASES_TREND("casesTrend"),
-	NOT_PASSED("notPassed"),
-	OVERALL_STATISTICS("overallStatistics"),
-	UNIQUE_BUG_TABLE("uniqueBugTable"),
-	BUG_TREND("bugTrend"),
-	ACTIVITY("activityStream"),
-	LAUNCHES_COMPARISON_CHART("launchesComparisonChart"),
-	LAUNCHES_DURATION_CHART("launchesDurationChart"),
-	LAUNCHES_TABLE("launchesTable"),
-	TOP_TEST_CASES("topTestCases"),
-	FLAKY_TEST_CASES("flakyTestCases"),
-	PASSING_RATE_SUMMARY("passingRateSummary"),
-	PASSING_RATE_PER_LAUNCH("passingRatePerLaunch"),
-	PRODUCT_STATUS("productStatus"),
-	MOST_TIME_CONSUMING("mostTimeConsuming"),
-	CUMULATIVE("cumulative");
+	OLD_LINE_CHART("oldLineChart", false),
+	INVESTIGATED_TREND("investigatedTrend", false),
+	LAUNCH_STATISTICS("launchStatistics", false),
+	STATISTIC_TREND("statisticTrend", false),
+	CASES_TREND("casesTrend", false),
+	NOT_PASSED("notPassed", false),
+	OVERALL_STATISTICS("overallStatistics", false),
+	UNIQUE_BUG_TABLE("uniqueBugTable", false),
+	BUG_TREND("bugTrend", false),
+	ACTIVITY("activityStream", false),
+	LAUNCHES_COMPARISON_CHART("launchesComparisonChart", false),
+	LAUNCHES_DURATION_CHART("launchesDurationChart", false),
+	LAUNCHES_TABLE("launchesTable", false),
+	TOP_TEST_CASES("topTestCases", false),
+	FLAKY_TEST_CASES("flakyTestCases", false),
+	PASSING_RATE_SUMMARY("passingRateSummary", false),
+	PASSING_RATE_PER_LAUNCH("passingRatePerLaunch", false),
+	PRODUCT_STATUS("productStatus", false),
+	MOST_TIME_CONSUMING("mostTimeConsuming", false),
+
+	CUMULATIVE("cumulative", true);
 
 	private final String type;
 
-	WidgetType(String type) {
+	private final boolean supportMultilevelStructure;
+
+	WidgetType(String type, boolean supportMultilevelStructure) {
 		this.type = type;
+		this.supportMultilevelStructure = supportMultilevelStructure;
 	}
 
 	public String getType() {
 		return this.type;
+	}
+
+	public boolean isSupportMultilevelStructure() {
+		return supportMultilevelStructure;
 	}
 
 	public static WidgetType getByName(String type) {

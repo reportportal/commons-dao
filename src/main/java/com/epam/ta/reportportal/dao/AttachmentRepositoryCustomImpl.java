@@ -39,7 +39,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByProjectId(Long projectId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(
+				dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.PROJECT_ID.eq(projectId))
 						.limit(pageable.getPageSize())
@@ -52,7 +53,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(
+				dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.LAUNCH_ID.eq(launchId))
 						.limit(pageable.getPageSize())
@@ -65,7 +67,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(
+				dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.ITEM_ID.eq(itemId))
 						.limit(pageable.getPageSize())

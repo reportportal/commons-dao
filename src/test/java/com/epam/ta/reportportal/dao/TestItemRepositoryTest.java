@@ -405,7 +405,8 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
 
-		assertThat(testItems.get(0).getItemResults().getStatus().name(),
+		assertThat(
+				testItems.get(0).getItemResults().getStatus().name(),
 				Matchers.lessThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
 		);
 	}

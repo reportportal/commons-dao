@@ -112,8 +112,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.leftJoin(USERS)
 				.on(LAUNCH.USER_ID.eq(USERS.ID))
-				.where(PROJECT.ID.eq(projectId))
-				.and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 				.fetch(USERS.LOGIN);
 	}
