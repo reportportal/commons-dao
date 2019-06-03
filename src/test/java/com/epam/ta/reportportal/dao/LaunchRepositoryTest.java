@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.CompositeFilter;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -74,7 +76,7 @@ class LaunchRepositoryTest extends BaseTest {
 		final String launchName = "launch name 1";
 		final List<Launch> launches = launchRepository.findAllByName(launchName);
 		assertNotNull(launches);
-		assertTrue(!launches.isEmpty());
+		assertFalse(launches.isEmpty());
 		launches.forEach(it -> assertEquals(launchName, it.getName()));
 	}
 
@@ -294,6 +296,26 @@ class LaunchRepositoryTest extends BaseTest {
 				.build());
 		assertThat(launch, Matchers.hasSize(1));
 		assertThat(launch.get(0).getDescription(), Matchers.nullValue());
+	}
+
+	@Test
+	void findLaunchesWithUserAttributes() {
+		List<Launch> withoutSystemAttrs = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.FALSE.toString()).build())
+				.build());
+		assertTrue(CollectionUtils.isNotEmpty(withoutSystemAttrs));
+		withoutSystemAttrs.forEach(it -> assertFalse(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
+	}
+
+	@Test
+	void findLaunchesWithSystemAttributes() {
+		List<Launch> withoutUserAttrs = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.TRUE.toString()).build())
+				.build());
+		assertTrue(CollectionUtils.isNotEmpty(withoutUserAttrs));
+		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
