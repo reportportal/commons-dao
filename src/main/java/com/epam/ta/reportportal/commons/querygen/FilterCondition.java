@@ -35,7 +35,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Entity
 @Table(name = "filter_condition", schema = "public")
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
-public class FilterCondition implements Serializable {
+public class FilterCondition implements ConvertibleCondition, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -188,6 +188,11 @@ public class FilterCondition implements Serializable {
 
 	public static ConditionBuilder builder() {
 		return new ConditionBuilder();
+	}
+
+	@Override
+	public org.jooq.Condition toCondition(CriteriaHolder criteriaHolder) {
+		return condition.toCondition(this, criteriaHolder);
 	}
 
 	/**

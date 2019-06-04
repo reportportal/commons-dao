@@ -250,7 +250,7 @@ public class QueryBuilder {
 					Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
 			);
 
-			Condition condition = filterCondition.getCondition().toCondition(filterCondition, criteriaHolder.get());
+			Condition condition = filterCondition.toCondition(criteriaHolder.get());
 
 			/* Does FilterCondition contains negative=true? */
 			if (filterCondition.isNegative()) {
