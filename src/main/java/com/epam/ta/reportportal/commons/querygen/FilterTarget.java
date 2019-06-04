@@ -38,7 +38,10 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
@@ -51,8 +54,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
@@ -374,8 +377,7 @@ public enum FilterTarget {
 							.get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME, PATTERN_TEMPLATE.NAME, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString())
-							.get(),
+							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString()).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_TICKET_ID, TICKET.TICKET_ID, String.class)
 							.withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString())
 							.get()
@@ -413,12 +415,7 @@ public enum FilterTarget {
 					ISSUE_TYPE.ABBREVIATION,
 					ISSUE_TYPE.HEX_COLOR,
 					ISSUE_TYPE.ISSUE_NAME,
-					ISSUE_GROUP.ISSUE_GROUP_,
-					TICKET.ID,
-					TICKET.BTS_PROJECT,
-					TICKET.BTS_URL,
-					TICKET.TICKET_ID,
-					TICKET.URL,
+					ISSUE_GROUP.ISSUE_GROUP_, TICKET.ID, TICKET.BTS_PROJECT, TICKET.BTS_URL, TICKET.TICKET_ID, TICKET.URL,
 					PATTERN_TEMPLATE.ID,
 					PATTERN_TEMPLATE.NAME
 			);
@@ -609,9 +606,7 @@ public enum FilterTarget {
 			return Lists.newArrayList(DASHBOARD.ID,
 					DASHBOARD.NAME,
 					DASHBOARD.DESCRIPTION,
-					DASHBOARD.CREATION_DATE,
-					DASHBOARD_WIDGET.WIDGET_OWNER,
-					DASHBOARD_WIDGET.IS_CREATED_ON,
+					DASHBOARD.CREATION_DATE, DASHBOARD_WIDGET.WIDGET_OWNER, DASHBOARD_WIDGET.IS_CREATED_ON,
 					DASHBOARD_WIDGET.WIDGET_ID,
 					DASHBOARD_WIDGET.WIDGET_HEIGHT,
 					DASHBOARD_WIDGET.WIDGET_WIDTH,

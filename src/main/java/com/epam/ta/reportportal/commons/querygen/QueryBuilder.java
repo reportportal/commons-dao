@@ -37,9 +37,7 @@ import java.util.stream.StreamSupport;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
-import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
-import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.field;
 

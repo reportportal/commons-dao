@@ -47,7 +47,7 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByLaunchId() {
 
-		List<Long> ids =attachmentRepository.findIdsByLaunchId(1L, PageRequest.of(0, 50)).getContent();
+		List<Long> ids = attachmentRepository.findIdsByLaunchId(1L, PageRequest.of(0, 50)).getContent();
 
 		Assertions.assertFalse(ids.isEmpty());
 

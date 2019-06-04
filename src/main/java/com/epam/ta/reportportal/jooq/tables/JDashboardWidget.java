@@ -3,28 +3,17 @@
  */
 package com.epam.ta.reportportal.jooq.tables;
 
-
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JDashboardWidgetRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -40,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
 
-    private static final long serialVersionUID = 177989395;
+	private static final long serialVersionUID = 177989395;
 
     /**
      * The reference instance of <code>public.dashboard_widget</code>
@@ -70,10 +59,15 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
      */
     public final TableField<JDashboardWidgetRecord, String> WIDGET_NAME = createField("widget_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
-    /**
-     * The column <code>public.dashboard_widget.widget_owner</code>.
-     */
-    public final TableField<JDashboardWidgetRecord, String> WIDGET_OWNER = createField("widget_owner", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+	/**
+	 * The column <code>public.dashboard_widget.widget_owner</code>.
+	 */
+	public final TableField<JDashboardWidgetRecord, String> WIDGET_OWNER = createField(
+			"widget_owner",
+			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
+			this,
+			""
+	);
 
     /**
      * The column <code>public.dashboard_widget.widget_width</code>.
@@ -95,10 +89,16 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
      */
     public final TableField<JDashboardWidgetRecord, Integer> WIDGET_POSITION_Y = createField("widget_position_y", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
-    /**
-     * The column <code>public.dashboard_widget.is_created_on</code>.
-     */
-    public final TableField<JDashboardWidgetRecord, Boolean> IS_CREATED_ON = createField("is_created_on", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+	/**
+	 * The column <code>public.dashboard_widget.is_created_on</code>.
+	 */
+	public final TableField<JDashboardWidgetRecord, Boolean> IS_CREATED_ON = createField(
+			"is_created_on",
+			org.jooq.impl.SQLDataType.BOOLEAN.nullable(false)
+					.defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)),
+			this,
+			""
+	);
 
     /**
      * Create a <code>public.dashboard_widget</code> table reference

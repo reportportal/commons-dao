@@ -49,8 +49,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
-				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system)).and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
@@ -76,8 +75,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
-				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system)).and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
