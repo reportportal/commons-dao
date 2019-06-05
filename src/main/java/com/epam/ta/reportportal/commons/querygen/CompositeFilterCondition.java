@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
@@ -30,11 +29,11 @@ import java.util.Map;
  */
 public class CompositeFilterCondition implements ConvertibleCondition {
 
-	private List<Pair<Operator, List<ConvertibleCondition>>> conditions;
+	private List<ConvertibleCondition> conditions;
 
 	private Operator operator;
 
-	public CompositeFilterCondition(List<Pair<Operator, List<ConvertibleCondition>>> conditions, Operator operator) {
+	public CompositeFilterCondition(List<ConvertibleCondition> conditions, Operator operator) {
 		this.conditions = conditions;
 		this.operator = operator;
 	}
@@ -44,22 +43,22 @@ public class CompositeFilterCondition implements ConvertibleCondition {
 
 		Map<ConditionType, Condition> result = Maps.newHashMapWithExpectedSize(ConditionType.values().length);
 
-		conditions.forEach(pair -> pair.getRight().forEach(c -> {
+		conditions.forEach(c -> {
 			Map<ConditionType, Condition> conditionMap = c.toCondition(filterTarget);
 			conditionMap.forEach((key, value) -> {
 				Condition condition = result.getOrDefault(key, DSL.noCondition());
-				result.put(key, DSL.condition(pair.getLeft(), condition, value));
+				result.put(key, DSL.condition(c.getOperator(), condition, value));
 			});
-		}));
+		});
 
 		return result;
 	}
 
-	public List<Pair<Operator, List<ConvertibleCondition>>> getConditions() {
+	public List<ConvertibleCondition> getConditions() {
 		return conditions;
 	}
 
-	public void setConditions(List<Pair<Operator, List<ConvertibleCondition>>> conditions) {
+	public void setConditions(List<ConvertibleCondition> conditions) {
 		this.conditions = conditions;
 	}
 
