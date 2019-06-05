@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
 
-	private static final long serialVersionUID = 177989395;
+	private static final long serialVersionUID = -1256285303;
 
     /**
      * The reference instance of <code>public.dashboard_widget</code>
@@ -64,6 +64,16 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
 	 */
 	public final TableField<JDashboardWidgetRecord, String> WIDGET_OWNER = createField(
 			"widget_owner",
+			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
+			this,
+			""
+	);
+
+	/**
+	 * The column <code>public.dashboard_widget.widget_type</code>.
+	 */
+	public final TableField<JDashboardWidgetRecord, String> WIDGET_TYPE = createField(
+			"widget_type",
 			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
 			this,
 			""
