@@ -17,6 +17,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -43,7 +44,6 @@ import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
@@ -916,7 +916,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultFilter(Long projectId) {
 
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
@@ -924,11 +924,11 @@ class WidgetContentRepositoryTest extends BaseTest {
 				new FilterCondition(Condition.NOT_EQUALS, false, StatusEnum.IN_PROGRESS.name(), CRITERIA_STATUS),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
-		return new Filter(1L, Launch.class, conditionSet);
+		return new Filter(1L, Launch.class, conditionList);
 	}
 
 	private Filter buildDefaultTestFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
@@ -937,20 +937,20 @@ class WidgetContentRepositoryTest extends BaseTest {
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE),
 				new FilterCondition(Condition.findByMarker("lte").get(), false, "12", "statistics$executions$total")
 		);
-		return new Filter(2L, Launch.class, conditionSet);
+		return new Filter(2L, Launch.class, conditionList);
 	}
 
 	private Filter buildDefaultActivityFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
 				CRITERIA_PROJECT_ID
 		));
-		return new Filter(1L, Activity.class, conditionSet);
+		return new Filter(1L, Activity.class, conditionList);
 	}
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
 				false,
 				String.valueOf(projectId),
 				CRITERIA_PROJECT_ID
@@ -960,7 +960,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 				CRITERIA_STATUS
 		));
 
-		return new Filter(1L, TestItem.class, conditionSet);
+		return new Filter(1L, TestItem.class, conditionList);
 	}
 
 	private Filter updateFilter(Filter filter, String launchName, Long projectId, boolean includeMethodsFlag) {

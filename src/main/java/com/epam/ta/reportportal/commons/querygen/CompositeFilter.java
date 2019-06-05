@@ -73,7 +73,7 @@ public class CompositeFilter implements Queryable {
 	}
 
 	@Override
-	public Set<FilterCondition> getFilterConditions() {
-		return filters.stream().flatMap(it -> it.getFilterConditions().stream()).collect(Collectors.toSet());
+	public List<ConvertibleCondition> getFilterConditions() {
+		return filters.stream().flatMap(it -> it.getFilterConditions().stream()).collect(Collectors.toList());
 	}
 }

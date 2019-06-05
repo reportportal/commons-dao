@@ -16,10 +16,18 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import org.jooq.Condition;
+import org.jooq.Operator;
+
+import java.util.Map;
+
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public interface ConvertibleCondition {
 
-	org.jooq.Condition toCondition(CriteriaHolder criteriaHolder);
+	Map<ConditionType, Condition> toCondition(FilterTarget filterTarget);
+
+	Operator getOperator();
+
 }

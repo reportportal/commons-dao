@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
+import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
@@ -26,7 +27,11 @@ import org.jooq.Operator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -118,12 +123,36 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 		return negative;
 	}
 
+	@Override
 	public Operator getOperator() {
 		return operator;
 	}
 
 	public void setOperator(Operator operator) {
 		this.operator = operator;
+	}
+
+	@Override
+	public Map<ConditionType, org.jooq.Condition> toCondition(FilterTarget filterTarget) {
+
+		Optional<CriteriaHolder> criteriaHolder = filterTarget.getCriteriaByFilter(searchCriteria);
+
+		BusinessRule.expect(criteriaHolder, com.epam.ta.reportportal.commons.Preconditions.IS_PRESENT)
+				.verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
+						Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
+				);
+
+		org.jooq.Condition condition = this.condition.toCondition(this, criteriaHolder.get());
+
+		/* Does FilterCondition contains negative=true? */
+		if (negative) {
+			condition = condition.not();
+		}
+		if (HAVING_CONDITION.test(this, filterTarget)) {
+			return Collections.singletonMap(ConditionType.HAVING, condition);
+		} else {
+			return Collections.singletonMap(ConditionType.WHERE, condition);
+		}
 	}
 
 	@Override
@@ -190,11 +219,6 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 		return new ConditionBuilder();
 	}
 
-	@Override
-	public org.jooq.Condition toCondition(CriteriaHolder criteriaHolder) {
-		return condition.toCondition(this, criteriaHolder);
-	}
-
 	/**
 	 * Builder for {@link FilterCondition}
 	 */
@@ -208,7 +232,7 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 
 		private String searchCriteria;
 
-		private Operator operator;
+		private Operator operator = Operator.AND;
 
 		private ConditionBuilder() {
 
@@ -249,7 +273,7 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 			Preconditions.checkArgument(!isNullOrEmpty(searchCriteria), "Search criteria should not be empty");
 			BusinessRule.expect(condition, c -> c != Condition.EQUALS || !negative)
 					.verify(ErrorType.BAD_REQUEST_ERROR, "Use 'ne' instead of '!eq");
-			return new FilterCondition(condition, negative, value, searchCriteria);
+			return new FilterCondition(operator, condition, negative, value, searchCriteria);
 		}
 	}
 }
