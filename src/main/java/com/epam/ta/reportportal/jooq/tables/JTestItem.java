@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = -1923643390;
+    private static final long serialVersionUID = -1707867737;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -100,6 +100,11 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      * The column <code>public.test_item.has_retries</code>.
      */
     public final TableField<JTestItemRecord, Boolean> HAS_RETRIES = createField("has_retries", org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.test_item.has_stats</code>.
+     */
+    public final TableField<JTestItemRecord, Boolean> HAS_STATS = createField("has_stats", org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("true", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>public.test_item.parent_id</code>.
