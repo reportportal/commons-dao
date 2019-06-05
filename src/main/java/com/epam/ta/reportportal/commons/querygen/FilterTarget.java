@@ -149,8 +149,7 @@ public enum FilterTarget {
 			return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
 					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
 							LAUNCH.ID
-					))
-							.as(LAUNCHES_QUANTITY),
+					)).as(LAUNCHES_QUANTITY),
 					DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
 					PROJECT.ID,
 					PROJECT.CREATION_DATE,
@@ -341,6 +340,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_STATS, TEST_ITEM.HAS_STATS, Boolean.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
 							.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
@@ -377,7 +377,8 @@ public enum FilterTarget {
 							.get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME, PATTERN_TEMPLATE.NAME, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString()).get(),
+							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString())
+							.get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_TICKET_ID, TICKET.TICKET_ID, String.class)
 							.withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString())
 							.get()
@@ -396,6 +397,7 @@ public enum FilterTarget {
 					TEST_ITEM.PARENT_ID,
 					TEST_ITEM.RETRY_OF,
 					TEST_ITEM.HAS_CHILDREN,
+					TEST_ITEM.HAS_STATS,
 					TEST_ITEM.HAS_RETRIES,
 					TEST_ITEM.LAUNCH_ID,
 					TEST_ITEM_RESULTS.STATUS,
@@ -415,7 +417,12 @@ public enum FilterTarget {
 					ISSUE_TYPE.ABBREVIATION,
 					ISSUE_TYPE.HEX_COLOR,
 					ISSUE_TYPE.ISSUE_NAME,
-					ISSUE_GROUP.ISSUE_GROUP_, TICKET.ID, TICKET.BTS_PROJECT, TICKET.BTS_URL, TICKET.TICKET_ID, TICKET.URL,
+					ISSUE_GROUP.ISSUE_GROUP_,
+					TICKET.ID,
+					TICKET.BTS_PROJECT,
+					TICKET.BTS_URL,
+					TICKET.TICKET_ID,
+					TICKET.URL,
 					PATTERN_TEMPLATE.ID,
 					PATTERN_TEMPLATE.NAME
 			);
@@ -605,9 +612,8 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(DASHBOARD.ID,
 					DASHBOARD.NAME,
-					DASHBOARD.DESCRIPTION,
-					DASHBOARD.CREATION_DATE, DASHBOARD_WIDGET.WIDGET_OWNER, DASHBOARD_WIDGET.IS_CREATED_ON,
-					DASHBOARD_WIDGET.WIDGET_ID,
+					DASHBOARD.DESCRIPTION, DASHBOARD.CREATION_DATE, DASHBOARD_WIDGET.WIDGET_OWNER, DASHBOARD_WIDGET.IS_CREATED_ON,
+					DASHBOARD_WIDGET.WIDGET_ID, DASHBOARD_WIDGET.WIDGET_NAME, DASHBOARD_WIDGET.WIDGET_TYPE,
 					DASHBOARD_WIDGET.WIDGET_HEIGHT,
 					DASHBOARD_WIDGET.WIDGET_WIDTH,
 					DASHBOARD_WIDGET.WIDGET_POSITION_X,

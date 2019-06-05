@@ -117,6 +117,9 @@ public class TestItem implements Serializable {
 	@Column(name = "has_retries")
 	private boolean hasRetries;
 
+	@Column(name = "has_stats")
+	private boolean hasStats;
+
 	public TestItem() {
 	}
 
@@ -125,7 +128,7 @@ public class TestItem implements Serializable {
 	}
 
 	public TestItem(Long itemId, String name, TestItemTypeEnum type, LocalDateTime startTime, String description,
-			LocalDateTime lastModified, String uniqueId, Boolean hasChildren, Boolean hasRetries) {
+			LocalDateTime lastModified, String uniqueId, boolean hasChildren, boolean hasRetries, boolean hasStats) {
 		this.itemId = itemId;
 		this.name = name;
 		this.type = type;
@@ -301,6 +304,14 @@ public class TestItem implements Serializable {
 
 	public void setHasRetries(boolean hasRetries) {
 		this.hasRetries = hasRetries;
+	}
+
+	public boolean isHasStats() {
+		return hasStats;
+	}
+
+	public void setHasStats(boolean hasStats) {
+		this.hasStats = hasStats;
 	}
 
 	@Override

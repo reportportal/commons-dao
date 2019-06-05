@@ -5,9 +5,9 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import org.jooq.Field;
+import org.jooq.Record10;
 import org.jooq.Record2;
-import org.jooq.Record9;
-import org.jooq.Row9;
+import org.jooq.Row10;
 import org.jooq.impl.UpdatableRecordImpl;
 
 import javax.annotation.Generated;
@@ -25,9 +25,9 @@ import javax.annotation.Generated;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidgetRecord>
-		implements Record9<Long, Long, String, String, Integer, Integer, Integer, Integer, Boolean> {
+		implements Record10<Long, Long, String, String, String, Integer, Integer, Integer, Integer, Boolean> {
 
-	private static final long serialVersionUID = -1688408608;
+	private static final long serialVersionUID = 2078869904;
 
     /**
      * Setter for <code>public.dashboard_widget.dashboard_id</code>.
@@ -71,22 +71,30 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
         return (String) get(2);
     }
 
+	/**
+	 * Create a detached JDashboardWidgetRecord
+	 */
+	public JDashboardWidgetRecord() {
+		super(JDashboardWidget.DASHBOARD_WIDGET);
+	}
+
     /**
 	 * Create a detached, initialised JDashboardWidgetRecord
 	 */
-	public JDashboardWidgetRecord(Long dashboardId, Long widgetId, String widgetName, String widgetOwner, Integer widgetWidth,
-			Integer widgetHeight, Integer widgetPositionX, Integer widgetPositionY, Boolean isCreatedOn) {
+	public JDashboardWidgetRecord(Long dashboardId, Long widgetId, String widgetName, String widgetOwner, String widgetType,
+			Integer widgetWidth, Integer widgetHeight, Integer widgetPositionX, Integer widgetPositionY, Boolean isCreatedOn) {
 		super(JDashboardWidget.DASHBOARD_WIDGET);
 
 		set(0, dashboardId);
 		set(1, widgetId);
 		set(2, widgetName);
 		set(3, widgetOwner);
-		set(4, widgetWidth);
-		set(5, widgetHeight);
-		set(6, widgetPositionX);
-		set(7, widgetPositionY);
-		set(8, isCreatedOn);
+		set(4, widgetType);
+		set(5, widgetWidth);
+		set(6, widgetHeight);
+		set(7, widgetPositionX);
+		set(8, widgetPositionY);
+		set(9, isCreatedOn);
 	}
 
 	/**
@@ -103,67 +111,74 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
         set(3, value);
     }
 
+	/**
+	 * Getter for <code>public.dashboard_widget.widget_type</code>.
+	 */
+	public String getWidgetType() {
+		return (String) get(4);
+	}
+
+	/**
+	 * Setter for <code>public.dashboard_widget.widget_type</code>.
+	 */
+	public void setWidgetType(String value) {
+		set(4, value);
+	}
+
     /**
      * Getter for <code>public.dashboard_widget.widget_width</code>.
      */
     public Integer getWidgetWidth() {
-		return (Integer) get(4);
+		return (Integer) get(5);
     }
 
     /**
 	 * Setter for <code>public.dashboard_widget.widget_width</code>.
      */
 	public void setWidgetWidth(Integer value) {
-        set(4, value);
+		set(5, value);
     }
 
     /**
      * Getter for <code>public.dashboard_widget.widget_height</code>.
      */
     public Integer getWidgetHeight() {
-		return (Integer) get(5);
+		return (Integer) get(6);
     }
 
     /**
 	 * Setter for <code>public.dashboard_widget.widget_height</code>.
      */
 	public void setWidgetHeight(Integer value) {
-        set(5, value);
+		set(6, value);
     }
 
     /**
      * Getter for <code>public.dashboard_widget.widget_position_x</code>.
      */
     public Integer getWidgetPositionX() {
-		return (Integer) get(6);
+		return (Integer) get(7);
     }
 
     /**
 	 * Setter for <code>public.dashboard_widget.widget_position_x</code>.
      */
 	public void setWidgetPositionX(Integer value) {
-        set(6, value);
+		set(7, value);
     }
 
     /**
      * Getter for <code>public.dashboard_widget.widget_position_y</code>.
      */
     public Integer getWidgetPositionY() {
-		return (Integer) get(7);
+		return (Integer) get(8);
 	}
 
 	/**
 	 * Setter for <code>public.dashboard_widget.widget_position_y</code>.
 	 */
 	public void setWidgetPositionY(Integer value) {
-		set(7, value);
-	}
-
-	/**
-	 * Getter for <code>public.dashboard_widget.is_created_on</code>.
-	 */
-	public Boolean getIsCreatedOn() {
-		return (Boolean) get(8);
+		set(8, value);
     }
 
     // -------------------------------------------------------------------------
@@ -179,22 +194,21 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
     }
 
     // -------------------------------------------------------------------------
-	// Record9 type implementation
+	// Record10 type implementation
     // -------------------------------------------------------------------------
+
+	/**
+	 * Getter for <code>public.dashboard_widget.is_created_on</code>.
+	 */
+	public Boolean getIsCreatedOn() {
+		return (Boolean) get(9);
+	}
 
     /**
 	 * Setter for <code>public.dashboard_widget.is_created_on</code>.
      */
 	public void setIsCreatedOn(Boolean value) {
-		set(8, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public Row9<Long, Long, String, String, Integer, Integer, Integer, Integer, Boolean> fieldsRow() {
-		return (Row9) super.fieldsRow();
+		set(9, value);
     }
 
     /**
@@ -225,8 +239,16 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-	public Row9<Long, Long, String, String, Integer, Integer, Integer, Integer, Boolean> valuesRow() {
-		return (Row9) super.valuesRow();
+	public Row10<Long, Long, String, String, String, Integer, Integer, Integer, Integer, Boolean> fieldsRow() {
+		return (Row10) super.fieldsRow();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Row10<Long, Long, String, String, String, Integer, Integer, Integer, Integer, Boolean> valuesRow() {
+		return (Row10) super.valuesRow();
 	}
 
 	/**
@@ -241,8 +263,8 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Field<Integer> field5() {
-        return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_WIDTH;
+	public Field<String> field5() {
+		return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_TYPE;
     }
 
     /**
@@ -250,7 +272,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public Field<Integer> field6() {
-        return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_HEIGHT;
+		return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_WIDTH;
     }
 
     /**
@@ -258,7 +280,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public Field<Integer> field7() {
-        return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_POSITION_X;
+		return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_HEIGHT;
     }
 
     /**
@@ -266,7 +288,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public Field<Integer> field8() {
-        return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_POSITION_Y;
+		return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_POSITION_X;
     }
 
     /**
@@ -297,7 +319,15 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-	public Field<Boolean> field9() {
+	public Field<Integer> field9() {
+		return JDashboardWidget.DASHBOARD_WIDGET.WIDGET_POSITION_Y;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<Boolean> field10() {
 		return JDashboardWidget.DASHBOARD_WIDGET.IS_CREATED_ON;
 	}
 
@@ -313,8 +343,8 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-    public Integer component5() {
-		return getWidgetWidth();
+	public String component5() {
+		return getWidgetType();
     }
 
     /**
@@ -322,7 +352,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
     public Integer component6() {
-		return getWidgetHeight();
+		return getWidgetWidth();
     }
 
     /**
@@ -330,7 +360,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public Integer component7() {
-		return getWidgetPositionX();
+		return getWidgetHeight();
 	}
 
 	/**
@@ -338,7 +368,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
 	 */
 	@Override
 	public Integer component8() {
-		return getWidgetPositionY();
+		return getWidgetPositionX();
 	}
 
     /**
@@ -369,7 +399,15 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-	public Boolean component9() {
+	public Integer component9() {
+		return getWidgetPositionY();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean component10() {
 		return getIsCreatedOn();
 	}
 
@@ -385,8 +423,8 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-	public Integer value5() {
-		return getWidgetWidth();
+	public String value5() {
+		return getWidgetType();
 	}
 
 	/**
@@ -394,7 +432,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
 	 */
 	@Override
 	public Integer value6() {
-		return getWidgetHeight();
+		return getWidgetWidth();
 	}
 
     /**
@@ -402,7 +440,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public Integer value7() {
-        return getWidgetPositionX();
+		return getWidgetHeight();
     }
 
     /**
@@ -410,7 +448,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public Integer value8() {
-        return getWidgetPositionY();
+		return getWidgetPositionX();
     }
 
     /**
@@ -444,7 +482,15 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-	public Boolean value9() {
+	public Integer value9() {
+		return getWidgetPositionY();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean value10() {
 		return getIsCreatedOn();
 	}
 
@@ -461,8 +507,8 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-    public JDashboardWidgetRecord value5(Integer value) {
-		setWidgetWidth(value);
+	public JDashboardWidgetRecord value5(String value) {
+		setWidgetType(value);
         return this;
     }
 
@@ -471,7 +517,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
     public JDashboardWidgetRecord value6(Integer value) {
-		setWidgetHeight(value);
+		setWidgetWidth(value);
         return this;
     }
 
@@ -480,7 +526,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      */
     @Override
 	public JDashboardWidgetRecord value7(Integer value) {
-		setWidgetPositionX(value);
+		setWidgetHeight(value);
 		return this;
 	}
 
@@ -489,7 +535,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
 	 */
 	@Override
 	public JDashboardWidgetRecord value8(Integer value) {
-		setWidgetPositionY(value);
+		setWidgetPositionX(value);
 		return this;
 	}
 
@@ -497,8 +543,8 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
      * {@inheritDoc}
      */
     @Override
-	public JDashboardWidgetRecord value9(Boolean value) {
-		setIsCreatedOn(value);
+	public JDashboardWidgetRecord value9(Integer value) {
+		setWidgetPositionY(value);
 		return this;
 	}
 
@@ -507,18 +553,20 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Create a detached JDashboardWidgetRecord
+	 * {@inheritDoc}
 	 */
-	public JDashboardWidgetRecord() {
-		super(JDashboardWidget.DASHBOARD_WIDGET);
+	@Override
+	public JDashboardWidgetRecord value10(Boolean value) {
+		setIsCreatedOn(value);
+		return this;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public JDashboardWidgetRecord values(Long value1, Long value2, String value3, String value4, Integer value5, Integer value6,
-			Integer value7, Integer value8, Boolean value9) {
+	public JDashboardWidgetRecord values(Long value1, Long value2, String value3, String value4, String value5, Integer value6,
+			Integer value7, Integer value8, Integer value9, Boolean value10) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -528,6 +576,7 @@ public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidget
         value7(value7);
 		value8(value8);
 		value9(value9);
+		value10(value10);
         return this;
     }
 }
