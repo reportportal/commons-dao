@@ -249,7 +249,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatusByParent() {
-		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED));
 	}
 
 	@Test
@@ -539,6 +539,14 @@ class TestItemRepositoryTest extends BaseTest {
 				.collect(toList());
 
 		Assertions.assertTrue(CollectionUtils.isNotEmpty(collect));
+	}
+
+	@Test
+	void findParentByChildIdTest() {
+		Optional<TestItem> parent = testItemRepository.findParentByChildId(2L);
+
+		Assertions.assertTrue(parent.isPresent());
+		Assertions.assertEquals(1L, (long) parent.get().getItemId());
 	}
 
 	@Test
