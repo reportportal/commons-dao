@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.commons.querygen.CompositeFilter;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -33,6 +32,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
+import org.jooq.Operator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,7 +47,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -184,7 +185,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(buildDefaultFilter(1L), buildDefaultFilter2()),
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND, buildDefaultFilter(1L), buildDefaultFilter2()),
 				PageRequest.of(0, 2, sort)
 		);
 		assertNotNull(launches);
@@ -296,6 +297,31 @@ class LaunchRepositoryTest extends BaseTest {
 				.build());
 		assertThat(launch, Matchers.hasSize(1));
 		assertThat(launch.get(0).getDescription(), Matchers.nullValue());
+	}
+
+	@Test
+	void shouldNotFindLaunchesWithSystemAttributes() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withSearchCriteria(CRITERIA_ITEM_ATTRIBUTE_KEY)
+						.withValue("systemKey")
+						.build())
+				.build());
+
+		assertTrue(launches.isEmpty());
+
+		launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withSearchCriteria(CRITERIA_ITEM_ATTRIBUTE_VALUE)
+						.withValue("systemValue")
+						.build())
+				.build());
+
+		assertTrue(launches.isEmpty());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

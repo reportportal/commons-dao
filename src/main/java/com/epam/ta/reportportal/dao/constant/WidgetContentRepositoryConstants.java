@@ -100,20 +100,20 @@ public class WidgetContentRepositoryConstants {
 	public static final String FLAKY_COUNT = "flakyCount";
 
 	/*Cumulative trend widget constants*/
-	public static final Integer LAUNCHES_COUNT = 150;
+	public static final Integer LAUNCHES_COUNT = 600;
 	public static final String LAUNCHES_TABLE = "launches_table";
 	public static final String START_TIME = "start_time";
+	public static final String LATEST_NUMBER = "latest_number";
 
 	/*Product status widget constants*/
 	public static final String ATTRIBUTE_VALUE = "attribute_value";
+	public static final String ATTRIBUTE_KEY = "attribute_key";
 	public static final String FILTER_NAME = "filter_name";
 	public static final String ATTRIBUTE_VALUES = "attribute_values";
 	public static final String PASSING_RATE = "passingRate";
 	public static final String SUM = "sum";
 	public static final String AVERAGE_PASSING_RATE = "averagePassingRate";
 	public static final String ATTR_ID = "attr_id";
-	public static final String ATTR_VALUE = "attr_value";
-	public static final String ATTR_KEY = "attr_key";
 	public static final String ATTR_TABLE = "attr_table";
 
 }

@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
 
-    private static final long serialVersionUID = 177989395;
+	private static final long serialVersionUID = -1256285303;
 
     /**
      * The reference instance of <code>public.dashboard_widget</code>
@@ -59,10 +59,25 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
      */
     public final TableField<JDashboardWidgetRecord, String> WIDGET_NAME = createField("widget_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
-    /**
-     * The column <code>public.dashboard_widget.widget_owner</code>.
-     */
-    public final TableField<JDashboardWidgetRecord, String> WIDGET_OWNER = createField("widget_owner", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+	/**
+	 * The column <code>public.dashboard_widget.widget_owner</code>.
+	 */
+	public final TableField<JDashboardWidgetRecord, String> WIDGET_OWNER = createField(
+			"widget_owner",
+			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
+			this,
+			""
+	);
+
+	/**
+	 * The column <code>public.dashboard_widget.widget_type</code>.
+	 */
+	public final TableField<JDashboardWidgetRecord, String> WIDGET_TYPE = createField(
+			"widget_type",
+			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
+			this,
+			""
+	);
 
     /**
      * The column <code>public.dashboard_widget.widget_width</code>.
@@ -84,10 +99,16 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
      */
     public final TableField<JDashboardWidgetRecord, Integer> WIDGET_POSITION_Y = createField("widget_position_y", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
-    /**
-     * The column <code>public.dashboard_widget.is_created_on</code>.
-     */
-    public final TableField<JDashboardWidgetRecord, Boolean> IS_CREATED_ON = createField("is_created_on", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+	/**
+	 * The column <code>public.dashboard_widget.is_created_on</code>.
+	 */
+	public final TableField<JDashboardWidgetRecord, Boolean> IS_CREATED_ON = createField(
+			"is_created_on",
+			org.jooq.impl.SQLDataType.BOOLEAN.nullable(false)
+					.defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)),
+			this,
+			""
+	);
 
     /**
      * Create a <code>public.dashboard_widget</code> table reference

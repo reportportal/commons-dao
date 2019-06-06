@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -46,7 +45,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -249,7 +247,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatusByParent() {
-		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED));
 	}
 
 	@Test
@@ -411,26 +409,6 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findWithUserAttributes() {
-		List<TestItem> withoutSystemAttrs = testItemRepository.findByFilter(Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.FALSE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutSystemAttrs));
-		withoutSystemAttrs.forEach(it -> assertFalse(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
-	}
-
-	@Test
-	void findWithSystemAttributes() {
-		List<TestItem> withoutUserAttrs = testItemRepository.findByFilter(Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.TRUE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutUserAttrs));
-		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
-	}
-
-	@Test
 	void hasParentWithStatus() {
 
 		boolean hasParentWithStatus = testItemRepository.hasParentWithStatus(3L, "1.2.3", StatusEnum.FAILED);
@@ -527,6 +505,25 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items);
 		assertEquals(20L, items.size());
 
+	}
+
+	@Test
+	void patternTemplateFilteringTest() {
+
+		List<TestItem> collect = testItemRepository.findAll()
+				.stream()
+				.filter(i -> CollectionUtils.isNotEmpty(i.getPatternTemplateTestItems()))
+				.collect(toList());
+
+		Assertions.assertTrue(CollectionUtils.isNotEmpty(collect));
+	}
+
+	@Test
+	void findParentByChildIdTest() {
+		Optional<TestItem> parent = testItemRepository.findParentByChildId(2L);
+
+		Assertions.assertTrue(parent.isPresent());
+		Assertions.assertEquals(1L, (long) parent.get().getItemId());
 	}
 
 	@Test

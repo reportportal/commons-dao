@@ -167,7 +167,13 @@ public class Indexes {
         public static Index CONTENT_FIELD_WIDGET_IDX = Internal.createIndex("content_field_widget_idx", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.ID }, false);
         public static Index DASHBOARD_PKEY = Internal.createIndex("dashboard_pkey", JDashboard.DASHBOARD, new OrderField[] { JDashboard.DASHBOARD.ID }, true);
         public static Index DASHBOARD_WIDGET_PK = Internal.createIndex("dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID }, true);
-        public static Index WIDGET_ON_DASHBOARD_UNQ = Internal.createIndex("widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET, new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER }, true);
+		public static Index WIDGET_ON_DASHBOARD_UNQ = Internal.createIndex(
+				"widget_on_dashboard_unq",
+				JDashboardWidget.DASHBOARD_WIDGET,
+				new OrderField[] { JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME,
+						JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER },
+				true
+		);
         public static Index FILTER_PKEY = Internal.createIndex("filter_pkey", JFilter.FILTER, new OrderField[] { JFilter.FILTER.ID }, true);
         public static Index FILTER_COND_FILTER_IDX = Internal.createIndex("filter_cond_filter_idx", JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.FILTER_ID }, false);
         public static Index FILTER_CONDITION_PK = Internal.createIndex("filter_condition_pk", JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.ID }, true);

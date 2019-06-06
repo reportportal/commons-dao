@@ -30,10 +30,7 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
-import org.jooq.DSLContext;
-import org.jooq.DatePart;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -117,9 +114,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses) {
+	public Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-		return dsl.fetchExists(commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(parentId))
+		return dsl.fetchExists(commonTestItemDslSelect()
+				.where(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", parentPath))
+				.and(TEST_ITEM.ITEM_ID.ne(parentId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
 				.limit(1));
 	}
@@ -334,8 +333,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
 						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
-						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-						.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
+						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)).and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
 				.fetchInto(Long.class);
 
 	}

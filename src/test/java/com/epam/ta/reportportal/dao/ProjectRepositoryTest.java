@@ -70,7 +70,9 @@ class ProjectRepositoryTest extends BaseTest {
 			assertNotNull(project.getId());
 			assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
 			assertEquals(14, project.getProjectAttributes().size());
-			assertTrue(project.getProjectAttributes().stream().anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
+			assertTrue(project.getProjectAttributes()
+					.stream()
+					.anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
 							.getName()
 							.equals(ProjectAttributeEnum.KEEP_LOGS.getAttribute())));
 		});

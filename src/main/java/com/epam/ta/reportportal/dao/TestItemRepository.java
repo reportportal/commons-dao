@@ -40,6 +40,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launch.id = :launchId")
 	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
 
+	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
+	Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
+
 	/**
 	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
 	 *
@@ -117,11 +120,11 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	/**
 	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
 	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
-	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of other {@link TestItem}
-	 * with the same {@link TestItem#uniqueId} then all those test items becomes retries of the new-inserted one:
-	 * theirs {@link TestItem#hasRetries} flag sets to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
+	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of the other {@link TestItem}
+	 * with the same {@link TestItem#uniqueId} then all those test items become retries of the new-inserted one:
+	 * theirs {@link TestItem#hasRetries} flag is set to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
 	 * The same operation applies to the new-inserted {@link TestItem} if its {@link TestItem#startTime} is less than
-	 * MAX {@link TestItem#startTime} of other {@link TestItem} with the same {@link TestItem#uniqueId}
+	 * MAX {@link TestItem#startTime} of the other {@link TestItem} with the same {@link TestItem#uniqueId}
 	 *
 	 * @param itemId The new-inserted {@link TestItem#itemId}
 	 */

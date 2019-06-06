@@ -273,7 +273,13 @@ public class Keys {
         public static final UniqueKey<JAuthConfigRecord> AUTH_CONFIG_PK = Internal.createUniqueKey(JAuthConfig.AUTH_CONFIG, "auth_config_pk", JAuthConfig.AUTH_CONFIG.ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pkey", JDashboard.DASHBOARD.ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
-        public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER);
+		public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(
+				JDashboardWidget.DASHBOARD_WIDGET,
+				"widget_on_dashboard_unq",
+				JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID,
+				JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME,
+				JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER
+		);
         public static final UniqueKey<JFilterRecord> FILTER_PKEY = Internal.createUniqueKey(JFilter.FILTER, "filter_pkey", JFilter.FILTER.ID);
         public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = Internal.createUniqueKey(JFilterCondition.FILTER_CONDITION, "filter_condition_pk", JFilterCondition.FILTER_CONDITION.ID);
         public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = Internal.createUniqueKey(JFilterSort.FILTER_SORT, "filter_sort_pk", JFilterSort.FILTER_SORT.ID);

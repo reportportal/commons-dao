@@ -17,25 +17,47 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
+ *
+ * Not a database entity. It is used to represent widget data
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CumulativeTrendChartContent extends AbstractLaunchStatisticsContent {
+public class CumulativeTrendChartContent {
 
-	@JsonProperty(value = "values")
-	private Map<String, String> values = new LinkedHashMap<>();
+	private Set<Long> launchIds = Sets.newHashSet();
 
-	public Map<String, String> getValues() {
-		return values;
+	private Map<String, Integer> statistics = Maps.newHashMap();
+
+	private Set<String> tooltipContent = Sets.newHashSet();
+
+	public Set<Long> getLaunchIds() {
+		return launchIds;
 	}
 
-	public void setValues(Map<String, String> values) {
-		this.values = values;
+	public void setLaunchIds(Set<Long> launchIds) {
+		this.launchIds = launchIds;
+	}
+
+	public Map<String, Integer> getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(Map<String, Integer> statistics) {
+		this.statistics = statistics;
+	}
+
+	public Set<String> getTooltipContent() {
+		return tooltipContent;
+	}
+
+	public void setTooltipContent(Set<String> tooltipContent) {
+		this.tooltipContent = tooltipContent;
 	}
 }
