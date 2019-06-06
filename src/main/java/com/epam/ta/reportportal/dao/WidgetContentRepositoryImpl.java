@@ -90,8 +90,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				.where(STATISTICS_FIELD.NAME.in(contentFields))
-				.groupBy(STATISTICS_FIELD.NAME).fetch());
+				.where(STATISTICS_FIELD.NAME.in(contentFields)).groupBy(STATISTICS_FIELD.NAME).fetch());
 	}
 
 	/**
@@ -285,8 +284,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.groupBy(groupingFields)
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch());
+				.groupBy(groupingFields).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch());
 
 	}
 
@@ -652,8 +650,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
 		)
 				.from(dsl.with(LAUNCHES)
-						.as(selectQuery)
-						.select(LAUNCH.NAME, DSL.max(LAUNCH.NUMBER).as(LATEST_NUMBER), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE))
+						.as(selectQuery).select(
+								LAUNCH.NAME,
+								LAUNCH.ID.as(ID),
+								DSL.max(LAUNCH.NUMBER).as(LATEST_NUMBER),
+								ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
+						)
 						.from(LAUNCH)
 						.join(LAUNCHES)
 						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
@@ -671,12 +673,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
 								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
-								.limit(limit)))
-						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
+								.limit(limit))).groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE, LAUNCH.ID)
 						.asTable(LAUNCHES_TABLE))
 				.join(LAUNCH)
 				.on(field(name(LAUNCHES_TABLE, NAME)).eq(LAUNCH.NAME))
-				.and(field(name(LAUNCHES_TABLE, LATEST_NUMBER)).eq(LAUNCH.NUMBER))
+				.and(field(name(LAUNCHES_TABLE, LATEST_NUMBER)).eq(LAUNCH.NUMBER)).and(field(name(LAUNCHES_TABLE, ID)).eq(LAUNCH.ID))
 				.join(TEST_ITEM)
 				.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 				.join(STATISTICS)
