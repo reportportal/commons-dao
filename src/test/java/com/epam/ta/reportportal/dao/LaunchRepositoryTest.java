@@ -32,6 +32,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
+import org.jooq.Operator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -182,7 +183,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(buildDefaultFilter(1L), buildDefaultFilter2()),
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND, buildDefaultFilter(1L), buildDefaultFilter2()),
 				PageRequest.of(0, 2, sort)
 		);
 		assertNotNull(launches);

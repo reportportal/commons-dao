@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static org.postgresql.shaded.com.ongres.scram.common.util.Preconditions.checkArgument;
 
 /**
- * Composite filter. Combines filters using {@link Operator#AND} and builds query.
+ * Composite filter. Combines filters using {@link Operator} and builds query.
  *
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
