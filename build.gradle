@@ -1,37 +1,40 @@
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
     }
 }
 
-
 plugins {
-    id "io.spring.dependency-management" version "1.0.2.RELEASE"
-    id 'net.researchgate.release' version '2.4.1'
-    id "com.jfrog.bintray" version "1.7"
+    id "io.spring.dependency-management" version "1.0.7.RELEASE"
+    id 'net.researchgate.release' version '2.8.0'
+    id "com.jfrog.bintray" version "1.7.3"
+    id 'jacoco'
+    id 'java'
 }
 
-project.description = 'EPAM Report portal. Common DAO Layer'
-
-apply plugin: 'java'
-apply plugin: 'jacoco'
 apply from: 'release-lib.gradle'
 apply from: 'build-quality.gradle'
+apply from: 'jacoco.gradle'
 
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url "http://dl.bintray.com/epam/reportportal" }
     maven { url 'https://jitpack.io' }
-    maven {
-        url 'https://repo.spring.io/libs-milestone'
-    }
+    maven { url 'https://repo.spring.io/libs-milestone' }
 }
 
+project.description = 'EPAM Report portal. Common DAO Layer'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+wrapper {
+    gradleVersion = '5.4.1'
+}
 
 dependencyManagement {
     imports {
@@ -51,9 +54,6 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode")
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
-}
 
 dependencies {
 
@@ -68,9 +68,7 @@ dependencies {
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.3'
 
-    //    seaweedfs
     compile 'org.lokra.seaweedfs:seaweedfs-client:0.7.3.RELEASE'
-//    end of seaweedfs
 
     compile group: 'org.jooq', name: 'jooq', version: '3.11.4'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
@@ -103,20 +101,14 @@ dependencies {
     compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
     testCompile group: 'org.flywaydb.flyway-test-extensions', name: 'flyway-spring-test', version: '5.2.1'
 
-    /* just for password encoder. To make sure Guava and Spring's Crypto generate the same  hash functions */
     testCompile 'org.hamcrest:hamcrest-all:1.3'
-//    testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:2.0.2-beta'
     testCompile 'org.assertj:assertj-core:3.9.0'
 
-//    testCompile 'org.springframework.boot:spring-boot-test'
     testCompile 'org.springframework:spring-test'
     testCompile 'org.springframework.security:spring-security-crypto'
     testCompile 'org.springframework.security:spring-security-core'
     testCompile 'org.hibernate:hibernate-validator:6.0.7.Final'
-
-//    testCompile group: 'org.testcontainers', name: 'testcontainers', version: '1.10.6'
-
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
     testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
 
@@ -143,7 +135,6 @@ task copyTestDatabaseScripts {
     copyFromUrl(dataScriptPath, dataScriptUrl)
 }
 
-test.dependsOn copyTestDatabaseScripts
 
 tasks.withType(Javadoc).all { enabled = false }
 
@@ -154,74 +145,13 @@ test {
         events "failed"
         exceptionFormat "short"
     }
+}
 
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-        }
-        afterEvaluate {
-            classDirectories = files(classDirectories.files.collect {
-                fileTree(dir: it,
-                        exclude: [
-                                'com/epam/ta/reportportal/jooq/**',
-                                'com/epam/ta/reportportal/config/**',
-                                'com/epam/ta/reportportal/commons/accessible',
-                                'com/epam/ta/reportportal/commons/querygen/constant',
-                                'com/epam/ta/reportportal/exception',
-                                'com/epam/ta/reportportal/entity/oauth',
-                                'com/epam/ta/reportportal/entity/bts',
-                                'com/epam/ta/reportportal/entity/ldap',
-                                'com/epam/ta/reportportal/entity/widget/content/**'
-                        ])
-            })
-        }
-        doLast {
-            def report = file("${reportsDir}/jacoco/test/jacocoTestReport.xml")
-            logger.lifecycle("Checking coverage results: ${report}")
-
-            def parser = new XmlParser()
-            parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-            parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-            def results = parser.parse(report)
-
-            def percentage = {
-                def covered = it.'@covered' as Double
-                def missed = it.'@missed' as Double
-                ((covered / (covered + missed)) * 100).round(2)
-            }
-
-            def counters = results.counter
-            def metrics = [:]
-            metrics << [
-                    'instruction': percentage(counters.find { (it.'@type' == 'INSTRUCTION') }),
-                    'branch'     : percentage(counters.find { (it.'@type' == 'BRANCH') }),
-                    'line'       : percentage(counters.find { (it.'@type' == 'LINE') }),
-                    'complexity' : percentage(counters.find { (it.'@type' == 'COMPLEXITY') }),
-                    'method'     : percentage(counters.find { (it.'@type' == 'METHOD') }),
-                    'class'      : percentage(counters.find { (it.'@type' == 'CLASS') })
-            ]
-
-
-            def failures = []
-            metrics.each {
-                def limit = limits[it.key]
-                if (it.value < limit) {
-                    failures.add("- ${it.key} coverage rate is: ${it.value}%, minimum is ${limit}%")
-                }
-            }
-
-            if (failures) {
-                logger.quiet("------------------ Code Coverage Failed -----------------------")
-                failures.each {
-                    logger.quiet(it)
-                }
-                logger.quiet("---------------------------------------------------------------")
-                throw new GradleException("Code coverage failed")
-            } else {
-                logger.quiet("Passed Code Coverage Checks")
-            }
-        }
+release {
+    git {
+        requireBranch = 'postgres-migration'
     }
 }
 
+test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
