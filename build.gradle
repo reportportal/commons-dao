@@ -10,6 +10,7 @@ buildscript {
 plugins {
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'net.researchgate.release' version '2.8.0'
+    id "de.undercouch.download" version "3.4.3"
     id "com.jfrog.bintray" version "1.7.3"
     id 'jacoco'
     id 'java'
@@ -115,24 +116,30 @@ dependencies {
 
 }
 
-private static void copyFromUrl(GString localScriptPath, String scriptUrl) {
-    def file = new File(localScriptPath)
-    if (file.exists()) {
-        file.delete()
-    }
-    file.getParentFile().mkdirs()
-    file.createNewFile()
-    file << new URL(scriptUrl).openStream()
-}
+
+ext.src = [
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql': 'V002__default_data.sql'
+]
 
 task copyTestDatabaseScripts {
-    def initScriptPath = "${projectDir}/src/test/resources/db/migration/V001__initialize_schema.sql"
-    def initScriptUrl = "https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql"
-    copyFromUrl(initScriptPath, initScriptUrl)
+    doLast {
+        for (s in src) {
+            download {
+                src s.key
+                dest new File("${projectDir}/src/test/resources/db/migration/", s.value)
+            }
+        }
+    }
+}
 
-    def dataScriptPath = "${projectDir}/src/test/resources/db/migration/V002__default_data.sql"
-    def dataScriptUrl = "https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql"
-    copyFromUrl(dataScriptPath, dataScriptUrl)
+task removeScripts {
+    doLast {
+        for (s in src) {
+            def file = new File("${projectDir}/src/test/resources/db/migration/", s.value)
+            file.delete()
+        }
+    }
 }
 
 
@@ -153,5 +160,6 @@ release {
     }
 }
 
+checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
