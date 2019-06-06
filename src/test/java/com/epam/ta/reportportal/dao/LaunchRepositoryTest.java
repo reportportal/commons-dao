@@ -47,6 +47,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -295,6 +297,31 @@ class LaunchRepositoryTest extends BaseTest {
 				.build());
 		assertThat(launch, Matchers.hasSize(1));
 		assertThat(launch.get(0).getDescription(), Matchers.nullValue());
+	}
+
+	@Test
+	void shouldNotFindLaunchesWithSystemAttributes() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withSearchCriteria(CRITERIA_ITEM_ATTRIBUTE_KEY)
+						.withValue("systemKey")
+						.build())
+				.build());
+
+		assertTrue(launches.isEmpty());
+
+		launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withSearchCriteria(CRITERIA_ITEM_ATTRIBUTE_VALUE)
+						.withValue("systemValue")
+						.build())
+				.build());
+
+		assertTrue(launches.isEmpty());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

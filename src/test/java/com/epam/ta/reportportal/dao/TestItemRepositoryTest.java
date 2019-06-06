@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -46,7 +45,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_SYSTEM;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -405,30 +403,9 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
 
-		assertThat(
-				testItems.get(0).getItemResults().getStatus().name(),
+		assertThat(testItems.get(0).getItemResults().getStatus().name(),
 				Matchers.lessThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
 		);
-	}
-
-	@Test
-	void findWithUserAttributes() {
-		List<TestItem> withoutSystemAttrs = testItemRepository.findByFilter(Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.FALSE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutSystemAttrs));
-		withoutSystemAttrs.forEach(it -> assertFalse(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
-	}
-
-	@Test
-	void findWithSystemAttributes() {
-		List<TestItem> withoutUserAttrs = testItemRepository.findByFilter(Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(FilterCondition.builder().eq(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, Boolean.TRUE.toString()).build())
-				.build());
-		assertTrue(CollectionUtils.isNotEmpty(withoutUserAttrs));
-		withoutUserAttrs.forEach(it -> assertTrue(it.getAttributes().stream().anyMatch(ItemAttribute::isSystem)));
 	}
 
 	@Test

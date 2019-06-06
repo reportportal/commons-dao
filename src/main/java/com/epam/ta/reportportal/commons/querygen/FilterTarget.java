@@ -49,7 +49,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
@@ -263,12 +264,14 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, LAUNCH.HAS_RETRIES, Boolean.class).get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY, List.class)
-					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString())
+					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)).toString())
 					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE, List.class)
-					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString())
+					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
+							.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+							.toString())
 					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
@@ -365,15 +368,15 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString())
+							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY)
+									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+									.toString())
 							.get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString())
-							.get(),
-
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM, Boolean.class)
-							.withAggregateCriteria(DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString())
+							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
+									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+									.toString())
 							.get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME, PATTERN_TEMPLATE.NAME, List.class)
@@ -612,8 +615,13 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(DASHBOARD.ID,
 					DASHBOARD.NAME,
-					DASHBOARD.DESCRIPTION, DASHBOARD.CREATION_DATE, DASHBOARD_WIDGET.WIDGET_OWNER, DASHBOARD_WIDGET.IS_CREATED_ON,
-					DASHBOARD_WIDGET.WIDGET_ID, DASHBOARD_WIDGET.WIDGET_NAME, DASHBOARD_WIDGET.WIDGET_TYPE,
+					DASHBOARD.DESCRIPTION,
+					DASHBOARD.CREATION_DATE,
+					DASHBOARD_WIDGET.WIDGET_OWNER,
+					DASHBOARD_WIDGET.IS_CREATED_ON,
+					DASHBOARD_WIDGET.WIDGET_ID,
+					DASHBOARD_WIDGET.WIDGET_NAME,
+					DASHBOARD_WIDGET.WIDGET_TYPE,
 					DASHBOARD_WIDGET.WIDGET_HEIGHT,
 					DASHBOARD_WIDGET.WIDGET_WIDTH,
 					DASHBOARD_WIDGET.WIDGET_POSITION_X,
