@@ -90,7 +90,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				.where(STATISTICS_FIELD.NAME.in(contentFields)).groupBy(STATISTICS_FIELD.NAME).fetch());
+				.where(STATISTICS_FIELD.NAME.in(contentFields))
+				.groupBy(STATISTICS_FIELD.NAME)
+				.fetch());
 	}
 
 	/**
@@ -284,7 +286,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.groupBy(groupingFields).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch());
+				.groupBy(groupingFields)
+				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES))
+				.fetch());
 
 	}
 
@@ -644,27 +648,20 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.with(sort)
 				.build();
 
-		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(LAUNCH.ID,
-				fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE),
-				STATISTICS_FIELD.NAME,
-				DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
-		)
-				.from(dsl.with(LAUNCHES)
-						.as(selectQuery).select(
-								LAUNCH.NAME,
-								LAUNCH.ID.as(ID),
-								DSL.max(LAUNCH.NUMBER).as(LATEST_NUMBER),
-								ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
-						)
-						.from(LAUNCH)
+		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(selectQuery)
+				.select(
+						LAUNCH.ID,
+						fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE),
+						STATISTICS_FIELD.NAME,
+						DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
+				)
+				.from(select(LAUNCH.NAME, DSL.max(LAUNCH.NUMBER).as(LATEST_NUMBER), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)).from(LAUNCH)
 						.join(LAUNCHES)
 						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
 						.join(ITEM_ATTRIBUTE)
 						.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
-						.where(ITEM_ATTRIBUTE.KEY.eq(primaryAttributeKey))
-						.and(ITEM_ATTRIBUTE.VALUE.in(dsl.with(LAUNCHES)
-								.as(selectQuery)
-								.select(ITEM_ATTRIBUTE.VALUE)
+						.where(ITEM_ATTRIBUTE.KEY.eq(primaryAttributeKey)).and(ITEM_ATTRIBUTE.VALUE.in(dsl.select(ITEM_ATTRIBUTE.VALUE)
 								.from(ITEM_ATTRIBUTE)
 								.join(LAUNCHES)
 								.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
@@ -672,12 +669,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.groupBy(ITEM_ATTRIBUTE.VALUE)
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
-								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
-								.limit(limit))).groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE, LAUNCH.ID)
+								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC)).limit(limit))).groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
 						.asTable(LAUNCHES_TABLE))
 				.join(LAUNCH)
 				.on(field(name(LAUNCHES_TABLE, NAME)).eq(LAUNCH.NAME))
-				.and(field(name(LAUNCHES_TABLE, LATEST_NUMBER)).eq(LAUNCH.NUMBER)).and(field(name(LAUNCHES_TABLE, ID)).eq(LAUNCH.ID))
+				.and(field(name(LAUNCHES_TABLE, LATEST_NUMBER)).eq(LAUNCH.NUMBER))
+				.join(LAUNCHES)
+				.on(field(name(LAUNCHES, ID)).eq(LAUNCH.ID))
 				.join(TEST_ITEM)
 				.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
 				.join(STATISTICS)
