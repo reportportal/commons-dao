@@ -17,18 +17,18 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.jooq.DSLContext;
-import org.jooq.OrderField;
-import org.jooq.SortField;
-import org.jooq.SortOrder;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,24 +39,28 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.time.Duration;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.DISTINCT_LOGS_TABLE;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ROW_NUMBER;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
-import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.NESTED_ITEM_FETCHER;
+import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static org.jooq.impl.DSL.field;
 
 /**
  * @author Pavel Bortnik
@@ -212,9 +216,63 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.execute();
 	}
 
-	private List<SortField<Object>> buildSortFields(Sort sort) {
-		return ofNullable(sort).map(s -> StreamSupport.stream(s.spliterator(), false)
-				.map(order -> field(order.getProperty()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC))
-				.collect(Collectors.toList())).orElseGet(Collections::emptyList);
+	@Override
+	public Page<NestedItem> findNestedItems(Long parentId, Queryable filter, Pageable pageable) {
+
+		SortField<Object> sorting = pageable.getSort()
+				.stream()
+				.filter(order -> CRITERIA_LOG_TIME.equals(order.getProperty()))
+				.findFirst()
+				.map(order -> order.isAscending() ? DSL.field(TIME).sort(SortOrder.ASC) : DSL.field(TIME).sort(SortOrder.DESC))
+				.orElseGet(() -> DSL.field(TIME).sort(SortOrder.ASC));
+
+		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = dsl.with(LOGS)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
+				.from(LOG)
+				.join(LOGS)
+				.on(fieldName(LOGS, ID).cast(Long.class).eq(LOG.ID))
+				.unionAll(buildNestedStepQuery(parentId, filter));
+
+		int total = dsl.fetchCount(selectQuery);
+
+		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(sorting)
+				.limit(pageable.getPageSize())
+				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable)))), pageable, () -> total);
+
+	}
+
+	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, Queryable filter) {
+
+		SelectConditionStep<Record3<Long, Timestamp, String>> nestedStepSelect = dsl.select(TEST_ITEM.ITEM_ID.as(ID),
+				TEST_ITEM.START_TIME.as(TIME),
+				DSL.val(ITEM).as(TYPE)
+		)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.PARENT_ID.eq(parentId))
+				.and(TEST_ITEM.PATH.in(DSL.with(LOGS)
+						.as(QueryBuilder.newBuilder(filter).build())
+						.select(TEST_ITEM.PATH)
+						.from(TEST_ITEM)
+						.join(LOG)
+						.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+						.join(LOGS)
+						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+						.where(TEST_ITEM.PATH + "<@" + TEST_ITEM.PATH)))
+				.and(TEST_ITEM.HAS_STATS.isFalse());
+
+		filter.getFilterConditions()
+				.stream()
+				.filter(c -> CRITERIA_STATUS.equals(c.getSearchCriteria()))
+				.findFirst()
+				.ifPresent(c -> FilterTarget.TEST_ITEM_TARGET.getCriteriaHolders()
+						.stream()
+						.filter(ch -> c.getSearchCriteria().equals(ch.getFilterCriteria()))
+						.findFirst()
+						.ifPresent(ch -> nestedStepSelect.and(c.getCondition().toCondition(c, ch))));
+
+		return nestedStepSelect.groupBy(TEST_ITEM.ITEM_ID);
 	}
 }

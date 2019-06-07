@@ -17,8 +17,11 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.log.Log;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
@@ -104,4 +107,5 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
 
+	Page<NestedItem> findNestedItems(Long parentId, Queryable filter, Pageable pageable);
 }
