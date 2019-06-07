@@ -232,6 +232,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.from(LOG)
 				.join(LOGS)
 				.on(fieldName(LOGS, ID).cast(Long.class).eq(LOG.ID))
+				.where(LOG.ITEM_ID.eq(parentId))
 				.unionAll(buildNestedStepQuery(parentId, filter));
 
 		int total = dsl.fetchCount(selectQuery);
