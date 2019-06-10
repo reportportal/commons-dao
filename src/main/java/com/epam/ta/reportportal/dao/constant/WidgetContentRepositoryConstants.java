@@ -90,7 +90,9 @@ public class WidgetContentRepositoryConstants {
 	public static final String NOT_PASSED_STATISTICS_KEY = "% (Failed+Skipped)/Total";
 
 	/*Unique bugs table widget constants*/
-	public static final String URL = "url";
+	public static final String ITEM_ATTRIBUTES = "item_attributes";
+	public static final String KEY = "key";
+	public static final String VALUE = "value";
 
 	/*Flaky cases table widget constants*/
 	public static final String UNIQUE_ID = "unique_id";
