@@ -69,7 +69,7 @@ bintray {
         githubRepo = "reportportal/$project.name"
         githubReleaseNotesFile = 'CHANGELOG.md'
 
-        userOrg = 'pavelbortnik'
+        userOrg = 'epam'
         licenses = ['Apache-2.0']
     }
 }
