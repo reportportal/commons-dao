@@ -3,13 +3,15 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.TableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**

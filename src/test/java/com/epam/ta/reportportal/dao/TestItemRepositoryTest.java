@@ -279,6 +279,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED)
+				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -289,6 +290,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
+				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -299,6 +301,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByNotHasChildrenAndParentPathAndStatus() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED)
+				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -309,6 +312,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED)
+				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
