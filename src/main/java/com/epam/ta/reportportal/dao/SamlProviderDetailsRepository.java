@@ -18,9 +18,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.saml.SamlProviderDetails;
 
+import java.util.Optional;
+
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public interface SamlProviderDetailsRepository extends ReportPortalRepository<SamlProviderDetails, Long> {
 
+	Optional<SamlProviderDetails> findByIdpName(String idpName);
 }
