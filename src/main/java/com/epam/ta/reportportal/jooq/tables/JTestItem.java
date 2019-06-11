@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = -1707867737;
+	private static final long serialVersionUID = -782136857;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -59,7 +59,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.name</code>.
      */
-    public final TableField<JTestItemRecord, String> NAME = createField("name", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+	public final TableField<JTestItemRecord, String> NAME = createField("name", org.jooq.impl.SQLDataType.VARCHAR(1024), this, "");
 
     /**
      * The column <code>public.test_item.type</code>.

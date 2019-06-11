@@ -73,5 +73,6 @@
         <!--
                 Put the property file, jooq*.jar and the JDBC driver into a directory, e.g. C:\temp\jooq
                 Go to C:\temp\jooq
-                Run java -cp jooq-3.11.7.jar:jooq-meta-3.11.7.jar:jooq-codegen-3.11.7.jar:postgresql-42.2.5.jar:. org.jooq.codegen.GenerationTool /jooq.xml
+                (Unix)    Run java -cp jooq-3.11.7.jar:jooq-meta-3.11.7.jar:jooq-codegen-3.11.7.jar:postgresql-42.2.5.jar:. org.jooq.codegen.GenerationTool /jooq.xml
+                (Windows) Run java -cp jooq-3.11.7.jar;jooq-meta-3.11.7.jar;jooq-codegen-3.11.7.jar;postgresql-42.2.5.jar;. org.jooq.codegen.GenerationTool /jooq.xml
         -->

@@ -27,7 +27,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1101899414;
+	private static final long serialVersionUID = -207308926;
 
     /**
      * The reference instance of <code>public</code>
@@ -265,6 +265,11 @@ public class JPublic extends SchemaImpl {
      */
     public final JRestorePasswordBid RESTORE_PASSWORD_BID = com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid.RESTORE_PASSWORD_BID;
 
+	/**
+	 * The table <code>public.saml_provider_details</code>.
+	 */
+	public final JSamlProviderDetails SAML_PROVIDER_DETAILS = com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails.SAML_PROVIDER_DETAILS;
+
     /**
      * The table <code>public.sender_case</code>.
      */
@@ -379,7 +384,7 @@ public class JPublic extends SchemaImpl {
             Sequences.PATTERN_TEMPLATE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
-            Sequences.PROJECT_ID_SEQ,
+            Sequences.PROJECT_ID_SEQ, Sequences.SAML_PROVIDER_DETAILS_ID_SEQ,
             Sequences.SENDER_CASE_ID_SEQ,
             Sequences.SENDER_CASE_PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
@@ -442,7 +447,7 @@ public class JPublic extends SchemaImpl {
             JProjectAttribute.PROJECT_ATTRIBUTE,
             JProjectUser.PROJECT_USER,
             JRecipients.RECIPIENTS,
-            JRestorePasswordBid.RESTORE_PASSWORD_BID,
+            JRestorePasswordBid.RESTORE_PASSWORD_BID, JSamlProviderDetails.SAML_PROVIDER_DETAILS,
             JSenderCase.SENDER_CASE,
             JServerSettings.SERVER_SETTINGS,
             JShareableEntity.SHAREABLE_ENTITY,

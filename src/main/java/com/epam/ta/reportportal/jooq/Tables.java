@@ -256,6 +256,11 @@ public class Tables {
      */
     public static final JRestorePasswordBid RESTORE_PASSWORD_BID = com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid.RESTORE_PASSWORD_BID;
 
+	/**
+	 * The table <code>public.saml_provider_details</code>.
+	 */
+	public static final JSamlProviderDetails SAML_PROVIDER_DETAILS = com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails.SAML_PROVIDER_DETAILS;
+
     /**
      * The table <code>public.sender_case</code>.
      */
