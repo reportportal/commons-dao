@@ -38,7 +38,7 @@ import static com.epam.ta.reportportal.dao.util.ShareableUtils.*;
  */
 public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity> implements ShareableRepository<T> {
 
-	private DSLContext dsl;
+	protected DSLContext dsl;
 
 	@Autowired
 	public void setDsl(DSLContext dsl) {
