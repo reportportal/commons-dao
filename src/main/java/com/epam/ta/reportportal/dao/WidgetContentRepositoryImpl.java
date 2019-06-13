@@ -357,8 +357,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<ChartStatisticsContent> casesTrendStatistics(Filter filter, String contentField, Sort sort, int limit) {
 
-		List<SortField<Object>> deltaCounterSort = WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES);
-
 		List<Field<?>> groupingFields = Lists.newArrayList(field(LAUNCH.ID),
 				field(LAUNCH.NUMBER),
 				field(LAUNCH.START_TIME),
@@ -377,7 +375,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 						coalesce(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).sub(lag(fieldName(STATISTICS_TABLE,
 								STATISTICS_COUNTER
-						)).over().orderBy(deltaCounterSort)), 0).as(DELTA)
+						)).over().orderBy(LAUNCH.START_TIME.asc())), 0).as(DELTA)
 				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
@@ -390,7 +388,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
 				.groupBy(groupingFields)
-				.orderBy(deltaCounterSort)
+				.orderBy(LAUNCH.START_TIME.asc())
 				.fetch(), contentField);
 	}
 
@@ -416,7 +414,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(STATISTICS_FIELD.NAME.in(contentFields))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES))
+				.orderBy(LAUNCH.START_TIME.asc())
 				.fetch());
 
 	}
@@ -539,6 +537,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.orderBy(LAUNCH.START_TIME.asc())
 				.fetch(NOT_PASSED_CASES_CONTENT_RECORD_MAPPER);
 	}
 
