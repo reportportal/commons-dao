@@ -16,15 +16,15 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Sets;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.sql.Timestamp;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DESCRIPTION;
+import java.util.Set;
 
 /**
  * @author Ivan Budayeu
@@ -32,37 +32,32 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UniqueBugContent implements Serializable {
 
-	@Column(name = "item_id")
 	@JsonProperty(value = "itemId")
 	private Long testItemId;
 
-	@Column(name = "ticket_id")
 	@JsonIgnore
 	private String ticketId;
 
-	@Column(name = "login")
 	@JsonProperty(value = "submitter")
 	private String submitter;
 
-	@Column(name = "name")
 	@JsonProperty(value = "itemName")
 	private String testItemName;
 
-	@Column(name = "url")
 	@JsonProperty(value = "url")
 	private String url;
 
-	@Column(name = "submit_date")
 	@JsonProperty(value = "submitDate")
 	private Timestamp submitDate;
 
-	@Column(name = "launch_id")
 	@JsonProperty(value = "launchId")
 	private Long launchId;
 
-	@Column(name = "description")
-	@JsonProperty(value = DESCRIPTION)
-	private String description;
+	@JsonProperty(value = "path")
+	private String path;
+
+	@JsonProperty(value = "attributes")
+	private Set<ItemAttributeResource> itemAttributeResources = Sets.newHashSet();
 
 	public UniqueBugContent() {
 	}
@@ -123,11 +118,19 @@ public class UniqueBugContent implements Serializable {
 		this.launchId = launchId;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getPath() {
+		return path;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public Set<ItemAttributeResource> getItemAttributeResources() {
+		return itemAttributeResources;
+	}
+
+	public void setItemAttributeResources(Set<ItemAttributeResource> itemAttributeResources) {
+		this.itemAttributeResources = itemAttributeResources;
 	}
 }

@@ -3,6 +3,7 @@
  */
 package com.epam.ta.reportportal.jooq;
 
+
 import org.jooq.Schema;
 import org.jooq.impl.CatalogImpl;
 
