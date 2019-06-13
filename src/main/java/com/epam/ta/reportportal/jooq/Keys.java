@@ -45,6 +45,7 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -99,6 +100,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JRecipientsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JRestorePasswordBidRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JSamlProviderDetailsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JSenderCaseRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JServerSettingsRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JShareableEntityRecord;
@@ -163,6 +165,7 @@ public class Keys {
     public static final Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Identities0.IDENTITY_PATTERN_TEMPLATE;
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Identities0.IDENTITY_PROJECT_ATTRIBUTE;
+    public static final Identity<JSamlProviderDetailsRecord, Long> IDENTITY_SAML_PROVIDER_DETAILS = Identities0.IDENTITY_SAML_PROVIDER_DETAILS;
     public static final Identity<JSenderCaseRecord, Long> IDENTITY_SENDER_CASE = Identities0.IDENTITY_SENDER_CASE;
     public static final Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Identities0.IDENTITY_SERVER_SETTINGS;
     public static final Identity<JShareableEntityRecord, Long> IDENTITY_SHAREABLE_ENTITY = Identities0.IDENTITY_SHAREABLE_ENTITY;
@@ -229,6 +232,7 @@ public class Keys {
     public static final UniqueKey<JProjectUserRecord> USERS_PROJECT_PK = UniqueKeys0.USERS_PROJECT_PK;
     public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_PK = UniqueKeys0.RESTORE_PASSWORD_BID_PK;
     public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_EMAIL_KEY = UniqueKeys0.RESTORE_PASSWORD_BID_EMAIL_KEY;
+    public static final UniqueKey<JSamlProviderDetailsRecord> SAML_PROVIDER_DETAILS_PKEY = UniqueKeys0.SAML_PROVIDER_DETAILS_PKEY;
     public static final UniqueKey<JSenderCaseRecord> SENDER_CASE_PK = UniqueKeys0.SENDER_CASE_PK;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = UniqueKeys0.SERVER_SETTINGS_KEY_KEY;
@@ -353,6 +357,7 @@ public class Keys {
         public static Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Internal.createIdentity(JPatternTemplate.PATTERN_TEMPLATE, JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Internal.createIdentity(JProjectAttribute.PROJECT_ATTRIBUTE, JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
+        public static Identity<JSamlProviderDetailsRecord, Long> IDENTITY_SAML_PROVIDER_DETAILS = Internal.createIdentity(JSamlProviderDetails.SAML_PROVIDER_DETAILS, JSamlProviderDetails.SAML_PROVIDER_DETAILS.ID);
         public static Identity<JSenderCaseRecord, Long> IDENTITY_SENDER_CASE = Internal.createIdentity(JSenderCase.SENDER_CASE, JSenderCase.SENDER_CASE.ID);
         public static Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Internal.createIdentity(JServerSettings.SERVER_SETTINGS, JServerSettings.SERVER_SETTINGS.ID);
         public static Identity<JShareableEntityRecord, Long> IDENTITY_SHAREABLE_ENTITY = Internal.createIdentity(JShareableEntity.SHAREABLE_ENTITY, JShareableEntity.SHAREABLE_ENTITY.ID);
@@ -417,6 +422,7 @@ public class Keys {
         public static final UniqueKey<JProjectUserRecord> USERS_PROJECT_PK = Internal.createUniqueKey(JProjectUser.PROJECT_USER, "users_project_pk", JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID);
         public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_PK = Internal.createUniqueKey(JRestorePasswordBid.RESTORE_PASSWORD_BID, "restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID);
         public static final UniqueKey<JRestorePasswordBidRecord> RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createUniqueKey(JRestorePasswordBid.RESTORE_PASSWORD_BID, "restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL);
+        public static final UniqueKey<JSamlProviderDetailsRecord> SAML_PROVIDER_DETAILS_PKEY = Internal.createUniqueKey(JSamlProviderDetails.SAML_PROVIDER_DETAILS, "saml_provider_details_pkey", JSamlProviderDetails.SAML_PROVIDER_DETAILS.ID);
         public static final UniqueKey<JSenderCaseRecord> SENDER_CASE_PK = Internal.createUniqueKey(JSenderCase.SENDER_CASE, "sender_case_pk", JSenderCase.SENDER_CASE.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_id", JServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_key_key", JServerSettings.SERVER_SETTINGS.KEY);
