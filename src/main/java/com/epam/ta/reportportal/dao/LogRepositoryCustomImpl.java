@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
@@ -152,7 +151,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
 				.from(LOG)
 				.join(ATTACHMENT)
-				.on(LOG.ID.eq(ATTACHMENT.ID))
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
 				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Log.class);
@@ -268,11 +267,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.stream()
 				.filter(c -> CRITERIA_STATUS.equals(c.getSearchCriteria()))
 				.findFirst()
-				.ifPresent(c -> FilterTarget.TEST_ITEM_TARGET.getCriteriaHolders()
-						.stream()
-						.filter(ch -> c.getSearchCriteria().equals(ch.getFilterCriteria()))
-						.findFirst()
-						.ifPresent(ch -> nestedStepSelect.and(c.getCondition().toCondition(c, ch))));
+				.ifPresent(c -> StatusEnum.fromValue(c.getValue())
+						.map(s -> JStatusEnum.valueOf(s.name()))
+						.ifPresent(s -> nestedStepSelect.and(TEST_ITEM_RESULTS.STATUS.eq(s))));
 
 		return nestedStepSelect.groupBy(TEST_ITEM.ITEM_ID);
 	}
