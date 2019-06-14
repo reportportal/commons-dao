@@ -16,10 +16,19 @@
 
 package com.epam.ta.reportportal.entity.item;
 
+import com.epam.ta.reportportal.commons.querygen.Queryable;
+import org.springframework.data.domain.Pageable;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
+ * Entity for query {@link com.epam.ta.reportportal.dao.LogRepository#findNestedItems(Long, Queryable, Pageable)}, consists from
+ * either {@link com.epam.ta.reportportal.entity.log.Log#id} or {@link TestItem#itemId} as {@link NestedItem#id}
+ * and {@link NestedItem#type} to identify what kind of entity is it.
+ * <p>
+ * Required for applying filters and sorting on the db level for different entity types
+ *
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class NestedItem implements Serializable {
