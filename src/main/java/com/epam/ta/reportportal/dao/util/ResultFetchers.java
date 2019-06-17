@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -293,6 +294,12 @@ public class ResultFetchers {
 			widgetMap.put(widgetId, widget);
 		});
 		return Lists.newArrayList(widgetMap.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<NestedItem>> NESTED_ITEM_FETCHER = result -> {
+		List<NestedItem> nestedItems = Lists.newArrayListWithExpectedSize(result.size());
+		result.forEach(record -> nestedItems.add(new NestedItem(record.get("id", Long.class), record.get("type", String.class))));
+		return nestedItems;
 	};
 
 }
