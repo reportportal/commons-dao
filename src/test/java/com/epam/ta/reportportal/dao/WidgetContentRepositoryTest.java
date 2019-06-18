@@ -536,7 +536,9 @@ class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
 		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
-				filter);
+				filter,
+				20
+		);
 
 		assertNotNull(mostTimeConsumingTestCasesContents);
 	}
