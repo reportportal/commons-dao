@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,5 +73,8 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
 			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+
+	@Query(value = "select * from launch l where l.name =:name and l.project_id=:projectId order by l.number desc limit 1", nativeQuery = true)
+	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
 
 }
