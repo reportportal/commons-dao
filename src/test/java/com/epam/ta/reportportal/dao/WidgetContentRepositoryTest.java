@@ -438,30 +438,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, false, 4);
 
 		assertNotNull(flakyCasesStatistics);
-		//		assertEquals(4, flakyCasesStatistics.size());
-
-		flakyCasesStatistics.forEach(content -> {
-			long counter = 0;
-			List<String> statuses = content.getStatuses();
-
-			for (int i = 0; i < statuses.size() - 1; i++) {
-				if (!statuses.get(i).equalsIgnoreCase(statuses.get(i + 1))) {
-					counter++;
-				}
-			}
-
-			assertEquals(counter, (long) content.getFlakyCount());
-			assertTrue(content.getFlakyCount() < content.getTotal());
-
-		});
-
-		assertEquals((long) flakyCasesStatistics.get(0).getFlakyCount(),
-				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).max().orElse(Long.MAX_VALUE)
-		);
-
-		assertEquals((long) flakyCasesStatistics.get(flakyCasesStatistics.size() - 1).getFlakyCount(),
-				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).min().orElse(Long.MIN_VALUE)
-		);
+		assertTrue(flakyCasesStatistics.isEmpty());
 	}
 
 	@Test
