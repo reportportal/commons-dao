@@ -246,10 +246,11 @@ public interface WidgetContentRepository {
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit);
 
 	/**
-	 * Loading the TOP-20 most time consuming test cases
+	 * Loading the most time consuming test cases
 	 *
 	 * @param filter {@link Filter}
+	 * @param limit  Results limit
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
-	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter);
+	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
 }
