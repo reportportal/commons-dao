@@ -260,7 +260,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 						.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 						.join(LOGS)
 						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
-						.where(TEST_ITEM.PATH + "<@" + TEST_ITEM.PATH)))
+						.where(TEST_ITEM.PATH + "<@" + TEST_ITEM.PATH))
+						.or(dsl.selectOne().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)).limit(1).asField().isNull()))
 				.and(TEST_ITEM.HAS_STATS.isFalse());
 
 		filter.getFilterConditions()
