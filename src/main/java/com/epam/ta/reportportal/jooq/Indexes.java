@@ -3,67 +3,12 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAttachment;
-import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
-import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRecipients;
-import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
-import com.epam.ta.reportportal.jooq.tables.JUserPreference;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-
-import javax.annotation.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -161,6 +106,7 @@ public class Indexes {
     public static final Index RCPNT_SEND_CASE_IDX = Indexes0.RCPNT_SEND_CASE_IDX;
     public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
+    public static final Index SAML_PROVIDER_DETAILS_PKEY = Indexes0.SAML_PROVIDER_DETAILS_PKEY;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
@@ -279,6 +225,7 @@ public class Indexes {
         public static Index RCPNT_SEND_CASE_IDX = Internal.createIndex("rcpnt_send_case_idx", JRecipients.RECIPIENTS, new OrderField[] { JRecipients.RECIPIENTS.SENDER_CASE_ID }, false);
         public static Index RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createIndex("restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL }, true);
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
+        public static Index SAML_PROVIDER_DETAILS_PKEY = Internal.createIndex("saml_provider_details_pkey", JSamlProviderDetails.SAML_PROVIDER_DETAILS, new OrderField[] { JSamlProviderDetails.SAML_PROVIDER_DETAILS.ID }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
