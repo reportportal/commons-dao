@@ -154,7 +154,8 @@ public enum FilterTarget {
 			return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
 					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
 							LAUNCH.ID
-					)).as(LAUNCHES_QUANTITY),
+					))
+							.as(LAUNCHES_QUANTITY),
 					DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
 					PROJECT.ID,
 					PROJECT.CREATION_DATE,
@@ -338,6 +339,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, TEST_ITEM.ITEM_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, TEST_ITEM.NAME, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(TestItemCriteriaConstant.CRITERIA_TYPE, TEST_ITEM.TYPE, JTestItemTypeEnum.class)
+							.withAggregateCriteria(DSL.max(TEST_ITEM.TYPE).toString())
 							.get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_START_TIME, TEST_ITEM.START_TIME, Timestamp.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, TEST_ITEM.DESCRIPTION, String.class).get(),
