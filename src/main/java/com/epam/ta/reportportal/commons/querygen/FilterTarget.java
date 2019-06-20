@@ -481,6 +481,7 @@ public enum FilterTarget {
 					LOG.LOG_MESSAGE,
 					LOG.LAST_MODIFIED,
 					LOG.LOG_LEVEL,
+
 					LOG.ITEM_ID, LOG.LAUNCH_ID,
 					LOG.ATTACHMENT_ID,
 					ATTACHMENT.ID,
