@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,10 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.DatePart;
+import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -116,8 +119,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-		return dsl.fetchExists(commonTestItemDslSelect()
-				.where(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", parentPath))
+		return dsl.fetchExists(commonTestItemDslSelect().where(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", parentPath))
 				.and(TEST_ITEM.ITEM_ID.ne(parentId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
 				.limit(1));
@@ -304,7 +306,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return dsl.update(TEST_ITEM_RESULTS)
 				.set(TEST_ITEM_RESULTS.STATUS, status)
 				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
-				.set(TEST_ITEM_RESULTS.DURATION,
+				.set(
+						TEST_ITEM_RESULTS.DURATION,
 						dsl.select(DSL.extract(endTime, DatePart.EPOCH)
 								.minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
 								.cast(Double.class)).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId))
@@ -333,7 +336,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
 						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
-						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)).and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
+						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+						.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
 				.fetchInto(Long.class);
 
 	}
@@ -357,6 +361,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.and(LOG.LOG_MESSAGE.likeRegex(pattern)))
 				.fetchInto(Long.class);
 
+	}
+
+	@Override
+	public Optional<TestItem> findByNameAndLaunchWithoutParents(String name, Long launchId) {
+		return Optional.ofNullable(commonTestItemDslSelect().where(TEST_ITEM.NAME.eq(name)
+				.and(TEST_ITEM.PARENT_ID.isNull())
+				.and(TEST_ITEM.LAUNCH_ID.eq(launchId))).fetchOne(TEST_ITEM_RECORD_MAPPER));
 	}
 
 	/**
@@ -394,7 +405,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
 
 		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
-			RETRIES_FETCHER.accept(items,
+			RETRIES_FETCHER.accept(
+					items,
 					dsl.select()
 							.from(TEST_ITEM)
 							.join(TEST_ITEM_RESULTS)
