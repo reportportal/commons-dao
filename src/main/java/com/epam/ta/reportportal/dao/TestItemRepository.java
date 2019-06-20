@@ -188,4 +188,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query("select t from TestItem t where t.name=:name and t.parent is null and t.launch.id=:launchId")
 	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
 
+	@Query(value = "select * from test_item t where t.name=:name and t.launch_id=:launchId and t.path <@ cast(:path as ltree)", nativeQuery = true)
+	Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
+			@Param("path") String path);
 }
