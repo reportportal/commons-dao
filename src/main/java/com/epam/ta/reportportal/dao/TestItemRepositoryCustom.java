@@ -222,7 +222,4 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
 	List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern);
-
-	Optional<TestItem> findByNameAndLaunchWithoutParents(String name, Long launchId);
-
 }

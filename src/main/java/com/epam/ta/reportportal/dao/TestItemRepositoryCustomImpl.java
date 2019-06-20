@@ -363,13 +363,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	}
 
-	@Override
-	public Optional<TestItem> findByNameAndLaunchWithoutParents(String name, Long launchId) {
-		return Optional.ofNullable(commonTestItemDslSelect().where(TEST_ITEM.NAME.eq(name)
-				.and(TEST_ITEM.PARENT_ID.isNull())
-				.and(TEST_ITEM.LAUNCH_ID.eq(launchId))).fetchOne(TEST_ITEM_RECORD_MAPPER));
-	}
-
 	/**
 	 * Commons select of an item with it's results and structure
 	 *
