@@ -196,13 +196,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
 
 	/**
-	 * Checks existence of {@link TestItem} with specified {@code name} and {@code launchId} under {@code path}
+	 * Finds {@link TestItem} with specified {@code name} and {@code launchId} under {@code path}
 	 *
 	 * @param name     Name of {@link TestItem}
 	 * @param launchId ID of {@link Launch}
 	 * @param path     Path of {@link TestItem}
-	 * @return {@code true} if exists
+	 * @return {@link Optional<TestItem>} if it exists, {@link Optional#empty()} if not
 	 */
-	@Query(value = "select exists(select 1 from test_item t where t.name=:name and t.launch_id=:launchId and t.path <@ cast(:path as ltree))", nativeQuery = true)
-	boolean existsByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId, @Param("path") String path);
+	@Query(value = "select * from test_item t where t.name=:name and t.launch_id=:launchId and t.path <@ cast(:path as ltree)", nativeQuery = true)
+	Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
+			@Param("path") String path);
 }
