@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -74,6 +75,13 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
+	/**
+	 * Finds the latest(that has max {@link Launch#number) {@link Launch} with specified {@code name} and {@code projectId}
+	 *
+	 * @param name      Name of {@link Launch}
+	 * @param projectId Id of {@link Project}
+	 * @return {@link Optional<Launch>} if exists, {@link Optional#empty()} if not
+	 */
 	@Query(value = "select * from launch l where l.name =:name and l.project_id=:projectId order by l.number desc limit 1", nativeQuery = true)
 	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
 

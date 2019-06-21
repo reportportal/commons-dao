@@ -185,10 +185,24 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") StatusEnum status);
 
+	/**
+	 * Finds root(without any parent) {@link TestItem} with specified with specified {@code name} and {@code launchId}
+	 *
+	 * @param name     Name of {@link TestItem}
+	 * @param launchId ID of {@link Launch}
+	 * @return {@link Optional<TestItem>} if it exists, {@link Optional#empty()} if not
+	 */
 	@Query("select t from TestItem t where t.name=:name and t.parent is null and t.launch.id=:launchId")
 	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
 
-	@Query(value = "select * from test_item t where t.name=:name and t.launch_id=:launchId and t.path <@ cast(:path as ltree)", nativeQuery = true)
-	Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
-			@Param("path") String path);
+	/**
+	 * Checks existence of {@link TestItem} with specified {@code name} and {@code launchId} under {@code path}
+	 *
+	 * @param name     Name of {@link TestItem}
+	 * @param launchId ID of {@link Launch}
+	 * @param path     Path of {@link TestItem}
+	 * @return {@code true} if exists
+	 */
+	@Query(value = "select exists(select 1 from test_item t where t.name=:name and t.launch_id=:launchId and t.path <@ cast(:path as ltree))", nativeQuery = true)
+	boolean existsByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId, @Param("path") String path);
 }
