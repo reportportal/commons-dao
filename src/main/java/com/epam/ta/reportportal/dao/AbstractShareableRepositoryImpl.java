@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import static com.epam.ta.reportportal.dao.util.ShareableUtils.*;
  */
 public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity> implements ShareableRepository<T> {
 
-	private DSLContext dsl;
+	protected DSLContext dsl;
 
 	@Autowired
 	public void setDsl(DSLContext dsl) {

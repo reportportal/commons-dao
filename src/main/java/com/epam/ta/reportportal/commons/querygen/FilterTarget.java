@@ -336,6 +336,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, TEST_ITEM.ITEM_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, TEST_ITEM.NAME, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(TestItemCriteriaConstant.CRITERIA_TYPE, TEST_ITEM.TYPE, JTestItemTypeEnum.class)
+							.withAggregateCriteria(DSL.max(TEST_ITEM.TYPE).toString())
 							.get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_START_TIME, TEST_ITEM.START_TIME, Timestamp.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, TEST_ITEM.DESCRIPTION, String.class).get(),
@@ -471,6 +472,9 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LEVEL, LOG.LOG_LEVEL, LogLevel.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_MESSAGE, LOG.LOG_MESSAGE, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_BINARY_CONTENT, ATTACHMENT.FILE_ID, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
+					.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
+					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get(),
 			new CriteriaHolderBuilder().newBuilder(LogCriteriaConstant.CRITERIA_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get()
 	)) {
@@ -480,9 +484,7 @@ public enum FilterTarget {
 					LOG.LOG_TIME,
 					LOG.LOG_MESSAGE,
 					LOG.LAST_MODIFIED,
-					LOG.LOG_LEVEL,
-
-					LOG.ITEM_ID, LOG.LAUNCH_ID,
+					LOG.LOG_LEVEL, LOG.ITEM_ID, LOG.LAUNCH_ID,
 					LOG.ATTACHMENT_ID,
 					ATTACHMENT.ID,
 					ATTACHMENT.FILE_ID,
@@ -502,6 +504,8 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
+			query.addJoin(TEST_ITEM, JoinType.LEFT_OUTER_JOIN, LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID));
+			query.addJoin(TEST_ITEM_RESULTS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
 		}
 
 		@Override

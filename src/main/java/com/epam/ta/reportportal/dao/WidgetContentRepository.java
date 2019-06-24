@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -246,10 +246,11 @@ public interface WidgetContentRepository {
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit);
 
 	/**
-	 * Loading the TOP-20 most time consuming test cases
+	 * Loading the most time consuming test cases
 	 *
 	 * @param filter {@link Filter}
+	 * @param limit  Results limit
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
-	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter);
+	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
 }

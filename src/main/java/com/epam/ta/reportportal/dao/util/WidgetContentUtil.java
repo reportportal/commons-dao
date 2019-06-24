@@ -1,6 +1,6 @@
 
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
@@ -273,6 +275,50 @@ public class WidgetContentUtil {
 		return new ArrayList<>(productStatusMapping.values());
 	};
 
+	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
+		UniqueBugContent uniqueBugContent = new UniqueBugContent();
+		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
+		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
+		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
+		uniqueBugContent.setTicketId(record.get(TICKET.TICKET_ID));
+		uniqueBugContent.setUrl(record.get(TICKET.URL));
+		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
+		uniqueBugContent.setSubmitter(record.get(USERS.LOGIN));
+		return uniqueBugContent;
+	};
+
+	public static final RecordMapper<Record, Optional<ItemAttributeResource>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
+
+		String key = record.get(fieldName(ITEM_ATTRIBUTES, KEY), String.class);
+		String value = record.get(fieldName(ITEM_ATTRIBUTES, VALUE), String.class);
+
+		if (key != null || value != null) {
+			return Optional.of(new ItemAttributeResource(key, value));
+		} else {
+			return Optional.empty();
+		}
+	};
+
+	public static final Function<Result<? extends Record>, List<UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
+		Map<Long, UniqueBugContent> content = Maps.newLinkedHashMap();
+
+		result.forEach(record -> {
+			Long itemId = record.get(TEST_ITEM.ITEM_ID);
+			UniqueBugContent uniqueBugContent;
+			if (content.containsKey(itemId)) {
+				uniqueBugContent = content.get(itemId);
+			} else {
+				uniqueBugContent = UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record);
+				content.put(itemId, uniqueBugContent);
+			}
+
+			ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
+		});
+
+		return new ArrayList<>(content.values());
+	};
+
 	public static final Function<Result<? extends Record>, List<CumulativeTrendChartEntry>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
 		Map<String, CumulativeTrendChartContent> attributesMapping = Maps.newLinkedHashMap();
 
@@ -318,8 +364,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
