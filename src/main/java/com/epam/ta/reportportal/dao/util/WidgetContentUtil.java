@@ -56,6 +56,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JPatternTemplate.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -410,6 +411,23 @@ public class WidgetContentUtil {
 		NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
 		res.setValues(Collections.singletonMap(NOT_PASSED_STATISTICS_KEY, r.getValue(fieldName(PERCENTAGE), String.class)));
 		return res;
+	};
+
+	public static final Function<Result<? extends Record>, List<TopPatternTemplatesContent>> TOP_PATTERN_TEMPLATES_FETCHER = result -> {
+
+		Map<String, TopPatternTemplatesContent> content = Maps.newLinkedHashMap();
+
+		result.forEach(record -> {
+
+			String attributeValue = record.get(fieldName(ATTRIBUTE_VALUE), String.class);
+			TopPatternTemplatesContent patternTemplatesContent = content.computeIfAbsent(attributeValue,
+					k -> new TopPatternTemplatesContent(attributeValue)
+			);
+			patternTemplatesContent.getPatternTemplates()
+					.add(new PatternTemplateStatistics(record.get(PATTERN_TEMPLATE.NAME), record.get(fieldName(TOTAL), Long.class)));
+		});
+
+		return new ArrayList<>(content.values());
 	};
 
 }

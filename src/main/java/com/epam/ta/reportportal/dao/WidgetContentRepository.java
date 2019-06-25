@@ -253,4 +253,6 @@ public interface WidgetContentRepository {
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
 	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
+
+	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, boolean isLatest, int limit);
 }
