@@ -44,6 +44,9 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 	@Column(name = "type")
 	private String type;
 
+	@Column(name = "path")
+	private String path;
+
 	@JsonProperty(value = "uniqueId")
 	@Column(name = UNIQUE_ID)
 	private String uniqueId;
@@ -90,6 +93,14 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	public String getUniqueId() {
