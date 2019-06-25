@@ -765,6 +765,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
 						TEST_ITEM.TYPE,
+						TEST_ITEM.PATH,
 						TEST_ITEM.START_TIME,
 						TEST_ITEM_RESULTS.END_TIME,
 						TEST_ITEM_RESULTS.DURATION,
