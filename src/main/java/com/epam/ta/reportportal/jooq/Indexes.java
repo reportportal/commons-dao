@@ -45,6 +45,7 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -161,6 +162,7 @@ public class Indexes {
     public static final Index RCPNT_SEND_CASE_IDX = Indexes0.RCPNT_SEND_CASE_IDX;
     public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
+    public static final Index SAML_PROVIDER_DETAILS_PKEY = Indexes0.SAML_PROVIDER_DETAILS_PKEY;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
@@ -279,6 +281,7 @@ public class Indexes {
         public static Index RCPNT_SEND_CASE_IDX = Internal.createIndex("rcpnt_send_case_idx", JRecipients.RECIPIENTS, new OrderField[] { JRecipients.RECIPIENTS.SENDER_CASE_ID }, false);
         public static Index RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createIndex("restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL }, true);
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
+        public static Index SAML_PROVIDER_DETAILS_PKEY = Internal.createIndex("saml_provider_details_pkey", JSamlProviderDetails.SAML_PROVIDER_DETAILS, new OrderField[] { JSamlProviderDetails.SAML_PROVIDER_DETAILS.ID }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);

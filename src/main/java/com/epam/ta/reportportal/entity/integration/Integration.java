@@ -59,6 +59,9 @@ public class Integration implements Serializable {
 	@Column(name = "enabled")
 	private boolean enabled;
 
+	@Column(name = "creator")
+	private String creator;
+
 	@CreatedDate
 	@Column(name = "creation_date")
 	private LocalDateTime creationDate;
@@ -112,6 +115,14 @@ public class Integration implements Serializable {
 
 	public void setParams(IntegrationParams params) {
 		this.params = params;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 
 	public LocalDateTime getCreationDate() {
