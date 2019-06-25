@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -159,6 +160,14 @@ public class WidgetRepositoryTest extends BaseTest {
 		final Page<Widget> jajaShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3), jajaLogin);
 		assertEquals(3, jajaShared.getTotalElements(), "Unexpected shared widgets count");
 		jajaShared.getContent().forEach(it -> assertTrue(it.isShared()));
+	}
+
+	@Test
+	void deleteRelationByFilterIdAndNotOwnerTest() {
+
+		int removedCount = repository.deleteRelationByFilterIdAndNotOwner(2L, "superadmin");
+
+		Assertions.assertEquals(1, removedCount);
 	}
 
 	private Filter buildDefaultFilter() {

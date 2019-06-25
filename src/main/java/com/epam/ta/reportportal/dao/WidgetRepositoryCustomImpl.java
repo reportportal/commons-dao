@@ -23,6 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
+import static com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
+import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
+import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -43,5 +46,19 @@ public class WidgetRepositoryCustomImpl extends AbstractShareableRepositoryImpl<
 	@Override
 	public Page<Widget> getShared(ProjectFilter filter, Pageable pageable, String userName) {
 		return getShared(WIDGET_FETCHER, filter, pageable, userName);
+	}
+
+	@Override
+	public int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner) {
+		return dsl.deleteFrom(WIDGET_FILTER)
+				.where(WIDGET_FILTER.WIDGET_ID.in(dsl.select(WIDGET.ID)
+						.from(WIDGET)
+						.join(WIDGET_FILTER)
+						.on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
+						.join(SHAREABLE_ENTITY)
+						.on(WIDGET.ID.eq(SHAREABLE_ENTITY.ID))
+						.where(WIDGET_FILTER.FILTER_ID.eq(filterId))
+						.and(SHAREABLE_ENTITY.OWNER.notEqual(owner))))
+				.execute();
 	}
 }

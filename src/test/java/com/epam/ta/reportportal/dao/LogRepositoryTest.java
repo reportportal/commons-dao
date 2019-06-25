@@ -38,6 +38,7 @@ import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -146,5 +147,17 @@ class LogRepositoryTest extends BaseTest {
 	void findIdsByItemIds() {
 		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
 		assertEquals(7, idsByTestItemIds.size());
+	}
+
+	@Test
+	void findNestedItemsTest() {
+
+		Filter filter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "2", CRITERIA_TEST_ITEM_ID))
+				.withCondition(new FilterCondition(Condition.IN, false, "FAILED, PASSED", CRITERIA_STATUS))
+				.build();
+
+		logRepository.findNestedItems(2L, filter, PageRequest.of(2, 1));
 	}
 }

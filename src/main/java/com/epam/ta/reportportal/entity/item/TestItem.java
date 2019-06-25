@@ -56,6 +56,9 @@ public class TestItem implements Serializable {
 	@Column(name = "name", length = 256)
 	private String name;
 
+	@Column(name = "location")
+	private String location;
+
 	@Enumerated(EnumType.STRING)
 	@Type(type = "pqsql_enum")
 	@Column(name = "type", nullable = false)
@@ -184,6 +187,14 @@ public class TestItem implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public TestItemTypeEnum getType() {
@@ -323,13 +334,13 @@ public class TestItem implements Serializable {
 			return false;
 		}
 		TestItem testItem = (TestItem) o;
-		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(uniqueId,
-				testItem.uniqueId
-		) && Objects.equals(path, testItem.path) && Objects.equals(retryOf, testItem.retryOf);
+		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && Objects.equals(location, testItem.location)
+				&& type == testItem.type && Objects.equals(uniqueId, testItem.uniqueId) && Objects.equals(path, testItem.path)
+				&& Objects.equals(retryOf, testItem.retryOf);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(itemId, name, type, uniqueId, path, retryOf);
+		return Objects.hash(itemId, name, location, type, uniqueId, path, retryOf);
 	}
 }
