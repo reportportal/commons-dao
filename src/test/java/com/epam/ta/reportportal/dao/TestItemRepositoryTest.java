@@ -542,7 +542,6 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void findAllNestedStepsByIds() {
 		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L));
-
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
