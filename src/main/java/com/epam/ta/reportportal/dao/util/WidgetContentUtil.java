@@ -430,4 +430,24 @@ public class WidgetContentUtil {
 		return new ArrayList<>(content.values());
 	};
 
+	public static final Function<Result<? extends Record>, List<TopPatternTemplatesContent>> TOP_PATTERN_TEMPLATES_GROUPED_FETCHER = result -> {
+
+		Map<String, TopPatternTemplatesContent> content = Maps.newLinkedHashMap();
+
+		result.forEach(record -> {
+
+			String attributeValue = record.get(fieldName(ATTRIBUTE_VALUE), String.class);
+			TopPatternTemplatesContent patternTemplatesContent = content.computeIfAbsent(attributeValue,
+					k -> new TopPatternTemplatesContent(attributeValue)
+			);
+			patternTemplatesContent.getPatternTemplates()
+					.add(new PatternTemplateLaunchStatistics(record.get(LAUNCH.NAME),
+							record.get(fieldName(TOTAL), Long.class),
+							record.get(LAUNCH.ID)
+					));
+		});
+
+		return new ArrayList<>(content.values());
+	};
+
 }

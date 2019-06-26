@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -254,5 +255,5 @@ public interface WidgetContentRepository {
 	 */
 	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
 
-	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, boolean isLatest, int limit);
+	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName, boolean isLatest, int limit);
 }

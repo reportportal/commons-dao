@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -780,7 +781,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, boolean isLatest, int limit) {
+	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
+			boolean isLatest, int limit) {
 
 		Map<String, List<Long>> attributeIdsMapping = dsl.with(LAUNCHES)
 				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sort, isLatest).with(sort).with(LAUNCHES_COUNT).build())
@@ -807,25 +809,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
 				.fetchGroups(r -> r.get(ITEM_ATTRIBUTE.VALUE), r -> r.get(ID, Long.class));
 
-		return attributeIdsMapping.entrySet()
-				.stream()
-				.map(entry -> (Select<? extends Record>) dsl.select(DSL.val(entry.getKey()).as(ATTRIBUTE_VALUE),
-						PATTERN_TEMPLATE.NAME,
-						DSL.countDistinct(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID).as(TOTAL)
-				)
-						.from(PATTERN_TEMPLATE)
-						.join(PATTERN_TEMPLATE_TEST_ITEM)
-						.on(PATTERN_TEMPLATE.ID.eq(PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID))
-						.join(TEST_ITEM)
-						.on(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
-						.join(LAUNCH)
-						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-						.where(LAUNCH.ID.in(entry.getValue()))
-						.groupBy(PATTERN_TEMPLATE.NAME)
-						.limit(PATTERNS_COUNT))
-				.reduce((prev, curr) -> curr = prev.unionAll(curr))
-				.map(select -> TOP_PATTERN_TEMPLATES_FETCHER.apply(select.fetch()))
-				.orElseGet(Collections::emptyList);
+		return StringUtils.isBlank(patternName) ?
+				buildPatternTemplatesQuery(attributeIdsMapping) :
+				buildPatternTemplatesQueryGroupedByPattern(attributeIdsMapping, patternName);
 
 	}
 
@@ -1032,6 +1018,55 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		launchesStatisticsContent.setAveragePassingRate(roundedAveragePassingRate);
 
 		return Lists.newArrayList(launchesStatisticsContent);
+	}
+
+	private List<TopPatternTemplatesContent> buildPatternTemplatesQuery(Map<String, List<Long>> attributeIdsMapping) {
+
+		return attributeIdsMapping.entrySet()
+				.stream()
+				.map(entry -> (Select<? extends Record>) dsl.select(DSL.val(entry.getKey()).as(ATTRIBUTE_VALUE),
+						PATTERN_TEMPLATE.NAME,
+						DSL.countDistinct(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID).as(TOTAL)
+				)
+						.from(PATTERN_TEMPLATE)
+						.join(PATTERN_TEMPLATE_TEST_ITEM)
+						.on(PATTERN_TEMPLATE.ID.eq(PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID))
+						.join(TEST_ITEM)
+						.on(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+						.join(LAUNCH)
+						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+						.where(LAUNCH.ID.in(entry.getValue()))
+						.groupBy(PATTERN_TEMPLATE.NAME)
+						.limit(PATTERNS_COUNT))
+				.reduce((prev, curr) -> curr = prev.unionAll(curr))
+				.map(select -> TOP_PATTERN_TEMPLATES_FETCHER.apply(select.fetch()))
+				.orElseGet(Collections::emptyList);
+	}
+
+	private List<TopPatternTemplatesContent> buildPatternTemplatesQueryGroupedByPattern(Map<String, List<Long>> attributeIdsMapping,
+			String patternTemplateName) {
+
+		return attributeIdsMapping.entrySet()
+				.stream()
+				.map(entry -> (Select<? extends Record>) dsl.select(DSL.val(entry.getKey()).as(ATTRIBUTE_VALUE),
+						LAUNCH.ID,
+						LAUNCH.NAME,
+						DSL.countDistinct(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID).as(TOTAL)
+				)
+						.from(PATTERN_TEMPLATE)
+						.join(PATTERN_TEMPLATE_TEST_ITEM)
+						.on(PATTERN_TEMPLATE.ID.eq(PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID))
+						.join(TEST_ITEM)
+						.on(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+						.join(LAUNCH)
+						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+						.where(LAUNCH.ID.in(entry.getValue()))
+						.and(PATTERN_TEMPLATE.NAME.eq(patternTemplateName))
+						.groupBy(LAUNCH.ID, LAUNCH.NAME, PATTERN_TEMPLATE.NAME)
+						.limit(PATTERNS_COUNT))
+				.reduce((prev, curr) -> curr = prev.unionAll(curr))
+				.map(select -> TOP_PATTERN_TEMPLATES_GROUPED_FETCHER.apply(select.fetch()))
+				.orElseGet(Collections::emptyList);
 	}
 
 }

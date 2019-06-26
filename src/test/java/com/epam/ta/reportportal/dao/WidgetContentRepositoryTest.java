@@ -524,7 +524,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	void patternTemplate() {
 		Filter filter = buildDefaultFilter(1L);
-		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", false, 600);
+		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", "FIRST PATTERN", false, 600);
 
 		assertNotNull(topPatternTemplatesContents);
 		assertFalse(topPatternTemplatesContents.isEmpty());
