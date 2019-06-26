@@ -783,7 +783,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, boolean isLatest, int limit) {
 
 		Map<String, List<Long>> attributeIdsMapping = dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter).with(sort).with(LAUNCHES_COUNT).build())
+				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(LAUNCHES_COUNT).build())
 				.select(DSL.max(LAUNCH.ID).as(ID), ITEM_ATTRIBUTE.VALUE)
 				.from(LAUNCH)
 				.join(LAUNCHES)
@@ -807,7 +807,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
 				.fetchGroups(r -> r.get(ITEM_ATTRIBUTE.VALUE), r -> r.get(ID, Long.class));
 
-		Select<? extends Record> patternsSelect = attributeIdsMapping.entrySet()
+		return attributeIdsMapping.entrySet()
 				.stream()
 				.map(entry -> (Select<? extends Record>) dsl.select(DSL.val(entry.getKey()).as(ATTRIBUTE_VALUE),
 						PATTERN_TEMPLATE.NAME,
@@ -824,9 +824,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(PATTERN_TEMPLATE.NAME)
 						.limit(PATTERNS_COUNT))
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
-				.orElseThrow(() -> new ReportPortalException("Query building for Top Pattern Templates Widget failed"));
-
-		return TOP_PATTERN_TEMPLATES_FETCHER.apply(patternsSelect.fetch());
+				.map(select -> TOP_PATTERN_TEMPLATES_FETCHER.apply(select.fetch()))
+				.orElseGet(Collections::emptyList);
 
 	}
 
