@@ -783,7 +783,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, boolean isLatest, int limit) {
 
 		Map<String, List<Long>> attributeIdsMapping = dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(LAUNCHES_COUNT).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sort, isLatest).with(sort).with(LAUNCHES_COUNT).build())
 				.select(DSL.max(LAUNCH.ID).as(ID), ITEM_ATTRIBUTE.VALUE)
 				.from(LAUNCH)
 				.join(LAUNCHES)
