@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -536,5 +537,13 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items);
 		assertEquals(1L, items.size());
 
+	}
+
+	@Test
+	void findAllNestedStepsByIds() {
+		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L));
+
+		assertNotNull(allNestedStepsByIds);
+		assertFalse(allNestedStepsByIds.isEmpty());
 	}
 }

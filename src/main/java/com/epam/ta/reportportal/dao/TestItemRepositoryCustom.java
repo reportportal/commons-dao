@@ -19,12 +19,14 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -223,4 +225,5 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern);
 
+	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids);
 }
