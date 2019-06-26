@@ -545,5 +545,6 @@ class TestItemRepositoryTest extends BaseTest {
 
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
+		assertEquals(3, allNestedStepsByIds.size());
 	}
 }
