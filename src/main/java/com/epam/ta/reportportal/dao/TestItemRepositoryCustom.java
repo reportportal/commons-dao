@@ -225,5 +225,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern);
 
+	/**
+	 * Select {@link NestedStep} entities by provided 'IDs' with {@link NestedStep#attachmentsCount}
+	 * of the {@link com.epam.ta.reportportal.entity.log.Log} entities of all descendants for each {@link NestedStep}
+	 * and {@link NestedStep#hasContent} flag to check whether entity is a last one
+	 * in the descendants tree or there are {@link com.epam.ta.reportportal.entity.log.Log} or {@link NestedStep} entities exist under it
+	 *
+	 * @param ids {@link Collection} of the {@link TestItem#itemId}
+	 * @return {@link List} of the {@link NestedStep}
+	 */
 	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids);
 }
