@@ -83,6 +83,7 @@ public class Project implements Serializable {
 
 	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "project_id", updatable = false)
+	@OrderBy
 	private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
 
 	public Project(Long id, String name) {
