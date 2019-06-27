@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,10 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.DatePart;
+import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -390,11 +393,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids) {
-
-		Field<Long> nestedParentIdField = fieldName(NESTED, TEST_ITEM.PARENT_ID.getName()).cast(Long.class);
-		Field<Long> nestedIdField = fieldName(NESTED, TEST_ITEM.ITEM_ID.getName()).cast(Long.class);
-		Field<Boolean> nestedHasStatsField = fieldName(NESTED, TEST_ITEM.HAS_STATS.getName()).cast(Boolean.class);
-
+		JTestItem nested = TEST_ITEM.as(NESTED);
 		return dsl.select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
 				TEST_ITEM.START_TIME,
@@ -403,15 +402,15 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				TEST_ITEM_RESULTS.END_TIME,
 				TEST_ITEM_RESULTS.DURATION,
 				DSL.field(DSL.exists(dsl.select().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
-						.orExists(dsl.select().from(TEST_ITEM.as(NESTED)).where(nestedParentIdField.eq(TEST_ITEM.ITEM_ID))))
+						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID))))
 						.as(HAS_CONTENT),
 				DSL.field(dsl.selectCount()
 						.from(LOG)
 						.join(ATTACHMENT)
 						.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
-						.join(TEST_ITEM.as(NESTED))
-						.on(LOG.ITEM_ID.eq(nestedIdField))
-						.where(nestedHasStatsField.isFalse()
+						.join(nested)
+						.on(LOG.ITEM_ID.eq(nested.ITEM_ID))
+						.where(nested.HAS_STATS.isFalse()
 								.and(DSL.sql(fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)", TEST_ITEM.PATH))))
 						.as(ATTACHMENTS_COUNT)
 		)
