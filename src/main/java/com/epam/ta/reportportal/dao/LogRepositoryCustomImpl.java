@@ -127,8 +127,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return dsl.select()
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
-				.onKey()
-				.join(LAUNCH).on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
 				.fetch(LOG.ID, Long.class);
 	}
@@ -138,8 +139,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return dsl.select()
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
-				.onKey()
-				.join(LAUNCH).on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(launchIds))
 				.fetch(LOG.ID, Long.class);
 	}
@@ -148,7 +150,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
 		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
 				.from(LOG)
-				.join(ATTACHMENT).on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.join(ATTACHMENT)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
 				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Log.class);

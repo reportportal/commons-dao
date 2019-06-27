@@ -195,11 +195,8 @@ public class RecordMappers {
 
 		log.setAttachment(ATTACHMENT_MAPPER.map(r));
 
-		TestItem testItem = new TestItem(r.get(LOG.ITEM_ID));
-		log.setTestItem(testItem);
-
-		Launch launch = new Launch(r.get(LOG.LAUNCH_ID));
-		log.setLaunch(launch);
+		ofNullable(r.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
+		ofNullable(r.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
 		return log;
 	};
 
@@ -210,8 +207,8 @@ public class RecordMappers {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(TEST_ITEM.LAUNCH_ID)));
-		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
+		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
+		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);
 		return testItem;
 	};
 
