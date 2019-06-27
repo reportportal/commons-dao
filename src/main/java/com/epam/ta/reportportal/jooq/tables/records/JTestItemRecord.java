@@ -89,6 +89,13 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
         return (String) get(2);
     }
 
+	/**
+	 * Create a detached JTestItemRecord
+	 */
+	public JTestItemRecord() {
+		super(JTestItem.TEST_ITEM);
+	}
+
     /**
 	 * Create a detached, initialised JTestItemRecord
 	 */
@@ -283,13 +290,6 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
         set(14, value);
     }
 
-    /**
-     * Getter for <code>public.test_item.launch_id</code>.
-     */
-    public Long getLaunchId() {
-		return (Long) get(15);
-    }
-
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -306,19 +306,18 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
 	// Record16 type implementation
     // -------------------------------------------------------------------------
 
+	/**
+	 * Getter for <code>public.test_item.launch_id</code>.
+	 */
+	public Long getLaunchId() {
+		return (Long) get(15);
+	}
+
     /**
 	 * Setter for <code>public.test_item.launch_id</code>.
      */
 	public void setLaunchId(Long value) {
 		set(15, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public Row16<Long, String, String, String, JTestItemTypeEnum, Timestamp, String, Timestamp, Object, String, Boolean, Boolean, Boolean, Long, Long, Long> fieldsRow() {
-		return (Row16) super.fieldsRow();
     }
 
     /**
@@ -344,6 +343,14 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     public Field<String> field3() {
         return JTestItem.TEST_ITEM.NAME;
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Row16<Long, String, String, String, JTestItemTypeEnum, Timestamp, String, Timestamp, Object, String, Boolean, Boolean, Boolean, Long, Long, Long> fieldsRow() {
+		return (Row16) super.fieldsRow();
+	}
 
     /**
      * {@inheritDoc}
@@ -445,14 +452,6 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      * {@inheritDoc}
      */
     @Override
-	public Field<Long> field15() {
-        return JTestItem.TEST_ITEM.RETRY_OF;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Long component1() {
         return getItemId();
     }
@@ -472,6 +471,14 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     public String component3() {
         return getName();
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<Long> field15() {
+		return JTestItem.TEST_ITEM.RETRY_OF;
+	}
 
     /**
      * {@inheritDoc}
@@ -573,14 +580,6 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      * {@inheritDoc}
      */
     @Override
-	public Long component15() {
-        return getRetryOf();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Long value1() {
         return getItemId();
     }
@@ -600,6 +599,14 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     public String value3() {
         return getName();
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long component15() {
+		return getRetryOf();
+	}
 
     /**
      * {@inheritDoc}
@@ -701,14 +708,6 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      * {@inheritDoc}
      */
     @Override
-    public Long value15() {
-		return getRetryOf();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public JTestItemRecord value1(Long value) {
         setItemId(value);
         return this;
@@ -731,6 +730,14 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
         setName(value);
         return this;
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long value15() {
+		return getRetryOf();
+	}
 
     /**
      * {@inheritDoc}
@@ -848,6 +855,10 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
         return this;
     }
 
+	// -------------------------------------------------------------------------
+	// Constructors
+	// -------------------------------------------------------------------------
+
     /**
      * {@inheritDoc}
      */
@@ -856,17 +867,6 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
         setLaunchId(value);
         return this;
     }
-
-	// -------------------------------------------------------------------------
-	// Constructors
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Create a detached JTestItemRecord
-	 */
-	public JTestItemRecord() {
-		super(JTestItem.TEST_ITEM);
-	}
 
     /**
      * {@inheritDoc}

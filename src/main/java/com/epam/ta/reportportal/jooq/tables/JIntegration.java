@@ -46,7 +46,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegration extends TableImpl<JIntegrationRecord> {
 
-    private static final long serialVersionUID = 678487208;
+	private static final long serialVersionUID = -243240654;
 
     /**
      * The reference instance of <code>public.integration</code>
@@ -90,6 +90,16 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
      * The column <code>public.integration.params</code>.
      */
     public final TableField<JIntegrationRecord, Object> PARAMS = createField("params", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"jsonb\""), this, "");
+
+	/**
+	 * The column <code>public.integration.creator</code>.
+	 */
+	public final TableField<JIntegrationRecord, String> CREATOR = createField(
+			"creator",
+			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
+			this,
+			""
+	);
 
     /**
      * The column <code>public.integration.creation_date</code>.

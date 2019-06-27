@@ -116,6 +116,13 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return (Long) get(4);
     }
 
+	/**
+	 * Create a detached JLogRecord
+	 */
+	public JLogRecord() {
+		super(JLog.LOG);
+	}
+
     /**
 	 * Create a detached, initialised JLogRecord
 	 */
@@ -176,13 +183,6 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         set(7, value);
     }
 
-    /**
-     * Getter for <code>public.log.attachment_id</code>.
-     */
-    public Long getAttachmentId() {
-		return (Long) get(8);
-    }
-
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -200,19 +200,18 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
     // -------------------------------------------------------------------------
 
 	/**
+	 * Getter for <code>public.log.attachment_id</code>.
+	 */
+	public Long getAttachmentId() {
+		return (Long) get(8);
+	}
+
+	/**
 	 * Setter for <code>public.log.attachment_id</code>.
 	 */
 	public void setAttachmentId(Long value) {
 		set(8, value);
 	}
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public Row9<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long> fieldsRow() {
-		return (Row9) super.fieldsRow();
-    }
 
     /**
      * {@inheritDoc}
@@ -254,6 +253,14 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return JLog.LOG.ITEM_ID;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Row9<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long> fieldsRow() {
+		return (Row9) super.fieldsRow();
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -277,14 +284,6 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
 	public Field<Timestamp> field7() {
 		return JLog.LOG.LAST_MODIFIED;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Field<Integer> field8() {
-		return JLog.LOG.LOG_LEVEL;
-    }
 
     /**
      * {@inheritDoc}
@@ -326,6 +325,14 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return getItemId();
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<Integer> field8() {
+		return JLog.LOG.LOG_LEVEL;
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -348,14 +355,6 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
 	@Override
 	public Timestamp component7() {
         return getLastModified();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public Integer component8() {
-        return getLogLevel();
     }
 
     /**
@@ -398,6 +397,14 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return getItemId();
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer component8() {
+		return getLogLevel();
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -421,14 +428,6 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
 	public Timestamp value7() {
 		return getLastModified();
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Integer value8() {
-		return getLogLevel();
-    }
 
     /**
      * {@inheritDoc}
@@ -475,6 +474,14 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return this;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer value8() {
+		return getLogLevel();
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -510,6 +517,10 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         return this;
     }
 
+	// -------------------------------------------------------------------------
+	// Constructors
+	// -------------------------------------------------------------------------
+
     /**
      * {@inheritDoc}
      */
@@ -518,17 +529,6 @@ public class JLogRecord extends UpdatableRecordImpl<JLogRecord>
         setAttachmentId(value);
         return this;
     }
-
-	// -------------------------------------------------------------------------
-	// Constructors
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Create a detached JLogRecord
-	 */
-	public JLogRecord() {
-		super(JLog.LOG);
-	}
 
     /**
      * {@inheritDoc}

@@ -755,7 +755,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.select(TEST_ITEM.ITEM_ID.as(ID),
 						TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
-						TEST_ITEM.TYPE,
+						TEST_ITEM.TYPE, TEST_ITEM.PATH,
 						TEST_ITEM.START_TIME,
 						TEST_ITEM_RESULTS.END_TIME,
 						TEST_ITEM_RESULTS.DURATION,
