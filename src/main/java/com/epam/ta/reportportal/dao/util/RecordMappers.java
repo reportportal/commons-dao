@@ -25,14 +25,13 @@ import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
-import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
-import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
+import com.epam.ta.reportportal.entity.enums.*;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import com.epam.ta.reportportal.entity.integration.IntegrationTypeDetails;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
@@ -77,6 +76,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
 import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -209,6 +210,17 @@ public class RecordMappers {
 		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
 		return testItem;
 	};
+
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
+			r.get(TEST_ITEM.NAME),
+			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
+			r.get(HAS_CONTENT, Boolean.class),
+			r.get(ATTACHMENTS_COUNT, Integer.class),
+			StatusEnum.valueOf(r.get(TEST_ITEM_RESULTS.STATUS).getLiteral()),
+			r.get(TEST_ITEM.START_TIME, LocalDateTime.class),
+			r.get(TEST_ITEM_RESULTS.END_TIME, LocalDateTime.class),
+			r.get(TEST_ITEM_RESULTS.DURATION)
+	);
 
 	/**
 	 * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link PatternTemplate#name} fields)
