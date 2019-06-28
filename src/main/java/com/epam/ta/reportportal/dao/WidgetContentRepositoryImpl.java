@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -388,8 +388,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(STATISTICS_FIELD.NAME.eq(contentField))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.groupBy(groupingFields)
-				.orderBy(LAUNCH.START_TIME.asc())
+				.groupBy(groupingFields).orderBy(LAUNCH.START_TIME.asc())
 				.fetch(), contentField);
 	}
 
@@ -414,8 +413,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.in(contentFields))
 						.asTable(STATISTICS_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.orderBy(LAUNCH.START_TIME.asc())
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class))).orderBy(LAUNCH.START_TIME.asc())
 				.fetch());
 
 	}
@@ -537,8 +535,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL))
 						.asTable(STATISTICS_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.orderBy(LAUNCH.START_TIME.asc())
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class))).orderBy(LAUNCH.START_TIME.asc())
 				.fetch(NOT_PASSED_CASES_CONTENT_RECORD_MAPPER);
 	}
 
@@ -610,12 +607,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						TICKET.SUBMIT_DATE,
 						TICKET.URL,
 						TEST_ITEM.ITEM_ID,
-						TEST_ITEM.NAME,
-						TEST_ITEM.PATH,
-						TEST_ITEM.LAUNCH_ID,
-						USERS.LOGIN,
-						fieldName(ITEM_ATTRIBUTES, KEY),
-						fieldName(ITEM_ATTRIBUTES, VALUE)
+						TEST_ITEM.NAME, TEST_ITEM.PATH,
+						TEST_ITEM.LAUNCH_ID, USERS.LOGIN, fieldName(ITEM_ATTRIBUTES, KEY), fieldName(ITEM_ATTRIBUTES, VALUE)
 				)
 				.from(TEST_ITEM)
 				.join(LAUNCHES)
@@ -652,8 +645,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.build();
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(selectQuery)
-				.select(LAUNCH.ID,
+				.as(selectQuery).select(
+						LAUNCH.ID,
 						fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE),
 						STATISTICS_FIELD.NAME,
 						DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
@@ -672,8 +665,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.groupBy(ITEM_ATTRIBUTE.VALUE)
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
-								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
-								.limit(limit)))
+								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC)).limit(limit)))
 						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
 						.asTable(LAUNCHES_TABLE))
 				.join(LAUNCH)
@@ -759,13 +751,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit) {
-		return dsl.with(ITEMS)
-				.as(QueryBuilder.newBuilder(filter).with(limit).build())
+		return dsl.with(ITEMS).as(QueryBuilder.newBuilder(filter).with(limit).build())
 				.select(TEST_ITEM.ITEM_ID.as(ID),
 						TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
-						TEST_ITEM.TYPE,
-						TEST_ITEM.PATH,
+						TEST_ITEM.TYPE, TEST_ITEM.PATH,
 						TEST_ITEM.START_TIME,
 						TEST_ITEM_RESULTS.END_TIME,
 						TEST_ITEM_RESULTS.DURATION,
@@ -811,11 +801,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_PASSED),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-						).otherwise(0)).as(PASSED),
-						sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
-								fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-						).otherwise(0)).as(TOTAL)
-				)
+				).otherwise(0)).as(PASSED), sum(when(
+						fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
+						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
+				).otherwise(0)).as(TOTAL))
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))

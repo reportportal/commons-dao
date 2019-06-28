@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,10 +138,17 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findIdsByLaunchId(1L);
+	void findItemLogIdsByLaunchId() {
+		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchId(1L);
 		assertEquals(7, logIdsByLaunch.size());
 	}
+
+	@Test
+	void findItemLogIdsByLaunchIds() {
+		List<Long> logIds = logRepository.findItemLogIdsByLaunchIds(Arrays.asList(1L, 2L));
+		assertEquals(7, logIds.size());
+	}
+
 
 	@Test
 	void findIdsByItemIds() {

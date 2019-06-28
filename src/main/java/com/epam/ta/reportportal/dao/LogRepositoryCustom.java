@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,9 +66,9 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	List<Long> findIdsByTestItemIds(List<Long> itemIds);
 
-	List<Long> findIdsByLaunchId(Long launchId);
+	List<Long> findItemLogIdsByLaunchId(Long launchId);
 
-	List<Long> findIdsByLaunchIds(List<Long> launchIds);
+	List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds);
 
 	/**
 	 * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}

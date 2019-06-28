@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,16 +187,18 @@ public class RecordMappers {
 	}).orElse(null);
 
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
-		TestItem testItem = new TestItem();
-		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
-		return new Log(r.get(JLog.LOG.ID, Long.class),
-				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
-				r.get(JLog.LOG.LOG_MESSAGE, String.class),
-				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
-				r.get(JLog.LOG.LOG_LEVEL, Integer.class),
-				testItem,
-				ATTACHMENT_MAPPER.map(r)
-		);
+		Log log = new Log();
+		log.setId(r.get(LOG.ID, Long.class));
+		log.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
+		log.setLogMessage(r.get(LOG.LOG_MESSAGE, String.class));
+		log.setLastModified(r.get(LOG.LAST_MODIFIED, LocalDateTime.class));
+		log.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+
+		log.setAttachment(ATTACHMENT_MAPPER.map(r));
+
+		ofNullable(r.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
+		ofNullable(r.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+		return log;
 	};
 
 	/**
@@ -206,8 +208,8 @@ public class RecordMappers {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(TEST_ITEM.LAUNCH_ID)));
-		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
+		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
+		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);
 		return testItem;
 	};
 
