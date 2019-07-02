@@ -129,7 +129,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
-		Optional<Field<Long>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID));
+		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
