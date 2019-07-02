@@ -149,7 +149,6 @@ class LogRepositoryTest extends BaseTest {
 		assertEquals(7, logIds.size());
 	}
 
-
 	@Test
 	void findIdsByItemIds() {
 		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
@@ -165,6 +164,6 @@ class LogRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.IN, false, "FAILED, PASSED", CRITERIA_STATUS))
 				.build();
 
-		logRepository.findNestedItems(2L, filter, PageRequest.of(2, 1));
+		logRepository.findNestedItems(2L, true, false, filter, PageRequest.of(2, 1));
 	}
 }
