@@ -186,7 +186,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			@Param("status") StatusEnum status);
 
 	/**
-	 * Finds root(without any parent) {@link TestItem} with specified with specified {@code name} and {@code launchId}
+	 * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
 	 *
 	 * @param name     Name of {@link TestItem}
 	 * @param launchId ID of {@link Launch}
