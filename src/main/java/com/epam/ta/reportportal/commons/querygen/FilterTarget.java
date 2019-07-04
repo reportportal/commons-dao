@@ -473,6 +473,7 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LEVEL, LOG.LOG_LEVEL, LogLevel.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_MESSAGE, LOG.LOG_MESSAGE, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_BINARY_CONTENT, ATTACHMENT.FILE_ID, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH, TEST_ITEM.PATH, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
 					.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
 					.get(),

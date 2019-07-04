@@ -16,9 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.commons.querygen.Condition;
+import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -26,6 +25,7 @@ import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -46,8 +46,10 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.NESTED;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
@@ -216,7 +218,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public Page<NestedItem> findNestedItems(Long parentId, Queryable filter, Pageable pageable) {
+	public Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter,
+			Pageable pageable) {
 
 		SortField<Object> sorting = pageable.getSort()
 				.stream()
@@ -225,14 +228,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.map(order -> order.isAscending() ? DSL.field(TIME).sort(SortOrder.ASC) : DSL.field(TIME).sort(SortOrder.DESC))
 				.orElseGet(() -> DSL.field(TIME).sort(SortOrder.ASC));
 
-		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = dsl.with(LOGS)
-				.as(QueryBuilder.newBuilder(filter).build())
-				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
-				.from(LOG)
-				.join(LOGS)
-				.on(fieldName(LOGS, ID).cast(Long.class).eq(LOG.ID))
-				.where(LOG.ITEM_ID.eq(parentId))
-				.unionAll(buildNestedStepQuery(parentId, filter));
+		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
+
+		if (!excludeLogs) {
+			selectQuery = selectQuery.unionAll(buildNestedLogQuery(parentId, filter));
+		}
 
 		int total = dsl.fetchCount(selectQuery);
 
@@ -242,7 +242,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	}
 
-	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, Queryable filter) {
+	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
+			Queryable filter) {
 
 		SelectConditionStep<Record3<Long, Timestamp, String>> nestedStepSelect = dsl.select(TEST_ITEM.ITEM_ID.as(ID),
 				TEST_ITEM.START_TIME.as(TIME),
@@ -252,16 +253,6 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.PARENT_ID.eq(parentId))
-				.and(TEST_ITEM.PATH.in(DSL.with(LOGS)
-						.as(QueryBuilder.newBuilder(filter).build())
-						.select(TEST_ITEM.PATH)
-						.from(TEST_ITEM)
-						.join(LOG)
-						.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
-						.join(LOGS)
-						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
-						.where(TEST_ITEM.PATH + "<@" + TEST_ITEM.PATH))
-						.or(dsl.selectOne().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)).limit(1).asField().isNull()))
 				.and(TEST_ITEM.HAS_STATS.isFalse());
 
 		filter.getFilterConditions()
@@ -272,6 +263,29 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 						.map(s -> JStatusEnum.valueOf(s.name()))
 						.ifPresent(s -> nestedStepSelect.and(TEST_ITEM_RESULTS.STATUS.eq(s))));
 
+		if (excludeEmptySteps) {
+			JTestItem nested = TEST_ITEM.as(NESTED);
+			nestedStepSelect.and(DSL.field(DSL.exists(dsl.select().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID)))));
+		}
+
 		return nestedStepSelect.groupBy(TEST_ITEM.ITEM_ID);
+	}
+
+	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
+
+		filter.getFilterConditions()
+				.add(FilterCondition.builder()
+						.withSearchCriteria(CRITERIA_TEST_ITEM_ID)
+						.withValue(String.valueOf(parentId))
+						.withCondition(Condition.EQUALS)
+						.build());
+
+		return dsl.with(LOGS)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
+				.from(LOG)
+				.join(LOGS)
+				.on(fieldName(LOGS, ID).cast(Long.class).eq(LOG.ID));
 	}
 }
