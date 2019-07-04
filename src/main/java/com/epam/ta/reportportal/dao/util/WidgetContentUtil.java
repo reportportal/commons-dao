@@ -129,7 +129,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
-		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID.getQualifiedName().toString()));
+		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ATTR_ID));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -249,8 +249,7 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(
-				LinkedHashMap::new,
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
 				LinkedHashMap::putAll
 		);
@@ -364,7 +363,8 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
