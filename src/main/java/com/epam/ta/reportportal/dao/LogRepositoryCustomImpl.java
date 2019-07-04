@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
@@ -259,9 +260,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.stream()
 				.filter(c -> CRITERIA_STATUS.equals(c.getSearchCriteria()))
 				.findFirst()
-				.ifPresent(c -> StatusEnum.fromValue(c.getValue())
-						.map(s -> JStatusEnum.valueOf(s.name()))
-						.ifPresent(s -> nestedStepSelect.and(TEST_ITEM_RESULTS.STATUS.eq(s))));
+				.map(c -> Stream.of(c.getValue().split(",")).filter(StatusEnum::isPresent).map(JStatusEnum::valueOf).collect(toList()))
+				.ifPresent(statuses -> nestedStepSelect.and(TEST_ITEM_RESULTS.STATUS.in(statuses)));
 
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
