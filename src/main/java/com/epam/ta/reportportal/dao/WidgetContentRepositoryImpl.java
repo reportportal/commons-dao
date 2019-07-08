@@ -388,7 +388,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(STATISTICS_FIELD.NAME.eq(contentField))
 						.asTable(STATISTICS_TABLE))
 				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
-				.groupBy(groupingFields).orderBy(LAUNCH.START_TIME.asc())
+				.groupBy(groupingFields)
+				.orderBy(LAUNCH.START_TIME.asc())
 				.fetch(), contentField);
 	}
 
@@ -413,7 +414,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.in(contentFields))
 						.asTable(STATISTICS_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class))).orderBy(LAUNCH.START_TIME.asc())
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.orderBy(LAUNCH.START_TIME.asc())
 				.fetch());
 
 	}
@@ -535,7 +537,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL))
 						.asTable(STATISTICS_TABLE))
-				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class))).orderBy(LAUNCH.START_TIME.asc())
+				.on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
+				.orderBy(LAUNCH.START_TIME.asc())
 				.fetch(NOT_PASSED_CASES_CONTENT_RECORD_MAPPER);
 	}
 
@@ -607,8 +610,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						TICKET.SUBMIT_DATE,
 						TICKET.URL,
 						TEST_ITEM.ITEM_ID,
-						TEST_ITEM.NAME, TEST_ITEM.PATH,
-						TEST_ITEM.LAUNCH_ID, USERS.LOGIN, fieldName(ITEM_ATTRIBUTES, KEY), fieldName(ITEM_ATTRIBUTES, VALUE)
+						TEST_ITEM.NAME,
+						TEST_ITEM.PATH,
+						TEST_ITEM.LAUNCH_ID,
+						USERS.LOGIN,
+						fieldName(ITEM_ATTRIBUTES, KEY),
+						fieldName(ITEM_ATTRIBUTES, VALUE)
 				)
 				.from(TEST_ITEM)
 				.join(LAUNCHES)
@@ -645,8 +652,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.build();
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(selectQuery).select(
-						LAUNCH.ID,
+				.as(selectQuery)
+				.select(LAUNCH.ID,
 						fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE),
 						STATISTICS_FIELD.NAME,
 						DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
@@ -665,7 +672,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.groupBy(ITEM_ATTRIBUTE.VALUE)
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(versionPattern),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, versionDelimiter).cast(Integer[].class)
-								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC)).limit(limit)))
+								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
+								.limit(limit)))
 						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
 						.asTable(LAUNCHES_TABLE))
 				.join(LAUNCH)
@@ -738,8 +746,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit) {
 
+		List<Field<?>> selectFields = getCommonProductStatusFields(filter, contentFields);
+
 		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
-				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, customColumns).fetch(),
+				buildProductStatusQuery(filter,
+						isLatest,
+						sort,
+						limit,
+						selectFields,
+						contentFields,
+						customColumns
+				).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch(),
 				customColumns
 		);
 
@@ -751,11 +768,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit) {
-		return dsl.with(ITEMS).as(QueryBuilder.newBuilder(filter).with(limit).build())
+		return dsl.with(ITEMS)
+				.as(QueryBuilder.newBuilder(filter).with(limit).build())
 				.select(TEST_ITEM.ITEM_ID.as(ID),
 						TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
-						TEST_ITEM.TYPE, TEST_ITEM.PATH,
+						TEST_ITEM.TYPE,
+						TEST_ITEM.PATH,
 						TEST_ITEM.START_TIME,
 						TEST_ITEM_RESULTS.END_TIME,
 						TEST_ITEM_RESULTS.DURATION,
@@ -801,10 +820,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_PASSED),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(PASSED), sum(when(
-						fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(TOTAL))
+						).otherwise(0)).as(PASSED),
+						sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
+								fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
+						).otherwise(0)).as(TOTAL)
+				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
@@ -821,45 +841,38 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private SelectSeekStepN<? extends Record> buildFilterGroupedQuery(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<String> contentFields, Map<String, String> customColumns) {
 
-		List<Field<?>> fields = Lists.newArrayList(LAUNCH.ID,
-				LAUNCH.NAME,
-				LAUNCH.NUMBER,
-				LAUNCH.START_TIME,
-				LAUNCH.STATUS,
-				fieldName(STATISTICS_TABLE, SF_NAME),
-				fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-				round(val(PERCENTAGE_MULTIPLIER).mul(dsl.select(sum(STATISTICS.S_COUNTER))
-						.from(STATISTICS)
-						.join(STATISTICS_FIELD)
-						.onKey()
-						.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
-						.asField()
-						.cast(Double.class))
-						.div(nullif(dsl.select(sum(STATISTICS.S_COUNTER))
-								.from(STATISTICS)
-								.join(STATISTICS_FIELD)
-								.onKey()
-								.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
-								.asField(), 0)), 2).as(PASSING_RATE),
-				timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION),
-				DSL.selectDistinct(FILTER.NAME).from(FILTER).where(FILTER.ID.eq(filter.getId())).asField(FILTER_NAME)
-		);
+		List<Field<?>> fields = getCommonProductStatusFields(filter, contentFields);
+		fields.add(DSL.selectDistinct(FILTER.NAME).from(FILTER).where(FILTER.ID.eq(filter.getId())).asField(FILTER_NAME));
 
-		fields.addAll(WidgetSortUtils.fieldTransformer(filter.getTarget()).apply(sort, LAUNCHES));
-
-		return buildProductStatusQuery(filter, isLatest, sort, limit, fields, contentFields, customColumns).groupBy(fields)
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES));
+		return buildProductStatusQuery(filter,
+				isLatest,
+				sort,
+				limit,
+				fields,
+				contentFields,
+				customColumns
+		).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES));
 
 	}
 
-	private SelectSeekStepN<? extends Record> buildLaunchGroupedQuery(Filter filter, boolean isLatest, Sort sort, int limit,
-			Collection<String> contentFields, Map<String, String> customColumns) {
+	private List<Field<?>> getCommonProductStatusFields(Filter filter, Collection<String> contentFields) {
 
-		List<Field<?>> fields = Lists.newArrayList(LAUNCH.ID,
+		Map<String, String> criteria = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
+
+		List<Field<?>> selectFields = contentFields.stream()
+				.filter(cf -> !cf.startsWith(STATISTICS_KEY))
+				.map(criteria::get)
+				.filter(Objects::nonNull)
+				.map(DSL::field)
+				.collect(Collectors.toList());
+
+		Collections.addAll(selectFields,
+				LAUNCH.ID,
 				LAUNCH.NAME,
 				LAUNCH.NUMBER,
-				LAUNCH.START_TIME,
-				LAUNCH.STATUS,
 				fieldName(STATISTICS_TABLE, SF_NAME),
 				fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 				round(val(PERCENTAGE_MULTIPLIER).mul(dsl.select(sum(STATISTICS.S_COUNTER))
@@ -878,29 +891,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
 		);
 
-		return buildProductStatusQuery(filter,
-				isLatest,
-				sort,
-				limit,
-				fields,
-				contentFields,
-				customColumns
-		).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES));
+		return selectFields;
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields, Map<String, String> customColumns) {
 
-		List<Condition> conditions = customColumns.values()
+		List<Condition> attributesKeyConditions = customColumns.values()
 				.stream()
 				.map(customColumn -> ofNullable(customColumn).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
 				.collect(Collectors.toList());
 
-		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
+		Optional<Condition> combinedAttributeKeyCondition = attributesKeyConditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
-		if (combinedTagCondition.isPresent()) {
+		return combinedAttributeKeyCondition.map(c -> {
 			Collections.addAll(fields,
 					fieldName(ATTR_TABLE, ATTR_ID),
 					fieldName(ATTR_TABLE, ATTRIBUTE_VALUE),
@@ -911,14 +917,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 					ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE),
 					ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
 					ITEM_ATTRIBUTE.LAUNCH_ID.as(LAUNCH_ID)
-			).from(ITEM_ATTRIBUTE).where(combinedTagCondition.get()).asTable(ATTR_TABLE))
-					.on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)));
-		} else {
-			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields);
-		}
+			).from(ITEM_ATTRIBUTE).where(c).asTable(ATTR_TABLE)).on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)));
+		}).orElseGet(() -> getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields));
 	}
 
-	private SelectOnConditionStep<? extends Record> getProductStatusSelect(Filter filter, boolean isLatest, Sort sort, int limit,
+	private SelectOnConditionStep<Record> getProductStatusSelect(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields) {
 		return dsl.with(LAUNCHES)
 				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sort, isLatest).with(sort).with(limit).build())
