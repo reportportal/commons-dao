@@ -273,10 +273,12 @@ public class WidgetContentUtil {
 			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
+				attributes.entrySet()
 						.stream()
-						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
-						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+						.filter(attributeName -> attributeKey == null || (StringUtils.isNotBlank(attributeKey) && attributeKey.startsWith(
+								attributeName.getValue())))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content));
 
 			}
 		});
