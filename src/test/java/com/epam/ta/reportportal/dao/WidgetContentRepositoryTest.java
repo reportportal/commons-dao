@@ -66,9 +66,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
 
-	@Autowired
-	private LaunchRepository launchRepository;
-
 	@Test
 	void overallStatisticsContent() {
 		String sortingColumn = "statistics$defects$no_defect$nd001";
@@ -1047,6 +1044,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
 				"statistics$executions$total",
+				"startTime",
+				"status",
 				"statistics$defects$no_defect$total",
 				"statistics$defects$product_bug$total",
 				"statistics$defects$automation_bug$total",
