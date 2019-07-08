@@ -560,7 +560,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Collections.addAll(selectFields, LAUNCH.ID, fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), fieldName(STATISTICS_TABLE, SF_NAME));
 
 		if (isAttributePresent) {
-			Collections.addAll(selectFields, ITEM_ATTRIBUTE.ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
+			Collections.addAll(selectFields, ITEM_ATTRIBUTE.ID.as(ATTR_ID), ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
 		}
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
