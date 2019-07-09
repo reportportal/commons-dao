@@ -69,12 +69,12 @@ dependencies {
 
     if (releaseMode) {
         compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
-        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-3'
-        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-3'
+        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-4'
+        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-4'
     } else {
-        compile('com.github.reportportal:commons:71d4aca')
-        compile 'com.github.reportportal:commons-rules:5f57515'
-        compile 'com.github.reportportal:commons-model:a8a0026'
+        compile('com.github.reportportal:commons:5.0.0-BETA-2')
+        compile 'com.github.reportportal:commons-rules:5.0.0-BETA-4'
+        compile 'com.github.reportportal:commons-model:5.0.0-BETA-4'
     }
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.3'
