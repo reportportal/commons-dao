@@ -1,31 +1,31 @@
 /*
- * Copyright 2016 EPAM Systems
- * 
- * 
- * This file is part of EPAM Report Portal.
- * https://github.com/reportportal/commons-dao
- * 
- * Report Portal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * Report Portal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2018 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.epam.ta.reportportal.commons;
 
 import com.google.common.base.Preconditions;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
+import static java.util.Optional.ofNullable;
 
 /**
  * Some useful utils for working with entities<br>
@@ -35,9 +35,31 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class EntityUtils {
 
-	private EntityUtils() {
+	private static final String OLD_SEPARATOR = ",";
+	private static final String NEW_SEPARATOR = "_";
 
+	private EntityUtils() {
+		//static only
 	}
+
+	public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> ofNullable(date).map(d -> LocalDateTime.ofInstant(d.toInstant(),
+			ZoneOffset.UTC
+	)).orElse(null);
+
+	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(localDateTime).map(l -> Date.from(l.atZone(
+			ZoneOffset.UTC).toInstant())).orElse(null);
+
+	/**
+	 * Remove leading and trailing spaces from list of string
+	 */
+	public static final Function<String, String> TRIM_FUNCTION = it -> ofNullable(it).map(String::trim).orElse(null);
+	public static final Predicate<String> NOT_EMPTY = s -> !isNullOrEmpty(s);
+
+	/**
+	 * Convert declined symbols on allowed for WS and UI
+	 */
+	public static final Function<String, String> REPLACE_SEPARATOR = s -> ofNullable(s).map(it -> it.replace(OLD_SEPARATOR, NEW_SEPARATOR))
+			.orElse(null);
 
 	/**
 	 * Normalize any ID for database ID fields, for example
@@ -45,67 +67,9 @@ public class EntityUtils {
 	 * @param id ID to normalize
 	 * @return String
 	 */
+
 	public static String normalizeId(String id) {
 		return Preconditions.checkNotNull(id, "Provided value shouldn't be null").toLowerCase();
 	}
 
-	/**
-	 * Normalized provided user name
-	 *
-	 * @param username Username to normalize
-	 * @return String
-	 * @deprecated in favor of {@link #normalizeId(String)}
-	 */
-	@Deprecated
-	public static String normalizeUsername(String username) {
-		return Preconditions.checkNotNull(username, "Username shouldn't be null").toLowerCase();
-	}
-
-	/**
-	 * Normalized provided project name
-	 *
-	 * @param projectName Project to normalize
-	 * @return String
-	 * @deprecated in favor of {@link #normalizeId(String)}
-	 */
-	@Deprecated
-	public static String normalizeProjectName(String projectName) {
-		return Preconditions.checkNotNull(projectName, "Project name shouldn't be null").toLowerCase();
-	}
-
-	/**
-	 * Normalized provided email address
-	 *
-	 * @param email email to normalize
-	 * @return String
-	 * @deprecated in favor of {@link #normalizeId(String)}
-	 */
-	@Deprecated
-	public static String normalizeEmail(String email) {
-		return Preconditions.checkNotNull(email, "Email shouldn't be null").toLowerCase();
-	}
-
-	/**
-	 * Remove leading and trailing spaces from list of string
-	 *
-	 * @param strings Strings to trim
-	 * @return String
-	 */
-	public static Iterable<String> trimStrings(Iterable<String> strings) {
-		Preconditions.checkNotNull(strings, "List of strings shouldn't be null");
-		return stream(strings.spliterator(), false).filter(string -> !isNullOrEmpty(string)).map(String::trim).collect(toList());
-	}
-
-	/**
-	 * Convert declined symbols on allowed for WS and UI
-	 *
-	 * @param input Input to be escaped
-	 * @return Updated input
-	 */
-	public static Iterable<String> update(Iterable<String> input) {
-		final String oldSeparator = ",";
-		final String newSeparator = "_";
-		return stream(input.spliterator(), false).map(
-				string -> string.replace(oldSeparator, newSeparator)).collect(toList());
-	}
 }
