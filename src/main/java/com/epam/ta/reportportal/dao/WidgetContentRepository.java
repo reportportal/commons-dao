@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -253,4 +254,19 @@ public interface WidgetContentRepository {
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
 	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
+
+	/**
+	 * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate} entities with matched items count,
+	 * grouped by {@link ItemAttribute#value} and {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 *
+	 * @param filter       {@link Filter}
+	 * @param sort         {@link Sort}
+	 * @param attributeKey {@link ItemAttribute#key}
+	 * @param patternName  {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 * @param isLatest     Flag for retrieving only latest launches
+	 * @param limit        Attributes count limit
+	 * @return The {@link List} of the {@link TopPatternTemplatesContent}
+	 */
+	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
+			boolean isLatest, int limit);
 }
