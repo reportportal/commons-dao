@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,11 +40,18 @@ class IntegrationTypeRepositoryTest extends BaseTest {
 	private IntegrationTypeRepository integrationTypeRepository;
 
 	@Test
-	@Ignore
+//	@Ignore
 		// add integration types filling
 	void shouldFindWhenNameExists() {
 		Optional<IntegrationType> byName = integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME);
 		assertTrue(byName.isPresent());
+	}
+
+	@Test
+	void shouldFindAllOrderedByCreationDate() {
+		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByOrderByCreationDate();
+		assertNotNull(integrationTypes);
+		assertFalse(integrationTypes.isEmpty());
 	}
 
 	@Test
