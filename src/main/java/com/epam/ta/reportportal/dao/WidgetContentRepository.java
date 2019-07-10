@@ -255,5 +255,18 @@ public interface WidgetContentRepository {
 	 */
 	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
 
-	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName, boolean isLatest, int limit);
+	/**
+	 * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate} entities with matched items count,
+	 * grouped by {@link ItemAttribute#value} and {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 *
+	 * @param filter       {@link Filter}
+	 * @param sort         {@link Sort}
+	 * @param attributeKey {@link ItemAttribute#key}
+	 * @param patternName  {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 * @param isLatest     Flag for retrieving only latest launches
+	 * @param limit        Attributes count limit
+	 * @return The {@link List} of the {@link TopPatternTemplatesContent}
+	 */
+	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
+			boolean isLatest, int limit);
 }
