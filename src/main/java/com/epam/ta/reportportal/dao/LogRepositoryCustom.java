@@ -66,9 +66,9 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	List<Long> findIdsByTestItemIds(List<Long> itemIds);
 
-	List<Long> findIdsByLaunchId(Long launchId);
+	List<Long> findItemLogIdsByLaunchId(Long launchId);
 
-	List<Long> findIdsByLaunchIds(List<Long> launchIds);
+	List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds);
 
 	/**
 	 * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
@@ -113,10 +113,12 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities filtered and sorted on the DB level
 	 * and returned as UNION parsed into the {@link NestedItem} entity
 	 *
-	 * @param parentId {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} of the parent item
-	 * @param filter   {@link Queryable}
-	 * @param pageable {@link Pageable}
+	 * @param parentId          {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} of the parent item
+	 * @param filter            {@link Queryable}
+	 * @param excludeEmptySteps Exclude steps without content (logs and child items)
+	 * @param excludeLogs       Exclude logs selection
+	 * @param pageable          {@link Pageable}
 	 * @return {@link Page} with {@link NestedItem} as content
 	 */
-	Page<NestedItem> findNestedItems(Long parentId, Queryable filter, Pageable pageable);
+	Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter, Pageable pageable);
 }

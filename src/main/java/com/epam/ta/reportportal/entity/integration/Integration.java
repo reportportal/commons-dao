@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,9 @@ public class Integration implements Serializable {
 	@Column(name = "enabled")
 	private boolean enabled;
 
+	@Column(name = "creator")
+	private String creator;
+
 	@CreatedDate
 	@Column(name = "creation_date")
 	private LocalDateTime creationDate;
@@ -112,6 +115,14 @@ public class Integration implements Serializable {
 
 	public void setParams(IntegrationParams params) {
 		this.params = params;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 
 	public LocalDateTime getCreationDate() {

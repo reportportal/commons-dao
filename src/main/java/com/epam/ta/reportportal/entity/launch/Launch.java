@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
@@ -107,6 +108,9 @@ public class Launch implements Serializable {
 	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
+
+	@OneToMany(mappedBy = "launch", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Log> logs = Sets.newHashSet();
 
 	@Column(name = "approximate_duration")
 	private double approximateDuration;
@@ -241,6 +245,14 @@ public class Launch implements Serializable {
 
 	public StatusEnum getStatus() {
 		return status;
+	}
+
+	public Set<Log> getLogs() {
+		return logs;
+	}
+
+	public void setLogs(Set<Log> logs) {
+		this.logs = logs;
 	}
 
 	public void setStatus(StatusEnum status) {

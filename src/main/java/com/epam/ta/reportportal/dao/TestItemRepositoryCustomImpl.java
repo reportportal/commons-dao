@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
@@ -44,14 +45,12 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -391,6 +390,36 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		fetchRetries(items);
 
 		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids) {
+		JTestItem nested = TEST_ITEM.as(NESTED);
+		return dsl.select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.NAME,
+				TEST_ITEM.START_TIME,
+				TEST_ITEM.TYPE,
+				TEST_ITEM_RESULTS.STATUS,
+				TEST_ITEM_RESULTS.END_TIME,
+				TEST_ITEM_RESULTS.DURATION,
+				DSL.field(DSL.exists(dsl.select().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID))))
+						.as(HAS_CONTENT),
+				DSL.field(dsl.selectCount()
+						.from(LOG)
+						.join(ATTACHMENT)
+						.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+						.join(nested)
+						.on(LOG.ITEM_ID.eq(nested.ITEM_ID))
+						.where(nested.HAS_STATS.isFalse()
+								.and(DSL.sql(fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)", TEST_ITEM.PATH))))
+						.as(ATTACHMENTS_COUNT)
+		)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.ITEM_ID.in(ids))
+				.fetch(NESTED_STEP_RECORD_MAPPER);
 	}
 
 	private void fetchRetries(List<TestItem> items) {

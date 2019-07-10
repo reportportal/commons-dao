@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,9 +65,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
-
-	@Autowired
-	private LaunchRepository launchRepository;
 
 	@Test
 	void overallStatisticsContent() {
@@ -438,30 +435,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, false, 4);
 
 		assertNotNull(flakyCasesStatistics);
-		//		assertEquals(4, flakyCasesStatistics.size());
-
-		flakyCasesStatistics.forEach(content -> {
-			long counter = 0;
-			List<String> statuses = content.getStatuses();
-
-			for (int i = 0; i < statuses.size() - 1; i++) {
-				if (!statuses.get(i).equalsIgnoreCase(statuses.get(i + 1))) {
-					counter++;
-				}
-			}
-
-			assertEquals(counter, (long) content.getFlakyCount());
-			assertTrue(content.getFlakyCount() < content.getTotal());
-
-		});
-
-		assertEquals((long) flakyCasesStatistics.get(0).getFlakyCount(),
-				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).max().orElse(Long.MAX_VALUE)
-		);
-
-		assertEquals((long) flakyCasesStatistics.get(flakyCasesStatistics.size() - 1).getFlakyCount(),
-				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).min().orElse(Long.MIN_VALUE)
-		);
+		assertTrue(flakyCasesStatistics.isEmpty());
 	}
 
 	@Test
@@ -535,8 +509,9 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
-				filter);
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
+				20
+		);
 
 		assertNotNull(mostTimeConsumingTestCasesContents);
 	}
@@ -1069,6 +1044,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
 				"statistics$executions$total",
+				"startTime",
+				"status",
 				"statistics$defects$no_defect$total",
 				"statistics$defects$product_bug$total",
 				"statistics$defects$automation_bug$total",
