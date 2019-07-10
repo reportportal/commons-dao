@@ -40,8 +40,6 @@ class IntegrationTypeRepositoryTest extends BaseTest {
 	private IntegrationTypeRepository integrationTypeRepository;
 
 	@Test
-//	@Ignore
-		// add integration types filling
 	void shouldFindWhenNameExists() {
 		Optional<IntegrationType> byName = integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME);
 		assertTrue(byName.isPresent());
