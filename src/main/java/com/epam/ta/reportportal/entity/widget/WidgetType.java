@@ -45,7 +45,8 @@ public enum WidgetType {
 	PRODUCT_STATUS("productStatus", false),
 	MOST_TIME_CONSUMING("mostTimeConsuming", false),
 
-	CUMULATIVE("cumulative", true);
+	CUMULATIVE("cumulative", true),
+	TOP_PATTERN_TEMPLATES("topPatternTemplates", true);
 
 	private final String type;
 
