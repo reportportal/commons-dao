@@ -51,8 +51,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return the {@link List} of the {@link TestItem#itemId}
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)", nativeQuery = true)
 	Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 	/**
@@ -65,8 +65,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
-			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
 	Stream<BigInteger> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
 			@Param("status") StatusEnum status);
@@ -80,9 +80,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return the {@link List} of the {@link TestItem#itemId}
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)", nativeQuery = true)
+			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)", nativeQuery = true)
 	Stream<BigInteger> streamIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath,
 			@Param("status") StatusEnum status);
 
@@ -96,9 +96,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
 	 */
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result on test_item.item_id = result.result_id "
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-			+ " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS status_enum)"
+			+ " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
 			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
 	Stream<BigInteger> streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
 			@Param("status") StatusEnum status);
@@ -151,8 +151,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   {@link StatusEnum}
 	 * @return 'True' if has, otherwise 'false'
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
-			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS status_enum) LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
@@ -180,8 +180,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   status {@link com.epam.ta.reportportal.entity.enums.StatusEnum}
 	 * @return True if has
 	 */
-	@Query(value = "select exists(select 1 from test_item " + "join test_item_results result on test_item.item_id = result.result_id "
-			+ "where test_item.parent_id=:parentId and test_item.item_id!=:stepId and result.status!=cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item " + "JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ "WHERE test_item.parent_id=:parentId AND test_item.item_id!=:stepId AND result.status!=cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") StatusEnum status);
 
@@ -192,7 +192,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param launchId ID of {@link Launch}
 	 * @return {@link Optional<TestItem>} if it exists, {@link Optional#empty()} if not
 	 */
-	@Query("select t from TestItem t where t.name=:name and t.parent is null and t.launch.id=:launchId")
+	@Query("SELECT t FROM TestItem t WHERE t.name=:name AND t.parent IS NULL AND t.launch.id=:launchId")
 	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
 
 	/**
@@ -203,7 +203,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param path     Path of {@link TestItem}
 	 * @return {@link Optional<TestItem>} if it exists, {@link Optional#empty()} if not
 	 */
-	@Query(value = "select * from test_item t where t.name=:name and t.launch_id=:launchId and t.path <@ cast(:path as ltree)", nativeQuery = true)
+	@Query(value = "SELECT * FROM test_item t WHERE t.name=:name AND t.launch_id=:launchId AND t.path <@ cast(:path AS LTREE)", nativeQuery = true)
 	Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
 			@Param("path") String path);
 }

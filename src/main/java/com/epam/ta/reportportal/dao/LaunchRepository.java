@@ -82,7 +82,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	 * @param projectId Id of {@link Project}
 	 * @return {@link Optional<Launch>} if exists, {@link Optional#empty()} if not
 	 */
-	@Query(value = "select * from launch l where l.name =:name and l.project_id=:projectId order by l.number desc limit 1", nativeQuery = true)
+	@Query(value = "SELECT * FROM launch l WHERE l.name =:name AND l.project_id=:projectId ORDER BY l.number DESC LIMIT 1", nativeQuery = true)
 	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
 
 }
