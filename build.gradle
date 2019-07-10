@@ -21,7 +21,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
     id 'jacoco'
     id 'java'
-    id "org.owasp.dependencycheck" version "5.0.0-M3.1"
+    id "org.owasp.dependencycheck" version "5.1.0"
 }
 
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
@@ -69,12 +69,12 @@ dependencies {
 
     if (releaseMode) {
         compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
-        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-3'
-        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-3'
+        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-4'
+        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-4'
     } else {
-        compile('com.github.reportportal:commons:71d4aca')
-        compile 'com.github.reportportal:commons-rules:5f57515'
-        compile 'com.github.reportportal:commons-model:a8a0026'
+        compile('com.github.reportportal:commons:5.0.0-BETA-2')
+        compile 'com.github.reportportal:commons-rules:5.0.0-BETA-4'
+        compile 'com.github.reportportal:commons-model:5.0.0-BETA-4'
     }
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.3'
@@ -105,8 +105,8 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.6'
     compile 'org.reflections:reflections:0.9.11'
 
-    compile 'org.apache.tika:tika-core:1.17'
-    compile 'org.apache.tika:tika-parsers:1.17'
+    compile 'org.apache.tika:tika-core'
+    compile 'org.apache.tika:tika-parsers'
 
     compile group: 'io.zonky.test', name: 'embedded-postgres', version: '1.2.1'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'

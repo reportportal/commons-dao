@@ -476,7 +476,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -514,6 +515,15 @@ class WidgetContentRepositoryTest extends BaseTest {
 		);
 
 		assertNotNull(mostTimeConsumingTestCasesContents);
+	}
+
+	@Test
+	void patternTemplate() {
+		Filter filter = buildDefaultFilter(1L);
+		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", "FIRST PATTERN", false, 600);
+
+		assertNotNull(topPatternTemplatesContents);
+		assertFalse(topPatternTemplatesContents.isEmpty());
 	}
 
 	@Test
@@ -853,7 +863,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -926,14 +937,16 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				CRITERIA_PROJECT_ID
-		), new FilterCondition(Condition.EQUALS_ANY,
-				false,
-				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-				CRITERIA_STATUS
-		));
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
+				new FilterCondition(Condition.EQUALS_ANY,
+						false,
+						String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+						CRITERIA_STATUS
+				)
+		);
 
 		return new Filter(1L, TestItem.class, conditionSet);
 	}
