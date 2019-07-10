@@ -5,8 +5,32 @@ VALUES (7, 1, 3, FALSE, 'superadmin', now()),
        (10, 2, 4, FALSE, 'superadmin', now());
 
 INSERT INTO integration (id, project_id, type, enabled, creator, params)
-VALUES (11, 1, 2, false, 'superadmin', '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "test@epam.com", "launchStatsRule": "always"}]}}'),
-       (12, 2, 2, false, 'superadmin', '{"params": {"rules": [{"recipients": ["OWNER"], "fromAddress": "test@epam.com", "launchStatsRule": "always"}]}}');
+VALUES (11, 1, 2, false, 'superadmin', '{
+  "params": {
+    "rules": [
+      {
+        "recipients": [
+          "OWNER"
+        ],
+        "fromAddress": "test@epam.com",
+        "launchStatsRule": "always"
+      }
+    ]
+  }
+}'),
+       (12, 2, 2, false, 'superadmin', '{
+         "params": {
+           "rules": [
+             {
+               "recipients": [
+                 "OWNER"
+               ],
+               "fromAddress": "test@epam.com",
+               "launchStatsRule": "always"
+             }
+           ]
+         }
+       }');
 
 INSERT INTO integration (id, type, enabled, creator, creation_date, params) --integration id = 8 (global JIRA)
 VALUES (13, 4, false, 'superadmin', now(), '{
@@ -40,6 +64,7 @@ VALUES (16, 3, false, 'superadmin', now(), '{
   }
 }');
 
-insert into integration(id, type, enabled, creator, creation_date) values (17, 2, true, 'superadmin', now());
+insert into integration(id, type, enabled, creator, creation_date)
+values (17, 2, true, 'superadmin', now());
 
 alter sequence integration_id_seq restart with 18;

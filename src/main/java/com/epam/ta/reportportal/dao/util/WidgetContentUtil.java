@@ -1,6 +1,6 @@
 
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
-		Optional<Field<Long>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID));
+		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ATTR_ID));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -229,6 +229,8 @@ public class WidgetContentUtil {
 		Map<String, Map<Long, ProductStatusStatisticsContent>> filterMapping = new LinkedHashMap<>();
 
 		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTRIBUTE_VALUE)));
+		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
+		Optional<Field<?>> statusField = ofNullable(result.field(LAUNCH.STATUS.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			String filterName = record.get(fieldName(FILTER_NAME), String.class);
@@ -241,11 +243,15 @@ public class WidgetContentUtil {
 			}
 
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
+				attributes.entrySet()
 						.stream()
-						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
-						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+						.filter(attributeName -> attributeKey == null || (StringUtils.isNotBlank(attributeKey) && attributeKey.startsWith(
+								attributeName.getValue())))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content));
 
 			}
 		});
@@ -262,14 +268,20 @@ public class WidgetContentUtil {
 		Map<Long, ProductStatusStatisticsContent> productStatusMapping = new LinkedHashMap<>();
 
 		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTRIBUTE_VALUE)));
+		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
+		Optional<Field<?>> statusField = ofNullable(result.field(LAUNCH.STATUS.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
+				attributes.entrySet()
 						.stream()
-						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
-						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+						.filter(attributeName -> attributeKey == null || (StringUtils.isNotBlank(attributeKey) && attributeKey.startsWith(
+								attributeName.getValue())))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content));
 
 			}
 		});

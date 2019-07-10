@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -564,7 +564,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		Collections.addAll(selectFields, LAUNCH.ID, fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), fieldName(STATISTICS_TABLE, SF_NAME));
 
 		if (isAttributePresent) {
-			Collections.addAll(selectFields, ITEM_ATTRIBUTE.ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
+			Collections.addAll(selectFields, ITEM_ATTRIBUTE.ID.as(ATTR_ID), ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
 		}
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
@@ -746,8 +746,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<ProductStatusStatisticsContent> productStatusGroupedByLaunchesStatistics(Filter filter, List<String> contentFields,
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit) {
 
+		List<Field<?>> selectFields = getCommonProductStatusFields(filter, contentFields);
+
 		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
-				buildLaunchGroupedQuery(filter, isLatest, sort, limit, contentFields, customColumns).fetch(),
+				buildProductStatusQuery(filter,
+						isLatest,
+						sort,
+						limit,
+						selectFields,
+						contentFields,
+						customColumns
+				).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch(),
 				customColumns
 		);
 
@@ -867,45 +876,38 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	private SelectSeekStepN<? extends Record> buildFilterGroupedQuery(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<String> contentFields, Map<String, String> customColumns) {
 
-		List<Field<?>> fields = Lists.newArrayList(LAUNCH.ID,
-				LAUNCH.NAME,
-				LAUNCH.NUMBER,
-				LAUNCH.START_TIME,
-				LAUNCH.STATUS,
-				fieldName(STATISTICS_TABLE, SF_NAME),
-				fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-				round(val(PERCENTAGE_MULTIPLIER).mul(dsl.select(sum(STATISTICS.S_COUNTER))
-						.from(STATISTICS)
-						.join(STATISTICS_FIELD)
-						.onKey()
-						.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
-						.asField()
-						.cast(Double.class))
-						.div(nullif(dsl.select(sum(STATISTICS.S_COUNTER))
-								.from(STATISTICS)
-								.join(STATISTICS_FIELD)
-								.onKey()
-								.where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL).and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
-								.asField(), 0)), 2).as(PASSING_RATE),
-				timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION),
-				DSL.selectDistinct(FILTER.NAME).from(FILTER).where(FILTER.ID.eq(filter.getId())).asField(FILTER_NAME)
-		);
+		List<Field<?>> fields = getCommonProductStatusFields(filter, contentFields);
+		fields.add(DSL.selectDistinct(FILTER.NAME).from(FILTER).where(FILTER.ID.eq(filter.getId())).asField(FILTER_NAME));
 
-		fields.addAll(WidgetSortUtils.fieldTransformer(filter.getTarget()).apply(sort, LAUNCHES));
-
-		return buildProductStatusQuery(filter, isLatest, sort, limit, fields, contentFields, customColumns).groupBy(fields)
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES));
+		return buildProductStatusQuery(filter,
+				isLatest,
+				sort,
+				limit,
+				fields,
+				contentFields,
+				customColumns
+		).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES));
 
 	}
 
-	private SelectSeekStepN<? extends Record> buildLaunchGroupedQuery(Filter filter, boolean isLatest, Sort sort, int limit,
-			Collection<String> contentFields, Map<String, String> customColumns) {
+	private List<Field<?>> getCommonProductStatusFields(Filter filter, Collection<String> contentFields) {
 
-		List<Field<?>> fields = Lists.newArrayList(LAUNCH.ID,
+		Map<String, String> criteria = filter.getTarget()
+				.getCriteriaHolders()
+				.stream()
+				.collect(Collectors.toMap(CriteriaHolder::getFilterCriteria, CriteriaHolder::getQueryCriteria));
+
+		List<Field<?>> selectFields = contentFields.stream()
+				.filter(cf -> !cf.startsWith(STATISTICS_KEY))
+				.map(criteria::get)
+				.filter(Objects::nonNull)
+				.map(DSL::field)
+				.collect(Collectors.toList());
+
+		Collections.addAll(selectFields,
+				LAUNCH.ID,
 				LAUNCH.NAME,
 				LAUNCH.NUMBER,
-				LAUNCH.START_TIME,
-				LAUNCH.STATUS,
 				fieldName(STATISTICS_TABLE, SF_NAME),
 				fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 				round(val(PERCENTAGE_MULTIPLIER).mul(dsl.select(sum(STATISTICS.S_COUNTER))
@@ -924,29 +926,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
 		);
 
-		return buildProductStatusQuery(filter,
-				isLatest,
-				sort,
-				limit,
-				fields,
-				contentFields,
-				customColumns
-		).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES));
+		return selectFields;
 	}
 
 	private SelectOnConditionStep<? extends Record> buildProductStatusQuery(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields, Map<String, String> customColumns) {
 
-		List<Condition> conditions = customColumns.values()
+		List<Condition> attributesKeyConditions = customColumns.values()
 				.stream()
 				.map(customColumn -> ofNullable(customColumn).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(ITEM_ATTRIBUTE.KEY::isNull))
 				.collect(Collectors.toList());
 
-		Optional<Condition> combinedTagCondition = conditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
+		Optional<Condition> combinedAttributeKeyCondition = attributesKeyConditions.stream().reduce((prev, curr) -> curr = prev.or(curr));
 
 		List<String> statisticsFields = contentFields.stream().filter(cf -> cf.startsWith(STATISTICS_KEY)).collect(toList());
 
-		if (combinedTagCondition.isPresent()) {
+		return combinedAttributeKeyCondition.map(c -> {
 			Collections.addAll(fields,
 					fieldName(ATTR_TABLE, ATTR_ID),
 					fieldName(ATTR_TABLE, ATTRIBUTE_VALUE),
@@ -957,14 +952,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 					ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE),
 					ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
 					ITEM_ATTRIBUTE.LAUNCH_ID.as(LAUNCH_ID)
-			).from(ITEM_ATTRIBUTE).where(combinedTagCondition.get()).asTable(ATTR_TABLE))
-					.on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)));
-		} else {
-			return getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields);
-		}
+			).from(ITEM_ATTRIBUTE).where(c).asTable(ATTR_TABLE)).on(LAUNCH.ID.eq(fieldName(ATTR_TABLE, LAUNCH_ID).cast(Long.class)));
+		}).orElseGet(() -> getProductStatusSelect(filter, isLatest, sort, limit, fields, statisticsFields));
 	}
 
-	private SelectOnConditionStep<? extends Record> getProductStatusSelect(Filter filter, boolean isLatest, Sort sort, int limit,
+	private SelectOnConditionStep<Record> getProductStatusSelect(Filter filter, boolean isLatest, Sort sort, int limit,
 			Collection<Field<?>> fields, Collection<String> contentFields) {
 		return dsl.with(LAUNCHES)
 				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sort, isLatest).with(sort).with(limit).build())

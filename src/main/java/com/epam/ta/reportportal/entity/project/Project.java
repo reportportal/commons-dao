@@ -62,7 +62,7 @@ public class Project implements Serializable {
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-	@OrderBy
+	@OrderBy(value = "issue_type_id")
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -83,6 +83,7 @@ public class Project implements Serializable {
 
 	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "project_id", updatable = false)
+	@OrderBy
 	private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
 
 	public Project(Long id, String name) {

@@ -10,10 +10,16 @@ DECLARE
 BEGIN
 
     alter sequence launch_id_seq restart with 1;
+    alter sequence shareable_entity_id_seq restart with 1;
     alter sequence item_attribute_id_seq restart with 1;
     alter sequence test_item_item_id_seq restart with 1;
     alter sequence ticket_id_seq restart with 1;
     alter sequence activity_id_seq restart with 1;
+
+    INSERT INTO public.shareable_entity (id, shared, owner, project_id)
+    VALUES (1, false, 'superadmin', 1);
+    INSERT INTO public.filter (id, name, target, description)
+    VALUES (1, 'filter name', 'Launch', 'filter for product status widget');
 
     INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
     VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
