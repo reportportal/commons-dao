@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -287,15 +288,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
+	public List<Long> selectIdsByAutoAnalyzedStatusWithErrorLogs(boolean status, Long launchId) {
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(LOG).on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(ISSUE.AUTO_ANALYZED.eq(status))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(LogLevel.ERROR.toInt()))
 				.fetchInto(Long.class);
 	}
 

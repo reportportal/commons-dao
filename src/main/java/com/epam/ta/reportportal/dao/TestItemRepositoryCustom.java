@@ -179,13 +179,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
-	 * Select item IDs by analyzed status and launch id
+	 * Select item IDs by analyzed status and launch id with log level greater or equals than error
 	 *
 	 * @param status   {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
 	 * @param launchId {@link TestItem#launch} ID
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId);
+	List<Long> selectIdsByAutoAnalyzedStatusWithErrorLogs(boolean status, Long launchId);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}

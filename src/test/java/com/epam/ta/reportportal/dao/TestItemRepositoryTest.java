@@ -271,7 +271,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectByAutoAnalyzedStatus() {
-		List<Long> itemIds = testItemRepository.selectIdsByAutoAnalyzedStatus(false, 1L);
+		List<Long> itemIds = testItemRepository.selectIdsByAutoAnalyzedStatusWithErrorLogs(false, 1L);
 		assertNotNull(itemIds);
 		assertThat(itemIds, Matchers.hasSize(1));
 	}
