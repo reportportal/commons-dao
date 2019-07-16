@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -271,7 +272,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectByAutoAnalyzedStatus() {
-		List<Long> itemIds = testItemRepository.selectIdsByAutoAnalyzedStatusWithErrorLogs(false, 1L);
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, 1L, LogLevel.ERROR.toInt());
 		assertNotNull(itemIds);
 		assertThat(itemIds, Matchers.hasSize(1));
 	}

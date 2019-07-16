@@ -288,7 +288,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByAutoAnalyzedStatusWithErrorLogs(boolean status, Long launchId) {
+	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
 		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
@@ -297,7 +297,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(LOG).on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE.AUTO_ANALYZED.eq(status))
+				.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
 				.and(LOG.LOG_LEVEL.greaterOrEqual(LogLevel.ERROR.toInt()))
 				.fetchInto(Long.class);
 	}

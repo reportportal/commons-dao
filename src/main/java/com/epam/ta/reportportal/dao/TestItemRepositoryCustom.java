@@ -181,11 +181,12 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	/**
 	 * Select item IDs by analyzed status and launch id with log level greater or equals than error
 	 *
-	 * @param status   {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
-	 * @param launchId {@link TestItem#launch} ID
+	 * @param autoAnalyzed {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
+	 * @param launchId     {@link TestItem#launch} ID
+	 * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByAutoAnalyzedStatusWithErrorLogs(boolean status, Long launchId);
+	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}
