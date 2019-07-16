@@ -29,8 +29,12 @@ public class PatternTemplateLaunchStatistics extends PatternTemplateStatistics {
 	@JsonProperty(value = "id")
 	private Long id;
 
-	public PatternTemplateLaunchStatistics(String name, Long count, Long id) {
+	@JsonProperty(value = "number")
+	private Integer number;
+
+	public PatternTemplateLaunchStatistics(String name, Integer number, Long count, Long id) {
 		super(name, count);
+		this.number = number;
 		this.id = id;
 	}
 
@@ -40,5 +44,13 @@ public class PatternTemplateLaunchStatistics extends PatternTemplateStatistics {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 }
