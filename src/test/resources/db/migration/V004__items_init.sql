@@ -119,8 +119,8 @@ BEGIN
                         INSERT INTO issue (issue_id, issue_type, auto_analyzed, issue_description)
                         VALUES (cur_step_id, 1, FALSE, 'issue description');
 
-        INSERT INTO ticket (ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
-        VALUES (concat('ticket_id_', cur_step_id), 1, now(), 'jira.com', 'project',
+        INSERT INTO ticket (ticket_id, submitter, submit_date, bts_url, bts_project, url)
+        VALUES (concat('ticket_id_', cur_step_id), 'superadmin', now(), 'jira.com', 'project',
                 concat('http://example.com/tickets/ticket_id_', cur_step_id));
         INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (cur_step_id, (SELECT currval(pg_get_serial_sequence('ticket', 'id'))));
 

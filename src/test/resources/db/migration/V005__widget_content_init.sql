@@ -100,12 +100,12 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3', null, launch4, false);
 
 
-    INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
-    VALUES (1, 'EPMRPP-322', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
-    INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
-    VALUES (2, 'EPMRPP-123', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
-    INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
-    VALUES (3, 'QWERTY-100', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
+    INSERT INTO public.ticket (id, ticket_id, submitter, submit_date, bts_url, bts_project, url)
+    VALUES (1, 'EPMRPP-322', 'superadmin', '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
+    INSERT INTO public.ticket (id, ticket_id, submitter, submit_date, bts_url, bts_project, url)
+    VALUES (2, 'EPMRPP-123', 'superadmin', '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
+    INSERT INTO public.ticket (id, ticket_id, submitter, submit_date, bts_url, bts_project, url)
+    VALUES (3, 'QWERTY-100', 'superadmin', '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
 
     INSERT INTO public.pattern_template (id, name, "value", type, enabled, project_id)
     VALUES (1, 'FIRST PATTERN', 'aaaa', 'STRING', true, 1);

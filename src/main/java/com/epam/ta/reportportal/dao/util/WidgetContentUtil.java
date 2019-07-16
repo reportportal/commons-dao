@@ -256,12 +256,10 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet()
-				.stream()
-				.collect(LinkedHashMap::new,
-						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-						LinkedHashMap::putAll
-				);
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -298,7 +296,7 @@ public class WidgetContentUtil {
 		uniqueBugContent.setTicketId(record.get(TICKET.TICKET_ID));
 		uniqueBugContent.setUrl(record.get(TICKET.URL));
 		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
-		uniqueBugContent.setSubmitter(record.get(USERS.LOGIN));
+		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
 		return uniqueBugContent;
 	};
 
@@ -378,7 +376,8 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
