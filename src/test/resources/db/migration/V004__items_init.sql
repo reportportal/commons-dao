@@ -87,7 +87,7 @@ BEGIN
                         CONTINUE;
                     END IF;
 
-                    INSERT INTO test_item (name, location, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+                    INSERT INTO test_item (name, code_ref, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
                     VALUES ('Step', 'package.Classname', 'uuid 3_' || launchcounter, 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchcounter,
                             cur_item_id, launchcounter);
                     cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
