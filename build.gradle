@@ -129,7 +129,8 @@ dependencies {
 
 ext.src = [
         'https://raw.githubusercontent.com/reportportal/migrations/code-ref-db/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
-        'https://raw.githubusercontent.com/reportportal/migrations/code-ref-db/migrations/3_default_data.up.sql': 'V002__default_data.sql'
+        'https://raw.githubusercontent.com/reportportal/migrations/code-ref-db/migrations/3_default_data.up.sql': 'V002__default_data.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/code-ref-db/migrations/4_alter_test_item_location.sql': 'V003__alter_test_item_location.sql'
 ]
 
 task copyTestDatabaseScripts {
