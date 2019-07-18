@@ -424,6 +424,25 @@ public class WidgetContentUtil {
 		return res;
 	};
 
+	public static final BiFunction<Result<? extends Record>, Boolean, Map<String, List<Long>>> PATTERN_TEMPLATES_AGGREGATION_FETCHER = (result, isLatest) -> {
+		Map<String, List<Long>> content;
+		if (isLatest) {
+			content = Maps.newLinkedHashMap();
+			result.forEach(record -> {
+				String attribute = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+				List<Long> launchIds = content.computeIfAbsent(attribute, k -> Lists.newArrayList());
+				launchIds.add(record.get(fieldName(ID), Long.class));
+			});
+		} else {
+			content = Maps.newLinkedHashMapWithExpectedSize(result.size());
+			result.forEach(record -> {
+				String attribute = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+				content.put(attribute, Lists.newArrayList(record.get(fieldName(ID), Long[].class)));
+			});
+		}
+		return content;
+	};
+
 	public static final Function<Result<? extends Record>, List<TopPatternTemplatesContent>> TOP_PATTERN_TEMPLATES_FETCHER = result -> {
 
 		Map<String, TopPatternTemplatesContent> content = Maps.newLinkedHashMap();
@@ -453,6 +472,7 @@ public class WidgetContentUtil {
 			);
 			patternTemplatesContent.getPatternTemplates()
 					.add(new PatternTemplateLaunchStatistics(record.get(LAUNCH.NAME),
+							record.get(LAUNCH.NUMBER),
 							record.get(fieldName(TOTAL), Long.class),
 							record.get(LAUNCH.ID)
 					));
