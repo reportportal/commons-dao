@@ -17,8 +17,11 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.log.Log;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
@@ -63,9 +66,9 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	List<Long> findIdsByTestItemIds(List<Long> itemIds);
 
-	List<Long> findIdsByLaunchId(Long launchId);
+	List<Long> findItemLogIdsByLaunchId(Long launchId);
 
-	List<Long> findIdsByLaunchIds(List<Long> launchIds);
+	List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds);
 
 	/**
 	 * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
@@ -104,4 +107,18 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
 
+	/**
+	 * Retrieve {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities' ids, differentiated by entity type
+	 * <p>
+	 * {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities filtered and sorted on the DB level
+	 * and returned as UNION parsed into the {@link NestedItem} entity
+	 *
+	 * @param parentId          {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} of the parent item
+	 * @param filter            {@link Queryable}
+	 * @param excludeEmptySteps Exclude steps without content (logs and child items)
+	 * @param excludeLogs       Exclude logs selection
+	 * @param pageable          {@link Pageable}
+	 * @return {@link Page} with {@link NestedItem} as content
+	 */
+	Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter, Pageable pageable);
 }

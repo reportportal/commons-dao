@@ -38,6 +38,7 @@ import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -137,14 +138,32 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findIdsByLaunchId(1L);
+	void findItemLogIdsByLaunchId() {
+		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchId(1L);
 		assertEquals(7, logIdsByLaunch.size());
+	}
+
+	@Test
+	void findItemLogIdsByLaunchIds() {
+		List<Long> logIds = logRepository.findItemLogIdsByLaunchIds(Arrays.asList(1L, 2L));
+		assertEquals(7, logIds.size());
 	}
 
 	@Test
 	void findIdsByItemIds() {
 		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
 		assertEquals(7, idsByTestItemIds.size());
+	}
+
+	@Test
+	void findNestedItemsTest() {
+
+		Filter filter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "2", CRITERIA_TEST_ITEM_ID))
+				.withCondition(new FilterCondition(Condition.IN, false, "FAILED, PASSED", CRITERIA_STATUS))
+				.build();
+
+		logRepository.findNestedItems(2L, true, false, filter, PageRequest.of(2, 1));
 	}
 }

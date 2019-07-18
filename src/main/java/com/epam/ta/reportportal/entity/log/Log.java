@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.log;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -60,6 +61,10 @@ public class Log implements Serializable {
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
+	@ManyToOne
+	@JoinColumn(name = "launch_id")
+	private Launch launch;
+
 	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "attachment_id")
 	private Attachment attachment;
@@ -96,6 +101,14 @@ public class Log implements Serializable {
 
 	public TestItem getTestItem() {
 		return testItem;
+	}
+
+	public Launch getLaunch() {
+		return launch;
+	}
+
+	public void setLaunch(Launch launch) {
+		this.launch = launch;
 	}
 
 	public void setTestItem(TestItem testItem) {
@@ -154,11 +167,11 @@ public class Log implements Serializable {
 		return Objects.equals(id, log.id) && Objects.equals(logTime, log.logTime) && Objects.equals(logMessage, log.logMessage)
 				&& Objects.equals(lastModified, log.lastModified) && Objects.equals(logLevel, log.logLevel) && Objects.equals(testItem,
 				log.testItem
-		);
+		) && Objects.equals(launch, log.launch);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem);
+		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem, launch);
 	}
 }

@@ -10,10 +10,16 @@ DECLARE
 BEGIN
 
     alter sequence launch_id_seq restart with 1;
+    alter sequence shareable_entity_id_seq restart with 1;
     alter sequence item_attribute_id_seq restart with 1;
     alter sequence test_item_item_id_seq restart with 1;
     alter sequence ticket_id_seq restart with 1;
     alter sequence activity_id_seq restart with 1;
+
+    INSERT INTO public.shareable_entity (id, shared, owner, project_id)
+    VALUES (1, false, 'superadmin', 1);
+    INSERT INTO public.filter (id, name, target, description)
+    VALUES (1, 'filter name', 'Launch', 'filter for product status widget');
 
     INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
     VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
@@ -90,6 +96,8 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.2.3', null, launch4, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'failed', null, launch2, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.3.2', null, launch2, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.9.1', null, launch3, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3', null, launch4, false);
 
 
     INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
@@ -99,10 +107,17 @@ BEGIN
     INSERT INTO public.ticket (id, ticket_id, submitter_id, submit_date, bts_url, bts_project, url)
     VALUES (3, 'QWERTY-100', 1, '2018-09-28 12:38:24.374555', 'jira.com', 'project', 'epam.com');
 
+    INSERT INTO public.pattern_template (id, name, "value", type, enabled, project_id)
+    VALUES (1, 'FIRST PATTERN', 'aaaa', 'STRING', true, 1);
+    INSERT INTO public.pattern_template (id, name, "value", type, enabled, project_id)
+    VALUES (2, 'SECOND PATTERN', 'bbbb', 'STRING', true, 1);
+
     INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
+    INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
+    INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
 
     INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
@@ -131,6 +146,8 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 2);
+    INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
+    INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
 
     INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
@@ -138,6 +155,7 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
+    INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
 
     INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch4);

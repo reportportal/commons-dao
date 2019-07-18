@@ -20,9 +20,11 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -270,7 +272,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectByAutoAnalyzedStatus() {
-		List<Long> itemIds = testItemRepository.selectIdsByAutoAnalyzedStatus(false, 1L);
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, 1L, LogLevel.ERROR.toInt());
 		assertNotNull(itemIds);
 		assertThat(itemIds, Matchers.hasSize(1));
 	}
@@ -279,7 +281,6 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED)
-				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -290,7 +291,6 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
-				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -301,7 +301,6 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByNotHasChildrenAndParentPathAndStatus() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED)
-				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -312,7 +311,6 @@ class TestItemRepositoryTest extends BaseTest {
 	void streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel() {
 
 		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED)
-				.stream()
 				.map(BigInteger::longValue)
 				.collect(toList());
 
@@ -540,5 +538,13 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items);
 		assertEquals(1L, items.size());
 
+	}
+
+	@Test
+	void findAllNestedStepsByIds() {
+		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L));
+		assertNotNull(allNestedStepsByIds);
+		assertFalse(allNestedStepsByIds.isEmpty());
+		assertEquals(3, allNestedStepsByIds.size());
 	}
 }

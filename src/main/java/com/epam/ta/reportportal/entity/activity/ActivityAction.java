@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ public enum ActivityAction {
 	CREATE_DEFECT("createDefect"),
 	UPDATE_DEFECT("updateDefect"),
 	DELETE_DEFECT("deleteDefect"),
-	CREATE_BTS("createBts"),
-	UPDATE_BTS("updateBts"),
-	DELETE_BTS("deleteBts"),
+	CREATE_INTEGRATION("createIntegration"),
+	UPDATE_INTEGRATION("updateIntegration"),
+	DELETE_INTEGRATION("deleteIntegration"),
 	START_LAUNCH("startLaunch"),
 	FINISH_LAUNCH("finishLaunch"),
 	DELETE_LAUNCH("deleteLaunch"),

@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
@@ -82,6 +83,9 @@ public class Launch implements Serializable {
 	@Column(name = "has_retries")
 	private boolean hasRetries;
 
+	@Column(name = "rerun")
+	private boolean rerun;
+
 	@Column(name = "last_modified", nullable = false)
 	@LastModifiedDate
 	private LocalDateTime lastModified;
@@ -104,6 +108,9 @@ public class Launch implements Serializable {
 	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
+
+	@OneToMany(mappedBy = "launch", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Log> logs = Sets.newHashSet();
 
 	@Column(name = "approximate_duration")
 	private double approximateDuration;
@@ -158,6 +165,14 @@ public class Launch implements Serializable {
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isRerun() {
+		return rerun;
+	}
+
+	public void setRerun(boolean rerun) {
+		this.rerun = rerun;
 	}
 
 	public void setName(String name) {
@@ -232,6 +247,14 @@ public class Launch implements Serializable {
 		return status;
 	}
 
+	public Set<Log> getLogs() {
+		return logs;
+	}
+
+	public void setLogs(Set<Log> logs) {
+		this.logs = logs;
+	}
+
 	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
@@ -253,22 +276,40 @@ public class Launch implements Serializable {
 			return false;
 		}
 		Launch launch = (Launch) o;
-		return Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId) && Objects.equals(name, launch.name)
-				&& Objects.equals(description, launch.description) && Objects.equals(startTime, launch.startTime) && Objects.equals(endTime,
-				launch.endTime
-		) && Objects.equals(number, launch.number) && hasRetries == launch.isHasRetries() && mode == launch.mode && status == launch.status;
+		return hasRetries == launch.hasRetries && rerun == launch.rerun && Objects.equals(uuid, launch.uuid) && Objects.equals(projectId,
+				launch.projectId
+		) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(startTime,
+				launch.startTime
+		) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number) && mode == launch.mode
+				&& status == launch.status;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries, mode, status);
+		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries, rerun, mode, status);
 	}
 
 	@Override
 	public String toString() {
-		return "Launch{" + "id=" + id + ", uuid='" + uuid + '\'' + ", projectId=" + projectId + ", user=" + user + ", name='" + name + '\''
-				+ ", description='" + description + '\'' + ", startTime=" + startTime + ", endTime=" + endTime + ", number=" + number
-				+ ", hasRetries=" + hasRetries + ", lastModified=" + lastModified + ", mode=" + mode + ", status=" + status
-				+ ", attributes=" + attributes + ", statistics=" + statistics + '}';
+		final StringBuilder sb = new StringBuilder("Launch{");
+		sb.append("id=").append(id);
+		sb.append(", uuid='").append(uuid).append('\'');
+		sb.append(", projectId=").append(projectId);
+		sb.append(", user=").append(user);
+		sb.append(", name='").append(name).append('\'');
+		sb.append(", description='").append(description).append('\'');
+		sb.append(", startTime=").append(startTime);
+		sb.append(", endTime=").append(endTime);
+		sb.append(", number=").append(number);
+		sb.append(", hasRetries=").append(hasRetries);
+		sb.append(", rerun=").append(rerun);
+		sb.append(", lastModified=").append(lastModified);
+		sb.append(", mode=").append(mode);
+		sb.append(", status=").append(status);
+		sb.append(", attributes=").append(attributes);
+		sb.append(", statistics=").append(statistics);
+		sb.append(", approximateDuration=").append(approximateDuration);
+		sb.append('}');
+		return sb.toString();
 	}
 }
