@@ -793,9 +793,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
 			boolean isLatest, int limit) {
 
-		Map<String, List<Long>> attributeIdsMapping = dsl.with(LAUNCHES)
-				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sort, isLatest).with(sort).with(LAUNCHES_COUNT).build())
-				.select(DSL.max(LAUNCH.ID).as(ID), ITEM_ATTRIBUTE.VALUE)
+		Field<?> launchIdsField = isLatest ? DSL.max(LAUNCH.ID).as(ID) : DSL.arrayAgg(LAUNCH.ID).as(ID);
+		List<Field<?>> groupingFields = isLatest ?
+				Lists.newArrayList(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE) :
+				Lists.newArrayList(ITEM_ATTRIBUTE.VALUE);
+
+		Map<String, List<Long>> attributeIdsMapping = PATTERN_TEMPLATES_AGGREGATION_FETCHER.apply(dsl.with(LAUNCHES)
+				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(LAUNCHES_COUNT).build())
+				.select(launchIdsField, ITEM_ATTRIBUTE.VALUE)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
@@ -812,11 +817,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
 						), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
 						.limit(limit)))
-				.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
+				.groupBy(groupingFields)
 				.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
 				), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
-				.fetchGroups(r -> r.get(ITEM_ATTRIBUTE.VALUE), r -> r.get(ID, Long.class));
+				.fetch(), isLatest);
 
 		return StringUtils.isBlank(patternName) ?
 				buildPatternTemplatesQuery(attributeIdsMapping) :
@@ -1044,6 +1049,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.map(entry -> (Select<? extends Record>) dsl.select(DSL.val(entry.getKey()).as(ATTRIBUTE_VALUE),
 						LAUNCH.ID,
 						LAUNCH.NAME,
+						LAUNCH.NUMBER,
 						DSL.countDistinct(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID).as(TOTAL)
 				)
 						.from(PATTERN_TEMPLATE)
@@ -1055,7 +1061,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 						.where(LAUNCH.ID.in(entry.getValue()))
 						.and(PATTERN_TEMPLATE.NAME.eq(patternTemplateName))
-						.groupBy(LAUNCH.ID, LAUNCH.NAME, PATTERN_TEMPLATE.NAME)
+						.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, PATTERN_TEMPLATE.NAME)
 						.having(DSL.countDistinct(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID).gt(BigDecimal.ZERO.intValue()))
 						.orderBy(field(TOTAL).desc())
 						.limit(PATTERNS_COUNT))
