@@ -3,16 +3,19 @@
  */
 package com.epam.ta.reportportal.jooq.tables.records;
 
+
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+
+import java.sql.Timestamp;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record16;
 import org.jooq.Row16;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
-import java.sql.Timestamp;
 
 
 /**
@@ -28,7 +31,7 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implements Record16<Long, String, String, String, JTestItemTypeEnum, Timestamp, String, Timestamp, Object, String, Boolean, Boolean, Boolean, Long, Long, Long> {
 
-    private static final long serialVersionUID = -251317944;
+    private static final long serialVersionUID = 1064647575;
 
     /**
      * Setter for <code>public.test_item.item_id</code>.
@@ -73,16 +76,16 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     }
 
     /**
-     * Setter for <code>public.test_item.location</code>.
+     * Setter for <code>public.test_item.code_ref</code>.
      */
-    public void setLocation(String value) {
+    public void setCodeRef(String value) {
         set(3, value);
     }
 
     /**
-     * Getter for <code>public.test_item.location</code>.
+     * Getter for <code>public.test_item.code_ref</code>.
      */
-    public String getLocation() {
+    public String getCodeRef() {
         return (String) get(3);
     }
 
@@ -315,7 +318,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      */
     @Override
     public Field<String> field4() {
-        return JTestItem.TEST_ITEM.LOCATION;
+        return JTestItem.TEST_ITEM.CODE_REF;
     }
 
     /**
@@ -443,7 +446,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      */
     @Override
     public String component4() {
-        return getLocation();
+        return getCodeRef();
     }
 
     /**
@@ -571,7 +574,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      */
     @Override
     public String value4() {
-        return getLocation();
+        return getCodeRef();
     }
 
     /**
@@ -702,7 +705,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
      */
     @Override
     public JTestItemRecord value4(String value) {
-        setLocation(value);
+        setCodeRef(value);
         return this;
     }
 
@@ -852,13 +855,13 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implem
     /**
      * Create a detached, initialised JTestItemRecord
      */
-    public JTestItemRecord(Long itemId, String uuid, String name, String location, JTestItemTypeEnum type, Timestamp startTime, String description, Timestamp lastModified, Object path, String uniqueId, Boolean hasChildren, Boolean hasRetries, Boolean hasStats, Long parentId, Long retryOf, Long launchId) {
+    public JTestItemRecord(Long itemId, String uuid, String name, String codeRef, JTestItemTypeEnum type, Timestamp startTime, String description, Timestamp lastModified, Object path, String uniqueId, Boolean hasChildren, Boolean hasRetries, Boolean hasStats, Long parentId, Long retryOf, Long launchId) {
         super(JTestItem.TEST_ITEM);
 
         set(0, itemId);
         set(1, uuid);
         set(2, name);
-        set(3, location);
+        set(3, codeRef);
         set(4, type);
         set(5, startTime);
         set(6, description);

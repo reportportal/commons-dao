@@ -207,7 +207,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setName(r.get(TEST_ITEM.NAME));
-		testItem.setLocation(r.get(TEST_ITEM.LOCATION));
+		testItem.setCodeRef(r.get(TEST_ITEM.CODE_REF));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
 		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
 		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);

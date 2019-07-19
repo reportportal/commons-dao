@@ -3,18 +3,128 @@
  */
 package com.epam.ta.reportportal.jooq;
 
-import com.epam.ta.reportportal.jooq.tables.*;
-import com.epam.ta.reportportal.jooq.tables.records.*;
+
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttachment;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
+import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
+import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
+import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
+import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRecipients;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails;
+import com.epam.ta.reportportal.jooq.tables.JSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserPreference;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.records.JAclClassRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAclEntryRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAclObjectIdentityRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAclSidRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JActiveDirectoryConfigRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAttributeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAuthConfigRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JContentFieldRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JDashboardRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JDashboardWidgetRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JFilterConditionRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JFilterRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JFilterSortRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIntegrationRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIntegrationTypeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIssueGroupRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIssueRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIssueTicketRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeProjectRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JIssueTypeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JItemAttributeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JLaunchAttributeRulesRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JLaunchNamesRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JLdapConfigRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JLdapSynchronizationAttributesRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JOauthAccessTokenRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JParameterRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateTestItemRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JProjectAttributeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JRecipientsRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JRestorePasswordBidRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JSamlProviderDetailsRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JSenderCaseRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JServerSettingsRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JShareableEntityRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JStatisticsFieldRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JStatisticsRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JTestItemResultsRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JTicketRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JUserCreationBidRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JUserPreferenceRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JWidgetFilterRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JWidgetRecord;
+
+import javax.annotation.Generated;
+
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.Internal;
 
-import javax.annotation.Generated;
-
 
 /**
- * A class modelling foreign key relationships and constraints of tables of 
+ * A class modelling foreign key relationships and constraints of tables of
  * the <code>public</code> schema.
  */
 @Generated(

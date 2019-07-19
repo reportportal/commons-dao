@@ -22,7 +22,7 @@ BEGIN
     VALUES (1, 'filter name', 'Launch', 'filter for product status widget');
 
     INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
-    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
+    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd31',
             1,
             1,
             'launch name 1',
@@ -36,7 +36,7 @@ BEGIN
     launch1 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
     INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
-    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
+    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd32',
             1,
             1,
             'launch name 1',
@@ -50,7 +50,7 @@ BEGIN
     launch2 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
     INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
-    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
+    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd33',
             1,
             1,
             'launch name 1',
@@ -64,7 +64,7 @@ BEGIN
     launch3 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
     INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
-    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd3c',
+    VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd34',
             1,
             1,
             'launch name 1',
@@ -112,36 +112,36 @@ BEGIN
     INSERT INTO public.pattern_template (id, name, "value", type, enabled, project_id)
     VALUES (2, 'SECOND PATTERN', 'bbbb', 'STRING', true, 1);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
+    INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step', 'uuid1', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
+    INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step','uuid2', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
+    INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step','uuid3', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 2);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
+    INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step','uuid4', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 1);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
+    INSERT INTO test_item (NAME,uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step','uuid5', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
@@ -149,16 +149,16 @@ BEGIN
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
+    INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step','uuid6','STEP', now(), 'description', now(), 'uniqueId', launch4);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
 
-    INSERT INTO test_item (NAME, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES ('Step', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
+    INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    VALUES ('Step', 'uuid7', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');

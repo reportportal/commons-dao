@@ -64,7 +64,7 @@ BEGIN
             INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_suite_id, 'FAILED', 0.35, now());
             --
             INSERT INTO test_item (has_children, name, uuid, type, start_time, description, last_modified, unique_id, launch_id, parent_id)
-            VALUES (true, 'uuid 2_' || launchcounter, 'First test', 'TEST', now(), 'description', now(), 'unqIdTEST' || launchcounter,
+            VALUES (true, 'uuid 2_' || launchcounter, 'First test'|| launchcounter, 'TEST', now(), 'description', now(), 'unqIdTEST' || launchcounter,
                     launchcounter, cur_suite_id);
             cur_item_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
@@ -87,8 +87,8 @@ BEGIN
                         CONTINUE;
                     END IF;
 
-                    INSERT INTO test_item (name, location, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
-                    VALUES ('Step', 'package.Classname', 'uuid 3_' || launchcounter, 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchcounter,
+                    INSERT INTO test_item (name, code_ref, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
+                    VALUES ('Step', 'package.Classname', 'uuid 3_' || launchcounter || stepcounter, 'STEP', now(), 'description', now(), 'unqIdSTEP' || launchcounter,
                             cur_item_id, launchcounter);
                     cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
@@ -180,7 +180,7 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
 
     INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
-    VALUES ('Step', 'uuid 6_' || launchcounter, 'STEP', now(), 'STEP WITH RETRIES', now(), 'unqIdSTEP_R' || launchcounter - 1, cur_item_id,
+    VALUES ('Step', 'another uuid 6_' || launchcounter, 'STEP', now(), 'STEP WITH RETRIES', now(), 'unqIdSTEP_R' || launchcounter - 1, cur_item_id,
             launchcounter - 1);
     cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
 
@@ -195,7 +195,7 @@ BEGIN
 
             INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
             VALUES ('Step',
-                    'uuid 7_' || launchcounter,
+                    'uuid 7_' || launchcounter || retriescounter,
                     'STEP',
                     now() - make_interval(secs := retriescounter),
                     'STEP WITH RETRIES',
@@ -220,7 +220,7 @@ BEGIN
     functionresult := (SELECT retries_statistics(launchcounter - 1));
 
   INSERT INTO test_item (name, uuid, type, start_time, description, last_modified, unique_id, parent_id, launch_id)
-  VALUES ('Step', 'uuid 6_' || launchcounter, 'STEP', now(), 'Descendant', now(), 'unqIdSTEP_R' || launchcounter - 1, 5, 1);
+  VALUES ('Step', 'some uuid 6_' || launchcounter, 'STEP', now(), 'Descendant', now(), 'unqIdSTEP_R' || launchcounter - 1, 5, 1);
   cur_step_id = (SELECT currval(pg_get_serial_sequence('test_item', 'item_id')));
   UPDATE test_item SET path = cast('1.2.5.' || cast(cur_step_id AS TEXT) AS LTREE) WHERE item_id = cur_step_id;
   UPDATE test_item SET has_children = true WHERE item_id = 5;
@@ -245,8 +245,8 @@ BEGIN
             INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
             VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
-            INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
-            VALUES (now(), 'log', stepid, now() - make_interval(days := 14), 40000,
+            INSERT INTO log (log_time, uuid,  log_message, item_id, last_modified, log_level, attachment_id)
+            VALUES (now(), 'uuid' || logscounter, 'log', stepid, now() - make_interval(days := 14), 40000,
                     (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
 
             logscounter = logscounter + 1;
@@ -258,8 +258,8 @@ BEGIN
             INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
             VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1, 1, stepid);
 
-            INSERT INTO log (log_time, log_message, item_id, last_modified, log_level, attachment_id)
-            VALUES (now(), 'log', stepid, now(), 40000, (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
+            INSERT INTO log (uuid, log_time, log_message, item_id, last_modified, log_level, attachment_id)
+            VALUES ('luuid' || logscounter, now(), 'log', stepid, now(), 40000, (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
 
             logscounter = logscounter - 1;
         END LOOP;
@@ -269,8 +269,8 @@ BEGIN
             INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, launch_id, item_id)
             VALUES ('attach_log ' || launchcounter, 'attachThumb_log ' || launchcounter, 'MIME', 1, launchcounter, null);
 
-            INSERT INTO log (log_time, log_message, launch_id, last_modified, log_level, attachment_id)
-            VALUES (now(), 'log', launchcounter, now() - make_interval(days := 14), 40000,
+            INSERT INTO log (uuid, log_time, log_message, launch_id, last_modified, log_level, attachment_id)
+            VALUES ('lluuid' || launchcounter, now(), 'log', launchcounter, now() - make_interval(days := 14), 40000,
                     (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
             launchcounter = launchcounter + 1;
         END LOOP;

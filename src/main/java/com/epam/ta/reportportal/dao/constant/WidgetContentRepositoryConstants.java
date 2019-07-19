@@ -106,7 +106,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String LAUNCHES_TABLE = "launches_table";
 	public static final String START_TIME = "start_time";
 	public static final String LATEST_NUMBER = "latest_number";
-	public static final String VERSION_PATTERN = "^(\\d)(\\.\\d)*$";
+	public static final String VERSION_PATTERN = "^(\\d+)(\\.\\d+)*$";
 	public static final String VERSION_DELIMITER = ".";
 
 	/*Product status widget constants*/
