@@ -238,6 +238,24 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void hasItemsWithStatusEqual() {
+		boolean hasItemsWithStatusEqual = launchRepository.hasItemsWithStatusEqual(100L, StatusEnum.IN_PROGRESS);
+		assertFalse(hasItemsWithStatusEqual);
+
+		hasItemsWithStatusEqual = launchRepository.hasItemsWithStatusEqual(200L, StatusEnum.IN_PROGRESS);
+		assertTrue(hasItemsWithStatusEqual);
+	}
+
+	@Test
+	void hasItems() {
+		boolean hasItems = launchRepository.hasItems(300L);
+		assertFalse(hasItems);
+
+		hasItems = launchRepository.hasItems(200L);
+		assertTrue(hasItems);
+	}
+
+	@Test
 	void hasRetries() {
 		final boolean hasRetries = launchRepository.hasRetries(100L);
 		assertTrue(hasRetries);
