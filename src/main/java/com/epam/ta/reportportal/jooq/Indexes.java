@@ -26,6 +26,7 @@ import org.jooq.impl.Internal;
 
 import javax.annotation.Generated;
 
+
 /**
  * A class modelling indexes of tables of the <code>public</code> schema.
  */

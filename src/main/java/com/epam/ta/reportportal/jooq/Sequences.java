@@ -24,6 +24,7 @@ import org.jooq.impl.SequenceImpl;
 
 import javax.annotation.Generated;
 
+
 /**
  * Convenience access to all sequences in public
  */

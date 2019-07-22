@@ -168,4 +168,4 @@ test {
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
-compileJava.dependsOn.remove(generateSampleJooqSchemaSource)
+compileJava.dependsOn.remove('generateSampleJooqSchemaSource')

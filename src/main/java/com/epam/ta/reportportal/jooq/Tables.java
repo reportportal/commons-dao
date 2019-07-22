@@ -27,6 +27,7 @@ import org.jooq.Result;
 
 import javax.annotation.Generated;
 
+
 /**
  * Convenience access to all tables in public
  */
