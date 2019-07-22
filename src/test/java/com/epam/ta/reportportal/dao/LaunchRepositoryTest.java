@@ -210,7 +210,7 @@ class LaunchRepositoryTest extends BaseTest {
 	void countLaunches() {
 		final Integer count = launchRepository.countLaunches(2L, Mode.DEFAULT.name(), LocalDateTime.now().minusDays(5));
 		assertNotNull(count);
-		assertEquals(1, (int) count);
+		assertEquals(3, (int) count);
 	}
 
 	@Test
@@ -220,7 +220,7 @@ class LaunchRepositoryTest extends BaseTest {
 				LocalDateTime.now().minusDays(5)
 		);
 		assertNotNull(map.get("default"));
-		assertEquals(1, (int) map.get("default"));
+		assertEquals(3, (int) map.get("default"));
 	}
 
 	@Test
@@ -235,6 +235,24 @@ class LaunchRepositoryTest extends BaseTest {
 	void hasItemsWithStatusNotEqual() {
 		final boolean hasItemsWithStatusNotEqual = launchRepository.hasItemsWithStatusNotEqual(100L, StatusEnum.PASSED);
 		assertTrue(hasItemsWithStatusNotEqual);
+	}
+
+	@Test
+	void hasItemsWithStatusEqual() {
+		boolean hasItemsWithStatusEqual = launchRepository.hasItemsWithStatusEqual(100L, StatusEnum.IN_PROGRESS);
+		assertFalse(hasItemsWithStatusEqual);
+
+		hasItemsWithStatusEqual = launchRepository.hasItemsWithStatusEqual(200L, StatusEnum.IN_PROGRESS);
+		assertTrue(hasItemsWithStatusEqual);
+	}
+
+	@Test
+	void hasItems() {
+		boolean hasItems = launchRepository.hasItems(300L);
+		assertFalse(hasItems);
+
+		hasItems = launchRepository.hasItems(200L);
+		assertTrue(hasItems);
 	}
 
 	@Test
@@ -295,7 +313,7 @@ class LaunchRepositoryTest extends BaseTest {
 						.withValue("description")
 						.build())
 				.build());
-		assertThat(launch, Matchers.hasSize(1));
+		assertThat(launch, Matchers.hasSize(3));
 		assertThat(launch.get(0).getDescription(), Matchers.nullValue());
 	}
 
