@@ -63,6 +63,7 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.jooq.impl.DSL.field;
 
 /**
  * @author Pavel Bortnik
@@ -226,8 +227,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.stream()
 				.filter(order -> CRITERIA_LOG_TIME.equals(order.getProperty()))
 				.findFirst()
-				.map(order -> order.isAscending() ? DSL.field(TIME).sort(SortOrder.ASC) : DSL.field(TIME).sort(SortOrder.DESC))
-				.orElseGet(() -> DSL.field(TIME).sort(SortOrder.ASC));
+				.map(order -> order.isAscending() ? field(TIME).sort(SortOrder.ASC) : field(TIME).sort(SortOrder.DESC))
+				.orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
 		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
 
@@ -261,11 +262,18 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.filter(c -> CRITERIA_STATUS.equals(c.getSearchCriteria()))
 				.findFirst()
 				.map(c -> Stream.of(c.getValue().split(",")).filter(StatusEnum::isPresent).map(JStatusEnum::valueOf).collect(toList()))
-				.ifPresent(statuses -> nestedStepSelect.and(TEST_ITEM_RESULTS.STATUS.in(statuses)));
+				.map(TEST_ITEM_RESULTS.STATUS::in)
+				.ifPresent(nestedStepSelect::and);
 
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
-			nestedStepSelect.and(DSL.field(DSL.exists(dsl.select().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+			nestedStepSelect.and(field(DSL.exists(dsl.with(LOGS)
+					.as(QueryBuilder.newBuilder(filter).addCondition(LOG.ITEM_ID.eq(parentId)).build())
+					.select()
+					.from(LOG)
+					.join(LOGS)
+					.on(LOG.ID.eq(field(LOGS, ID).cast(Long.class)))
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
 					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID)))));
 		}
 
