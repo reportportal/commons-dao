@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = 2094315254;
+    private static final long serialVersionUID = 378440842;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -68,9 +68,9 @@ public class JTicket extends TableImpl<JTicketRecord> {
     public final TableField<JTicketRecord, String> TICKET_ID = createField("ticket_id", org.jooq.impl.SQLDataType.VARCHAR(64).nullable(false), this, "");
 
     /**
-     * The column <code>public.ticket.submitter_id</code>.
+     * The column <code>public.ticket.submitter</code>.
      */
-    public final TableField<JTicketRecord, Long> SUBMITTER_ID = createField("submitter_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JTicketRecord, String> SUBMITTER = createField("submitter", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.submit_date</code>.
@@ -138,7 +138,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TICKET_PK, Indexes.TICKET_SUBMITTER_IDX, Indexes.TICKET_TICKET_ID_KEY);
+        return Arrays.<Index>asList(Indexes.TICKET_PK, Indexes.TICKET_TICKET_ID_KEY);
     }
 
     /**
@@ -163,18 +163,6 @@ public class JTicket extends TableImpl<JTicketRecord> {
     @Override
     public List<UniqueKey<JTicketRecord>> getKeys() {
         return Arrays.<UniqueKey<JTicketRecord>>asList(Keys.TICKET_PK, Keys.TICKET_TICKET_ID_KEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ForeignKey<JTicketRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JTicketRecord, ?>>asList(Keys.TICKET__TICKET_SUBMITTER_ID_FKEY);
-    }
-
-    public JUsers users() {
-        return new JUsers(this, Keys.TICKET__TICKET_SUBMITTER_ID_FKEY);
     }
 
     /**
