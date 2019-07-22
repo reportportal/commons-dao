@@ -43,7 +43,7 @@ jooq {
             }
             target {
                 packageName = 'com.epam.ta.reportportal.jooq'
-                // directory = ...
+                directory = 'src/main/java/'
             }
         }
     }
