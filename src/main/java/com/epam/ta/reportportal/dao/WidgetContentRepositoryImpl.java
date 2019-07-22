@@ -120,7 +120,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								TEST_ITEM.NAME,
 								DSL.arrayAgg(when(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class).ge(1),
 										true
-								).otherwise(false)).orderBy(LAUNCH.NUMBER.asc()).as(STATUS_HISTORY),
+								).otherwise(false))
+										.orderBy(LAUNCH.NUMBER.asc())
+										.as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
 								DSL.sum(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
 								DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
@@ -178,7 +180,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
+										)))), 1).otherwise(ZERO_QUERY_VALUE)
+										.as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -610,11 +613,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.select(TICKET.TICKET_ID,
 						TICKET.SUBMIT_DATE,
 						TICKET.URL,
+						TICKET.SUBMITTER,
 						TEST_ITEM.ITEM_ID,
 						TEST_ITEM.NAME,
 						TEST_ITEM.PATH,
 						TEST_ITEM.LAUNCH_ID,
-						USERS.LOGIN,
 						fieldName(ITEM_ATTRIBUTES, KEY),
 						fieldName(ITEM_ATTRIBUTES, VALUE)
 				)
@@ -629,8 +632,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(ISSUE.ISSUE_ID.eq(ISSUE_TICKET.ISSUE_ID))
 				.join(TICKET)
 				.on(ISSUE_TICKET.TICKET_ID.eq(TICKET.ID))
-				.join(USERS)
-				.on(TICKET.SUBMITTER_ID.eq(USERS.ID))
 				.leftJoin(lateral(dsl.select(ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 						.from(ITEM_ATTRIBUTE)
 						.where(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID).andNot(ITEM_ATTRIBUTE.SYSTEM))).as(ITEM_ATTRIBUTES))
@@ -748,14 +749,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> selectFields = getCommonProductStatusFields(filter, contentFields);
 
-		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
-				buildProductStatusQuery(filter,
-						isLatest,
-						sort,
-						limit,
-						selectFields,
-						contentFields,
-						customColumns
+		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(buildProductStatusQuery(
+				filter,
+				isLatest,
+				sort,
+				limit,
+				selectFields,
+				contentFields,
+				customColumns
 				).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch(),
 				customColumns
 		);
@@ -860,11 +861,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_PASSED),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-						).otherwise(0)).as(PASSED),
-						sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
-								fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-						).otherwise(0)).as(TOTAL)
-				)
+				).otherwise(0)).as(PASSED), sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
+						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
+				).otherwise(0)).as(TOTAL))
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))

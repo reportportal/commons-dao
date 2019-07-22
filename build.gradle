@@ -89,7 +89,7 @@ dependencies {
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
 
     compile('org.postgresql:postgresql')
-    
+
     compile 'org.springframework:spring-context-support'
     compile 'com.github.ben-manes.caffeine:caffeine'
 
@@ -124,9 +124,10 @@ dependencies {
 
 
 ext.src = [
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql': 'V002__default_data.sql',
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/4_alter_test_item_location.up.sql': 'V003__alter_test_item_location.sql'
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql'                   : 'V001__initialize_schema.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'                        : 'V002__default_data.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/4_alter_test_item_location.up.sql'            : 'V003__alter_test_item_location.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/fix/ticket-submitter/migrations/5_alter_ticket_submitter.up.sql': 'V004__alter_ticket_submitter.sql'
 ]
 
 task copyTestDatabaseScripts {
