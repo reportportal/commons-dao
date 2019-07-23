@@ -358,13 +358,14 @@ public class WidgetContentUtil {
 	public static final BiConsumer<List<CumulativeTrendChartEntry>, Result<? extends Record>> CUMULATIVE_TOOLTIP_FETCHER = (cumulative, tooltipResult) -> {
 		tooltipResult.forEach(record -> {
 			Long launchId = record.get(LAUNCH.ID);
+			String attributeKey = record.get(ITEM_ATTRIBUTE.KEY);
 			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
 			cumulative.forEach(it -> it.getContent()
 					.getLaunchIds()
 					.stream()
 					.filter(id -> id.equals(launchId))
 					.findAny()
-					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeValue)));
+					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeKey + ":" + attributeValue)));
 		});
 	};
 
