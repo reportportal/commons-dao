@@ -698,7 +698,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
 			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
-					dsl.select(LAUNCH.ID, ITEM_ATTRIBUTE.VALUE)
+					dsl.select(LAUNCH.ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 							.from(ITEM_ATTRIBUTE)
 							.join(LAUNCH)
 							.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID))
@@ -709,9 +709,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							.fetch()
 			);
 		}
-
 		return accumulatedLaunches;
-
 	}
 
 	@Override
