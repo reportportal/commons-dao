@@ -342,6 +342,19 @@ class LaunchRepositoryTest extends BaseTest {
 		assertTrue(launches.isEmpty());
 	}
 
+	@Test
+	void shouldFindLatestLaunchNumber() {
+		Optional<Integer> number = launchRepository.findLatestNumberByNameAndProjectId("name", 1L);
+		assertFalse(number.isPresent());
+	}
+
+	@Test
+	void shouldNotFindLatestLaunchNumber() {
+		Optional<Integer> number = launchRepository.findLatestNumberByNameAndProjectId("launch name 1", 1L);
+		assertTrue(number.isPresent());
+		assertEquals(4, (int) number.get());
+	}
+
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
 						false,
