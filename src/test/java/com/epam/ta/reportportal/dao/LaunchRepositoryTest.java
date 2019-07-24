@@ -305,13 +305,13 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void nextNumberFirstLaunch() {
-		int nextNumber = launchRepository.getNextNumber(1l, "name");
+		long nextNumber = launchRepository.getNextNumber(1l, "name");
 		assertThat(nextNumber, Matchers.equalTo(1));
 	}
 
 	@Test
 	void nextNumberLaunch() {
-		int nextNumber = launchRepository.getNextNumber(1l, "launch name 1");
+		long nextNumber = launchRepository.getNextNumber(1l, "launch name 1");
 		assertThat(nextNumber, Matchers.equalTo(104));
 	}
 

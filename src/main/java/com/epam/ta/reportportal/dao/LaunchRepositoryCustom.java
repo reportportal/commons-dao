@@ -64,7 +64,7 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	 * @param launchName Launch name
 	 * @return Next number or 0
 	 */
-	int getNextNumber(Long projectId, String launchName);
+	Long getNextNumber(Long projectId, String launchName);
 
 	Map<String, String> getStatuses(Long projectId, Long[] ids);
 

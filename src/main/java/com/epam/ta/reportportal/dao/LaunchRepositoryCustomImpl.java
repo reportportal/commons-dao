@@ -116,15 +116,13 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public int getNextNumber(Long projectId, String launchName) {
+	public Long getNextNumber(Long projectId, String launchName) {
 		return dsl.select(LAUNCH.NUMBER.plus(1))
 				.from(LAUNCH)
 				.where(LAUNCH.NAME.eq(launchName))
 				.and(LAUNCH.PROJECT_ID.eq(projectId))
 				.orderBy(LAUNCH.NUMBER.desc())
-				.limit(1)
-				.fetchOptionalInto(Integer.class)
-				.orElse(1);
+				.limit(1).fetchOptionalInto(Long.class).orElse(1L);
 	}
 
 	@Override
