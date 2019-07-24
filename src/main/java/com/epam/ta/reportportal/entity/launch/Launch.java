@@ -62,7 +62,7 @@ public class Launch implements Serializable {
 	private Long projectId;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id", insertable = false, updatable = false)
+	@JoinColumn(name = "user_id", updatable = false)
 	private User user;
 
 	@Column(name = "name", nullable = false, length = 256)
