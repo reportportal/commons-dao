@@ -47,8 +47,8 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
@@ -57,8 +57,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.choose;
@@ -259,7 +259,7 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_START_TIME, LAUNCH.START_TIME, Timestamp.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_END_TIME, LAUNCH.END_TIME, Timestamp.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, LAUNCH.PROJECT_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ID, LAUNCH.USER_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, LAUNCH.OWNER, Long.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_NUMBER, LAUNCH.NUMBER, Integer.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_MODIFIED, LAUNCH.LAST_MODIFIED, Timestamp.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE, JLaunchModeEnum.class).get(),
@@ -276,11 +276,6 @@ public enum FilterTarget {
 							.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
 							.toString())
 					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-					.get(),
-
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
-					.withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
-					.withJoinCondition(LAUNCH.USER_ID.eq(USERS.ID))
 					.get()
 	)) {
 		@Override
@@ -291,8 +286,7 @@ public enum FilterTarget {
 					LAUNCH.DESCRIPTION,
 					LAUNCH.START_TIME,
 					LAUNCH.END_TIME,
-					LAUNCH.PROJECT_ID,
-					LAUNCH.USER_ID,
+					LAUNCH.PROJECT_ID, LAUNCH.OWNER,
 					LAUNCH.NUMBER,
 					LAUNCH.LAST_MODIFIED,
 					LAUNCH.MODE,
@@ -302,10 +296,7 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.KEY,
 					ITEM_ATTRIBUTE.VALUE,
 					ITEM_ATTRIBUTE.SYSTEM,
-					STATISTICS.S_COUNTER,
-					STATISTICS_FIELD.NAME,
-					USERS.ID,
-					USERS.LOGIN
+					STATISTICS.S_COUNTER, STATISTICS_FIELD.NAME
 			);
 		}
 
@@ -317,7 +308,6 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
-			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, LAUNCH.USER_ID.eq(USERS.ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
 			query.addJoin(STATISTICS_FIELD, JoinType.LEFT_OUTER_JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
 		}

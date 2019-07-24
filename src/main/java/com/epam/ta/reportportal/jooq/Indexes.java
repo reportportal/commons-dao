@@ -82,7 +82,6 @@ public class Indexes {
 	public static final Index ITEM_ATTRIBUTE_PK = Indexes0.ITEM_ATTRIBUTE_PK;
 	public static final Index LAUNCH_PK = Indexes0.LAUNCH_PK;
 	public static final Index LAUNCH_PROJECT_IDX = Indexes0.LAUNCH_PROJECT_IDX;
-	public static final Index LAUNCH_USER_IDX = Indexes0.LAUNCH_USER_IDX;
 	public static final Index LAUNCH_UUID_IDX = Indexes0.LAUNCH_UUID_IDX;
 	public static final Index LAUNCH_UUID_KEY = Indexes0.LAUNCH_UUID_KEY;
 	public static final Index UNQ_NAME_NUMBER = Indexes0.UNQ_NAME_NUMBER;
@@ -412,12 +411,6 @@ public class Indexes {
 				new OrderField[] { JLaunch.LAUNCH.PROJECT_ID },
 				false
 		);
-		public static Index LAUNCH_USER_IDX = Internal.createIndex(
-				"launch_user_idx",
-				JLaunch.LAUNCH,
-				new OrderField[] { JLaunch.LAUNCH.USER_ID },
-				false
-		);
 		public static Index LAUNCH_UUID_IDX = Internal.createIndex(
 				"launch_uuid_idx",
 				JLaunch.LAUNCH,
@@ -433,7 +426,7 @@ public class Indexes {
 		public static Index UNQ_NAME_NUMBER = Internal.createIndex(
 				"unq_name_number",
 				JLaunch.LAUNCH,
-				new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.UUID },
+				new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID },
 				true
 		);
 		public static Index L_ATTR_RL_SEND_CASE_IDX = Internal.createIndex(

@@ -62,6 +62,6 @@ public class DefaultCatalog extends CatalogImpl {
     }
 
     private final List<Schema> getSchemas0() {
-        return Arrays.<Schema>asList(JPublic.PUBLIC);
+		return Arrays.<Schema>asList(JPublic.PUBLIC);
     }
 }

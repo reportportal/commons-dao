@@ -42,7 +42,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-	private static final long serialVersionUID = 268125254;
+	private static final long serialVersionUID = -908974209;
 
 	/**
 	 * The reference instance of <code>public.launch</code>
@@ -89,9 +89,14 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
 	);
 
 	/**
-	 * The column <code>public.launch.user_id</code>.
+	 * The column <code>public.launch.owner</code>.
 	 */
-	public final TableField<JLaunchRecord, Long> USER_ID = createField("user_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+	public final TableField<JLaunchRecord, String> OWNER = createField(
+			"owner",
+			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
+			this,
+			""
+	);
 
 	/**
 	 * The column <code>public.launch.name</code>.
@@ -245,7 +250,6 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
 		return Arrays.<Index>asList(
 				Indexes.LAUNCH_PK,
 				Indexes.LAUNCH_PROJECT_IDX,
-				Indexes.LAUNCH_USER_IDX,
 				Indexes.LAUNCH_UUID_IDX,
 				Indexes.LAUNCH_UUID_KEY,
 				Indexes.UNQ_NAME_NUMBER
@@ -281,15 +285,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
 	 */
 	@Override
 	public List<ForeignKey<JLaunchRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<JLaunchRecord, ?>>asList(Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY);
+		return Arrays.<ForeignKey<JLaunchRecord, ?>>asList(Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY);
 	}
 
 	public JProject project() {
 		return new JProject(this, Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY);
-	}
-
-	public JUsers users() {
-		return new JUsers(this, Keys.LAUNCH__LAUNCH_USER_ID_FKEY);
 	}
 
 	/**

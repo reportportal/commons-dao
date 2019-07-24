@@ -32,8 +32,17 @@ BEGIN
 
     WHILE launchcounter < 13
         LOOP
-            INSERT INTO launch (id, uuid, project_id, user_id, name, start_time, number, last_modified, mode, status)
-            VALUES (launchcounter, 'uuid ' || launchcounter, 1, 1, 'name ' || launchcounter, now(), 1, now(), 'DEFAULT', 'IN_PROGRESS');
+        INSERT INTO launch (id, uuid, project_id, owner, name, start_time, number, last_modified, mode, status)
+        VALUES (launchcounter,
+                'uuid ' || launchcounter,
+                1,
+                'superadmin',
+                'name ' || launchcounter,
+                now(),
+                1,
+                now(),
+                'DEFAULT',
+                'IN_PROGRESS');
 
             INSERT INTO item_attribute (key, value, item_id, launch_id, system)
             VALUES ('key' || launchcounter % 4, 'value' || launchcounter, NULL, launchcounter, FALSE);

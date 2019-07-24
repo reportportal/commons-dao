@@ -243,10 +243,6 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-
-		User user = new User();
-		user.setLogin(r.get(USERS.LOGIN));
-		launch.setUser(user);
 		return launch;
 	};
 

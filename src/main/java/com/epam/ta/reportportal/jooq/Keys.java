@@ -28,6 +28,7 @@ import org.jooq.impl.Internal;
 
 import javax.annotation.Generated;
 
+
 /**
  * A class modelling foreign key relationships and constraints of tables of 
  * the <code>public</code> schema.
@@ -193,7 +194,6 @@ public class Keys {
 	public static final ForeignKey<JItemAttributeRecord, JTestItemRecord> ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_ITEM_ID_FKEY = ForeignKeys0.ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_ITEM_ID_FKEY;
 	public static final ForeignKey<JItemAttributeRecord, JLaunchRecord> ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_LAUNCH_ID_FKEY = ForeignKeys0.ITEM_ATTRIBUTE__ITEM_ATTRIBUTE_LAUNCH_ID_FKEY;
 	public static final ForeignKey<JLaunchRecord, JProjectRecord> LAUNCH__LAUNCH_PROJECT_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_PROJECT_ID_FKEY;
-	public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = ForeignKeys0.LAUNCH__LAUNCH_USER_ID_FKEY;
 	public static final ForeignKey<JLaunchAttributeRulesRecord, JSenderCaseRecord> LAUNCH_ATTRIBUTE_RULES__LAUNCH_ATTRIBUTE_RULES_SENDER_CASE_ID_FKEY = ForeignKeys0.LAUNCH_ATTRIBUTE_RULES__LAUNCH_ATTRIBUTE_RULES_SENDER_CASE_ID_FKEY;
 	public static final ForeignKey<JLaunchNamesRecord, JSenderCaseRecord> LAUNCH_NAMES__LAUNCH_NAMES_SENDER_CASE_ID_FKEY = ForeignKeys0.LAUNCH_NAMES__LAUNCH_NAMES_SENDER_CASE_ID_FKEY;
 	public static final ForeignKey<JLdapConfigRecord, JIntegrationRecord> LDAP_CONFIG__LDAP_CONFIG_ID_FKEY = ForeignKeys0.LDAP_CONFIG__LDAP_CONFIG_ID_FKEY;
@@ -517,8 +517,7 @@ public class Keys {
 				"unq_name_number",
 				JLaunch.LAUNCH.NAME,
 				JLaunch.LAUNCH.NUMBER,
-				JLaunch.LAUNCH.PROJECT_ID,
-				JLaunch.LAUNCH.UUID
+				JLaunch.LAUNCH.PROJECT_ID
 		);
 		public static final UniqueKey<JLaunchAttributeRulesRecord> LAUNCH_ATTRIBUTE_RULES_PK = Internal.createUniqueKey(
 				JLaunchAttributeRules.LAUNCH_ATTRIBUTE_RULES,
@@ -935,12 +934,6 @@ public class Keys {
 				JLaunch.LAUNCH,
 				"launch__launch_project_id_fkey",
 				JLaunch.LAUNCH.PROJECT_ID
-		);
-		public static final ForeignKey<JLaunchRecord, JUsersRecord> LAUNCH__LAUNCH_USER_ID_FKEY = Internal.createForeignKey(
-				com.epam.ta.reportportal.jooq.Keys.USERS_PK,
-				JLaunch.LAUNCH,
-				"launch__launch_user_id_fkey",
-				JLaunch.LAUNCH.USER_ID
 		);
 		public static final ForeignKey<JLaunchAttributeRulesRecord, JSenderCaseRecord> LAUNCH_ATTRIBUTE_RULES__LAUNCH_ATTRIBUTE_RULES_SENDER_CASE_ID_FKEY = Internal
 				.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SENDER_CASE_PK,

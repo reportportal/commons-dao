@@ -185,16 +185,17 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND, buildDefaultFilter(1L), buildDefaultFilter2()),
-				PageRequest.of(0, 2, sort)
-		);
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND,
+				buildDefaultFilter(1L),
+				buildDefaultFilter2()
+		), PageRequest.of(0, 2, sort));
 		assertNotNull(launches);
 		assertEquals(1, launches.getTotalElements());
 	}
 
 	@Test
 	void getOwnerNames() {
-		final List<String> ownerNames = launchRepository.getOwnerNames(1L, "sup", Mode.DEFAULT.name());
+		final List<String> ownerNames = launchRepository.getOwnerNames(1L, "sup");
 		assertNotNull(ownerNames);
 		assertEquals(1, ownerNames.size());
 		assertTrue(ownerNames.contains("superadmin"));
@@ -284,7 +285,7 @@ class LaunchRepositoryTest extends BaseTest {
 						.build())
 				.build(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(Launch::getOwner)));
 	}
 
 	@Test
@@ -299,7 +300,19 @@ class LaunchRepositoryTest extends BaseTest {
 						.build())
 				.build(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(Launch::getOwner)));
+	}
+
+	@Test
+	void nextNumberFirstLaunch() {
+		int nextNumber = launchRepository.getNextNumber(1l, "name");
+		assertThat(nextNumber, Matchers.equalTo(1));
+	}
+
+	@Test
+	void nextNumberLaunch() {
+		int nextNumber = launchRepository.getNextNumber(1l, "launch name 1");
+		assertThat(nextNumber, Matchers.equalTo(104));
 	}
 
 	@Test

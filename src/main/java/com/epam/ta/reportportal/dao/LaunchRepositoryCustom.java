@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,23 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	 */
 	List<String> getLaunchNamesByModeExcludedByStatus(Long projectId, String value, LaunchModeEnum mode, StatusEnum status);
 
-	List<String> getOwnerNames(Long projectId, String value, String mode);
+	/**
+	 * Get list of available users on project
+	 *
+	 * @param projectId project id
+	 * @param value     part of username
+	 * @return List of users
+	 */
+	List<String> getOwnerNames(Long projectId, String value);
+
+	/**
+	 * Give next number for a new launch
+	 *
+	 * @param projectId  Project id
+	 * @param launchName Launch name
+	 * @return Next number or 0
+	 */
+	int getNextNumber(Long projectId, String launchName);
 
 	Map<String, String> getStatuses(Long projectId, Long[] ids);
 

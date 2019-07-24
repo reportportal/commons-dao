@@ -4,7 +4,9 @@ CREATE OR REPLACE FUNCTION launches_init()
   RETURNS VOID AS
 $$
 DECLARE
-  differentLaunchesCounter INT = 1; DECLARE sameLaunchCounter INT = 1;
+  differentlaunchescounter INT = 1;
+  samelaunchcounter        INT = 1;
+  launchnumber             INT = 100;
 BEGIN
   WHILE differentLaunchesCounter < 4
     LOOP
@@ -12,17 +14,17 @@ BEGIN
       WHILE sameLaunchCounter < 5
         LOOP
           raise notice 'Value: %', sameLaunchCounter;
-          INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, last_modified, mode, status)
-          VALUES ('uuid ' || differentLaunchesCounter || sameLaunchCounter,
-                  1,
-                  1,
+        INSERT INTO public.launch (uuid, project_id, number, owner, name, description, start_time, end_time, last_modified, mode, status)
+        VALUES ('uuid ' || differentLaunchesCounter || sameLaunchCounter,
+                1, launchnumber, 'superadmin',
                   'launch name ' || differentLaunchesCounter,
-                  'description',
+                'description',
                   now() - make_interval(days := 14),
                   now() - make_interval(days := 14) + make_interval(mins := 1),
                   now() - make_interval(days := 14) + make_interval(mins := 1),
-                  'DEFAULT',
-                  'IN_PROGRESS');
+                'DEFAULT',
+                'IN_PROGRESS');
+        launchnumber = launchnumber + 1;
           sameLaunchCounter = sameLaunchCounter + 1;
           IF sameLaunchCounter % 4 = 0
           THEN

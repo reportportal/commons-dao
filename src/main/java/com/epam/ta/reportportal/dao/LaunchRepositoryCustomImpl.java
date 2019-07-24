@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,16 +105,26 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<String> getOwnerNames(Long projectId, String value, String mode) {
+	public List<String> getOwnerNames(Long projectId, String value) {
 		return dsl.selectDistinct(USERS.LOGIN)
-				.from(LAUNCH)
-				.leftJoin(PROJECT)
-				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
-				.leftJoin(USERS)
-				.on(LAUNCH.USER_ID.eq(USERS.ID))
-				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
-				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
+				.from(USERS)
+				.join(PROJECT_USER)
+				.on(USERS.ID.eq(PROJECT_USER.USER_ID))
+				.where(PROJECT_USER.PROJECT_ID.eq(projectId))
+				.and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(USERS.LOGIN);
+	}
+
+	@Override
+	public int getNextNumber(Long projectId, String launchName) {
+		return dsl.select(LAUNCH.NUMBER.plus(1))
+				.from(LAUNCH)
+				.where(LAUNCH.NAME.eq(launchName))
+				.and(LAUNCH.PROJECT_ID.eq(projectId))
+				.orderBy(LAUNCH.NUMBER.desc())
+				.limit(1)
+				.fetchOptionalInto(Integer.class)
+				.orElse(1);
 	}
 
 	@Override
@@ -154,8 +164,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 						.leftJoin(ITEM_ATTRIBUTE)
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-						.leftJoin(USERS)
-						.on(LAUNCH.USER_ID.eq(USERS.ID))
 						.orderBy(SortUtils.TO_SORT_FIELDS.apply(pageable.getSort(), filter.getTarget()))
 						.fetch()),
 				pageable,
@@ -189,8 +197,6 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
 				.leftJoin(STATISTICS)
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
-				.leftJoin(USERS)
-				.on(LAUNCH.USER_ID.eq(USERS.ID))
 				.leftJoin(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.leftJoin(ITEM_ATTRIBUTE)
@@ -217,16 +223,14 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from) {
-		return dsl.select(USERS.LOGIN, DSL.count().as("count"))
+		return dsl.select(LAUNCH.OWNER, DSL.count().as("count"))
 				.from(LAUNCH)
-				.join(USERS)
-				.on(LAUNCH.USER_ID.eq(USERS.ID))
 				.where(LAUNCH.PROJECT_ID.eq(projectId)
 						.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
 								.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
 								.and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
-				.groupBy(USERS.LOGIN)
-				.fetchMap(USERS.LOGIN, field("count", Integer.class));
+				.groupBy(LAUNCH.OWNER)
+				.fetchMap(LAUNCH.OWNER, field("count", Integer.class));
 	}
 
 }
