@@ -78,7 +78,7 @@ public class Launch implements Serializable {
 	private LocalDateTime endTime;
 
 	@Column(name = "number", nullable = false, precision = 32)
-	private Integer number;
+	private Long number;
 
 	@Column(name = "has_retries")
 	private boolean hasRetries;
@@ -211,11 +211,11 @@ public class Launch implements Serializable {
 		this.endTime = endTime;
 	}
 
-	public Integer getNumber() {
+	public Long getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(Long number) {
 		this.number = number;
 	}
 
