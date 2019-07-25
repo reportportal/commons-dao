@@ -194,7 +194,7 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, USERS.ID, Long.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_EMAIL, USERS.EMAIL, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, DSL.lower(USERS.FULL_NAME).toString(), String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_TYPE, USERS.TYPE, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_EXPIRED, USERS.EXPIRED, Boolean.class).get(),
@@ -285,8 +285,7 @@ public enum FilterTarget {
 					LAUNCH.NAME,
 					LAUNCH.DESCRIPTION,
 					LAUNCH.START_TIME,
-					LAUNCH.END_TIME,
-					LAUNCH.PROJECT_ID, LAUNCH.OWNER,
+					LAUNCH.END_TIME, LAUNCH.PROJECT_ID, LAUNCH.OWNER,
 					LAUNCH.NUMBER,
 					LAUNCH.LAST_MODIFIED,
 					LAUNCH.MODE,
@@ -295,8 +294,7 @@ public enum FilterTarget {
 					LAUNCH.APPROXIMATE_DURATION,
 					ITEM_ATTRIBUTE.KEY,
 					ITEM_ATTRIBUTE.VALUE,
-					ITEM_ATTRIBUTE.SYSTEM,
-					STATISTICS.S_COUNTER, STATISTICS_FIELD.NAME
+					ITEM_ATTRIBUTE.SYSTEM, STATISTICS.S_COUNTER, STATISTICS_FIELD.NAME
 			);
 		}
 
