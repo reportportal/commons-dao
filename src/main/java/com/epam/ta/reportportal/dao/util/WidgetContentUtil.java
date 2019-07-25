@@ -287,18 +287,6 @@ public class WidgetContentUtil {
 		return new ArrayList<>(productStatusMapping.values());
 	};
 
-	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
-		UniqueBugContent uniqueBugContent = new UniqueBugContent();
-		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
-		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
-		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
-		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
-		uniqueBugContent.setUrl(record.get(TICKET.URL));
-		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
-		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
-		return uniqueBugContent;
-	};
-
 	public static final RecordMapper<Record, Optional<ItemAttributeResource>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
 
 		String key = record.get(fieldName(ITEM_ATTRIBUTES, KEY), String.class);
@@ -310,6 +298,21 @@ public class WidgetContentUtil {
 			return Optional.empty();
 		}
 	};
+
+	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
+		UniqueBugContent uniqueBugContent = new UniqueBugContent();
+		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
+		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
+		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
+		uniqueBugContent.setUrl(record.get(TICKET.URL));
+		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
+		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
+		ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
+		return uniqueBugContent;
+	};
+
+
 
 	public static final Function<Result<? extends Record>, Map<String, UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
 		Map<String, UniqueBugContent> content = Maps.newLinkedHashMap();

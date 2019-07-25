@@ -419,8 +419,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
-		System.out.println();
-
 		assertNotNull(uniqueBugStatistics);
 		assertEquals(3, uniqueBugStatistics.size());
 
