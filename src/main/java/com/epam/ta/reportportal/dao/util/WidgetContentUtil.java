@@ -293,7 +293,6 @@ public class WidgetContentUtil {
 		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
 		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
 		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
-		uniqueBugContent.setTicketId(record.get(TICKET.TICKET_ID));
 		uniqueBugContent.setUrl(record.get(TICKET.URL));
 		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
 		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
@@ -312,23 +311,19 @@ public class WidgetContentUtil {
 		}
 	};
 
-	public static final Function<Result<? extends Record>, List<UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
-		Map<Long, UniqueBugContent> content = Maps.newLinkedHashMap();
+	public static final Function<Result<? extends Record>, Map<String, UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
+		Map<String, UniqueBugContent> content = Maps.newLinkedHashMap();
 
 		result.forEach(record -> {
-			Long itemId = record.get(TEST_ITEM.ITEM_ID);
-			UniqueBugContent uniqueBugContent;
-			if (content.containsKey(itemId)) {
-				uniqueBugContent = content.get(itemId);
-			} else {
-				uniqueBugContent = UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record);
-				content.put(itemId, uniqueBugContent);
-			}
-
-			ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
+			String ticketId = record.get(TICKET.TICKET_ID);
+			content.computeIfPresent(ticketId, (k, v) -> {
+				ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> v.getItemAttributeResources().add(attribute));
+				return v;
+			});
+			content.putIfAbsent(ticketId, UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record));
 		});
 
-		return new ArrayList<>(content.values());
+		return content;
 	};
 
 	public static final Function<Result<? extends Record>, List<CumulativeTrendChartEntry>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
