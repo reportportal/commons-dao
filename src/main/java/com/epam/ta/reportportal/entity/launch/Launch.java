@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,9 +61,8 @@ public class Launch implements Serializable {
 	@Column(name = "project_id", nullable = false, precision = 32)
 	private Long projectId;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@Column(name = "user_id")
+	private User userId;
 
 	@Column(name = "name", nullable = false, length = 256)
 	private String name;
@@ -155,12 +154,12 @@ public class Launch implements Serializable {
 		this.projectId = projectId;
 	}
 
-	public User getUser() {
-		return user;
+	public User getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(User userId) {
+		this.userId = userId;
 	}
 
 	public String getName() {
@@ -295,7 +294,7 @@ public class Launch implements Serializable {
 		sb.append("id=").append(id);
 		sb.append(", uuid='").append(uuid).append('\'');
 		sb.append(", projectId=").append(projectId);
-		sb.append(", user=").append(user);
+		sb.append(", user=").append(userId);
 		sb.append(", name='").append(name).append('\'');
 		sb.append(", description='").append(description).append('\'');
 		sb.append(", startTime=").append(startTime);
