@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,15 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 	Optional<Launch> findLatestByFilter(Filter filter);
 
 	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
+
+	/**
+	 * Give next number for a new launch
+	 *
+	 * @param projectId  Project id
+	 * @param launchName Launch name
+	 * @return Next number or 0
+	 */
+	Long getNextNumber(Long projectId, String launchName);
 
 	/**
 	 * Finds launch ids of project with provided id
