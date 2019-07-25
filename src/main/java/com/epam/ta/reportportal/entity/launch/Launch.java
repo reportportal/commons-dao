@@ -22,7 +22,6 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
-import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -44,10 +43,7 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
-@Table(name = "launch", schema = "public", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
-		@Index(name = "launch_pk", unique = true, columnList = "id ASC"),
-		@Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
+@Table(name = "launch", schema = "public")
 public class Launch implements Serializable {
 
 	@Id
@@ -62,7 +58,7 @@ public class Launch implements Serializable {
 	private Long projectId;
 
 	@Column(name = "user_id")
-	private User userId;
+	private Long userId;
 
 	@Column(name = "name", nullable = false, length = 256)
 	private String name;
@@ -154,11 +150,11 @@ public class Launch implements Serializable {
 		this.projectId = projectId;
 	}
 
-	public User getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(User userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 

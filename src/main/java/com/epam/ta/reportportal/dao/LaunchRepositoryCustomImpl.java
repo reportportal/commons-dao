@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.leftJoin(USERS)
 				.on(LAUNCH.USER_ID.eq(USERS.ID))
-				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.where(PROJECT.ID.eq(projectId))
+				.and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 				.fetch(USERS.LOGIN);
 	}
@@ -167,6 +168,18 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.join(LAUNCHES)
 						.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID)))
 		);
+	}
+
+	@Override
+	public Long getNextNumber(Long projectId, String launchName) {
+		return dsl.select(LAUNCH.NUMBER.plus(1))
+				.from(LAUNCH)
+				.where(LAUNCH.NAME.eq(launchName))
+				.and(LAUNCH.PROJECT_ID.eq(projectId))
+				.orderBy(LAUNCH.NUMBER.desc())
+				.limit(1)
+				.fetchOptionalInto(Long.class)
+				.orElse(1L);
 	}
 
 	@Override
