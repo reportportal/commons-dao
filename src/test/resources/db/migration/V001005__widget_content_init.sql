@@ -118,6 +118,8 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step','uuid2', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
@@ -125,6 +127,8 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step','uuid3', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
@@ -132,6 +136,8 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 2);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step','uuid4', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
@@ -139,6 +145,8 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 1);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     INSERT INTO test_item (NAME,uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step','uuid5', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
@@ -148,6 +156,8 @@ BEGIN
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 2);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step','uuid6','STEP', now(), 'description', now(), 'uniqueId', launch4);
@@ -156,6 +166,8 @@ BEGIN
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step', 'uuid7', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
@@ -163,6 +175,8 @@ BEGIN
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 1);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
     ALTER SEQUENCE statistics_s_id_seq RESTART WITH 1;
     DELETE FROM statistics CASCADE;

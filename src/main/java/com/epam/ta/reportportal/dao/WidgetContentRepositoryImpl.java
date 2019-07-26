@@ -606,9 +606,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
+	public Map<String, UniqueBugContent> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit) {
 
-		List<UniqueBugContent> uniqueBugContents = UNIQUE_BUG_CONTENT_FETCHER.apply(dsl.with(LAUNCHES)
+		Map<String, UniqueBugContent> content = UNIQUE_BUG_CONTENT_FETCHER.apply(dsl.with(LAUNCHES)
 				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sort, isLatest).with(limit).with(sort).build())
 				.select(TICKET.TICKET_ID,
 						TICKET.SUBMIT_DATE,
@@ -636,9 +636,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.from(ITEM_ATTRIBUTE)
 						.where(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID).andNot(ITEM_ATTRIBUTE.SYSTEM))).as(ITEM_ATTRIBUTES))
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEM_ATTRIBUTES, ITEM_ID).cast(Long.class)))
+				.orderBy(TICKET.SUBMIT_DATE.desc())
 				.fetch());
 
-		return uniqueBugContents.stream().collect(groupingBy(UniqueBugContent::getTicketId, LinkedHashMap::new, toList()));
+		return content;
 	}
 
 	@Override

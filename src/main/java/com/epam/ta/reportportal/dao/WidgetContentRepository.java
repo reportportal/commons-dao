@@ -194,7 +194,7 @@ public interface WidgetContentRepository {
 	 * @param limit    Results limit
 	 * @return Map grouped by ticket id as key and List of {@link UniqueBugContent} as value
 	 */
-	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit);
+	Map<String, UniqueBugContent> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit);
 
 	/**
 	 * Loading the most "flaky" test cases content
