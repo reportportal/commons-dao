@@ -283,7 +283,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
 
-		QueryBuilder.newBuilder(filter.getFilterConditions()
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getFilterConditions()
 				.stream()
 				.filter(condition -> CRITERIA_STATUS.equalsIgnoreCase(condition.getSearchCriteria()))
 				.findAny()
@@ -294,10 +294,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
 								.collect(Collectors.toSet())
 				))
-				.orElse(filter)).build();
+				.orElse(filter));
 
 		return dsl.with(LOGS)
-				.as(QueryBuilder.newBuilder(filter).addCondition(LOG.ITEM_ID.eq(parentId)).build())
+				.as(queryBuilder.addCondition(LOG.ITEM_ID.eq(parentId)).build())
 				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
 				.from(LOG)
 				.join(LOGS)
