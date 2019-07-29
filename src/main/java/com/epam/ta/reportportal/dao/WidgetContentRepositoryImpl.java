@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
@@ -113,6 +114,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
+		Table<Record2<Long, BigDecimal>> criteriaTable;
+		if (criteria.endsWith("failed") || criteria.endsWith("skipped")) {
+			criteriaTable = statusCriteriaTable(JStatusEnum.valueOf(StringUtils.substringAfterLast(criteria, "$").toUpperCase()));
+		} else {
+			criteriaTable = statisticsCriteriaTable(criteria);
+		}
+
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted())).with(limit).build())
@@ -132,15 +140,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 						.join(TEST_ITEM)
 						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
-						.join(dsl.select(STATISTICS.ITEM_ID,
-								sum(when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG)
-						)
-								.from(STATISTICS)
-								.join(STATISTICS_FIELD)
-								.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-								.where(STATISTICS.ITEM_ID.isNotNull())
-								.groupBy(STATISTICS.ITEM_ID)
-								.asTable(CRITERIA_TABLE))
+						.join(criteriaTable)
 						.on(TEST_ITEM.ITEM_ID.eq(fieldName(CRITERIA_TABLE, ITEM_ID).cast(Long.class)))
 						.where(itemTypeStepCondition(includeMethods))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
@@ -151,6 +151,28 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(MOST_FAILED_CRITERIA_LIMIT)
 				.fetchInto(CriteriaHistoryItem.class);
+	}
+
+	private Table<Record2<Long, BigDecimal>> statisticsCriteriaTable(String criteria) {
+		return dsl.select(STATISTICS.ITEM_ID,
+				sum(when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG)
+		)
+				.from(STATISTICS)
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(STATISTICS.ITEM_ID.isNotNull())
+				.groupBy(STATISTICS.ITEM_ID)
+				.asTable(CRITERIA_TABLE);
+	}
+
+	private Table<Record2<Long, BigDecimal>> statusCriteriaTable(JStatusEnum criteria) {
+		return dsl.select(TEST_ITEM_RESULTS.RESULT_ID.as(ITEM_ID),
+				sum(when(TEST_ITEM_RESULTS.STATUS.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG)
+		)
+				.from(TEST_ITEM_RESULTS)
+				.where(TEST_ITEM_RESULTS.RESULT_ID.isNotNull())
+				.groupBy(TEST_ITEM_RESULTS.RESULT_ID)
+				.asTable(CRITERIA_TABLE);
 	}
 
 	@Override
