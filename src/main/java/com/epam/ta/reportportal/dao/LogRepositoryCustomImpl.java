@@ -16,8 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.*;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -44,10 +45,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.NESTED;
@@ -282,15 +283,21 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
 
-		filter.getFilterConditions()
-				.add(FilterCondition.builder()
-						.withSearchCriteria(CRITERIA_TEST_ITEM_ID)
-						.withValue(String.valueOf(parentId))
-						.withCondition(Condition.EQUALS)
-						.build());
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getFilterConditions()
+				.stream()
+				.filter(condition -> CRITERIA_STATUS.equalsIgnoreCase(condition.getSearchCriteria()))
+				.findAny()
+				.map(condition -> (Queryable) new Filter(filter.getTarget().getClazz(),
+						filter.getFilterConditions()
+								.stream()
+								.filter(filterCondition -> !condition.getSearchCriteria()
+										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
+								.collect(Collectors.toSet())
+				))
+				.orElse(filter));
 
 		return dsl.with(LOGS)
-				.as(QueryBuilder.newBuilder(filter).build())
+				.as(queryBuilder.addCondition(LOG.ITEM_ID.eq(parentId)).build())
 				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
 				.from(LOG)
 				.join(LOGS)

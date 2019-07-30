@@ -1088,8 +1088,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(PATTERN_TEMPLATE.NAME.eq(patternTemplateName))
 						.groupBy(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, PATTERN_TEMPLATE.NAME)
 						.having(DSL.countDistinct(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID).gt(BigDecimal.ZERO.intValue()))
-						.orderBy(field(TOTAL).desc())
-						.limit(PATTERNS_COUNT))
+						.orderBy(field(TOTAL).desc()))
 				.reduce((prev, curr) -> curr = prev.unionAll(curr))
 				.map(select -> TOP_PATTERN_TEMPLATES_GROUPED_FETCHER.apply(select.fetch()))
 				.orElseGet(Collections::emptyList);
