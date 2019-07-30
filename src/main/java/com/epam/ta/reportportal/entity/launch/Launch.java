@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -43,7 +44,10 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
-@Table(name = "launch", schema = "public")
+@Table(name = "launch", schema = "public", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
+		@Index(name = "launch_pk", unique = true, columnList = "id ASC"),
+		@Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
 public class Launch implements Serializable {
 
 	@Id
@@ -57,8 +61,9 @@ public class Launch implements Serializable {
 	@Column(name = "project_id", nullable = false, precision = 32)
 	private Long projectId;
 
-	@Column(name = "user_id")
-	private Long userId;
+	@ManyToOne
+	@JoinColumn(name = "user_id", insertable = false, updatable = false)
+	private User user;
 
 	@Column(name = "name", nullable = false, length = 256)
 	private String name;
@@ -150,12 +155,12 @@ public class Launch implements Serializable {
 		this.projectId = projectId;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getName() {
@@ -290,7 +295,7 @@ public class Launch implements Serializable {
 		sb.append("id=").append(id);
 		sb.append(", uuid='").append(uuid).append('\'');
 		sb.append(", projectId=").append(projectId);
-		sb.append(", user=").append(userId);
+		sb.append(", user=").append(user);
 		sb.append(", name='").append(name).append('\'');
 		sb.append(", description='").append(description).append('\'');
 		sb.append(", startTime=").append(startTime);
