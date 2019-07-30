@@ -76,7 +76,8 @@ class UserRepositoryTest extends BaseTest {
 		//then
 		assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
 		users.forEach(user -> assertThat(
-				"Last login should be lower than in the filer", Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
+				"Last login should be lower than in the filer",
+				Long.parseLong((String) user.getMetadata().getMetadata().get("lastLogin")),
 				Matchers.lessThan(now)
 		));
 	}
@@ -222,7 +223,7 @@ class UserRepositoryTest extends BaseTest {
 		reg.setRole(UserRole.USER);
 
 		Map<String, Object> map = new HashMap<>();
-		map.put("last_login", new Date());
+		map.put("lastLogin", new Date());
 		reg.setMetadata(new Metadata(map));
 
 		Project defaultProject = projectRepository.findByName("superadmin_personal").get();

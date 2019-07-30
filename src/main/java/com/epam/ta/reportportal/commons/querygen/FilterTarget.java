@@ -203,7 +203,7 @@ public enum FilterTarget {
 					.withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
-					"(" + USERS.METADATA + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
+					"(" + USERS.METADATA + "-> 'metadata' ->> 'lastLogin')::DOUBLE PRECISION ",
 					Long.class
 			).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_SYNCHRONIZATION_DATE,
