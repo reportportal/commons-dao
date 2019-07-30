@@ -214,8 +214,7 @@ public class RecordMappers {
 		return testItem;
 	};
 
-	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(
-			r.get(TEST_ITEM.ITEM_ID),
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
 			r.get(TEST_ITEM.NAME),
 			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
 			r.get(HAS_CONTENT, Boolean.class),
@@ -244,7 +243,10 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-		launch.setUserId(r.get(LAUNCH.USER_ID));
+
+		User user = new User();
+		user.setLogin(r.get(USERS.LOGIN));
+		launch.setUser(user);
 		return launch;
 	};
 

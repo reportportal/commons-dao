@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.google.common.collect.Comparators;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -41,10 +42,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -187,10 +185,9 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND,
-				buildDefaultFilter(1L),
-				buildDefaultFilter2()
-		), PageRequest.of(0, 2, sort));
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND, buildDefaultFilter(1L), buildDefaultFilter2()),
+				PageRequest.of(0, 2, sort)
+		);
 		assertNotNull(launches);
 		assertEquals(1, launches.getTotalElements());
 	}
@@ -276,18 +273,6 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void nextNumberFirstLaunch() {
-		long nextNumber = launchRepository.getNextNumber(1L, "name");
-		assertThat(nextNumber, Matchers.equalTo(1L));
-	}
-
-	@Test
-	void nextNumberLaunch() {
-		long nextNumber = launchRepository.getNextNumber(1L, "launch name 1");
-		assertThat(nextNumber, Matchers.equalTo(104L));
-	}
-
-	@Test
 	void sortingByJoinedColumnTest() {
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_USER));
 		Page<Launch> launchesPage = launchRepository.findByFilter(Filter.builder()
@@ -298,6 +283,23 @@ class LaunchRepositoryTest extends BaseTest {
 						.withValue("100")
 						.build())
 				.build(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+	}
+
+	@Test
+	void sortingByJoinedColumnLatestTest() {
+		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "statistics$defects$product_bug$pb001"));
+		Page<Launch> launchesPage = launchRepository.findAllLatestByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria(CRITERIA_ID)
+						.withValue("100")
+						.build())
+				.build(), pageRequest);
+
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
 	}
 
 	@Test
