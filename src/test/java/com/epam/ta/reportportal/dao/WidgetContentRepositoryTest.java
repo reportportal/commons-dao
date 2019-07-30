@@ -816,7 +816,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	@Disabled
 	void cumulativeTrendChartSorting() {
 		String sortingColumn = "statistics$defects$no_defect$nd001";
 		Filter filter = buildDefaultFilter(1L);
