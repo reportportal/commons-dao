@@ -417,7 +417,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		Sort sort = Sort.by(orderings);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
+		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
 		assertNotNull(uniqueBugStatistics);
 		assertEquals(3, uniqueBugStatistics.size());
@@ -808,7 +808,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
 		Sort sort = Sort.by(orders);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
+		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
 		assertNotNull(uniqueBugStatistics);
 		assertEquals(3, uniqueBugStatistics.size());
@@ -816,7 +816,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	@Disabled
 	void cumulativeTrendChartSorting() {
 		String sortingColumn = "statistics$defects$no_defect$nd001";
 		Filter filter = buildDefaultFilter(1L);

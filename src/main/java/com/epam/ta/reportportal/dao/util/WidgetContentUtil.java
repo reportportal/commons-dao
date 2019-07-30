@@ -256,12 +256,10 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet()
-				.stream()
-				.collect(LinkedHashMap::new,
-						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-						LinkedHashMap::putAll
-				);
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -289,19 +287,6 @@ public class WidgetContentUtil {
 		return new ArrayList<>(productStatusMapping.values());
 	};
 
-	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
-		UniqueBugContent uniqueBugContent = new UniqueBugContent();
-		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
-		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
-		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
-		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
-		uniqueBugContent.setTicketId(record.get(TICKET.TICKET_ID));
-		uniqueBugContent.setUrl(record.get(TICKET.URL));
-		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
-		uniqueBugContent.setSubmitter(record.get(USERS.LOGIN));
-		return uniqueBugContent;
-	};
-
 	public static final RecordMapper<Record, Optional<ItemAttributeResource>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
 
 		String key = record.get(fieldName(ITEM_ATTRIBUTES, KEY), String.class);
@@ -314,23 +299,34 @@ public class WidgetContentUtil {
 		}
 	};
 
-	public static final Function<Result<? extends Record>, List<UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
-		Map<Long, UniqueBugContent> content = Maps.newLinkedHashMap();
+	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
+		UniqueBugContent uniqueBugContent = new UniqueBugContent();
+		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
+		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
+		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
+		uniqueBugContent.setUrl(record.get(TICKET.URL));
+		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
+		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
+		ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
+		return uniqueBugContent;
+	};
+
+
+
+	public static final Function<Result<? extends Record>, Map<String, UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
+		Map<String, UniqueBugContent> content = Maps.newLinkedHashMap();
 
 		result.forEach(record -> {
-			Long itemId = record.get(TEST_ITEM.ITEM_ID);
-			UniqueBugContent uniqueBugContent;
-			if (content.containsKey(itemId)) {
-				uniqueBugContent = content.get(itemId);
-			} else {
-				uniqueBugContent = UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record);
-				content.put(itemId, uniqueBugContent);
-			}
-
-			ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
+			String ticketId = record.get(TICKET.TICKET_ID);
+			content.computeIfPresent(ticketId, (k, v) -> {
+				ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> v.getItemAttributeResources().add(attribute));
+				return v;
+			});
+			content.putIfAbsent(ticketId, UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record));
 		});
 
-		return new ArrayList<>(content.values());
+		return content;
 	};
 
 	public static final Function<Result<? extends Record>, List<CumulativeTrendChartEntry>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
@@ -360,13 +356,14 @@ public class WidgetContentUtil {
 	public static final BiConsumer<List<CumulativeTrendChartEntry>, Result<? extends Record>> CUMULATIVE_TOOLTIP_FETCHER = (cumulative, tooltipResult) -> {
 		tooltipResult.forEach(record -> {
 			Long launchId = record.get(LAUNCH.ID);
+			String attributeKey = record.get(ITEM_ATTRIBUTE.KEY);
 			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
 			cumulative.forEach(it -> it.getContent()
 					.getLaunchIds()
 					.stream()
 					.filter(id -> id.equals(launchId))
 					.findAny()
-					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeValue)));
+					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeKey + ":" + attributeValue)));
 		});
 	};
 
@@ -378,7 +375,8 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
@@ -425,6 +423,25 @@ public class WidgetContentUtil {
 		return res;
 	};
 
+	public static final BiFunction<Result<? extends Record>, Boolean, Map<String, List<Long>>> PATTERN_TEMPLATES_AGGREGATION_FETCHER = (result, isLatest) -> {
+		Map<String, List<Long>> content;
+		if (isLatest) {
+			content = Maps.newLinkedHashMap();
+			result.forEach(record -> {
+				String attribute = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+				List<Long> launchIds = content.computeIfAbsent(attribute, k -> Lists.newArrayList());
+				launchIds.add(record.get(fieldName(ID), Long.class));
+			});
+		} else {
+			content = Maps.newLinkedHashMapWithExpectedSize(result.size());
+			result.forEach(record -> {
+				String attribute = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+				content.put(attribute, Lists.newArrayList(record.get(fieldName(ID), Long[].class)));
+			});
+		}
+		return content;
+	};
+
 	public static final Function<Result<? extends Record>, List<TopPatternTemplatesContent>> TOP_PATTERN_TEMPLATES_FETCHER = result -> {
 
 		Map<String, TopPatternTemplatesContent> content = Maps.newLinkedHashMap();
@@ -454,6 +471,7 @@ public class WidgetContentUtil {
 			);
 			patternTemplatesContent.getPatternTemplates()
 					.add(new PatternTemplateLaunchStatistics(record.get(LAUNCH.NAME),
+							record.get(LAUNCH.NUMBER),
 							record.get(fieldName(TOTAL), Long.class),
 							record.get(LAUNCH.ID)
 					));

@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -179,13 +180,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
-	 * Select item IDs by analyzed status and launch id
+	 * Select item IDs by analyzed status and launch id with log level greater or equals than error
 	 *
-	 * @param status   {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
-	 * @param launchId {@link TestItem#launch} ID
+	 * @param autoAnalyzed {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
+	 * @param launchId     {@link TestItem#launch} ID
+	 * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId);
+	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}
@@ -231,8 +233,10 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * and {@link NestedStep#hasContent} flag to check whether entity is a last one
 	 * in the descendants tree or there are {@link com.epam.ta.reportportal.entity.log.Log} or {@link NestedStep} entities exist under it
 	 *
-	 * @param ids {@link Collection} of the {@link TestItem#itemId}
+	 * @param ids       {@link Collection} of the {@link TestItem#itemId}
+	 * @param logFilter {@link Queryable} with {@link com.epam.ta.reportportal.entity.log.Log} target, to evaluate 'hasContent' flag
+	 *                  and   attachments count
 	 * @return {@link List} of the {@link NestedStep}
 	 */
-	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids);
+	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter);
 }

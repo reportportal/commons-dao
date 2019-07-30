@@ -164,6 +164,6 @@ class LogRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.IN, false, "FAILED, PASSED", CRITERIA_STATUS))
 				.build();
 
-		logRepository.findNestedItems(2L, true, false, filter, PageRequest.of(2, 1));
+		logRepository.findNestedItems(2L, false, false, filter, PageRequest.of(2, 1));
 	}
 }

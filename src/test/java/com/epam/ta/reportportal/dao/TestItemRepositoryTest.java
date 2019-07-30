@@ -20,12 +20,14 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
@@ -46,6 +48,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -271,7 +275,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectByAutoAnalyzedStatus() {
-		List<Long> itemIds = testItemRepository.selectIdsByAutoAnalyzedStatus(false, 1L);
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, 1L, LogLevel.ERROR.toInt());
 		assertNotNull(itemIds);
 		assertThat(itemIds, Matchers.hasSize(1));
 	}
@@ -541,7 +545,14 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllNestedStepsByIds() {
-		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L));
+
+		Filter logFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(new FilterCondition(Condition.IN, false, "1,2,3", CRITERIA_TEST_ITEM_ID))
+				.withCondition(new FilterCondition(Condition.CONTAINS, false, "a", CRITERIA_LOG_MESSAGE))
+				.build();
+
+		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L), logFilter);
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());

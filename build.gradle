@@ -18,13 +18,15 @@ plugins {
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'net.researchgate.release' version '2.8.0'
     id "de.undercouch.download" version "3.4.3"
+    id 'nu.studer.jooq' version '3.0.3'
     id "com.jfrog.bintray" version "1.8.4"
     id 'jacoco'
     id 'java'
-    id "org.owasp.dependencycheck" version "5.1.0"
+    id "org.owasp.dependencycheck" version "5.2.0"
 }
 
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
+apply from: 'jooq.gradle'
 apply from: 'build-quality.gradle'
 apply from: 'jacoco.gradle'
 
@@ -47,8 +49,8 @@ wrapper {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
-        mavenBom "com.github.reportportal:commons-bom:f8ca1d4"
+//        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
+        mavenBom "com.github.reportportal:commons-bom:274c63e"
     }
 }
 
@@ -64,7 +66,6 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode")
 }
 
-
 dependencies {
 
     if (releaseMode) {
@@ -77,32 +78,29 @@ dependencies {
         compile 'com.github.reportportal:commons-model:5.0.0-BETA-4'
     }
 
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.3'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     compile 'org.lokra.seaweedfs:seaweedfs-client:0.7.3.RELEASE'
 
-    compile group: 'org.jooq', name: 'jooq', version: '3.11.4'
-    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.3'
+    compile('org.postgresql:postgresql')
+
+    compile 'org.jooq:jooq'
+    jooqRuntime 'org.postgresql:postgresql'
+
 
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.10.RELEASE'
 
-    compile('org.postgresql:postgresql')
-    runtime('org.postgresql:postgresql')
-
-    compile 'org.springframework.boot:spring-boot'
-    compile 'org.springframework.boot:spring-boot-autoconfigure'
     compile 'org.springframework:spring-context-support'
     compile 'com.github.ben-manes.caffeine:caffeine'
 
+    compile 'commons-fileupload:commons-fileupload:1.3.3'
     compile 'net.coobird:thumbnailator:0.4.8'
     compile 'commons-validator:commons-validator:1.6'
     compile 'com.google.guava:guava:23.0'
     compile 'org.jasypt:jasypt:1.9.2'
     compile 'com.google.code.findbugs:jsr305:3.0.2'
-    compile 'org.apache.commons:commons-lang3:3.6'
+    compile 'org.apache.commons:commons-lang3:3.9'
     compile 'org.reflections:reflections:0.9.11'
 
     compile 'org.apache.tika:tika-core'
@@ -128,8 +126,10 @@ dependencies {
 
 
 ext.src = [
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql': 'V002__default_data.sql'
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql'   : 'V001__initialize_schema.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'            : 'V002__default_data.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/4_alter_test_item_location.up.sql': 'V003__alter_test_item_location.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/5_alter_ticket_submitter.up.sql'  : 'V004__alter_ticket_submitter.sql'
 ]
 
 task copyTestDatabaseScripts {
@@ -167,3 +167,4 @@ test {
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
+compileJava.dependsOn.remove('generateSampleJooqSchemaSource')

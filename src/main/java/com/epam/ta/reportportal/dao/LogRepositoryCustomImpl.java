@@ -16,8 +16,9 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.*;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -44,10 +45,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.NESTED;
@@ -63,6 +64,7 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.jooq.impl.DSL.field;
 
 /**
  * @author Pavel Bortnik
@@ -226,8 +228,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.stream()
 				.filter(order -> CRITERIA_LOG_TIME.equals(order.getProperty()))
 				.findFirst()
-				.map(order -> order.isAscending() ? DSL.field(TIME).sort(SortOrder.ASC) : DSL.field(TIME).sort(SortOrder.DESC))
-				.orElseGet(() -> DSL.field(TIME).sort(SortOrder.ASC));
+				.map(order -> order.isAscending() ? field(TIME).sort(SortOrder.ASC) : field(TIME).sort(SortOrder.DESC))
+				.orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
 		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
 
@@ -261,11 +263,18 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.filter(c -> CRITERIA_STATUS.equals(c.getSearchCriteria()))
 				.findFirst()
 				.map(c -> Stream.of(c.getValue().split(",")).filter(StatusEnum::isPresent).map(JStatusEnum::valueOf).collect(toList()))
-				.ifPresent(statuses -> nestedStepSelect.and(TEST_ITEM_RESULTS.STATUS.in(statuses)));
+				.map(TEST_ITEM_RESULTS.STATUS::in)
+				.ifPresent(nestedStepSelect::and);
 
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
-			nestedStepSelect.and(DSL.field(DSL.exists(dsl.select().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+			nestedStepSelect.and(field(DSL.exists(dsl.with(LOGS)
+					.as(QueryBuilder.newBuilder(filter).addCondition(LOG.ITEM_ID.eq(parentId)).build())
+					.select()
+					.from(LOG)
+					.join(LOGS)
+					.on(LOG.ID.eq(field(LOGS, ID).cast(Long.class)))
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
 					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID)))));
 		}
 
@@ -274,15 +283,21 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
 
-		filter.getFilterConditions()
-				.add(FilterCondition.builder()
-						.withSearchCriteria(CRITERIA_TEST_ITEM_ID)
-						.withValue(String.valueOf(parentId))
-						.withCondition(Condition.EQUALS)
-						.build());
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getFilterConditions()
+				.stream()
+				.filter(condition -> CRITERIA_STATUS.equalsIgnoreCase(condition.getSearchCriteria()))
+				.findAny()
+				.map(condition -> (Queryable) new Filter(filter.getTarget().getClazz(),
+						filter.getFilterConditions()
+								.stream()
+								.filter(filterCondition -> !condition.getSearchCriteria()
+										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
+								.collect(Collectors.toSet())
+				))
+				.orElse(filter));
 
 		return dsl.with(LOGS)
-				.as(QueryBuilder.newBuilder(filter).build())
+				.as(queryBuilder.addCondition(LOG.ITEM_ID.eq(parentId)).build())
 				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
 				.from(LOG)
 				.join(LOGS)

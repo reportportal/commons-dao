@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -31,10 +32,7 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
-import org.jooq.DSLContext;
-import org.jooq.DatePart;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,7 +46,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
@@ -287,15 +287,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
+	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE.AUTO_ANALYZED.eq(status))
+				.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(LogLevel.ERROR.toInt()))
 				.fetchInto(Long.class);
 	}
 
@@ -305,8 +308,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return dsl.update(TEST_ITEM_RESULTS)
 				.set(TEST_ITEM_RESULTS.STATUS, status)
 				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
-				.set(
-						TEST_ITEM_RESULTS.DURATION,
+				.set(TEST_ITEM_RESULTS.DURATION,
 						dsl.select(DSL.extract(endTime, DatePart.EPOCH)
 								.minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
 								.cast(Double.class)).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId))
@@ -393,8 +395,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids) {
+	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter) {
 		JTestItem nested = TEST_ITEM.as(NESTED);
+		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter).build();
+
 		return dsl.select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
 				TEST_ITEM.START_TIME,
@@ -402,15 +406,25 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				TEST_ITEM_RESULTS.STATUS,
 				TEST_ITEM_RESULTS.END_TIME,
 				TEST_ITEM_RESULTS.DURATION,
-				DSL.field(DSL.exists(dsl.select().from(LOG).where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
-						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID))))
-						.as(HAS_CONTENT),
-				DSL.field(dsl.selectCount()
+				DSL.field(DSL.exists(dsl.with(LOGS)
+						.as(logsSelectQuery)
+						.select()
 						.from(LOG)
-						.join(ATTACHMENT)
-						.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+						.join(LOGS)
+						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+						.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse()))))
+						.as(HAS_CONTENT),
+				DSL.field(dsl.with(LOGS)
+						.as(logsSelectQuery)
+						.selectCount()
+						.from(LOG)
 						.join(nested)
 						.on(LOG.ITEM_ID.eq(nested.ITEM_ID))
+						.join(LOGS)
+						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+						.join(ATTACHMENT)
+						.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
 						.where(nested.HAS_STATS.isFalse()
 								.and(DSL.sql(fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)", TEST_ITEM.PATH))))
 						.as(ATTACHMENTS_COUNT)
@@ -427,8 +441,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
 
 		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
-			RETRIES_FETCHER.accept(
-					items,
+			RETRIES_FETCHER.accept(items,
 					dsl.select()
 							.from(TEST_ITEM)
 							.join(TEST_ITEM_RESULTS)

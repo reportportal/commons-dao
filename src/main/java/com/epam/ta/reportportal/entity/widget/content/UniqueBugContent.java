@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
@@ -34,9 +33,6 @@ public class UniqueBugContent implements Serializable {
 
 	@JsonProperty(value = "itemId")
 	private Long testItemId;
-
-	@JsonIgnore
-	private String ticketId;
 
 	@JsonProperty(value = "submitter")
 	private String submitter;
@@ -70,14 +66,6 @@ public class UniqueBugContent implements Serializable {
 		this.testItemId = testItemId;
 	}
 
-	public String getTicketId() {
-		return ticketId;
-	}
-
-	public void setTicketId(String ticketId) {
-		this.ticketId = ticketId;
-	}
-
 	public String getSubmitter() {
 		return submitter;
 	}
@@ -103,11 +91,11 @@ public class UniqueBugContent implements Serializable {
 	}
 
 	public Timestamp getSubmitDate() {
-		return submitDate;
+		return new Timestamp(submitDate.getTime());
 	}
 
 	public void setSubmitDate(Timestamp submitDate) {
-		this.submitDate = submitDate;
+		this.submitDate = new Timestamp(submitDate.getTime());
 	}
 
 	public Long getLaunchId() {
