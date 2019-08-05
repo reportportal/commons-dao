@@ -259,14 +259,15 @@ public interface WidgetContentRepository {
 	 * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate} entities with matched items count,
 	 * grouped by {@link ItemAttribute#value} and {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
 	 *
-	 * @param filter       {@link Filter}
-	 * @param sort         {@link Sort}
-	 * @param attributeKey {@link ItemAttribute#key}
-	 * @param patternName  {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
-	 * @param isLatest     Flag for retrieving only latest launches
-	 * @param limit        Attributes count limit
+	 * @param filter          {@link Filter}
+	 * @param sort            {@link Sort}
+	 * @param attributeKey    {@link ItemAttribute#key}
+	 * @param patternName     {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 * @param isLatest        Flag for retrieving only latest launches
+	 * @param launchesLimit   Launches count limit
+	 * @param attributesLimit Attributes count limit
 	 * @return The {@link List} of the {@link TopPatternTemplatesContent}
 	 */
 	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
-			boolean isLatest, int limit);
+			boolean isLatest, int launchesLimit, int attributesLimit);
 }
