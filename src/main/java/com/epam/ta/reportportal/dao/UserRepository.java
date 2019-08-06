@@ -72,6 +72,9 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 	@Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND u.login LIKE %:term%", nativeQuery = true)
 	List<String> findNamesByProject(@Param("projectId") Long projectId, @Param("term") String term);
 
+	@Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
+	Optional<String> findLoginById(@Param("id") Long id);
+
 	@Query(value = "SELECT users.login FROM users WHERE users.id = :id FOR UPDATE", nativeQuery = true)
-	Optional<String> findUsernameById(@Param("id") Long id);
+	Optional<String> findLoginByIdForUpdate(@Param("id") Long id);
 }
