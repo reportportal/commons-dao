@@ -31,7 +31,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -520,7 +519,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	void patternTemplate() {
 		Filter filter = buildDefaultFilter(1L);
-		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", "FIRST PATTERN", false, 600);
+		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", "FIRST PATTERN", false, 600, 15);
 
 		assertNotNull(topPatternTemplatesContents);
 		assertFalse(topPatternTemplatesContents.isEmpty());
