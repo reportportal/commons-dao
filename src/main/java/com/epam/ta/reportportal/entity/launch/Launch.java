@@ -61,7 +61,7 @@ public class Launch implements Serializable {
 	@Column(name = "project_id", nullable = false, precision = 32)
 	private Long projectId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 
