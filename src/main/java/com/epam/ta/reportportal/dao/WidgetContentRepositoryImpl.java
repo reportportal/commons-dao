@@ -818,7 +818,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
-			boolean isLatest, int limit) {
+			boolean isLatest, int launchesLimit, int attributesLimit) {
 
 		Field<?> launchIdsField = isLatest ? DSL.max(LAUNCH.ID).as(ID) : DSL.arrayAgg(LAUNCH.ID).as(ID);
 		List<Field<?>> groupingFields = isLatest ?
@@ -826,7 +826,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				Lists.newArrayList(ITEM_ATTRIBUTE.VALUE);
 
 		Map<String, List<Long>> attributeIdsMapping = PATTERN_TEMPLATES_AGGREGATION_FETCHER.apply(dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(LAUNCHES_COUNT).build())
+				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(launchesLimit).build())
 				.select(launchIdsField, ITEM_ATTRIBUTE.VALUE)
 				.from(LAUNCH)
 				.join(LAUNCHES)
@@ -843,7 +843,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 								PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
 						), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
-						.limit(limit)))
+						.limit(attributesLimit)))
 				.groupBy(groupingFields)
 				.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
