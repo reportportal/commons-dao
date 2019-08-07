@@ -209,7 +209,7 @@ public class RecordMappers {
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setCodeRef(r.get(TEST_ITEM.CODE_REF));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
+		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).ifPresent(testItem::setLaunchId);
 		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);
 		return testItem;
 	};

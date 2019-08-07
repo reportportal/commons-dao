@@ -37,7 +37,7 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
 
-	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launch.id = :launchId")
+	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launchId = :launchId")
 	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
 
 	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
@@ -192,7 +192,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param launchId ID of {@link Launch}
 	 * @return {@link Optional<TestItem>} if it exists, {@link Optional#empty()} if not
 	 */
-	@Query("SELECT t FROM TestItem t WHERE t.name=:name AND t.parent IS NULL AND t.launch.id=:launchId")
+	@Query("SELECT t FROM TestItem t WHERE t.name=:name AND t.parent IS NULL AND t.launchId=:launchId")
 	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
 
 	/**

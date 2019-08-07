@@ -92,4 +92,13 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	@Query(value = "SELECT * FROM launch l WHERE l.name =:name AND l.project_id=:projectId ORDER BY l.number DESC LIMIT 1", nativeQuery = true)
 	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
 
+	/**
+	 * Finds launch by {@link Launch#id} and sets a lock on the found launch row in the database.
+	 * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
+	 *
+	 * @param id {@link Launch#id}
+	 * @return {@link Optional} with {@link Launch} object
+	 */
+	@Query(value = "SELECT * FROM launch WHERE launch.id = :id FOR UPDATE", nativeQuery = true)
+	Optional<Launch> findByIdForUpdate(@Param("id") Long id);
 }
