@@ -102,6 +102,6 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	 * @return {@link Optional} with {@link Launch} object
 	 */
 	@Lock(value = LockModeType.PESSIMISTIC_READ)
-	@Query(value = "SELECT * FROM launch WHERE launch.id = :id FOR UPDATE", nativeQuery = true)
+	@Query(value = "SELECT l FROM Launch l WHERE l.id = :id")
 	Optional<Launch> findByIdForUpdate(@Param("id") Long id);
 }
