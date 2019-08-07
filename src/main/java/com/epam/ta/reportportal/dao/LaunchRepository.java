@@ -20,10 +20,12 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -99,6 +101,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	 * @param id {@link Launch#id}
 	 * @return {@link Optional} with {@link Launch} object
 	 */
+	@Lock(value = LockModeType.PESSIMISTIC_READ)
 	@Query(value = "SELECT * FROM launch WHERE launch.id = :id FOR UPDATE", nativeQuery = true)
 	Optional<Launch> findByIdForUpdate(@Param("id") Long id);
 }
