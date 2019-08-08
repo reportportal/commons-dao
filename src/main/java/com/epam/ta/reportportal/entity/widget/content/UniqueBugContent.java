@@ -77,7 +77,7 @@ public class UniqueBugContent implements Serializable {
 		this.items = items;
 	}
 
-	public static class ItemInfo {
+	public static class ItemInfo implements Serializable {
 		@JsonProperty(value = "itemId")
 		private Long testItemId;
 
