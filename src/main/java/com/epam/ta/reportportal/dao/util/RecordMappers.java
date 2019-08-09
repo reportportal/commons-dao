@@ -209,7 +209,7 @@ public class RecordMappers {
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setCodeRef(r.get(TEST_ITEM.CODE_REF));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
+		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).ifPresent(testItem::setLaunchId);
 		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);
 		return testItem;
 	};
@@ -243,10 +243,7 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-
-		User user = new User();
-		user.setLogin(r.get(USERS.LOGIN));
-		launch.setUser(user);
+		launch.setUserId(r.get(LAUNCH.USER_ID));
 		return launch;
 	};
 
