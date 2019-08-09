@@ -206,15 +206,17 @@ public class RecordMappers {
 	 */
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
+		testItem.setItemId(r.get(TEST_ITEM.ITEM_ID));
 		testItem.setName(r.get(TEST_ITEM.NAME));
 		testItem.setCodeRef(r.get(TEST_ITEM.CODE_REF));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
+		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).ifPresent(testItem::setLaunchId);
 		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);
 		return testItem;
 	};
 
-	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(
+			r.get(TEST_ITEM.ITEM_ID),
 			r.get(TEST_ITEM.NAME),
 			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
 			r.get(HAS_CONTENT, Boolean.class),
@@ -243,10 +245,7 @@ public class RecordMappers {
 		Launch launch = r.into(Launch.class);
 		launch.setId(r.get(LAUNCH.ID));
 		launch.setName(r.get(LAUNCH.NAME));
-
-		User user = new User();
-		user.setLogin(r.get(USERS.LOGIN));
-		launch.setUser(user);
+		launch.setUserId(r.get(LAUNCH.USER_ID));
 		return launch;
 	};
 

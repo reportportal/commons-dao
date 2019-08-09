@@ -185,9 +185,10 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND, buildDefaultFilter(1L), buildDefaultFilter2()),
-				PageRequest.of(0, 2, sort)
-		);
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND,
+				buildDefaultFilter(1L),
+				buildDefaultFilter2()
+		), PageRequest.of(0, 2, sort));
 		assertNotNull(launches);
 		assertEquals(1, launches.getTotalElements());
 	}
@@ -284,7 +285,7 @@ class LaunchRepositoryTest extends BaseTest {
 						.build())
 				.build(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(Launch::getUserId)));
 	}
 
 	@Test
@@ -299,7 +300,7 @@ class LaunchRepositoryTest extends BaseTest {
 						.build())
 				.build(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(Launch::getUserId)));
 	}
 
 	@Test
@@ -344,12 +345,10 @@ class LaunchRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
-		);
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
+		), new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE));
 		return new Filter(Launch.class, conditionSet);
 	}
 

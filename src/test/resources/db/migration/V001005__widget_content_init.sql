@@ -164,10 +164,11 @@ BEGIN
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
-    INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
+    INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 1);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'lol', itemId, null, false);
 
     INSERT INTO test_item (NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
     VALUES ('Step', 'uuid7', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
