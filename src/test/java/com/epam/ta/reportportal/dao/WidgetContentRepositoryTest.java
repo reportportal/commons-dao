@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -264,7 +263,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void launchesComparisonStatistics() {
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalContentFields();
-		filter = filter.withConditions(Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME)));
+		filter = filter.withConditions(Lists.newArrayList(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME)));
 		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
 
 		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.launchesComparisonStatistics(filter,
@@ -693,7 +692,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		String sortingColumn = "statistics$defects$no_defect$nd001";
 		Filter filter = buildDefaultFilter(1L);
 		List<String> contentFields = buildTotalContentFields();
-		filter = filter.withConditions(Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME)));
+		filter = filter.withConditions(Lists.newArrayList(new FilterCondition(Condition.EQUALS, false, "launch name 1", NAME)));
 		List<Sort.Order> orders = filter.getTarget()
 				.getCriteriaHolders()
 				.stream()

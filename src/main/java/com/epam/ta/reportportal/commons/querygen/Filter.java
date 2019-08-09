@@ -98,12 +98,12 @@ public class Filter implements Serializable, Queryable {
 		return filterConditions;
 	}
 
-	public Filter withCondition(FilterCondition filterCondition) {
+	public Filter withCondition(ConvertibleCondition filterCondition) {
 		this.filterConditions.add(filterCondition);
 		return this;
 	}
 
-	public Filter withConditions(Collection<FilterCondition> conditions) {
+	public Filter withConditions(List<ConvertibleCondition> conditions) {
 		this.filterConditions.addAll(conditions);
 		return this;
 	}
