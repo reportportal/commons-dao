@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,9 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 
 	@Column(name = "type")
 	private String type;
+
+	@Column(name = "path")
+	private String path;
 
 	@JsonProperty(value = "uniqueId")
 	@Column(name = UNIQUE_ID)
@@ -90,6 +93,14 @@ public class MostTimeConsumingTestCasesContent implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	public String getUniqueId() {

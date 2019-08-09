@@ -184,11 +184,6 @@ public class QueryBuilder {
 	}
 
 	public QueryBuilder with(Field<?> field, SortOrder sort) {
-		if (query.getSelect()
-				.stream()
-				.noneMatch(f -> String.valueOf(f.getQualifiedName()).equalsIgnoreCase(String.valueOf(field.getQualifiedName())))) {
-			query.addSelect(field);
-		}
 		query.addOrderBy(field.sort(sort));
 		return this;
 	}

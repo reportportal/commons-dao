@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
@@ -46,10 +47,12 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
@@ -264,12 +267,14 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, LAUNCH.HAS_RETRIES, Boolean.class).get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY, List.class)
-					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString())
+					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)).toString())
 					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE, List.class)
-					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString())
+					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
+							.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+							.toString())
 					.withJoinCondition(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 					.get(),
 
@@ -332,6 +337,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, TEST_ITEM.ITEM_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, TEST_ITEM.NAME, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(TestItemCriteriaConstant.CRITERIA_TYPE, TEST_ITEM.TYPE, JTestItemTypeEnum.class)
+							.withAggregateCriteria(DSL.max(TEST_ITEM.TYPE).toString())
 							.get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_START_TIME, TEST_ITEM.START_TIME, Timestamp.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, TEST_ITEM.DESCRIPTION, String.class).get(),
@@ -341,6 +347,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_STATS, TEST_ITEM.HAS_STATS, Boolean.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
 							.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
@@ -365,19 +372,20 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).toString())
+							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY)
+									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+									.toString())
 							.get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE).toString())
-							.get(),
-
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_SYSTEM, ITEM_ATTRIBUTE.SYSTEM, Boolean.class)
-							.withAggregateCriteria(DSL.boolOr(ITEM_ATTRIBUTE.SYSTEM).toString())
+							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
+									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+									.toString())
 							.get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME, PATTERN_TEMPLATE.NAME, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString()).get(),
+							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString())
+							.get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_TICKET_ID, TICKET.TICKET_ID, String.class)
 							.withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString())
 							.get()
@@ -387,6 +395,7 @@ public enum FilterTarget {
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(TEST_ITEM.ITEM_ID,
 					TEST_ITEM.NAME,
+					TEST_ITEM.CODE_REF,
 					TEST_ITEM.TYPE,
 					TEST_ITEM.START_TIME,
 					TEST_ITEM.DESCRIPTION,
@@ -396,6 +405,7 @@ public enum FilterTarget {
 					TEST_ITEM.PARENT_ID,
 					TEST_ITEM.RETRY_OF,
 					TEST_ITEM.HAS_CHILDREN,
+					TEST_ITEM.HAS_STATS,
 					TEST_ITEM.HAS_RETRIES,
 					TEST_ITEM.LAUNCH_ID,
 					TEST_ITEM_RESULTS.STATUS,
@@ -415,7 +425,12 @@ public enum FilterTarget {
 					ISSUE_TYPE.ABBREVIATION,
 					ISSUE_TYPE.HEX_COLOR,
 					ISSUE_TYPE.ISSUE_NAME,
-					ISSUE_GROUP.ISSUE_GROUP_, TICKET.ID, TICKET.BTS_PROJECT, TICKET.BTS_URL, TICKET.TICKET_ID, TICKET.URL,
+					ISSUE_GROUP.ISSUE_GROUP_,
+					TICKET.ID,
+					TICKET.BTS_PROJECT,
+					TICKET.BTS_URL,
+					TICKET.TICKET_ID,
+					TICKET.URL,
 					PATTERN_TEMPLATE.ID,
 					PATTERN_TEMPLATE.NAME
 			);
@@ -459,7 +474,12 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LEVEL, LOG.LOG_LEVEL, LogLevel.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_MESSAGE, LOG.LOG_MESSAGE, String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_BINARY_CONTENT, ATTACHMENT.FILE_ID, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get()
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH, TEST_ITEM.PATH, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
+					.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(LogCriteriaConstant.CRITERIA_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get()
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -469,6 +489,7 @@ public enum FilterTarget {
 					LOG.LAST_MODIFIED,
 					LOG.LOG_LEVEL,
 					LOG.ITEM_ID,
+					LOG.LAUNCH_ID,
 					LOG.ATTACHMENT_ID,
 					ATTACHMENT.ID,
 					ATTACHMENT.FILE_ID,
@@ -488,6 +509,8 @@ public enum FilterTarget {
 		@Override
 		protected void joinTables(SelectQuery<? extends Record> query) {
 			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
+			query.addJoin(TEST_ITEM, JoinType.LEFT_OUTER_JOIN, LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID));
+			query.addJoin(TEST_ITEM_RESULTS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
 		}
 
 		@Override
@@ -563,6 +586,7 @@ public enum FilterTarget {
 					INTEGRATION.PROJECT_ID,
 					INTEGRATION.TYPE,
 					INTEGRATION.PARAMS,
+					INTEGRATION.CREATOR,
 					INTEGRATION.CREATION_DATE,
 					INTEGRATION_TYPE.NAME,
 					INTEGRATION_TYPE.GROUP_TYPE,
@@ -606,8 +630,12 @@ public enum FilterTarget {
 			return Lists.newArrayList(DASHBOARD.ID,
 					DASHBOARD.NAME,
 					DASHBOARD.DESCRIPTION,
-					DASHBOARD.CREATION_DATE, DASHBOARD_WIDGET.WIDGET_OWNER, DASHBOARD_WIDGET.IS_CREATED_ON,
+					DASHBOARD.CREATION_DATE,
+					DASHBOARD_WIDGET.WIDGET_OWNER,
+					DASHBOARD_WIDGET.IS_CREATED_ON,
 					DASHBOARD_WIDGET.WIDGET_ID,
+					DASHBOARD_WIDGET.WIDGET_NAME,
+					DASHBOARD_WIDGET.WIDGET_TYPE,
 					DASHBOARD_WIDGET.WIDGET_HEIGHT,
 					DASHBOARD_WIDGET.WIDGET_WIDTH,
 					DASHBOARD_WIDGET.WIDGET_POSITION_X,

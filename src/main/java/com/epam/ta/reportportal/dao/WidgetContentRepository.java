@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -193,7 +194,7 @@ public interface WidgetContentRepository {
 	 * @param limit    Results limit
 	 * @return Map grouped by ticket id as key and List of {@link UniqueBugContent} as value
 	 */
-	Map<String, List<UniqueBugContent>> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit);
+	Map<String, UniqueBugContent> uniqueBugStatistics(Filter filter, Sort sort, boolean isLatest, int limit);
 
 	/**
 	 * Loading the most "flaky" test cases content
@@ -246,10 +247,27 @@ public interface WidgetContentRepository {
 			Map<String, String> customColumns, Sort sort, boolean isLatest, int limit);
 
 	/**
-	 * Loading the TOP-20 most time consuming test cases
+	 * Loading the most time consuming test cases
 	 *
 	 * @param filter {@link Filter}
+	 * @param limit  Results limit
 	 * @return list of {@link MostTimeConsumingTestCasesContent}
 	 */
-	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter);
+	List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit);
+
+	/**
+	 * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate} entities with matched items count,
+	 * grouped by {@link ItemAttribute#value} and {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 *
+	 * @param filter          {@link Filter}
+	 * @param sort            {@link Sort}
+	 * @param attributeKey    {@link ItemAttribute#key}
+	 * @param patternName     {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 * @param isLatest        Flag for retrieving only latest launches
+	 * @param launchesLimit   Launches count limit
+	 * @param attributesLimit Attributes count limit
+	 * @return The {@link List} of the {@link TopPatternTemplatesContent}
+	 */
+	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
+			boolean isLatest, int launchesLimit, int attributesLimit);
 }

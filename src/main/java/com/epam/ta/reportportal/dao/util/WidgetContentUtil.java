@@ -1,6 +1,6 @@
 
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,8 +56,11 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JPatternTemplate.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
@@ -127,7 +130,7 @@ public class WidgetContentUtil {
 
 		Optional<Field<?>> statisticsField = ofNullable(result.field(fieldName(STATISTICS_TABLE, SF_NAME)));
 		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
-		Optional<Field<Long>> itemAttributeIdField = ofNullable(result.field(ITEM_ATTRIBUTE.ID));
+		Optional<Field<?>> itemAttributeIdField = ofNullable(result.field(ATTR_ID));
 
 		result.forEach(record -> {
 			LaunchesTableContent content;
@@ -226,6 +229,8 @@ public class WidgetContentUtil {
 		Map<String, Map<Long, ProductStatusStatisticsContent>> filterMapping = new LinkedHashMap<>();
 
 		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTRIBUTE_VALUE)));
+		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
+		Optional<Field<?>> statusField = ofNullable(result.field(LAUNCH.STATUS.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			String filterName = record.get(fieldName(FILTER_NAME), String.class);
@@ -238,17 +243,20 @@ public class WidgetContentUtil {
 			}
 
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
+				attributes.entrySet()
 						.stream()
-						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
-						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+						.filter(attributeName -> attributeKey == null || (StringUtils.isNotBlank(attributeKey) && attributeKey.startsWith(
+								attributeName.getValue())))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content));
 
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(
-				LinkedHashMap::new,
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
 				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
 				LinkedHashMap::putAll
 		);
@@ -258,19 +266,67 @@ public class WidgetContentUtil {
 		Map<Long, ProductStatusStatisticsContent> productStatusMapping = new LinkedHashMap<>();
 
 		Optional<? extends Field<?>> attributeField = ofNullable(result.field(fieldName(ATTR_TABLE, ATTRIBUTE_VALUE)));
+		Optional<Field<?>> startTimeField = ofNullable(result.field(LAUNCH.START_TIME.getQualifiedName().toString()));
+		Optional<Field<?>> statusField = ofNullable(result.field(LAUNCH.STATUS.getQualifiedName().toString()));
 
 		result.forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
-				ofNullable(record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class)).ifPresent(key -> attributes.entrySet()
+				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
+				attributes.entrySet()
 						.stream()
-						.filter(attributeName -> StringUtils.isNotBlank(key) && key.startsWith(attributeName.getValue()))
-						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content)));
+						.filter(attributeName -> attributeKey == null || (StringUtils.isNotBlank(attributeKey) && attributeKey.startsWith(
+								attributeName.getValue())))
+						.forEach(attribute -> proceedProductStatusAttributes(record, attribute.getKey(), content));
 
 			}
 		});
 
 		return new ArrayList<>(productStatusMapping.values());
+	};
+
+	public static final RecordMapper<Record, Optional<ItemAttributeResource>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
+
+		String key = record.get(fieldName(ITEM_ATTRIBUTES, KEY), String.class);
+		String value = record.get(fieldName(ITEM_ATTRIBUTES, VALUE), String.class);
+
+		if (key != null || value != null) {
+			return Optional.of(new ItemAttributeResource(key, value));
+		} else {
+			return Optional.empty();
+		}
+	};
+
+	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
+		UniqueBugContent uniqueBugContent = new UniqueBugContent();
+		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
+		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
+		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
+		uniqueBugContent.setUrl(record.get(TICKET.URL));
+		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
+		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
+		ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
+		return uniqueBugContent;
+	};
+
+
+
+	public static final Function<Result<? extends Record>, Map<String, UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
+		Map<String, UniqueBugContent> content = Maps.newLinkedHashMap();
+
+		result.forEach(record -> {
+			String ticketId = record.get(TICKET.TICKET_ID);
+			content.computeIfPresent(ticketId, (k, v) -> {
+				ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> v.getItemAttributeResources().add(attribute));
+				return v;
+			});
+			content.putIfAbsent(ticketId, UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record));
+		});
+
+		return content;
 	};
 
 	public static final Function<Result<? extends Record>, List<CumulativeTrendChartEntry>> CUMULATIVE_TREND_CHART_FETCHER = result -> {
@@ -300,13 +356,14 @@ public class WidgetContentUtil {
 	public static final BiConsumer<List<CumulativeTrendChartEntry>, Result<? extends Record>> CUMULATIVE_TOOLTIP_FETCHER = (cumulative, tooltipResult) -> {
 		tooltipResult.forEach(record -> {
 			Long launchId = record.get(LAUNCH.ID);
+			String attributeKey = record.get(ITEM_ATTRIBUTE.KEY);
 			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
 			cumulative.forEach(it -> it.getContent()
 					.getLaunchIds()
 					.stream()
 					.filter(id -> id.equals(launchId))
 					.findAny()
-					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeValue)));
+					.ifPresent(content -> it.getContent().getTooltipContent().add(attributeKey + ":" + attributeValue)));
 		});
 	};
 
@@ -364,6 +421,63 @@ public class WidgetContentUtil {
 		NotPassedCasesContent res = r.into(NotPassedCasesContent.class);
 		res.setValues(Collections.singletonMap(NOT_PASSED_STATISTICS_KEY, r.getValue(fieldName(PERCENTAGE), String.class)));
 		return res;
+	};
+
+	public static final BiFunction<Result<? extends Record>, Boolean, Map<String, List<Long>>> PATTERN_TEMPLATES_AGGREGATION_FETCHER = (result, isLatest) -> {
+		Map<String, List<Long>> content;
+		if (isLatest) {
+			content = Maps.newLinkedHashMap();
+			result.forEach(record -> {
+				String attribute = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+				List<Long> launchIds = content.computeIfAbsent(attribute, k -> Lists.newArrayList());
+				launchIds.add(record.get(fieldName(ID), Long.class));
+			});
+		} else {
+			content = Maps.newLinkedHashMapWithExpectedSize(result.size());
+			result.forEach(record -> {
+				String attribute = record.get(ITEM_ATTRIBUTE.VALUE, String.class);
+				content.put(attribute, Lists.newArrayList(record.get(fieldName(ID), Long[].class)));
+			});
+		}
+		return content;
+	};
+
+	public static final Function<Result<? extends Record>, List<TopPatternTemplatesContent>> TOP_PATTERN_TEMPLATES_FETCHER = result -> {
+
+		Map<String, TopPatternTemplatesContent> content = Maps.newLinkedHashMap();
+
+		result.forEach(record -> {
+
+			String attributeValue = record.get(fieldName(ATTRIBUTE_VALUE), String.class);
+			TopPatternTemplatesContent patternTemplatesContent = content.computeIfAbsent(attributeValue,
+					k -> new TopPatternTemplatesContent(attributeValue)
+			);
+			patternTemplatesContent.getPatternTemplates()
+					.add(new PatternTemplateStatistics(record.get(PATTERN_TEMPLATE.NAME), record.get(fieldName(TOTAL), Long.class)));
+		});
+
+		return new ArrayList<>(content.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<TopPatternTemplatesContent>> TOP_PATTERN_TEMPLATES_GROUPED_FETCHER = result -> {
+
+		Map<String, TopPatternTemplatesContent> content = Maps.newLinkedHashMap();
+
+		result.forEach(record -> {
+
+			String attributeValue = record.get(fieldName(ATTRIBUTE_VALUE), String.class);
+			TopPatternTemplatesContent patternTemplatesContent = content.computeIfAbsent(attributeValue,
+					k -> new TopPatternTemplatesContent(attributeValue)
+			);
+			patternTemplatesContent.getPatternTemplates()
+					.add(new PatternTemplateLaunchStatistics(record.get(LAUNCH.NAME),
+							record.get(LAUNCH.NUMBER),
+							record.get(fieldName(TOTAL), Long.class),
+							record.get(LAUNCH.ID)
+					));
+		});
+
+		return new ArrayList<>(content.values());
 	};
 
 }

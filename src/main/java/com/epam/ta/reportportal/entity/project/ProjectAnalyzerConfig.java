@@ -23,9 +23,9 @@ import java.io.Serializable;
  */
 public class ProjectAnalyzerConfig implements Serializable {
 
-	public static final int MIN_DOC_FREQ = 7;
+	public static final int MIN_DOC_FREQ = 1;
 	public static final int MIN_TERM_FREQ = 1;
-	public static final int MIN_SHOULD_MATCH = 80;
-	public static final int NUMBER_OF_LOG_LINES = 2;
+	public static final int MIN_SHOULD_MATCH = 95;
+	public static final int NUMBER_OF_LOG_LINES = -1;
 
 }

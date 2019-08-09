@@ -25,6 +25,7 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_STATUS = "status";
 	public static final String CRITERIA_HAS_CHILDREN = "hasChildren";
 	public static final String CRITERIA_HAS_RETRIES = "hasRetries";
+	public static final String CRITERIA_HAS_STATS = "hasStats";
 	public static final String CRITERIA_TYPE = "type";
 	public static final String CRITERIA_PATH = "path";
 	public static final String CRITERIA_ISSUE_TYPE = "issueType";

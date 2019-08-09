@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String DEFECTS_NO_DEFECT_TOTAL = "statistics$defects$no_defect$total";
 	public static final String DEFECTS_SYSTEM_ISSUE_TOTAL = "statistics$defects$system_issue$total";
 	public static final String DEFECTS_TO_INVESTIGATE_TOTAL = "statistics$defects$to_investigate$total";
+
+	public static final String STATISTICS_SEPARATOR = "$";
 
 	public static final String TOTAL = "total";
 	public static final String EXECUTIONS_KEY = "executions";
@@ -90,7 +92,9 @@ public class WidgetContentRepositoryConstants {
 	public static final String NOT_PASSED_STATISTICS_KEY = "% (Failed+Skipped)/Total";
 
 	/*Unique bugs table widget constants*/
-	public static final String URL = "url";
+	public static final String ITEM_ATTRIBUTES = "item_attributes";
+	public static final String KEY = "key";
+	public static final String VALUE = "value";
 
 	/*Flaky cases table widget constants*/
 	public static final String UNIQUE_ID = "unique_id";
@@ -104,6 +108,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String LAUNCHES_TABLE = "launches_table";
 	public static final String START_TIME = "start_time";
 	public static final String LATEST_NUMBER = "latest_number";
+	public static final String VERSION_PATTERN = "^(\\d+)(\\.\\d+)*$";
+	public static final String VERSION_DELIMITER = ".";
 
 	/*Product status widget constants*/
 	public static final String ATTRIBUTE_VALUE = "attribute_value";
@@ -115,5 +121,8 @@ public class WidgetContentRepositoryConstants {
 	public static final String AVERAGE_PASSING_RATE = "averagePassingRate";
 	public static final String ATTR_ID = "attr_id";
 	public static final String ATTR_TABLE = "attr_table";
+
+	/*Top pattern templates widget constants*/
+	public static final Integer PATTERNS_COUNT = 20;
 
 }

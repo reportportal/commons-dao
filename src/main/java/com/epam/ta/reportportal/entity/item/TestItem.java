@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,9 @@ public class TestItem implements Serializable {
 
 	@Column(name = "name", length = 256)
 	private String name;
+
+	@Column(name = "code_ref")
+	private String codeRef;
 
 	@Enumerated(EnumType.STRING)
 	@Type(type = "pqsql_enum")
@@ -117,6 +120,9 @@ public class TestItem implements Serializable {
 	@Column(name = "has_retries")
 	private boolean hasRetries;
 
+	@Column(name = "has_stats")
+	private boolean hasStats;
+
 	public TestItem() {
 	}
 
@@ -125,7 +131,7 @@ public class TestItem implements Serializable {
 	}
 
 	public TestItem(Long itemId, String name, TestItemTypeEnum type, LocalDateTime startTime, String description,
-			LocalDateTime lastModified, String uniqueId, Boolean hasChildren, Boolean hasRetries) {
+			LocalDateTime lastModified, String uniqueId, boolean hasChildren, boolean hasRetries, boolean hasStats) {
 		this.itemId = itemId;
 		this.name = name;
 		this.type = type;
@@ -181,6 +187,14 @@ public class TestItem implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCodeRef() {
+		return codeRef;
+	}
+
+	public void setCodeRef(String codeRef) {
+		this.codeRef = codeRef;
 	}
 
 	public TestItemTypeEnum getType() {
@@ -303,6 +317,14 @@ public class TestItem implements Serializable {
 		this.hasRetries = hasRetries;
 	}
 
+	public boolean isHasStats() {
+		return hasStats;
+	}
+
+	public void setHasStats(boolean hasStats) {
+		this.hasStats = hasStats;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -312,13 +334,13 @@ public class TestItem implements Serializable {
 			return false;
 		}
 		TestItem testItem = (TestItem) o;
-		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && type == testItem.type && Objects.equals(uniqueId,
-				testItem.uniqueId
-		) && Objects.equals(path, testItem.path) && Objects.equals(retryOf, testItem.retryOf);
+		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && Objects.equals(codeRef, testItem.codeRef)
+				&& type == testItem.type && Objects.equals(uniqueId, testItem.uniqueId) && Objects.equals(path, testItem.path)
+				&& Objects.equals(retryOf, testItem.retryOf);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(itemId, name, type, uniqueId, path, retryOf);
+		return Objects.hash(itemId, name, codeRef, type, uniqueId, path, retryOf);
 	}
 }

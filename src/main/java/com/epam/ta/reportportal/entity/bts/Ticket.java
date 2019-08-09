@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ public class Ticket implements Serializable {
 	@Column(name = "ticket_id")
 	private String ticketId;
 
-	@Column(name = "submitter_id")
-	private Long submitterId;
+	@Column(name = "submitter")
+	private String submitter;
 
 	@Column(name = "submit_date")
 	private LocalDateTime submitDate;
@@ -78,12 +78,12 @@ public class Ticket implements Serializable {
 		this.ticketId = ticketId;
 	}
 
-	public Long getSubmitterId() {
-		return submitterId;
+	public String getSubmitter() {
+		return submitter;
 	}
 
-	public void setSubmitterId(Long submitterId) {
-		this.submitterId = submitterId;
+	public void setSubmitter(String submitter) {
+		this.submitter = submitter;
 	}
 
 	public LocalDateTime getSubmitDate() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
@@ -30,10 +32,7 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
-import org.jooq.DSLContext;
-import org.jooq.DatePart;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,14 +43,14 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -117,9 +116,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Boolean hasItemsInStatusByParent(Long parentId, StatusEnum... statuses) {
+	public Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-		return dsl.fetchExists(commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(parentId))
+		return dsl.fetchExists(commonTestItemDslSelect().where(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", parentPath))
+				.and(TEST_ITEM.ITEM_ID.ne(parentId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
 				.limit(1));
 	}
@@ -287,15 +287,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByAutoAnalyzedStatus(boolean status, Long launchId) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
+	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE.AUTO_ANALYZED.eq(status))
+				.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(LogLevel.ERROR.toInt()))
 				.fetchInto(Long.class);
 	}
 
@@ -334,7 +337,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
 						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
-						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)).and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
+						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+						.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
 				.fetchInto(Long.class);
 
 	}
@@ -388,6 +392,48 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		fetchRetries(items);
 
 		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter) {
+		JTestItem nested = TEST_ITEM.as(NESTED);
+		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter).build();
+
+		return dsl.select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.NAME,
+				TEST_ITEM.START_TIME,
+				TEST_ITEM.TYPE,
+				TEST_ITEM_RESULTS.STATUS,
+				TEST_ITEM_RESULTS.END_TIME,
+				TEST_ITEM_RESULTS.DURATION,
+				DSL.field(DSL.exists(dsl.with(LOGS)
+						.as(logsSelectQuery)
+						.select()
+						.from(LOG)
+						.join(LOGS)
+						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+						.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse()))))
+						.as(HAS_CONTENT),
+				DSL.field(dsl.with(LOGS)
+						.as(logsSelectQuery)
+						.selectCount()
+						.from(LOG)
+						.join(nested)
+						.on(LOG.ITEM_ID.eq(nested.ITEM_ID))
+						.join(LOGS)
+						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+						.join(ATTACHMENT)
+						.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+						.where(nested.HAS_STATS.isFalse()
+								.and(DSL.sql(fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)", TEST_ITEM.PATH))))
+						.as(ATTACHMENTS_COUNT)
+		)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.ITEM_ID.in(ids))
+				.fetch(NESTED_STEP_RECORD_MAPPER);
 	}
 
 	private void fetchRetries(List<TestItem> items) {

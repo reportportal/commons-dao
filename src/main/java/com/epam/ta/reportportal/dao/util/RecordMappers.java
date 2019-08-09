@@ -25,14 +25,13 @@ import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
-import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
-import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
+import com.epam.ta.reportportal.entity.enums.*;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import com.epam.ta.reportportal.entity.integration.IntegrationTypeDetails;
+import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
@@ -77,6 +76,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
 import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -186,17 +187,18 @@ public class RecordMappers {
 	}).orElse(null);
 
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
-		TestItem testItem = new TestItem();
-		testItem.setItemId(r.get(JLog.LOG.ITEM_ID));
-		return new Log(
-				r.get(JLog.LOG.ID, Long.class),
-				r.get(JLog.LOG.LOG_TIME, LocalDateTime.class),
-				r.get(JLog.LOG.LOG_MESSAGE, String.class),
-				r.get(JLog.LOG.LAST_MODIFIED, LocalDateTime.class),
-				r.get(JLog.LOG.LOG_LEVEL, Integer.class),
-				testItem,
-				ATTACHMENT_MAPPER.map(r)
-		);
+		Log log = new Log();
+		log.setId(r.get(LOG.ID, Long.class));
+		log.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
+		log.setLogMessage(r.get(LOG.LOG_MESSAGE, String.class));
+		log.setLastModified(r.get(LOG.LAST_MODIFIED, LocalDateTime.class));
+		log.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+
+		log.setAttachment(ATTACHMENT_MAPPER.map(r));
+
+		ofNullable(r.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
+		ofNullable(r.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+		return log;
 	};
 
 	/**
@@ -205,11 +207,23 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, TestItem> TEST_ITEM_RECORD_MAPPER = r -> {
 		TestItem testItem = r.into(TestItem.class);
 		testItem.setName(r.get(TEST_ITEM.NAME));
+		testItem.setCodeRef(r.get(TEST_ITEM.CODE_REF));
 		testItem.setItemResults(TEST_ITEM_RESULTS_RECORD_MAPPER.map(r));
-		testItem.setLaunch(new Launch(r.get(TEST_ITEM.LAUNCH_ID)));
-		testItem.setParent(new TestItem(r.get(TEST_ITEM.PARENT_ID)));
+		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).map(Launch::new).ifPresent(testItem::setLaunch);
+		ofNullable(r.get(TEST_ITEM.PARENT_ID)).map(TestItem::new).ifPresent(testItem::setParent);
 		return testItem;
 	};
+
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
+			r.get(TEST_ITEM.NAME),
+			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
+			r.get(HAS_CONTENT, Boolean.class),
+			r.get(ATTACHMENTS_COUNT, Integer.class),
+			StatusEnum.valueOf(r.get(TEST_ITEM_RESULTS.STATUS).getLiteral()),
+			r.get(TEST_ITEM.START_TIME, LocalDateTime.class),
+			r.get(TEST_ITEM_RESULTS.END_TIME, LocalDateTime.class),
+			r.get(TEST_ITEM_RESULTS.DURATION)
+	);
 
 	/**
 	 * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link PatternTemplate#name} fields)
@@ -384,6 +398,8 @@ public class RecordMappers {
 		dashboardWidget.setWidth(r.get(DASHBOARD_WIDGET.WIDGET_WIDTH));
 		dashboardWidget.setCreatedOn(r.get(DASHBOARD_WIDGET.IS_CREATED_ON));
 		dashboardWidget.setWidgetOwner(r.get(DASHBOARD_WIDGET.WIDGET_OWNER));
+		dashboardWidget.setWidgetName(r.get(DASHBOARD_WIDGET.WIDGET_NAME));
+		dashboardWidget.setWidgetType(r.get(DASHBOARD_WIDGET.WIDGET_TYPE));
 		return Optional.of(dashboardWidget);
 	};
 
@@ -442,6 +458,7 @@ public class RecordMappers {
 		integration.setId(r.get(INTEGRATION.ID, Long.class));
 		integration.setName(r.get(INTEGRATION.NAME));
 		integration.setType(INTEGRATION_TYPE_MAPPER.map(r));
+		integration.setCreator(r.get(INTEGRATION.CREATOR));
 		integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 		integration.setEnabled(r.get(INTEGRATION.ENABLED));
 		INTEGRATION_PARAMS_MAPPER.accept(integration, r);
@@ -466,6 +483,7 @@ public class RecordMappers {
 		LdapConfig ldapConfig = r.into(LdapConfig.class);
 
 		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
+		ldapConfig.setCreator(r.get(INTEGRATION.CREATOR));
 		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
 		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
@@ -483,6 +501,7 @@ public class RecordMappers {
 
 		activeDirectoryConfig.setEnabled(r.get(INTEGRATION.ENABLED));
 		activeDirectoryConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
+		activeDirectoryConfig.setCreator(r.get(INTEGRATION.CREATOR));
 
 		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
 		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));

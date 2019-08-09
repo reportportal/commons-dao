@@ -45,6 +45,9 @@ public class DashboardWidget implements Serializable {
 	@Column(name = "widget_owner")
 	private String widgetOwner;
 
+	@Column(name = "widget_type")
+	private String widgetType;
+
 	@Column(name = "is_created_on")
 	private boolean createdOn;
 
@@ -110,6 +113,14 @@ public class DashboardWidget implements Serializable {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public String getWidgetType() {
+		return widgetType;
+	}
+
+	public void setWidgetType(String widgetType) {
+		this.widgetType = widgetType;
 	}
 
 	public void setWidth(int width) {

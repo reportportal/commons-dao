@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -65,9 +64,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
-
-	@Autowired
-	private LaunchRepository launchRepository;
 
 	@Test
 	void overallStatisticsContent() {
@@ -420,7 +416,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		Sort sort = Sort.by(orderings);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
+		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
 		assertNotNull(uniqueBugStatistics);
 		assertEquals(3, uniqueBugStatistics.size());
@@ -438,30 +434,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, false, 4);
 
 		assertNotNull(flakyCasesStatistics);
-		//		assertEquals(4, flakyCasesStatistics.size());
-
-		flakyCasesStatistics.forEach(content -> {
-			long counter = 0;
-			List<String> statuses = content.getStatuses();
-
-			for (int i = 0; i < statuses.size() - 1; i++) {
-				if (!statuses.get(i).equalsIgnoreCase(statuses.get(i + 1))) {
-					counter++;
-				}
-			}
-
-			assertEquals(counter, (long) content.getFlakyCount());
-			assertTrue(content.getFlakyCount() < content.getTotal());
-
-		});
-
-		assertEquals((long) flakyCasesStatistics.get(0).getFlakyCount(),
-				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).max().orElse(Long.MAX_VALUE)
-		);
-
-		assertEquals((long) flakyCasesStatistics.get(flakyCasesStatistics.size() - 1).getFlakyCount(),
-				flakyCasesStatistics.stream().mapToLong(FlakyCasesTableContent::getFlakyCount).min().orElse(Long.MIN_VALUE)
-		);
+		assertTrue(flakyCasesStatistics.isEmpty());
 	}
 
 	@Test
@@ -502,7 +475,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -535,10 +509,20 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
-				filter);
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
+				20
+		);
 
 		assertNotNull(mostTimeConsumingTestCasesContents);
+	}
+
+	@Test
+	void patternTemplate() {
+		Filter filter = buildDefaultFilter(1L);
+		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", "FIRST PATTERN", false, 600, 15);
+
+		assertNotNull(topPatternTemplatesContents);
+		assertFalse(topPatternTemplatesContents.isEmpty());
 	}
 
 	@Test
@@ -823,7 +807,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
 		Sort sort = Sort.by(orders);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
+		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
 		assertNotNull(uniqueBugStatistics);
 		assertEquals(3, uniqueBugStatistics.size());
@@ -831,7 +815,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	@Disabled
 	void cumulativeTrendChartSorting() {
 		String sortingColumn = "statistics$defects$no_defect$nd001";
 		Filter filter = buildDefaultFilter(1L);
@@ -878,7 +861,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -1069,6 +1053,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 				"statistics$executions$failed",
 				"statistics$executions$skipped",
 				"statistics$executions$total",
+				"startTime",
+				"status",
 				"statistics$defects$no_defect$total",
 				"statistics$defects$product_bug$total",
 				"statistics$defects$automation_bug$total",

@@ -16,7 +16,7 @@
 package com.epam.ta.reportportal.entity.ldap.validation;
 
 import com.epam.ta.reportportal.entity.integration.Integration;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.validator.spi.group.DefaultGroupSequenceProvider;
 
 import java.util.ArrayList;

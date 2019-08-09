@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.project.Project;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -73,5 +74,22 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
 			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
+			+ " WHERE ti.launch_id = :launchId AND tir.status = cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
+	boolean hasItemsWithStatusEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti WHERE ti.launch_id = :launchId LIMIT 1)", nativeQuery = true)
+	boolean hasItems(@Param("launchId") Long launchId);
+
+	/**
+	 * Finds the latest(that has max {@link Launch#number) {@link Launch} with specified {@code name} and {@code projectId}
+	 *
+	 * @param name      Name of {@link Launch}
+	 * @param projectId Id of {@link Project}
+	 * @return {@link Optional<Launch>} if exists, {@link Optional#empty()} if not
+	 */
+	@Query(value = "SELECT * FROM launch l WHERE l.name =:name AND l.project_id=:projectId ORDER BY l.number DESC LIMIT 1", nativeQuery = true)
+	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
 
 }
