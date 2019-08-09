@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.MoreCollectors;
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
@@ -48,6 +50,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEMS;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -323,45 +326,38 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByStringPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern) {
+	public List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
 
-		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
-				.from(TEST_ITEM)
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(ISSUE)
-				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
-				.join(ISSUE_TYPE)
-				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-				.join(LOG)
-				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
-						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
-						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-						.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%")))
-				.fetchInto(Long.class);
+		Set<String> fields = filter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
+
+		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, fields).build();
+		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID));
+		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"));
+
+		return dsl.select(fieldName(ITEMS, ID)).from(itemQuery.asTable(ITEMS)).fetchInto(Long.class);
 
 	}
 
 	@Override
-	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern) {
+	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
 
-		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
-				.from(TEST_ITEM)
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(ISSUE)
-				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
-				.join(ISSUE_TYPE)
-				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
-				.join(LOG)
-				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId)
-						.and(ISSUE_TYPE.ISSUE_GROUP_ID.eq(issueGroupId.shortValue()))
-						.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-						.and(LOG.LOG_MESSAGE.likeRegex(pattern)))
-				.fetchInto(Long.class);
+		Set<String> fields = filter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
 
+		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, fields).build();
+		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID));
+		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.likeRegex(pattern));
+
+		return dsl.select(fieldName(ITEMS, ID)).from(itemQuery.asTable(ITEMS)).fetchInto(Long.class);
 	}
 
 	/**

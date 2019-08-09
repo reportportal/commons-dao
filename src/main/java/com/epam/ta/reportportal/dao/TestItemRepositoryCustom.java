@@ -207,25 +207,23 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
 	 * and message is matched by the STRING pattern
 	 *
-	 * @param launchId     {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-	 * @param issueGroupId {@link com.epam.ta.reportportal.entity.item.issue.IssueGroup#id}
-	 * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-	 * @param pattern      CASE SENSITIVE STRING pattern for log message search
+	 * @param filter   {@link Queryable}
+	 * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
+	 * @param pattern  CASE SENSITIVE STRING pattern for log message search
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByStringPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern);
+	List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
 
 	/**
 	 * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
 	 * and message is matched by the REGEX pattern
 	 *
-	 * @param launchId     {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-	 * @param issueGroupId {@link com.epam.ta.reportportal.entity.item.issue.IssueGroup#id}
-	 * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-	 * @param pattern      REGEX pattern for log message search
+	 * @param filter   {@link Queryable}
+	 * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
+	 * @param pattern  REGEX pattern for log message search
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
-	List<Long> selectIdsByRegexPatternMatchedLogMessage(Long launchId, Integer issueGroupId, Integer logLevel, String pattern);
+	List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
 
 	/**
 	 * Select {@link NestedStep} entities by provided 'IDs' with {@link NestedStep#attachmentsCount}

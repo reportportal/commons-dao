@@ -176,14 +176,28 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L, 1, 40000, "o");
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
+				.build();
+
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(filter, 40000, "o");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
 
 	@Test
 	void selectIdsByRegexPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L, 1, 40000, "[a-z]{3,3}");
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
+				.build();
+
+		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(filter, 40000, "[a-z]{3,3}");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
