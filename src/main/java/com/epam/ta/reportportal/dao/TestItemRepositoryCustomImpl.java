@@ -17,8 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.MoreCollectors;
-import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
@@ -327,15 +325,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
-
-		Set<String> fields = filter.getFilterConditions()
-				.stream()
-				.map(ConvertibleCondition::getAllConditions)
-				.flatMap(Collection::stream)
-				.map(FilterCondition::getSearchCriteria)
-				.collect(Collectors.toSet());
-
-		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, fields).build();
+		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter).build();
 		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID));
 		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"));
 
@@ -345,15 +335,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
-
-		Set<String> fields = filter.getFilterConditions()
-				.stream()
-				.map(ConvertibleCondition::getAllConditions)
-				.flatMap(Collection::stream)
-				.map(FilterCondition::getSearchCriteria)
-				.collect(Collectors.toSet());
-
-		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, fields).build();
+		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter).build();
 		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID));
 		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.likeRegex(pattern));
 
