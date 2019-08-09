@@ -299,31 +299,50 @@ public class WidgetContentUtil {
 		}
 	};
 
-	public static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
+	private static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
 		UniqueBugContent uniqueBugContent = new UniqueBugContent();
-		uniqueBugContent.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
-		uniqueBugContent.setTestItemName(record.get(TEST_ITEM.NAME));
-		uniqueBugContent.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
-		uniqueBugContent.setPath(record.get(TEST_ITEM.PATH, String.class));
 		uniqueBugContent.setUrl(record.get(TICKET.URL));
 		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
 		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
-		ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> uniqueBugContent.getItemAttributeResources().add(attribute));
 		return uniqueBugContent;
 	};
 
-
+	private static final RecordMapper<Record, UniqueBugContent.ItemInfo> UNIQUE_BUG_ITEM_MAPPER = record -> {
+		UniqueBugContent.ItemInfo itemInfo = new UniqueBugContent.ItemInfo();
+		itemInfo.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		itemInfo.setTestItemName(record.get(TEST_ITEM.NAME));
+		itemInfo.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
+		itemInfo.setPath(record.get(TEST_ITEM.PATH, String.class));
+		ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> itemInfo.getItemAttributeResources().add(attribute));
+		return itemInfo;
+	};
 
 	public static final Function<Result<? extends Record>, Map<String, UniqueBugContent>> UNIQUE_BUG_CONTENT_FETCHER = result -> {
 		Map<String, UniqueBugContent> content = Maps.newLinkedHashMap();
+		Map<Long, UniqueBugContent.ItemInfo> itemsMap = Maps.newHashMap();
 
 		result.forEach(record -> {
 			String ticketId = record.get(TICKET.TICKET_ID);
-			content.computeIfPresent(ticketId, (k, v) -> {
-				ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> v.getItemAttributeResources().add(attribute));
-				return v;
+			Long itemId = record.get(TEST_ITEM.ITEM_ID);
+			content.computeIfPresent(ticketId, (ticketID, bugContent) -> {
+				itemsMap.computeIfPresent(itemId, (itemID, itemInfo) -> {
+					ITEM_ATTRIBUTE_RESOURCE_MAPPER.map(record).ifPresent(attribute -> itemInfo.getItemAttributeResources().add(attribute));
+					return itemInfo;
+				});
+				itemsMap.computeIfAbsent(itemId, id -> {
+					UniqueBugContent.ItemInfo itemInfo = UNIQUE_BUG_ITEM_MAPPER.map(record);
+					bugContent.getItems().add(itemInfo);
+					return itemInfo;
+				});
+				return bugContent;
 			});
-			content.putIfAbsent(ticketId, UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record));
+			content.computeIfAbsent(ticketId, key -> {
+				UniqueBugContent.ItemInfo itemInfo = UNIQUE_BUG_ITEM_MAPPER.map(record);
+				itemsMap.put(itemId, itemInfo);
+				UniqueBugContent uniqueBugContent = UNIQUE_BUG_CONTENT_RECORD_MAPPER.map(record);
+				uniqueBugContent.getItems().add(itemInfo);
+				return uniqueBugContent;
+			});
 		});
 
 		return content;
