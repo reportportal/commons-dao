@@ -1,5 +1,6 @@
 language: java
 dist: trusty
+
 script: ./gradlew build --full-stacktrace
 
 jdk:

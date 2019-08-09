@@ -409,22 +409,20 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	@Test
 	void uniqueBugStatistics() {
-
 		Filter filter = buildDefaultFilter(1L);
-
 		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME));
-
 		Sort sort = Sort.by(orderings);
 
 		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
 		assertNotNull(uniqueBugStatistics);
-		assertEquals(3, uniqueBugStatistics.size());
+		assertEquals(2, uniqueBugStatistics.size());
 
-		assertTrue(uniqueBugStatistics.containsKey("EPMRPP-123"));
 		assertTrue(uniqueBugStatistics.containsKey("EPMRPP-322"));
-		assertTrue(uniqueBugStatistics.containsKey("QWERTY-100"));
+		assertTrue(uniqueBugStatistics.containsKey("EPMRPP-123"));
 
+		assertEquals(2, uniqueBugStatistics.get("EPMRPP-322").getItems().size());
+		assertEquals(1, uniqueBugStatistics.get("EPMRPP-123").getItems().size());
 	}
 
 	@Test
@@ -475,8 +473,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -519,7 +516,14 @@ class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	void patternTemplate() {
 		Filter filter = buildDefaultFilter(1L);
-		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter, Sort.unsorted(), "build", "FIRST PATTERN", false, 600, 15);
+		List<TopPatternTemplatesContent> topPatternTemplatesContents = widgetContentRepository.patternTemplate(filter,
+				Sort.unsorted(),
+				"build",
+				"FIRST PATTERN",
+				false,
+				600,
+				15
+		);
 
 		assertNotNull(topPatternTemplatesContents);
 		assertFalse(topPatternTemplatesContents.isEmpty());
@@ -795,7 +799,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	@Test
 	void uniqueBugStatisticsSorting() {
-
 		String sortingColumn = "statistics$defects$no_defect$nd001";
 		Filter filter = buildDefaultFilter(1L);
 
@@ -810,8 +813,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		Map<String, UniqueBugContent> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, sort, true, 5);
 
 		assertNotNull(uniqueBugStatistics);
-		assertEquals(3, uniqueBugStatistics.size());
-
+		assertEquals(2, uniqueBugStatistics.size());
 	}
 
 	@Test
@@ -861,8 +863,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -935,16 +936,14 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.EQUALS_ANY,
-						false,
-						String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-						CRITERIA_STATUS
-				)
-		);
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
+		), new FilterCondition(Condition.EQUALS_ANY,
+				false,
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+				CRITERIA_STATUS
+		));
 
 		return new Filter(1L, TestItem.class, conditionSet);
 	}
