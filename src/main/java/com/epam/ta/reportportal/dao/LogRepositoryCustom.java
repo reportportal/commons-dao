@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -121,4 +122,13 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return {@link Page} with {@link NestedItem} as content
 	 */
 	Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter, Pageable pageable);
+
+	/**
+	 * Retrieves log message of specified test item with log level greather or equals than {@code level}
+	 *
+	 * @param itemId ID of {@link TestItem}
+	 * @param level  log level
+	 * @return {@link List<String>} of log messages
+	 */
+	List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level);
 }
