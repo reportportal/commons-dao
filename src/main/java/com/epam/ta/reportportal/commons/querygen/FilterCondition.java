@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.jooq.Operator;
@@ -28,6 +29,7 @@ import org.jooq.Operator;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -126,6 +128,11 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 	@Override
 	public Operator getOperator() {
 		return operator;
+	}
+
+	@Override
+	public List<FilterCondition> getAllConditions() {
+		return Lists.newArrayList(this);
 	}
 
 	public void setOperator(Operator operator) {

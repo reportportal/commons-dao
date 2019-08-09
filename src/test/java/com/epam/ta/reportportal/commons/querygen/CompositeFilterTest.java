@@ -65,17 +65,37 @@ public class CompositeFilterTest {
 				Operator.OR
 		);
 
+		System.err.println( QueryBuilder.newBuilder(Filter.builder().withTarget(Launch.class).withCondition(firstCompositeCondition).build()).build());
+		System.err.println();
+		System.err.println();
+		System.err.println();
+
 		CompositeFilterCondition secondCompositeCondition = new CompositeFilterCondition(Lists.newArrayList(condition2, condition3),
 				Operator.OR
 		);
+
+		System.err.println( QueryBuilder.newBuilder(Filter.builder().withTarget(Launch.class).withCondition(secondCompositeCondition).build()).build());
+		System.err.println();
+		System.err.println();
+		System.err.println();
 
 		CompositeFilterCondition compositeFilterCondition1 = new CompositeFilterCondition(Lists.newArrayList(firstCompositeCondition,
 				secondCompositeCondition
 		), Operator.OR);
 
+		System.err.println( QueryBuilder.newBuilder(Filter.builder().withTarget(Launch.class).withCondition(compositeFilterCondition1).build()).build());
+		System.err.println();
+		System.err.println();
+		System.err.println();
+
 		CompositeFilterCondition compositeFilterCondition2 = new CompositeFilterCondition(Lists.newArrayList(firstCompositeCondition,
 				secondCompositeCondition
 		), Operator.AND);
+
+		System.err.println( QueryBuilder.newBuilder(Filter.builder().withTarget(Launch.class).withCondition(compositeFilterCondition2).build()).build());
+		System.err.println();
+		System.err.println();
+		System.err.println();
 
 		List<ConvertibleCondition> conditions = Lists.newArrayList(compositeFilterCondition1, compositeFilterCondition2);
 		ConvertibleCondition filterCondition = new CompositeFilterCondition(conditions, Operator.AND);
@@ -84,6 +104,6 @@ public class CompositeFilterTest {
 
 		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).build();
 
-		System.out.println(build);
+		System.err.println(build);
 	}
 }

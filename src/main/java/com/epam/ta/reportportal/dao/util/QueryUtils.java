@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -23,6 +24,7 @@ import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
@@ -63,7 +65,12 @@ public final class QueryUtils {
 	}
 
 	public static Set<String> collectJoinFields(Filter filter, Sort sort) {
-		Set<String> joinFields = filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(toSet());
+		Set<String> joinFields = filter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(toSet());
 		joinFields.addAll(sort.get().map(Sort.Order::getProperty).collect(toSet()));
 		return joinFields;
 	}

@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.commons.querygen;
 import org.jooq.Condition;
 import org.jooq.Operator;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,5 +30,7 @@ public interface ConvertibleCondition {
 	Map<ConditionType, Condition> toCondition(FilterTarget filterTarget);
 
 	Operator getOperator();
+
+	List<FilterCondition> getAllConditions();
 
 }

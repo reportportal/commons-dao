@@ -21,8 +21,10 @@ import org.jooq.Condition;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -65,6 +67,11 @@ public class CompositeFilterCondition implements ConvertibleCondition {
 	@Override
 	public Operator getOperator() {
 		return operator;
+	}
+
+	@Override
+	public List<FilterCondition> getAllConditions() {
+		return conditions.stream().map(ConvertibleCondition::getAllConditions).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
 	public void setOperator(Operator operator) {

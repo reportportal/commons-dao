@@ -35,10 +35,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
@@ -72,13 +69,23 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public List<Launch> findByFilter(Queryable filter) {
 		return LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter,
-				filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(Collectors.toSet())
+				filter.getFilterConditions()
+						.stream()
+						.map(ConvertibleCondition::getAllConditions)
+						.flatMap(Collection::stream)
+						.map(FilterCondition::getSearchCriteria)
+						.collect(Collectors.toSet())
 		).wrap().build()));
 	}
 
 	@Override
 	public Page<Launch> findByFilter(Queryable filter, Pageable pageable) {
-		Set<String> fields = filter.getFilterConditions().stream().map(FilterCondition::getSearchCriteria).collect(Collectors.toSet());
+		Set<String> fields = filter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
 		fields.addAll(pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
 
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
@@ -109,7 +116,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.leftJoin(USERS)
 				.on(LAUNCH.USER_ID.eq(USERS.ID))
-				.where(PROJECT.ID.eq(projectId)).and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.where(PROJECT.ID.eq(projectId))
+				.and(USERS.LOGIN.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
 				.fetch(USERS.LOGIN);
 	}
