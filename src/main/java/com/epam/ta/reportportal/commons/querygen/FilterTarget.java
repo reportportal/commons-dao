@@ -366,6 +366,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_IGNORE_ANALYZER, ISSUE.IGNORE_ANALYZER, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_COMMENT, ISSUE.ISSUE_DESCRIPTION, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_LOCATOR, ISSUE_TYPE.LOCATOR, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_GROUP_ID, ISSUE_TYPE.ISSUE_GROUP_ID, Short.class).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE, JLaunchModeEnum.class).get(),
