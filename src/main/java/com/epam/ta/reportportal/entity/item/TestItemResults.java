@@ -55,7 +55,7 @@ public class TestItemResults implements Serializable {
 	@OneToOne(mappedBy = "testItemResults", cascade = { CascadeType.MERGE, CascadeType.REMOVE })
 	private IssueEntity issue;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany
 	@JoinColumn(name = "item_id", insertable = false, updatable = false)
 	private Set<Statistics> statistics = Sets.newHashSet();
 

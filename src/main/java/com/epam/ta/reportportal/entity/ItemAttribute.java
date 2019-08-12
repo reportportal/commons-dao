@@ -41,11 +41,11 @@ public class ItemAttribute implements Serializable {
 	@Column(name = "value")
 	private String value;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "launch_id")
 	private Launch launch;
 
@@ -125,8 +125,7 @@ public class ItemAttribute implements Serializable {
 		return Objects.equals(key, that.key) && Objects.equals(value, that.value) && Objects.equals(system, that.system) && Objects.equals(
 				testItem != null ? "testItem:" + (testItem.getItemId() != null ? testItem.getItemId() : "") : "testItem:",
 				that.testItem != null ? "testItem:" + (that.testItem.getItemId() != null ? that.testItem.getItemId() : "") : "testItem:"
-		) && Objects.equals(
-				launch != null ? "launch:" + (launch.getId() != null ? launch.getId() : "") : "launch:",
+		) && Objects.equals(launch != null ? "launch:" + (launch.getId() != null ? launch.getId() : "") : "launch:",
 				that.launch != null ? "launch:" + (that.launch.getId() != null ? that.launch.getId() : "") : "launch:"
 		);
 	}
@@ -136,8 +135,7 @@ public class ItemAttribute implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(
-				key,
+		return Objects.hash(key,
 				value,
 				system,
 				testItem != null ? "testItem:" + (testItem.getItemId() != null ? testItem.getItemId() : "") : "testItem:",

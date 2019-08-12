@@ -245,6 +245,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	}
 
+	@Override
+	public List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level) {
+		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).and(LOG.LOG_LEVEL.ge(level)).fetch(LOG.LOG_MESSAGE);
+	}
+
 	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
 			Queryable filter) {
 

@@ -115,8 +115,8 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
 		assertEquals(7, items.size(), "Incorrect items size");
-		items.forEach(it -> assertTrue(it.getUniqueId().equals(uniqueId) && (it.getLaunch().getId() == 7L || it.getLaunch().getId() == 8L
-				|| it.getLaunch().getId() == 9L)));
+		items.forEach(it -> assertTrue(
+				it.getUniqueId().equals(uniqueId) && (it.getLaunchId() == 7L || it.getLaunchId() == 8L || it.getLaunchId() == 9L)));
 	}
 
 	@Test
@@ -126,7 +126,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
 		assertNotNull(items, "Items should not be null");
 		assertEquals(6, items.size(), "Incorrect items size");
-		items.forEach(it -> assertEquals(launchId, (long) it.getLaunch().getId()));
+		items.forEach(it -> assertEquals(launchId, (long) it.getLaunchId()));
 	}
 
 	@Test
@@ -241,7 +241,7 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
-			assertEquals(launchId, it.getLaunch().getId(), "Incorrect launch id");
+			assertEquals(launchId, it.getLaunchId(), "Incorrect launch id");
 			assertEquals(failedStatus, it.getItemResults().getStatus(), "Incorrect launch status");
 		});
 	}
@@ -342,7 +342,7 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
-			assertEquals(launchId, it.getLaunch().getId(), "Incorrect launch id");
+			assertEquals(launchId, it.getLaunchId(), "Incorrect launch id");
 			assertEquals(it.getItemResults().getIssue().getIssueType().getId(), Long.valueOf(1L), "Incorrect item issue");
 		});
 	}
@@ -386,7 +386,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		assertEquals(3L, retries.size());
 
-		retries.stream().map(TestItem::getLaunch).forEach(Assertions::assertNull);
+		retries.stream().map(TestItem::getLaunchId).forEach(Assertions::assertNull);
 		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> assertEquals(retriesParent.getItemId(), retryOf));
 		retries.forEach(retry -> assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
 				retry.getPath()
@@ -423,7 +423,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
 
 		assertThat(testItems.get(0).getItemResults().getStatus().name(),
-				Matchers.lessThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
+				Matchers.greaterThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
 		);
 	}
 

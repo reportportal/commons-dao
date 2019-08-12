@@ -19,10 +19,12 @@ package com.epam.ta.reportportal.entity.widget.content;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,14 +33,8 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UniqueBugContent implements Serializable {
 
-	@JsonProperty(value = "itemId")
-	private Long testItemId;
-
 	@JsonProperty(value = "submitter")
 	private String submitter;
-
-	@JsonProperty(value = "itemName")
-	private String testItemName;
 
 	@JsonProperty(value = "url")
 	private String url;
@@ -46,25 +42,8 @@ public class UniqueBugContent implements Serializable {
 	@JsonProperty(value = "submitDate")
 	private Timestamp submitDate;
 
-	@JsonProperty(value = "launchId")
-	private Long launchId;
-
-	@JsonProperty(value = "path")
-	private String path;
-
-	@JsonProperty(value = "attributes")
-	private Set<ItemAttributeResource> itemAttributeResources = Sets.newHashSet();
-
-	public UniqueBugContent() {
-	}
-
-	public Long getTestItemId() {
-		return testItemId;
-	}
-
-	public void setTestItemId(Long testItemId) {
-		this.testItemId = testItemId;
-	}
+	@JsonProperty(value = "items")
+	private List<ItemInfo> items = Lists.newArrayList();
 
 	public String getSubmitter() {
 		return submitter;
@@ -72,14 +51,6 @@ public class UniqueBugContent implements Serializable {
 
 	public void setSubmitter(String submitter) {
 		this.submitter = submitter;
-	}
-
-	public String getTestItemName() {
-		return testItemName;
-	}
-
-	public void setTestItemName(String testItemName) {
-		this.testItemName = testItemName;
 	}
 
 	public String getUrl() {
@@ -91,34 +62,75 @@ public class UniqueBugContent implements Serializable {
 	}
 
 	public Timestamp getSubmitDate() {
-		return new Timestamp(submitDate.getTime());
+		return submitDate;
 	}
 
 	public void setSubmitDate(Timestamp submitDate) {
-		this.submitDate = new Timestamp(submitDate.getTime());
+		this.submitDate = submitDate;
 	}
 
-	public Long getLaunchId() {
-		return launchId;
+	public List<ItemInfo> getItems() {
+		return items;
 	}
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
+	public void setItems(List<ItemInfo> items) {
+		this.items = items;
 	}
 
-	public String getPath() {
-		return path;
-	}
+	public static class ItemInfo implements Serializable {
+		@JsonProperty(value = "itemId")
+		private Long testItemId;
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+		@JsonProperty(value = "itemName")
+		private String testItemName;
 
-	public Set<ItemAttributeResource> getItemAttributeResources() {
-		return itemAttributeResources;
-	}
+		@JsonProperty(value = "launchId")
+		private Long launchId;
 
-	public void setItemAttributeResources(Set<ItemAttributeResource> itemAttributeResources) {
-		this.itemAttributeResources = itemAttributeResources;
+		@JsonProperty(value = "path")
+		private String path;
+
+		@JsonProperty(value = "attributes")
+		private Set<ItemAttributeResource> itemAttributeResources = Sets.newHashSet();
+
+		public Long getTestItemId() {
+			return testItemId;
+		}
+
+		public void setTestItemId(Long testItemId) {
+			this.testItemId = testItemId;
+		}
+
+		public String getTestItemName() {
+			return testItemName;
+		}
+
+		public void setTestItemName(String testItemName) {
+			this.testItemName = testItemName;
+		}
+
+		public Long getLaunchId() {
+			return launchId;
+		}
+
+		public void setLaunchId(Long launchId) {
+			this.launchId = launchId;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		public Set<ItemAttributeResource> getItemAttributeResources() {
+			return itemAttributeResources;
+		}
+
+		public void setItemAttributeResources(Set<ItemAttributeResource> itemAttributeResources) {
+			this.itemAttributeResources = itemAttributeResources;
+		}
 	}
 }

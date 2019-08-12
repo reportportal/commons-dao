@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.item;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.google.common.collect.Sets;
@@ -70,9 +69,8 @@ public class TestItem implements Serializable {
 	@Column(name = "description")
 	private String description;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "launch_id")
-	private Launch launch;
+	@Column(name = "launch_id", nullable = false)
+	private Long launchId;
 
 	@LastModifiedDate
 	@Column(name = "last_modified", nullable = false)
@@ -245,12 +243,12 @@ public class TestItem implements Serializable {
 		this.uniqueId = uniqueId;
 	}
 
-	public Launch getLaunch() {
-		return launch;
+	public Long getLaunchId() {
+		return launchId;
 	}
 
-	public void setLaunch(Launch launch) {
-		this.launch = launch;
+	public void setLaunchId(Long launchId) {
+		this.launchId = launchId;
 	}
 
 	public String getPath() {
