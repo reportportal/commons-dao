@@ -40,6 +40,11 @@ public class CompositeFilterCondition implements ConvertibleCondition {
 		this.operator = operator;
 	}
 
+	public CompositeFilterCondition(List<ConvertibleCondition> conditions) {
+		this.conditions = conditions;
+		this.operator = Operator.AND;
+	}
+
 	@Override
 	public Map<ConditionType, Condition> toCondition(FilterTarget filterTarget) {
 
