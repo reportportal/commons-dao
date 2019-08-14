@@ -16,9 +16,6 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.Preconditions;
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
-import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
@@ -29,9 +26,11 @@ import org.jooq.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
@@ -240,27 +239,6 @@ public class QueryBuilder {
 			}
 		}));
 		return this;
-	}
-
-	public static Function<FilterCondition, Condition> filterConverter(FilterTarget target) {
-		return filterCondition -> {
-			String searchCriteria = filterCondition.getSearchCriteria();
-			Optional<CriteriaHolder> criteriaHolder = target.getCriteriaByFilter(searchCriteria);
-
-			BusinessRule.expect(criteriaHolder, Preconditions.IS_PRESENT)
-					.verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
-							Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
-					);
-
-			Condition condition = filterCondition.getCondition().toCondition(filterCondition, criteriaHolder.get());
-
-			/* Does FilterCondition contains negative=true? */
-			if (filterCondition.isNegative()) {
-				condition = condition.not();
-			}
-
-			return condition;
-		};
 	}
 
 	public static int retrieveOffsetAndApplyBoundaries(Pageable pageable) {

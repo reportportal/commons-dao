@@ -20,8 +20,8 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Can be used to generate SQL queries with help of JOOQ
@@ -54,6 +54,6 @@ public interface Queryable {
 	/**
 	 * @return Set of {@link FilterCondition}
 	 */
-	Set<FilterCondition> getFilterConditions();
+	List<ConvertibleCondition> getFilterConditions();
 
 }
