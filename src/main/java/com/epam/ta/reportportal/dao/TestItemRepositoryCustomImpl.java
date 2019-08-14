@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -70,6 +71,30 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Autowired
 	public void setDsl(DSLContext dsl) {
 		this.dsl = dsl;
+	}
+
+	@Override
+	public Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable) {
+		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter).with(launchPageable).build().asTable(LAUNCHES);
+		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
+				.with(testItemPageable)
+				.addJoin(launchesTable, JoinType.JOIN, TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class)))
+				.wrap()
+				.withWrapperSort(testItemPageable.getSort())
+				.build()));
+
+		fetchRetries(items);
+
+		return PageableExecutionUtils.getPage(items,
+				testItemPageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
+						.addJoin(launchesTable,
+								JoinType.JOIN,
+								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+						)
+						.build())
+		);
 	}
 
 	@Override
