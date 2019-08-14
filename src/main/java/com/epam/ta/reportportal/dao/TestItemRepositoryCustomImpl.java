@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.MoreCollectors;
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
@@ -37,6 +39,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -48,8 +51,8 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEMS;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -77,7 +80,19 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable) {
-		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter).with(launchPageable).build().asTable(LAUNCHES);
+
+		Set<String> fields = launchFilter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
+		fields.addAll(launchPageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
+
+		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter, fields)
+				.with(launchPageable)
+				.build()
+				.asTable(LAUNCHES);
 		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
 				.with(testItemPageable)
 				.addJoin(launchesTable, JoinType.JOIN, TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class)))
