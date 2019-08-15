@@ -16,9 +16,8 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.query.LazyJoinSelect;
 import org.jooq.Condition;
-import org.jooq.Record;
-import org.jooq.SelectQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -32,11 +31,11 @@ import java.util.Map;
 public interface Queryable {
 
 	/**
-	 * Builds a JOOQ query
+	 * Builds a query with lazy joins
 	 *
-	 * @return {@link org.jooq.SelectQuery}
+	 * @return {@link LazyJoinSelect}
 	 */
-	SelectQuery<? extends Record> toQuery();
+	LazyJoinSelect toQuery();
 
 	/**
 	 * Build a map where key is {@link ConditionType} and value is a composite {@link Condition}

@@ -17,21 +17,14 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Pavel Bortnik
@@ -61,6 +54,6 @@ public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends Simp
 
 	@Override
 	public boolean exists(Filter filter) {
-		return dsl.fetchExists(filter.toQuery());
+		return dsl.fetchExists(filter.toQuery().get());
 	}
 }

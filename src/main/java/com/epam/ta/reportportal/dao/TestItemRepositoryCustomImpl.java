@@ -95,7 +95,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.asTable(LAUNCHES);
 		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
 				.with(testItemPageable)
-				.addJoin(launchesTable, JoinType.JOIN, TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class)))
+				.addJointToStart(launchesTable, JoinType.JOIN, TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class)))
 				.wrap()
 				.withWrapperSort(testItemPageable.getSort())
 				.build()));
@@ -105,7 +105,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return PageableExecutionUtils.getPage(items,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
-						.addJoin(launchesTable,
+						.addJointToStart(launchesTable,
 								JoinType.JOIN,
 								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
 						)
