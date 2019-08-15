@@ -113,6 +113,14 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectMultiplePathNames() {
+		Map<Long, Map<Long, String>> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
+		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
+		results.values().forEach(map -> assertThat("Incorrect class type", map.getClass(), Matchers.theInstance(LinkedHashMap.class)));
+		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
+	}
+
+	@Test
 	void testLoadItemsHistory() {
 		final String uniqueId = "unqIdSTEP7";
 

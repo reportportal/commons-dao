@@ -193,10 +193,18 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
+	 * Select ids and names of all items in a tree till current, for each id from the provided collection
+	 *
+	 * @param ids {@link Collection} of {@link TestItem#getItemId()}
+	 * @return id from collection -> { parent id -> parent name }
+	 */
+	Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids);
+
+	/**
 	 * Select item IDs by analyzed status and launch id with log level greater or equals than error
 	 *
 	 * @param autoAnalyzed {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
-	 * @param launchId     {@link TestItem#launch} ID
+	 * @param launchId     {@link TestItem#launchId} ID
 	 * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
