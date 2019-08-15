@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.querygen.query.LazyJoinSelect;
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import org.jooq.Condition;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
@@ -51,12 +51,12 @@ public class CompositeFilter implements Queryable {
 	}
 
 	@Override
-	public LazyJoinSelect toQuery() {
+	public QuerySupplier toQuery() {
 		QueryBuilder query = QueryBuilder.newBuilder(this.target);
 		Map<ConditionType, Condition> conditions = toCondition();
 		return query.addCondition(conditions.get(ConditionType.WHERE))
 				.addHavingCondition(conditions.get(ConditionType.HAVING))
-				.getLazyJoinSelect();
+				.getQuerySupplier();
 	}
 
 	@Override

@@ -25,31 +25,40 @@ import java.util.function.Supplier;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class LazyJoinSelect implements Supplier<SelectQuery<? extends Record>> {
+public class QuerySupplier implements Supplier<SelectQuery<? extends Record>> {
 
 	private final SelectQuery<? extends Record> selectQuery;
 	private final List<JoinEntity> joinEntities;
 
-	public LazyJoinSelect(SelectQuery<? extends Record> selectQuery, List<JoinEntity> joinEntities) {
+	public QuerySupplier(SelectQuery<? extends Record> selectQuery, List<JoinEntity> joinEntities) {
 		this.selectQuery = selectQuery;
 		this.joinEntities = joinEntities;
 	}
 
-	public LazyJoinSelect(SelectQuery<? extends Record> selectQuery) {
+	public QuerySupplier(SelectQuery<? extends Record> selectQuery) {
 		this.selectQuery = selectQuery;
 		this.joinEntities = Lists.newArrayList();
 	}
 
-	public void addJoin(TableLike<?> table, JoinType joinType, Condition condition) {
+	@Override
+	public SelectQuery<? extends Record> get() {
+		joinEntities.forEach(join -> selectQuery.addJoin(join.getTable(), join.getJoinType(), join.getJoinCondition()));
+		return selectQuery;
+	}
+
+	public QuerySupplier addJoin(TableLike<?> table, JoinType joinType, Condition condition) {
 		addJoinToEnd(JoinEntity.of(table, joinType, condition));
+		return this;
 	}
 
-	public void addJoinToStart(JoinEntity joinEntity) {
+	public QuerySupplier addJoinToStart(JoinEntity joinEntity) {
 		joinEntities.add(0, joinEntity);
+		return this;
 	}
 
-	public void addJoinToEnd(JoinEntity joinEntity) {
+	public QuerySupplier addJoinToEnd(JoinEntity joinEntity) {
 		joinEntities.add(joinEntity);
+		return this;
 	}
 
 	public boolean addJoin(int index, JoinEntity joinEntity) {
@@ -62,34 +71,33 @@ public class LazyJoinSelect implements Supplier<SelectQuery<? extends Record>> {
 
 	}
 
-	@Override
-	public SelectQuery<? extends Record> get() {
-		joinEntities.forEach(join -> selectQuery.addJoin(join.getTable(), join.getJoinType(), join.getJoinCondition()));
-		return selectQuery;
-	}
-
-	public void addSelect(Field<?> as) {
+	public QuerySupplier addSelect(Field<?> as) {
 		selectQuery.addSelect(as);
-
+		return this;
 	}
 
-	public void addOrderBy(SortField<?> sortField) {
+	public QuerySupplier addOrderBy(SortField<?> sortField) {
 		selectQuery.addOrderBy(sortField);
+		return this;
 	}
 
-	public void addLimit(int limit) {
+	public QuerySupplier addLimit(int limit) {
 		selectQuery.addLimit(limit);
+		return this;
 	}
 
-	public void addOffset(int offset) {
+	public QuerySupplier addOffset(int offset) {
 		selectQuery.addOffset(offset);
+		return this;
 	}
 
-	public void addCondition(Condition condition) {
+	public QuerySupplier addCondition(Condition condition) {
 		selectQuery.addConditions(condition);
+		return this;
 	}
 
-	public void addHaving(Condition condition) {
+	public QuerySupplier addHaving(Condition condition) {
 		selectQuery.addHaving(condition);
+		return this;
 	}
 }

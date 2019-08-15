@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
-import com.epam.ta.reportportal.commons.querygen.query.LazyJoinSelect;
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
@@ -106,7 +106,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID));
@@ -144,13 +144,13 @@ public enum FilterTarget {
 			)
 	) {
 		@Override
-		public LazyJoinSelect getQuery() {
+		public QuerySupplier getQuery() {
 			SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
 			addFrom(query);
 			query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
-			LazyJoinSelect lazyJoinSelect = new LazyJoinSelect(query);
-			joinTables(lazyJoinSelect);
-			return lazyJoinSelect;
+			QuerySupplier querySupplier = new QuerySupplier(query);
+			joinTables(querySupplier);
+			return querySupplier;
 		}
 
 		@Override
@@ -173,18 +173,18 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
 			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
 		}
 
 		@Override
-		public LazyJoinSelect wrapQuery(SelectQuery<? extends Record> query) {
+		public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
 			throw new UnsupportedOperationException("Doesn't supported for Project Info query");
 		}
 
 		@Override
-		public LazyJoinSelect wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+		public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
 			throw new UnsupportedOperationException("Doesn't supported for Project Info query");
 		}
 
@@ -244,7 +244,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
 			query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
 		}
@@ -320,7 +320,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, LAUNCH.USER_ID.eq(USERS.ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
@@ -328,7 +328,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTablesForFilter(LazyJoinSelect query) {
+		protected void joinTablesForFilter(QuerySupplier query) {
 		}
 
 		@Override
@@ -454,7 +454,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID));
 			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID));
 			query.addJoin(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID));
@@ -514,7 +514,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(ATTACHMENT, JoinType.LEFT_OUTER_JOIN, LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
 			query.addJoin(TEST_ITEM, JoinType.LEFT_OUTER_JOIN, LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID));
 			query.addJoin(TEST_ITEM_RESULTS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
@@ -566,7 +566,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
 		}
@@ -607,7 +607,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(INTEGRATION_TYPE, JoinType.JOIN, INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, INTEGRATION.PROJECT_ID.eq(PROJECT.ID));
 		}
@@ -659,7 +659,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(DASHBOARD_WIDGET, JoinType.LEFT_OUTER_JOIN, DASHBOARD.ID.eq(DASHBOARD_WIDGET.DASHBOARD_ID));
 			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, DASHBOARD.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
@@ -708,7 +708,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN, WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
 			query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
@@ -761,7 +761,7 @@ public enum FilterTarget {
 		}
 
 		@Override
-		protected void joinTables(LazyJoinSelect query) {
+		protected void joinTables(QuerySupplier query) {
 			query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHAREABLE_ENTITY.ID));
 			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
 			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
@@ -787,54 +787,54 @@ public enum FilterTarget {
 		this.criteriaHolders = criteriaHolders;
 	}
 
-	public LazyJoinSelect getQuery() {
+	public QuerySupplier getQuery() {
 		SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
 		addFrom(query);
 		query.addGroupBy(idField());
 
-		LazyJoinSelect lazyJoinSelect = new LazyJoinSelect(query);
-		joinTablesForFilter(lazyJoinSelect);
-		return lazyJoinSelect;
+		QuerySupplier querySupplier = new QuerySupplier(query);
+		joinTablesForFilter(querySupplier);
+		return querySupplier;
 	}
 
 	protected abstract Collection<? extends SelectField> selectFields();
 
 	protected abstract void addFrom(SelectQuery<? extends Record> query);
 
-	protected abstract void joinTables(LazyJoinSelect query);
+	protected abstract void joinTables(QuerySupplier query);
 
-	protected void joinTablesForFilter(LazyJoinSelect query) {
+	protected void joinTablesForFilter(QuerySupplier query) {
 		joinTables(query);
 	}
 
 	protected abstract Field<Long> idField();
 
-	public LazyJoinSelect wrapQuery(SelectQuery<? extends Record> query) {
+	public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
 		SelectQuery<Record> wrappedQuery = DSL.with(FILTERED_QUERY).as(query).select(selectFields()).getQuery();
 		addFrom(wrappedQuery);
-		LazyJoinSelect lazyJoinSelect = new LazyJoinSelect(wrappedQuery);
-		lazyJoinSelect.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
+		QuerySupplier querySupplier = new QuerySupplier(wrappedQuery);
+		querySupplier.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
 				JoinType.JOIN,
 				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
 		);
-		joinTables(lazyJoinSelect);
-		return lazyJoinSelect;
+		joinTables(querySupplier);
+		return querySupplier;
 	}
 
-	public LazyJoinSelect wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+	public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
 		List<String> excludingFields = Lists.newArrayList(excluding);
 		List<? extends SelectField> fields = selectFields().stream()
 				.filter(it -> !excludingFields.contains(it.getName()))
 				.collect(Collectors.toList());
 		SelectQuery<Record> wrappedQuery = DSL.with(FILTERED_QUERY).as(query).select(fields).getQuery();
 		addFrom(wrappedQuery);
-		LazyJoinSelect lazyJoinSelect = new LazyJoinSelect(wrappedQuery);
-		lazyJoinSelect.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
+		QuerySupplier querySupplier = new QuerySupplier(wrappedQuery);
+		querySupplier.addJoin(DSL.table(DSL.name(FILTERED_QUERY)),
 				JoinType.JOIN,
 				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
 		);
-		joinTables(lazyJoinSelect);
-		return lazyJoinSelect;
+		joinTables(querySupplier);
+		return querySupplier;
 	}
 
 	public Class<?> getClazz() {

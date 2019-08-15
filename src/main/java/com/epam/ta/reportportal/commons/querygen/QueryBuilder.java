@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
-import com.epam.ta.reportportal.commons.querygen.query.LazyJoinSelect;
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
@@ -77,7 +77,7 @@ public class QueryBuilder {
 	/**
 	 * JOOQ SQL query representation
 	 */
-	private LazyJoinSelect query;
+	private QuerySupplier query;
 
 	private FilterTarget filterTarget;
 
@@ -204,7 +204,7 @@ public class QueryBuilder {
 		return this;
 	}
 
-	public LazyJoinSelect getLazyJoinSelect() {
+	public QuerySupplier getQuerySupplier() {
 		return query;
 	}
 
@@ -270,7 +270,7 @@ public class QueryBuilder {
 
 	}
 
-	private void addJoinsToQuery(LazyJoinSelect query, FilterTarget filterTarget, Set<String> fields) {
+	private void addJoinsToQuery(QuerySupplier query, FilterTarget filterTarget, Set<String> fields) {
 		Map<Table, Condition> joinTables = new LinkedHashMap<>();
 		fields.forEach(it -> {
 			if (!joinTables.containsKey(STATISTICS) && it.startsWith(STATISTICS_KEY)) {

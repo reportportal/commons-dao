@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.querygen.query.LazyJoinSelect;
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.jooq.Operator;
@@ -111,12 +111,12 @@ public class Filter implements Serializable, Queryable {
 	}
 
 	@Override
-	public LazyJoinSelect toQuery() {
+	public QuerySupplier toQuery() {
 		QueryBuilder queryBuilder = QueryBuilder.newBuilder(this.target);
 		Map<ConditionType, org.jooq.Condition> conditions = toCondition();
 		return queryBuilder.addCondition(conditions.get(ConditionType.WHERE))
 				.addHavingCondition(conditions.get(ConditionType.HAVING))
-				.getLazyJoinSelect();
+				.getQuerySupplier();
 	}
 
 	@Override
