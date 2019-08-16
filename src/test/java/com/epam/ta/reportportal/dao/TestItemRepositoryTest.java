@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
@@ -37,6 +38,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
@@ -47,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
@@ -107,6 +110,14 @@ class TestItemRepositoryTest extends BaseTest {
 		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
+	}
+
+	@Test
+	void selectMultiplePathNames() {
+		Map<Long, Map<Long, String>> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
+		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
+		results.values().forEach(map -> assertThat("Incorrect class type", map.getClass(), Matchers.theInstance(LinkedHashMap.class)));
+		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
 	}
 
 	@Test
@@ -570,5 +581,27 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
+	}
+
+	@Test
+	void findByLaunchAndTestItemFiltersTest() {
+
+		Filter launchFilter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ID))
+				.build();
+
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Page<TestItem> testItems = testItemRepository.findByFilter(launchFilter, itemFilter, PageRequest.of(0, 1), PageRequest.of(0, 100));
+
+		List<TestItem> content = testItems.getContent();
+
+		Assertions.assertFalse(content.isEmpty());
+		Assertions.assertEquals(5, content.size());
+
 	}
 }

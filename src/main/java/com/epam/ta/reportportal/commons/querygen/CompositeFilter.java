@@ -16,10 +16,9 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import org.jooq.Condition;
 import org.jooq.Operator;
-import org.jooq.Record;
-import org.jooq.SelectQuery;
 import org.jooq.impl.DSL;
 
 import java.util.*;
@@ -52,10 +51,12 @@ public class CompositeFilter implements Queryable {
 	}
 
 	@Override
-	public SelectQuery<? extends Record> toQuery() {
+	public QuerySupplier toQuery() {
 		QueryBuilder query = QueryBuilder.newBuilder(this.target);
 		Map<ConditionType, Condition> conditions = toCondition();
-		return query.addCondition(conditions.get(ConditionType.WHERE)).addHavingCondition(conditions.get(ConditionType.HAVING)).build();
+		return query.addCondition(conditions.get(ConditionType.WHERE))
+				.addHavingCondition(conditions.get(ConditionType.HAVING))
+				.getQuerySupplier();
 	}
 
 	@Override

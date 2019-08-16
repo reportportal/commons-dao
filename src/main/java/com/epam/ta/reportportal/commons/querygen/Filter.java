@@ -16,16 +16,18 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.jooq.Operator;
-import org.jooq.Record;
-import org.jooq.SelectQuery;
 import org.jooq.impl.DSL;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Filter for building queries to database. Contains CriteriaHolder which is mapping between request
@@ -109,12 +111,12 @@ public class Filter implements Serializable, Queryable {
 	}
 
 	@Override
-	public SelectQuery<? extends Record> toQuery() {
+	public QuerySupplier toQuery() {
 		QueryBuilder queryBuilder = QueryBuilder.newBuilder(this.target);
 		Map<ConditionType, org.jooq.Condition> conditions = toCondition();
 		return queryBuilder.addCondition(conditions.get(ConditionType.WHERE))
 				.addHavingCondition(conditions.get(ConditionType.HAVING))
-				.build();
+				.getQuerySupplier();
 	}
 
 	@Override
