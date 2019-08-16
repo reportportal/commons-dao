@@ -35,6 +35,9 @@ import java.util.Set;
  */
 public interface UserRepository extends ReportPortalRepository<User, Long>, UserRepositoryCustom {
 
+	@Query(value = "SELECT id FROM users WHERE users.login = :username FOR UPDATE", nativeQuery = true)
+	Optional<Long> findIdByLoginForUpdate(@Param("username") String login);
+
 	Optional<User> findByEmail(String email);
 
 	/**

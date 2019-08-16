@@ -127,6 +127,14 @@ class UserRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findIdByLogin() {
+
+		Optional<Long> userId = userRepository.findIdByLoginForUpdate("han_solo");
+		assertTrue(userId.isPresent(), "User not found");
+		assertThat("Ids are not equal", userId.get(), Matchers.equalTo(27L));
+	}
+
+	@Test
 	void findByLogin() {
 		final String login = "han_solo";
 
