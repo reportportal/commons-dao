@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
@@ -75,7 +77,7 @@ public class QueryBuilder {
 	/**
 	 * JOOQ SQL query representation
 	 */
-	private SelectQuery<? extends Record> query;
+	private QuerySupplier query;
 
 	private FilterTarget filterTarget;
 
@@ -107,6 +109,20 @@ public class QueryBuilder {
 		return new QueryBuilder(queryable, fields);
 	}
 
+	public QueryBuilder addJointToStart(TableLike<? extends Record> table, JoinType joinType, Condition condition) {
+		if (table != null && joinType != null && condition != null) {
+			query.addJoinToStart(JoinEntity.of(table, joinType, condition));
+		}
+		return this;
+	}
+
+	public QueryBuilder addJoinToEnd(TableLike<? extends Record> table, JoinType joinType, Condition condition) {
+		if (table != null && joinType != null && condition != null) {
+			query.addJoinToEnd(JoinEntity.of(table, joinType, condition));
+		}
+		return this;
+	}
+
 	/**
 	 * Adds condition to the query
 	 *
@@ -115,7 +131,7 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder addCondition(Condition condition) {
 		if (null != condition) {
-			query.addConditions(condition);
+			query.addCondition(condition);
 		}
 		return this;
 	}
@@ -188,13 +204,17 @@ public class QueryBuilder {
 		return this;
 	}
 
+	public QuerySupplier getQuerySupplier() {
+		return query;
+	}
+
 	/**
 	 * Builds query
 	 *
 	 * @return Query
 	 */
 	public SelectQuery<? extends Record> build() {
-		return query;
+		return query.get();
 	}
 
 	/**
@@ -203,7 +223,7 @@ public class QueryBuilder {
 	 * @return Query builder
 	 */
 	public QueryBuilder wrap() {
-		query = filterTarget.wrapQuery(query);
+		query = filterTarget.wrapQuery(query.get());
 		return this;
 	}
 
@@ -213,7 +233,7 @@ public class QueryBuilder {
 	 * @return Query builder
 	 */
 	public QueryBuilder wrapExcludingFields(String... excludingFields) {
-		query = filterTarget.wrapQuery(query, excludingFields);
+		query = filterTarget.wrapQuery(query.get(), excludingFields);
 		return this;
 	}
 
@@ -250,7 +270,7 @@ public class QueryBuilder {
 
 	}
 
-	private void addJoinsToQuery(SelectQuery<? extends Record> query, FilterTarget filterTarget, Set<String> fields) {
+	private void addJoinsToQuery(QuerySupplier query, FilterTarget filterTarget, Set<String> fields) {
 		Map<Table, Condition> joinTables = new LinkedHashMap<>();
 		fields.forEach(it -> {
 			if (!joinTables.containsKey(STATISTICS) && it.startsWith(STATISTICS_KEY)) {

@@ -24,6 +24,8 @@ import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -36,6 +38,17 @@ import java.util.Optional;
  * @author Pavel Bortnik
  */
 public interface TestItemRepositoryCustom extends FilterableRepository<TestItem> {
+
+	/**
+	 * Executes query built for given filters and maps result for given page
+	 *
+	 * @param launchFilter     {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+	 * @param testItemFilter   {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
+	 * @param launchPageable   {@link Pageable} for {@link com.epam.ta.reportportal.entity.launch.Launch} query
+	 * @param testItemPageable {@link Pageable} for {@link TestItem} query
+	 * @return List of mapped entries found
+	 */
+	Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable, Pageable testItemPageable);
 
 	/**
 	 * Selects all descendants of TestItem with provided id.
@@ -180,10 +193,18 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
+	 * Select ids and names of all items in a tree till current, for each id from the provided collection
+	 *
+	 * @param ids {@link Collection} of {@link TestItem#getItemId()}
+	 * @return id from collection -> { parent id -> parent name }
+	 */
+	Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids);
+
+	/**
 	 * Select item IDs by analyzed status and launch id with log level greater or equals than error
 	 *
 	 * @param autoAnalyzed {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
-	 * @param launchId     {@link TestItem#launch} ID
+	 * @param launchId     {@link TestItem#launchId} ID
 	 * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
 	 * @return The {@link List} of the {@link TestItem#itemId}
 	 */
