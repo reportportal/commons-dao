@@ -151,7 +151,7 @@ public class ResultFetchers {
 				testItem = testItems.get(id);
 			}
 			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
-			testItem.getParameters().add(record.into(Parameter.class));
+			ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(it -> testItem.getParameters().add(record.into(Parameter.class)));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(record)
 					.ifPresent(patternTemplate -> testItem.getPatternTemplateTestItems()

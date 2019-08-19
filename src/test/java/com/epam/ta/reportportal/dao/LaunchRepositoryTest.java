@@ -17,10 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.commons.querygen.CompositeFilter;
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -28,7 +25,6 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Comparators;
-import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
@@ -42,7 +38,10 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -185,9 +184,10 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findLaunchByFilterTest() {
 		Sort sort = Sort.by(Sort.Direction.ASC, CRITERIA_LAST_MODIFIED);
-		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND, buildDefaultFilter(1L), buildDefaultFilter2()),
-				PageRequest.of(0, 2, sort)
-		);
+		Page<Launch> launches = launchRepository.findByFilter(new CompositeFilter(Operator.AND,
+				buildDefaultFilter(1L),
+				buildDefaultFilter2()
+		), PageRequest.of(0, 2, sort));
 		assertNotNull(launches);
 		assertEquals(1, launches.getTotalElements());
 	}
@@ -284,7 +284,7 @@ class LaunchRepositoryTest extends BaseTest {
 						.build())
 				.build(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(Launch::getUserId)));
 	}
 
 	@Test
@@ -299,7 +299,7 @@ class LaunchRepositoryTest extends BaseTest {
 						.build())
 				.build(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(it -> it.getUser().getLogin())));
+		assertTrue(Comparators.isInOrder(launchesPage.getContent(), Comparator.comparing(Launch::getUserId)));
 	}
 
 	@Test
@@ -343,17 +343,17 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
+		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
 						false,
 						String.valueOf(projectId),
 						CRITERIA_PROJECT_ID
 				),
 				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
 		);
-		return new Filter(Launch.class, conditionSet);
+		return new Filter(Launch.class, conditionList);
 	}
 
 	private Filter buildDefaultFilter2() {
-		return new Filter(Launch.class, Sets.newHashSet(new FilterCondition(Condition.EQUALS, false, "uuid 11", CRITERIA_LAUNCH_UUID)));
+		return new Filter(Launch.class, Lists.newArrayList(new FilterCondition(Condition.EQUALS, false, "uuid 11", CRITERIA_LAUNCH_UUID)));
 	}
 }

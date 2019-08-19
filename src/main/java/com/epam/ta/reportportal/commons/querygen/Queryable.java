@@ -16,12 +16,11 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import org.jooq.Condition;
-import org.jooq.Record;
-import org.jooq.SelectQuery;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Can be used to generate SQL queries with help of JOOQ
@@ -32,11 +31,11 @@ import java.util.Set;
 public interface Queryable {
 
 	/**
-	 * Builds a JOOQ query
+	 * Builds a query with lazy joins
 	 *
-	 * @return {@link org.jooq.SelectQuery}
+	 * @return {@link QuerySupplier}
 	 */
-	SelectQuery<? extends Record> toQuery();
+	QuerySupplier toQuery();
 
 	/**
 	 * Build a map where key is {@link ConditionType} and value is a composite {@link Condition}
@@ -54,6 +53,6 @@ public interface Queryable {
 	/**
 	 * @return Set of {@link FilterCondition}
 	 */
-	Set<FilterCondition> getFilterConditions();
+	List<ConvertibleCondition> getFilterConditions();
 
 }

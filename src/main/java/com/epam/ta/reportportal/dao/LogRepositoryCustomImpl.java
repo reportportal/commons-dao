@@ -245,6 +245,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	}
 
+	@Override
+	public List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level) {
+		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).and(LOG.LOG_LEVEL.ge(level)).fetch(LOG.LOG_MESSAGE);
+	}
+
 	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
 			Queryable filter) {
 
@@ -260,6 +265,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		filter.getFilterConditions()
 				.stream()
+				.flatMap(condition -> condition.getAllConditions().stream())
 				.filter(c -> CRITERIA_STATUS.equals(c.getSearchCriteria()))
 				.findFirst()
 				.map(c -> Stream.of(c.getValue().split(",")).filter(StatusEnum::isPresent).map(JStatusEnum::valueOf).collect(toList()))
@@ -285,14 +291,16 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getFilterConditions()
 				.stream()
+				.flatMap(condition -> condition.getAllConditions().stream())
 				.filter(condition -> CRITERIA_STATUS.equalsIgnoreCase(condition.getSearchCriteria()))
 				.findAny()
 				.map(condition -> (Queryable) new Filter(filter.getTarget().getClazz(),
 						filter.getFilterConditions()
 								.stream()
+								.flatMap(simpleCondition -> condition.getAllConditions().stream())
 								.filter(filterCondition -> !condition.getSearchCriteria()
 										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
-								.collect(Collectors.toSet())
+								.collect(Collectors.toList())
 				))
 				.orElse(filter));
 

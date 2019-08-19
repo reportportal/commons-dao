@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
@@ -37,6 +38,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
@@ -47,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
@@ -110,13 +113,21 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectMultiplePathNames() {
+		Map<Long, Map<Long, String>> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
+		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
+		results.values().forEach(map -> assertThat("Incorrect class type", map.getClass(), Matchers.theInstance(LinkedHashMap.class)));
+		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
+	}
+
+	@Test
 	void testLoadItemsHistory() {
 		final String uniqueId = "unqIdSTEP7";
 
 		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
 		assertEquals(7, items.size(), "Incorrect items size");
-		items.forEach(it -> assertTrue(it.getUniqueId().equals(uniqueId) && (it.getLaunch().getId() == 7L || it.getLaunch().getId() == 8L
-				|| it.getLaunch().getId() == 9L)));
+		items.forEach(it -> assertTrue(
+				it.getUniqueId().equals(uniqueId) && (it.getLaunchId() == 7L || it.getLaunchId() == 8L || it.getLaunchId() == 9L)));
 	}
 
 	@Test
@@ -126,7 +137,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<TestItem> items = testItemRepository.findTestItemsByLaunchId(launchId);
 		assertNotNull(items, "Items should not be null");
 		assertEquals(6, items.size(), "Incorrect items size");
-		items.forEach(it -> assertEquals(launchId, (long) it.getLaunch().getId()));
+		items.forEach(it -> assertEquals(launchId, (long) it.getLaunchId()));
 	}
 
 	@Test
@@ -176,14 +187,28 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(1L, 1, 40000, "o");
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
+				.build();
+
+		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(filter, 40000, "o");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
 
 	@Test
 	void selectIdsByRegexPatternMatchedLogMessage() {
-		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(1L, 1, 40000, "[a-z]{3,3}");
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
+				.build();
+
+		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(filter, 40000, "[a-z]{3,3}");
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -227,7 +252,7 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
-			assertEquals(launchId, it.getLaunch().getId(), "Incorrect launch id");
+			assertEquals(launchId, it.getLaunchId(), "Incorrect launch id");
 			assertEquals(failedStatus, it.getItemResults().getStatus(), "Incorrect launch status");
 		});
 	}
@@ -328,7 +353,7 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
-			assertEquals(launchId, it.getLaunch().getId(), "Incorrect launch id");
+			assertEquals(launchId, it.getLaunchId(), "Incorrect launch id");
 			assertEquals(it.getItemResults().getIssue().getIssueType().getId(), Long.valueOf(1L), "Incorrect item issue");
 		});
 	}
@@ -372,7 +397,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		assertEquals(3L, retries.size());
 
-		retries.stream().map(TestItem::getLaunch).forEach(Assertions::assertNull);
+		retries.stream().map(TestItem::getLaunchId).forEach(Assertions::assertNull);
 		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> assertEquals(retriesParent.getItemId(), retryOf));
 		retries.forEach(retry -> assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
 				retry.getPath()
@@ -409,7 +434,7 @@ class TestItemRepositoryTest extends BaseTest {
 		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
 
 		assertThat(testItems.get(0).getItemResults().getStatus().name(),
-				Matchers.lessThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
+				Matchers.greaterThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
 		);
 	}
 
@@ -556,5 +581,27 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
+	}
+
+	@Test
+	void findByLaunchAndTestItemFiltersTest() {
+
+		Filter launchFilter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ID))
+				.build();
+
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Page<TestItem> testItems = testItemRepository.findByFilter(launchFilter, itemFilter, PageRequest.of(0, 1), PageRequest.of(0, 100));
+
+		List<TestItem> content = testItems.getContent();
+
+		Assertions.assertFalse(content.isEmpty());
+		Assertions.assertEquals(5, content.size());
+
 	}
 }
