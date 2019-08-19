@@ -66,6 +66,7 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode")
 }
 
+
 dependencies {
 
     if (releaseMode) {
