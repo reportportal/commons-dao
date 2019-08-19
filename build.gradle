@@ -72,7 +72,7 @@ dependencies {
     if (releaseMode) {
         compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
         compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-4'
-        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-4'
+        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-9'
     } else {
         compile('com.github.reportportal:commons:5.0.0-BETA-2')
         compile 'com.github.reportportal:commons-rules:5.0.0-BETA-4'
