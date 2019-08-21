@@ -78,7 +78,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 			@Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
-			+ "AND l.project_id = :projectId ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
+			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
 	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
 			@Param("launchName") String launchName, @Param("projectId") Long projectId);
 
@@ -96,11 +96,11 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	boolean hasRetries(@Param("launchId") Long launchId);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
-			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
-			+ " WHERE ti.launch_id = :launchId AND tir.status = cast(:#{#status.name()} as status_enum) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.launch_id = :launchId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti WHERE ti.launch_id = :launchId LIMIT 1)", nativeQuery = true)
