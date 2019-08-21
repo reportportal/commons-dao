@@ -90,6 +90,7 @@ dependencies {
 
 
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile 'org.hibernate:hibernate-core:5.4.4.Final'
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
 
     compile 'org.springframework:spring-context-support'
