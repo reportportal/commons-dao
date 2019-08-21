@@ -32,6 +32,10 @@ import java.util.Optional;
  */
 public interface IntegrationRepository extends ReportPortalRepository<Integration, Long>, IntegrationRepositoryCustom {
 
+	boolean existsByNameAndTypeIdAndProjectIdIsNull(String name, Long typeId);
+
+	boolean existsByNameAndTypeIdAndProjectId(String name, Long typeId, Long projectId);
+
 	/**
 	 * Retrieve integration by ID and project ID
 	 *
