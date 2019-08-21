@@ -122,6 +122,30 @@ class IntegrationRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void existsByNameTypePositive() {
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectIdIsNull("jira", 4L);
+		assertTrue(exists);
+	}
+
+	@Test
+	void existsByNameTypeNegative() {
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectIdIsNull("jira1", 4L);
+		assertFalse(exists);
+	}
+
+	@Test
+	void existsByNameTypeProjectIdPositive() {
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira", 4L, 1L);
+		assertTrue(exists);
+	}
+
+	@Test
+	void existsByNameTypeProjectIdNegative() {
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira", 4L, 2L);
+		assertFalse(exists);
+	}
+
+	@Test
 	void findAllGlobalByIntegrationGroup() {
 		List<Integration> integrations = integrationRepository.findAllGlobalByGroup(IntegrationGroupEnum.BTS);
 		assertThat(integrations, hasSize(2));
