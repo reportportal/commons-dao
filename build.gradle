@@ -71,12 +71,12 @@ dependencies {
 
     if (releaseMode) {
         compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
-        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-4'
-        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-9'
+        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-6'
+        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-11'
     } else {
         compile('com.github.reportportal:commons:5.0.0-BETA-2')
-        compile 'com.github.reportportal:commons-rules:5.0.0-BETA-4'
-        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-9'
+        compile 'com.github.reportportal:commons-rules:5.0.0-BETA-6'
+        compile 'com.epam.reportportal:commons-model:5.0.0-BETA-11'
     }
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
@@ -90,6 +90,7 @@ dependencies {
 
 
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile 'org.hibernate:hibernate-core:5.4.4.Final'
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
 
     compile 'org.springframework:spring-context-support'
