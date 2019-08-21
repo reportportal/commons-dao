@@ -32,16 +32,16 @@ VALUES (11, 1, 2, false, 'superadmin', '{
          }
        }');
 
-INSERT INTO integration (id, type, enabled, creator, creation_date, params) --integration id = 8 (global JIRA)
-VALUES (13, 4, false, 'superadmin', now(), '{
+INSERT INTO integration (id, name, type, enabled, creator, creation_date, params) --integration id = 8 (global JIRA)
+VALUES (13, 'jira', 4, false, 'superadmin', now(), '{
   "params": {
     "url" : "bts.com",
     "project" : "bts_project"
   }
 }');
 
-INSERT INTO integration (id, project_id, type, enabled, creator, creation_date, params)--integration id = 9 (superadmin project JIRA)
-VALUES (14, 1, 4, false, 'superadmin', now(), '{
+INSERT INTO integration (id, name,  project_id, type, enabled, creator, creation_date, params)--integration id = 9 (superadmin project JIRA)
+VALUES (14, 'jira', 1, 4, false, 'superadmin', now(), '{
   "params": {
     "url" : "projectbts.com",
     "project" : "project"
