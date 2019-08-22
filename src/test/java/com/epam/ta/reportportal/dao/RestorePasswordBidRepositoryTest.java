@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,8 +37,8 @@ class RestorePasswordBidRepositoryTest extends BaseTest {
 
 	@Test
 	void existsByEmail() {
-		boolean b = restorePasswordBidRepository.existsByEmail("notexisted@email.com");
-		assertFalse(b);
+		Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail("notexisted@email.com");
+		assertFalse(bid.isPresent());
 	}
 
 	@Test
@@ -47,7 +48,7 @@ class RestorePasswordBidRepositoryTest extends BaseTest {
 		restorePasswordBid.setEmail("existed@email.com");
 		restorePasswordBid.setLastModifiedDate(new Date());
 		restorePasswordBidRepository.save(restorePasswordBid);
-		boolean b = restorePasswordBidRepository.existsByEmail("existed@email.com");
-		assertTrue(b);
+		Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail("existed@email.com");
+		assertTrue(bid.isPresent());
 	}
 }
