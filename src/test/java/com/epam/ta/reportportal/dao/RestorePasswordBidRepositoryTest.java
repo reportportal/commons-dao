@@ -36,13 +36,13 @@ class RestorePasswordBidRepositoryTest extends BaseTest {
 	private RestorePasswordBidRepository restorePasswordBidRepository;
 
 	@Test
-	void existsByEmail() {
+	void findByEmail() {
 		Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail("notexisted@email.com");
 		assertFalse(bid.isPresent());
 	}
 
 	@Test
-	void existsByEmailNegative() {
+	void findByExistedEmail() {
 		RestorePasswordBid restorePasswordBid = new RestorePasswordBid();
 		restorePasswordBid.setUuid("uuid");
 		restorePasswordBid.setEmail("existed@email.com");
