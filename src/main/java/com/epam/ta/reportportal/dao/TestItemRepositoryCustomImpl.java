@@ -107,7 +107,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(items,
+		return PageableExecutionUtils.getPage(
+				items,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,
@@ -505,6 +506,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 							.leftJoin(PARAMETER)
 							.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
 							.where(TEST_ITEM.RETRY_OF.in(itemsWithRetries.stream().map(TestItem::getItemId).collect(Collectors.toList())))
+							.orderBy(TEST_ITEM.START_TIME)
 							.fetch()
 			);
 		}
