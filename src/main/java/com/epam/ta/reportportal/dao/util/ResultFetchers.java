@@ -133,7 +133,7 @@ public class ResultFetchers {
 				.collect(HashMap::new, (map, item) -> map.put(item.getItemId(), item), HashMap::putAll);
 		retriesMap.values()
 				.stream()
-				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toSet()))
+				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toCollection(LinkedHashSet::new)))
 				.forEach((key, value) -> items.get(key).setRetries(value));
 	};
 
