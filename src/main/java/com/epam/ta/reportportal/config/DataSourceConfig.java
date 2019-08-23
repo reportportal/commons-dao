@@ -50,7 +50,8 @@ public class DataSourceConfig extends HikariConfig {
 	public DataSource testDataSource(@Value("${embedded.datasource.dir}") String dataDir,
 			@Value("${embedded.datasource.clean}") Boolean clean, @Value("${embedded.datasource.port}") Integer port) throws IOException {
 		final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
-				.setPort(port).setDataDirectory(new File(System.getProperty("user.dir") + dataDir))
+				.setPort(port)
+				.setDataDirectory(new File(dataDir))
 				.setCleanDataDirectory(clean);
 		return builder.start().getPostgresDatabase();
 	}
