@@ -424,18 +424,64 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findOrderedByStatus() {
-		Filter filter = Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_LAUNCH_ID))
-				.build();
+		//GIVEN
+		Filter filter = prepareTestItemLaunchIdFilter("3");
 
 		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_STATUS)));
 
+		//WHEN
 		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
 
+		//THEN
 		assertThat(testItems.get(0).getItemResults().getStatus().name(),
 				Matchers.greaterThan(testItems.get(testItems.size() - 1).getItemResults().getStatus().name())
 		);
+	}
+
+	@Test
+	void findIdsByFilterShouldReturnPageOfExpectedIdsOrderedByStatusWhenTestItemsArePresent() {
+		//GIVEN
+		Filter filter = prepareTestItemLaunchIdFilter("3");
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_STATUS)));
+
+		List<Long> expectedIds = Arrays.asList(13L, 14L, 17L, 18L, 15L, 16L, 11L, 10L, 12L);
+
+		//WHEN
+		Page<Long> testItemsIdsPage = testItemRepository.findIdsByFilter(filter, PageRequest.of(0, 20, sort));
+
+		//THEN
+		List<Long> actualIds = testItemsIdsPage.getContent();
+		Assertions.assertEquals(expectedIds.size(), actualIds.size());
+
+		Assertions.assertEquals(expectedIds, actualIds);
+
+		Assertions.assertEquals(9, testItemsIdsPage.getTotalElements());
+		Assertions.assertEquals(1, testItemsIdsPage.getTotalPages());
+	}
+
+	@Test
+	void findIdsByFilterShouldReturnEmptyPageOfExpectedIdsWhenItemsAreNotPresent() {
+		//GIVEN
+		Filter filter = prepareTestItemLaunchIdFilter("555");
+
+		//WHEN
+		Page<Long> testItemsIdsPage = testItemRepository.findIdsByFilter(filter, PageRequest.of(0, 20));
+
+		//THEN
+		List<Long> actualIds = testItemsIdsPage.getContent();
+		Assertions.assertEquals(0, actualIds.size());
+
+		Assertions.assertEquals(Collections.emptyList(), actualIds);
+
+		Assertions.assertEquals(0, testItemsIdsPage.getTotalElements());
+		Assertions.assertEquals(0, testItemsIdsPage.getTotalPages());
+	}
+
+	private Filter prepareTestItemLaunchIdFilter(String launchIdValue) {
+		return Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, launchIdValue, CRITERIA_LAUNCH_ID))
+				.build();
 	}
 
 	@Test
@@ -585,23 +631,71 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findByLaunchAndTestItemFiltersTest() {
+		//GIVEN
+		Filter launchFilter = prepareLaunchIdFilter();
+		Filter itemFilter = prepareTestItemStatusFilter("FAILED");
 
-		Filter launchFilter = Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ID))
-				.build();
-
-		Filter itemFilter = Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
-				.build();
-
+		//WHEN
 		Page<TestItem> testItems = testItemRepository.findByFilter(launchFilter, itemFilter, PageRequest.of(0, 1), PageRequest.of(0, 100));
 
+		//THEN
 		List<TestItem> content = testItems.getContent();
 
 		Assertions.assertFalse(content.isEmpty());
 		Assertions.assertEquals(5, content.size());
+	}
 
+	@Test
+	void findIdsByFilterShouldReturnPageOfExpectedIdsWhenTestItemsArePresent() {
+		//GIVEN
+		Filter launchFilter = prepareLaunchIdFilter();
+		Filter itemFilter = prepareTestItemStatusFilter("FAILED");
+
+		List<Long> expectedIds = Arrays.asList(1L, 2L, 3L, 5L, 106L);
+
+		//WHEN
+		Page<Long> testItemsIdsPage = testItemRepository.findIdsByFilter(launchFilter, itemFilter, PageRequest.of(0, 10), PageRequest.of(0, 100));
+
+		//THEN
+		List<Long> actualIds = testItemsIdsPage.getContent();
+		Assertions.assertEquals(expectedIds.size(), actualIds.size());
+
+		Assertions.assertEquals(expectedIds, actualIds);
+
+		Assertions.assertEquals(5, testItemsIdsPage.getTotalElements());
+		Assertions.assertEquals(1, testItemsIdsPage.getTotalPages());
+	}
+
+	@Test
+	void findIdsByFilterShouldReturnEmptyPageOfExpectedIdsWhenTestItemsAreNotPresent() {
+		//GIVEN
+		Filter launchFilter = prepareLaunchIdFilter();
+		Filter itemFilter = prepareTestItemStatusFilter("PASSED");
+
+		//WHEN
+		Page<Long> testItemsIdsPage = testItemRepository.findIdsByFilter(launchFilter, itemFilter, PageRequest.of(0, 10), PageRequest.of(0, 100));
+
+		//THEN
+		List<Long> actualIds = testItemsIdsPage.getContent();
+		Assertions.assertEquals(0, actualIds.size());
+
+		Assertions.assertEquals(Collections.emptyList(), actualIds);
+
+		Assertions.assertEquals(0, testItemsIdsPage.getTotalElements());
+		Assertions.assertEquals(0, testItemsIdsPage.getTotalPages());
+	}
+
+	private Filter prepareLaunchIdFilter() {
+		return Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ID))
+				.build();
+	}
+
+	private Filter prepareTestItemStatusFilter(String statusValue) {
+		return Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, statusValue, CRITERIA_STATUS))
+				.build();
 	}
 }

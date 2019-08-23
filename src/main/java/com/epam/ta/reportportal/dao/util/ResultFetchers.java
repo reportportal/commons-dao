@@ -164,6 +164,17 @@ public class ResultFetchers {
 		return new ArrayList<>(testItems.values());
 	};
 
+	public static final Function<Result<? extends Record>, List<Long>> TEST_ITEM_IDS_FETCHER = records -> {
+		List<Long> testItemsIds = new ArrayList<>();
+		records.forEach(record -> {
+			Long id = record.get(TEST_ITEM.ITEM_ID);
+			if (!testItemsIds.contains(id)) {
+				testItemsIds.add(id);
+			}
+		});
+		return testItemsIds;
+	};
+
 	/**
 	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log} objects.
 	 */

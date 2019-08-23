@@ -58,8 +58,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -83,18 +82,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable) {
 
-		Set<String> fields = launchFilter.getFilterConditions()
-				.stream()
-				.map(ConvertibleCondition::getAllConditions)
-				.flatMap(Collection::stream)
-				.map(FilterCondition::getSearchCriteria)
-				.collect(Collectors.toSet());
-		fields.addAll(launchPageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
+		Table<? extends Record> launchesTable = getLaunchesAsTable(launchFilter, launchPageable);
 
-		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter, fields)
-				.with(launchPageable)
-				.build()
-				.asTable(LAUNCHES);
 		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
 				.with(testItemPageable)
 				.addJointToStart(launchesTable,
@@ -107,7 +96,32 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(items,
+		return PageableExecutionUtils.getPage(items, testItemPageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
+				.addJointToStart(launchesTable,
+						JoinType.JOIN,
+						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+				)
+				.build()));
+	}
+
+	@Override
+	public Page<Long> findIdsByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable) {
+
+		Table<? extends Record> launchesTable = getLaunchesAsTable(launchFilter, launchPageable);
+
+		List<Long> testItemsIds = TEST_ITEM_IDS_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
+				.with(testItemPageable)
+				.addJointToStart(launchesTable,
+						JoinType.JOIN,
+						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+				)
+				.wrap()
+				.withWrapperSort(testItemPageable.getSort())
+				.build()));
+
+		return PageableExecutionUtils.getPage(
+				testItemsIds,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,
@@ -116,6 +130,22 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						)
 						.build())
 		);
+	}
+
+	private Table<? extends Record> getLaunchesAsTable(Queryable launchFilter, Pageable launchPageable) {
+		Set<String> fields = prepareLaunchFilterFields(launchFilter, launchPageable);
+		return QueryBuilder.newBuilder(launchFilter, fields).with(launchPageable).build().asTable(LAUNCHES);
+	}
+
+	private Set<String> prepareLaunchFilterFields(Queryable launchFilter, Pageable launchPageable) {
+		Set<String> fields = launchFilter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
+		fields.addAll(launchPageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
+		return fields;
 	}
 
 	@Override
@@ -444,6 +474,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.build()));
 
 		fetchRetries(items);
+
+		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+	}
+
+	@Override
+	public Page<Long> findIdsByFilter(Queryable filter, Pageable pageable) {
+
+		List<Long> items = TEST_ITEM_IDS_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+				.with(pageable)
+				.wrap()
+				.withWrapperSort(pageable.getSort())
+				.build()));
 
 		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}

@@ -50,6 +50,10 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable, Pageable testItemPageable);
 
+	Page<Long> findIdsByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable, Pageable testItemPageable);
+
+	Page<Long> findIdsByFilter(Queryable filter, Pageable pageable);
+
 	/**
 	 * Selects all descendants of TestItem with provided id.
 	 *
