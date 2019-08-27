@@ -356,17 +356,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
 		result.forEach(record -> {
-			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
-				String parentName = record.get(parentItem.NAME);
-				Long childItemId = record.get(childItem.ITEM_ID);
-				Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> {
-					LinkedHashMap<Long, String> pathMapping = Maps.newLinkedHashMap();
-					pathMapping.put(BigDecimal.ZERO.longValue(), record.get(LAUNCH.NAME));
-					return pathMapping;
-				});
-				pathNames.put(parentItemId, parentName);
+			Long childItemId = record.get(childItem.ITEM_ID);
+			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> {
+				LinkedHashMap<Long, String> pathMapping = Maps.newLinkedHashMap();
+				pathMapping.put(BigDecimal.ZERO.longValue(), record.get(LAUNCH.NAME));
+				return pathMapping;
 			});
 
+			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
+				String parentName = record.get(parentItem.NAME);
+				pathNames.put(parentItemId, parentName);
+			});
 		});
 
 		return content;
