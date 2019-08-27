@@ -44,6 +44,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -107,8 +108,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(
-				items,
+		return PageableExecutionUtils.getPage(items,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,
@@ -338,11 +338,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
-		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME)
+		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME)
 				.from(childItem)
 				.join(parentItem)
 				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
 				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
+				.join(LAUNCH)
+				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(childItem.ITEM_ID.in(ids))
 				.orderBy(childItem.ITEM_ID, parentItem.ITEM_ID)
 				.fetch());
@@ -357,7 +359,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			String parentName = record.get(parentItem.NAME);
 			Long childItemId = record.get(childItem.ITEM_ID);
 
-			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> Maps.newLinkedHashMap());
+			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> {
+				LinkedHashMap<Long, String> pathMapping = Maps.newLinkedHashMap();
+				pathMapping.put(BigDecimal.ZERO.longValue(), record.get(LAUNCH.NAME));
+				return pathMapping;
+			});
 			pathNames.put(parentItemId, parentName);
 		});
 
