@@ -44,6 +44,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -64,6 +65,7 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -309,7 +311,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
-		return Optional.ofNullable(dsl.select()
+		return ofNullable(dsl.select()
 				.from(ISSUE_TYPE)
 				.join(ISSUE_TYPE_PROJECT)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
@@ -337,11 +339,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
-		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME)
+		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME)
 				.from(childItem)
-				.join(parentItem)
+				.leftJoin(parentItem)
 				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
 				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
+				.join(LAUNCH)
+				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(childItem.ITEM_ID.in(ids))
 				.orderBy(childItem.ITEM_ID, parentItem.ITEM_ID)
 				.fetch());
@@ -352,12 +356,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
 		result.forEach(record -> {
-			Long parentItemId = record.get(parentItem.ITEM_ID);
-			String parentName = record.get(parentItem.NAME);
 			Long childItemId = record.get(childItem.ITEM_ID);
+			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> {
+				LinkedHashMap<Long, String> pathMapping = Maps.newLinkedHashMap();
+				pathMapping.put(BigDecimal.ZERO.longValue(), record.get(LAUNCH.NAME));
+				return pathMapping;
+			});
 
-			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> Maps.newLinkedHashMap());
-			pathNames.put(parentItemId, parentName);
+			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
+				String parentName = record.get(parentItem.NAME);
+				pathNames.put(parentItemId, parentName);
+			});
 		});
 
 		return content;
@@ -505,6 +514,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 							.leftJoin(PARAMETER)
 							.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
 							.where(TEST_ITEM.RETRY_OF.in(itemsWithRetries.stream().map(TestItem::getItemId).collect(Collectors.toList())))
+							.orderBy(TEST_ITEM.START_TIME)
 							.fetch()
 			);
 		}
