@@ -79,6 +79,9 @@ dependencies {
         compile 'com.epam.reportportal:commons-model:5.0.0-BETA-12'
     }
 
+
+    compile 'io.minio:minio:6.0.10'
+
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     compile 'org.lokra.seaweedfs:seaweedfs-client:0.7.3.RELEASE'
