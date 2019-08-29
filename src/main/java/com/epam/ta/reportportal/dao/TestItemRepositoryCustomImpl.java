@@ -109,7 +109,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(items,
+		return PageableExecutionUtils.getPage(
+				items,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,

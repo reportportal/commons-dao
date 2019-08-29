@@ -25,6 +25,10 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.SeaweedDataStore;
+import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
+import io.minio.MinioClient;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
 import org.lokra.seaweedfs.core.FileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +83,20 @@ public class DataStoreConfiguration {
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
 
 		return new LocalDataStore(storagePath);
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+	public MinioClient minioClient(@Value("${datastore.minio.endpoint}") String endpoint,
+			@Value("${datastore.minio.accessKey}") String accessKey, @Value("${datastore.minio.secretKey}") String secretKey)
+			throws InvalidPortException, InvalidEndpointException {
+		return new MinioClient(endpoint, accessKey, secretKey);
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+	public DataStore minioDataStore(@Autowired MinioClient minioClient) {
+		return new MinioDataStore(minioClient);
 	}
 
 	@Bean
