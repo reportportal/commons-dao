@@ -24,7 +24,12 @@ import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
+import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.SeaweedDataStore;
+import io.minio.MinioClient;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
+import org.apache.commons.io.FileUtils;
 import org.lokra.seaweedfs.core.FileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +40,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -79,6 +86,35 @@ public class DataStoreConfiguration {
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
 
 		return new LocalDataStore(storagePath);
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+	public MinioClient minioClient(@Value("${datastore.minio.endpoint}") String endpoint,
+			@Value("${datastore.minio.accessKey}") String accessKey, @Value("${datastore.minio.secretKey}") String secretKey)
+			throws InvalidPortException, InvalidEndpointException {
+		return new MinioClient(endpoint, accessKey, secretKey);
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+	public DataStore minioDataStore(@Autowired MinioClient minioClient) {
+		return new MinioDataStore(minioClient);
+	}
+
+	public static void main(String[] args) throws InvalidPortException, InvalidEndpointException, IOException {
+		MinioDataStore minioDataStore = new MinioDataStore(new MinioClient("https://play.min.io",
+				"Q3AM3UQ867SPQQA43P2F",
+				"zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
+		));
+
+		minioDataStore.save("1/test.jpg",
+				new FileInputStream(new File("/Users/yumfriez/IdeaProjects/commons-dao/src/test/resources/meh.jpg"))
+		);
+
+		FileUtils.copyInputStreamToFile(minioDataStore.load("1/test.jpg"),
+				new File("/Users/yumfriez/IdeaProjects/commons-dao/src/main/java/com/epam/ta/reportportal/filesystem/distributed/test.jpg")
+		);
 	}
 
 	@Bean
