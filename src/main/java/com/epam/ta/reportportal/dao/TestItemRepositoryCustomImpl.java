@@ -26,7 +26,9 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
+import com.epam.ta.reportportal.entity.item.LaunchPathName;
 import com.epam.ta.reportportal.entity.item.NestedStep;
+import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
@@ -44,7 +46,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -109,8 +110,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(
-				items,
+		return PageableExecutionUtils.getPage(items,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,
@@ -336,11 +336,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids) {
+	public Map<Long, PathName> selectPathNames(Collection<Long> ids) {
 
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
-		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME)
+		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME, LAUNCH.NUMBER)
 				.from(childItem)
 				.leftJoin(parentItem)
 				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
@@ -352,21 +352,20 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetch());
 	}
 
-	public static final Function<Result<? extends Record>, Map<Long, Map<Long, String>>> PATH_NAMES_FETCHER = result -> {
-		Map<Long, Map<Long, String>> content = Maps.newHashMap();
+	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
+		Map<Long, PathName> content = Maps.newHashMap();
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
 		result.forEach(record -> {
 			Long childItemId = record.get(childItem.ITEM_ID);
-			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> {
-				LinkedHashMap<Long, String> pathMapping = Maps.newLinkedHashMap();
-				pathMapping.put(BigDecimal.ZERO.longValue(), record.get(LAUNCH.NAME));
-				return pathMapping;
+			PathName pathName = content.computeIfAbsent(childItemId, k -> {
+				LaunchPathName launchPathName = new LaunchPathName(record.get(LAUNCH.NAME), record.get(LAUNCH.NUMBER));
+				return new PathName(launchPathName, Maps.newLinkedHashMap());
 			});
 
 			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
 				String parentName = record.get(parentItem.NAME);
-				pathNames.put(parentItemId, parentName);
+				pathName.getItemPaths().put(parentItemId, parentName);
 			});
 		});
 
