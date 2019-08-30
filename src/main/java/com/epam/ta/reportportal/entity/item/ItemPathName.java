@@ -17,37 +17,37 @@
 package com.epam.ta.reportportal.entity.item;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class PathName implements Serializable {
+public class ItemPathName implements Serializable {
 
-	private LaunchPathName launchPathName;
-	private List<ItemPathName> itemPaths;
+	private Long id;
 
-	public PathName() {
+	private String name;
+
+	public ItemPathName() {
 	}
 
-	public PathName(LaunchPathName launchPathName, List<ItemPathName> itemPaths) {
-		this.launchPathName = launchPathName;
-		this.itemPaths = itemPaths;
+	public ItemPathName(Long id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 
-	public LaunchPathName getLaunchPathName() {
-		return launchPathName;
+	public Long getId() {
+		return id;
 	}
 
-	public void setLaunchPathName(LaunchPathName launchPathName) {
-		this.launchPathName = launchPathName;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public List<ItemPathName> getItemPaths() {
-		return itemPaths;
+	public String getName() {
+		return name;
 	}
 
-	public void setItemPaths(List<ItemPathName> itemPaths) {
-		this.itemPaths = itemPaths;
+	public void setName(String name) {
+		this.name = name;
 	}
 }

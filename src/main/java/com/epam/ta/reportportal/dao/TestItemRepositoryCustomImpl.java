@@ -26,15 +26,13 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.item.LaunchPathName;
-import com.epam.ta.reportportal.entity.item.NestedStep;
-import com.epam.ta.reportportal.entity.item.PathName;
-import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.*;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
@@ -60,8 +58,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -351,26 +348,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.orderBy(childItem.ITEM_ID, parentItem.ITEM_ID)
 				.fetch());
 	}
-
-	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
-		Map<Long, PathName> content = Maps.newHashMap();
-		JTestItem parentItem = TEST_ITEM.as("parent");
-		JTestItem childItem = TEST_ITEM.as("child");
-		result.forEach(record -> {
-			Long childItemId = record.get(childItem.ITEM_ID);
-			PathName pathName = content.computeIfAbsent(childItemId, k -> {
-				LaunchPathName launchPathName = new LaunchPathName(record.get(LAUNCH.NAME), record.get(LAUNCH.NUMBER));
-				return new PathName(launchPathName, Maps.newLinkedHashMap());
-			});
-
-			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
-				String parentName = record.get(parentItem.NAME);
-				pathName.getItemPaths().put(parentItemId, parentName);
-			});
-		});
-
-		return content;
-	};
 
 	@Override
 	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {

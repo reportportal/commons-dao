@@ -22,10 +22,7 @@ import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.item.NestedItem;
-import com.epam.ta.reportportal.entity.item.Parameter;
-import com.epam.ta.reportportal.entity.item.TestItem;
-import com.epam.ta.reportportal.entity.item.TestItemResults;
+import com.epam.ta.reportportal.entity.item.*;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
@@ -34,6 +31,7 @@ import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -48,6 +46,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -163,6 +162,27 @@ public class ResultFetchers {
 		});
 		return new ArrayList<>(testItems.values());
 	};
+
+	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
+		Map<Long, PathName> content = Maps.newHashMap();
+		JTestItem parentItem = TEST_ITEM.as("parent");
+		JTestItem childItem = TEST_ITEM.as("child");
+		result.forEach(record -> {
+			Long childItemId = record.get(childItem.ITEM_ID);
+			PathName pathName = content.computeIfAbsent(childItemId, k -> {
+				LaunchPathName launchPathName = new LaunchPathName(record.get(LAUNCH.NAME), record.get(LAUNCH.NUMBER));
+				return new PathName(launchPathName, Lists.newArrayList());
+			});
+
+			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
+				String parentName = record.get(parentItem.NAME);
+				pathName.getItemPaths().add(new ItemPathName(parentItemId, parentName));
+			});
+		});
+
+		return content;
+	};
+
 
 	/**
 	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log} objects.
