@@ -46,7 +46,8 @@ public enum WidgetType {
 	MOST_TIME_CONSUMING("mostTimeConsuming", false),
 
 	CUMULATIVE("cumulative", true),
-	TOP_PATTERN_TEMPLATES("topPatternTemplates", true);
+	TOP_PATTERN_TEMPLATES("topPatternTemplates", true),
+	COMPONENT_HEALTH_CHECK("componentHealthCheck", true);
 
 	private final String type;
 
