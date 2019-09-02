@@ -94,26 +94,53 @@ public class DataStoreService {
 		this.attachmentRepository = attachmentRepository;
 	}
 
-	public void saveLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
-		save(attachmentMetaInfo.getProjectId(), file).ifPresent(it -> {
-			try {
-				Attachment attachment = new Attachment();
-				attachment.setFileId(it.getFileId());
-				attachment.setThumbnailId(it.getThumbnailFileId());
-				attachment.setContentType(it.getContentType());
-				attachment.setProjectId(attachmentMetaInfo.getProjectId());
-				attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
-				attachment.setItemId(attachmentMetaInfo.getItemId());
+	public Optional<BinaryDataMetaInfo> saveLog(Long projectId, MultipartFile file) {
+		Optional<BinaryDataMetaInfo> result = Optional.empty();
+		try {
+			BinaryData binaryData = getBinaryData(file);
 
-				createLogAttachmentService.create(attachment, attachmentMetaInfo.getLogId());
-			} catch (Exception exception) {
-				LOGGER.error("Cannot save log to database, remove files ", exception);
+			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
+			Path targetPath = Paths.get(commonPath, file.getOriginalFilename());
 
-				delete(it.getFileId());
-				delete(it.getThumbnailFileId());
-				throw exception;
+			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
+
+			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
+					.withFileId(dataEncoder.encode(filePath))
+					.withThumbnailFileId(dataEncoder.encode(saveImageThumbnail(binaryData, commonPath, file.getOriginalFilename())))
+					.withContentType(binaryData.getContentType())
+					.build());
+		} catch (IOException e) {
+			LOGGER.error("Unable to save binary data", e);
+		} finally {
+			if (file instanceof CommonsMultipartFile) {
+				((CommonsMultipartFile) file).getFileItem().delete();
 			}
-		});
+		}
+		return result;
+	}
+
+	public void saveLogWithAttachment(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
+		saveLog(attachmentMetaInfo.getProjectId(), file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
+	}
+
+	public void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo) {
+		try {
+			Attachment attachment = new Attachment();
+			attachment.setFileId(binaryDataMetaInfo.getFileId());
+			attachment.setThumbnailId(binaryDataMetaInfo.getThumbnailFileId());
+			attachment.setContentType(binaryDataMetaInfo.getContentType());
+			attachment.setProjectId(attachmentMetaInfo.getProjectId());
+			attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
+			attachment.setItemId(attachmentMetaInfo.getItemId());
+
+			createLogAttachmentService.create(attachment, attachmentMetaInfo.getLogId());
+		} catch (Exception exception) {
+			LOGGER.error("Cannot save log to database, remove files ", exception);
+
+			delete(binaryDataMetaInfo.getFileId());
+			delete(binaryDataMetaInfo.getThumbnailFileId());
+			throw exception;
+		}
 	}
 
 	public void saveUserPhoto(User user, MultipartFile file) throws IOException {
@@ -154,31 +181,6 @@ public class DataStoreService {
 			user.setAttachmentThumbnail(null);
 			ofNullable(user.getMetadata()).ifPresent(metadata -> metadata.getMetadata().remove(ATTACHMENT_CONTENT_TYPE));
 		});
-	}
-
-	private Optional<BinaryDataMetaInfo> save(Long projectId, MultipartFile file) {
-		Optional<BinaryDataMetaInfo> result = Optional.empty();
-		try {
-			BinaryData binaryData = getBinaryData(file);
-
-			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
-			Path targetPath = Paths.get(commonPath, file.getOriginalFilename());
-
-			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
-
-			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(dataEncoder.encode(filePath))
-					.withThumbnailFileId(dataEncoder.encode(saveImageThumbnail(binaryData, commonPath, file.getOriginalFilename())))
-					.withContentType(binaryData.getContentType())
-					.build());
-		} catch (IOException e) {
-			LOGGER.error("Unable to save binary data", e);
-		} finally {
-			if (file instanceof CommonsMultipartFile) {
-				((CommonsMultipartFile) file).getFileItem().delete();
-			}
-		}
-		return result;
 	}
 
 	private String saveImageThumbnail(BinaryData binaryData, String commonPath, String fileName) {
