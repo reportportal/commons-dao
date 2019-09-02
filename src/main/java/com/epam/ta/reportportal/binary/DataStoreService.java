@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.binary;
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
-import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
@@ -47,9 +46,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.function.Predicate;
 
-import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
 import static java.util.Optional.ofNullable;
 
@@ -151,11 +148,10 @@ public class DataStoreService {
 				.put(ATTACHMENT_CONTENT_TYPE, file.getContentType());
 	}
 
-	public BinaryData loadLog(String fileId, ReportPortalUser.ProjectDetails projectDetails) throws IOException {
+	public BinaryData loadLog(String fileId) throws IOException {
 		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
 		Attachment attachment = attachmentRepository.findByFileId(fileId)
 				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
-		expect(projectDetails.getProjectId(), Predicate.isEqual(attachment.getProjectId())).verify(ErrorType.ACCESS_DENIED);
 		return new BinaryData(attachment.getContentType(), (long) data.available(), data);
 	}
 
