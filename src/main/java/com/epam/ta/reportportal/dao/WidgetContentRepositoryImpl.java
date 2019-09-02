@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.LAUNCH_ATTRIBUTE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -881,9 +882,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(ITEM_ATTRIBUTE)
+				.leftJoin(ITEM_ATTRIBUTE)
 				.on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID))
-				.where(ITEM_ATTRIBUTE.KEY.eq(currentLevelKey))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.join(LAUNCH_ATTRIBUTE)
+				.on(LAUNCH.ID.eq(fieldName(LAUNCH_ATTRIBUTE.getName(), LAUNCH_ID).cast(Long.class)))
+				.where(ITEM_ATTRIBUTE.KEY.eq(currentLevelKey)
+						.or(fieldName(LAUNCH_ATTRIBUTE.getName(), KEY).cast(String.class).eq(currentLevelKey)))
 				.groupBy(ITEM_ATTRIBUTE.VALUE)
 				.orderBy(DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
 						.mul(DSL.count(TEST_ITEM_RESULTS.RESULT_ID).filterWhere(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.PASSED)))
