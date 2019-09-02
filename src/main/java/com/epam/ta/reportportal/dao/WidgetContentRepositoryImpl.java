@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
@@ -122,9 +124,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								TEST_ITEM.NAME,
 								DSL.arrayAgg(when(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class).ge(1),
 										true
-								).otherwise(false))
-										.orderBy(LAUNCH.NUMBER.asc())
-										.as(STATUS_HISTORY),
+								).otherwise(false)).orderBy(LAUNCH.NUMBER.asc()).as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
 								DSL.sum(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
 								DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
@@ -207,8 +207,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE)
-										.as(SWITCH_FLAG)
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -775,14 +774,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> selectFields = getCommonProductStatusFields(filter, contentFields);
 
-		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(buildProductStatusQuery(
-				filter,
-				isLatest,
-				sort,
-				limit,
-				selectFields,
-				contentFields,
-				customColumns
+		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
+				buildProductStatusQuery(filter,
+						isLatest,
+						sort,
+						limit,
+						selectFields,
+						contentFields,
+						customColumns
 				).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch(),
 				customColumns
 		);
@@ -856,6 +855,42 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	}
 
+	@Override
+	public List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, int launchesLimit,
+			Filter testItemFilter, String currentLevelKey) {
+
+		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter, launchSort))
+				.with(launchesLimit)
+				.build()
+				.asTable(LAUNCHES);
+
+		return COMPONENT_HEALTH_CHECK_FETCHER.apply(dsl.with(ITEMS)
+				.as(QueryBuilder.newBuilder(testItemFilter)
+						.addJointToStart(launchesTable,
+								JoinType.JOIN,
+								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+						)
+						.build())
+				.select(DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL),
+						DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
+								.mul(DSL.count(TEST_ITEM_RESULTS.RESULT_ID).filterWhere(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.PASSED)))
+								.div(DSL.nullif(DSL.count(TEST_ITEM.ITEM_ID), 0)), 2).as(PASSING_RATE)
+				)
+				.from(TEST_ITEM)
+				.join(ITEMS)
+				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ITEM_ATTRIBUTE)
+				.on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID))
+				.where(ITEM_ATTRIBUTE.KEY.eq(currentLevelKey))
+				.groupBy(ITEM_ATTRIBUTE.VALUE)
+				.orderBy(DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
+						.mul(DSL.count(TEST_ITEM_RESULTS.RESULT_ID).filterWhere(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.PASSED)))
+						.div(DSL.nullif(DSL.count(TEST_ITEM.ITEM_ID), 0)), 2))
+				.fetch());
+	}
+
 	private SelectSeekStepN<? extends Record> buildLaunchesTableQuery(Collection<Field<?>> selectFields,
 			Collection<String> statisticsFields, Filter filter, Sort sort, int limit, boolean isAttributePresent) {
 
@@ -887,9 +922,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_PASSED),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(PASSED), sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(TOTAL))
+						).otherwise(0)).as(PASSED),
+						sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
+								fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
+						).otherwise(0)).as(TOTAL)
+				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))

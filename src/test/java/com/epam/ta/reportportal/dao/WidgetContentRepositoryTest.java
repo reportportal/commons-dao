@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
@@ -472,7 +474,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -505,7 +508,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
+				filter,
 				20
 		);
 
@@ -862,7 +866,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -935,14 +940,16 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				CRITERIA_PROJECT_ID
-		), new FilterCondition(Condition.EQUALS_ANY,
-				false,
-				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-				CRITERIA_STATUS
-		));
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
+				new FilterCondition(Condition.EQUALS_ANY,
+						false,
+						String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+						CRITERIA_STATUS
+				)
+		);
 
 		return new Filter(1L, TestItem.class, conditionList);
 	}
@@ -1166,4 +1173,34 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	}
 
+	@Test
+	void componentHealthCheck() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter launchFilter = buildDefaultFilter(1L);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
+				new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME)
+		);
+		Sort sort = Sort.by(orderings);
+
+		Filter itemsFilter = new Filter(1L,
+				TestItem.class,
+				Lists.newArrayList(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withNegative(false)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("new:os")
+						.build())
+		);
+
+		List<ComponentHealthCheckContent> contents = widgetContentRepository.componentHealthCheck(launchFilter,
+				sort,
+				600,
+				itemsFilter,
+				"new"
+		);
+
+		assertTrue(contents.isEmpty());
+	}
 }
