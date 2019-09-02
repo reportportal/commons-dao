@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.preference.UserPreference;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * User preference repository
@@ -35,6 +36,16 @@ public interface UserPreferenceRepository extends ReportPortalRepository<UserPre
 	 * @return List of user preferences
 	 */
 	List<UserPreference> findByProjectIdAndUserId(Long projectId, Long userId);
+
+	/**
+	 * Find unique user preference
+	 *
+	 * @param projectId Project id
+	 * @param userId    User id
+	 * @param filterId  Filter id
+	 * @return Optional of {@link UserPreference}
+	 */
+	Optional<UserPreference> findByProjectIdAndUserIdAndFilterId(Long projectId, Long userId, Long filterId);
 
 	/**
 	 * Remove user preferences by project and user
