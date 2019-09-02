@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,25 @@ package com.epam.ta.reportportal.binary;
 
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
-import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
+import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.dao.AttachmentRepository;
+import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
+import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
+import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +47,11 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.function.Predicate;
+
+import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
+import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Dzianis_Shybeka
@@ -44,6 +60,12 @@ import java.util.Optional;
 public class DataStoreService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreService.class);
+
+	private static final String ROOT_USER_PHOTO_DIR = "users";
+
+	private static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";
+
+	private static final String THUMBNAIL_PREFIX = "thumbnail-";
 
 	private final DataStore dataStore;
 
@@ -55,44 +77,99 @@ public class DataStoreService {
 
 	private final DataEncoder dataEncoder;
 
+	private final CreateLogAttachmentService createLogAttachmentService;
+
+	private final AttachmentRepository attachmentRepository;
+
+	@Autowired
 	public DataStoreService(DataStore dataStore, Thumbnailator thumbnailator, ContentTypeResolver contentTypeResolver,
-			FilePathGenerator filePathGenerator, DataEncoder dataEncoder) {
+			FilePathGenerator filePathGenerator, DataEncoder dataEncoder, CreateLogAttachmentService createLogAttachmentService,
+			AttachmentRepository attachmentRepository) {
 		this.dataStore = dataStore;
 		this.thumbnailator = thumbnailator;
 		this.contentTypeResolver = contentTypeResolver;
 		this.filePathGenerator = filePathGenerator;
 		this.dataEncoder = dataEncoder;
+		this.createLogAttachmentService = createLogAttachmentService;
+		this.attachmentRepository = attachmentRepository;
 	}
 
-	public Optional<BinaryDataMetaInfo> save(Long projectId, MultipartFile file) {
-		Optional<BinaryDataMetaInfo> result = Optional.empty();
+	public void saveLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
+		save(attachmentMetaInfo.getProjectId(), file).ifPresent(it -> {
+			try {
+				Attachment attachment = new Attachment();
+				attachment.setFileId(it.getFileId());
+				attachment.setThumbnailId(it.getThumbnailFileId());
+				attachment.setContentType(it.getContentType());
+				attachment.setProjectId(attachmentMetaInfo.getProjectId());
+				attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
+				attachment.setItemId(attachmentMetaInfo.getItemId());
 
+				createLogAttachmentService.create(attachment, attachmentMetaInfo.getLogId());
+			} catch (Exception exception) {
+				LOGGER.error("Cannot save log to database, remove files ", exception);
+
+				delete(it.getFileId());
+				delete(it.getThumbnailFileId());
+				throw exception;
+			}
+		});
+	}
+
+	public void saveUserPhoto(User user, MultipartFile file) throws IOException {
+		String fileId = dataStore.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), file.getInputStream());
+		user.setAttachment(dataEncoder.encode(fileId));
+		ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
+				.getMetadata()
+				.put(ATTACHMENT_CONTENT_TYPE, file.getContentType());
+	}
+
+	public BinaryData loadLog(String fileId, ReportPortalUser.ProjectDetails projectDetails) throws IOException {
+		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+		Attachment attachment = attachmentRepository.findByFileId(fileId)
+				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+		expect(projectDetails.getProjectId(), Predicate.isEqual(attachment.getProjectId())).verify(ErrorType.ACCESS_DENIED);
+		return new BinaryData(attachment.getContentType(), (long) data.available(), data);
+	}
+
+	public BinaryData loadUserPhoto(User user) throws IOException {
+		String fileId = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
+				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
+		));
+		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+		return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
+	}
+
+	public void deleteLog(String fileId) {
+		if (StringUtils.isNotEmpty(fileId)) {
+			delete(fileId);
+			attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
+		}
+	}
+
+	public void deleteUserPhoto(User user) {
+		ofNullable(user.getAttachment()).ifPresent(fileId -> {
+			delete(fileId);
+			user.setAttachment(null);
+			user.setAttachmentThumbnail(null);
+			ofNullable(user.getMetadata()).ifPresent(metadata -> metadata.getMetadata().remove(ATTACHMENT_CONTENT_TYPE));
+		});
+	}
+
+	private Optional<BinaryDataMetaInfo> save(Long projectId, MultipartFile file) {
+		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try {
 			BinaryData binaryData = getBinaryData(file);
 
 			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
 			Path targetPath = Paths.get(commonPath, file.getOriginalFilename());
 
-			String thumbnailFilePath = null;
-			if (isImage(binaryData.getContentType())) {
-				try {
-					Path thumbnailTargetPath = Paths.get(commonPath, "thumbnail-" .concat(file.getName()));
-					InputStream thumbnailStream = thumbnailator.createThumbnail(file.getInputStream());
-					thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
-				} catch (IOException e) {
-					// do not propogate. Thumbnail is not so critical
-					LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", file.getOriginalFilename(), e);
-				}
-			}
-			/*
-			 * Saves binary data into storage
-			 */
 			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(dataEncoder.encode(filePath))
-					.withThumbnailFileId(dataEncoder.encode(thumbnailFilePath))
-					.withContentType(file.getContentType())
+					.withThumbnailFileId(dataEncoder.encode(saveImageThumbnail(binaryData, commonPath, file.getOriginalFilename())))
+					.withContentType(binaryData.getContentType())
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
@@ -104,38 +181,38 @@ public class DataStoreService {
 		return result;
 	}
 
-	public String save(Long projectId, InputStream inputStream, String fileName) {
-		String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
-		Path targetPath = Paths.get(commonPath, fileName);
-
-		return dataEncoder.encode(dataStore.save(targetPath.toString(), inputStream));
-	}
-
-	public InputStream load(String fileId) {
-
-		return dataStore.load(dataEncoder.decode(fileId));
-	}
-
-	public void delete(String filePath) {
-		if (filePath != null) {
-			dataStore.delete(dataEncoder.decode(filePath));
+	private String saveImageThumbnail(BinaryData binaryData, String commonPath, String fileName) {
+		String thumbnailFilePath = null;
+		if (isImage(binaryData.getContentType())) {
+			try {
+				Path thumbnailTargetPath = Paths.get(commonPath, THUMBNAIL_PREFIX.concat(fileName));
+				InputStream thumbnailStream = thumbnailator.createThumbnail(binaryData.getInputStream());
+				thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
+			} catch (IOException e) {
+				// do not propogate. Thumbnail is not so critical
+				LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", fileName, e);
+			}
 		}
+		return thumbnailFilePath;
+	}
+
+	private void delete(String fileId) {
+		dataStore.delete(dataEncoder.decode(fileId));
+	}
+
+	private Optional<InputStream> load(String fileId) {
+		return Optional.ofNullable(dataStore.load(dataEncoder.decode(fileId)));
 	}
 
 	private BinaryData getBinaryData(MultipartFile file) throws IOException {
+		String contentType = isContentTypePresent(file.getContentType()) ?
+				file.getContentType() :
+				contentTypeResolver.detectContentType(file.getInputStream());
+		return new BinaryData(contentType, file.getSize(), file.getInputStream());
+	}
 
-		BinaryData binaryData;
-		boolean isContentTypePresented =
-				!Strings.isNullOrEmpty(file.getContentType()) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(file.getContentType());
-		if (isContentTypePresented) {
-			binaryData = new BinaryData(file.getContentType(), file.getSize(), file.getInputStream());
-		} else {
-			binaryData = new BinaryData(contentTypeResolver.detectContentType(file.getInputStream()),
-					file.getSize(),
-					file.getInputStream()
-			);
-		}
-		return binaryData;
+	private boolean isContentTypePresent(String contentType) {
+		return !Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
 	}
 
 	private boolean isImage(String contentType) {
