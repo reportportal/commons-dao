@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.entity.attachment;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
@@ -56,7 +58,7 @@ public class AttachmentMetaInfo {
 		return logId;
 	}
 
-	private static class AttachmentMetaInfoBuilder {
+	public static class AttachmentMetaInfoBuilder {
 		private Long projectId;
 
 		private Long launchId;
@@ -65,12 +67,17 @@ public class AttachmentMetaInfo {
 
 		private Long logId;
 
+		private AttachmentMetaInfoBuilder() {
+		}
+
 		public AttachmentMetaInfoBuilder withProjectId(Long projectId) {
+			Preconditions.checkNotNull(projectId);
 			this.projectId = projectId;
 			return this;
 		}
 
 		public AttachmentMetaInfoBuilder withLaunchId(Long launchId) {
+			Preconditions.checkNotNull(launchId);
 			this.launchId = launchId;
 			return this;
 		}
@@ -81,6 +88,7 @@ public class AttachmentMetaInfo {
 		}
 
 		public AttachmentMetaInfoBuilder withLogId(Long logId) {
+			Preconditions.checkNotNull(logId);
 			this.logId = logId;
 			return this;
 		}
