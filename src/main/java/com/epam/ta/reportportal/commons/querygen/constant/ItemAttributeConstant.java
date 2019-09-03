@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.commons.querygen.constant;
 
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
+
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
@@ -28,4 +30,8 @@ public final class ItemAttributeConstant {
 	public static final String CRITERIA_ITEM_ATTRIBUTE_KEY = "attributeKey";
 	public static final String CRITERIA_ITEM_ATTRIBUTE_VALUE = "attributeValue";
 	public static final String CRITERIA_ITEM_ATTRIBUTE_SYSTEM = "attributeSystem";
+	public static final String CRITERIA_COMPOSITE_ATTRIBUTE = "compositeAttribute";
+	public static final String KEY_VALUE_SEPARATOR = ":";
+
+	public static final JItemAttribute LAUNCH_ATTRIBUTE = JItemAttribute.ITEM_ATTRIBUTE.as("launchAttribute");
 }
