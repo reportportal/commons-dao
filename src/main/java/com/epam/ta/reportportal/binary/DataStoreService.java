@@ -91,8 +91,7 @@ public class DataStoreService {
 		this.attachmentRepository = attachmentRepository;
 	}
 
-	public Optional<BinaryDataMetaInfo> saveLog(Long projectId, MultipartFile file) {
-		Optional<BinaryDataMetaInfo> result = Optional.empty();
+	public Optional<BinaryDataMetaInfo> saveFile(Long projectId, MultipartFile file) {
 		try {
 			BinaryData binaryData = getBinaryData(file);
 
@@ -101,23 +100,23 @@ public class DataStoreService {
 
 			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
 
-			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
+			return Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(dataEncoder.encode(filePath))
-					.withThumbnailFileId(dataEncoder.encode(saveImageThumbnail(binaryData, commonPath, file.getOriginalFilename())))
+					.withThumbnailFileId(dataEncoder.encode(saveImageThumbnail(file, commonPath)))
 					.withContentType(binaryData.getContentType())
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
+			throw new ReportPortalException(ErrorType.BINARY_DATA_CANNOT_BE_SAVED, e);
 		} finally {
 			if (file instanceof CommonsMultipartFile) {
 				((CommonsMultipartFile) file).getFileItem().delete();
 			}
 		}
-		return result;
 	}
 
-	public void saveLogWithAttachment(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
-		saveLog(attachmentMetaInfo.getProjectId(), file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
+	public void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
+		saveFile(attachmentMetaInfo.getProjectId(), file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
 	}
 
 	public void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo) {
@@ -140,30 +139,45 @@ public class DataStoreService {
 		}
 	}
 
-	public void saveUserPhoto(User user, MultipartFile file) throws IOException {
-		String fileId = dataStore.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), file.getInputStream());
-		user.setAttachment(dataEncoder.encode(fileId));
-		ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
-				.getMetadata()
-				.put(ATTACHMENT_CONTENT_TYPE, file.getContentType());
+	public void saveUserPhoto(User user, MultipartFile file) {
+		try {
+			String fileId = dataStore.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), file.getInputStream());
+			user.setAttachment(dataEncoder.encode(fileId));
+			ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
+					.getMetadata()
+					.put(ATTACHMENT_CONTENT_TYPE, file.getContentType());
+		} catch (IOException e) {
+			LOGGER.error("Unable to save user photo", e);
+			throw new ReportPortalException(ErrorType.BINARY_DATA_CANNOT_BE_SAVED, e);
+		}
 	}
 
-	public BinaryData loadLog(String fileId) throws IOException {
-		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
-		Attachment attachment = attachmentRepository.findByFileId(fileId)
-				.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
-		return new BinaryData(attachment.getContentType(), (long) data.available(), data);
+	public BinaryData loadFile(String fileId) {
+		try {
+			InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+			Attachment attachment = attachmentRepository.findByFileId(fileId)
+					.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+			return new BinaryData(attachment.getContentType(), (long) data.available(), data);
+		} catch (IOException e) {
+			LOGGER.error("Unable to load binary data", e);
+			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load binary data");
+		}
 	}
 
-	public BinaryData loadUserPhoto(User user) throws IOException {
+	public BinaryData loadUserPhoto(User user) {
 		String fileId = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
 				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
 		));
 		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
-		return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
+		try {
+			return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
+		} catch (IOException e) {
+			LOGGER.error("Unable to load user photo", e);
+			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load user photo");
+		}
 	}
 
-	public void deleteLog(String fileId) {
+	public void deleteFile(String fileId) {
 		if (StringUtils.isNotEmpty(fileId)) {
 			delete(fileId);
 			attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
@@ -179,12 +193,13 @@ public class DataStoreService {
 		});
 	}
 
-	private String saveImageThumbnail(BinaryData binaryData, String commonPath, String fileName) {
+	private String saveImageThumbnail(MultipartFile file, String commonPath) {
 		String thumbnailFilePath = null;
-		if (isImage(binaryData.getContentType())) {
+		if (isImage(file.getContentType())) {
+			String fileName = StringUtils.isEmpty(file.getOriginalFilename()) ? file.getName() : file.getOriginalFilename();
 			try {
 				Path thumbnailTargetPath = Paths.get(commonPath, THUMBNAIL_PREFIX.concat(fileName));
-				InputStream thumbnailStream = thumbnailator.createThumbnail(binaryData.getInputStream());
+				InputStream thumbnailStream = thumbnailator.createThumbnail(file.getInputStream());
 				thumbnailFilePath = dataStore.save(thumbnailTargetPath.toString(), thumbnailStream);
 			} catch (IOException e) {
 				// do not propogate. Thumbnail is not so critical
