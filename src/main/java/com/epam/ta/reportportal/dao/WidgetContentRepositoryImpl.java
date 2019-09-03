@@ -886,7 +886,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(ITEM_ATTRIBUTE)
 						.on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID).or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
-								ITEM_ATTRIBUTE.KEY.eq(currentLevelKey)))
+								ITEM_ATTRIBUTE.KEY.eq(currentLevelKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 						.asTable(ITEMS))
 				.groupBy(fieldName(ITEMS, VALUE))

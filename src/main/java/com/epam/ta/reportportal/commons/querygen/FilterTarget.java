@@ -391,8 +391,14 @@ public enum FilterTarget {
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE, ITEM_ATTRIBUTE.KEY, List.class)
 							.withAggregateCriteria(DSL.field("array_cat({0}, {1})::varchar[]",
-									DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""), DSL.val(KEY_VALUE_SEPARATOR), ITEM_ATTRIBUTE.VALUE)),
-									DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), DSL.val(KEY_VALUE_SEPARATOR), LAUNCH_ATTRIBUTE.VALUE))
+									DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
+											DSL.val(KEY_VALUE_SEPARATOR),
+											ITEM_ATTRIBUTE.VALUE
+									)).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
+									DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
+											DSL.val(KEY_VALUE_SEPARATOR),
+											LAUNCH_ATTRIBUTE.VALUE
+									)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
 							).toString())
 							.get(),
 
