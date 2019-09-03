@@ -1196,6 +1196,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		List<ComponentHealthCheckContent> contents = widgetContentRepository.componentHealthCheck(launchFilter,
 				sort,
+				false,
 				600,
 				itemsFilter,
 				"new"
