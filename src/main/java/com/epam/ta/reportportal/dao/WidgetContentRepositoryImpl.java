@@ -46,7 +46,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.LAUNCH_ATTRIBUTE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -865,35 +864,36 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.build()
 				.asTable(LAUNCHES);
 
-		return COMPONENT_HEALTH_CHECK_FETCHER.apply(dsl.with(ITEMS)
-				.as(QueryBuilder.newBuilder(testItemFilter)
-						.addJointToStart(launchesTable,
-								JoinType.JOIN,
-								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
-						)
-						.build())
-				.select(DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL),
-						DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
-								.mul(DSL.count(TEST_ITEM_RESULTS.RESULT_ID).filterWhere(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.PASSED)))
-								.div(DSL.nullif(DSL.count(TEST_ITEM.ITEM_ID), 0)), 2).as(PASSING_RATE)
-				)
-				.from(TEST_ITEM)
-				.join(ITEMS)
-				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.leftJoin(ITEM_ATTRIBUTE)
-				.on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID))
-				.join(LAUNCH)
-				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.join(LAUNCH_ATTRIBUTE)
-				.on(LAUNCH.ID.eq(fieldName(LAUNCH_ATTRIBUTE.getName(), LAUNCH_ID).cast(Long.class)))
-				.where(ITEM_ATTRIBUTE.KEY.eq(currentLevelKey)
-						.or(fieldName(LAUNCH_ATTRIBUTE.getName(), KEY).cast(String.class).eq(currentLevelKey)))
-				.groupBy(ITEM_ATTRIBUTE.VALUE)
+		return COMPONENT_HEALTH_CHECK_FETCHER.apply(dsl.select(fieldName(ITEMS, VALUE),
+				DSL.count(fieldName(ITEMS, ITEM_ID)).as(TOTAL),
+				DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
+						.mul(DSL.count(fieldName(ITEMS, ITEM_ID))
+								.filterWhere(fieldName(ITEMS, STATUS).cast(JStatusEnum.class).eq(JStatusEnum.PASSED)))
+						.div(DSL.nullif(DSL.count(fieldName(ITEMS, ITEM_ID)), 0)), 2).as(PASSING_RATE)
+		)
+				.from(dsl.with(ITEMS)
+						.as(QueryBuilder.newBuilder(testItemFilter)
+								.addJointToStart(launchesTable,
+										JoinType.JOIN,
+										TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+								)
+								.build())
+						.select(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+						.from(TEST_ITEM)
+						.join(ITEMS)
+						.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.join(ITEM_ATTRIBUTE)
+						.on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID).or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
+								ITEM_ATTRIBUTE.KEY.eq(currentLevelKey)))
+						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+						.asTable(ITEMS))
+				.groupBy(fieldName(ITEMS, VALUE))
 				.orderBy(DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
-						.mul(DSL.count(TEST_ITEM_RESULTS.RESULT_ID).filterWhere(TEST_ITEM_RESULTS.STATUS.eq(JStatusEnum.PASSED)))
-						.div(DSL.nullif(DSL.count(TEST_ITEM.ITEM_ID), 0)), 2))
+						.mul(DSL.count(fieldName(ITEMS, ITEM_ID))
+								.filterWhere(fieldName(ITEMS, STATUS).cast(JStatusEnum.class).eq(JStatusEnum.PASSED)))
+						.div(DSL.nullif(DSL.count(fieldName(ITEMS, ITEM_ID)), 0)), 2))
 				.fetch());
 	}
 

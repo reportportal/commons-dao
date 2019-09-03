@@ -50,6 +50,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String DESCRIPTION = "description";
 	public static final String TARGET = "target";
 	public static final String ID = "id";
+	public static final String STATUS = "status";
 	public static final String NUMBER = "number";
 	public static final String END_TIME = "endTime";
 

@@ -504,7 +504,7 @@ public class WidgetContentUtil {
 	public static final Function<Result<? extends Record>, List<ComponentHealthCheckContent>> COMPONENT_HEALTH_CHECK_FETCHER = result -> result
 			.stream()
 			.map(record -> {
-				String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
+				String attributeValue = record.get(fieldName(VALUE), String.class);
 				Long total = record.get(fieldName(TOTAL), Long.class);
 				Double passingRate = record.get(fieldName(PASSING_RATE), Double.class);
 				return new ComponentHealthCheckContent(attributeValue, total, passingRate);
