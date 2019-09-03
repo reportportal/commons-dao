@@ -92,6 +92,7 @@ public class DataStoreService {
 	}
 
 	public Optional<BinaryDataMetaInfo> saveFile(Long projectId, MultipartFile file) {
+		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try {
 			BinaryData binaryData = getBinaryData(file);
 
@@ -100,19 +101,19 @@ public class DataStoreService {
 
 			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
 
-			return Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
+			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(dataEncoder.encode(filePath))
 					.withThumbnailFileId(dataEncoder.encode(saveImageThumbnail(file, commonPath)))
 					.withContentType(binaryData.getContentType())
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
-			throw new ReportPortalException(ErrorType.BINARY_DATA_CANNOT_BE_SAVED, e);
 		} finally {
 			if (file instanceof CommonsMultipartFile) {
 				((CommonsMultipartFile) file).getFileItem().delete();
 			}
 		}
+		return result;
 	}
 
 	public void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
