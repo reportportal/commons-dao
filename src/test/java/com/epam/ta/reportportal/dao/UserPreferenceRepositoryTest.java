@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,6 +61,18 @@ class UserPreferenceRepositoryTest extends BaseTest {
 			assertEquals(defaultId, it.getUser().getId());
 			assertEquals(defaultProjectId, it.getProject().getId());
 		});
+	}
+
+	@Test
+	void findByProjectIdAndUserIdAndFilterId() {
+		Optional<UserPreference> userPreference = repository.findByProjectIdAndUserIdAndFilterId(1L, 1L, 1L);
+		assertTrue(userPreference.isPresent());
+	}
+
+	@Test
+	void findByProjectIdAndUserIdAndFilterIdNegative() {
+		Optional<UserPreference> userPreference = repository.findByProjectIdAndUserIdAndFilterId(1L, 1L, 101L);
+		assertFalse(userPreference.isPresent());
 	}
 
 	@Test
