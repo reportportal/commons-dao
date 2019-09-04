@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.binary;
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
+import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
@@ -46,7 +47,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.function.Predicate;
 
+import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
 import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
 import static java.util.Optional.ofNullable;
 
@@ -153,11 +156,14 @@ public class DataStoreService {
 		}
 	}
 
-	public BinaryData loadFile(String fileId) {
+	public BinaryData loadFile(String fileId, ReportPortalUser.ProjectDetails projectDetails) {
 		try {
-			InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+			InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
 			Attachment attachment = attachmentRepository.findByFileId(fileId)
-					.orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+					.orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
+			expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(ErrorType.ACCESS_DENIED,
+					formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
+			);
 			return new BinaryData(attachment.getContentType(), (long) data.available(), data);
 		} catch (IOException e) {
 			LOGGER.error("Unable to load binary data", e);
@@ -169,7 +175,7 @@ public class DataStoreService {
 		String fileId = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
 				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
 		));
-		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR));
+		InputStream data = load(fileId).orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
 		try {
 			return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
 		} catch (IOException e) {
