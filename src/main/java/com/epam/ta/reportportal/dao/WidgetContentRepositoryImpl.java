@@ -856,10 +856,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, int launchesLimit,
+	public List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
 			Filter testItemFilter, String currentLevelKey) {
 
-		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter, launchSort))
+		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
 				.with(launchesLimit)
 				.build()
 				.asTable(LAUNCHES);

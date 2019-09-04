@@ -279,11 +279,12 @@ public interface WidgetContentRepository {
 	 *
 	 * @param launchFilter    {@link Filter} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
 	 * @param launchSort      {@link Sort} for launches query
+	 * @param isLatest        Flag for retrieving only latest launches
 	 * @param launchesLimit   launches limit
 	 * @param testItemFilter  {@link Filter} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
 	 * @param currentLevelKey {@link ItemAttribute#getKey()} for query level select
 	 * @return {@link List} of {@link ComponentHealthCheckContent}
 	 */
-	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, int launchesLimit, Filter testItemFilter,
-			String currentLevelKey);
+	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
+			Filter testItemFilter, String currentLevelKey);
 }
