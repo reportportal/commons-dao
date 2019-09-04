@@ -145,15 +145,23 @@ public class DataStoreService {
 
 	public void saveUserPhoto(User user, MultipartFile file) {
 		try {
-			String fileId = dataStore.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), file.getInputStream());
-			user.setAttachment(dataEncoder.encode(fileId));
-			ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
-					.getMetadata()
-					.put(ATTACHMENT_CONTENT_TYPE, file.getContentType());
+			saveUserPhoto(user, file.getInputStream(), file.getContentType());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save user photo", e);
 			throw new ReportPortalException(ErrorType.BINARY_DATA_CANNOT_BE_SAVED, e);
 		}
+	}
+
+	public void saveUserPhoto(User user, BinaryData binaryData) {
+		saveUserPhoto(user, binaryData.getInputStream(), binaryData.getContentType());
+	}
+
+	public void saveUserPhoto(User user, InputStream inputStream, String contentType) {
+		String fileId = dataStore.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), inputStream);
+		user.setAttachment(dataEncoder.encode(fileId));
+		ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
+				.getMetadata()
+				.put(ATTACHMENT_CONTENT_TYPE, contentType);
 	}
 
 	public BinaryData loadFile(String fileId, ReportPortalUser.ProjectDetails projectDetails) {
