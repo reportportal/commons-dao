@@ -16,19 +16,24 @@
 
 package com.epam.ta.reportportal.binary;
 
+import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.entity.user.User;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.InputStream;
-import java.util.Optional;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface DataStoreService {
+public interface UserDataStoreService {
 
-	String save(String fileName, InputStream data);
+	void saveUserPhoto(User user, MultipartFile file);
 
-	String saveThumbnail(String fileName, InputStream data);
+	void saveUserPhoto(User user, BinaryData binaryData);
 
-	void delete(String fileId);
+	void saveUserPhoto(User user, InputStream inputStream, String contentType);
 
-	Optional<InputStream> load(String fileId);
+	BinaryData loadUserPhoto(User user, boolean loadThumbnail);
+
+	public void deleteUserPhoto(User user);
 }

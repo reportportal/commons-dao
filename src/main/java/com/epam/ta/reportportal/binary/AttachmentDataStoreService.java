@@ -16,19 +16,26 @@
 
 package com.epam.ta.reportportal.binary;
 
-import java.io.InputStream;
+import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
+import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
+import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Optional;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface DataStoreService {
+public interface AttachmentDataStoreService {
 
-	String save(String fileName, InputStream data);
+	Optional<BinaryDataMetaInfo> saveAttachment(Long projectId, MultipartFile file);
 
-	String saveThumbnail(String fileName, InputStream data);
+	void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo);
+
+	void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo);
+
+	BinaryData load(String fileId, ReportPortalUser.ProjectDetails projectDetails);
 
 	void delete(String fileId);
-
-	Optional<InputStream> load(String fileId);
 }
