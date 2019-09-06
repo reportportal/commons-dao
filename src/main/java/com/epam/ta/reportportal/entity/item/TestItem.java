@@ -78,13 +78,14 @@ public class TestItem implements Serializable {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "parameter", joinColumns = @JoinColumn(name = "item_id"))
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<Parameter> parameters = Sets.newHashSet();
 
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
 	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	@Fetch(FetchMode.JOIN)
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<ItemAttribute> attributes = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "testItem", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -106,10 +107,12 @@ public class TestItem implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "retry_of")
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<TestItem> retries = Sets.newLinkedHashSet();
 
 	@OneToMany(mappedBy = "testItem", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@OrderBy(value = "pattern_id")
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<PatternTemplateTestItem> patternTemplateTestItems = Sets.newLinkedHashSet();
 
 	@Column(name = "has_children")

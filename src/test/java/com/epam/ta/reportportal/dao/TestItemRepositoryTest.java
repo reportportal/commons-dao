@@ -127,10 +127,19 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void testLoadItemsHistory() {
+		//GIVEN
 		final String uniqueId = "unqIdSTEP7";
 
-		List<TestItem> items = testItemRepository.loadItemsHistory(Lists.newArrayList(uniqueId), Lists.newArrayList(7L, 8L, 9L));
-		assertEquals(7, items.size(), "Incorrect items size");
+		List<String> uniqueIds = Lists.newArrayList(uniqueId);
+		ArrayList<Long> launchesIds = Lists.newArrayList(7L, 8L, 9L);
+
+		int limit = 6;
+
+		//WHEN
+		List<TestItem> items = testItemRepository.loadItemsHistory(uniqueIds, launchesIds, limit);
+
+		//THEN
+		assertEquals(limit, items.size(), String.format("Items size should be %d", limit));
 		items.forEach(it -> assertTrue(
 				it.getUniqueId().equals(uniqueId) && (it.getLaunchId() == 7L || it.getLaunchId() == 8L || it.getLaunchId() == 9L)));
 	}

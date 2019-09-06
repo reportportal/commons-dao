@@ -21,6 +21,8 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -57,6 +59,7 @@ public class TestItemResults implements Serializable {
 
 	@OneToMany
 	@JoinColumn(name = "item_id", insertable = false, updatable = false)
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
 	@OneToOne
