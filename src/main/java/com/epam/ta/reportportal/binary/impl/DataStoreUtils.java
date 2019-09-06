@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.binary;
+package com.epam.ta.reportportal.binary.impl;
 
 import com.google.common.base.Strings;
 import org.apache.tika.mime.MimeTypeException;

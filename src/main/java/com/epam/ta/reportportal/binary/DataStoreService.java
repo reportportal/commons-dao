@@ -16,59 +16,19 @@
 
 package com.epam.ta.reportportal.binary;
 
-import com.epam.reportportal.commons.Thumbnailator;
-import com.epam.ta.reportportal.filesystem.DataEncoder;
-import com.epam.ta.reportportal.filesystem.DataStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-@Service
-public class DataStoreService {
+public interface DataStoreService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreService.class);
+	String save(String fileName, InputStream data);
 
-	private DataStore dataStore;
+	String saveThumbnail(String fileName, InputStream data);
 
-	private DataEncoder dataEncoder;
+	void delete(String fileId);
 
-	private Thumbnailator thumbnailator;
-
-	@Autowired
-	public DataStoreService(DataStore dataStore, DataEncoder dataEncoder, Thumbnailator thumbnailator) {
-		this.dataStore = dataStore;
-		this.dataEncoder = dataEncoder;
-		this.thumbnailator = thumbnailator;
-	}
-
-	public String save(String fileName, InputStream data) {
-		return dataEncoder.encode(dataStore.save(fileName, data));
-	}
-
-	public String saveThumbnail(String fileName, InputStream data) {
-		try {
-			return dataEncoder.encode(dataStore.save(fileName, thumbnailator.createThumbnail(data)));
-		} catch (IOException e) {
-			LOGGER.error("Thumbnail is not created for file [{}]. Error:\n{}", fileName, e);
-		}
-		return null;
-	}
-
-	public void delete(String fileId) {
-		dataStore.delete(dataEncoder.decode(fileId));
-	}
-
-	public Optional<InputStream> load(String fileId) {
-		return ofNullable(dataStore.load(dataEncoder.encode(fileId)));
-	}
+	Optional<InputStream> load(String fileId);
 }

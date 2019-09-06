@@ -17,8 +17,6 @@
 package com.epam.ta.reportportal.binary;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.dao.AttachmentRepository;
-import com.epam.ta.reportportal.dao.UserRepository;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -31,16 +29,18 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-class DataStoreServiceTest extends BaseTest {
+class DataStoreServiceImplTest extends BaseTest {
 
 	@Autowired
 	private DataStoreService dataStoreService;
@@ -48,64 +48,44 @@ class DataStoreServiceTest extends BaseTest {
 	@Autowired
 	private DataEncoder dataEncoder;
 
-	@Autowired
-	private AttachmentRepository attachmentRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
 	@Test
-	void saveImageWithThumbnailTest() throws IOException {
+	void saveTest() throws IOException {
 		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
 		String fileId = dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
 		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
 	}
 
-	/*@Test
-	@Sql("/db/fill/data-store/data-store-fill.sql")
-	void attachFileToExistLogTest() {
-		String fileID = "fileID";
-		String thumbnailID = "thumbnailID";
-		String contentType = "content-type";
-
-		BinaryDataMetaInfo binaryDataMetaInfo = new BinaryDataMetaInfo();
-		binaryDataMetaInfo.setFileId(fileID);
-		binaryDataMetaInfo.setThumbnailFileId(thumbnailID);
-		binaryDataMetaInfo.setContentType(contentType);
-
-		Long projectId = 1L;
-		Long itemId = 1L;
-		AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
-				.withProjectId(projectId)
-				.withLaunchId(1L)
-				.withItemId(itemId)
-				.withLogId(1L)
-				.build();
-
-		dataStoreService.attachToLog(binaryDataMetaInfo, attachmentMetaInfo);
-
-		Optional<Attachment> attachment = attachmentRepository.findByFileId(fileID);
-
-		assertTrue(attachment.isPresent());
-
-		assertEquals(projectId, attachment.get().getProjectId());
-		assertEquals(itemId, attachment.get().getItemId());
-		assertEquals(fileID, attachment.get().getFileId());
-		assertEquals(thumbnailID, attachment.get().getThumbnailId());
-		assertEquals(contentType, attachment.get().getContentType());
+	@Test
+	void saveThumbnailTest() throws IOException {
+		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
+		String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
+		assertNotNull(fileId);
+		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
 	}
 
 	@Test
-	void saveUserPhotoTest() throws IOException {
-		User user = userRepository.findByLogin("superadmin").get();
+	void saveAndLoadTest() throws IOException {
+		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
+		String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 
-		dataStoreService.saveUserPhoto(user, getMultipartFile("meh.jpg"));
+		Optional<InputStream> content = dataStoreService.load(fileId);
 
-		assertNotNull(user.getAttachment());
-		assertTrue(Files.exists(Paths.get(dataEncoder.decode(user.getAttachment()))));
-		assertEquals(IMAGE_JPEG_VALUE, (String) user.getMetadata().getMetadata().get("attachmentContentType"));
-	}*/
+		assertTrue(content.isPresent());
+	}
+
+	@Test
+	void saveAndDeleteTest() throws IOException {
+		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
+		String fileId = dataStoreService.save(
+				new Random().nextLong() + "/" + multipartFile.getOriginalFilename(),
+				multipartFile.getInputStream()
+		);
+
+		dataStoreService.delete(fileId);
+
+		assertFalse(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+	}
 
 	private static CommonsMultipartFile getMultipartFile(String path) throws IOException {
 		File file = new ClassPathResource(path).getFile();
