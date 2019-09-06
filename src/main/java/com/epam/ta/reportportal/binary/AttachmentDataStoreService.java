@@ -18,10 +18,16 @@ package com.epam.ta.reportportal.binary;
 
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
+import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
+import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +36,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.epam.ta.reportportal.binary.DataStoreUtils.*;
+import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
+import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -48,6 +58,8 @@ public class AttachmentDataStoreService {
 	private final FilePathGenerator filePathGenerator;
 
 	private final DataStoreService dataStoreService;
+
+	private AttachmentRepository attachmentRepository;
 
 	private final CreateLogAttachmentService createLogAttachmentService;
 
@@ -106,6 +118,29 @@ public class AttachmentDataStoreService {
 			dataStoreService.delete(binaryDataMetaInfo.getFileId());
 			dataStoreService.delete(binaryDataMetaInfo.getThumbnailFileId());
 			throw exception;
+		}
+	}
+
+	public BinaryData load(String fileId, ReportPortalUser.ProjectDetails projectDetails) {
+		try {
+			InputStream data = dataStoreService.load(fileId)
+					.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
+			Attachment attachment = attachmentRepository.findByFileId(fileId)
+					.orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
+			expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(ErrorType.ACCESS_DENIED,
+					formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
+			);
+			return new BinaryData(attachment.getContentType(), (long) data.available(), data);
+		} catch (IOException e) {
+			LOGGER.error("Unable to load binary data", e);
+			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load binary data");
+		}
+	}
+
+	public void delete(String fileId) {
+		if (StringUtils.isNotEmpty(fileId)) {
+			dataStoreService.delete(fileId);
+			attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
 		}
 	}
 

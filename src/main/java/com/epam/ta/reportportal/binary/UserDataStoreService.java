@@ -75,8 +75,10 @@ public class UserDataStoreService {
 				.put(ATTACHMENT_CONTENT_TYPE, contentType);
 	}
 
-	public BinaryData loadUserPhoto(User user) {
-		String fileId = ofNullable(user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
+	public BinaryData loadUserPhoto(User user, boolean loadThumbnail) {
+		String fileId = ofNullable(loadThumbnail ?
+				user.getAttachmentThumbnail() :
+				user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
 				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
 		));
 		InputStream data = dataStoreService.load(fileId)
