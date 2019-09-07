@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
+import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.binary.UserDataStoreService;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -46,11 +48,11 @@ public class UserDataStoreServiceImpl implements UserDataStoreService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDataStoreServiceImpl.class);
 
-	private DataStoreServiceImpl dataStoreServiceImpl;
+	private DataStoreService dataStoreService;
 
 	@Autowired
-	public UserDataStoreServiceImpl(DataStoreServiceImpl dataStoreServiceImpl) {
-		this.dataStoreServiceImpl = dataStoreServiceImpl;
+	public UserDataStoreServiceImpl(DataStoreService dataStoreService) {
+		this.dataStoreService = dataStoreService;
 	}
 
 	@Override
@@ -70,13 +72,20 @@ public class UserDataStoreServiceImpl implements UserDataStoreService {
 
 	@Override
 	public void saveUserPhoto(User user, InputStream inputStream, String contentType) {
-		user.setAttachment(dataStoreServiceImpl.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), inputStream));
-		user.setAttachmentThumbnail(dataStoreServiceImpl.saveThumbnail(buildThumbnailFileName(ROOT_USER_PHOTO_DIR, user.getLogin()),
-				inputStream
-		));
-		ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
-				.getMetadata()
-				.put(ATTACHMENT_CONTENT_TYPE, contentType);
+		try {
+			byte[] data = convertToBytes(inputStream);
+			try (InputStream userPhotoCopy = new ByteArrayInputStream(data); InputStream thumbnailCopy = new ByteArrayInputStream(data)) {
+				user.setAttachment(dataStoreService.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), userPhotoCopy));
+				user.setAttachmentThumbnail(dataStoreService.saveThumbnail(buildThumbnailFileName(ROOT_USER_PHOTO_DIR, user.getLogin()),
+						thumbnailCopy
+				));
+			}
+			ofNullable(user.getMetadata()).orElseGet(() -> new Metadata(Maps.newHashMap()))
+					.getMetadata()
+					.put(ATTACHMENT_CONTENT_TYPE, contentType);
+		} catch (IOException e) {
+			LOGGER.error("Unable to save user photo", e);
+		}
 	}
 
 	@Override
@@ -86,7 +95,7 @@ public class UserDataStoreServiceImpl implements UserDataStoreService {
 				user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
 				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
 		));
-		InputStream data = dataStoreServiceImpl.load(fileId)
+		InputStream data = dataStoreService.load(fileId)
 				.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
 		try {
 			return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
@@ -99,10 +108,10 @@ public class UserDataStoreServiceImpl implements UserDataStoreService {
 	@Override
 	public void deleteUserPhoto(User user) {
 		ofNullable(user.getAttachment()).ifPresent(fileId -> {
-			dataStoreServiceImpl.delete(fileId);
+			dataStoreService.delete(fileId);
 			user.setAttachment(null);
 			Optional.ofNullable(user.getAttachmentThumbnail()).ifPresent(thumbnailId -> {
-				dataStoreServiceImpl.delete(thumbnailId);
+				dataStoreService.delete(thumbnailId);
 				user.setAttachmentThumbnail(null);
 			});
 			ofNullable(user.getMetadata()).ifPresent(metadata -> metadata.getMetadata().remove(ATTACHMENT_CONTENT_TYPE));

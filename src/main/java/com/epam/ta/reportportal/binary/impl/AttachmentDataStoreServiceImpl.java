@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.binary.impl;
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.ta.reportportal.binary.AttachmentDataStoreService;
 import com.epam.ta.reportportal.binary.CreateLogAttachmentService;
+import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
@@ -59,7 +60,7 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 
 	private final FilePathGenerator filePathGenerator;
 
-	private final DataStoreServiceImpl dataStoreServiceImpl;
+	private final DataStoreService dataStoreService;
 
 	private final AttachmentRepository attachmentRepository;
 
@@ -67,11 +68,11 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 
 	@Autowired
 	public AttachmentDataStoreServiceImpl(ContentTypeResolver contentTypeResolver, FilePathGenerator filePathGenerator,
-			DataStoreServiceImpl dataStoreServiceImpl, AttachmentRepository attachmentRepository,
+			DataStoreService dataStoreService, AttachmentRepository attachmentRepository,
 			CreateLogAttachmentService createLogAttachmentService) {
 		this.contentTypeResolver = contentTypeResolver;
 		this.filePathGenerator = filePathGenerator;
-		this.dataStoreServiceImpl = dataStoreServiceImpl;
+		this.dataStoreService = dataStoreService;
 		this.attachmentRepository = attachmentRepository;
 		this.createLogAttachmentService = createLogAttachmentService;
 	}
@@ -88,7 +89,7 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(dataStoreServiceImpl.save(targetPath, file.getInputStream()))
+					.withFileId(dataStoreService.save(targetPath, file.getInputStream()))
 					.withThumbnailFileId(createThumbnail(file, fileName, commonPath))
 					.withContentType(contentType)
 					.build());
@@ -122,8 +123,8 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 		} catch (Exception exception) {
 			LOGGER.error("Cannot save log to database, remove files ", exception);
 
-			dataStoreServiceImpl.delete(binaryDataMetaInfo.getFileId());
-			dataStoreServiceImpl.delete(binaryDataMetaInfo.getThumbnailFileId());
+			dataStoreService.delete(binaryDataMetaInfo.getFileId());
+			dataStoreService.delete(binaryDataMetaInfo.getThumbnailFileId());
 			throw exception;
 		}
 	}
@@ -131,7 +132,7 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 	@Override
 	public BinaryData load(String fileId, ReportPortalUser.ProjectDetails projectDetails) {
 		try {
-			InputStream data = dataStoreServiceImpl.load(fileId)
+			InputStream data = dataStoreService.load(fileId)
 					.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
 			Attachment attachment = attachmentRepository.findByFileId(fileId)
 					.orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
@@ -148,7 +149,7 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 	@Override
 	public void delete(String fileId) {
 		if (StringUtils.isNotEmpty(fileId)) {
-			dataStoreServiceImpl.delete(fileId);
+			dataStoreService.delete(fileId);
 			attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
 		}
 	}
@@ -156,7 +157,7 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 	private String createThumbnail(MultipartFile file, String fileName, String commonPath) throws IOException {
 		String thumbnailId = null;
 		if (isImage(file.getContentType())) {
-			thumbnailId = dataStoreServiceImpl.saveThumbnail(buildThumbnailFileName(commonPath, fileName), file.getInputStream());
+			thumbnailId = dataStoreService.saveThumbnail(buildThumbnailFileName(commonPath, fileName), file.getInputStream());
 		}
 		return thumbnailId;
 	}
@@ -166,5 +167,4 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 				file.getContentType() :
 				contentTypeResolver.detectContentType(file.getInputStream());
 	}
-
 }
