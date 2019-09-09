@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,6 +191,32 @@ class ProjectUtilsTest {
 		boolean isPersonal = ProjectUtils.isPersonalForUser(ProjectType.INTERNAL, "qwe_personal1234", "qwe");
 
 		assertFalse(isPersonal);
+	}
+
+	@Test
+	void isAssignedPositiveTest() {
+		User user = new User();
+		ProjectUser projectUser = new ProjectUser();
+		projectUser.setUser(user);
+		Project project = new Project();
+		project.setId(1L);
+		projectUser.setProject(project);
+		user.setProjects(Sets.newHashSet(projectUser));
+
+		assertTrue(ProjectUtils.isAssignedToProject(user, 1L));
+	}
+
+	@Test
+	void isAssignedNegativeTest() {
+		User user = new User();
+		ProjectUser projectUser = new ProjectUser();
+		projectUser.setUser(user);
+		Project project = new Project();
+		project.setId(1L);
+		projectUser.setProject(project);
+		user.setProjects(Sets.newHashSet(projectUser));
+
+		assertFalse(ProjectUtils.isAssignedToProject(user, 2L));
 	}
 
 	private static Project getTestProject() {

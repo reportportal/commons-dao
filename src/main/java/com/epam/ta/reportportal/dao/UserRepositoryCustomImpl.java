@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,34 +43,11 @@ import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 @Repository
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
-	private final DataStore dataStore;
-
 	private final DSLContext dsl;
 
 	@Autowired
-	public UserRepositoryCustomImpl(DataStore dataStore, DSLContext dsl) {
-		this.dataStore = dataStore;
+	public UserRepositoryCustomImpl(DSLContext dsl) {
 		this.dsl = dsl;
-	}
-
-	@Override
-	public String uploadUserPhoto(String username, BinaryData binaryData) {
-		return dataStore.save(username, binaryData.getInputStream());
-	}
-
-	@Override
-	public String replaceUserPhoto(String username, BinaryData binaryData) {
-		return dataStore.save(username, binaryData.getInputStream());
-	}
-
-	@Override
-	public String replaceUserPhoto(User user, BinaryData binaryData) {
-		return dataStore.save(user.getLogin(), binaryData.getInputStream());
-	}
-
-	@Override
-	public void deleteUserPhoto(String path) {
-		dataStore.delete(path);
 	}
 
 	@Override
