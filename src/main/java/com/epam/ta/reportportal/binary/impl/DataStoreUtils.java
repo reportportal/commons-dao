@@ -17,13 +17,13 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.google.common.base.Strings;
+import org.apache.commons.io.IOUtils;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -33,7 +33,7 @@ import java.util.Optional;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-class DataStoreUtils {
+public class DataStoreUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
 
@@ -47,7 +47,7 @@ class DataStoreUtils {
 		//static only
 	}
 
-	static Optional<String> resolveExtension(String contentType) {
+	public static Optional<String> resolveExtension(String contentType) {
 		Optional<String> result = Optional.empty();
 		try {
 			result = Optional.of(MimeTypes.getDefaultMimeTypes().forName(contentType).getExtension());
@@ -57,28 +57,20 @@ class DataStoreUtils {
 		return result;
 	}
 
-	static String buildThumbnailFileName(String commonPath, String fileName) {
+	public static String buildThumbnailFileName(String commonPath, String fileName) {
 		Path thumbnailTargetPath = Paths.get(commonPath, THUMBNAIL_PREFIX.concat(fileName));
 		return thumbnailTargetPath.toString();
 	}
 
-	static boolean isImage(String contentType) {
+	public static boolean isImage(String contentType) {
 		return contentType != null && contentType.contains("image");
 	}
 
-	static boolean isContentTypePresent(String contentType) {
+	public static boolean isContentTypePresent(String contentType) {
 		return !Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
 	}
 
-	static byte[] convertToBytes(InputStream input) throws IOException {
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			byte[] buffer = new byte[1024];
-			int len;
-			while ((len = input.read(buffer)) > -1) {
-				baos.write(buffer, 0, len);
-			}
-			baos.flush();
-			return baos.toByteArray();
-		}
+	public static byte[] convertToBytes(InputStream input) throws IOException {
+		return IOUtils.toByteArray(input);
 	}
 }

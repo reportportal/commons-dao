@@ -87,7 +87,7 @@ class DataStoreServiceImplTest extends BaseTest {
 		assertFalse(Files.exists(Paths.get(dataEncoder.decode(fileId))));
 	}
 
-	private static CommonsMultipartFile getMultipartFile(String path) throws IOException {
+	public static CommonsMultipartFile getMultipartFile(String path) throws IOException {
 		File file = new ClassPathResource(path).getFile();
 		FileItem fileItem = new DiskFileItem("mainFile",
 				Files.probeContentType(file.toPath()),
