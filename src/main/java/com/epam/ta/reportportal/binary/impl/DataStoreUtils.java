@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-class DataStoreUtils {
+public class DataStoreUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
 
@@ -44,7 +44,7 @@ class DataStoreUtils {
 		//static only
 	}
 
-	static Optional<String> resolveExtension(String contentType) {
+	public static Optional<String> resolveExtension(String contentType) {
 		Optional<String> result = Optional.empty();
 		try {
 			result = Optional.of(MimeTypes.getDefaultMimeTypes().forName(contentType).getExtension());
@@ -54,16 +54,16 @@ class DataStoreUtils {
 		return result;
 	}
 
-	static String buildThumbnailFileName(String commonPath, String fileName) {
+	public static String buildThumbnailFileName(String commonPath, String fileName) {
 		Path thumbnailTargetPath = Paths.get(commonPath, THUMBNAIL_PREFIX.concat(fileName));
 		return thumbnailTargetPath.toString();
 	}
 
-	static boolean isImage(String contentType) {
+	public static boolean isImage(String contentType) {
 		return contentType != null && contentType.contains("image");
 	}
 
-	static boolean isContentTypePresent(String contentType) {
+	public static boolean isContentTypePresent(String contentType) {
 		return !Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
 	}
 }
