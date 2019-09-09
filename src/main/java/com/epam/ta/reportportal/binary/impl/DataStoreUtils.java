@@ -17,15 +17,12 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.google.common.base.Strings;
-import org.apache.commons.io.IOUtils;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -68,9 +65,5 @@ public class DataStoreUtils {
 
 	public static boolean isContentTypePresent(String contentType) {
 		return !Strings.isNullOrEmpty(contentType) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(contentType);
-	}
-
-	public static byte[] convertToBytes(InputStream input) throws IOException {
-		return IOUtils.toByteArray(input);
 	}
 }

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.binary;
+package com.epam.ta.reportportal.binary.impl;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;

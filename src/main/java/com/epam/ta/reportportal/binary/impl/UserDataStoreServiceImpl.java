@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -73,7 +74,7 @@ public class UserDataStoreServiceImpl implements UserDataStoreService {
 	@Override
 	public void saveUserPhoto(User user, InputStream inputStream, String contentType) {
 		try {
-			byte[] data = convertToBytes(inputStream);
+			byte[] data = StreamUtils.copyToByteArray(inputStream);
 			try (InputStream userPhotoCopy = new ByteArrayInputStream(data); InputStream thumbnailCopy = new ByteArrayInputStream(data)) {
 				user.setAttachment(dataStoreService.save(Paths.get(ROOT_USER_PHOTO_DIR, user.getLogin()).toString(), userPhotoCopy));
 				user.setAttachmentThumbnail(dataStoreService.saveThumbnail(buildThumbnailFileName(ROOT_USER_PHOTO_DIR, user.getLogin()),
