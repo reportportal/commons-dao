@@ -50,7 +50,7 @@ wrapper {
 dependencyManagement {
     imports {
 //        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
-        mavenBom "com.github.reportportal:commons-bom:274c63e"
+        mavenBom "com.github.reportportal:commons-bom:7fd984c"
     }
 }
 
