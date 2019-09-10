@@ -54,7 +54,7 @@ public class IssueEntity implements Serializable {
 	@JoinColumn(name = "issue_id")
 	private TestItemResults testItemResults;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	@JoinTable(name = "issue_ticket", joinColumns = @JoinColumn(name = "issue_id"), inverseJoinColumns = @JoinColumn(name = "ticket_id"))
 	private Set<Ticket> tickets = Sets.newHashSet();
 
