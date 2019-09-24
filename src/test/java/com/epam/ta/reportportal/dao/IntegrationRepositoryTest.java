@@ -135,7 +135,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 	@Test
 	void existsByNameTypeProjectIdPositive() {
-		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira1", 4L, 1L);
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira", 4L, 1L);
 		assertTrue(exists);
 	}
 
