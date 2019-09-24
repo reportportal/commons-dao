@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,6 +173,17 @@ public class ProjectUtils {
 	@Nullable
 	public static ProjectUser findUserConfigByLogin(Project project, String user) {
 		return project.getUsers().stream().filter(it -> user.equalsIgnoreCase(it.getUser().getLogin())).findAny().orElse(null);
+	}
+
+	/**
+	 * Checks if user is assigned to specified project
+	 *
+	 * @param user      {@link User}
+	 * @param projectId ID of project
+	 * @return {@code true} if assigned, otherwise {@code false}
+	 */
+	public static boolean isAssignedToProject(User user, Long projectId) {
+		return user.getProjects().stream().anyMatch(it -> it.getProject().getId().equals(projectId));
 	}
 
 	public static Map<String, String> getConfigParameters(Set<ProjectAttribute> projectAttributes) {

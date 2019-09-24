@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity;
+package com.epam.ta.reportportal.binary;
 
-import java.util.Arrays;
-import java.util.Optional;
+import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.entity.user.User;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public enum SearchMode {
+public interface UserDataStoreService {
 
-	BY_LAUNCH_NAME("launchName"),
-	CURRENT_LAUNCH("currentLaunch"),
-	FILTER("filter");
+	void saveUserPhoto(User user, MultipartFile file);
 
-	private String value;
+	void saveUserPhoto(User user, BinaryData binaryData);
 
-	SearchMode(String value) {
-		this.value = value;
-	}
+	void saveUserPhoto(User user, InputStream inputStream, String contentType);
 
-	public String getValue() {
-		return value;
-	}
+	BinaryData loadUserPhoto(User user, boolean loadThumbnail);
 
-	public static Optional<SearchMode> fromString(String mode) {
-		return Arrays.stream(values()).filter(it -> it.getValue().equalsIgnoreCase(mode)).findFirst();
-	}
+	public void deleteUserPhoto(User user);
 }
