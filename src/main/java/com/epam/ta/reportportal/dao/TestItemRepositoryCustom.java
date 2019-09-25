@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
+import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -193,12 +194,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
-	 * Select ids and names of all items in a tree till current, for each id from the provided collection
+	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
+	 * for each item id from the provided collection
 	 *
 	 * @param ids {@link Collection} of {@link TestItem#getItemId()}
-	 * @return id from collection -> { parent id -> parent name }
+	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids);
+	Map<Long, PathName> selectPathNames(Collection<Long> ids);
 
 	/**
 	 * Select item IDs by analyzed status and launch id with log level greater or equals than error

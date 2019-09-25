@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
+import com.epam.ta.reportportal.entity.project.Project;
 
 import java.util.List;
 
@@ -25,6 +26,16 @@ import java.util.List;
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public interface ItemAttributeRepositoryCustom {
+
+	/**
+	 * Retrieves {@link com.epam.ta.reportportal.entity.launch.Launch} and {@link com.epam.ta.reportportal.entity.item.TestItem}
+	 * {@link ItemAttribute#getKey()} by project id and part of the {@link ItemAttribute#getKey()}.
+	 *
+	 * @param projectId {@link Project#getId()}
+	 * @param keyPart   Part of the {@link ItemAttribute#getKey()}
+	 * @return {@link List} of matched attribute keys
+	 */
+	List<String> findKeysByProjectId(Long projectId, String keyPart, boolean isSystem);
 
 	/**
 	 * Retrieves launch attribute keys by project and part of value.

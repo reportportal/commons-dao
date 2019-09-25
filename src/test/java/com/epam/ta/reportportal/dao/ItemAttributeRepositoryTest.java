@@ -38,6 +38,14 @@ class ItemAttributeRepositoryTest extends BaseTest {
 	private ItemAttributeRepository repository;
 
 	@Test
+	void findAttributesByProjectId() {
+
+		List<String> key = repository.findKeysByProjectId(1L, "step", false);
+
+		assertFalse(key.isEmpty());
+	}
+
+	@Test
 	void findByLaunchIdAndKeyAndSystem() {
 		final String launchKeyName = "key1";
 		final Long launchId = 1L;

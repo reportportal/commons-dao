@@ -26,13 +26,13 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.item.NestedStep;
-import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.*;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
@@ -58,12 +58,12 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -107,8 +107,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(
-				items,
+		return PageableExecutionUtils.getPage(items,
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,
@@ -310,7 +309,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
-		return Optional.ofNullable(dsl.select()
+		return ofNullable(dsl.select()
 				.from(ISSUE_TYPE)
 				.join(ISSUE_TYPE_PROJECT)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
@@ -334,35 +333,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids) {
+	public Map<Long, PathName> selectPathNames(Collection<Long> ids) {
 
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
-		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME)
+		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME, LAUNCH.NUMBER)
 				.from(childItem)
-				.join(parentItem)
+				.leftJoin(parentItem)
 				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
 				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
+				.join(LAUNCH)
+				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(childItem.ITEM_ID.in(ids))
 				.orderBy(childItem.ITEM_ID, parentItem.ITEM_ID)
 				.fetch());
 	}
-
-	public static final Function<Result<? extends Record>, Map<Long, Map<Long, String>>> PATH_NAMES_FETCHER = result -> {
-		Map<Long, Map<Long, String>> content = Maps.newHashMap();
-		JTestItem parentItem = TEST_ITEM.as("parent");
-		JTestItem childItem = TEST_ITEM.as("child");
-		result.forEach(record -> {
-			Long parentItemId = record.get(parentItem.ITEM_ID);
-			String parentName = record.get(parentItem.NAME);
-			Long childItemId = record.get(childItem.ITEM_ID);
-
-			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> Maps.newLinkedHashMap());
-			pathNames.put(parentItemId, parentName);
-		});
-
-		return content;
-	};
 
 	@Override
 	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
