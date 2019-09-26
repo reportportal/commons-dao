@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
+import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -114,9 +115,9 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectMultiplePathNames() {
-		Map<Long, Map<Long, String>> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
+		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
-		results.values().forEach(map -> assertThat("Incorrect class type", map.getClass(), Matchers.theInstance(LinkedHashMap.class)));
+		results.values().forEach(pathName -> assertThat("Incorrect class type", pathName.getItemPaths().getClass(), Matchers.theInstance(ArrayList.class)));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
 	}
 

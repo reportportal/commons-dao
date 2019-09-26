@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
@@ -270,4 +271,20 @@ public interface WidgetContentRepository {
 	 */
 	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
 			boolean isLatest, int launchesLimit, int attributesLimit);
+
+	/**
+	 * Load component health check data containing items count and passing rate. Multi-level widget
+	 * with {@link ItemAttribute#getKey()} on each level. Previous levels are built based on
+	 * {@link ItemAttribute#getKey()}-{@link ItemAttribute#getValue()} pairs
+	 *
+	 * @param launchFilter    {@link Filter} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+	 * @param launchSort      {@link Sort} for launches query
+	 * @param isLatest        Flag for retrieving only latest launches
+	 * @param launchesLimit   launches limit
+	 * @param testItemFilter  {@link Filter} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
+	 * @param currentLevelKey {@link ItemAttribute#getKey()} for query level select
+	 * @return {@link List} of {@link ComponentHealthCheckContent}
+	 */
+	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
+			Filter testItemFilter, String currentLevelKey);
 }
