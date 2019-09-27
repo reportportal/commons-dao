@@ -117,7 +117,11 @@ class TestItemRepositoryTest extends BaseTest {
 	void selectMultiplePathNames() {
 		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
-		results.values().forEach(pathName -> assertThat("Incorrect class type", pathName.getItemPaths().getClass(), Matchers.theInstance(ArrayList.class)));
+		results.values()
+				.forEach(pathName -> assertThat("Incorrect class type",
+						pathName.getItemPaths().getClass(),
+						Matchers.theInstance(ArrayList.class)
+				));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
 	}
 
@@ -597,7 +601,12 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
 				.build();
 
-		Page<TestItem> testItems = testItemRepository.findByFilter(launchFilter, itemFilter, PageRequest.of(0, 1), PageRequest.of(0, 100));
+		Page<TestItem> testItems = testItemRepository.findByFilter(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 1),
+				PageRequest.of(0, 100)
+		);
 
 		List<TestItem> content = testItems.getContent();
 
