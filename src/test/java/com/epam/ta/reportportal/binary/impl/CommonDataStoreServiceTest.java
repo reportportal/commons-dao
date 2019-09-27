@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -41,9 +42,10 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-class DataStoreServiceImplTest extends BaseTest {
+class CommonDataStoreServiceTest extends BaseTest {
 
 	@Autowired
+	@Qualifier("userDataStoreService")
 	private DataStoreService dataStoreService;
 
 	@Autowired
@@ -78,8 +80,8 @@ class DataStoreServiceImplTest extends BaseTest {
 	@Test
 	void saveAndDeleteTest() throws IOException {
 		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-		String fileId = dataStoreService.save(
-				new Random().nextLong() + "/" + multipartFile.getOriginalFilename(),
+		Random random = new Random();
+		String fileId = dataStoreService.save(random.nextLong() + "/" + multipartFile.getOriginalFilename(),
 				multipartFile.getInputStream()
 		);
 

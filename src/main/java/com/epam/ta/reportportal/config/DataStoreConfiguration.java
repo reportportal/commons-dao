@@ -99,9 +99,16 @@ public class DataStoreConfiguration {
 		return new MinioDataStore(minioClient);
 	}
 
-	@Bean
-	public Thumbnailator thumbnailator() {
-		return new ThumbnailatorImpl();
+	@Bean("attachmentThumbnailator")
+	public Thumbnailator attachmentThumbnailator(@Value("${datastore.thumbnail.attachment.width}") int width,
+			@Value("${datastore.thumbnail.attachment.height}") int height) {
+		return new ThumbnailatorImpl(width, height);
+	}
+
+	@Bean("userPhotoThumbnailator")
+	public Thumbnailator userPhotoThumbnailator(@Value("${datastore.thumbnail.avatar.width}") int width,
+			@Value("${datastore.thumbnail.avatar.height}") int height) {
+		return new ThumbnailatorImpl(width, height);
 	}
 
 	@Bean

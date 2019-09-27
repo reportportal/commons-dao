@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.epam.reportportal.commons.ContentTypeResolver;
-import com.epam.ta.reportportal.binary.AttachmentDataStoreService;
+import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.binary.CreateLogAttachmentService;
 import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -52,9 +53,9 @@ import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSup
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @Service
-public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreService {
+public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentDataStoreServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentBinaryDataServiceImpl.class);
 
 	private final ContentTypeResolver contentTypeResolver;
 
@@ -67,8 +68,8 @@ public class AttachmentDataStoreServiceImpl implements AttachmentDataStoreServic
 	private final CreateLogAttachmentService createLogAttachmentService;
 
 	@Autowired
-	public AttachmentDataStoreServiceImpl(ContentTypeResolver contentTypeResolver, FilePathGenerator filePathGenerator,
-			DataStoreService dataStoreService, AttachmentRepository attachmentRepository,
+	public AttachmentBinaryDataServiceImpl(ContentTypeResolver contentTypeResolver, FilePathGenerator filePathGenerator,
+			@Qualifier("attachmentDataStoreService") DataStoreService dataStoreService, AttachmentRepository attachmentRepository,
 			CreateLogAttachmentService createLogAttachmentService) {
 		this.contentTypeResolver = contentTypeResolver;
 		this.filePathGenerator = filePathGenerator;

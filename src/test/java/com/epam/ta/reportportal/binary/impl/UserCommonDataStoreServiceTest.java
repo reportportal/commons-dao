@@ -18,32 +18,34 @@ package com.epam.ta.reportportal.binary.impl;
 
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.binary.UserDataStoreService;
+import com.epam.ta.reportportal.binary.UserBinaryDataService;
 import com.epam.ta.reportportal.dao.UserRepository;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.entity.user.User;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.IOException;
 
-import static com.epam.ta.reportportal.binary.impl.DataStoreServiceImplTest.getMultipartFile;
+import static com.epam.ta.reportportal.binary.impl.CommonDataStoreServiceTest.getMultipartFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-class UserDataStoreServiceImplTest extends BaseTest {
+class UserCommonDataStoreServiceTest extends BaseTest {
 
 	@Autowired
-	private UserDataStoreService userDataStoreService;
+	private UserBinaryDataService userDataStoreService;
 
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
+	@Qualifier("userPhotoThumbnailator")
 	private Thumbnailator thumbnailator;
 
 	@Test

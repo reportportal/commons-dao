@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.epam.ta.reportportal.binary.DataStoreService;
-import com.epam.ta.reportportal.binary.UserDataStoreService;
+import com.epam.ta.reportportal.binary.UserBinaryDataService;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.entity.user.User;
@@ -27,6 +27,7 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,14 +46,14 @@ import static java.util.Optional.ofNullable;
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @Service
-public class UserDataStoreServiceImpl implements UserDataStoreService {
+public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserDataStoreServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserBinaryDataServiceImpl.class);
 
 	private DataStoreService dataStoreService;
 
 	@Autowired
-	public UserDataStoreServiceImpl(DataStoreService dataStoreService) {
+	public UserBinaryDataServiceImpl(@Qualifier("userDataStoreService") DataStoreService dataStoreService) {
 		this.dataStoreService = dataStoreService;
 	}
 

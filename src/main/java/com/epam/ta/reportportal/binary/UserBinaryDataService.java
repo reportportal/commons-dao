@@ -25,7 +25,7 @@ import java.io.InputStream;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface UserDataStoreService {
+public interface UserBinaryDataService {
 
 	void saveUserPhoto(User user, MultipartFile file);
 

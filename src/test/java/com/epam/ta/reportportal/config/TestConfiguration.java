@@ -21,6 +21,7 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,9 +37,16 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:test-application.properties")
 public class TestConfiguration {
 
-	@Bean
-	public Thumbnailator thumbnailator() {
-		return new ThumbnailatorImpl();
+	@Bean("attachmentThumbnailator")
+	public Thumbnailator attachmentThumbnailator(@Value("${datastore.thumbnail.attachment.width}") int width,
+			@Value("${datastore.thumbnail.attachment.height}") int height) {
+		return new ThumbnailatorImpl(width, height);
+	}
+
+	@Bean("userPhotoThumbnailator")
+	public Thumbnailator userPhotoThumbnailator(@Value("${datastore.thumbnail.avatar.width}") int width,
+			@Value("${datastore.thumbnail.avatar.height}") int height) {
+		return new ThumbnailatorImpl(width, height);
 	}
 
 	@Bean
