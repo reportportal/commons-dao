@@ -57,6 +57,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 		String fileId = dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
 		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+		dataStoreService.delete(fileId);
 	}
 
 	@Test
@@ -65,6 +66,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 		String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
 		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+		dataStoreService.delete(fileId);
 	}
 
 	@Test
@@ -75,6 +77,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 		Optional<InputStream> content = dataStoreService.load(fileId);
 
 		assertTrue(content.isPresent());
+		dataStoreService.delete(fileId);
 	}
 
 	@Test
