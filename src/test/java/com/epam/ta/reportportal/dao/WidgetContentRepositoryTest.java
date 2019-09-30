@@ -105,8 +105,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		List<CriteriaHistoryItem> criteriaHistoryItems = widgetContentRepository.topItemsByCriteria(filter, defect, 10, false);
 
-		System.out.println(123);
-
+		assertNotNull(criteriaHistoryItems);
+		assertEquals(1, criteriaHistoryItems.size());
 	}
 
 	@Test
@@ -191,6 +191,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter, sort, 1);
 
 		assertNotNull(passStatisticsResult);
+		assertEquals(4, passStatisticsResult.getNumber());
 		assertEquals(3, passStatisticsResult.getPassed());
 		assertEquals(12, passStatisticsResult.getTotal());
 	}
@@ -203,6 +204,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, sort, 4);
 
 		assertNotNull(passStatisticsResult);
+		assertEquals(4, passStatisticsResult.getNumber());
 		assertEquals(13, passStatisticsResult.getPassed());
 		assertEquals(48, passStatisticsResult.getTotal());
 	}
@@ -474,8 +476,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -508,8 +509,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
-				filter,
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
 				20
 		);
 
@@ -866,8 +866,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -940,16 +939,14 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.EQUALS_ANY,
-						false,
-						String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-						CRITERIA_STATUS
-				)
-		);
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
+		), new FilterCondition(Condition.EQUALS_ANY,
+				false,
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+				CRITERIA_STATUS
+		));
 
 		return new Filter(1L, TestItem.class, conditionList);
 	}

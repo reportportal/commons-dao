@@ -28,6 +28,10 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
  */
 public class PassingRateStatisticsResult implements Serializable {
 
+	@Column(name = NUMBER)
+	@JsonProperty(value = NUMBER)
+	private int number;
+
 	@Column(name = PASSED)
 	@JsonProperty(value = PASSED)
 	private int passed;
@@ -53,5 +57,13 @@ public class PassingRateStatisticsResult implements Serializable {
 
 	public void setTotal(int total) {
 		this.total = total;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
 	}
 }
