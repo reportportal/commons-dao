@@ -19,6 +19,8 @@ package com.epam.ta.reportportal.entity.item.issue;
 import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -56,6 +58,7 @@ public class IssueEntity implements Serializable {
 
 	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	@JoinTable(name = "issue_ticket", joinColumns = @JoinColumn(name = "issue_id"), inverseJoinColumns = @JoinColumn(name = "ticket_id"))
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<Ticket> tickets = Sets.newHashSet();
 
 	public IssueEntity() {
