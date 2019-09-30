@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -31,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+import static org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH;
 
 /**
  * @author Pavel Bortnik
@@ -168,8 +170,17 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
 	void interruptInProgressItems(@Param("launchId") Long launchId);
 
-	@Query(value = "SELECT * FROM test_item ti WHERE ti.unique_id IN :uniqueIds AND ti.launch_id IN :launchIds", nativeQuery = true)
-	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds);
+	@Query(value = "SELECT testitem.item_id, testitemresult.result_id, issue.issue_id, issuetype.id, issuegroup.issue_group_id, "
+			+ "testitem.code_ref, testitem.description, testitem.has_children, testitem.has_retries, testitem.has_stats, "
+			+ "testitem.last_modified, testitem.launch_id, testitem.name, testitem.parent_id, testitem.path, testitem.retry_of, "
+			+ "testitem.start_time, testitem.type, testitem.unique_id, testitem.uuid, testitemresult.duration, testitemresult.end_time, "
+			+ "testitemresult.status, issue.auto_analyzed, issue.ignore_analyzer, issue.issue_description, issue.issue_type, issuetype.hex_color, "
+			+ "issuetype.issue_group_id, issuetype.locator, issuetype.issue_name, issuetype.abbreviation, issuegroup.issue_group "
+			+ "FROM test_item testitem LEFT OUTER JOIN test_item_results testitemresult ON testitem.item_id=testitemresult.result_id "
+			+ "LEFT OUTER JOIN issue issue ON testitemresult.result_id=issue.issue_id LEFT OUTER JOIN issue_type issuetype ON "
+			+ "issue.issue_type=issuetype.id LEFT OUTER JOIN issue_group issuegroup ON issuetype.issue_group_id=issuegroup.issue_group_id "
+			+ "WHERE (testitem.unique_id in (:uniqueIds)) AND (testitem.launch_id IN (:launchIds)) LIMIT :limit", nativeQuery = true)
+	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds, @Param("limit") int limit);
 
 	/**
 	 * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId},
