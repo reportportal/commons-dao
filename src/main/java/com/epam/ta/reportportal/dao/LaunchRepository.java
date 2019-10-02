@@ -96,11 +96,11 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	boolean hasRetries(@Param("launchId") Long launchId);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
-			+ " WHERE ti.launch_id = :launchId AND tir.status <> cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.launch_id = :launchId AND ti.has_stats = TRUE AND tir.status <> cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
-			+ " WHERE ti.launch_id = :launchId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.launch_id = :launchId AND ti.has_stats = TRUE AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasItemsWithStatusEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti WHERE ti.launch_id = :launchId LIMIT 1)", nativeQuery = true)
