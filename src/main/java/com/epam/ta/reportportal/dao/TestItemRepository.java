@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -32,7 +31,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
-import static org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH;
 
 /**
  * @author Pavel Bortnik
@@ -154,7 +152,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return 'True' if has, otherwise 'false'
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
@@ -179,8 +177,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			+ "FROM test_item testitem LEFT OUTER JOIN test_item_results testitemresult ON testitem.item_id=testitemresult.result_id "
 			+ "LEFT OUTER JOIN issue issue ON testitemresult.result_id=issue.issue_id LEFT OUTER JOIN issue_type issuetype ON "
 			+ "issue.issue_type=issuetype.id LEFT OUTER JOIN issue_group issuegroup ON issuetype.issue_group_id=issuegroup.issue_group_id "
-			+ "WHERE (testitem.unique_id in (:uniqueIds)) AND (testitem.launch_id IN (:launchIds)) LIMIT :limit", nativeQuery = true)
-	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds, @Param("limit") int limit);
+			+ "WHERE (testitem.unique_id IN (:uniqueIds)) AND (testitem.launch_id IN (:launchIds)) LIMIT :limit", nativeQuery = true)
+	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds,
+			@Param("limit") int limit);
 
 	/**
 	 * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId},
