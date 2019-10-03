@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -50,8 +51,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
@@ -62,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Ivan Budaev
  */
-@Sql("/db/fill/item/items-fill.sql")
+@Sql({"/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
 class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
@@ -621,6 +622,39 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Assertions.assertFalse(content.isEmpty());
 		Assertions.assertEquals(5, content.size());
+	}
 
+	@Test
+	void findByFilterShouldReturnItemsWithIssueAndWithoutTicketsWhenIssueExistsAndTicketsNotExistFiltersAreSelected() {
+		//GIVEN
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EXISTS, false, "TRUE", CRITERIA_ISSUE_ID))
+				.withCondition(new FilterCondition(Condition.EXISTS, false, "FALSE", CRITERIA_TICKET_ID))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		//WHEN
+		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
+
+		//THEN
+		assertEquals(2, testItems.size());
+
+		TestItem firstTestItem = testItems.get(0);
+		TestItem secondTestItem = testItems.get(1);
+
+		Long expectedFirstTestItemId = 5L;
+		assertIssueExistsAndTicketsEmpty(firstTestItem, expectedFirstTestItemId);
+		Long expectedSecondTestItemId = 106L;
+		assertIssueExistsAndTicketsEmpty(secondTestItem, expectedSecondTestItemId);
+	}
+
+	private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
+		assertEquals(expectedId, testItem.getItemId());
+
+		IssueEntity issue = testItem.getItemResults().getIssue();
+		assertNotEquals(null, issue);
+		assertEquals(0, issue.getTickets().size());
 	}
 }
