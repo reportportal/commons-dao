@@ -16,16 +16,19 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.epam.ta.reportportal.jooq.tables.records.JItemAttributeRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
@@ -45,24 +48,27 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findKeysByProjectId(Long projectId, String keyPart, boolean isSystem) {
+	public List<String> findAllKeysByLaunchFilter(Queryable launchFilter, Sort sort, boolean isLatest, int launchesLimit, String keyPart,
+			boolean isSystem) {
 
 		return dslContext.select(fieldName(KEY))
-				.from(DSL.selectDistinct(ITEM_ATTRIBUTE.KEY)
+				.from(dslContext.with(LAUNCHES)
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, sort, isLatest).with(launchesLimit).build())
+						.selectDistinct(ITEM_ATTRIBUTE.KEY)
 						.from(ITEM_ATTRIBUTE)
 						.join(TEST_ITEM)
 						.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID)
 								.and(TEST_ITEM.HAS_STATS)
 								.and(TEST_ITEM.HAS_CHILDREN.isFalse())
 								.and(TEST_ITEM.RETRY_OF.isNull()))
-						.join(LAUNCH)
-						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID).and(LAUNCH.PROJECT_ID.eq(projectId)))
+						.join(LAUNCHES)
+						.on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 						.where(ITEM_ATTRIBUTE.SYSTEM.isFalse())
 						.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase(DSL.val("%" + DSL.escape(keyPart, '\\') + "%")))
-						.unionAll(DSL.selectDistinct(ITEM_ATTRIBUTE.KEY)
+						.unionAll(dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
 								.from(ITEM_ATTRIBUTE)
-								.join(LAUNCH)
-								.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(LAUNCH.ID).and(LAUNCH.PROJECT_ID.eq(projectId)))
+								.join(LAUNCHES)
+								.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 								.where(ITEM_ATTRIBUTE.SYSTEM.isFalse())
 								.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase(DSL.val("%" + DSL.escape(keyPart, '\\') + "%")))))
 				.groupBy(fieldName(KEY))
