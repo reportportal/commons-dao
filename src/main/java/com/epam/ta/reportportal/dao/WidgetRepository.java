@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,4 +52,8 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, 
 	 * @return if exists 'true' else 'false'
 	 */
 	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
+
+	@Query(value = "SELECT w FROM Widget w WHERE w.project.id = :projectId AND w.widgetType IN :widgetTypes AND :contentField MEMBER w.contentFields")
+	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldsContains(@Param("projectId") Long projectId,
+			@Param("widgetTypes") List<String> widgetTypes, @Param("contentField") String contentField);
 }

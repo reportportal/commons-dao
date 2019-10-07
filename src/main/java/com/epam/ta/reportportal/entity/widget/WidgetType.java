@@ -25,37 +25,40 @@ import java.util.Optional;
  */
 public enum WidgetType {
 
-	OLD_LINE_CHART("oldLineChart", false),
-	INVESTIGATED_TREND("investigatedTrend", false),
-	LAUNCH_STATISTICS("launchStatistics", false),
-	STATISTIC_TREND("statisticTrend", false),
-	CASES_TREND("casesTrend", false),
-	NOT_PASSED("notPassed", false),
-	OVERALL_STATISTICS("overallStatistics", false),
-	UNIQUE_BUG_TABLE("uniqueBugTable", false),
-	BUG_TREND("bugTrend", false),
-	ACTIVITY("activityStream", false),
-	LAUNCHES_COMPARISON_CHART("launchesComparisonChart", false),
-	LAUNCHES_DURATION_CHART("launchesDurationChart", false),
-	LAUNCHES_TABLE("launchesTable", false),
-	TOP_TEST_CASES("topTestCases", false),
-	FLAKY_TEST_CASES("flakyTestCases", false),
-	PASSING_RATE_SUMMARY("passingRateSummary", false),
-	PASSING_RATE_PER_LAUNCH("passingRatePerLaunch", false),
-	PRODUCT_STATUS("productStatus", false),
-	MOST_TIME_CONSUMING("mostTimeConsuming", false),
+	OLD_LINE_CHART("oldLineChart", false, false),
+	INVESTIGATED_TREND("investigatedTrend", false, false),
+	LAUNCH_STATISTICS("launchStatistics", false, true),
+	STATISTIC_TREND("statisticTrend", false, true),
+	CASES_TREND("casesTrend", false, false),
+	NOT_PASSED("notPassed", false, false),
+	OVERALL_STATISTICS("overallStatistics", false, true),
+	UNIQUE_BUG_TABLE("uniqueBugTable", false, false),
+	BUG_TREND("bugTrend", false, false),
+	ACTIVITY("activityStream", false, false),
+	LAUNCHES_COMPARISON_CHART("launchesComparisonChart", false, false),
+	LAUNCHES_DURATION_CHART("launchesDurationChart", false, false),
+	LAUNCHES_TABLE("launchesTable", false, true),
+	TOP_TEST_CASES("topTestCases", false, false),
+	FLAKY_TEST_CASES("flakyTestCases", false, false),
+	PASSING_RATE_SUMMARY("passingRateSummary", false, false),
+	PASSING_RATE_PER_LAUNCH("passingRatePerLaunch", false, false),
+	PRODUCT_STATUS("productStatus", false, true),
+	MOST_TIME_CONSUMING("mostTimeConsuming", false, false),
 
-	CUMULATIVE("cumulative", true),
-	TOP_PATTERN_TEMPLATES("topPatternTemplates", true),
-	COMPONENT_HEALTH_CHECK("componentHealthCheck", true);
+	CUMULATIVE("cumulative", true, false),
+	TOP_PATTERN_TEMPLATES("topPatternTemplates", true, false),
+	COMPONENT_HEALTH_CHECK("componentHealthCheck", true, false);
 
 	private final String type;
 
 	private final boolean supportMultilevelStructure;
 
-	WidgetType(String type, boolean supportMultilevelStructure) {
+	private final boolean issueTypeUpdateSupported;
+
+	WidgetType(String type, boolean supportMultilevelStructure, boolean issueTypeUpdateSupported) {
 		this.type = type;
 		this.supportMultilevelStructure = supportMultilevelStructure;
+		this.issueTypeUpdateSupported = issueTypeUpdateSupported;
 	}
 
 	public String getType() {
@@ -64,6 +67,10 @@ public enum WidgetType {
 
 	public boolean isSupportMultilevelStructure() {
 		return supportMultilevelStructure;
+	}
+
+	public boolean isIssueTypeUpdateSupported() {
+		return issueTypeUpdateSupported;
 	}
 
 	public static WidgetType getByName(String type) {
