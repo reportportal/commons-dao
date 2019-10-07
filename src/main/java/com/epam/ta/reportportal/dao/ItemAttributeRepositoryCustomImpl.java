@@ -23,7 +23,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JItemAttributeRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -48,12 +48,14 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findAllKeysByLaunchFilter(Queryable launchFilter, Sort sort, boolean isLatest, int launchesLimit, String keyPart,
+	public List<String> findAllKeysByLaunchFilter(Queryable launchFilter, Pageable launchPageable, boolean isLatest, String keyPart,
 			boolean isSystem) {
 
 		return dslContext.select(fieldName(KEY))
 				.from(dslContext.with(LAUNCHES)
-						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, sort, isLatest).with(launchesLimit).build())
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchPageable.getSort(), isLatest)
+								.with(launchPageable)
+								.build())
 						.selectDistinct(ITEM_ATTRIBUTE.KEY)
 						.from(ITEM_ATTRIBUTE)
 						.join(TEST_ITEM)

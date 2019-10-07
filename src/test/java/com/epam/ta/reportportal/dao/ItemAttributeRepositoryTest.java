@@ -24,7 +24,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
@@ -49,7 +49,7 @@ class ItemAttributeRepositoryTest extends BaseTest {
 				.withTarget(Launch.class)
 				.withCondition(FilterCondition.builder().eq(CRITERIA_PROJECT_ID, "1").build())
 				.build();
-		List<String> keys = repository.findAllKeysByLaunchFilter(filter, Sort.unsorted(), false, 600, "step", false);
+		List<String> keys = repository.findAllKeysByLaunchFilter(filter, PageRequest.of(0, 600), false, "step", false);
 
 		assertFalse(keys.isEmpty());
 	}

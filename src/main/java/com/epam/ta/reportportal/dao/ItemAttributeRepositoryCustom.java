@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -32,15 +32,14 @@ public interface ItemAttributeRepositoryCustom {
 	 * Retrieves {@link com.epam.ta.reportportal.entity.launch.Launch} and {@link com.epam.ta.reportportal.entity.item.TestItem}
 	 * {@link ItemAttribute#getKey()} by project id and part of the {@link ItemAttribute#getKey()}.
 	 *
-	 * @param launchFilter  {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
-	 * @param sort          Launches sorting
-	 * @param isLatest      Flag defines whether all or latest launches launches will be included in the query condition
-	 * @param launchesLimit Launches limit
-	 * @param keyPart       Part of the {@link ItemAttribute#getKey()}
-	 * @param isSystem      {@link ItemAttribute#isSystem()}
+	 * @param launchFilter   {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+	 * @param launchPageable {@link Pageable} for launches sorting and limitation
+	 * @param isLatest       Flag defines whether all or latest launches launches will be included in the query condition
+	 * @param keyPart        Part of the {@link ItemAttribute#getKey()}
+	 * @param isSystem       {@link ItemAttribute#isSystem()}
 	 * @return {@link List} of matched attribute keys
 	 */
-	List<String> findAllKeysByLaunchFilter(Queryable launchFilter, Sort sort, boolean isLatest, int launchesLimit, String keyPart,
+	List<String> findAllKeysByLaunchFilter(Queryable launchFilter, Pageable launchPageable, boolean isLatest, String keyPart,
 			boolean isSystem);
 
 	/**
