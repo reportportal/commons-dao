@@ -49,6 +49,7 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
@@ -127,22 +128,32 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void testLoadItemsHistory() {
+	void loadItemsHistoryShouldReturnhLimitedCountOfItemsPerLaunch() {
 		//GIVEN
-		final String uniqueId = "unqIdSTEP7";
-
-		List<String> uniqueIds = Lists.newArrayList(uniqueId);
-		ArrayList<Long> launchesIds = Lists.newArrayList(7L, 8L, 9L);
+		List<String> uniqueIds = Lists.newArrayList("unqIdSTEP7", "unqIdSTEP8", "unqIdSTEP9");
+		List<Long> launchesIds = Lists.newArrayList(7L, 8L, 9L);
 
 		int limit = 6;
+		int historyDepth = launchesIds.size();
+		int itemsLimitPerLaunch = limit / historyDepth;
 
 		//WHEN
-		List<TestItem> items = testItemRepository.loadItemsHistory(uniqueIds, launchesIds, limit);
+		List<TestItem> items = testItemRepository.loadItemsHistory(uniqueIds, launchesIds, itemsLimitPerLaunch);
 
 		//THEN
 		assertEquals(limit, items.size(), String.format("Items size should be %d", limit));
-		items.forEach(it -> assertTrue(
-				it.getUniqueId().equals(uniqueId) && (it.getLaunchId() == 7L || it.getLaunchId() == 8L || it.getLaunchId() == 9L)));
+
+		Map<Long, List<TestItem>> itemsGroupedByLaunch = items.stream().collect(Collectors.groupingBy(TestItem::getLaunchId));
+		assertGroupedItems(7L, itemsGroupedByLaunch, itemsLimitPerLaunch);
+		assertGroupedItems(8L, itemsGroupedByLaunch, itemsLimitPerLaunch);
+		assertGroupedItems(9L, itemsGroupedByLaunch, itemsLimitPerLaunch);
+	}
+
+	private void assertGroupedItems(Long launchId, Map<Long, List<TestItem>> itemsGroupedByLaunch, int itemsLimitPerLaunch) {
+		List<TestItem> items = itemsGroupedByLaunch.get(launchId);
+		assertEquals(itemsLimitPerLaunch, items.size());
+
+		items.forEach(item -> assertEquals(launchId, item.getLaunchId()));
 	}
 
 	@Test
