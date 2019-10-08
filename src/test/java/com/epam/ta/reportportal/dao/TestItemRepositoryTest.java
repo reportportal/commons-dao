@@ -592,7 +592,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.CONTAINS, false, "a", CRITERIA_LOG_MESSAGE))
 				.build();
 
-		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L), logFilter);
+		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L), logFilter, false);
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
