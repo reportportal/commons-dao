@@ -63,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Ivan Budaev
  */
-@Sql({"/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
+@Sql({ "/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
 class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
@@ -375,7 +375,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasDescendantsWithStatusNotEqual() {
-		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, JStatusEnum.PASSED), "Incorrect status");
+		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, StatusEnum.PASSED), "Incorrect status");
 	}
 
 	@Test

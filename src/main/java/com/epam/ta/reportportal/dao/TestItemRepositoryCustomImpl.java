@@ -274,15 +274,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status) {
-		return dsl.fetchExists(dsl.selectOne()
-				.from(TEST_ITEM)
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.where(TEST_ITEM.PARENT_ID.eq(parentId).and(TEST_ITEM_RESULTS.STATUS.notEqual(status))));
-	}
-
-	@Override
 	public List<IssueType> selectIssueLocatorsByProject(Long projectId) {
 		return dsl.select()
 				.from(PROJECT)
