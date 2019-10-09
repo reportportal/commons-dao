@@ -187,6 +187,20 @@ public class WidgetRepositoryTest extends BaseTest {
 		assertEquals(1, widgets.size());
 	}
 
+	@Test
+	void findAllByProjectIdWidgetTypeInAndContentFieldContainingTest() {
+		List<Widget> widgets = repository.findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(1L,
+				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.LAUNCHES_TABLE)
+						.stream()
+						.map(WidgetType::getType)
+						.collect(Collectors.toList()),
+				"statistics$product_bug"
+		);
+
+		assertFalse(widgets.isEmpty());
+		assertEquals(1, widgets.size());
+	}
+
 	private Filter buildDefaultFilter() {
 		return Filter.builder()
 				.withTarget(Widget.class)
