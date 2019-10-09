@@ -195,6 +195,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") StatusEnum status);
 
+	@Query(value = "SELECT 1 FROM test_item item JOIN test_item_results result ON item.item_id = result.result_id WHERE item.parent_id <> :parentId AND result.status <> cast(:#{#status.name()} AS STATUS_ENUM) AND item.path <@ cast(:path AS LTREE)", nativeQuery = true)
+	boolean hasStatusNotEqualByParent(@Param("parentId") Long parentId, @Param("path") String path, @Param("status") StatusEnum status);
+
 	/**
 	 * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
 	 *
