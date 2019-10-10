@@ -84,8 +84,8 @@ public class TestItem implements Serializable {
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
-	@Column(name = "test_case_id", nullable = false)
-	private String testCaseId;
+	@Column(name = "test_case_id")
+	private Integer testCaseId;
 
 	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Fetch(FetchMode.SUBSELECT)
@@ -249,11 +249,11 @@ public class TestItem implements Serializable {
 		this.uniqueId = uniqueId;
 	}
 
-	public String getTestCaseId() {
+	public Integer getTestCaseId() {
 		return testCaseId;
 	}
 
-	public void setTestCaseId(String testCaseId) {
+	public void setTestCaseId(Integer testCaseId) {
 		this.testCaseId = testCaseId;
 	}
 
