@@ -173,7 +173,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
 	 */
 	@Override
 	public List<Index> getIndexes() {
-		return Arrays.<Index>asList(Indexes.TICKET_PK, Indexes.TICKET_SUBMITTER_IDX, Indexes.TICKET_TICKET_ID_KEY);
+		return Arrays.<Index>asList(Indexes.TICKET_PK, Indexes.TICKET_SUBMITTER_IDX);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
 	 */
 	@Override
 	public List<UniqueKey<JTicketRecord>> getKeys() {
-		return Arrays.<UniqueKey<JTicketRecord>>asList(Keys.TICKET_PK, Keys.TICKET_TICKET_ID_KEY);
+		return Arrays.<UniqueKey<JTicketRecord>>asList(Keys.TICKET_PK);
 	}
 
 	/**

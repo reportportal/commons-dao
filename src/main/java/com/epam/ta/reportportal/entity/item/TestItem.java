@@ -84,6 +84,9 @@ public class TestItem implements Serializable {
 	@Column(name = "unique_id", nullable = false, length = 256)
 	private String uniqueId;
 
+	@Column(name = "test_case_id", nullable = false)
+	private String testCaseId;
+
 	@OneToMany(mappedBy = "testItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Fetch(FetchMode.SUBSELECT)
 	private Set<ItemAttribute> attributes = Sets.newHashSet();
@@ -246,6 +249,14 @@ public class TestItem implements Serializable {
 		this.uniqueId = uniqueId;
 	}
 
+	public String getTestCaseId() {
+		return testCaseId;
+	}
+
+	public void setTestCaseId(String testCaseId) {
+		this.testCaseId = testCaseId;
+	}
+
 	public Long getLaunchId() {
 		return launchId;
 	}
@@ -336,12 +347,12 @@ public class TestItem implements Serializable {
 		}
 		TestItem testItem = (TestItem) o;
 		return Objects.equals(itemId, testItem.itemId) && Objects.equals(name, testItem.name) && Objects.equals(codeRef, testItem.codeRef)
-				&& type == testItem.type && Objects.equals(uniqueId, testItem.uniqueId) && Objects.equals(path, testItem.path)
-				&& Objects.equals(retryOf, testItem.retryOf);
+				&& type == testItem.type && Objects.equals(uniqueId, testItem.uniqueId) && Objects.equals(testCaseId, testItem.testCaseId)
+				&& Objects.equals(path, testItem.path) && Objects.equals(retryOf, testItem.retryOf);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(itemId, name, codeRef, type, uniqueId, path, retryOf);
+		return Objects.hash(itemId, name, codeRef, type, uniqueId, testCaseId, path, retryOf);
 	}
 }
