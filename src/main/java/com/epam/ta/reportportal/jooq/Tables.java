@@ -27,7 +27,6 @@ import org.jooq.Result;
 
 import javax.annotation.Generated;
 
-
 /**
  * Convenience access to all tables in public
  */
@@ -166,6 +165,11 @@ public class Tables {
 	public static final JLaunchNames LAUNCH_NAMES = com.epam.ta.reportportal.jooq.tables.JLaunchNames.LAUNCH_NAMES;
 
 	/**
+	 * The table <code>public.launch_number</code>.
+	 */
+	public static final JLaunchNumber LAUNCH_NUMBER = com.epam.ta.reportportal.jooq.tables.JLaunchNumber.LAUNCH_NUMBER;
+
+	/**
 	 * The table <code>public.ldap_config</code>.
 	 */
 	public static final JLdapConfig LDAP_CONFIG = com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
@@ -270,11 +274,6 @@ public class Tables {
 	 * The table <code>public.saml_provider_details</code>.
 	 */
 	public static final JSamlProviderDetails SAML_PROVIDER_DETAILS = com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails.SAML_PROVIDER_DETAILS;
-
-	/**
-	 * The table <code>public.schema_migrations</code>.
-	 */
-	public static final JSchemaMigrations SCHEMA_MIGRATIONS = com.epam.ta.reportportal.jooq.tables.JSchemaMigrations.SCHEMA_MIGRATIONS;
 
 	/**
 	 * The table <code>public.sender_case</code>.
