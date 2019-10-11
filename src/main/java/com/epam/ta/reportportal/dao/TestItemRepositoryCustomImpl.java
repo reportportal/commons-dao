@@ -96,15 +96,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(items,
-				testItemPageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
-						.addJointToStart(launchesTable,
-								JoinType.JOIN,
-								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
-						)
-						.build())
-		);
+		return PageableExecutionUtils.getPage(items, testItemPageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
+				.addJointToStart(launchesTable,
+						JoinType.JOIN,
+						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+				)
+				.build()));
 	}
 
 	@Override
@@ -415,7 +412,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter) {
+	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs) {
 		JTestItem nested = TEST_ITEM.as(NESTED);
 		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter).build();
 
@@ -426,15 +423,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				TEST_ITEM_RESULTS.STATUS,
 				TEST_ITEM_RESULTS.END_TIME,
 				TEST_ITEM_RESULTS.DURATION,
-				DSL.field(DSL.exists(dsl.with(LOGS)
-						.as(logsSelectQuery)
-						.select()
-						.from(LOG)
-						.join(LOGS)
-						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
-						.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
-						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse()))))
-						.as(HAS_CONTENT),
+				DSL.field(hasContentQuery(nested, logsSelectQuery, excludePassedLogs)).as(HAS_CONTENT),
 				DSL.field(dsl.with(LOGS)
 						.as(logsSelectQuery)
 						.selectCount()
@@ -454,6 +443,29 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.ITEM_ID.in(ids))
 				.fetch(NESTED_STEP_RECORD_MAPPER);
+	}
+
+	private Condition hasContentQuery(JTestItem nested, SelectQuery<? extends Record> logsSelectQuery, boolean excludePassedLogs) {
+		if (excludePassedLogs) {
+			return DSL.exists(dsl.with(LOGS)
+					.as(logsSelectQuery)
+					.select()
+					.from(LOG)
+					.join(LOGS)
+					.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+					.join(TEST_ITEM_RESULTS)
+					.on(LOG.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))).and(TEST_ITEM_RESULTS.STATUS.ne(JStatusEnum.PASSED));
+		} else {
+			return DSL.exists(dsl.with(LOGS)
+					.as(logsSelectQuery)
+					.select()
+					.from(LOG)
+					.join(LOGS)
+					.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse())));
+		}
 	}
 
 	private void fetchRetries(List<TestItem> items) {
