@@ -17,15 +17,20 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,6 +41,18 @@ class ItemAttributeRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ItemAttributeRepository repository;
+
+	@Test
+	void findAttributesByProjectId() {
+
+		Filter filter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_PROJECT_ID, "1").build())
+				.build();
+		List<String> keys = repository.findAllKeysByLaunchFilter(filter, PageRequest.of(0, 600), false, "step", false);
+
+		assertFalse(keys.isEmpty());
+	}
 
 	@Test
 	void findByLaunchIdAndKeyAndSystem() {

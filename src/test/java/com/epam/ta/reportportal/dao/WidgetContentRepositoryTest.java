@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
@@ -103,8 +105,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		List<CriteriaHistoryItem> criteriaHistoryItems = widgetContentRepository.topItemsByCriteria(filter, defect, 10, false);
 
-		System.out.println(123);
-
+		assertNotNull(criteriaHistoryItems);
+		assertEquals(1, criteriaHistoryItems.size());
 	}
 
 	@Test
@@ -189,6 +191,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter, sort, 1);
 
 		assertNotNull(passStatisticsResult);
+		assertEquals(4, passStatisticsResult.getNumber());
 		assertEquals(3, passStatisticsResult.getPassed());
 		assertEquals(12, passStatisticsResult.getTotal());
 	}
@@ -201,6 +204,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.summaryPassingRateStatistics(filter, sort, 4);
 
 		assertNotNull(passStatisticsResult);
+		assertEquals(4, passStatisticsResult.getNumber());
 		assertEquals(13, passStatisticsResult.getPassed());
 		assertEquals(48, passStatisticsResult.getTotal());
 	}
@@ -1166,4 +1170,35 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	}
 
+	@Test
+	void componentHealthCheck() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter launchFilter = buildDefaultFilter(1L);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
+				new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME)
+		);
+		Sort sort = Sort.by(orderings);
+
+		Filter itemsFilter = new Filter(1L,
+				TestItem.class,
+				Lists.newArrayList(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withNegative(false)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("new:os")
+						.build())
+		);
+
+		List<ComponentHealthCheckContent> contents = widgetContentRepository.componentHealthCheck(launchFilter,
+				sort,
+				false,
+				600,
+				itemsFilter,
+				"new"
+		);
+
+		assertTrue(contents.isEmpty());
+	}
 }

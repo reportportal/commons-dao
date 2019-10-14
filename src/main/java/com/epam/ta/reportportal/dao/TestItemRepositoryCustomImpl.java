@@ -17,30 +17,28 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.MoreCollectors;
-import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
+import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -48,7 +46,6 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
@@ -58,12 +55,12 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.RETRIES_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -80,21 +77,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+	public Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable) {
 
-		Set<String> fields = launchFilter.getFilterConditions()
-				.stream()
-				.map(ConvertibleCondition::getAllConditions)
-				.flatMap(Collection::stream)
-				.map(FilterCondition::getSearchCriteria)
-				.collect(Collectors.toSet());
-		fields.addAll(launchPageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
-
-		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(launchFilter, fields)
-				.with(launchPageable)
-				.build()
-				.asTable(LAUNCHES);
+		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter,
+				launchPageable.getSort(),
+				isLatest
+		).with(launchPageable).build().asTable(LAUNCHES);
 		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
 				.with(testItemPageable)
 				.addJointToStart(launchesTable,
@@ -107,16 +96,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(
-				items,
-				testItemPageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
-						.addJointToStart(launchesTable,
-								JoinType.JOIN,
-								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
-						)
-						.build())
-		);
+		return PageableExecutionUtils.getPage(items, testItemPageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
+				.addJointToStart(launchesTable,
+						JoinType.JOIN,
+						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+				)
+				.build()));
 	}
 
 	@Override
@@ -310,7 +295,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator) {
-		return Optional.ofNullable(dsl.select()
+		return ofNullable(dsl.select()
 				.from(ISSUE_TYPE)
 				.join(ISSUE_TYPE_PROJECT)
 				.on(ISSUE_TYPE_PROJECT.ISSUE_TYPE_ID.eq(ISSUE_TYPE.ID))
@@ -334,35 +319,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids) {
+	public Map<Long, PathName> selectPathNames(Collection<Long> ids) {
 
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
-		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME)
+		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME, LAUNCH.NUMBER)
 				.from(childItem)
-				.join(parentItem)
+				.leftJoin(parentItem)
 				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
 				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
+				.join(LAUNCH)
+				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(childItem.ITEM_ID.in(ids))
 				.orderBy(childItem.ITEM_ID, parentItem.ITEM_ID)
 				.fetch());
 	}
-
-	public static final Function<Result<? extends Record>, Map<Long, Map<Long, String>>> PATH_NAMES_FETCHER = result -> {
-		Map<Long, Map<Long, String>> content = Maps.newHashMap();
-		JTestItem parentItem = TEST_ITEM.as("parent");
-		JTestItem childItem = TEST_ITEM.as("child");
-		result.forEach(record -> {
-			Long parentItemId = record.get(parentItem.ITEM_ID);
-			String parentName = record.get(parentItem.NAME);
-			Long childItemId = record.get(childItem.ITEM_ID);
-
-			Map<Long, String> pathNames = content.computeIfAbsent(childItemId, k -> Maps.newLinkedHashMap());
-			pathNames.put(parentItemId, parentName);
-		});
-
-		return content;
-	};
 
 	@Override
 	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
@@ -450,7 +421,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter) {
+	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs) {
 		JTestItem nested = TEST_ITEM.as(NESTED);
 		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter).build();
 
@@ -461,15 +432,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				TEST_ITEM_RESULTS.STATUS,
 				TEST_ITEM_RESULTS.END_TIME,
 				TEST_ITEM_RESULTS.DURATION,
-				DSL.field(DSL.exists(dsl.with(LOGS)
-						.as(logsSelectQuery)
-						.select()
-						.from(LOG)
-						.join(LOGS)
-						.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
-						.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
-						.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse()))))
-						.as(HAS_CONTENT),
+				DSL.field(hasContentQuery(nested, logsSelectQuery, excludePassedLogs)).as(HAS_CONTENT),
 				DSL.field(dsl.with(LOGS)
 						.as(logsSelectQuery)
 						.selectCount()
@@ -489,6 +452,29 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.ITEM_ID.in(ids))
 				.fetch(NESTED_STEP_RECORD_MAPPER);
+	}
+
+	private Condition hasContentQuery(JTestItem nested, SelectQuery<? extends Record> logsSelectQuery, boolean excludePassedLogs) {
+		if (excludePassedLogs) {
+			return DSL.exists(dsl.with(LOGS)
+					.as(logsSelectQuery)
+					.select()
+					.from(LOG)
+					.join(LOGS)
+					.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+					.join(TEST_ITEM_RESULTS)
+					.on(LOG.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))).and(TEST_ITEM_RESULTS.STATUS.ne(JStatusEnum.PASSED));
+		} else {
+			return DSL.exists(dsl.with(LOGS)
+					.as(logsSelectQuery)
+					.select()
+					.from(LOG)
+					.join(LOGS)
+					.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse())));
+		}
 	}
 
 	private void fetchRetries(List<TestItem> items) {

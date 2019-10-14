@@ -22,6 +22,8 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.entity.widget.WidgetType;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
@@ -168,6 +171,34 @@ public class WidgetRepositoryTest extends BaseTest {
 		int removedCount = repository.deleteRelationByFilterIdAndNotOwner(2L, "superadmin");
 
 		Assertions.assertEquals(1, removedCount);
+	}
+
+	@Test
+	void findAllByWidgetTypeInAndContentFieldsContainsTest() {
+		List<Widget> widgets = repository.findAllByProjectIdAndWidgetTypeInAndContentFieldsContains(1L,
+				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.LAUNCHES_TABLE)
+						.stream()
+						.map(WidgetType::getType)
+						.collect(Collectors.toList()),
+				"statistics$product_bug$pb001"
+		);
+
+		assertFalse(widgets.isEmpty());
+		assertEquals(1, widgets.size());
+	}
+
+	@Test
+	void findAllByProjectIdWidgetTypeInAndContentFieldContainingTest() {
+		List<Widget> widgets = repository.findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(1L,
+				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.LAUNCHES_TABLE)
+						.stream()
+						.map(WidgetType::getType)
+						.collect(Collectors.toList()),
+				"statistics$product_bug"
+		);
+
+		assertFalse(widgets.isEmpty());
+		assertEquals(1, widgets.size());
 	}
 
 	private Filter buildDefaultFilter() {

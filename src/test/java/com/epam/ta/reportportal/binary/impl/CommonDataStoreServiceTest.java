@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -41,9 +42,10 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-class DataStoreServiceImplTest extends BaseTest {
+class CommonDataStoreServiceTest extends BaseTest {
 
 	@Autowired
+	@Qualifier("userDataStoreService")
 	private DataStoreService dataStoreService;
 
 	@Autowired
@@ -55,6 +57,7 @@ class DataStoreServiceImplTest extends BaseTest {
 		String fileId = dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
 		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+		dataStoreService.delete(fileId);
 	}
 
 	@Test
@@ -63,6 +66,7 @@ class DataStoreServiceImplTest extends BaseTest {
 		String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
 		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+		dataStoreService.delete(fileId);
 	}
 
 	@Test
@@ -73,13 +77,14 @@ class DataStoreServiceImplTest extends BaseTest {
 		Optional<InputStream> content = dataStoreService.load(fileId);
 
 		assertTrue(content.isPresent());
+		dataStoreService.delete(fileId);
 	}
 
 	@Test
 	void saveAndDeleteTest() throws IOException {
 		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-		String fileId = dataStoreService.save(
-				new Random().nextLong() + "/" + multipartFile.getOriginalFilename(),
+		Random random = new Random();
+		String fileId = dataStoreService.save(random.nextLong() + "/" + multipartFile.getOriginalFilename(),
 				multipartFile.getInputStream()
 		);
 

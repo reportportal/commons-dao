@@ -152,7 +152,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return 'True' if has, otherwise 'false'
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
@@ -168,8 +168,11 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
 	void interruptInProgressItems(@Param("launchId") Long launchId);
 
-	@Query(value = "SELECT * FROM test_item ti WHERE ti.unique_id IN :uniqueIds AND ti.launch_id IN :launchIds", nativeQuery = true)
-	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds);
+	@Query(value = "SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY ti.launch_id) AS row_count, ti.* FROM test_item ti "
+			+ "WHERE (ti.unique_id IN (:uniqueIds)) AND (ti.launch_id IN (:launchIds))) testitem WHERE testitem.row_count <= :itemsLimitPerLaunch",
+			nativeQuery = true)
+	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds,
+			@Param("itemsLimitPerLaunch") int itemsLimitPerLaunch);
 
 	/**
 	 * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId},

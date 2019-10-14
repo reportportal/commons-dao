@@ -90,7 +90,7 @@ public class FilterRules {
 	 * @return Predicate
 	 */
 	public static Predicate<CriteriaHolder> filterForArrayAggregation() {
-		return filter -> filter.getAggregateCriteria().startsWith("array_agg");
+		return filter -> filter.getAggregateCriteria().startsWith("array_agg") || filter.getAggregateCriteria().startsWith("array_cat");
 	}
 
 	/**

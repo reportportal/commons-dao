@@ -27,7 +27,7 @@ import java.util.Optional;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-public interface AttachmentDataStoreService {
+public interface AttachmentBinaryDataService {
 
 	Optional<BinaryDataMetaInfo> saveAttachment(Long projectId, MultipartFile file);
 

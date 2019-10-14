@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.binary.AttachmentDataStoreService;
+import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-class AttachmentDataStoreServiceImplTest extends BaseTest {
+class AttachmentCommonDataStoreServiceTest extends BaseTest {
 
 	@Autowired
-	private AttachmentDataStoreService attachmentDataStoreService;
+	private AttachmentBinaryDataService attachmentBinaryDataService;
 
 	@Autowired
 	private AttachmentRepository attachmentRepository;
@@ -63,7 +63,7 @@ class AttachmentDataStoreServiceImplTest extends BaseTest {
 				.withLogId(1L)
 				.build();
 
-		attachmentDataStoreService.attachToLog(binaryDataMetaInfo, attachmentMetaInfo);
+		attachmentBinaryDataService.attachToLog(binaryDataMetaInfo, attachmentMetaInfo);
 
 		Optional<Attachment> attachment = attachmentRepository.findByFileId(fileID);
 

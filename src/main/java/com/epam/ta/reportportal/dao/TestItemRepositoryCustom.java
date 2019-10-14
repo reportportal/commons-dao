@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
+import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -42,13 +43,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	/**
 	 * Executes query built for given filters and maps result for given page
 	 *
+	 * @param isLatest         Flag for retrieving only latest launches
 	 * @param launchFilter     {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
 	 * @param testItemFilter   {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
 	 * @param launchPageable   {@link Pageable} for {@link com.epam.ta.reportportal.entity.launch.Launch} query
 	 * @param testItemPageable {@link Pageable} for {@link TestItem} query
 	 * @return List of mapped entries found
 	 */
-	Page<TestItem> findByFilter(Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable, Pageable testItemPageable);
+	Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable);
 
 	/**
 	 * Selects all descendants of TestItem with provided id.
@@ -193,12 +196,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Map<Long, String> selectPathNames(String path);
 
 	/**
-	 * Select ids and names of all items in a tree till current, for each id from the provided collection
+	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
+	 * for each item id from the provided collection
 	 *
 	 * @param ids {@link Collection} of {@link TestItem#getItemId()}
-	 * @return id from collection -> { parent id -> parent name }
+	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, Map<Long, String>> selectPathNames(Collection<Long> ids);
+	Map<Long, PathName> selectPathNames(Collection<Long> ids);
 
 	/**
 	 * Select item IDs by analyzed status and launch id with log level greater or equals than error
@@ -257,5 +261,6 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 *                  and   attachments count
 	 * @return {@link List} of the {@link NestedStep}
 	 */
-	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter);
+
+	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs);
 }

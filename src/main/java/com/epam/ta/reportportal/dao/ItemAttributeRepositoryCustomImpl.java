@@ -16,15 +16,20 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.epam.ta.reportportal.jooq.tables.records.JItemAttributeRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 
 /**
@@ -33,11 +38,45 @@ import static com.epam.ta.reportportal.jooq.Tables.*;
 @Repository
 public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositoryCustom {
 
+	public static final Integer ATTRIBUTES_LIMIT = 50;
+
 	private final DSLContext dslContext;
 
 	@Autowired
 	public ItemAttributeRepositoryCustomImpl(DSLContext dslContext) {
 		this.dslContext = dslContext;
+	}
+
+	@Override
+	public List<String> findAllKeysByLaunchFilter(Queryable launchFilter, Pageable launchPageable, boolean isLatest, String keyPart,
+			boolean isSystem) {
+
+		return dslContext.select(fieldName(KEY))
+				.from(dslContext.with(LAUNCHES)
+						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchPageable.getSort(), isLatest)
+								.with(launchPageable)
+								.build())
+						.selectDistinct(ITEM_ATTRIBUTE.KEY)
+						.from(ITEM_ATTRIBUTE)
+						.join(TEST_ITEM)
+						.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID)
+								.and(TEST_ITEM.HAS_STATS)
+								.and(TEST_ITEM.HAS_CHILDREN.isFalse())
+								.and(TEST_ITEM.RETRY_OF.isNull()))
+						.join(LAUNCHES)
+						.on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+						.where(ITEM_ATTRIBUTE.SYSTEM.isFalse())
+						.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase(DSL.val("%" + DSL.escape(keyPart, '\\') + "%")))
+						.unionAll(dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
+								.from(ITEM_ATTRIBUTE)
+								.join(LAUNCHES)
+								.on(ITEM_ATTRIBUTE.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+								.where(ITEM_ATTRIBUTE.SYSTEM.isFalse())
+								.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase(DSL.val("%" + DSL.escape(keyPart, '\\') + "%")))))
+				.groupBy(fieldName(KEY))
+				.orderBy(DSL.length(fieldName(KEY).cast(String.class)))
+				.limit(ATTRIBUTES_LIMIT)
+				.fetchInto(String.class);
 	}
 
 	@Override
@@ -49,7 +88,8 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(PROJECT)
 				.on(LAUNCH.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT.ID.eq(projectId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system)).and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
@@ -75,7 +115,8 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
-				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system)).and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
 				.fetch(ITEM_ATTRIBUTE.KEY);
 	}
 
