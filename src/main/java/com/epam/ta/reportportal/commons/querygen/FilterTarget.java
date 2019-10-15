@@ -363,6 +363,8 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_KEY, PARAMETER.KEY, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_VALUE, PARAMETER.VALUE, String.class).get(),
 
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_ID, ISSUE.ISSUE_ID, Long.class).get(),
+
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR, String.class)
 							.withAggregateCriteria(DSL.max(ISSUE_TYPE.LOCATOR).toString())
 							.get(),
@@ -439,6 +441,7 @@ public enum FilterTarget {
 					PARAMETER.VALUE,
 					STATISTICS_FIELD.NAME,
 					STATISTICS.S_COUNTER,
+					ISSUE.ISSUE_ID,
 					ISSUE.AUTO_ANALYZED,
 					ISSUE.IGNORE_ANALYZER,
 					ISSUE.ISSUE_DESCRIPTION,

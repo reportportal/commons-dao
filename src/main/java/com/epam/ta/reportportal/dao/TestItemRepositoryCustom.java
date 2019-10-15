@@ -261,5 +261,6 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 *                  and   attachments count
 	 * @return {@link List} of the {@link NestedStep}
 	 */
-	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter);
+
+	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs);
 }
