@@ -349,6 +349,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_MODIFIED, TEST_ITEM.LAST_MODIFIED, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH, TEST_ITEM.PATH, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
@@ -424,6 +425,7 @@ public enum FilterTarget {
 					TEST_ITEM.LAST_MODIFIED,
 					TEST_ITEM.PATH,
 					TEST_ITEM.UNIQUE_ID,
+					TEST_ITEM.TEST_CASE_ID,
 					TEST_ITEM.PARENT_ID,
 					TEST_ITEM.RETRY_OF,
 					TEST_ITEM.HAS_CHILDREN,
@@ -665,6 +667,7 @@ public enum FilterTarget {
 					DASHBOARD_WIDGET.WIDGET_WIDTH,
 					DASHBOARD_WIDGET.WIDGET_POSITION_X,
 					DASHBOARD_WIDGET.WIDGET_POSITION_Y,
+					DASHBOARD_WIDGET.SHARE,
 					SHAREABLE_ENTITY.SHARED,
 					SHAREABLE_ENTITY.PROJECT_ID,
 					SHAREABLE_ENTITY.OWNER

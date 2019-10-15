@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties
 @EnableAutoConfiguration(exclude = QuartzAutoConfiguration.class)
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
-@PropertySource("classpath:test-application.properties")
+@PropertySource({ "classpath:test-application.properties" })
 public class TestConfiguration {
 
 	@Bean("attachmentThumbnailator")

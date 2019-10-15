@@ -398,6 +398,7 @@ public class RecordMappers {
 		dashboardWidget.setWidgetOwner(r.get(DASHBOARD_WIDGET.WIDGET_OWNER));
 		dashboardWidget.setWidgetName(r.get(DASHBOARD_WIDGET.WIDGET_NAME));
 		dashboardWidget.setWidgetType(r.get(DASHBOARD_WIDGET.WIDGET_TYPE));
+		dashboardWidget.setShare(r.get(DASHBOARD_WIDGET.SHARE));
 		return Optional.of(dashboardWidget);
 	};
 

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ import java.io.IOException;
  * @author Dzianis_Shybeka
  */
 @Configuration
-@PropertySource(value = { "classpath:datastore.properties" })
 public class DataStoreConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
