@@ -34,7 +34,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties
 @EnableAutoConfiguration(exclude = QuartzAutoConfiguration.class)
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
-@PropertySource("classpath:test-application.properties")
+@PropertySource({ "classpath:test-application.properties", "classpath:application.properties" })
 public class TestConfiguration {
 
 	@Bean("attachmentThumbnailator")
