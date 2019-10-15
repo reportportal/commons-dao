@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = -1583184742;
+    private static final long serialVersionUID = -274462511;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -107,6 +107,11 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      * The column <code>public.test_item.unique_id</code>.
      */
     public final TableField<JTestItemRecord, String> UNIQUE_ID = createField("unique_id", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+
+    /**
+     * The column <code>public.test_item.test_case_id</code>.
+     */
+    public final TableField<JTestItemRecord, Integer> TEST_CASE_ID = createField("test_case_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>public.test_item.has_children</code>.
@@ -184,7 +189,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK, Indexes.TEST_ITEM_UNIQUE_ID_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UUID_KEY, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX, Indexes.TI_UUID_IDX);
+        return Arrays.<Index>asList(Indexes.ITEM_TEST_CASE_ID_IDX, Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK, Indexes.TEST_ITEM_UNIQUE_ID_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UUID_KEY, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX, Indexes.TI_UUID_IDX);
     }
 
     /**
