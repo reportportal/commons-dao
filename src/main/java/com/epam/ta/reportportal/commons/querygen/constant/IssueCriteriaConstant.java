@@ -24,6 +24,8 @@ public final class IssueCriteriaConstant {
 	private IssueCriteriaConstant() {
 		//static only
 	}
+
+	public static final String CRITERIA_ISSUE_ID = "issueId";
 	public static final String CRITERIA_ISSUE_AUTO_ANALYZED = "autoAnalyzed";
 	public static final String CRITERIA_ISSUE_IGNORE_ANALYZER = "ignoreAnalyzer";
 	public static final String CRITERIA_ISSUE_LOCATOR = "locator";

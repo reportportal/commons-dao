@@ -27,6 +27,7 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -48,10 +49,11 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
@@ -62,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Ivan Budaev
  */
-@Sql("/db/fill/item/items-fill.sql")
+@Sql({"/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
 class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
@@ -126,22 +128,32 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void testLoadItemsHistory() {
+	void loadItemsHistoryShouldReturnhLimitedCountOfItemsPerLaunch() {
 		//GIVEN
-		final String uniqueId = "unqIdSTEP7";
-
-		List<String> uniqueIds = Lists.newArrayList(uniqueId);
-		ArrayList<Long> launchesIds = Lists.newArrayList(7L, 8L, 9L);
+		List<String> uniqueIds = Lists.newArrayList("unqIdSTEP7", "unqIdSTEP8", "unqIdSTEP9");
+		List<Long> launchesIds = Lists.newArrayList(7L, 8L, 9L);
 
 		int limit = 6;
+		int historyDepth = launchesIds.size();
+		int itemsLimitPerLaunch = limit / historyDepth;
 
 		//WHEN
-		List<TestItem> items = testItemRepository.loadItemsHistory(uniqueIds, launchesIds, limit);
+		List<TestItem> items = testItemRepository.loadItemsHistory(uniqueIds, launchesIds, itemsLimitPerLaunch);
 
 		//THEN
 		assertEquals(limit, items.size(), String.format("Items size should be %d", limit));
-		items.forEach(it -> assertTrue(
-				it.getUniqueId().equals(uniqueId) && (it.getLaunchId() == 7L || it.getLaunchId() == 8L || it.getLaunchId() == 9L)));
+
+		Map<Long, List<TestItem>> itemsGroupedByLaunch = items.stream().collect(Collectors.groupingBy(TestItem::getLaunchId));
+		assertGroupedItems(7L, itemsGroupedByLaunch, itemsLimitPerLaunch);
+		assertGroupedItems(8L, itemsGroupedByLaunch, itemsLimitPerLaunch);
+		assertGroupedItems(9L, itemsGroupedByLaunch, itemsLimitPerLaunch);
+	}
+
+	private void assertGroupedItems(Long launchId, Map<Long, List<TestItem>> itemsGroupedByLaunch, int itemsLimitPerLaunch) {
+		List<TestItem> items = itemsGroupedByLaunch.get(launchId);
+		assertEquals(itemsLimitPerLaunch, items.size());
+
+		items.forEach(item -> assertEquals(launchId, item.getLaunchId()));
 	}
 
 	@Test
@@ -591,7 +603,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.CONTAINS, false, "a", CRITERIA_LOG_MESSAGE))
 				.build();
 
-		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L), logFilter);
+		List<NestedStep> allNestedStepsByIds = testItemRepository.findAllNestedStepsByIds(Lists.newArrayList(1L, 2L, 3L), logFilter, false);
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
@@ -621,6 +633,39 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Assertions.assertFalse(content.isEmpty());
 		Assertions.assertEquals(5, content.size());
+	}
 
+	@Test
+	void findByFilterShouldReturnItemsWithIssueAndWithoutTicketsWhenIssueExistsAndTicketsNotExistFiltersAreSelected() {
+		//GIVEN
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EXISTS, false, "TRUE", CRITERIA_ISSUE_ID))
+				.withCondition(new FilterCondition(Condition.EXISTS, false, "FALSE", CRITERIA_TICKET_ID))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		//WHEN
+		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
+
+		//THEN
+		assertEquals(2, testItems.size());
+
+		TestItem firstTestItem = testItems.get(0);
+		TestItem secondTestItem = testItems.get(1);
+
+		Long expectedFirstTestItemId = 5L;
+		assertIssueExistsAndTicketsEmpty(firstTestItem, expectedFirstTestItemId);
+		Long expectedSecondTestItemId = 106L;
+		assertIssueExistsAndTicketsEmpty(secondTestItem, expectedSecondTestItemId);
+	}
+
+	private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
+		assertEquals(expectedId, testItem.getItemId());
+
+		IssueEntity issue = testItem.getItemResults().getIssue();
+		assertNotEquals(null, issue);
+		assertEquals(0, issue.getTickets().size());
 	}
 }

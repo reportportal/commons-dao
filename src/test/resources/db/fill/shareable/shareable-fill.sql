@@ -53,6 +53,8 @@ INSERT INTO public.widget (id, name, description, widget_type, items_count, widg
 (10, 'FAILED CASES TREND CHART', null, 'bugTrend', 10, '{"options": {}}'),
 (11, 'LAUNCH STATISTICS', null, 'launchStatistics', 10, '{"options": {"timeline": "WEEK"}}');
 
+INSERT INTO public.content_field(id, field) VALUES (6, 'statistics$product_bug$pb001');
+
 INSERT INTO public.widget_filter (widget_id, filter_id) VALUES
 (6, 1),
 (7, 2),
