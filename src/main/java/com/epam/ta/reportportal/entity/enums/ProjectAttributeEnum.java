@@ -31,8 +31,6 @@ public enum ProjectAttributeEnum {
 
 	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(false)),
 
-	PATTERN_ANALYSIS_ENABLED("pattern.analysis.enabled", String.valueOf(false)),
-
 	INTERRUPT_JOB_TIME(Prefix.JOB + "interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
 	KEEP_LAUNCHES(Prefix.JOB + "keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
 	KEEP_LOGS(Prefix.JOB + "keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
@@ -43,6 +41,7 @@ public enum ProjectAttributeEnum {
 	MIN_SHOULD_MATCH(Prefix.ANALYZER + "minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
 	NUMBER_OF_LOG_LINES(Prefix.ANALYZER + "numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
 	INDEXING_RUNNING(Prefix.ANALYZER + "indexingRunning", String.valueOf(false)),
+	AUTO_PATTERN_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoPatternAnalyzerEnabled", String.valueOf(false)),
 	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(false)),
 	AUTO_ANALYZER_MODE(Prefix.ANALYZER + "autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
 

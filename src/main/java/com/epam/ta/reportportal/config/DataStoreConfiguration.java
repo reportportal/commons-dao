@@ -45,7 +45,6 @@ import java.io.IOException;
  * @author Dzianis_Shybeka
  */
 @Configuration
-@PropertySource(value = { "classpath:datastore.properties" })
 public class DataStoreConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
