@@ -47,7 +47,6 @@ import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
 import com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails;
-import com.epam.ta.reportportal.jooq.tables.JSchemaMigrations;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -172,7 +171,6 @@ public class Indexes {
     public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
     public static final Index SAML_PROVIDER_DETAILS_PKEY = Indexes0.SAML_PROVIDER_DETAILS_PKEY;
-    public static final Index SCHEMA_MIGRATIONS_PKEY = Indexes0.SCHEMA_MIGRATIONS_PKEY;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
@@ -187,6 +185,8 @@ public class Indexes {
     public static final Index UNIQUE_STATS_LAUNCH = Indexes0.UNIQUE_STATS_LAUNCH;
     public static final Index STATISTICS_FIELD_NAME_KEY = Indexes0.STATISTICS_FIELD_NAME_KEY;
     public static final Index STATISTICS_FIELD_PK = Indexes0.STATISTICS_FIELD_PK;
+    public static final Index ITEM_TEST_CASE_ID_IDX = Indexes0.ITEM_TEST_CASE_ID_IDX;
+    public static final Index ITEM_TEST_CASE_ID_LAUNCH_ID_IDX = Indexes0.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX;
     public static final Index PATH_GIST_IDX = Indexes0.PATH_GIST_IDX;
     public static final Index PATH_IDX = Indexes0.PATH_IDX;
     public static final Index TEST_ITEM_PK = Indexes0.TEST_ITEM_PK;
@@ -301,7 +301,6 @@ public class Indexes {
         public static Index RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createIndex("restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL }, true);
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
         public static Index SAML_PROVIDER_DETAILS_PKEY = Internal.createIndex("saml_provider_details_pkey", JSamlProviderDetails.SAML_PROVIDER_DETAILS, new OrderField[] { JSamlProviderDetails.SAML_PROVIDER_DETAILS.ID }, true);
-        public static Index SCHEMA_MIGRATIONS_PKEY = Internal.createIndex("schema_migrations_pkey", JSchemaMigrations.SCHEMA_MIGRATIONS, new OrderField[] { JSchemaMigrations.SCHEMA_MIGRATIONS.VERSION }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
@@ -316,6 +315,8 @@ public class Indexes {
         public static Index UNIQUE_STATS_LAUNCH = Internal.createIndex("unique_stats_launch", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID }, true);
         public static Index STATISTICS_FIELD_NAME_KEY = Internal.createIndex("statistics_field_name_key", JStatisticsField.STATISTICS_FIELD, new OrderField[] { JStatisticsField.STATISTICS_FIELD.NAME }, true);
         public static Index STATISTICS_FIELD_PK = Internal.createIndex("statistics_field_pk", JStatisticsField.STATISTICS_FIELD, new OrderField[] { JStatisticsField.STATISTICS_FIELD.SF_ID }, true);
+        public static Index ITEM_TEST_CASE_ID_IDX = Internal.createIndex("item_test_case_id_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.TEST_CASE_ID }, false);
+        public static Index ITEM_TEST_CASE_ID_LAUNCH_ID_IDX = Internal.createIndex("item_test_case_id_launch_id_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.TEST_CASE_ID, JTestItem.TEST_ITEM.LAUNCH_ID }, false);
         public static Index PATH_GIST_IDX = Internal.createIndex("path_gist_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index PATH_IDX = Internal.createIndex("path_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
         public static Index TEST_ITEM_PK = Internal.createIndex("test_item_pk", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.ITEM_ID }, true);
