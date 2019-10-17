@@ -104,7 +104,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * The column <code>public.users.full_name</code>.
      */
-    public final TableField<JUsersRecord, String> FULL_NAME = createField("full_name", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<JUsersRecord, String> FULL_NAME = createField("full_name", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.users.metadata</code>.
