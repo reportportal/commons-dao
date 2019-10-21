@@ -162,4 +162,6 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE type = :integrationTypeId", nativeQuery = true)
 	void updateEnabledStateByIntegrationTypeId(@Param("enabled") boolean enabled, @Param("integrationTypeId") Long integrationTypeId);
+
+	Optional<Integration> findByNameAndTypeId(String name, Long integrationTypeId);
 }
