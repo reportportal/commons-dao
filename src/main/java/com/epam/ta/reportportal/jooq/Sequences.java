@@ -154,11 +154,6 @@ public class Sequences {
     public static final Sequence<Long> PROJECT_ID_SEQ = new SequenceImpl<Long>("project_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.saml_provider_details_id_seq</code>
-     */
-    public static final Sequence<Long> SAML_PROVIDER_DETAILS_ID_SEQ = new SequenceImpl<Long>("saml_provider_details_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.sender_case_id_seq</code>
      */
     public static final Sequence<Long> SENDER_CASE_ID_SEQ = new SequenceImpl<Long>("sender_case_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
