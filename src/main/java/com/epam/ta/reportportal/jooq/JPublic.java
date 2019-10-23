@@ -8,11 +8,9 @@ import com.epam.ta.reportportal.jooq.tables.JAclClass;
 import com.epam.ta.reportportal.jooq.tables.JAclEntry;
 import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
 import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
@@ -31,8 +29,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
@@ -90,7 +86,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 1683404346;
+    private static final long serialVersionUID = -2101440200;
 
     /**
      * The reference instance of <code>public</code>
@@ -118,11 +114,6 @@ public class JPublic extends SchemaImpl {
     public final JAclSid ACL_SID = com.epam.ta.reportportal.jooq.tables.JAclSid.ACL_SID;
 
     /**
-     * The table <code>public.active_directory_config</code>.
-     */
-    public final JActiveDirectoryConfig ACTIVE_DIRECTORY_CONFIG = com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
-
-    /**
      * The table <code>public.activity</code>.
      */
     public final JActivity ACTIVITY = com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -136,11 +127,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.attribute</code>.
      */
     public final JAttribute ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
-
-    /**
-     * The table <code>public.auth_config</code>.
-     */
-    public final JAuthConfig AUTH_CONFIG = com.epam.ta.reportportal.jooq.tables.JAuthConfig.AUTH_CONFIG;
 
     /**
      * The table <code>public.content_field</code>.
@@ -231,16 +217,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.launch_number</code>.
      */
     public final JLaunchNumber LAUNCH_NUMBER = com.epam.ta.reportportal.jooq.tables.JLaunchNumber.LAUNCH_NUMBER;
-
-    /**
-     * The table <code>public.ldap_config</code>.
-     */
-    public final JLdapConfig LDAP_CONFIG = com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
-
-    /**
-     * The table <code>public.ldap_synchronization_attributes</code>.
-     */
-    public final JLdapSynchronizationAttributes LDAP_SYNCHRONIZATION_ATTRIBUTES = com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
 
     /**
      * The table <code>public.log</code>.
@@ -440,7 +416,6 @@ public class JPublic extends SchemaImpl {
             Sequences.LAUNCH_ATTRIBUTE_RULES_ID_SEQ,
             Sequences.LAUNCH_ID_SEQ,
             Sequences.LAUNCH_NUMBER_ID_SEQ,
-            Sequences.LDAP_SYNCHRONIZATION_ATTRIBUTES_ID_SEQ,
             Sequences.LOG_ID_SEQ,
             Sequences.OAUTH_ACCESS_TOKEN_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
@@ -474,11 +449,9 @@ public class JPublic extends SchemaImpl {
             JAclEntry.ACL_ENTRY,
             JAclObjectIdentity.ACL_OBJECT_IDENTITY,
             JAclSid.ACL_SID,
-            JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG,
             JActivity.ACTIVITY,
             JAttachment.ATTACHMENT,
             JAttribute.ATTRIBUTE,
-            JAuthConfig.AUTH_CONFIG,
             JContentField.CONTENT_FIELD,
             JDashboard.DASHBOARD,
             JDashboardWidget.DASHBOARD_WIDGET,
@@ -497,8 +470,6 @@ public class JPublic extends SchemaImpl {
             JLaunchAttributeRules.LAUNCH_ATTRIBUTE_RULES,
             JLaunchNames.LAUNCH_NAMES,
             JLaunchNumber.LAUNCH_NUMBER,
-            JLdapConfig.LDAP_CONFIG,
-            JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES,
             JLog.LOG,
             JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
