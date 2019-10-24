@@ -165,9 +165,9 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 
 	Optional<Integration> findByNameAndTypeId(String name, Long integrationTypeId);
 
-	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type FROM integration i JOIN integration_type it ON i.type = it.id WHERE i.name = :name AND it.name = :typeName AND it.group_type = 'AUTH'::INTEGRATION_GROUP_ENUM", nativeQuery = true)
+	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type FROM integration i JOIN integration_type it ON i.type = it.id WHERE i.name = :name AND it.name = :typeName AND it.group_type = cast('AUTH' AS INTEGRATION_GROUP_ENUM)", nativeQuery = true)
 	Optional<Integration> findAuthByNameAndTypeName(@Param("name") String name, @Param("typeName") String typeName);
 
-	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type FROM integration i JOIN integration_type it ON i.type = it.id WHERE i.name = :name AND it.name = :name AND it.group_type = 'AUTH'::INTEGRATION_GROUP_ENUM", nativeQuery = true)
+	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type FROM integration i JOIN integration_type it ON i.type = it.id WHERE i.name = :name AND it.name = :name AND it.group_type = cast('AUTH' AS INTEGRATION_GROUP_ENUM)", nativeQuery = true)
 	Optional<Integration> findExclusiveAuth(@Param("name") String name);
 }
