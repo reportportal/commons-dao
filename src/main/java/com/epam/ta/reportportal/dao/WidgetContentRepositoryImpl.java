@@ -864,6 +864,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
 				.with(launchesLimit)
+				.with(launchSort)
 				.build()
 				.asTable(LAUNCHES);
 
