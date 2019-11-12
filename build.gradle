@@ -50,7 +50,7 @@ wrapper {
 dependencyManagement {
     imports {
 //        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
-        mavenBom 'com.github.reportportal:commons-bom:b24aed1'
+        mavenBom 'com.github.reportportal:commons-bom:f060f9c'
     }
 }
 
@@ -85,12 +85,13 @@ dependencies {
 
     compile 'org.lokra.seaweedfs:seaweedfs-client:0.7.3.RELEASE'
 
+    compile 'org.hibernate:hibernate-core:5.4.4.Final'
     compile 'org.postgresql:postgresql'
     compile 'org.jooq:jooq'
     jooqRuntime 'org.postgresql:postgresql'
 
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compile 'org.hibernate:hibernate-validator:6.1.0.Final'
+    compile 'org.hibernate.validator:hibernate-validator:6.1.0.Final'
 
     compile 'commons-fileupload:commons-fileupload:1.4'
     compile 'commons-validator:commons-validator:1.6'
