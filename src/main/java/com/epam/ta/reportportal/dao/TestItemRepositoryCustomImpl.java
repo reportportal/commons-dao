@@ -156,7 +156,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 								.from(TEST_ITEM)
 								.join(ITEMS)
 								.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-								.groupBy(outerItemTable.TEST_CASE_ID))))
+								.groupBy(TEST_ITEM.TEST_CASE_ID))))
 				.groupBy(outerItemTable.TEST_CASE_ID);
 	}
 
