@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable);
+
+	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth);
 
 	/**
 	 * Selects all descendants of TestItem with provided id.

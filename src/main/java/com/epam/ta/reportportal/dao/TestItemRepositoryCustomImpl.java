@@ -28,10 +28,12 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
@@ -50,8 +52,7 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEMS;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -62,12 +63,17 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.jooq.impl.DSL.lateral;
+import static org.jooq.impl.DSL.select;
 
 /**
  * @author Pavel Bortnik
  */
 @Repository
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
+
+	private static final String OUTER_ITEM_TABLE = "outerItemTable";
+	private static final String INNER_ITEM_TABLE = "innerItemTable";
 
 	private DSLContext dsl;
 
@@ -96,12 +102,58 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		fetchRetries(items);
 
-		return PageableExecutionUtils.getPage(items, testItemPageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
-				.addJointToStart(launchesTable,
-						JoinType.JOIN,
-						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
-				)
-				.build()));
+		return PageableExecutionUtils.getPage(items,
+				testItemPageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
+						.addJointToStart(launchesTable,
+								JoinType.JOIN,
+								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+						)
+						.build())
+		);
+	}
+
+	@Override
+	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth) {
+
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter.getTarget()).with(pageable.getSort()).build();
+		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
+		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID).orderBy(outerItemTable.START_TIME.desc()).as(HISTORY);
+
+		List<TestItemHistory> result = buildHistoryQuery(filteringQuery, outerItemTable, historyField, projectId, historyDepth).limit(
+				pageable.getPageSize())
+				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
+				.fetch()
+				.stream()
+				.map(record -> new TestItemHistory(record.get(outerItemTable.TEST_CASE_ID), Arrays.asList(record.get(historyField))))
+				.collect(toList());
+
+		return PageableExecutionUtils.getPage(result,
+				pageable,
+				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery, outerItemTable, historyField, projectId, historyDepth))
+		);
+	}
+
+	private SelectHavingStep<Record2<Integer, Long[]>> buildHistoryQuery(SelectQuery<? extends Record> filteringQuery,
+			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth) {
+
+		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
+		JLaunch launch = LAUNCH.as(LAUNCHES);
+
+		return dsl.with(ITEMS)
+				.as(filteringQuery)
+				.select(outerItemTable.TEST_CASE_ID, historyField)
+				.from(outerItemTable)
+				.join(ITEMS)
+				.on(outerItemTable.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+				.join(lateral(select(innerItemTable.ITEM_ID).from(innerItemTable)
+						.join(launch)
+						.on(innerItemTable.LAUNCH_ID.eq(launch.ID))
+						.where(launch.PROJECT_ID.eq(projectId).and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID)))
+						.orderBy(innerItemTable.START_TIME.desc())
+						.limit(historyDepth)).as(INNER_ITEM_TABLE))
+				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
+				.groupBy(outerItemTable.TEST_CASE_ID);
 	}
 
 	@Override
