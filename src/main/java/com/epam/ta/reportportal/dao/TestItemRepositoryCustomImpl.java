@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.jooq.*;
@@ -138,21 +137,26 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth) {
 
 		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
-		JLaunch launch = LAUNCH.as(LAUNCHES);
 
-		return dsl.with(ITEMS)
-				.as(filteringQuery)
-				.select(outerItemTable.TEST_CASE_ID, historyField)
+		return dsl.select(outerItemTable.TEST_CASE_ID, historyField)
 				.from(outerItemTable)
-				.join(ITEMS)
-				.on(outerItemTable.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+				.join(LAUNCH)
+				.on(outerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
 				.join(lateral(select(innerItemTable.ITEM_ID).from(innerItemTable)
-						.join(launch)
-						.on(innerItemTable.LAUNCH_ID.eq(launch.ID))
-						.where(launch.PROJECT_ID.eq(projectId).and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID)))
+						.join(LAUNCH)
+						.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
+						.where(LAUNCH.PROJECT_ID.eq(projectId).and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID)))
 						.orderBy(innerItemTable.START_TIME.desc())
 						.limit(historyDepth)).as(INNER_ITEM_TABLE))
 				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
+				.where(LAUNCH.PROJECT_ID.eq(projectId)
+						.and(outerItemTable.TEST_CASE_ID.in(DSL.with(ITEMS)
+								.as(filteringQuery)
+								.select(TEST_ITEM.TEST_CASE_ID)
+								.from(TEST_ITEM)
+								.join(ITEMS)
+								.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+								.groupBy(outerItemTable.TEST_CASE_ID))))
 				.groupBy(outerItemTable.TEST_CASE_ID);
 	}
 
