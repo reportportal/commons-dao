@@ -116,7 +116,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth) {
 
-		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter.getTarget()).with(pageable.getSort()).build();
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
 		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID).orderBy(outerItemTable.START_TIME.desc()).as(HISTORY);
 
