@@ -39,11 +39,13 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 	@Autowired
 	private AttachmentDataStoreService attachmentDataStoreService;
 
+	private static Random random = new Random();
+
 	@Test
 	void saveLoadAndDeleteTest() throws IOException {
 		InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-		String fileId = attachmentDataStoreService.save(new Random().nextLong() + "meh.jpg", inputStream);
+		String fileId = attachmentDataStoreService.save(random.nextLong() + "meh.jpg", inputStream);
 
 		Optional<InputStream> loadedData = attachmentDataStoreService.load(fileId);
 
@@ -61,7 +63,7 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 	void saveLoadAndDeleteThumbnailTest() throws IOException {
 		InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-		String thumbnailId = attachmentDataStoreService.saveThumbnail(new Random().nextLong() + "thumbnail.jpg", inputStream);
+		String thumbnailId = attachmentDataStoreService.saveThumbnail(random.nextLong() + "thumbnail.jpg", inputStream);
 
 		Optional<InputStream> loadedData = attachmentDataStoreService.load(thumbnailId);
 
