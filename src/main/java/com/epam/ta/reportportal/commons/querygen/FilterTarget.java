@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -48,7 +47,6 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
@@ -506,7 +504,8 @@ public enum FilterTarget {
 					.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(LogCriteriaConstant.CRITERIA_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get()
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get()
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
