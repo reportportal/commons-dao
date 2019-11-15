@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_ISSUE_TYPE = "issueType";
 	public static final String CRITERIA_ISSUE_GROUP_ID = "issueGroupId";
 	public static final String CRITERIA_UNIQUE_ID = "uniqueId";
+	public static final String CRITERIA_TEST_CASE_ID = "testCaseId";
 	public static final String CRITERIA_PARENT_ID = "parentId";
 	public static final String CRITERIA_RETRY_PARENT_ID = "retryParentId";
 	public static final String CRITERIA_DURATION = "duration";

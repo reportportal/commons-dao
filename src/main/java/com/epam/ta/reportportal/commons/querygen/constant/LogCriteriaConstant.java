@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 EPAM Systems
+ * Copyright 2019 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ public final class LogCriteriaConstant {
 	}
 
 	public static final String CRITERIA_TEST_ITEM_ID = "item";
-	public static final String CRITERIA_LAUNCH_ID = "launch";
+	public static final String CRITERIA_LOG_LAUNCH_ID = "launch";
+	public static final String CRITERIA_ITEM_LAUNCH_ID = "launchId";
 	public static final String CRITERIA_LOG_MESSAGE = "message";
 	public static final String CRITERIA_LOG_LEVEL = "level";
 	public static final String CRITERIA_LOG_ID = "logId";
