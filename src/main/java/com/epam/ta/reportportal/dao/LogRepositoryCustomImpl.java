@@ -124,12 +124,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Long> findIdsByTestItemIds(List<Long> itemIds) {
-		return dsl.select().from(LOG).where(LOG.ITEM_ID.in(itemIds)).fetch(LOG.ID, Long.class);
+		return dsl.select(LOG.ID).from(LOG).where(LOG.ITEM_ID.in(itemIds)).fetch(LOG.ID, Long.class);
 	}
 
 	@Override
 	public List<Long> findItemLogIdsByLaunchId(Long launchId) {
-		return dsl.select()
+		return dsl.select(LOG.ID)
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
 				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
@@ -141,7 +141,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds) {
-		return dsl.select()
+		return dsl.select(LOG.ID)
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
 				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
@@ -247,7 +247,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level) {
-		return dsl.select().from(LOG).where(LOG.ITEM_ID.eq(itemId)).and(LOG.LOG_LEVEL.ge(level)).fetch(LOG.LOG_MESSAGE);
+		return dsl.select(LOG.LOG_MESSAGE).from(LOG).where(LOG.ITEM_ID.eq(itemId)).and(LOG.LOG_LEVEL.ge(level)).fetch(LOG.LOG_MESSAGE);
 	}
 
 	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
