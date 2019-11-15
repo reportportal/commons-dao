@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  */
 class MinioDataStoreTest {
 
-	public static final String FILE_PATH = "someFile";
+	private static final String FILE_PATH = "someFile";
 
 	private final MinioClient minioClient = mock(MinioClient.class);
 	private final InputStream inputStream = mock(InputStream.class);

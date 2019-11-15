@@ -31,6 +31,8 @@ apply from: 'jooq.gradle'
 apply from: 'build-quality.gradle'
 apply from: 'jacoco.gradle'
 
+project.description = 'EPAM Report portal. Common DAO Layer'
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -38,7 +40,6 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-project.description = 'EPAM Report portal. Common DAO Layer'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
