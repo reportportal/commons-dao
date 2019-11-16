@@ -140,6 +140,28 @@ public class Activity implements Serializable {
 		this.objectId = objectId;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Activity activity = (Activity) o;
+		return Objects.equals(id, activity.id) && Objects.equals(userId, activity.userId) && Objects.equals(username, activity.username)
+				&& Objects.equals(projectId, activity.projectId) && Objects.equals(activityEntityType, activity.activityEntityType)
+				&& Objects.equals(action, activity.action) && Objects.equals(details, activity.details) && Objects.equals(
+				createdAt,
+				activity.createdAt
+		) && Objects.equals(objectId, activity.objectId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, userId, username, projectId, activityEntityType, action, details, createdAt, objectId);
+	}
+
 	public enum ActivityEntityType {
 		LAUNCH("launch"),
 		ITEM("item"),
@@ -163,35 +185,13 @@ public class Activity implements Serializable {
 			this.value = value;
 		}
 
-		public String getValue() {
-			return value;
-		}
-
 		public static Optional<ActivityEntityType> fromString(String string) {
 			return Optional.ofNullable(string)
 					.flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equalsIgnoreCase(str)).findAny());
 		}
-	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
+		public String getValue() {
+			return value;
 		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Activity activity = (Activity) o;
-		return Objects.equals(id, activity.id) && Objects.equals(userId, activity.userId) && Objects.equals(username, activity.username)
-				&& Objects.equals(projectId, activity.projectId) && activityEntityType == activity.activityEntityType && Objects.equals(action,
-				activity.action
-		) && Objects.equals(details, activity.details) && Objects.equals(createdAt, activity.createdAt) && Objects.equals(objectId,
-				activity.objectId
-		);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, userId, username, projectId, activityEntityType, action, details, createdAt, objectId);
 	}
 }

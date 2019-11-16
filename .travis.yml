@@ -4,7 +4,7 @@ dist: trusty
 script: ./gradlew build --full-stacktrace
 
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 
 notifications:
   slack: reportportal:fl6xWHVQp1jvsMmCJxYW9YKP

@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public abstract class AttributeConverterTest {
 
-	protected AttributeConverter converter;
-	protected Map<Enum, List<String>> allowedValues;
+	AttributeConverter converter;
+	Map<Enum, List<String>> allowedValues;
 
 	@Test
 	void convertToDatabaseColumn() {

@@ -23,6 +23,7 @@ plugins {
     id 'jacoco'
     id 'java'
     id "org.owasp.dependencycheck" version "5.2.0"
+    id "com.github.spotbugs" version "2.0.1" apply false
 }
 
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
@@ -40,11 +41,11 @@ repositories {
 }
 
 project.description = 'EPAM Report portal. Common DAO Layer'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 wrapper {
-    gradleVersion = '5.4.1'
+    gradleVersion = '6.0'
 }
 
 dependencyManagement {
@@ -80,7 +81,7 @@ dependencies {
     }
 
 
-    compile 'io.minio:minio:6.0.10'
+    compile 'io.minio:minio:6.0.11'
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
@@ -130,7 +131,7 @@ dependencies {
 
 ext.src = [
         'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'            : 'V002__default_data.sql',
+        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'     : 'V002__default_data.sql',
 ]
 
 task copyTestDatabaseScripts {
@@ -168,4 +169,4 @@ test {
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
-compileJava.dependsOn.remove('generateSampleJooqSchemaSource')
+generateSampleJooqSchemaSource.enabled = false
