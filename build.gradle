@@ -16,20 +16,20 @@
 
 plugins {
     id "io.spring.dependency-management" version "1.0.8.RELEASE"
-    id 'net.researchgate.release' version '2.8.0'
     id "de.undercouch.download" version "3.4.3"
     id 'nu.studer.jooq' version '3.0.3'
-    id "com.jfrog.bintray" version "1.8.4"
     id 'jacoco'
     id 'java'
     id "org.owasp.dependencycheck" version "5.2.0"
+    id "com.jfrog.bintray" version "1.8.4"
+    id "net.researchgate.release" version "2.8.1"
 }
 
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/copy-database-scripts.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/build-quality.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/jacoco.gradle'
 apply from: 'jooq.gradle'
-apply from: 'build-quality.gradle'
-apply from: 'jacoco.gradle'
 
 project.description = 'EPAM Report portal. Common DAO Layer'
 
@@ -67,6 +67,17 @@ project.ext {
     testScriptsSrc = [
             'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
             'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'     : 'V002__default_data.sql',
+    ]
+    excludeTests = [
+            'com/epam/ta/reportportal/jooq/**',
+            'com/epam/ta/reportportal/config/**',
+            'com/epam/ta/reportportal/commons/accessible',
+            'com/epam/ta/reportportal/commons/querygen/constant',
+            'com/epam/ta/reportportal/exception',
+            'com/epam/ta/reportportal/entity/oauth',
+            'com/epam/ta/reportportal/entity/bts',
+            'com/epam/ta/reportportal/entity/ldap',
+            'com/epam/ta/reportportal/entity/widget/content/**'
     ]
 }
 
@@ -110,12 +121,7 @@ tasks.withType(Javadoc).all { enabled = false }
 test {
     useJUnitPlatform()
     testLogging {
-        events "failed"
-        exceptionFormat "short"
+        events = ["failed"]
+        exceptionFormat = "short"
     }
 }
-
-checkCommitNeeded.dependsOn removeScripts
-test.dependsOn copyTestDatabaseScripts
-build.dependsOn jacocoTestReport
-compileJava.dependsOn.remove('generateSampleJooqSchemaSource')
