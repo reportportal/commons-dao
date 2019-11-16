@@ -35,6 +35,7 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +63,7 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static org.jooq.impl.DSL.lateral;
-import static org.jooq.impl.DSL.select;
+import static org.jooq.impl.DSL.*;
 
 /**
  * @author Pavel Bortnik
@@ -71,8 +71,9 @@ import static org.jooq.impl.DSL.select;
 @Repository
 public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
-	private static final String OUTER_ITEM_TABLE = "outerItemTable";
-	private static final String INNER_ITEM_TABLE = "innerItemTable";
+	private static final String OUTER_ITEM_TABLE = "outer_item_table";
+	private static final String INNER_ITEM_TABLE = "inner_item_table";
+	private static final String TEST_CASE_ID_TABLE = "test_case_id_table";
 
 	private DSLContext dsl;
 
@@ -116,11 +117,40 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth) {
 
 		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
+		return fetchHistory(filteringQuery, projectId, historyDepth, pageable);
+	}
+
+	@Override
+	public Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter,
+			Pageable launchPageable, Pageable testItemPageable, Long projectId, int historyDepth) {
+		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter,
+				launchPageable.getSort(),
+				isLatest
+		).with(launchPageable).build().asTable(LAUNCHES);
+
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(testItemFilter)
+				.with(testItemPageable.getSort())
+				.addJointToStart(launchesTable,
+						JoinType.JOIN,
+						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+				)
+				.build();
+		return fetchHistory(filteringQuery, projectId, historyDepth, testItemPageable);
+
+	}
+
+	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Long projectId, int historyDepth,
+			Pageable pageable) {
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
 		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID).orderBy(outerItemTable.START_TIME.desc()).as(HISTORY);
 
-		List<TestItemHistory> result = buildHistoryQuery(filteringQuery, outerItemTable, historyField, projectId, historyDepth).limit(
-				pageable.getPageSize())
+		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
+				outerItemTable,
+				historyField,
+				projectId,
+				historyDepth,
+				Pair.of(Boolean.TRUE, pageable.getPageSize())
+		).limit(pageable.getPageSize())
 				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 				.fetch()
 				.stream()
@@ -129,14 +159,42 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		return PageableExecutionUtils.getPage(result,
 				pageable,
-				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery, outerItemTable, historyField, projectId, historyDepth))
+				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery,
+						outerItemTable,
+						historyField,
+						projectId,
+						1,
+						Pair.of(Boolean.FALSE, pageable.getPageSize())
+				))
 		);
 	}
 
 	private SelectHavingStep<Record2<Integer, Long[]>> buildHistoryQuery(SelectQuery<? extends Record> filteringQuery,
-			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth) {
+			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth, Pair<Boolean, Integer> limitConfig) {
 
 		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
+
+		Field<Timestamp> maxStartTimeField = max(TEST_ITEM.START_TIME).as(START_TIME);
+		SelectHavingStep<Record2<Integer, Timestamp>> testCaseIdQuery = with(ITEMS).as(filteringQuery)
+				.select(TEST_ITEM.TEST_CASE_ID, maxStartTimeField)
+				.from(TEST_ITEM)
+				.join(ITEMS)
+				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+				.groupBy(TEST_ITEM.TEST_CASE_ID);
+
+		SelectHavingStep<Record1<Integer>> itemsQuery = with(ITEMS).as(filteringQuery)
+				.select(TEST_ITEM.TEST_CASE_ID)
+				.from(TEST_ITEM)
+				.join(ITEMS)
+				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+				.groupBy(TEST_ITEM.TEST_CASE_ID);
+
+		if (limitConfig.getKey()) {
+			testCaseIdQuery.limit(limitConfig.getValue());
+			itemsQuery.limit(limitConfig.getValue());
+		}
+
+		Table<Record2<Integer, Timestamp>> testCaseIdTable = testCaseIdQuery.asTable(TEST_CASE_ID_TABLE);
 
 		return dsl.select(outerItemTable.TEST_CASE_ID, historyField)
 				.from(outerItemTable)
@@ -145,18 +203,15 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(lateral(select(innerItemTable.ITEM_ID).from(innerItemTable)
 						.join(LAUNCH)
 						.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
-						.where(LAUNCH.PROJECT_ID.eq(projectId).and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID)))
+						.join(testCaseIdTable)
+						.on(innerItemTable.TEST_CASE_ID.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_ID)))
+						.where(LAUNCH.PROJECT_ID.eq(projectId)
+								.and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID))
+								.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
 						.orderBy(innerItemTable.START_TIME.desc())
 						.limit(historyDepth)).as(INNER_ITEM_TABLE))
 				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
-				.where(LAUNCH.PROJECT_ID.eq(projectId)
-						.and(outerItemTable.TEST_CASE_ID.in(DSL.with(ITEMS)
-								.as(filteringQuery)
-								.select(TEST_ITEM.TEST_CASE_ID)
-								.from(TEST_ITEM)
-								.join(ITEMS)
-								.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-								.groupBy(TEST_ITEM.TEST_CASE_ID))))
+				.where(LAUNCH.PROJECT_ID.eq(projectId).and(outerItemTable.TEST_CASE_ID.in(itemsQuery)))
 				.groupBy(outerItemTable.TEST_CASE_ID);
 	}
 

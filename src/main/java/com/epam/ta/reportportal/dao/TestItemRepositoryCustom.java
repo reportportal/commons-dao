@@ -56,6 +56,9 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
 	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth);
 
+	Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable, Long projectId, int historyDepth);
+
 	/**
 	 * Selects all descendants of TestItem with provided id.
 	 *
