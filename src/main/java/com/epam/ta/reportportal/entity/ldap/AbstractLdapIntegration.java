@@ -23,6 +23,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 /**
  * General properties for both LDAP and AD authentication types
@@ -32,7 +33,7 @@ import javax.validation.constraints.Pattern;
 
 @MappedSuperclass
 @PrimaryKeyJoinColumn(name = "id")
-public class AbstractLdapIntegration extends Integration {
+public class AbstractLdapIntegration extends Integration implements Serializable {
 
 	@Pattern(regexp = "^ldaps?://.*")
 	@NotEmpty(groups = { IfEnabled.class })

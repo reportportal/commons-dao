@@ -139,7 +139,7 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	void findByFilterWithSortingAndLimit() {
 		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
-				new Sort(Sort.Direction.DESC, CRITERIA_CREATION_DATE),
+				Sort.by(Sort.Direction.DESC, CRITERIA_CREATION_DATE),
 				2
 		);
 
@@ -183,7 +183,9 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	void findByEntityType() {
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
-				Condition.EQUALS, false, "launch",
+				Condition.EQUALS,
+				false,
+				"launch",
 				CRITERIA_ENTITY
 		));
 		assertNotNull(activities);
