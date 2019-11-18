@@ -23,11 +23,12 @@ plugins {
     id "org.owasp.dependencycheck" version "5.2.0"
     id "com.jfrog.bintray" version "1.8.4"
     id "net.researchgate.release" version "2.8.1"
+    id "com.github.spotbugs" version "2.0.1"
 }
 
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/copy-database-scripts.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/build-quality.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/v5.1/build-quality.gradle'
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/jacoco.gradle'
 apply from: 'jooq.gradle'
 
@@ -40,11 +41,11 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 wrapper {
-    gradleVersion = '5.4.1'
+    gradleVersion = '6.0'
 }
 
 dependencyManagement {
@@ -85,11 +86,11 @@ dependencies {
     if (releaseMode) {
         compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
         compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-6'
-        compile 'com.epam.reportportal:commons-model:5.0.0-RC-1'
+        compile 'com.epam.reportportal:commons-model:4e48d28'
     } else {
-        compile('com.github.reportportal:commons:5.0.0-BETA-2')
-        compile 'com.github.reportportal:commons-rules:5.0.0-BETA-6'
-        compile 'com.github.reportportal:commons-model:5.0.0-RC-1'
+        compile 'com.github.reportportal:commons:89ba5a7'
+        compile 'com.github.reportportal:commons-rules:3c46d7c'
+        compile 'com.github.reportportal:commons-model:9213a59'
     }
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -106,7 +107,7 @@ dependencies {
     compile 'commons-fileupload:commons-fileupload:1.4'
     compile 'commons-validator:commons-validator:1.6'
     compile 'org.jasypt:jasypt:1.9.2'
-    compile 'org.apache.commons:commons-lang3:3.9'
+//    compile 'org.apache.commons:commons-lang3:3.9'
 
     compile 'io.zonky.test:embedded-postgres:1.2.1'
     compile 'org.flywaydb:flyway-core:5.2.4'
