@@ -149,9 +149,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				historyField,
 				projectId,
 				historyDepth,
-				Pair.of(Boolean.TRUE, pageable.getPageSize())
+				Pair.of(Boolean.TRUE, pageable)
 		).limit(pageable.getPageSize())
-				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 				.fetch()
 				.stream()
 				.map(record -> new TestItemHistory(record.get(outerItemTable.TEST_CASE_ID), Arrays.asList(record.get(historyField))))
@@ -164,13 +163,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						historyField,
 						projectId,
 						1,
-						Pair.of(Boolean.FALSE, pageable.getPageSize())
+						Pair.of(Boolean.FALSE, pageable)
 				))
 		);
 	}
 
 	private SelectHavingStep<Record2<Integer, Long[]>> buildHistoryQuery(SelectQuery<? extends Record> filteringQuery,
-			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth, Pair<Boolean, Integer> limitConfig) {
+			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth,
+			Pair<Boolean, Pageable> pageableConfig) {
 
 		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
 
@@ -189,9 +189,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
 				.groupBy(TEST_ITEM.TEST_CASE_ID);
 
-		if (limitConfig.getKey()) {
-			testCaseIdQuery.limit(limitConfig.getValue());
-			itemsQuery.limit(limitConfig.getValue());
+		if (pageableConfig.getKey()) {
+			int limit = pageableConfig.getValue().getPageSize();
+			int offset = QueryBuilder.retrieveOffsetAndApplyBoundaries(pageableConfig.getValue());
+			testCaseIdQuery.limit(limit);
+			testCaseIdQuery.offset(offset);
+			itemsQuery.limit(limit);
+			itemsQuery.offset(offset);
 		}
 
 		Table<Record2<Integer, Timestamp>> testCaseIdTable = testCaseIdQuery.asTable(TEST_CASE_ID_TABLE);
