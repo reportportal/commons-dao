@@ -16,7 +16,7 @@
 
 plugins {
     id "io.spring.dependency-management" version "1.0.8.RELEASE"
-    id "de.undercouch.download" version "3.4.3"
+    id "de.undercouch.download" version "4.0.1"
     id 'nu.studer.jooq' version '3.0.3'
     id 'jacoco'
     id 'java'
@@ -25,10 +25,10 @@ plugins {
     id "net.researchgate.release" version "2.8.1"
 }
 
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/release-commons.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/copy-database-scripts.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/build-quality.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-bom/jacoco.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/copy-database-scripts.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/build-quality.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/jacoco.gradle'
 apply from: 'jooq.gradle'
 
 project.description = 'EPAM Report portal. Common DAO Layer'
@@ -99,7 +99,6 @@ dependencies {
     jooqRuntime 'org.postgresql:postgresql'
 
     compile 'io.minio:minio:6.0.10'
-    compile 'org.lokra.seaweedfs:seaweedfs-client:0.7.3.RELEASE'
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator:6.1.0.Final'
