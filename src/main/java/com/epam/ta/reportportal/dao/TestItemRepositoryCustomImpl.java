@@ -319,7 +319,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, PathName> selectPathNames(Collection<Long> ids) {
+	public Map<Long, PathName> selectPathNames(Collection<Long> ids, Long projectId) {
 
 		JTestItem parentItem = TEST_ITEM.as("parent");
 		JTestItem childItem = TEST_ITEM.as("child");
@@ -331,7 +331,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.join(LAUNCH)
 				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(childItem.ITEM_ID.in(ids))
-				.orderBy(childItem.ITEM_ID, parentItem.ITEM_ID)
+				.and(LAUNCH.PROJECT_ID.eq(projectId))
+				.orderBy(childItem.ITEM_ID, parentItem.START_TIME.asc())
 				.fetch());
 	}
 
