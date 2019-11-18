@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.ldap.validation.IfEnabled;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * Attributes to retrieve from LDAP tree
@@ -28,7 +29,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "ldap_synchronization_attributes")
-public class SynchronizationAttributes {
+public class SynchronizationAttributes implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

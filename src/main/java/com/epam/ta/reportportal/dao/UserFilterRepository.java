@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public interface UserFilterRepository extends ReportPortalRepository<UserFilter,
 	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
 	 * @return The {@link List} of the {@link UserFilter}
 	 */
-	List<UserFilter> findAllByIdInAndProjectId(Iterable<Long> ids, Long projectId);
+	List<UserFilter> findAllByIdInAndProjectId(Collection<Long> ids, Long projectId);
 
 	/**
 	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
