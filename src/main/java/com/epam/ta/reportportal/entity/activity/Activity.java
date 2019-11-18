@@ -183,11 +183,11 @@ public class Activity implements Serializable {
 		}
 		Activity activity = (Activity) o;
 		return Objects.equals(id, activity.id) && Objects.equals(userId, activity.userId) && Objects.equals(username, activity.username)
-				&& Objects.equals(projectId, activity.projectId) && activityEntityType == activity.activityEntityType && Objects.equals(action,
-				activity.action
-		) && Objects.equals(details, activity.details) && Objects.equals(createdAt, activity.createdAt) && Objects.equals(objectId,
-				activity.objectId
-		);
+				&& Objects.equals(projectId, activity.projectId) && Objects.equals(activityEntityType, activity.activityEntityType)
+				&& Objects.equals(action, activity.action) && Objects.equals(details, activity.details) && Objects.equals(
+				createdAt,
+				activity.createdAt
+		) && Objects.equals(objectId, activity.objectId);
 	}
 
 	@Override

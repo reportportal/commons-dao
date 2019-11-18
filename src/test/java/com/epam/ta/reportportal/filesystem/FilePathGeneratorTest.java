@@ -30,18 +30,13 @@ import static org.mockito.Mockito.when;
 
 class FilePathGeneratorTest {
 
-	private FilePathGenerator filePathGenerator;
-
 	private DateTimeProvider dateTimeProvider;
 
 	private static final String SEPARATOR = "\\" + File.separator;
 
 	@BeforeEach
 	void setUp() throws Exception {
-
 		dateTimeProvider = Mockito.mock(DateTimeProvider.class);
-
-		filePathGenerator = new FilePathGenerator(dateTimeProvider);
 	}
 
 	@Test

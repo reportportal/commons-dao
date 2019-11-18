@@ -161,7 +161,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findAllLatestLaunchesTest() {
 		Page<Launch> allLatestByFilter = launchRepository.findAllLatestByFilter(buildDefaultFilter(1L),
-				PageRequest.of(0, 2, new Sort(Sort.Direction.ASC, "number"))
+				PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "number"))
 		);
 		assertNotNull(allLatestByFilter);
 		assertEquals(2, allLatestByFilter.getNumberOfElements());
