@@ -78,7 +78,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 			@Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
-			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
+			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time DESC LIMIT :historyDepth", nativeQuery = true)
 	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
 			@Param("launchName") String launchName, @Param("projectId") Long projectId);
 
