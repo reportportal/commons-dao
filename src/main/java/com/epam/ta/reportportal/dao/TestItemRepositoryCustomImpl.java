@@ -115,9 +115,15 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth) {
-
 		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
-		return fetchHistory(filteringQuery, projectId, historyDepth, pageable);
+		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId), historyDepth, pageable);
+	}
+
+	@Override
+	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, String launchName,
+			int historyDepth) {
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
+		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)), historyDepth, pageable);
 	}
 
 	@Override
@@ -135,11 +141,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
 				)
 				.build();
-		return fetchHistory(filteringQuery, projectId, historyDepth, testItemPageable);
+		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId), historyDepth, testItemPageable);
 
 	}
 
-	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Long projectId, int historyDepth,
+	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Condition baselineCondition, int historyDepth,
 			Pageable pageable) {
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
 		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID).orderBy(outerItemTable.START_TIME.desc()).as(HISTORY);
@@ -147,7 +153,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
 				outerItemTable,
 				historyField,
-				projectId,
+				baselineCondition,
 				historyDepth,
 				Pair.of(Boolean.TRUE, pageable)
 		).limit(pageable.getPageSize())
@@ -161,7 +167,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery,
 						outerItemTable,
 						historyField,
-						projectId,
+						baselineCondition,
 						1,
 						Pair.of(Boolean.FALSE, pageable)
 				))
@@ -169,7 +175,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	private SelectHavingStep<Record2<Integer, Long[]>> buildHistoryQuery(SelectQuery<? extends Record> filteringQuery,
-			JTestItem outerItemTable, Field<Long[]> historyField, Long projectId, int historyDepth,
+			JTestItem outerItemTable, Field<Long[]> historyField, Condition baselineCondition, int historyDepth,
 			Pair<Boolean, Pageable> pageableConfig) {
 
 		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
@@ -209,13 +215,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
 						.join(testCaseIdTable)
 						.on(innerItemTable.TEST_CASE_ID.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_ID)))
-						.where(LAUNCH.PROJECT_ID.eq(projectId)
-								.and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID))
+						.where(baselineCondition.and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID))
 								.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
 						.orderBy(innerItemTable.START_TIME.desc())
 						.limit(historyDepth)).as(INNER_ITEM_TABLE))
 				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
-				.where(LAUNCH.PROJECT_ID.eq(projectId).and(outerItemTable.TEST_CASE_ID.in(itemsQuery)))
+				.where(baselineCondition.and(outerItemTable.TEST_CASE_ID.in(itemsQuery)))
 				.groupBy(outerItemTable.TEST_CASE_ID);
 	}
 
