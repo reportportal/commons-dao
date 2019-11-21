@@ -503,7 +503,8 @@ public enum FilterTarget {
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get()
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_RETRY_PARENT_ID, TEST_ITEM.RETRY_OF, Long.class).get()
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
