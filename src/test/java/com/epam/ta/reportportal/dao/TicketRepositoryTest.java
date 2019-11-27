@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -68,5 +69,11 @@ class TicketRepositoryTest extends BaseTest {
 		final List<Ticket> tickets = repository.findAll();
 
 		assertEquals(2, tickets.size());
+	}
+
+	@Test
+	void findUniqueTicketsCountBefore() {
+		assertEquals(1, repository.findUniqueCountByProjectBefore(1L, LocalDateTime.now().minusDays(2)));
+		assertEquals(0, repository.findUniqueCountByProjectBefore(2L, LocalDateTime.now().minusDays(2)));
 	}
 }
