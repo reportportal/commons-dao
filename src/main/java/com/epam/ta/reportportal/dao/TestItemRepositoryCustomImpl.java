@@ -181,19 +181,21 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
 
 		Field<Timestamp> maxStartTimeField = max(TEST_ITEM.START_TIME).as(START_TIME);
-		SelectHavingStep<Record2<Integer, Timestamp>> testCaseIdQuery = with(ITEMS).as(filteringQuery)
+		SelectLimitStep<Record2<Integer, Timestamp>> testCaseIdQuery = with(ITEMS).as(filteringQuery)
 				.select(TEST_ITEM.TEST_CASE_ID, maxStartTimeField)
 				.from(TEST_ITEM)
 				.join(ITEMS)
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.groupBy(TEST_ITEM.TEST_CASE_ID);
+				.groupBy(TEST_ITEM.TEST_CASE_ID)
+				.orderBy(max(TEST_ITEM.START_TIME));
 
-		SelectHavingStep<Record1<Integer>> itemsQuery = with(ITEMS).as(filteringQuery)
+		SelectLimitStep<Record1<Integer>> itemsQuery = with(ITEMS).as(filteringQuery)
 				.select(TEST_ITEM.TEST_CASE_ID)
 				.from(TEST_ITEM)
 				.join(ITEMS)
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.groupBy(TEST_ITEM.TEST_CASE_ID);
+				.groupBy(TEST_ITEM.TEST_CASE_ID)
+				.orderBy(max(TEST_ITEM.START_TIME));
 
 		if (pageableConfig.getKey()) {
 			int limit = pageableConfig.getValue().getPageSize();
