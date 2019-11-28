@@ -35,7 +35,7 @@ public interface AttachmentBinaryDataService {
 
 	void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo);
 
-	BinaryData load(String fileId, ReportPortalUser.ProjectDetails projectDetails);
+	BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails);
 
 	void delete(String fileId);
 }
