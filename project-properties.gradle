@@ -1,0 +1,33 @@
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+project.ext {
+    releaseMode = project.hasProperty("releaseMode")
+    testScriptsSrc = [
+            'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
+            'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'     : 'V002__default_data.sql',
+    ]
+    excludeTests = [
+            'com/epam/ta/reportportal/jooq/**',
+            'com/epam/ta/reportportal/config/**',
+            'com/epam/ta/reportportal/commons/accessible',
+            'com/epam/ta/reportportal/commons/querygen/constant',
+            'com/epam/ta/reportportal/exception',
+            'com/epam/ta/reportportal/entity/oauth',
+            'com/epam/ta/reportportal/entity/bts',
+            'com/epam/ta/reportportal/entity/ldap',
+            'com/epam/ta/reportportal/entity/widget/content/**'
+    ]
+    limits = [
+            'instruction': 70,
+            'branch'     : 36,
+            'line'       : 60,
+            'complexity' : 49,
+            'method'     : 55,
+            'class'      : 87
+    ]
+}
+
+wrapper {
+    gradleVersion = '5.4.1'
+}

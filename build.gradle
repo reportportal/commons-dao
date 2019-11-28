@@ -16,22 +16,16 @@
 
 plugins {
     id "io.spring.dependency-management" version "1.0.8.RELEASE"
-    id "de.undercouch.download" version "4.0.1"
     id 'nu.studer.jooq' version '3.0.3'
-    id 'jacoco'
-    id 'java'
     id "org.owasp.dependencycheck" version "5.2.0"
-    id "com.jfrog.bintray" version "1.8.4"
-    id "net.researchgate.release" version "2.8.1"
 }
 
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/copy-database-scripts.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/build-quality.gradle'
-apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/jacoco.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-plugins/release-commons.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-plugins/copy-database-scripts.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-plugins/build-quality.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/update-plugins/jacoco.gradle'
 apply from: 'jooq.gradle'
-
-project.description = 'EPAM Report portal. Common DAO Layer'
+apply from: 'project-properties.gradle'
 
 repositories {
     mavenLocal()
@@ -40,45 +34,11 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-wrapper {
-    gradleVersion = '5.4.1'
-}
-
 dependencyManagement {
     imports {
 //        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
         mavenBom 'com.github.reportportal:commons-bom:f060f9c'
     }
-}
-
-project.ext {
-    limits = [
-            'instruction': 70,
-            'branch'     : 36,
-            'line'       : 60,
-            'complexity' : 49,
-            'method'     : 55,
-            'class'      : 87
-    ]
-    releaseMode = project.hasProperty("releaseMode")
-    testScriptsSrc = [
-            'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
-            'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'     : 'V002__default_data.sql',
-    ]
-    excludeTests = [
-            'com/epam/ta/reportportal/jooq/**',
-            'com/epam/ta/reportportal/config/**',
-            'com/epam/ta/reportportal/commons/accessible',
-            'com/epam/ta/reportportal/commons/querygen/constant',
-            'com/epam/ta/reportportal/exception',
-            'com/epam/ta/reportportal/entity/oauth',
-            'com/epam/ta/reportportal/entity/bts',
-            'com/epam/ta/reportportal/entity/ldap',
-            'com/epam/ta/reportportal/entity/widget/content/**'
-    ]
 }
 
 dependencies {
@@ -124,3 +84,8 @@ test {
         exceptionFormat = "short"
     }
 }
+
+afterReleaseBuild.dependsOn bintrayUpload
+checkCommitNeeded.dependsOn removeScripts
+test.dependsOn copyTestDatabaseScripts
+build.dependsOn jacocoTestReport
