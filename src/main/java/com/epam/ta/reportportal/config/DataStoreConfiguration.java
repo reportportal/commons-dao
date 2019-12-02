@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2019 EPAM Systems
  *
@@ -53,9 +52,9 @@ public class DataStoreConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
 	public MinioClient minioClient(@Value("${datastore.minio.endpoint}") String endpoint,
-			@Value("${datastore.minio.accessKey}") String accessKey, @Value("${datastore.minio.secretKey}") String secretKey)
-			throws InvalidPortException, InvalidEndpointException {
-		return new MinioClient(endpoint, accessKey, secretKey);
+			@Value("${datastore.minio.accessKey}") String accessKey, @Value("${datastore.minio.secretKey}") String secretKey,
+			@Value("${datastore.minio.region}") String region) throws InvalidPortException, InvalidEndpointException {
+		return new MinioClient(endpoint, accessKey, secretKey, region);
 	}
 
 	@Bean
