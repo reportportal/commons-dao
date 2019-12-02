@@ -8,11 +8,9 @@ import com.epam.ta.reportportal.jooq.tables.JAclClass;
 import com.epam.ta.reportportal.jooq.tables.JAclEntry;
 import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
 import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JAuthConfig;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
@@ -31,8 +29,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunch;
 import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
-import com.epam.ta.reportportal.jooq.tables.JLdapConfig;
-import com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
@@ -47,7 +43,6 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -104,11 +99,6 @@ public class Tables {
     public static final JAclSid ACL_SID = com.epam.ta.reportportal.jooq.tables.JAclSid.ACL_SID;
 
     /**
-     * The table <code>public.active_directory_config</code>.
-     */
-    public static final JActiveDirectoryConfig ACTIVE_DIRECTORY_CONFIG = com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
-
-    /**
      * The table <code>public.activity</code>.
      */
     public static final JActivity ACTIVITY = com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -122,11 +112,6 @@ public class Tables {
      * The table <code>public.attribute</code>.
      */
     public static final JAttribute ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
-
-    /**
-     * The table <code>public.auth_config</code>.
-     */
-    public static final JAuthConfig AUTH_CONFIG = com.epam.ta.reportportal.jooq.tables.JAuthConfig.AUTH_CONFIG;
 
     /**
      * The table <code>public.content_field</code>.
@@ -219,16 +204,6 @@ public class Tables {
     public static final JLaunchNumber LAUNCH_NUMBER = com.epam.ta.reportportal.jooq.tables.JLaunchNumber.LAUNCH_NUMBER;
 
     /**
-     * The table <code>public.ldap_config</code>.
-     */
-    public static final JLdapConfig LDAP_CONFIG = com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
-
-    /**
-     * The table <code>public.ldap_synchronization_attributes</code>.
-     */
-    public static final JLdapSynchronizationAttributes LDAP_SYNCHRONIZATION_ATTRIBUTES = com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
-
-    /**
      * The table <code>public.log</code>.
      */
     public static final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
@@ -318,11 +293,6 @@ public class Tables {
      * The table <code>public.restore_password_bid</code>.
      */
     public static final JRestorePasswordBid RESTORE_PASSWORD_BID = com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid.RESTORE_PASSWORD_BID;
-
-    /**
-     * The table <code>public.saml_provider_details</code>.
-     */
-    public static final JSamlProviderDetails SAML_PROVIDER_DETAILS = com.epam.ta.reportportal.jooq.tables.JSamlProviderDetails.SAML_PROVIDER_DETAILS;
 
     /**
      * The table <code>public.sender_case</code>.
