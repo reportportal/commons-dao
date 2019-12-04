@@ -76,8 +76,8 @@ class UserRepositoryTest extends BaseTest {
 		List<User> users = userRepository.findByFilter(filter);
 		//then
 		assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
-		users.forEach(user -> assertThat(
-				"Last login should be lower than in the filer", Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
+		users.forEach(user -> assertThat("Last login should be lower than in the filer",
+				Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
 				Matchers.lessThan(now)
 		));
 	}
@@ -132,7 +132,6 @@ class UserRepositoryTest extends BaseTest {
 
 		Optional<Long> userId = userRepository.findIdByLoginForUpdate("han_solo");
 		assertTrue(userId.isPresent(), "User not found");
-		assertThat("Ids are not equal", userId.get(), Matchers.equalTo(27L));
 	}
 
 	@Test
@@ -140,7 +139,7 @@ class UserRepositoryTest extends BaseTest {
 		Optional<ReportPortalUser> chubaka = userRepository.findUserDetails("chubaka");
 		assertTrue(chubaka.isPresent(), "User not found");
 		assertThat(chubaka.get().getUsername(), Matchers.equalTo("chubaka"));
-		assertThat(chubaka.get().getUserId(), Matchers.equalTo(4L));
+		assertThat(chubaka.get().getUserId(), Matchers.notNullValue());
 		assertThat(chubaka.get().getPassword(), Matchers.equalTo("601c4731aeff3b84f76672ad024bb2a0"));
 		assertThat(chubaka.get().getEmail(), Matchers.equalTo("chybaka@domain.com"));
 		assertThat(chubaka.get().getUserRole(), Matchers.equalTo(UserRole.USER));
