@@ -334,7 +334,7 @@ public class ResultFetchers {
 		if (!CollectionUtils.isEmpty(records)) {
 			ReportPortalUser user = new ReportPortalUser(
 					records.get(0).get(USERS.LOGIN),
-					records.get(0).get(USERS.PASSWORD),
+					Optional.ofNullable(records.get(0).get(USERS.PASSWORD)).orElse(""),
 					Collections.emptyList(),
 					records.get(0).get(USERS.ID),
 					UserRole.findByName(records.get(0).get(USERS.ROLE))
