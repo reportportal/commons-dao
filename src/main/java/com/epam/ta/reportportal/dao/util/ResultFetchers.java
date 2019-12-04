@@ -347,7 +347,7 @@ public class ResultFetchers {
 						record.get(PROJECT_USER.PROJECT_ID, Long.class),
 						record.get(PROJECT.NAME, String.class),
 						ProjectRole.forName(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
-								.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR))
+								.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, record.get(PROJECT_USER.PROJECT_ROLE, String.class)))
 				);
 				user.getProjectDetails().put(record.get(PROJECT.NAME), projectDetails);
 			});
