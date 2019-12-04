@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
@@ -28,15 +29,20 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -46,7 +52,10 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
+import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -182,7 +191,6 @@ public class ResultFetchers {
 
 		return content;
 	};
-
 
 	/**
 	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log} objects.
@@ -320,6 +328,32 @@ public class ResultFetchers {
 		List<NestedItem> nestedItems = Lists.newArrayListWithExpectedSize(result.size());
 		result.forEach(record -> nestedItems.add(new NestedItem(record.get("id", Long.class), record.get("type", String.class))));
 		return nestedItems;
+	};
+
+	public static final Function<Result<? extends Record>, ReportPortalUser> REPORTPORTAL_USER_FETCHER = records -> {
+		if (!CollectionUtils.isEmpty(records)) {
+			ReportPortalUser user = new ReportPortalUser(
+					records.get(0).get(USERS.LOGIN),
+					records.get(0).get(USERS.PASSWORD),
+					Collections.emptyList(),
+					records.get(0).get(USERS.ID),
+					UserRole.findByName(records.get(0).get(USERS.ROLE))
+							.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR)),
+					new HashMap<>(records.size()),
+					records.get(0).get(USERS.EMAIL)
+			);
+			records.forEach(record -> {
+				ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(
+						record.get(PROJECT_USER.PROJECT_ID, Long.class),
+						record.get(PROJECT.NAME, String.class),
+						ProjectRole.forName(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
+								.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, record.get(PROJECT_USER.PROJECT_ROLE, String.class)))
+				);
+				user.getProjectDetails().put(record.get(PROJECT.NAME), projectDetails);
+			});
+			return user;
+		}
+		return null;
 	};
 
 }
