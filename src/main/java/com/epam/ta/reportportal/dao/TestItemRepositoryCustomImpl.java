@@ -129,20 +129,46 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter,
 			Pageable launchPageable, Pageable testItemPageable, Long projectId, int historyDepth) {
+		SelectQuery<? extends Record> filteringQuery = buildCompositeFilterHistoryQuery(isLatest,
+				launchFilter,
+				testItemFilter,
+				launchPageable,
+				testItemPageable
+		);
+		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId), historyDepth, testItemPageable);
+
+	}
+
+	@Override
+	public Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter,
+			Pageable launchPageable, Pageable testItemPageable, Long projectId, String launchName, int historyDepth) {
+		SelectQuery<? extends Record> filteringQuery = buildCompositeFilterHistoryQuery(isLatest,
+				launchFilter,
+				testItemFilter,
+				launchPageable,
+				testItemPageable
+		);
+		return fetchHistory(filteringQuery,
+				LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)),
+				historyDepth,
+				testItemPageable
+		);
+	}
+
+	private SelectQuery<? extends Record> buildCompositeFilterHistoryQuery(boolean isLatest, Queryable launchFilter,
+			Queryable testItemFilter, Pageable launchPageable, Pageable testItemPageable) {
 		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter,
 				launchPageable.getSort(),
 				isLatest
 		).with(launchPageable).build().asTable(LAUNCHES);
 
-		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(testItemFilter)
+		return QueryBuilder.newBuilder(testItemFilter)
 				.with(testItemPageable.getSort())
 				.addJointToStart(launchesTable,
 						JoinType.JOIN,
 						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
 				)
 				.build();
-		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId), historyDepth, testItemPageable);
-
 	}
 
 	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Condition baselineCondition, int historyDepth,
