@@ -157,7 +157,8 @@ public enum FilterTarget {
 					PROJECT.ID,
 					PROJECT.CREATION_DATE,
 					PROJECT.NAME,
-					PROJECT.PROJECT_TYPE
+					PROJECT.PROJECT_TYPE,
+					PROJECT.ORGANIZATION
 			);
 		}
 

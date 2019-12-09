@@ -47,7 +47,7 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class ProjectUtils {
 	public static final String INIT_FROM = "reportportal@example.com";
-	public static final String PERSONAL_PROJECT_POSTFIX_REGEX = "_personal[0-9]*$";
+	public static final String PERSONAL_PROJECT_POSTFIX_REGEX = "_personal(_?[0-9]+)?$";
 	public static final String LINE_START_SYMBOL = "^";
 
 	private static final String OWNER = "OWNER";
