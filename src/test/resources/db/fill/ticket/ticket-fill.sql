@@ -6,8 +6,8 @@ VALUES (1, 'ticket_id_1', 'superadmin', now(), 'jira.com', 'project', 'http://ex
 INSERT INTO launch(uuid, project_id, user_id, name, start_time, last_modified, mode, status)
 VALUES ('uuid', 1, 1, 'launch', now(), now(), 'DEFAULT', 'FAILED');
 
-INSERT INTO test_item(uuid, type, start_time, last_modified, launch_id)
-VALUES ('uuid', 'STEP', now(), now(), (SELECT currval(pg_get_serial_sequence('launch', 'id'))));
+INSERT INTO test_item(test_case_hash, uuid, type, start_time, last_modified, launch_id)
+VALUES (1, 'uuid', 'STEP', now(), now(), (SELECT currval(pg_get_serial_sequence('launch', 'id'))));
 
 INSERT INTO test_item_results(result_id, status)
 VALUES ((SELECT currval(pg_get_serial_sequence('test_item', 'item_id'))), 'FAILED');
