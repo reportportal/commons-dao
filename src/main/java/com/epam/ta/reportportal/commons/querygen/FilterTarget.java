@@ -157,7 +157,8 @@ public enum FilterTarget {
 					PROJECT.ID,
 					PROJECT.CREATION_DATE,
 					PROJECT.NAME,
-					PROJECT.PROJECT_TYPE
+					PROJECT.PROJECT_TYPE,
+					PROJECT.ORGANIZATION
 			);
 		}
 
@@ -345,6 +346,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH, TEST_ITEM.PATH, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_HASH, TEST_ITEM.TEST_CASE_HASH, Integer.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
@@ -423,6 +425,7 @@ public enum FilterTarget {
 					TEST_ITEM.PATH,
 					TEST_ITEM.UNIQUE_ID,
 					TEST_ITEM.TEST_CASE_ID,
+					TEST_ITEM.TEST_CASE_HASH,
 					TEST_ITEM.PARENT_ID,
 					TEST_ITEM.RETRY_OF,
 					TEST_ITEM.HAS_CHILDREN,
