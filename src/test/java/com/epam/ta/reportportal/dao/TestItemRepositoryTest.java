@@ -117,7 +117,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectMultiplePathNames() {
-		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L));
+		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L), 1L);
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
 		results.values()
 				.forEach(pathName -> assertThat("Incorrect class type",
