@@ -18,9 +18,11 @@ package com.epam.ta.reportportal.commons;
 
 import com.google.common.base.Preconditions;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -37,6 +39,12 @@ public class EntityUtils {
 
 	private static final String OLD_SEPARATOR = ",";
 	private static final String NEW_SEPARATOR = "_";
+	private static String LEGACY_FORMAT = "EEE MMM dd hh:mm:ss zzz yyyy";
+	private static final SimpleDateFormat legacyFormatter = new SimpleDateFormat(LEGACY_FORMAT);
+
+	static {
+		legacyFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 
 	private EntityUtils() {
 		//static only
@@ -48,6 +56,8 @@ public class EntityUtils {
 
 	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(localDateTime).map(l -> Date.from(l.atZone(
 			ZoneOffset.UTC).toInstant())).orElse(null);
+
+	public static final Function<Date, String> TO_LEGACY_STRING = legacyFormatter::format;
 
 	/**
 	 * Remove leading and trailing spaces from list of string
