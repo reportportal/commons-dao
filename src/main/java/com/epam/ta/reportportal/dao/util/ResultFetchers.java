@@ -332,22 +332,25 @@ public class ResultFetchers {
 
 	public static final Function<Result<? extends Record>, ReportPortalUser> REPORTPORTAL_USER_FETCHER = records -> {
 		if (!CollectionUtils.isEmpty(records)) {
-			ReportPortalUser user = new ReportPortalUser(
-					records.get(0).get(USERS.LOGIN),
-					Optional.ofNullable(records.get(0).get(USERS.PASSWORD)).orElse(""),
-					Collections.emptyList(),
-					records.get(0).get(USERS.ID),
-					UserRole.findByName(records.get(0).get(USERS.ROLE))
-							.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR)),
-					new HashMap<>(records.size()),
-					records.get(0).get(USERS.EMAIL)
-			);
+			ReportPortalUser user = ReportPortalUser.userBuilder()
+					.withUserName(records.get(0).get(USERS.LOGIN))
+					.withPassword(ofNullable(records.get(0).get(USERS.PASSWORD)).orElse(""))
+					.withAuthorities(Collections.emptyList())
+					.withUserId(records.get(0).get(USERS.ID))
+					.withUserRole(UserRole.findByName(records.get(0).get(USERS.ROLE))
+							.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR)))
+					.withProjectDetails(new HashMap<>(records.size()))
+					.withEmail(records.get(0).get(USERS.EMAIL))
+					.build();
 			records.forEach(record -> {
-				ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(
-						record.get(PROJECT_USER.PROJECT_ID, Long.class),
+				ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(record.get(PROJECT_USER.PROJECT_ID,
+						Long.class
+				),
 						record.get(PROJECT.NAME, String.class),
 						ProjectRole.forName(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
-								.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, record.get(PROJECT_USER.PROJECT_ROLE, String.class)))
+								.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND,
+										record.get(PROJECT_USER.PROJECT_ROLE, String.class)
+								))
 				);
 				user.getProjectDetails().put(record.get(PROJECT.NAME), projectDetails);
 			});
