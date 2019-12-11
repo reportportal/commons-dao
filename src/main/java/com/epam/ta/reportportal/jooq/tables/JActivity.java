@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = -1444907194;
+    private static final long serialVersionUID = 1362430673;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -148,7 +148,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ACTIVITY_PK, Indexes.ACTIVITY_PROJECT_IDX);
+        return Arrays.<Index>asList(Indexes.ACTIVITY_CREATION_DATE_IDX, Indexes.ACTIVITY_OBJECT_IDX, Indexes.ACTIVITY_PK, Indexes.ACTIVITY_PROJECT_IDX);
     }
 
     /**

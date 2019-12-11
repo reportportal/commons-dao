@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = 782590419;
+    private static final long serialVersionUID = 126523428;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -65,7 +65,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
     /**
      * The column <code>public.ticket.ticket_id</code>.
      */
-    public final TableField<JTicketRecord, String> TICKET_ID = createField("ticket_id", org.jooq.impl.SQLDataType.VARCHAR(64).nullable(false), this, "");
+    public final TableField<JTicketRecord, String> TICKET_ID = createField("ticket_id", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.submitter</code>.
@@ -80,17 +80,17 @@ public class JTicket extends TableImpl<JTicketRecord> {
     /**
      * The column <code>public.ticket.bts_url</code>.
      */
-    public final TableField<JTicketRecord, String> BTS_URL = createField("bts_url", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+    public final TableField<JTicketRecord, String> BTS_URL = createField("bts_url", org.jooq.impl.SQLDataType.VARCHAR(1024).nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.bts_project</code>.
      */
-    public final TableField<JTicketRecord, String> BTS_PROJECT = createField("bts_project", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+    public final TableField<JTicketRecord, String> BTS_PROJECT = createField("bts_project", org.jooq.impl.SQLDataType.VARCHAR(1024).nullable(false), this, "");
 
     /**
      * The column <code>public.ticket.url</code>.
      */
-    public final TableField<JTicketRecord, String> URL = createField("url", org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+    public final TableField<JTicketRecord, String> URL = createField("url", org.jooq.impl.SQLDataType.VARCHAR(1024).nullable(false), this, "");
 
     /**
      * Create a <code>public.ticket</code> table reference

@@ -38,9 +38,6 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
-import com.epam.ta.reportportal.entity.ldap.LdapConfig;
-import com.epam.ta.reportportal.entity.ldap.SynchronizationAttributes;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -402,16 +399,6 @@ public class RecordMappers {
 		return Optional.of(dashboardWidget);
 	};
 
-	public static final Function<? super Record, SynchronizationAttributes> SYNCHRONIZATION_ATTRIBUTES_MAPPER = r -> {
-		SynchronizationAttributes synchronizationAttributes = new SynchronizationAttributes();
-		synchronizationAttributes.setFullName(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.FULL_NAME));
-		synchronizationAttributes.setEmail(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.EMAIL));
-		synchronizationAttributes.setPhoto(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.PHOTO));
-		synchronizationAttributes.setId(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
-
-		return synchronizationAttributes;
-	};
-
 	public static final RecordMapper<? super Record, IntegrationType> INTEGRATION_TYPE_MAPPER = r -> {
 		IntegrationType integrationType = new IntegrationType();
 		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
@@ -475,40 +462,5 @@ public class RecordMappers {
 		integration.setProject(project);
 
 		return integration;
-	};
-
-	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
-
-		LdapConfig ldapConfig = r.into(LdapConfig.class);
-
-		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
-		ldapConfig.setCreator(r.get(INTEGRATION.CREATOR));
-		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
-		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
-
-		INTEGRATION_PARAMS_MAPPER.accept(ldapConfig, r);
-
-		ldapConfig.setId(r.get(LDAP_CONFIG.ID));
-
-		return ldapConfig;
-	};
-
-	public static final RecordMapper<? super Record, ActiveDirectoryConfig> ACTIVE_DIRECTORY_CONFIG_MAPPER = r -> {
-
-		ActiveDirectoryConfig activeDirectoryConfig = r.into(ActiveDirectoryConfig.class);
-
-		activeDirectoryConfig.setEnabled(r.get(INTEGRATION.ENABLED));
-		activeDirectoryConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-		activeDirectoryConfig.setCreator(r.get(INTEGRATION.CREATOR));
-
-		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
-		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
-
-		INTEGRATION_PARAMS_MAPPER.accept(activeDirectoryConfig, r);
-
-		activeDirectoryConfig.setId(r.get(ACTIVE_DIRECTORY_CONFIG.ID));
-
-		return activeDirectoryConfig;
 	};
 }

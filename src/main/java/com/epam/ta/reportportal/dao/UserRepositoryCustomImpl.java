@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -31,9 +32,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.REPORTPORTAL_USER_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 
@@ -87,6 +91,27 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 					return ProjectRole.forName(projectRoleName)
 							.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRoleName));
 				}));
+	}
+
+	@Override
+	public Optional<ReportPortalUser> findUserDetails(String login) {
+		return Optional.ofNullable(REPORTPORTAL_USER_FETCHER.apply(dsl.select(
+				USERS.ID,
+				USERS.LOGIN,
+				USERS.PASSWORD,
+				USERS.ROLE,
+				USERS.EMAIL,
+				PROJECT_USER.PROJECT_ID,
+				PROJECT_USER.PROJECT_ROLE,
+				PROJECT.NAME
+		)
+				.from(USERS)
+				.leftJoin(PROJECT_USER)
+				.on(USERS.ID.eq(PROJECT_USER.USER_ID))
+				.leftJoin(PROJECT)
+				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
+				.where(USERS.LOGIN.eq(login))
+				.fetch()));
 	}
 
 }
