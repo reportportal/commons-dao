@@ -16,6 +16,7 @@
 
 plugins {
     id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id 'java'
     id 'nu.studer.jooq' version '3.0.3'
     id "org.owasp.dependencycheck" version "5.2.0"
 }
