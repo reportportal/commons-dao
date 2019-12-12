@@ -1,14 +1,14 @@
 language: java
 dist: trusty
 
-script: ./gradlew build --full-stacktrace --no-build-cache --rerun-tasks
+script: ./gradlew build --full-stacktrace
 
 env:
   global:
     - GRADLE_OPTS="-Xms128m -Xmx1g"
 
 jdk:
-  - openjdk11
+  - oraclejdk11
 
 cache:
   directories:
