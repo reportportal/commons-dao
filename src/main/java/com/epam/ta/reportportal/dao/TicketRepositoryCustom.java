@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,5 +32,14 @@ public interface TicketRepositoryCustom {
 	 * @return List of ticket ids
 	 */
 	List<String> findByTerm(Long launchId, String term);
+
+	/**
+	 * Returns number of unique tickets on specified project posted before {@code from} parameter
+	 *
+	 * @param projectId {@link com.epam.ta.reportportal.entity.project.Project#id} Id of project
+	 * @param from      Date threshold
+	 * @return Number of unique tickets
+	 */
+	Integer findUniqueCountByProjectBefore(Long projectId, LocalDateTime from);
 
 }

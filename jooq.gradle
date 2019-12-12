@@ -1,5 +1,5 @@
 jooq {
-    version = '3.11.11'
+    version = '3.12.3'
     edition = 'OSS'
     sample(sourceSets.main) {
         jdbc {
@@ -33,4 +33,6 @@ jooq {
     }
 }
 
-compileJava.dependsOn.remove('generateSampleJooqSchemaSource')
+generateSampleJooqSchemaSource {
+    enabled = false
+}

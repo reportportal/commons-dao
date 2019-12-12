@@ -157,7 +157,8 @@ public enum FilterTarget {
 					PROJECT.ID,
 					PROJECT.CREATION_DATE,
 					PROJECT.NAME,
-					PROJECT.PROJECT_TYPE
+					PROJECT.PROJECT_TYPE,
+					PROJECT.ORGANIZATION
 			);
 		}
 
@@ -344,7 +345,8 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_MODIFIED, TEST_ITEM.LAST_MODIFIED, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH, TEST_ITEM.PATH, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID, Integer.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_HASH, TEST_ITEM.TEST_CASE_HASH, Integer.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
@@ -423,6 +425,7 @@ public enum FilterTarget {
 					TEST_ITEM.PATH,
 					TEST_ITEM.UNIQUE_ID,
 					TEST_ITEM.TEST_CASE_ID,
+					TEST_ITEM.TEST_CASE_HASH,
 					TEST_ITEM.PARENT_ID,
 					TEST_ITEM.RETRY_OF,
 					TEST_ITEM.HAS_CHILDREN,
@@ -503,7 +506,8 @@ public enum FilterTarget {
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get()
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_RETRY_PARENT_ID, TEST_ITEM.RETRY_OF, Long.class).get()
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {

@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = -274462511;
+    private static final long serialVersionUID = -1503461273;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -76,7 +76,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.code_ref</code>.
      */
-    public final TableField<JTestItemRecord, String> CODE_REF = createField("code_ref", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+    public final TableField<JTestItemRecord, String> CODE_REF = createField("code_ref", org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.test_item.type</code>.
@@ -106,12 +106,12 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.unique_id</code>.
      */
-    public final TableField<JTestItemRecord, String> UNIQUE_ID = createField("unique_id", org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+    public final TableField<JTestItemRecord, String> UNIQUE_ID = createField("unique_id", org.jooq.impl.SQLDataType.VARCHAR(1024), this, "");
 
     /**
      * The column <code>public.test_item.test_case_id</code>.
      */
-    public final TableField<JTestItemRecord, Integer> TEST_CASE_ID = createField("test_case_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final TableField<JTestItemRecord, String> TEST_CASE_ID = createField("test_case_id", org.jooq.impl.SQLDataType.VARCHAR(512), this, "");
 
     /**
      * The column <code>public.test_item.has_children</code>.
@@ -142,6 +142,11 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      * The column <code>public.test_item.launch_id</code>.
      */
     public final TableField<JTestItemRecord, Long> LAUNCH_ID = createField("launch_id", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.test_item.test_case_hash</code>.
+     */
+    public final TableField<JTestItemRecord, Integer> TEST_CASE_HASH = createField("test_case_hash", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * Create a <code>public.test_item</code> table reference
@@ -189,7 +194,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ITEM_TEST_CASE_ID_IDX, Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_ITEM_PK, Indexes.TEST_ITEM_UNIQUE_ID_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UUID_KEY, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX, Indexes.TI_UUID_IDX);
+        return Arrays.<Index>asList(Indexes.ITEM_TEST_CASE_ID_IDX, Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_CASE_HASH_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_PK, Indexes.TEST_ITEM_UNIQUE_ID_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UUID_KEY, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX, Indexes.TI_UUID_IDX);
     }
 
     /**

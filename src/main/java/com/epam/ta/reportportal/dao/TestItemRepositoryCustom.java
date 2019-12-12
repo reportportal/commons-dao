@@ -211,9 +211,10 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * for each item id from the provided collection
 	 *
 	 * @param ids {@link Collection} of {@link TestItem#getItemId()}
+	 * @param porjectId Project
 	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, PathName> selectPathNames(Collection<Long> ids);
+	Map<Long, PathName> selectPathNames(Collection<Long> id, Long porjectId);
 
 	/**
 	 * Select item IDs by analyzed status and launch id with log level greater or equals than error

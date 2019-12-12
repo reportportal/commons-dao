@@ -23,13 +23,17 @@ import com.epam.ta.reportportal.entity.project.Project;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 /**
  * @author Pavel Bortnik
@@ -70,15 +74,17 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	@Query(value = "DELETE FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
 	int deleteLaunchesByProjectIdModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
 	Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
 	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status,
 			@Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
-			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY id DESC LIMIT :historyDepth", nativeQuery = true)
+			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time DESC, number DESC LIMIT :historyDepth", nativeQuery = true)
 	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
 			@Param("launchName") String launchName, @Param("projectId") Long projectId);
 

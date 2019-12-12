@@ -171,25 +171,19 @@ class ProjectUtilsTest {
 
 	@Test
 	void isPersonalForUserPositive() {
-
-		boolean isPersonal = ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal1234", "qwe");
-
-		assertTrue(isPersonal);
+		assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_1234", "qwe"));
+		assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal", "qwe"));
 	}
 
 	@Test
 	void isPersonalForUserNegative() {
-
-		boolean isPersonal = ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal1234", "qwe_personal");
-
-		assertFalse(isPersonal);
+		assertFalse(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_1234", "qwe_personal"));
+		assertFalse(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_", "qwe"));
 	}
 
 	@Test
 	void isPersonalForUserNegativeWithProjectType() {
-
-		boolean isPersonal = ProjectUtils.isPersonalForUser(ProjectType.INTERNAL, "qwe_personal1234", "qwe");
-
+		boolean isPersonal = ProjectUtils.isPersonalForUser(ProjectType.INTERNAL, "qwe_personal_1234", "qwe");
 		assertFalse(isPersonal);
 	}
 
