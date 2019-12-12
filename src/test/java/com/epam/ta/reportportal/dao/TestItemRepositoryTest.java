@@ -624,7 +624,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, 5);
 
-		assertTrue(testItemHistories.isEmpty());
+		assertFalse(testItemHistories.isEmpty());
 	}
 
 	@Test
