@@ -185,7 +185,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		).limit(pageable.getPageSize())
 				.fetch()
 				.stream()
-				.map(record -> new TestItemHistory(record.get(outerItemTable.TEST_CASE_ID), Arrays.asList(record.get(historyField))))
+				.map(record -> new TestItemHistory(record.get(outerItemTable.TEST_CASE_HASH), Arrays.asList(record.get(historyField))))
 				.collect(toList());
 
 		return PageableExecutionUtils.getPage(result,
@@ -208,19 +208,19 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		Field<Timestamp> maxStartTimeField = max(TEST_ITEM.START_TIME).as(START_TIME);
 		SelectLimitStep<Record2<Integer, Timestamp>> testCaseIdQuery = with(ITEMS).as(filteringQuery)
-				.select(TEST_ITEM.TEST_CASE_ID, maxStartTimeField)
+				.select(TEST_ITEM.TEST_CASE_HASH, maxStartTimeField)
 				.from(TEST_ITEM)
 				.join(ITEMS)
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.groupBy(TEST_ITEM.TEST_CASE_ID)
+				.groupBy(TEST_ITEM.TEST_CASE_HASH)
 				.orderBy(max(TEST_ITEM.START_TIME));
 
 		SelectLimitStep<Record1<Integer>> itemsQuery = with(ITEMS).as(filteringQuery)
-				.select(TEST_ITEM.TEST_CASE_ID)
+				.select(TEST_ITEM.TEST_CASE_HASH)
 				.from(TEST_ITEM)
 				.join(ITEMS)
 				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.groupBy(TEST_ITEM.TEST_CASE_ID)
+				.groupBy(TEST_ITEM.TEST_CASE_HASH)
 				.orderBy(max(TEST_ITEM.START_TIME));
 
 		if (pageableConfig.getKey()) {
@@ -234,7 +234,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		Table<Record2<Integer, Timestamp>> testCaseIdTable = testCaseIdQuery.asTable(TEST_CASE_ID_TABLE);
 
-		return dsl.select(outerItemTable.TEST_CASE_ID, historyField)
+		return dsl.select(outerItemTable.TEST_CASE_HASH, historyField)
 				.from(outerItemTable)
 				.join(LAUNCH)
 				.on(outerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
@@ -242,14 +242,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.join(LAUNCH)
 						.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
 						.join(testCaseIdTable)
-						.on(innerItemTable.TEST_CASE_ID.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_ID)))
-						.where(baselineCondition.and(innerItemTable.TEST_CASE_ID.eq(outerItemTable.TEST_CASE_ID))
+						.on(innerItemTable.TEST_CASE_HASH.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_HASH)))
+						.where(baselineCondition.and(innerItemTable.TEST_CASE_HASH.eq(outerItemTable.TEST_CASE_HASH))
 								.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
 						.orderBy(innerItemTable.START_TIME.desc())
 						.limit(historyDepth)).as(INNER_ITEM_TABLE))
 				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
-				.where(baselineCondition.and(outerItemTable.TEST_CASE_ID.in(itemsQuery)))
-				.groupBy(outerItemTable.TEST_CASE_ID);
+				.where(baselineCondition.and(outerItemTable.TEST_CASE_HASH.in(itemsQuery)))
+				.groupBy(outerItemTable.TEST_CASE_HASH);
 	}
 
 	@Override

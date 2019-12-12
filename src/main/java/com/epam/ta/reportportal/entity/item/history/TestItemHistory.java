@@ -24,24 +24,24 @@ import java.util.List;
  */
 public class TestItemHistory implements Serializable {
 
-	private Integer testCaseId;
+	private Integer testCaseHash;
 
 	private List<Long> itemIds;
 
 	public TestItemHistory() {
 	}
 
-	public TestItemHistory(Integer testCaseId, List<Long> itemIds) {
-		this.testCaseId = testCaseId;
+	public TestItemHistory(Integer testCaseHash, List<Long> itemIds) {
+		this.testCaseHash = testCaseHash;
 		this.itemIds = itemIds;
 	}
 
-	public Integer getTestCaseId() {
-		return testCaseId;
+	public Integer getTestCaseHash() {
+		return testCaseHash;
 	}
 
-	public void setTestCaseId(Integer testCaseId) {
-		this.testCaseId = testCaseId;
+	public void setTestCaseHash(Integer testCaseHash) {
+		this.testCaseHash = testCaseHash;
 	}
 
 	public List<Long> getItemIds() {
