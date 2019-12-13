@@ -58,10 +58,10 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	Optional<Launch> findByUuid(String uuid);
 
 	/**
-	 * Finds launch by {@link Launch#uuid} and sets a lock on the found launch row in the database.
+	 * Finds launch by {@link Launch#getUuid()} and sets a lock on the found launch row in the database.
 	 * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
 	 *
-	 * @param uuid {@link Launch#uuid}
+	 * @param uuid {@link Launch#getUuid()}
 	 * @return {@link Optional} with {@link Launch} object
 	 */
 	@Query(value = "SELECT l FROM Launch l WHERE l.uuid = :uuid")
