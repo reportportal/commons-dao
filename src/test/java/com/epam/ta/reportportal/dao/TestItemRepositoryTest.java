@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Ivan Budaev
  */
-@Sql({"/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
+@Sql({ "/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
 class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
@@ -625,6 +625,97 @@ class TestItemRepositoryTest extends BaseTest {
 		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, 5);
 
 		assertFalse(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchName() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				"launch name 1",
+				5
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchIds() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				com.google.common.collect.Lists.newArrayList(1L, 2L, 3L),
+				5
+		);
+
+		assertFalse(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchFilter() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Filter launchFilter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				5
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchFilterAndLaunchName() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Filter launchFilter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				"launch name 1",
+				5
+		);
+
+		assertTrue(testItemHistories.isEmpty());
 	}
 
 	@Test

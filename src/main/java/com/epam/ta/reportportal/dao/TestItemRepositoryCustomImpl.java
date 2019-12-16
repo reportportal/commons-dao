@@ -127,6 +127,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, List<Long> launchIds,
+			int historyDepth) {
+
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter)
+				.with(pageable.getSort())
+				.addCondition(LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId)))
+				.build();
+		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.ID.in(launchIds)), historyDepth, pageable);
+
+	}
+
+	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter,
 			Pageable launchPageable, Pageable testItemPageable, Long projectId, int historyDepth) {
 		SelectQuery<? extends Record> filteringQuery = buildCompositeFilterHistoryQuery(isLatest,

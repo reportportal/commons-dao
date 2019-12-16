@@ -58,6 +58,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
 	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, String launchName, int historyDepth);
 
+	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, List<Long> launchIds, int historyDepth);
+
 	Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable, Long projectId, int historyDepth);
 
@@ -210,7 +212,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
 	 * for each item id from the provided collection
 	 *
-	 * @param ids {@link Collection} of {@link TestItem#getItemId()}
+	 * @param ids       {@link Collection} of {@link TestItem#getItemId()}
 	 * @param porjectId Project
 	 * @return id from collection -> {@link PathName}
 	 */
