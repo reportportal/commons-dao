@@ -58,10 +58,10 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	Optional<Launch> findByUuid(String uuid);
 
 	/**
-	 * Finds launch by {@link Launch#uuid} and sets a lock on the found launch row in the database.
+	 * Finds launch by {@link Launch#getUuid()} and sets a lock on the found launch row in the database.
 	 * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
 	 *
-	 * @param uuid {@link Launch#uuid}
+	 * @param uuid {@link Launch#getUuid()}
 	 * @return {@link Optional} with {@link Launch} object
 	 */
 	@Query(value = "SELECT l FROM Launch l WHERE l.uuid = :uuid")
@@ -84,7 +84,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 			@Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
-			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time, number DESC LIMIT :historyDepth", nativeQuery = true)
+			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time DESC, number DESC LIMIT :historyDepth", nativeQuery = true)
 	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
 			@Param("launchName") String launchName, @Param("projectId") Long projectId);
 
