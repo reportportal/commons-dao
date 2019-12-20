@@ -186,7 +186,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Condition baselineCondition, int historyDepth,
 			Pageable pageable) {
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
-		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID).orderBy(outerItemTable.START_TIME.desc()).as(HISTORY);
+		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID)
+				.orderBy(outerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
+				.as(HISTORY);
 
 		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
 				outerItemTable,
@@ -257,7 +259,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.on(innerItemTable.TEST_CASE_HASH.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_HASH)))
 						.where(baselineCondition.and(innerItemTable.TEST_CASE_HASH.eq(outerItemTable.TEST_CASE_HASH))
 								.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
-						.orderBy(innerItemTable.START_TIME.desc())
+						.orderBy(innerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
 						.limit(historyDepth)).as(INNER_ITEM_TABLE))
 				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
 				.where(baselineCondition.and(outerItemTable.TEST_CASE_HASH.in(itemsQuery)))
