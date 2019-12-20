@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -117,16 +118,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
+		Sort launchSort = Sort.by(Sort.Direction.DESC, CRITERIA_START_TIME);
 		return dsl.with(HISTORY)
 				.as(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted())).with(limit).build())
+						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, launchSort)).with(limit).with(launchSort).build())
 						.select(TEST_ITEM.UNIQUE_ID,
 								TEST_ITEM.NAME,
 								DSL.arrayAgg(when(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class).ge(1),
 										true
-								).otherwise(false))
-										.orderBy(LAUNCH.NUMBER.asc())
-										.as(STATUS_HISTORY),
+								).otherwise(false)).orderBy(LAUNCH.NUMBER.asc()).as(STATUS_HISTORY),
 								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
 								DSL.sum(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
 								DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
@@ -139,6 +139,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(getTopItemsCriteriaTable(criteria))
 						.on(TEST_ITEM.ITEM_ID.eq(fieldName(CRITERIA_TABLE, ITEM_ID).cast(Long.class)))
 						.where(itemTypeStepCondition(includeMethods))
+						.and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
 				.select()
@@ -209,8 +210,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE)
-										.as(SWITCH_FLAG)
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -220,6 +220,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.where(itemTypeStepCondition(includeMethods))
+						.and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
 						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME, TEST_ITEM.START_TIME)
@@ -717,6 +718,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.where(TEST_ITEM.HAS_CHILDREN.eq(Boolean.FALSE)
+						.and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
 						.and(TEST_ITEM.RETRY_OF.isNull())
 						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP)))
 				.groupBy(LAUNCH.ID, STATISTICS_FIELD.NAME, fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE))
@@ -777,14 +779,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> selectFields = getCommonProductStatusFields(filter, contentFields);
 
-		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(buildProductStatusQuery(
-				filter,
-				isLatest,
-				sort,
-				limit,
-				selectFields,
-				contentFields,
-				customColumns
+		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
+				buildProductStatusQuery(filter,
+						isLatest,
+						sort,
+						limit,
+						selectFields,
+						contentFields,
+						customColumns
 				).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch(),
 				customColumns
 		);
@@ -864,6 +866,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
 				.with(launchesLimit)
+				.with(launchSort)
 				.build()
 				.asTable(LAUNCHES);
 
@@ -888,9 +891,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(ITEM_ATTRIBUTE)
-						.on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
-								.or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(ITEM_ATTRIBUTE.KEY.eq(currentLevelKey)
-								.and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
+						.on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID).or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
+								ITEM_ATTRIBUTE.KEY.eq(currentLevelKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 						.asTable(ITEMS))
 				.groupBy(fieldName(ITEMS, VALUE))
@@ -932,9 +934,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_PASSED),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(PASSED), sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(TOTAL), max(LAUNCH.NUMBER).as(NUMBER))
+						).otherwise(0)).as(PASSED),
+						sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
+								fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
+						).otherwise(0)).as(TOTAL),
+						max(LAUNCH.NUMBER).as(NUMBER)
+				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))

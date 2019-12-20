@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2019 EPAM Systems
  *
@@ -21,15 +20,12 @@ import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
-import com.epam.ta.reportportal.filesystem.distributed.SeaweedDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
 import io.minio.MinioClient;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import org.lokra.seaweedfs.core.FileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +33,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-
-import java.io.IOException;
 
 /**
  * @author Dzianis_Shybeka
@@ -48,34 +41,6 @@ import java.io.IOException;
 public class DataStoreConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
-
-	@Bean
-	@ConditionalOnProperty(name = "datastore.type", havingValue = "seaweed")
-	public FileSource fileSource(@Value("${datastore.seaweed.master.host}") String masterHost,
-			@Value("${datastore.seaweed.master.port}") Integer masterPort) {
-
-		FileSource fileSource = new FileSource();
-		fileSource.setHost(masterHost);
-		fileSource.setPort(masterPort);
-
-		try {
-			fileSource.startup();
-		} catch (IOException e) {
-
-			throw new ReportPortalException("Cannot connect to seaweed fs");
-		}
-
-		LOGGER.debug("Connected to seaweed fs !");
-
-		return fileSource;
-	}
-
-	@Bean
-	@ConditionalOnProperty(name = "datastore.type", havingValue = "seaweed")
-	public DataStore seaweedDataStore(@Autowired FileSource fileSource) {
-
-		return new SeaweedDataStore(fileSource);
-	}
 
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
@@ -87,9 +52,9 @@ public class DataStoreConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
 	public MinioClient minioClient(@Value("${datastore.minio.endpoint}") String endpoint,
-			@Value("${datastore.minio.accessKey}") String accessKey, @Value("${datastore.minio.secretKey}") String secretKey)
-			throws InvalidPortException, InvalidEndpointException {
-		return new MinioClient(endpoint, accessKey, secretKey);
+			@Value("${datastore.minio.accessKey}") String accessKey, @Value("${datastore.minio.secretKey}") String secretKey,
+			@Value("${datastore.minio.region}") String region) throws InvalidPortException, InvalidEndpointException {
+		return new MinioClient(endpoint, accessKey, secretKey, region);
 	}
 
 	@Bean

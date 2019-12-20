@@ -15,20 +15,17 @@
  */
 
 plugins {
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
-    id 'net.researchgate.release' version '2.8.0'
-    id "de.undercouch.download" version "3.4.3"
+    id "io.spring.dependency-management" version "1.0.8.RELEASE"
     id 'nu.studer.jooq' version '3.0.3'
-    id "com.jfrog.bintray" version "1.8.4"
-    id 'jacoco'
-    id 'java'
     id "org.owasp.dependencycheck" version "5.2.0"
 }
 
+apply from: 'project-properties.gradle'
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/release-commons.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/copy-database-scripts.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/build-quality.gradle'
+apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/jacoco.gradle'
 apply from: 'jooq.gradle'
-apply from: 'build-quality.gradle'
-apply from: 'jacoco.gradle'
 
 
 repositories {
@@ -36,39 +33,16 @@ repositories {
     mavenCentral()
     maven { url "http://dl.bintray.com/epam/reportportal" }
     maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.spring.io/libs-milestone' }
-}
-
-project.description = 'EPAM Report portal. Common DAO Layer'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-wrapper {
-    gradleVersion = '5.4.1'
 }
 
 dependencyManagement {
     imports {
 //        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
-        mavenBom "com.github.reportportal:commons-bom:7fd984c"
+        mavenBom 'com.github.reportportal:commons-bom:f060f9c'
     }
 }
 
-project.ext {
-    limits = [
-            'instruction': 70,
-            'branch'     : 36,
-            'line'       : 60,
-            'complexity' : 49,
-            'method'     : 55,
-            'class'      : 87
-    ]
-    releaseMode = project.hasProperty("releaseMode")
-}
-
-
 dependencies {
-
     if (releaseMode) {
         compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
         compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-6'
@@ -78,94 +52,41 @@ dependencies {
         compile 'com.github.reportportal:commons-rules:5.0.0-BETA-6'
         compile 'com.github.reportportal:commons-model:5.0.0-RC-1'
     }
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    compile 'org.hibernate:hibernate-core:5.4.4.Final'
+    compile 'org.postgresql:postgresql'
+    compile 'org.jooq:jooq'
+    jooqRuntime 'org.postgresql:postgresql'
 
     compile 'io.minio:minio:6.0.10'
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    compile 'org.hibernate.validator:hibernate-validator:6.1.0.Final'
 
-    compile 'org.lokra.seaweedfs:seaweedfs-client:0.7.3.RELEASE'
-
-    compile('org.postgresql:postgresql')
-
-    compile 'org.jooq:jooq'
-    jooqRuntime 'org.postgresql:postgresql'
-
-
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile 'org.hibernate:hibernate-core:5.4.4.Final'
-    compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
-
-    compile 'org.springframework:spring-context-support'
-    compile 'com.github.ben-manes.caffeine:caffeine'
-
-    compile 'commons-fileupload:commons-fileupload:1.3.3'
-    compile 'net.coobird:thumbnailator:0.4.8'
+    compile 'commons-fileupload:commons-fileupload:1.4'
     compile 'commons-validator:commons-validator:1.6'
-    compile 'com.google.guava:guava:23.0'
     compile 'org.jasypt:jasypt:1.9.2'
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
     compile 'org.apache.commons:commons-lang3:3.9'
-    compile 'org.reflections:reflections:0.9.11'
 
-    compile 'org.apache.tika:tika-core'
-    compile 'org.apache.tika:tika-parsers'
+    compile 'io.zonky.test:embedded-postgres:1.2.1'
+    compile 'org.flywaydb:flyway-core:5.2.4'
 
-    compile group: 'io.zonky.test', name: 'embedded-postgres', version: '1.2.1'
-    compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
-    testCompile group: 'org.flywaydb.flyway-test-extensions', name: 'flyway-spring-test', version: '5.2.1'
-
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'org.assertj:assertj-core:3.9.0'
-
-    testCompile 'org.springframework:spring-test'
-    testCompile 'org.springframework.security:spring-security-crypto'
-    testCompile 'org.springframework.security:spring-security-core'
-    testCompile 'org.hibernate:hibernate-validator:6.0.7.Final'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
-    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-    testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.23.0'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:5.2.1'
 }
-
-
-ext.src = [
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/1_initialize_schema.up.sql': 'V001__initialize_schema.sql',
-        'https://raw.githubusercontent.com/reportportal/migrations/master/migrations/3_default_data.up.sql'            : 'V002__default_data.sql',
-]
-
-task copyTestDatabaseScripts {
-    doLast {
-        for (s in src) {
-            download {
-                src s.key
-                dest new File("${projectDir}/src/test/resources/db/migration/", s.value)
-            }
-        }
-    }
-}
-
-task removeScripts {
-    doLast {
-        for (s in src) {
-            def file = new File("${projectDir}/src/test/resources/db/migration/", s.value)
-            file.delete()
-        }
-    }
-}
-
 
 tasks.withType(Javadoc).all { enabled = false }
 
 test {
     useJUnitPlatform()
-
     testLogging {
-        events "failed"
-        exceptionFormat "short"
+        events = ["failed"]
+        exceptionFormat = "short"
     }
 }
 
+afterReleaseBuild.dependsOn bintrayUpload
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
-compileJava.dependsOn.remove('generateSampleJooqSchemaSource')

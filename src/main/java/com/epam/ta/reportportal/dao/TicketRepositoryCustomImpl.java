@@ -20,6 +20,8 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -45,5 +47,21 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
 				.where(TICKET.TICKET_ID.likeIgnoreCase("%" + DSL.escape(term, '\\') + "%"))
 				.and(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.fetchInto(String.class);
+	}
+
+	@Override
+	public Integer findUniqueCountByProjectBefore(Long projectId, LocalDateTime from) {
+		return dsl.fetchCount(dsl.selectDistinct(TICKET.TICKET_ID)
+				.from(TICKET)
+				.join(ISSUE_TICKET)
+				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
+				.join(ISSUE)
+				.on(ISSUE_TICKET.ISSUE_ID.eq(ISSUE.ISSUE_ID))
+				.join(TEST_ITEM)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(TICKET.SUBMIT_DATE.greaterOrEqual(Timestamp.valueOf(from))));
 	}
 }

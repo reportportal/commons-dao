@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import java.io.InputStream;
 
 import static com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore.DEFAULT_BUCKET;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.*;
  */
 class MinioDataStoreTest {
 
-	public static final String FILE_PATH = "someFile";
+	private static final String FILE_PATH = "someFile";
 
 	private final MinioClient minioClient = mock(MinioClient.class);
 	private final InputStream inputStream = mock(InputStream.class);

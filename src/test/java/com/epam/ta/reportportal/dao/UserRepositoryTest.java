@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -75,8 +76,8 @@ class UserRepositoryTest extends BaseTest {
 		List<User> users = userRepository.findByFilter(filter);
 		//then
 		assertThat("Users should exist", users.size(), Matchers.greaterThan(0));
-		users.forEach(user -> assertThat(
-				"Last login should be lower than in the filer", Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
+		users.forEach(user -> assertThat("Last login should be lower than in the filer",
+				Long.parseLong((String) user.getMetadata().getMetadata().get("last_login")),
 				Matchers.lessThan(now)
 		));
 	}
@@ -131,7 +132,22 @@ class UserRepositoryTest extends BaseTest {
 
 		Optional<Long> userId = userRepository.findIdByLoginForUpdate("han_solo");
 		assertTrue(userId.isPresent(), "User not found");
-		assertThat("Ids are not equal", userId.get(), Matchers.equalTo(27L));
+	}
+
+	@Test
+	void findUserDetailsInfoByLogin() {
+		Optional<ReportPortalUser> chubaka = userRepository.findUserDetails("chubaka");
+		assertTrue(chubaka.isPresent(), "User not found");
+		assertThat(chubaka.get().getUsername(), Matchers.equalTo("chubaka"));
+		assertThat(chubaka.get().getUserId(), Matchers.notNullValue());
+		assertThat(chubaka.get().getPassword(), Matchers.equalTo("601c4731aeff3b84f76672ad024bb2a0"));
+		assertThat(chubaka.get().getEmail(), Matchers.equalTo("chybaka@domain.com"));
+		assertThat(chubaka.get().getUserRole(), Matchers.equalTo(UserRole.USER));
+		assertThat(chubaka.get().getProjectDetails(), Matchers.hasKey("millennium_falcon"));
+		ReportPortalUser.ProjectDetails project = chubaka.get().getProjectDetails().get("millennium_falcon");
+		assertThat(project.getProjectId(), Matchers.equalTo(3L));
+		assertThat(project.getProjectName(), Matchers.equalTo("millennium_falcon"));
+		assertThat(project.getProjectRole(), Matchers.equalTo(ProjectRole.MEMBER));
 	}
 
 	@Test

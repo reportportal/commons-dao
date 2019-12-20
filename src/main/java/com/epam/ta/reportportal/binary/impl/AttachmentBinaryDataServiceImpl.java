@@ -131,12 +131,12 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	}
 
 	@Override
-	public BinaryData load(String fileId, ReportPortalUser.ProjectDetails projectDetails) {
+	public BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails) {
 		try {
-			InputStream data = dataStoreService.load(fileId)
-					.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
-			Attachment attachment = attachmentRepository.findByFileId(fileId)
+			Attachment attachment = attachmentRepository.findById(fileId)
 					.orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
+			InputStream data = dataStoreService.load(attachment.getFileId())
+					.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
 			expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(ErrorType.ACCESS_DENIED,
 					formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
 			);

@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 /**
  * @author Dzianis_Shybeka
@@ -49,7 +50,7 @@ public class LocalDataStore implements DataStore {
 			Path targetPath = Paths.get(storageRootPath, filePath);
 			Path targetDirectory = targetPath.getParent();
 
-			if (!Files.isDirectory(targetDirectory)) {
+			if (Objects.nonNull(targetDirectory) && !Files.isDirectory(targetDirectory)) {
 				Files.createDirectories(targetDirectory);
 			}
 

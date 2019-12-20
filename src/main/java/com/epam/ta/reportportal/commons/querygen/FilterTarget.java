@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -48,7 +47,6 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
@@ -66,22 +64,20 @@ import static org.jooq.impl.DSL.field;
 
 public enum FilterTarget {
 
-	PROJECT_TARGET(Project.class,
-			Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME, ATTRIBUTE.NAME, String.class).get(),
+	PROJECT_TARGET(Project.class, Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME, ATTRIBUTE.NAME, String.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
-							.withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
-							.get(),
-					new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
-							.withAggregateCriteria(DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-									.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
-							.get()
-			)
-	) {
+			new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
+					.withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
+					.withAggregateCriteria(DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
+							.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+					.get()
+	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(PROJECT.ID,
@@ -119,29 +115,27 @@ public enum FilterTarget {
 		}
 	},
 
-	PROJECT_INFO(ProjectInfo.class,
-			Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE, String.class).get(),
+	PROJECT_INFO(ProjectInfo.class, Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE, String.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION, String.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE, Timestamp.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_CREATION_DATE, PROJECT.CREATION_DATE, Timestamp.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
-							.withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
-							.get(),
+			new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
+					.withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
+					.get(),
 
-					new CriteriaHolderBuilder().newBuilder(LAST_RUN, LAST_RUN, Timestamp.class)
-							.withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
-							.get(),
+			new CriteriaHolderBuilder().newBuilder(LAST_RUN, LAST_RUN, Timestamp.class)
+					.withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+					.get(),
 
-					new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
-							.withAggregateCriteria(DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-									.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
-							.get()
-			)
-	) {
+			new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
+					.withAggregateCriteria(DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
+							.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+					.get()
+	)) {
 		@Override
 		public QuerySupplier getQuery() {
 			SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
@@ -157,12 +151,14 @@ public enum FilterTarget {
 			return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
 					DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
 							LAUNCH.ID
-					)).as(LAUNCHES_QUANTITY),
+					))
+							.as(LAUNCHES_QUANTITY),
 					DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
 					PROJECT.ID,
 					PROJECT.CREATION_DATE,
 					PROJECT.NAME,
-					PROJECT.PROJECT_TYPE
+					PROJECT.PROJECT_TYPE,
+					PROJECT.ORGANIZATION
 			);
 		}
 
@@ -350,6 +346,7 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH, TEST_ITEM.PATH, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_HASH, TEST_ITEM.TEST_CASE_HASH, Integer.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_CHILDREN, TEST_ITEM.HAS_CHILDREN, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
@@ -398,11 +395,13 @@ public enum FilterTarget {
 									DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
 											DSL.val(KEY_VALUE_SEPARATOR),
 											ITEM_ATTRIBUTE.VALUE
-									)).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
+									))
+											.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
 									DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
 											DSL.val(KEY_VALUE_SEPARATOR),
 											LAUNCH_ATTRIBUTE.VALUE
-									)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
+									))
+											.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
 							).toString())
 							.get(),
 
@@ -426,6 +425,7 @@ public enum FilterTarget {
 					TEST_ITEM.PATH,
 					TEST_ITEM.UNIQUE_ID,
 					TEST_ITEM.TEST_CASE_ID,
+					TEST_ITEM.TEST_CASE_HASH,
 					TEST_ITEM.PARENT_ID,
 					TEST_ITEM.RETRY_OF,
 					TEST_ITEM.HAS_CHILDREN,
@@ -477,7 +477,6 @@ public enum FilterTarget {
 			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID));
 			query.addJoin(TEST_ITEM_RESULTS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
 			query.addJoin(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID));
-			query.addJoin(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID));
 			query.addJoin(STATISTICS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID));
 			query.addJoin(STATISTICS_FIELD, JoinType.LEFT_OUTER_JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
 			query.addJoin(PATTERN_TEMPLATE_TEST_ITEM, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID));
@@ -488,7 +487,7 @@ public enum FilterTarget {
 			query.addJoin(ISSUE_TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_ID.eq(ISSUE_TICKET.ISSUE_ID));
 			query.addJoin(TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE_TICKET.TICKET_ID.eq(TICKET.ID));
 			query.addJoin(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID));
-
+			query.addJoin(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID));
 		}
 	},
 
@@ -506,7 +505,9 @@ public enum FilterTarget {
 					.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_ITEM_ID, LOG.ITEM_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(LogCriteriaConstant.CRITERIA_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get()
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOG_LAUNCH_ID, LOG.LAUNCH_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_RETRY_PARENT_ID, TEST_ITEM.RETRY_OF, Long.class).get()
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
@@ -742,22 +743,20 @@ public enum FilterTarget {
 		}
 	},
 
-	USER_FILTER_TARGET(UserFilter.class,
-			Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED, Boolean.class)
-							.withAggregateCriteria(DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString())
-							.get(),
+	USER_FILTER_TARGET(UserFilter.class, Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED, Boolean.class)
+					.withAggregateCriteria(DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString())
+					.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID, Long.class)
-							.withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString())
-							.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID, Long.class)
+					.withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString())
+					.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER, String.class)
-							.withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.OWNER).toString())
-							.get()
-			)
-	) {
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER, String.class)
+					.withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.OWNER).toString())
+					.get()
+	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(FILTER.ID,
