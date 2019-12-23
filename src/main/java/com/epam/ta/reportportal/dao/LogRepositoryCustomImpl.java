@@ -297,7 +297,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.map(condition -> (Queryable) new Filter(filter.getTarget().getClazz(),
 						filter.getFilterConditions()
 								.stream()
-								.flatMap(simpleCondition -> condition.getAllConditions().stream())
+								.flatMap(simpleCondition -> simpleCondition.getAllConditions().stream())
 								.filter(filterCondition -> !condition.getSearchCriteria()
 										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
 								.collect(Collectors.toList())
