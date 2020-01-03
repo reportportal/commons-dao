@@ -19,11 +19,13 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import java.math.BigInteger;
 import java.util.List;
@@ -109,6 +111,17 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<TestItem> findTestItemsByLaunchId(Long launchId);
 
 	Optional<TestItem> findByUuid(String uuid);
+
+	/**
+	 * Finds {@link TestItem} by {@link TestItem#getUuid()} and sets a lock on the found 'item' row in the database.
+	 * Required for fetching 'item' from the concurrent environment to provide synchronization between dependant entities
+	 *
+	 * @param uuid {@link TestItem#getUuid()}
+	 * @return {@link Optional} with {@link TestItem} object
+	 */
+	@Query(value = "SELECT ti FROM TestItem ti WHERE ti.uuid = :uuid")
+	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+	Optional<TestItem> findByUuidForUpdate(@Param("uuid") String uuid);
 
 	/**
 	 * Finds all {@link TestItem} by specified launch id
