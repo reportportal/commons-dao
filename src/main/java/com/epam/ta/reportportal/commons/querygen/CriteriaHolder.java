@@ -27,7 +27,6 @@ import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -147,10 +146,7 @@ public class CriteriaHolder {
 		Object castedValue;
 		if (Number.class.isAssignableFrom(getDataType())) {
 			/* Verify correct number */
-			Long parsedLong = NumberUtils.toLong(oneValue, -1);
-			BusinessRule.expect(parsedLong, FilterRules.numberIsPositive())
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid positive number", oneValue));
-			castedValue = parsedLong;
+			castedValue = parseLong(oneValue, errorType);
 		} else if (Date.class.isAssignableFrom(getDataType())) {
 
 			if (FilterRules.dateInMillis().test(oneValue)) {
@@ -218,6 +214,14 @@ public class CriteriaHolder {
 		}
 
 		return castedValue;
+	}
+
+	private Long parseLong(String value, ErrorType errorType) {
+		try {
+			return Long.parseLong(value);
+		} catch (final NumberFormatException nfe) {
+			throw new ReportPortalException(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid number", value));
+		}
 	}
 
 }
