@@ -166,15 +166,6 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
 
-	/**
-	 * Check for existence of descendants with statuses NOT EQUAL to provided status
-	 *
-	 * @param parentId {@link TestItem#parent} ID
-	 * @param status   {@link JStatusEnum}
-	 * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
-	 */
-	boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status);
-
 	//TODO move to project repo
 	List<IssueType> selectIssueLocatorsByProject(Long projectId);
 

@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -166,8 +167,19 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return 'True' if has, otherwise 'false'
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM))", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
+
+	/**
+	 * Check for existence of descendants with statuses NOT EQUAL to provided status
+	 *
+	 * @param parentId {@link TestItem#getParent()} ID
+	 * @param status   {@link JStatusEnum}
+	 * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
+			+ " WHERE ti.parent_id = :parentId AND tir.status != cast(:#{#status.name()} AS STATUS_ENUM))", nativeQuery = true)
+	boolean hasDescendantsWithStatusNotEqual(Long parentId, StatusEnum status);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
@@ -183,8 +195,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	void interruptInProgressItems(@Param("launchId") Long launchId);
 
 	@Query(value = "SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY ti.launch_id) AS row_count, ti.* FROM test_item ti "
-			+ "WHERE (ti.unique_id IN (:uniqueIds)) AND (ti.launch_id IN (:launchIds))) testitem WHERE testitem.row_count <= :itemsLimitPerLaunch",
-			nativeQuery = true)
+			+ "WHERE (ti.unique_id IN (:uniqueIds)) AND (ti.launch_id IN (:launchIds))) testitem WHERE testitem.row_count <= :itemsLimitPerLaunch", nativeQuery = true)
 	List<TestItem> loadItemsHistory(@Param("uniqueIds") List<String> uniqueIds, @Param("launchIds") List<Long> launchIds,
 			@Param("itemsLimitPerLaunch") int itemsLimitPerLaunch);
 
