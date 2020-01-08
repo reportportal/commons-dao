@@ -79,14 +79,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param pageable     {@link Pageable}
 	 * @param projectId    {@link Project#getId()}
 	 * @param launchName   Name of the {@link Launch} which {@link TestItem} should be retrieved
-	 * @param historyDepth max {@link TestItemHistory} group size
+	 * @param historyDepth Max {@link TestItemHistory} group size
 	 * @return {@link Page} with {@link TestItemHistory} as content
 	 */
 	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, String launchName, int historyDepth);
 
 	/**
-	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the whole {@link com.epam.ta.reportportal.entity.project.Project}
-	 * grouped by {@link TestItem#getTestCaseHash()} ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
+	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the {@link com.epam.ta.reportportal.entity.project.Project}
+	 * with provided `projectId` and {@link Launch} which IDs are in provided `launchIds`.
+	 * Result is grouped by {@link TestItem#getTestCaseHash()} and is ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
 	 * Max group size equals to the provided `historyDepth` value.
 	 *
 	 * @param filter       {@link Queryable}
