@@ -148,15 +148,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses) {
-		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
-		return dsl.fetchExists(commonTestItemDslSelect().where(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", parentPath))
-				.and(TEST_ITEM.ITEM_ID.ne(parentId))
-				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.limit(1));
-	}
-
-	@Override
 	public List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator) {
 		return commonTestItemDslSelect().join(ISSUE)
 				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))

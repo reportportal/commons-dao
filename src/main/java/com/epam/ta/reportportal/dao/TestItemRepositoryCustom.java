@@ -100,16 +100,6 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
 	/**
-	 * True if the parent item has any child items with provided status.
-	 *
-	 * @param parentId   parent item {@link TestItem#itemId}
-	 * @param parentPath parent item {@link TestItem#path}
-	 * @param statuses   child item {@link com.epam.ta.reportportal.entity.item.TestItemResults#status}
-	 * @return True if contains, false if not
-	 */
-	Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses);
-
-	/**
 	 * Select items that has different issue from provided for
 	 * specified launch.
 	 *

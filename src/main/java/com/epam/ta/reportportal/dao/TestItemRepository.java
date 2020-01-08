@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.springframework.data.jpa.repository.Lock;
@@ -179,7 +180,20 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
 			+ " WHERE ti.parent_id = :parentId AND tir.status != cast(:#{#status.name()} AS STATUS_ENUM))", nativeQuery = true)
-	boolean hasDescendantsWithStatusNotEqual(Long parentId, StatusEnum status);
+	boolean hasDescendantsWithStatusNotEqual(@Param("parentId") Long parentId, @Param("status") StatusEnum status);
+
+	/**
+	 * True if the parent item has any child items with provided status.
+	 *
+	 * @param parentId   parent item {@link TestItem#getItemId()}
+	 * @param parentPath parent item {@link TestItem#getPath()}
+	 * @param statuses   child item {@link TestItemResults#getStatus()}
+	 * @return True if contains, false if not
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
+			+ " WHERE ti.path <@ cast(:parentPath AS LTREE) AND ti.item_id != :parentId AND cast(tir.status AS VARCHAR) IN (:statuses))", nativeQuery = true)
+	boolean hasItemsInStatusByParent(@Param("parentId") Long parentId, @Param("parentPath") String parentPath,
+			@Param("statuses") String... statuses);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the

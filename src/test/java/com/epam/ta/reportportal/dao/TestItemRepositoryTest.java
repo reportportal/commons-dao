@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Ivan Budaev
  */
-@Sql({"/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
+@Sql({ "/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
 class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
@@ -303,7 +303,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatusByParent() {
-		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED.name()));
+	}
+
+	@Test
+	void hasItemsInStatusByParentNegative() {
+		assertFalse(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.SKIPPED.name(), StatusEnum.PASSED.name()));
 	}
 
 	@Test
