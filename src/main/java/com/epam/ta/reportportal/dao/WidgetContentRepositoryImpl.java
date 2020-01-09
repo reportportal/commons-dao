@@ -821,9 +821,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
-			boolean isLatest, int launchesLimit, int attributesLimit) {
+	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, @Nullable String attributeKey,
+			@Nullable String patternName, boolean isLatest, int launchesLimit, int attributesLimit) {
 
+		Condition attributeKeyCondition = ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(DSL::noCondition);
 		Field<?> launchIdsField = isLatest ? DSL.max(LAUNCH.ID).as(ID) : DSL.arrayAgg(LAUNCH.ID).as(ID);
 		List<Field<?>> groupingFields = isLatest ?
 				Lists.newArrayList(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE) :
@@ -837,12 +838,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
 				.join(ITEM_ATTRIBUTE)
 				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-				.where(ITEM_ATTRIBUTE.KEY.eq(attributeKey))
+				.where(attributeKeyCondition)
 				.and(ITEM_ATTRIBUTE.VALUE.in(dsl.select(ITEM_ATTRIBUTE.VALUE)
 						.from(ITEM_ATTRIBUTE)
 						.join(LAUNCHES)
 						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-						.where(ITEM_ATTRIBUTE.KEY.eq(attributeKey))
+						.where(attributeKeyCondition)
 						.groupBy(ITEM_ATTRIBUTE.VALUE)
 						.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 								PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
