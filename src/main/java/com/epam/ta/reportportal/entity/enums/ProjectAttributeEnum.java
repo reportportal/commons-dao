@@ -36,8 +36,6 @@ public enum ProjectAttributeEnum {
 	KEEP_LOGS(Prefix.JOB + "keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
 	KEEP_SCREENSHOTS(Prefix.JOB + "keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
 
-	MIN_DOC_FREQ(Prefix.ANALYZER + "minDocFreq", String.valueOf(ProjectAnalyzerConfig.MIN_DOC_FREQ)),
-	MIN_TERM_FREQ(Prefix.ANALYZER + "minTermFreq", String.valueOf(ProjectAnalyzerConfig.MIN_TERM_FREQ)),
 	MIN_SHOULD_MATCH(Prefix.ANALYZER + "minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
 	NUMBER_OF_LOG_LINES(Prefix.ANALYZER + "numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
 	INDEXING_RUNNING(Prefix.ANALYZER + "indexingRunning", String.valueOf(false)),
@@ -53,20 +51,20 @@ public enum ProjectAttributeEnum {
 		this.defaultValue = defaultValue;
 	}
 
-	public String getAttribute() {
-		return attribute;
-	}
-
-	public String getDefaultValue() {
-		return defaultValue;
-	}
-
 	public static Optional<ProjectAttributeEnum> findByAttributeName(String attributeName) {
 		return Arrays.stream(ProjectAttributeEnum.values()).filter(v -> v.getAttribute().equalsIgnoreCase(attributeName)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
 		return findByAttributeName(name).isPresent();
+	}
+
+	public String getAttribute() {
+		return attribute;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
 	}
 
 	public static class Prefix {
