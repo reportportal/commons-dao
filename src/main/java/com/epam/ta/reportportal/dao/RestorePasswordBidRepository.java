@@ -25,11 +25,11 @@ import java.util.Optional;
  */
 public interface RestorePasswordBidRepository extends ReportPortalRepository<RestorePasswordBid, String> {
 
-	/**
-	 * Finds bid by specified email
-	 *
-	 * @param email email
-	 * @return Optional<RestorePasswordBid>
-	 */
-	Optional<RestorePasswordBid> findByEmail(String email);
+    /**
+     * Finds bid by specified email
+     *
+     * @param email email
+     * @return Optional
+     */
+    Optional<RestorePasswordBid> findByEmail(String email);
 }
