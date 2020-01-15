@@ -55,7 +55,12 @@ class LocalDataStoreTest {
 	void save_load_delete() throws Exception {
 
 		//  given:
-		AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(1L).build();
+		AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
+				.withProjectId(1L)
+				.withLaunchId(2L)
+				.withItemId(3L)
+				.withLogId(4L)
+				.build();
 		String generatedDirectory = "/test";
 		when(fileNameGenerator.generate(attachmentMetaInfo)).thenReturn(generatedDirectory);
 		FileUtils.deleteDirectory(new File(Paths.get(ROOT_PATH, generatedDirectory).toUri()));

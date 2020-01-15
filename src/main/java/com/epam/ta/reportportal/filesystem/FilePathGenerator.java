@@ -35,6 +35,12 @@ public class FilePathGenerator {
 	 */
 	public String generate(AttachmentMetaInfo metaInfo) {
 		String uuid = UUID.randomUUID().toString();
-		return Paths.get(String.valueOf(metaInfo.getProjectId()), String.valueOf(metaInfo.getLaunchId()), uuid).toString();
+		return Paths.get(
+				String.valueOf(metaInfo.getProjectId()),
+				String.valueOf(metaInfo.getLaunchId()),
+				String.valueOf(metaInfo.getItemId()),
+				String.valueOf(metaInfo.getLogId()),
+				uuid
+		).toString();
 	}
 }

@@ -17,11 +17,8 @@
 package com.epam.ta.reportportal.filesystem;
 
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
-import com.epam.ta.reportportal.util.DateTimeProvider;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 
@@ -29,20 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class FilePathGeneratorTest {
 
-	private DateTimeProvider dateTimeProvider;
-
 	private static final String SEPARATOR = "\\" + File.separator;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		dateTimeProvider = Mockito.mock(DateTimeProvider.class);
-	}
 
 	@Test
 	void generate_different_even_for_same_date() {
 
 		//		given:
-		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(1L).build();
+		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(2L).withItemId(3L).withLogId(4L).build();
 		//
 
 		//		when:
@@ -52,7 +42,7 @@ class FilePathGeneratorTest {
 		//		then:
 		assertNotEquals(pathOne, pathTwo);
 
-		final String regex = "^" + "1" + SEPARATOR + "1" + SEPARATOR + ".*$";
+		final String regex = "^" + "1" + SEPARATOR + "2" + SEPARATOR + "3" + SEPARATOR + "4" + SEPARATOR + ".*$";
 
 		Assertions.assertThat(pathOne).matches(regex);
 		Assertions.assertThat(pathTwo).matches(regex);
