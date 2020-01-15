@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Entity for query {@link com.epam.ta.reportportal.dao.LogRepository#findNestedItems(Long, Queryable, Pageable)}, consists from
+ * Entity for query {@link com.epam.ta.reportportal.dao.LogRepository#findNestedItems(Long, boolean, boolean, Queryable, Pageable)}, consists from
  * either {@link com.epam.ta.reportportal.entity.log.Log#id} or {@link TestItem#itemId} as {@link NestedItem#id}
  * and {@link NestedItem#type} to identify what kind of entity is it.
  * <p>
@@ -33,48 +33,48 @@ import java.util.Objects;
  */
 public class NestedItem implements Serializable {
 
-	private Long id;
+    private Long id;
 
-	private String type;
+    private String type;
 
-	public NestedItem() {
-	}
+    public NestedItem() {
+    }
 
-	public NestedItem(Long id, String type) {
-		this.id = id;
-		this.type = type;
-	}
+    public NestedItem(Long id, String type) {
+        this.id = id;
+        this.type = type;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		NestedItem that = (NestedItem) o;
-		return Objects.equals(id, that.id) && Objects.equals(type, that.type);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        NestedItem that = (NestedItem) o;
+        return Objects.equals(id, that.id) && Objects.equals(type, that.type);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, type);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type);
+    }
 }
