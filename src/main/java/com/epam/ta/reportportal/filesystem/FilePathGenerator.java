@@ -16,9 +16,7 @@
 
 package com.epam.ta.reportportal.filesystem;
 
-import com.epam.ta.reportportal.util.DateTimeProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Paths;
@@ -30,34 +28,13 @@ import java.util.UUID;
 @Component
 public class FilePathGenerator {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FilePathGenerator.class);
-
-	private final DateTimeProvider dateTimeProvider;
-
-	public FilePathGenerator(DateTimeProvider dateTimeProvider) {
-		this.dateTimeProvider = dateTimeProvider;
-	}
-
 	/**
 	 * Generate relative file path for new local file. ${Day of the year}/${split UUID part}
 	 *
 	 * @return
 	 */
-	public String generate() {
-
+	public String generate(AttachmentMetaInfo metaInfo) {
 		String uuid = UUID.randomUUID().toString();
-
-		int dayOfYear = dateTimeProvider.localDateTimeNow().getDayOfYear();
-
-		String levelOne = uuid.substring(0, 2);
-		String levelTwo = uuid.substring(2, 4);
-		String levelThree = uuid.substring(4, 6);
-		String tail = uuid.substring(6);
-
-		String result = Paths.get(String.valueOf(dayOfYear), levelOne, levelTwo, levelThree, tail).toString();
-
-		LOG.debug("File path generated: {}", result);
-
-		return result;
+		return Paths.get(String.valueOf(metaInfo.getProjectId()), String.valueOf(metaInfo.getLaunchId()), uuid).toString();
 	}
 }

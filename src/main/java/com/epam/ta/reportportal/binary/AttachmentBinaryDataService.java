@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 public interface AttachmentBinaryDataService {
 
-	Optional<BinaryDataMetaInfo> saveAttachment(Long projectId, MultipartFile file);
+	Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo attachmentMetaInfo, MultipartFile file);
 
 	void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo);
 

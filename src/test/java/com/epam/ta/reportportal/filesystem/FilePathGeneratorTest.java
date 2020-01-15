@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.util.DateTimeProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.when;
 
 class FilePathGeneratorTest {
 
@@ -43,18 +42,17 @@ class FilePathGeneratorTest {
 	void generate_different_even_for_same_date() {
 
 		//		given:
-		LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);
-		when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
+		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(1L).build();
+		//
 
 		//		when:
-		String pathOne = new FilePathGenerator(dateTimeProvider).generate();
-		String pathTwo = new FilePathGenerator(dateTimeProvider).generate();
+		String pathOne = new FilePathGenerator().generate(metaInfo);
+		String pathTwo = new FilePathGenerator().generate(metaInfo);
 
 		//		then:
 		assertNotEquals(pathOne, pathTwo);
 
-		final String regex =
-				"^" + date.getDayOfYear() + SEPARATOR + "\\w{2}" + SEPARATOR + "\\w{2}" + SEPARATOR + "\\w{2}" + SEPARATOR + ".*$";
+		final String regex = "^" + "1" + SEPARATOR + "1" + SEPARATOR + ".*$";
 
 		Assertions.assertThat(pathOne).matches(regex);
 		Assertions.assertThat(pathTwo).matches(regex);

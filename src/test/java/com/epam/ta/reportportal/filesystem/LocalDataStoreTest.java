@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.base.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -54,8 +55,9 @@ class LocalDataStoreTest {
 	void save_load_delete() throws Exception {
 
 		//  given:
+		AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(1L).build();
 		String generatedDirectory = "/test";
-		when(fileNameGenerator.generate()).thenReturn(generatedDirectory);
+		when(fileNameGenerator.generate(attachmentMetaInfo)).thenReturn(generatedDirectory);
 		FileUtils.deleteDirectory(new File(Paths.get(ROOT_PATH, generatedDirectory).toUri()));
 
 		//  when: save new file

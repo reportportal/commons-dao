@@ -79,14 +79,14 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	}
 
 	@Override
-	public Optional<BinaryDataMetaInfo> saveAttachment(Long projectId, MultipartFile file) {
+	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try {
 			String contentType = resolveContentType(file);
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
 			String fileName = file.getName() + extension;
 
-			String commonPath = Paths.get(projectId.toString(), filePathGenerator.generate()).toString();
+			String commonPath = filePathGenerator.generate(metaInfo);
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
@@ -106,7 +106,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 
 	@Override
 	public void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
-		saveAttachment(attachmentMetaInfo.getProjectId(), file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
+		saveAttachment(attachmentMetaInfo, file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
 	}
 
 	@Override
