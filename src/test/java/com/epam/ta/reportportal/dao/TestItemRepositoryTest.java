@@ -281,7 +281,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatusByParent() {
-		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED.name()));
+	}
+
+	@Test
+	void hasItemsInStatusByParentNegative() {
+		assertFalse(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.SKIPPED.name(), StatusEnum.PASSED.name()));
 	}
 
 	@Test
@@ -364,7 +369,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasDescendantsWithStatusNotEqual() {
-		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, JStatusEnum.PASSED), "Incorrect status");
+		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, StatusEnum.PASSED), "Incorrect status");
 	}
 
 	@Test

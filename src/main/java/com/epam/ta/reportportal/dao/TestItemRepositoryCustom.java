@@ -185,25 +185,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
      */
     Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
-    /**
-     * True if the parent item has any child items with provided status.
-     *
-     * @param parentId   parent item {@link TestItem#itemId}
-     * @param parentPath parent item {@link TestItem#path}
-     * @param statuses   child item {@link com.epam.ta.reportportal.entity.item.TestItemResults#status}
-     * @return True if contains, false if not
-     */
-    Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses);
-
-    /**
-     * Select items that has different issue from provided for
-     * specified launch.
-     *
-     * @param launchId Launch
-     * @param locator  Issue type locator
-     * @return List of items
-     */
-    List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator);
+	/**
+	 * Select items that has different issue from provided for
+	 * specified launch.
+	 *
+	 * @param launchId Launch
+	 * @param locator  Issue type locator
+	 * @return List of items
+	 */
+	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator);
 
     /**
      * Select items that has different issue from provided for
@@ -252,17 +242,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
      */
     List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
 
-    /**
-     * Check for existence of descendants with statuses NOT EQUAL to provided status
-     *
-     * @param parentId {@link TestItem#parent} ID
-     * @param status   {@link JStatusEnum}
-     * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
-     */
-    boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status);
-
-    //TODO move to project repo
-    List<IssueType> selectIssueLocatorsByProject(Long projectId);
+	//TODO move to project repo
+	List<IssueType> selectIssueLocatorsByProject(Long projectId);
 
     /**
      * Selects issue type object by provided locator for specified project.
