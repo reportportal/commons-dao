@@ -31,11 +31,17 @@ public class AttachmentMetaInfo {
 
 	private Long logId;
 
-	private AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId) {
+	private String launchUuid;
+
+	private String logUuid;
+
+	public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId, String launchUuid, String logUuid) {
 		this.projectId = projectId;
 		this.launchId = launchId;
 		this.itemId = itemId;
 		this.logId = logId;
+		this.launchUuid = launchUuid;
+		this.logUuid = logUuid;
 	}
 
 	public static AttachmentMetaInfoBuilder builder() {
@@ -58,6 +64,14 @@ public class AttachmentMetaInfo {
 		return logId;
 	}
 
+	public String getLaunchUuid() {
+		return launchUuid;
+	}
+
+	public String getLogUuid() {
+		return logUuid;
+	}
+
 	public static class AttachmentMetaInfoBuilder {
 		private Long projectId;
 
@@ -66,6 +80,10 @@ public class AttachmentMetaInfo {
 		private Long itemId;
 
 		private Long logId;
+
+		private String launchUuid;
+
+		private String logUuid;
 
 		private AttachmentMetaInfoBuilder() {
 		}
@@ -77,7 +95,6 @@ public class AttachmentMetaInfo {
 		}
 
 		public AttachmentMetaInfoBuilder withLaunchId(Long launchId) {
-			Preconditions.checkNotNull(launchId);
 			this.launchId = launchId;
 			return this;
 		}
@@ -88,13 +105,22 @@ public class AttachmentMetaInfo {
 		}
 
 		public AttachmentMetaInfoBuilder withLogId(Long logId) {
-			Preconditions.checkNotNull(logId);
 			this.logId = logId;
 			return this;
 		}
 
+		public AttachmentMetaInfoBuilder withLaunchUuid(String launchUuid) {
+			this.launchUuid = launchUuid;
+			return this;
+		}
+
+		public AttachmentMetaInfoBuilder withLogUuid(String logUuid) {
+			this.logUuid = logUuid;
+			return this;
+		}
+
 		public AttachmentMetaInfo build() {
-			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId);
+			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId, this.launchUuid, this.logUuid);
 		}
 	}
 }
