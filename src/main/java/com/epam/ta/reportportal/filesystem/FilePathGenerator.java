@@ -17,10 +17,13 @@
 package com.epam.ta.reportportal.filesystem;
 
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
+import com.epam.ta.reportportal.util.DateTimeProvider;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Paths;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 /**
  * @author Dzianis_Shybeka
@@ -28,19 +31,25 @@ import java.util.UUID;
 @Component
 public class FilePathGenerator {
 
+	private final DateTimeProvider dateTimeProvider;
+
+	public FilePathGenerator(DateTimeProvider dateTimeProvider) {
+		this.dateTimeProvider = dateTimeProvider;
+	}
+
 	/**
 	 * Generate relative file path for new local file. ${Day of the year}/${split UUID part}
 	 *
 	 * @return
 	 */
 	public String generate(AttachmentMetaInfo metaInfo) {
-		String uuid = UUID.randomUUID().toString();
+		LocalDateTime localDateTime = dateTimeProvider.localDateTimeNow();
+		String date = localDateTime.getYear() + "-" + localDateTime.getMonthValue();
 		return Paths.get(
 				String.valueOf(metaInfo.getProjectId()),
+				date,
 				String.valueOf(metaInfo.getLaunchId()),
-				String.valueOf(metaInfo.getItemId()),
-				String.valueOf(metaInfo.getLogId()),
-				uuid
+				String.valueOf(metaInfo.getLogId())
 		).toString();
 	}
 }
