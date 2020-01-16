@@ -22,8 +22,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 
 /**
  * @author Dzianis_Shybeka
@@ -45,11 +43,6 @@ public class FilePathGenerator {
 	public String generate(AttachmentMetaInfo metaInfo) {
 		LocalDateTime localDateTime = dateTimeProvider.localDateTimeNow();
 		String date = localDateTime.getYear() + "-" + localDateTime.getMonthValue();
-		return Paths.get(
-				String.valueOf(metaInfo.getProjectId()),
-				date,
-				String.valueOf(metaInfo.getLaunchId()),
-				String.valueOf(metaInfo.getLogId())
-		).toString();
+		return Paths.get(String.valueOf(metaInfo.getProjectId()), date, metaInfo.getLaunchUuid(), metaInfo.getLogUuid()).toString();
 	}
 }

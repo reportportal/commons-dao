@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -42,8 +41,18 @@ class FilePathGeneratorTest {
 	void generate_different_even_for_same_date() {
 
 		//		given:
-		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(2L).withItemId(3L).withLogId(4L).build();
-		AttachmentMetaInfo metaInfo2 = AttachmentMetaInfo.builder().withProjectId(1L).withLaunchId(2L).withItemId(3L).withLogId(5L).build();
+		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder()
+				.withProjectId(1L)
+				.withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
+				.withLogUuid("271b5881-9a62-4df4-b477-335a96acbe15")
+				.build();
+
+		AttachmentMetaInfo metaInfo2 = AttachmentMetaInfo.builder()
+				.withProjectId(1L)
+				.withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
+				.withLogUuid("271b5881-9a62-4df4-b477-335a96acbe16")
+				.build();
+
 		LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);
 		when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
 		//
@@ -55,7 +64,7 @@ class FilePathGeneratorTest {
 		//		then:
 		assertNotEquals(pathOne, pathTwo);
 
-		Assertions.assertThat(pathOne).isEqualTo("1/2018-5/2/4");
-		Assertions.assertThat(pathTwo).isEqualTo("1/2018-5/2/5");
+		Assertions.assertThat(pathOne).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14/271b5881-9a62-4df4-b477-335a96acbe15");
+		Assertions.assertThat(pathTwo).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14/271b5881-9a62-4df4-b477-335a96acbe16");
 	}
 }
