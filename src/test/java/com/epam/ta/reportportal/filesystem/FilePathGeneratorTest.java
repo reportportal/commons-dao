@@ -25,7 +25,6 @@ import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 class FilePathGeneratorTest {
@@ -44,13 +43,6 @@ class FilePathGeneratorTest {
 		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder()
 				.withProjectId(1L)
 				.withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
-				.withLogUuid("271b5881-9a62-4df4-b477-335a96acbe15")
-				.build();
-
-		AttachmentMetaInfo metaInfo2 = AttachmentMetaInfo.builder()
-				.withProjectId(1L)
-				.withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
-				.withLogUuid("271b5881-9a62-4df4-b477-335a96acbe16")
 				.build();
 
 		LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);
@@ -59,12 +51,7 @@ class FilePathGeneratorTest {
 
 		//		when:
 		String pathOne = new FilePathGenerator(dateTimeProvider).generate(metaInfo);
-		String pathTwo = new FilePathGenerator(dateTimeProvider).generate(metaInfo2);
 
-		//		then:
-		assertNotEquals(pathOne, pathTwo);
-
-		Assertions.assertThat(pathOne).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14/271b5881-9a62-4df4-b477-335a96acbe15");
-		Assertions.assertThat(pathTwo).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14/271b5881-9a62-4df4-b477-335a96acbe16");
+		Assertions.assertThat(pathOne).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14");
 	}
 }

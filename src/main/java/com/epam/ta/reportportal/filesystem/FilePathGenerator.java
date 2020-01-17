@@ -36,13 +36,13 @@ public class FilePathGenerator {
 	}
 
 	/**
-	 * Generate relative file path for new local file. ${Day of the year}/${split UUID part}
+	 * Generate relative file path for new local file. projectId/year-month/launchUUID
 	 *
-	 * @return
+	 * @return Generated path
 	 */
 	public String generate(AttachmentMetaInfo metaInfo) {
 		LocalDateTime localDateTime = dateTimeProvider.localDateTimeNow();
 		String date = localDateTime.getYear() + "-" + localDateTime.getMonthValue();
-		return Paths.get(String.valueOf(metaInfo.getProjectId()), date, metaInfo.getLaunchUuid(), metaInfo.getLogUuid()).toString();
+		return Paths.get(String.valueOf(metaInfo.getProjectId()), date, metaInfo.getLaunchUuid()).toString();
 	}
 }

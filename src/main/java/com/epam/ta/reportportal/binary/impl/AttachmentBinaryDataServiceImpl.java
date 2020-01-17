@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.*;
@@ -85,7 +84,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		try {
 			String contentType = resolveContentType(file);
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
-			String fileName = file.getName() + "-" + UUID.randomUUID() + extension;
+			String fileName = metaInfo.getLogUuid() + "-" + file.getName() + extension;
 
 			String commonPath = filePathGenerator.generate(metaInfo);
 			String targetPath = Paths.get(commonPath, fileName).toString();
