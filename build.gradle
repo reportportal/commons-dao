@@ -27,30 +27,27 @@ apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/maste
 apply from: 'https://raw.githubusercontent.com/reportportal/gradle-scripts/master/jacoco.gradle'
 apply from: 'jooq.gradle'
 
-
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "http://dl.bintray.com/epam/reportportal" }
-    maven { url 'https://jitpack.io' }
+    releaseMode ? maven { url "http://dl.bintray.com/epam/reportportal" } : maven { url 'https://jitpack.io' }
 }
 
 dependencyManagement {
     imports {
-//        mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.5.RELEASE"
-        mavenBom 'com.github.reportportal:commons-bom:f060f9c'
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.0.0-RC-5' : 'com.github.reportportal:commons-bom:4b7ed8a')
     }
 }
 
 dependencies {
     if (releaseMode) {
-        compile 'com.epam.reportportal:commons:5.0.0-BETA-2'
-        compile 'com.epam.reportportal:commons-rules:5.0.0-BETA-6'
-        compile 'com.epam.reportportal:commons-model:5.0.0-RC-5'
+        compile 'com.epam.reportportal:commons'
+        compile 'com.epam.reportportal:commons-rules'
+        compile 'com.epam.reportportal:commons-model'
     } else {
-        compile('com.github.reportportal:commons:5.0.0-BETA-2')
-        compile 'com.github.reportportal:commons-rules:5.0.0-BETA-6'
-        compile 'com.github.reportportal:commons-model:5.0.0-RC-5'
+        compile('com.github.reportportal:commons:ac09eb5')
+        compile 'com.github.reportportal:commons-rules:2e3921e'
+        compile 'com.github.reportportal:commons-model:2f23f50'
     }
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -75,8 +72,6 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:5.2.1'
 }
-
-tasks.withType(Javadoc).all { enabled = false }
 
 test {
     useJUnitPlatform()

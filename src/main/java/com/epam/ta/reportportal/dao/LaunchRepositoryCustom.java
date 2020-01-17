@@ -34,71 +34,71 @@ import java.util.Optional;
  */
 public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
-	boolean hasItemsInStatuses(Long launchId, List<JStatusEnum> statuses);
+    boolean hasItemsInStatuses(Long launchId, List<JStatusEnum> statuses);
 
-	/**
-	 * Retrieves names of the launches by provided 'projectId', 'mode', 'value' as a part of the name
-	 * and statuses that are not equal to the provided 'status'
-	 *
-	 * @param projectId {@link Launch#projectId}
-	 * @param value     A part of the {@link Launch#name}
-	 * @param mode      {@link Launch#mode}
-	 * @param status    {@link Launch#status}
-	 * @return The {@link List} of the {@link Launch#name}
-	 */
-	List<String> getLaunchNamesByModeExcludedByStatus(Long projectId, String value, LaunchModeEnum mode, StatusEnum status);
+    /**
+     * Retrieves names of the launches by provided 'projectId', 'mode', 'value' as a part of the name
+     * and statuses that are not equal to the provided 'status'
+     *
+     * @param projectId {@link Launch#projectId}
+     * @param value     A part of the {@link Launch#name}
+     * @param mode      {@link Launch#mode}
+     * @param status    {@link Launch#status}
+     * @return The {@link List} of the {@link Launch#name}
+     */
+    List<String> getLaunchNamesByModeExcludedByStatus(Long projectId, String value, LaunchModeEnum mode, StatusEnum status);
 
-	List<String> getOwnerNames(Long projectId, String value, String mode);
+    List<String> getOwnerNames(Long projectId, String value, String mode);
 
-	Map<String, String> getStatuses(Long projectId, Long[] ids);
+    Map<String, String> getStatuses(Long projectId, Long[] ids);
 
-	Optional<Launch> findLatestByFilter(Filter filter);
+    Optional<Launch> findLatestByFilter(Filter filter);
 
-	Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
+    Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
 
-	/**
-	 * Finds launch ids of project with provided id
-	 *
-	 * @param projectId - Project id
-	 * @return List of ids
-	 */
-	List<Long> findLaunchIdsByProjectId(Long projectId);
+    /**
+     * Finds launch ids of project with provided id
+     *
+     * @param projectId - Project id
+     * @return List of ids
+     */
+    List<Long> findLaunchIdsByProjectId(Long projectId);
 
-	/**
-	 * Finds the last valid launch in project
-	 *
-	 * @param projectId Project id
-	 * @param mode      Launch mode
-	 * @return {@link Optional} of {@link Launch}
-	 */
-	Optional<Launch> findLastRun(Long projectId, String mode);
+    /**
+     * Finds the last valid launch in project
+     *
+     * @param projectId Project id
+     * @param mode      Launch mode
+     * @return {@link Optional} of {@link Launch}
+     */
+    Optional<Launch> findLastRun(Long projectId, String mode);
 
-	/**
-	 * Counts launches with mode for specified project from provided date
-	 *
-	 * @param projectId Project id
-	 * @param mode      Launch mode
-	 * @param fromDate  From Date to count
-	 * @return Launches count
-	 */
-	Integer countLaunches(Long projectId, String mode, LocalDateTime fromDate);
+    /**
+     * Counts launches with mode for specified project from provided date
+     *
+     * @param projectId Project id
+     * @param mode      Launch mode
+     * @param fromDate  From Date to count
+     * @return Launches count
+     */
+    Integer countLaunches(Long projectId, String mode, LocalDateTime fromDate);
 
-	/**
-	 * Counts launches with mode for specified project
-	 *
-	 * @param projectId {@link Launch#projectId}
-	 * @param mode      {@link Launch#mode}
-	 * @return Launches count
-	 */
-	Integer countLaunches(Long projectId, String mode);
+    /**
+     * Counts launches with mode for specified project
+     *
+     * @param projectId {@link Launch#projectId}
+     * @param mode      {@link Launch#mode}
+     * @return Launches count
+     */
+    Integer countLaunches(Long projectId, String mode);
 
-	/**
-	 * Counts quantity of launches with mode per user for specified project.
-	 *
-	 * @param projectId Project id
-	 * @param mode      Launch mode
-	 * @param from      From Date to count
-	 * @return Map of username -> launches count
-	 */
-	Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
+    /**
+     * Counts quantity of launches with mode per user for specified project.
+     *
+     * @param projectId Project id
+     * @param mode      Launch mode
+     * @param from      From Date to count
+     * @return Map of username and launches count
+     */
+    Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 }

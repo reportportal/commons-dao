@@ -43,7 +43,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
     /**
      * @param login user login for search
-     * @return Optional<User>
+     * @return {@link Optional} of {@link User}
      */
     Optional<User> findByLogin(String login);
 
