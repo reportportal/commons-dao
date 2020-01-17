@@ -85,7 +85,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		try {
 			String contentType = resolveContentType(file);
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
-			String fileName = file.getName() + "-" + UUID.randomUUID() + extension;
+			String fileName = UUID.randomUUID() + "-" + file.getName() + extension;
 
 			String commonPath = filePathGenerator.generate(metaInfo);
 			String targetPath = Paths.get(commonPath, fileName).toString();
