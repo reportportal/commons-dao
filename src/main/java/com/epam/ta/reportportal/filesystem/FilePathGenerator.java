@@ -36,7 +36,7 @@ public class FilePathGenerator {
 	}
 
 	/**
-	 * Generate relative file path for new local file. ${Day of the year}/${split UUID part}
+	 * Generate relative file path for new local file. projectId/year-month/launchUUID
 	 *
 	 * @return Generated path
 	 */
