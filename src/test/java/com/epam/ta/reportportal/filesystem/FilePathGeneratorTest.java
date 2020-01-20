@@ -16,26 +16,23 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.util.DateTimeProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 class FilePathGeneratorTest {
 
 	private DateTimeProvider dateTimeProvider;
 
-	private static final String SEPARATOR = "\\" + File.separator;
-
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		dateTimeProvider = Mockito.mock(DateTimeProvider.class);
 	}
 
@@ -43,20 +40,18 @@ class FilePathGeneratorTest {
 	void generate_different_even_for_same_date() {
 
 		//		given:
+		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder()
+				.withProjectId(1L)
+				.withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
+				.build();
+
 		LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);
 		when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
+		//
 
 		//		when:
-		String pathOne = new FilePathGenerator(dateTimeProvider).generate();
-		String pathTwo = new FilePathGenerator(dateTimeProvider).generate();
+		String pathOne = new FilePathGenerator(dateTimeProvider).generate(metaInfo);
 
-		//		then:
-		assertNotEquals(pathOne, pathTwo);
-
-		final String regex =
-				"^" + date.getDayOfYear() + SEPARATOR + "\\w{2}" + SEPARATOR + "\\w{2}" + SEPARATOR + "\\w{2}" + SEPARATOR + ".*$";
-
-		Assertions.assertThat(pathOne).matches(regex);
-		Assertions.assertThat(pathTwo).matches(regex);
+		Assertions.assertThat(pathOne).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14");
 	}
 }
