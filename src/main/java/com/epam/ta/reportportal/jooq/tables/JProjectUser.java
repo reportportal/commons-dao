@@ -13,7 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JProjectUserRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProjectUser extends TableImpl<JProjectUserRecord> {
 
-    private static final long serialVersionUID = 1318763391;
+    private static final long serialVersionUID = 1070794480;
 
     /**
      * The reference instance of <code>public.project_user</code>

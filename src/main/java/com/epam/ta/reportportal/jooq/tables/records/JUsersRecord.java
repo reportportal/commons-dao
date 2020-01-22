@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.JSONB;
@@ -29,7 +29,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> implements Record11<Long, String, String, String, String, String, String, String, Boolean, String, JSONB> {
 
-    private static final long serialVersionUID = -1488881047;
+    private static final long serialVersionUID = 1759323352;
 
     /**
      * Setter for <code>public.users.id</code>.

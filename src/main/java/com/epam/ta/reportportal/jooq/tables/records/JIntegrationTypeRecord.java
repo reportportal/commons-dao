@@ -10,7 +10,7 @@ import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.JSONB;
@@ -33,7 +33,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationTypeRecord> implements Record7<Integer, String, JIntegrationAuthFlowEnum, Timestamp, JIntegrationGroupEnum, Boolean, JSONB> {
 
-    private static final long serialVersionUID = 1609991607;
+    private static final long serialVersionUID = -875273220;
 
     /**
      * Setter for <code>public.integration_type.id</code>.

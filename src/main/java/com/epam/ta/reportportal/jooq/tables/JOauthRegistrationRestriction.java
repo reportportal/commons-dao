@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictio
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthRegistrationRestriction extends TableImpl<JOauthRegistrationRestrictionRecord> {
 
-    private static final long serialVersionUID = -10285133;
+    private static final long serialVersionUID = 1105563434;
 
     /**
      * The reference instance of <code>public.oauth_registration_restriction</code>

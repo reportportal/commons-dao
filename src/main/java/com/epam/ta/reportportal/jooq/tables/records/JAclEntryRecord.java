@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JAclEntry;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAclEntryRecord extends UpdatableRecordImpl<JAclEntryRecord> implements Record8<Long, Long, Integer, Long, Integer, Boolean, Boolean, Boolean> {
 
-    private static final long serialVersionUID = -702039827;
+    private static final long serialVersionUID = -565564478;
 
     /**
      * Setter for <code>public.acl_entry.id</code>.

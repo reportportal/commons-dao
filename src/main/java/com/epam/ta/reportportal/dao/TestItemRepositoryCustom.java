@@ -23,7 +23,10 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,13 +56,96 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
     Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
                                 Pageable testItemPageable);
 
-    /**
-     * Selects all descendants of TestItem with provided id.
-     *
-     * @param itemId TestItem id
-     * @return List of all descendants
-     */
-    List<TestItem> selectAllDescendants(Long itemId);
+	/**
+	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the whole {@link com.epam.ta.reportportal.entity.project.Project}
+	 * grouped by {@link TestItem#getTestCaseHash()} and ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
+	 * Max group size equals to the provided `historyDepth` value.
+	 *
+	 * @param filter       {@link Queryable}
+	 * @param pageable     {@link Pageable}
+	 * @param projectId    {@link Project#getId()}
+	 * @param historyDepth max {@link TestItemHistory} group size
+	 * @return {@link Page} with {@link TestItemHistory} as content
+	 */
+	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth);
+
+	/**
+	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the {@link com.epam.ta.reportportal.entity.project.Project}
+	 * with provided `projectId` and {@link Launch#getName()} equal to the provided `launchName` value.
+	 * Result is grouped by {@link TestItem#getTestCaseHash()} and is ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
+	 * Max group size equals to the provided `historyDepth` value.
+	 *
+	 * @param filter       {@link Queryable}
+	 * @param pageable     {@link Pageable}
+	 * @param projectId    {@link Project#getId()}
+	 * @param launchName   Name of the {@link Launch} which {@link TestItem} should be retrieved
+	 * @param historyDepth Max {@link TestItemHistory} group size
+	 * @return {@link Page} with {@link TestItemHistory} as content
+	 */
+	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, String launchName, int historyDepth);
+
+	/**
+	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the {@link com.epam.ta.reportportal.entity.project.Project}
+	 * with provided `projectId` and {@link Launch} which IDs are in provided `launchIds`.
+	 * Result is grouped by {@link TestItem#getTestCaseHash()} and is ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
+	 * Max group size equals to the provided `historyDepth` value.
+	 *
+	 * @param filter       {@link Queryable}
+	 * @param pageable     {@link Pageable}
+	 * @param projectId    {@link Project#getId()}
+	 * @param launchIds    IDs of the {@link Launch}es which {@link TestItem} should be retrieved
+	 * @param historyDepth Max {@link TestItemHistory} group size
+	 * @return {@link Page} with {@link TestItemHistory} as content
+	 */
+	Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, List<Long> launchIds, int historyDepth);
+
+	/**
+	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the whole {@link com.epam.ta.reportportal.entity.project.Project}
+	 * grouped by {@link TestItem#getTestCaseHash()} ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
+	 * Max group size equals to the provided `historyDepth` value.
+	 * Items result query is built from filters with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+	 * and {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
+	 *
+	 * @param isLatest         Flag for retrieving only latest launches
+	 * @param launchFilter     {@link Queryable} for {@link Launch} query
+	 * @param testItemFilter   {@link Queryable} for {@link TestItem} query
+	 * @param launchPageable   {@link Pageable} for {@link Launch} query
+	 * @param testItemPageable {@link Pageable} for {@link TestItem} query
+	 * @param projectId        {@link Project#getId()}
+	 * @param historyDepth     Max {@link TestItemHistory} group size
+	 * @return {@link Page} with {@link TestItemHistory} as content
+	 */
+	Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable, Long projectId, int historyDepth);
+
+	/**
+	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the {@link com.epam.ta.reportportal.entity.project.Project}
+	 * with provided `projectId` and {@link Launch#getName()} equal to the provided `launchName` value.
+	 * Result is grouped by {@link TestItem#getTestCaseHash()} and is ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.
+	 * Max group size equals to the provided `historyDepth` value.
+	 * Items result query is built from filters with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+	 * and {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
+	 *
+	 * @param isLatest         Flag for retrieving only latest launches
+	 * @param launchFilter     {@link Queryable} for {@link Launch} query
+	 * @param testItemFilter   {@link Queryable} for {@link TestItem} query
+	 * @param launchPageable   {@link Pageable} for {@link Launch} query
+	 * @param testItemPageable {@link Pageable} for {@link TestItem} query
+	 * @param projectId        {@link Project#getId()}
+	 * @param launchName       Name of the {@link Launch} which {@link TestItem} should be retrieved
+	 * @param historyDepth     Max {@link TestItemHistory} group size
+	 * @return {@link Page} with {@link TestItemHistory} as content
+	 */
+	Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable, Long projectId, String launchName, int historyDepth);
+
+	/**
+	 * Selects all descendants of TestItem with provided id.
+	 *
+	 * @param itemId TestItem id
+	 * @return List of all descendants
+	 */
+	List<TestItem> selectAllDescendants(Long itemId);
 
     /**
      * Selects all descendants of TestItem with provided id, which has at least one child.
@@ -99,25 +185,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
      */
     Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
-    /**
-     * True if the parent item has any child items with provided status.
-     *
-     * @param parentId   parent item {@link TestItem#itemId}
-     * @param parentPath parent item {@link TestItem#path}
-     * @param statuses   child item {@link com.epam.ta.reportportal.entity.item.TestItemResults#status}
-     * @return True if contains, false if not
-     */
-    Boolean hasItemsInStatusByParent(Long parentId, String parentPath, StatusEnum... statuses);
-
-    /**
-     * Select items that has different issue from provided for
-     * specified launch.
-     *
-     * @param launchId Launch
-     * @param locator  Issue type locator
-     * @return List of items
-     */
-    List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator);
+	/**
+	 * Select items that has different issue from provided for
+	 * specified launch.
+	 *
+	 * @param launchId Launch
+	 * @param locator  Issue type locator
+	 * @return List of items
+	 */
+	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator);
 
     /**
      * Select items that has different issue from provided for
@@ -166,17 +242,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
      */
     List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
 
-    /**
-     * Check for existence of descendants with statuses NOT EQUAL to provided status
-     *
-     * @param parentId {@link TestItem#parent} ID
-     * @param status   {@link JStatusEnum}
-     * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
-     */
-    boolean hasDescendantsWithStatusNotEqual(Long parentId, JStatusEnum status);
-
-    //TODO move to project repo
-    List<IssueType> selectIssueLocatorsByProject(Long projectId);
+	//TODO move to project repo
+	List<IssueType> selectIssueLocatorsByProject(Long projectId);
 
     /**
      * Selects issue type object by provided locator for specified project.
@@ -195,15 +262,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
      */
     Map<Long, String> selectPathNames(String path);
 
-    /**
-     * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
-     * for each item id from the provided collection
-     *
-     * @param id        {@link Collection} of {@link TestItem#getItemId()}
-     * @param porjectId Project
-     * @return Map of id from collection and {@link PathName}
-     */
-    Map<Long, PathName> selectPathNames(Collection<Long> id, Long porjectId);
+	/**
+	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
+	 * for each item id from the provided collection
+	 *
+	 * @param ids       {@link Collection} of {@link TestItem#getItemId()}
+	 * @param porjectId Project
+	 * @return id from collection -> {@link PathName}
+	 */
+	Map<Long, PathName> selectPathNames(Collection<Long> id, Long porjectId);
 
     /**
      * Select item IDs by analyzed status and launch id with log level greater or equals than error

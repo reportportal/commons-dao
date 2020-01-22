@@ -9,14 +9,26 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.processing.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row18;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -32,7 +44,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = 1719660545;
+    private static final long serialVersionUID = 739094166;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -100,7 +112,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.test_case_id</code>.
      */
-    public final TableField<JTestItemRecord, String> TEST_CASE_ID = createField(DSL.name("test_case_id"), org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+    public final TableField<JTestItemRecord, String> TEST_CASE_ID = createField(DSL.name("test_case_id"), org.jooq.impl.SQLDataType.VARCHAR(512), this, "");
 
     /**
      * The column <code>public.test_item.has_children</code>.
@@ -135,7 +147,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.test_case_hash</code>.
      */
-    public final TableField<JTestItemRecord, Integer> TEST_CASE_HASH = createField(DSL.name("test_case_hash"), org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final TableField<JTestItemRecord, Integer> TEST_CASE_HASH = createField(DSL.name("test_case_hash"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * Create a <code>public.test_item</code> table reference

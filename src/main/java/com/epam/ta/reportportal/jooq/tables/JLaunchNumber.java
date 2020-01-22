@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JLaunchNumberRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunchNumber extends TableImpl<JLaunchNumberRecord> {
 
-    private static final long serialVersionUID = -1085564783;
+    private static final long serialVersionUID = -774941446;
 
     /**
      * The reference instance of <code>public.launch_number</code>

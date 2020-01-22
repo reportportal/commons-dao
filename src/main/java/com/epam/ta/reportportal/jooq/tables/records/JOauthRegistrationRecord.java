@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthRegistrationRecord extends UpdatableRecordImpl<JOauthRegistrationRecord> implements Record12<String, String, String, String, String, String, String, String, String, String, String, String> {
 
-    private static final long serialVersionUID = -1028822752;
+    private static final long serialVersionUID = -1820403169;
 
     /**
      * Setter for <code>public.oauth_registration.id</code>.

@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JDashboard;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardRecord extends UpdatableRecordImpl<JDashboardRecord> implements Record4<Long, String, String, Timestamp> {
 
-    private static final long serialVersionUID = -1190936845;
+    private static final long serialVersionUID = -2051192626;
 
     /**
      * Setter for <code>public.dashboard.id</code>.

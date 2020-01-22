@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JItemAttributeRecord extends UpdatableRecordImpl<JItemAttributeRecord> implements Record6<Long, String, String, Long, Long, Boolean> {
 
-    private static final long serialVersionUID = -329625228;
+    private static final long serialVersionUID = -664211325;
 
     /**
      * Setter for <code>public.item_attribute.id</code>.

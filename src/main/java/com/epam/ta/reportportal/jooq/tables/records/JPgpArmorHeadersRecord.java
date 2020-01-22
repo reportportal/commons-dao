@@ -5,12 +5,13 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 
 import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
+
+import javax.annotation.processing.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.TableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -26,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPgpArmorHeadersRecord extends TableRecordImpl<JPgpArmorHeadersRecord> implements Record2<String, String> {
 
-    private static final long serialVersionUID = 1396123694;
+    private static final long serialVersionUID = 826487565;
 
     /**
      * Setter for <code>public.pgp_armor_headers.key</code>.

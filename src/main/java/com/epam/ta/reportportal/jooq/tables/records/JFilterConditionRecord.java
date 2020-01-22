@@ -7,7 +7,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 import com.epam.ta.reportportal.jooq.enums.JFilterConditionEnum;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -29,7 +29,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterConditionRecord> implements Record6<Long, Long, JFilterConditionEnum, String, String, Boolean> {
 
-    private static final long serialVersionUID = 2016131156;
+    private static final long serialVersionUID = 742332515;
 
     /**
      * Setter for <code>public.filter_condition.id</code>.

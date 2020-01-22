@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JStatisticsFieldRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatisticsField extends TableImpl<JStatisticsFieldRecord> {
 
-    private static final long serialVersionUID = 1789327009;
+    private static final long serialVersionUID = 1327330856;
 
     /**
      * The reference instance of <code>public.statistics_field</code>

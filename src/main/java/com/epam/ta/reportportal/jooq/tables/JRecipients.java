@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JRecipientsRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRecipients extends TableImpl<JRecipientsRecord> {
 
-    private static final long serialVersionUID = -113704833;
+    private static final long serialVersionUID = 494455012;
 
     /**
      * The reference instance of <code>public.recipients</code>

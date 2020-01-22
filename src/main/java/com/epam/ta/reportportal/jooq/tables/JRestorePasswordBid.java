@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRestorePasswordBid extends TableImpl<JRestorePasswordBidRecord> {
 
-    private static final long serialVersionUID = -1845062831;
+    private static final long serialVersionUID = -552529694;
 
     /**
      * The reference instance of <code>public.restore_password_bid</code>

@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JTicket;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicketRecord extends UpdatableRecordImpl<JTicketRecord> implements Record7<Long, String, String, Timestamp, String, String, String> {
 
-    private static final long serialVersionUID = 2135370481;
+    private static final long serialVersionUID = 1520567256;
 
     /**
      * Setter for <code>public.ticket.id</code>.
