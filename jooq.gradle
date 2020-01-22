@@ -33,4 +33,6 @@ jooq {
     }
 }
 
-compileJava.dependsOn.remove('generateSampleJooqSchemaSource')
+generateSampleJooqSchemaSource {
+    enabled = false
+}

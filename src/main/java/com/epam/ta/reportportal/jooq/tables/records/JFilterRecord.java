@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterRecord extends UpdatableRecordImpl<JFilterRecord> implements Record4<Long, String, String, String> {
 
-    private static final long serialVersionUID = -846873324;
+    private static final long serialVersionUID = 2036332543;
 
     /**
      * Setter for <code>public.filter.id</code>.

@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JShareableEntityRecord extends UpdatableRecordImpl<JShareableEntityRecord> implements Record4<Long, Boolean, String, Long> {
 
-    private static final long serialVersionUID = -1921871613;
+    private static final long serialVersionUID = 905114;
 
     /**
      * Setter for <code>public.shareable_entity.id</code>.

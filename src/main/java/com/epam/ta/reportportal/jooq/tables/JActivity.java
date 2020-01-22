@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = -41137044;
+    private static final long serialVersionUID = -2037052079;
 
     /**
      * The reference instance of <code>public.activity</code>

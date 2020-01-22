@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthAccessTokenRecord extends UpdatableRecordImpl<JOauthAccessTokenRecord> implements Record9<Long, String, byte[], String, String, Long, String, byte[], String> {
 
-    private static final long serialVersionUID = -984530072;
+    private static final long serialVersionUID = -1222975535;
 
     /**
      * Setter for <code>public.oauth_access_token.id</code>.

@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JIssueRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssue extends TableImpl<JIssueRecord> {
 
-    private static final long serialVersionUID = -1307854367;
+    private static final long serialVersionUID = -316178516;
 
     /**
      * The reference instance of <code>public.issue</code>

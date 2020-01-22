@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JActivity;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.JSONB;
@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implements Record9<Long, Long, String, Long, String, String, JSONB, Timestamp, Long> {
 
-    private static final long serialVersionUID = -636424269;
+    private static final long serialVersionUID = -683707898;
 
     /**
      * Setter for <code>public.activity.id</code>.

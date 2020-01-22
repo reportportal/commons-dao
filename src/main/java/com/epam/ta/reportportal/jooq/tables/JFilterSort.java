@@ -13,7 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JFilterSortRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterSort extends TableImpl<JFilterSortRecord> {
 
-    private static final long serialVersionUID = 1031856089;
+    private static final long serialVersionUID = -1549458832;
 
     /**
      * The reference instance of <code>public.filter_sort</code>

@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachmentRecord extends UpdatableRecordImpl<JAttachmentRecord> implements Record7<Long, String, String, String, Long, Long, Long> {
 
-    private static final long serialVersionUID = 121995284;
+    private static final long serialVersionUID = 2135314677;
 
     /**
      * Setter for <code>public.attachment.id</code>.

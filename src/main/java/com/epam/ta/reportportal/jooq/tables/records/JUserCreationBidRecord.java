@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBidRecord> implements Record5<String, Timestamp, String, Long, String> {
 
-    private static final long serialVersionUID = 859769628;
+    private static final long serialVersionUID = 1148222211;
 
     /**
      * Setter for <code>public.user_creation_bid.uuid</code>.

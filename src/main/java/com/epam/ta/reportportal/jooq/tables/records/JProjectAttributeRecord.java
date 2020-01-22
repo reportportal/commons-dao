@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record2;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProjectAttributeRecord extends UpdatableRecordImpl<JProjectAttributeRecord> implements Record3<Long, String, Long> {
 
-    private static final long serialVersionUID = -1597470182;
+    private static final long serialVersionUID = 162652441;
 
     /**
      * Setter for <code>public.project_attribute.attribute_id</code>.

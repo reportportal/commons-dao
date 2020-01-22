@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JShareableEntityRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JShareableEntity extends TableImpl<JShareableEntityRecord> {
 
-    private static final long serialVersionUID = 424414879;
+    private static final long serialVersionUID = 1534928590;
 
     /**
      * The reference instance of <code>public.shareable_entity</code>

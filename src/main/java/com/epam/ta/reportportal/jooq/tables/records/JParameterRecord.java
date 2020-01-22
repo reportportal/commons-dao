@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record3;
@@ -27,7 +27,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JParameterRecord extends TableRecordImpl<JParameterRecord> implements Record3<Long, String, String> {
 
-    private static final long serialVersionUID = -1459021833;
+    private static final long serialVersionUID = -1113985464;
 
     /**
      * Setter for <code>public.parameter.item_id</code>.

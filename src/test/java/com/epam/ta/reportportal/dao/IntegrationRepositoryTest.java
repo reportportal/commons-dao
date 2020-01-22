@@ -44,8 +44,8 @@ class IntegrationRepositoryTest extends BaseTest {
 	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 4L;
 	private static final long GLOBAL_BTS_INTEGRATIONS_COUNT = 2L;
 
-	private static final Long RALLY_INTEGRATION_TYPE_ID = 2L;
-	private static final Long JIRA_INTEGRATION_TYPE_ID = 4L;
+	private static final Long RALLY_INTEGRATION_TYPE_ID = 5L;
+	private static final Long JIRA_INTEGRATION_TYPE_ID = 6L;
 
 	private static final Long RALLY_INTEGRATION_ID = 7L;
 	private static final Long JIRA_INTEGRATION_ID = 2L;
@@ -123,7 +123,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 	@Test
 	void existsByNameTypePositive() {
-		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectIdIsNull("jira", 4L);
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectIdIsNull("jira", 6L);
 		assertTrue(exists);
 	}
 
@@ -135,13 +135,13 @@ class IntegrationRepositoryTest extends BaseTest {
 
 	@Test
 	void existsByNameTypeProjectIdPositive() {
-		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira1", 4L, 1L);
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira1", 6L, 1L);
 		assertTrue(exists);
 	}
 
 	@Test
 	void existsByNameTypeProjectIdNegative() {
-		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira", 4L, 2L);
+		boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira", 6L, 2L);
 		assertFalse(exists);
 	}
 
@@ -163,7 +163,7 @@ class IntegrationRepositoryTest extends BaseTest {
 	@Test
 	void shouldFindAllGlobalByIntegrationType() {
 
-		IntegrationType integrationType = integrationTypeRepository.findById(3L).get();
+		IntegrationType integrationType = integrationTypeRepository.findById(2L).get();
 
 		List<Integration> globalEmailIntegrations = integrationRepository.findAllGlobalByType(integrationType);
 

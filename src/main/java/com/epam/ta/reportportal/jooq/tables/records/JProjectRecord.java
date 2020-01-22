@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JProject;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.JSONB;
@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> implements Record6<Long, String, String, String, Timestamp, JSONB> {
 
-    private static final long serialVersionUID = -855827669;
+    private static final long serialVersionUID = -1618972368;
 
     /**
      * Setter for <code>public.project.id</code>.

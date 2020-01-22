@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
 
-    private static final long serialVersionUID = -2033251559;
+    private static final long serialVersionUID = 68796382;
 
     /**
      * The reference instance of <code>public.test_item_results</code>

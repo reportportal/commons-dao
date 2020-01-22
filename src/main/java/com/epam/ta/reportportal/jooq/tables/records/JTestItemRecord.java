@@ -9,7 +9,7 @@ import com.epam.ta.reportportal.jooq.tables.JTestItem;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> implements Record18<Long, String, String, String, JTestItemTypeEnum, Timestamp, String, Timestamp, Object, String, String, Boolean, Boolean, Boolean, Long, Long, Long, Integer> {
 
-    private static final long serialVersionUID = -80689486;
+    private static final long serialVersionUID = -1295928707;
 
     /**
      * Setter for <code>public.test_item.item_id</code>.

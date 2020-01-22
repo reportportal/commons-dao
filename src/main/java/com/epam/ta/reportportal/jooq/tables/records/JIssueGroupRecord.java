@@ -7,7 +7,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -29,7 +29,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssueGroupRecord extends UpdatableRecordImpl<JIssueGroupRecord> implements Record2<Short, JIssueGroupEnum> {
 
-    private static final long serialVersionUID = 1969551959;
+    private static final long serialVersionUID = -914267198;
 
     /**
      * Setter for <code>public.issue_group.issue_group_id</code>.
