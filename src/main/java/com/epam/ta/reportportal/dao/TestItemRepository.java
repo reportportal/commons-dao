@@ -252,4 +252,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT item_id FROM test_item WHERE path <@ cast(:path AS LTREE)", nativeQuery = true)
 	List<Long> selectAllDescendantsIds(@Param("path") String path);
+
+	void deleteAllByItemIds(Iterable<Long> ids);
 }
