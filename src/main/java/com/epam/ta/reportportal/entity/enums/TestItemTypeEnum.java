@@ -22,23 +22,21 @@ import java.util.Optional;
 
 public enum TestItemTypeEnum implements Comparable<TestItemTypeEnum> {
 
-	//@formatter:off
-SUITE(Constants.SUITE_LEVEL, true),
-STORY(Constants.SUITE_LEVEL, true),
-TEST(Constants.TEST_LEVEL, true),
-SCENARIO(Constants.TEST_LEVEL, true),
-STEP(Constants.STEP_LEVEL, true),
-BEFORE_CLASS(Constants.STEP_LEVEL, false),
-BEFORE_GROUPS(Constants.STEP_LEVEL, false),
-BEFORE_METHOD(Constants.STEP_LEVEL, false),
-BEFORE_SUITE(Constants.TEST_LEVEL, false),
-BEFORE_TEST(Constants.STEP_LEVEL, false),
-AFTER_CLASS(Constants.STEP_LEVEL, false),
-AFTER_GROUPS(Constants.STEP_LEVEL, false),
-AFTER_METHOD(Constants.STEP_LEVEL, false),
-AFTER_SUITE(Constants.TEST_LEVEL, false),
-AFTER_TEST(Constants.STEP_LEVEL, false);
-//@formatter:on
+	SUITE(Constants.SUITE_LEVEL, true),
+	STORY(Constants.SUITE_LEVEL, true),
+	TEST(Constants.TEST_LEVEL, true),
+	SCENARIO(Constants.TEST_LEVEL, true),
+	STEP(Constants.STEP_LEVEL, true),
+	BEFORE_CLASS(Constants.STEP_LEVEL, false),
+	BEFORE_GROUPS(Constants.STEP_LEVEL, false),
+	BEFORE_METHOD(Constants.STEP_LEVEL, false),
+	BEFORE_SUITE(Constants.TEST_LEVEL, false),
+	BEFORE_TEST(Constants.STEP_LEVEL, false),
+	AFTER_CLASS(Constants.STEP_LEVEL, false),
+	AFTER_GROUPS(Constants.STEP_LEVEL, false),
+	AFTER_METHOD(Constants.STEP_LEVEL, false),
+	AFTER_SUITE(Constants.TEST_LEVEL, false),
+	AFTER_TEST(Constants.STEP_LEVEL, false);
 
 	private int level;
 	private boolean awareStatistics;
@@ -80,14 +78,17 @@ AFTER_TEST(Constants.STEP_LEVEL, false);
 		return awareStatistics;
 	}
 
+	public int getLevel() {
+		return level;
+	}
+
 	/**
 	 * Level Comparator for TestItem types. Returns TRUE of level of first
 	 * object is <b>lower</b> than level of second object
 	 *
 	 * @author Andrei Varabyeu
 	 */
-	private static final Comparator<TestItemTypeEnum> LEVEL_COMPARATOR = (TestItemTypeEnum o1, TestItemTypeEnum o2) -> (o1.level
-			== o2.level) ? 0 : (o1.level < o2.level) ? 1 : -1;
+	private static final Comparator<TestItemTypeEnum> LEVEL_COMPARATOR = (o1, o2) -> Integer.compare(o2.level, o1.level);
 
 	public static class Constants {
 		public static final int SUITE_LEVEL = 0;
