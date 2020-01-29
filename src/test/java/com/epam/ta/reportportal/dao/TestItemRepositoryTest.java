@@ -749,6 +749,14 @@ class TestItemRepositoryTest extends BaseTest {
 		assertIssueExistsAndTicketsEmpty(secondTestItem, expectedSecondTestItemId);
 	}
 
+	@Test
+	void selectAllDescendantsIdsTest() {
+		TestItem item = testItemRepository.findById(1L).get();
+		List<Long> ids = testItemRepository.selectAllDescendantsIds(item.getPath());
+
+		testItemRepository.findAllById(ids).stream().map(TestItem::getPath).forEach(it -> assertTrue(it.startsWith("1")));
+	}
+
 	private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
 		assertEquals(expectedId, testItem.getItemId());
 

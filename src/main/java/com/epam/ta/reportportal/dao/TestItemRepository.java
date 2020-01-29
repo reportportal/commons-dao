@@ -41,135 +41,135 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
 
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launchId = :launchId")
-    Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launchId = :launchId")
+	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
 
-    @Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
-    Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
+	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
+	Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
 
-    /**
-     * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
-     *
-     * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-     * @param status   {@link StatusEnum#name()}
-     * @return the {@link List} of the {@link TestItem#itemId}
-     */
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-            + " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)", nativeQuery = true)
-    Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == false
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param status   {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
-    /**
-     * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
-     * ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
-     *
-     * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-     * @param status   {@link StatusEnum#name()}
-     * @return the {@link List} of the {@link TestItem#itemId}
-     * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
-     */
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-            + " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
-            + " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
-    Stream<BigInteger> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
-                                                                                    @Param("status") StatusEnum status);
+	/**
+	 * Retrieve the {@link List} of the {@link TestItem#itemId} by launch ID, {@link StatusEnum#name()} and {@link TestItem#hasChildren} == true
+	 * ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param status   {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
+			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
+	Stream<BigInteger> streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
+			@Param("status") StatusEnum status);
 
-    /**
-     * Retrieve the {@link Stream} of the {@link TestItem#itemId} under parent {@link TestItem#path}, {@link StatusEnum#name()}
-     * and {@link TestItem#hasChildren} == false
-     *
-     * @param parentPath {@link TestItem#path} of the parent item
-     * @param status     {@link StatusEnum#name()}
-     * @return the {@link List} of the {@link TestItem#itemId}
-     */
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-            + " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-            + " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)", nativeQuery = true)
-    Stream<BigInteger> streamIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath,
-                                                                       @Param("status") StatusEnum status);
+	/**
+	 * Retrieve the {@link Stream} of the {@link TestItem#itemId} under parent {@link TestItem#path}, {@link StatusEnum#name()}
+	 * and {@link TestItem#hasChildren} == false
+	 *
+	 * @param parentPath {@link TestItem#path} of the parent item
+	 * @param status     {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
+			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)", nativeQuery = true)
+	Stream<BigInteger> streamIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath,
+			@Param("status") StatusEnum status);
 
-    /**
-     * Retrieve the {@link Stream} of the {@link TestItem#itemId} under parent {@link TestItem#path}, {@link StatusEnum#name()}
-     * and {@link TestItem#hasChildren} == true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
-     *
-     * @param parentPath {@link TestItem#path} of the parent item
-     * @param status     {@link StatusEnum#name()}
-     * @return the {@link List} of the {@link TestItem#itemId}
-     * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
-     */
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-            + " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-            + " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
-            + " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
-    Stream<BigInteger> streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
-                                                                                      @Param("status") StatusEnum status);
+	/**
+	 * Retrieve the {@link Stream} of the {@link TestItem#itemId} under parent {@link TestItem#path}, {@link StatusEnum#name()}
+	 * and {@link TestItem#hasChildren} == true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#path}
+	 *
+	 * @param parentPath {@link TestItem#path} of the parent item
+	 * @param status     {@link StatusEnum#name()}
+	 * @return the {@link List} of the {@link TestItem#itemId}
+	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+	 */
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
+			+ " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
+			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
+	Stream<BigInteger> streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
+			@Param("status") StatusEnum status);
 
-    List<TestItem> findTestItemsByUniqueId(String uniqueId);
+	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
-    List<TestItem> findTestItemsByLaunchId(Long launchId);
+	List<TestItem> findTestItemsByLaunchId(Long launchId);
 
-    Optional<TestItem> findByUuid(String uuid);
+	Optional<TestItem> findByUuid(String uuid);
 
-    /**
-     * Finds {@link TestItem} by {@link TestItem#getUuid()} and sets a lock on the found 'item' row in the database.
-     * Required for fetching 'item' from the concurrent environment to provide synchronization between dependant entities
-     *
-     * @param uuid {@link TestItem#getUuid()}
-     * @return {@link Optional} with {@link TestItem} object
-     */
-    @Query(value = "SELECT ti FROM TestItem ti WHERE ti.uuid = :uuid")
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    Optional<TestItem> findByUuidForUpdate(@Param("uuid") String uuid);
+	/**
+	 * Finds {@link TestItem} by {@link TestItem#getUuid()} and sets a lock on the found 'item' row in the database.
+	 * Required for fetching 'item' from the concurrent environment to provide synchronization between dependant entities
+	 *
+	 * @param uuid {@link TestItem#getUuid()}
+	 * @return {@link Optional} with {@link TestItem} object
+	 */
+	@Query(value = "SELECT ti FROM TestItem ti WHERE ti.uuid = :uuid")
+	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+	Optional<TestItem> findByUuidForUpdate(@Param("uuid") String uuid);
 
-    /**
-     * Finds all {@link TestItem} by specified launch id
-     *
-     * @param launchId {@link Launch#id}
-     * @return {@link List} of {@link TestItem} ordered by {@link TestItem#startTime} ascending
-     */
-    List<TestItem> findTestItemsByLaunchIdOrderByStartTimeAsc(Long launchId);
+	/**
+	 * Finds all {@link TestItem} by specified launch id
+	 *
+	 * @param launchId {@link Launch#id}
+	 * @return {@link List} of {@link TestItem} ordered by {@link TestItem#startTime} ascending
+	 */
+	List<TestItem> findTestItemsByLaunchIdOrderByStartTimeAsc(Long launchId);
 
-    /**
-     * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
-     * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
-     * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of the other {@link TestItem}
-     * with the same {@link TestItem#uniqueId} then all those test items become retries of the new-inserted one:
-     * theirs {@link TestItem#hasRetries} flag is set to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
-     * The same operation applies to the new-inserted {@link TestItem} if its {@link TestItem#startTime} is less than
-     * MAX {@link TestItem#startTime} of the other {@link TestItem} with the same {@link TestItem#uniqueId}
-     *
-     * @param itemId The new-inserted {@link TestItem#itemId}
-     */
-    @Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
-    void handleRetries(@Param("itemId") Long itemId);
+	/**
+	 * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#startTime}.
+	 * If the new-inserted {@link TestItem} with specified {@link TestItem#itemId} is a retry
+	 * and it has {@link TestItem#startTime} greater than MAX {@link TestItem#startTime} of the other {@link TestItem}
+	 * with the same {@link TestItem#uniqueId} then all those test items become retries of the new-inserted one:
+	 * theirs {@link TestItem#hasRetries} flag is set to 'false' and {@link TestItem#retryOf} gets the new-inserted {@link TestItem#itemId} value.
+	 * The same operation applies to the new-inserted {@link TestItem} if its {@link TestItem#startTime} is less than
+	 * MAX {@link TestItem#startTime} of the other {@link TestItem} with the same {@link TestItem#uniqueId}
+	 *
+	 * @param itemId The new-inserted {@link TestItem#itemId}
+	 */
+	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
+	void handleRetries(@Param("itemId") Long itemId);
 
-    @Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
-    void deleteTestItem(@Param(value = "itemId") Long itemId);
+	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
+	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
-    /**
-     * Checks does test item have children.
-     *
-     * @param itemPath Current item path in a tree
-     * @return True if has
-     */
-    @Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
-    boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
+	/**
+	 * Checks does test item have children.
+	 *
+	 * @param itemPath Current item path in a tree
+	 * @return True if has
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
-    /**
-     * Checks does test item have parent with provided status.
-     *
-     * @param itemId   Cuttent item id
-     * @param itemPath Current item path in a tree
-     * @param status   {@link StatusEnum}
-     * @return 'True' if has, otherwise 'false'
-     */
-    @Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-            + " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
-    boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
+	/**
+	 * Checks does test item have parent with provided status.
+	 *
+	 * @param itemId   Cuttent item id
+	 * @param itemPath Current item path in a tree
+	 * @param status   {@link StatusEnum}
+	 * @return 'True' if has, otherwise 'false'
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
+			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
 	 * Check for existence of descendants with statuses NOT EQUAL to provided status
@@ -190,23 +190,23 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param statuses   child item {@link TestItemResults#getStatus()}
 	 * @return True if contains, false if not
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir on ti.item_id = tir.result_id"
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
 			+ " WHERE ti.path <@ cast(:parentPath AS LTREE) AND ti.item_id != :parentId AND cast(tir.status AS VARCHAR) IN (:statuses))", nativeQuery = true)
 	boolean hasItemsInStatusByParent(@Param("parentId") Long parentId, @Param("parentPath") String parentPath,
 			@Param("statuses") String... statuses);
 
-    /**
-     * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
-     * launch with provided launchId.
-     * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
-     *
-     * @param launchId Launch id
-     */
-    @Modifying
-    @Query(value =
-            "UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
-                    + "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
-    void interruptInProgressItems(@Param("launchId") Long launchId);
+	/**
+	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
+	 * launch with provided launchId.
+	 * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
+	 *
+	 * @param launchId Launch id
+	 */
+	@Modifying
+	@Query(value =
+			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
+					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
+	void interruptInProgressItems(@Param("launchId") Long launchId);
 
 	/**
 	 * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId},
@@ -222,25 +222,34 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("status") StatusEnum status);
 
-    /**
-     * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
-     *
-     * @param name     Name of {@link TestItem}
-     * @param launchId ID of {@link Launch}
-     * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
-     */
-    @Query("SELECT t FROM TestItem t WHERE t.name=:name AND t.parent IS NULL AND t.launchId=:launchId")
-    Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
+	/**
+	 * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
+	 *
+	 * @param name     Name of {@link TestItem}
+	 * @param launchId ID of {@link Launch}
+	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
+	 */
+	@Query("SELECT t FROM TestItem t WHERE t.name=:name AND t.parent IS NULL AND t.launchId=:launchId")
+	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
 
-    /**
-     * Finds {@link TestItem} with specified {@code name} and {@code launchId} under {@code path}
-     *
-     * @param name     Name of {@link TestItem}
-     * @param launchId ID of {@link Launch}
-     * @param path     Path of {@link TestItem}
-     * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
-     */
-    @Query(value = "SELECT * FROM test_item t WHERE t.name=:name AND t.launch_id=:launchId AND t.path <@ cast(:path AS LTREE)", nativeQuery = true)
-    Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
-                                                    @Param("path") String path);
+	/**
+	 * Finds {@link TestItem} with specified {@code name} and {@code launchId} under {@code path}
+	 *
+	 * @param name     Name of {@link TestItem}
+	 * @param launchId ID of {@link Launch}
+	 * @param path     Path of {@link TestItem}
+	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
+	 */
+	@Query(value = "SELECT * FROM test_item t WHERE t.name=:name AND t.launch_id=:launchId AND t.path <@ cast(:path AS LTREE)", nativeQuery = true)
+	Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
+			@Param("path") String path);
+
+	/**
+	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id
+	 *
+	 * @param path Path of {@link TestItem}
+	 * @return {@link List<Long>} of test item ids
+	 */
+	@Query(value = "SELECT item_id FROM test_item WHERE path <@ cast(:path AS LTREE)", nativeQuery = true)
+	List<Long> selectAllDescendantsIds(@Param("path") String path);
 }
