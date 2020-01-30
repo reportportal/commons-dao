@@ -37,5 +37,5 @@ public interface AttachmentRepositoryCustom {
 
 	int deleteAllByIds(Collection<Long> ids);
 
-	List<Attachment> findByItemIdsAndLastModifiedBefore(Collection<Long> itemIds, Duration period);
+	List<Attachment> findByItemIdsAndPeriod(Collection<Long> itemIds, Duration period);
 }

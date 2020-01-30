@@ -92,7 +92,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	}
 
 	@Override
-	public List<Attachment> findByItemIdsAndLastModifiedBefore(Collection<Long> itemIds, Duration period) {
+	public List<Attachment> findByItemIdsAndPeriod(Collection<Long> itemIds, Duration period) {
 		return dsl.select()
 				.from(ATTACHMENT)
 				.join(LOG)

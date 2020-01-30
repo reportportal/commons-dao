@@ -79,11 +79,11 @@ class AttachmentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByItemIdsAndLastModifiedBefore() {
+	void findByItemIdsAndPeriodTest() {
 		Duration duration = Duration.ofDays(6).plusHours(23);
 		final Long itemId = 3L;
 
-		List<Attachment> attachments = attachmentRepository.findByItemIdsAndLastModifiedBefore(Collections.singletonList(itemId), duration);
+		List<Attachment> attachments = attachmentRepository.findByItemIdsAndPeriod(Collections.singletonList(itemId), duration);
 
 		assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
 		assertEquals(3, attachments.size(), "Incorrect count of attachments");
