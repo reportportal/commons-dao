@@ -22,7 +22,6 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
-import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,17 +73,6 @@ class LogRepositoryTest extends BaseTest {
 			assertEquals(3L, (long) itemId, "Incorrect item id");
 			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
 		});
-	}
-
-	@Test
-	void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
-		Duration duration = Duration.ofDays(6).plusHours(23);
-		final Long itemId = 3L;
-
-		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
-
-		assertTrue(CollectionUtils.isNotEmpty(logs), "Logs should not be empty");
-		assertEquals(3, logs.size(), "Incorrect count of logs");
 	}
 
 	@Test

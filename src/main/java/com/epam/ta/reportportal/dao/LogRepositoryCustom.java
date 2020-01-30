@@ -34,101 +34,92 @@ import java.util.List;
  */
 public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
-    /**
-     * Checks if the test item has any logs.
-     *
-     * @param itemId Item id
-     * @return true if logs were found
-     */
-    boolean hasLogs(Long itemId);
+	/**
+	 * Checks if the test item has any logs.
+	 *
+	 * @param itemId Item id
+	 * @return true if logs were found
+	 */
+	boolean hasLogs(Long itemId);
 
-    /**
-     * Load specified number of last logs for specified test item. binaryData
-     * field will be loaded if it specified in appropriate input parameter, all
-     * other fields will be fully loaded.
-     *
-     * @param limit  Max count of logs to be loaded
-     * @param itemId Test Item log belongs to
-     * @return Found logs
-     */
-    List<Log> findByTestItemId(Long itemId, int limit);
+	/**
+	 * Load specified number of last logs for specified test item. binaryData
+	 * field will be loaded if it specified in appropriate input parameter, all
+	 * other fields will be fully loaded.
+	 *
+	 * @param limit  Max count of logs to be loaded
+	 * @param itemId Test Item log belongs to
+	 * @return Found logs
+	 */
+	List<Log> findByTestItemId(Long itemId, int limit);
 
-    /**
-     * Load specified number of last logs for specified test item. binaryData
-     * field will be loaded if it specified in appropriate input parameter, all
-     * other fields will be fully loaded.
-     *
-     * @param itemId Test Item log belongs to
-     * @return Found logs
-     */
-    List<Log> findByTestItemId(Long itemId);
+	/**
+	 * Load specified number of last logs for specified test item. binaryData
+	 * field will be loaded if it specified in appropriate input parameter, all
+	 * other fields will be fully loaded.
+	 *
+	 * @param itemId Test Item log belongs to
+	 * @return Found logs
+	 */
+	List<Log> findByTestItemId(Long itemId);
 
-    List<Long> findIdsByTestItemId(Long testItemId);
+	List<Long> findIdsByTestItemId(Long testItemId);
 
-    List<Long> findIdsByTestItemIds(List<Long> itemIds);
+	List<Long> findIdsByTestItemIds(List<Long> itemIds);
 
-    List<Long> findItemLogIdsByLaunchId(Long launchId);
+	List<Long> findItemLogIdsByLaunchId(Long launchId);
 
-    List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds);
+	List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds);
 
-    /**
-     * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
-     *
-     * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
-     * @param period {@link Duration}
-     * @return List of {@link Log} with {@link Log#id}, {@link Log#attachment} and {@link Log#attachment} that were modified before the specified time period
-     */
-    List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period);
+	/**
+	 * Get the specified log's page number
+	 *
+	 * @param id       ID of log page should be found of
+	 * @param filter   Filter
+	 * @param pageable Page details
+	 * @return Page number log found using specified filter
+	 */
+	Integer getPageNumber(Long id, Filter filter, Pageable pageable);
 
-    /**
-     * Get the specified log's page number
-     *
-     * @param id       ID of log page should be found of
-     * @param filter   Filter
-     * @param pageable Page details
-     * @return Page number log found using specified filter
-     */
-    Integer getPageNumber(Long id, Filter filter, Pageable pageable);
+	/**
+	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
+	 * has {@link Log}'s with {@link Log#lastModified} up to the current point of time minus provided 'period'
+	 *
+	 * @param period   {@link Duration}
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if logs(the log) exist(exists)
+	 */
+	boolean hasLogsAddedLately(Duration period, Long launchId, StatusEnum... statuses);
 
-    /**
-     * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
-     * has {@link Log}'s with {@link Log#lastModified} up to the current point of time minus provided 'period'
-     *
-     * @param period   {@link Duration}
-     * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-     * @param statuses {@link StatusEnum}
-     * @return true if logs(the log) exist(exists)
-     */
-    boolean hasLogsAddedLately(Duration period, Long launchId, StatusEnum... statuses);
+	/**
+	 * @param period      {@link Duration}
+	 * @param testItemIds Collection of the {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem}
+	 * @return Count of removed logs
+	 */
+	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
 
-    /**
-     * @param period      {@link Duration}
-     * @param testItemIds Collection of the {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem}
-     * @return Count of removed logs
-     */
-    int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
+	/**
+	 * Retrieve {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities' ids, differentiated by entity type
+	 * <p>
+	 * {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities filtered and sorted on the DB level
+	 * and returned as UNION parsed into the {@link NestedItem} entity
+	 *
+	 * @param parentId          {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} of the parent item
+	 * @param filter            {@link Queryable}
+	 * @param excludeEmptySteps Exclude steps without content (logs and child items)
+	 * @param excludeLogs       Exclude logs selection
+	 * @param pageable          {@link Pageable}
+	 * @return {@link Page} with {@link NestedItem} as content
+	 */
+	Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter, Pageable pageable);
 
-    /**
-     * Retrieve {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities' ids, differentiated by entity type
-     * <p>
-     * {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities filtered and sorted on the DB level
-     * and returned as UNION parsed into the {@link NestedItem} entity
-     *
-     * @param parentId          {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} of the parent item
-     * @param filter            {@link Queryable}
-     * @param excludeEmptySteps Exclude steps without content (logs and child items)
-     * @param excludeLogs       Exclude logs selection
-     * @param pageable          {@link Pageable}
-     * @return {@link Page} with {@link NestedItem} as content
-     */
-    Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter, Pageable pageable);
-
-    /**
-     * Retrieves log message of specified test item with log level greather or equals than {@code level}
-     *
-     * @param itemId ID of {@link TestItem}
-     * @param level  log level
-     * @return {@link List} of {@link String} of log messages
-     */
-    List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level);
+	/**
+	 * Retrieves log message of specified test item with log level greather or equals than {@code level}
+	 *
+	 * @param itemId ID of {@link TestItem}
+	 * @param level  log level
+	 * @return {@link List} of {@link String} of log messages
+	 */
+	List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level);
 }
