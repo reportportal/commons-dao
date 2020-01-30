@@ -757,6 +757,14 @@ class TestItemRepositoryTest extends BaseTest {
 		testItemRepository.findAllById(ids).stream().map(TestItem::getPath).forEach(it -> assertTrue(it.startsWith("1")));
 	}
 
+	@Test
+	void deleteAllByItemIdTest() {
+		ArrayList<Long> ids = Lists.newArrayList(1L, 10L);
+		testItemRepository.deleteAllByItemIdIn(ids);
+
+		assertEquals(0, testItemRepository.findAllById(ids).size());
+	}
+
 	private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
 		assertEquals(expectedId, testItem.getItemId());
 

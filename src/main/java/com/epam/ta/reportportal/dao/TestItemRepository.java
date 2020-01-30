@@ -30,6 +30,7 @@ import org.springframework.data.repository.query.Param;
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -253,5 +254,5 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT item_id FROM test_item WHERE path <@ cast(:path AS LTREE)", nativeQuery = true)
 	List<Long> selectAllDescendantsIds(@Param("path") String path);
 
-	void deleteAllByItemId(Iterable<Long> ids);
+	void deleteAllByItemIdIn(Collection<Long> ids);
 }
