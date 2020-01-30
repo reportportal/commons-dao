@@ -58,6 +58,8 @@ dependencies {
     compile 'org.jooq:jooq'
     jooqRuntime 'org.postgresql:postgresql'
 
+    compile 'io.hypersistence:hypersistence-optimizer:1.2.3-trial'
+
     compile 'io.minio:minio:6.0.10'
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'

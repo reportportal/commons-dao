@@ -166,4 +166,17 @@ class LogRepositoryTest extends BaseTest {
 
 		logRepository.findNestedItems(2L, false, false, filter, PageRequest.of(2, 1));
 	}
+
+	@Test
+	void findIdsByFilter() {
+
+		Filter failedStatusFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_STATUS, "FAILED").build())
+				.build();
+
+		List<Long> ids = logRepository.findIdsByFilter(failedStatusFilter);
+
+		assertEquals(7, ids.size());
+	}
 }

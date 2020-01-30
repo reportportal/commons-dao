@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
@@ -41,10 +42,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -118,6 +116,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Long> findIdsByFilter(Queryable filter) {
+		Set<String> fields = QueryUtils.collectJoinFields(filter);
+		return dsl.select(fieldName(ID)).from(QueryBuilder.newBuilder(filter, fields).build()).fetchInto(Long.class);
+	}
+
+	@Override
 	public List<Long> findIdsByTestItemId(Long testItemId) {
 		return dsl.select(LOG.ID).from(LOG).where(LOG.ITEM_ID.eq(testItemId)).fetchInto(Long.class);
 	}
@@ -164,16 +168,17 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Log> findByFilter(Queryable filter) {
-		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
+		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).wrap().build()));
 	}
 
 	@Override
 	public Page<Log> findByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable)
-				.wrap()
-				.withWrapperSort(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter,
+				QueryUtils.collectJoinFields(filter, pageable.getSort())
+				).with(pageable).wrap().withWrapperSort(pageable.getSort()).build())),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 
 	@Override
