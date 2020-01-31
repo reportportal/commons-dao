@@ -144,8 +144,6 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.where(childItemTable.LAUNCH_ID.eq(launchId))
 				.and(parentItemTable.LAUNCH_ID.eq(launchId))
 				.and(parentItemTable.ITEM_ID.in(itemIds))
-				.andNot(childItemTable.HAS_CHILDREN)
-				.andNot(parentItemTable.HAS_CHILDREN)
 				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetchInto(Long.class);
 	}
