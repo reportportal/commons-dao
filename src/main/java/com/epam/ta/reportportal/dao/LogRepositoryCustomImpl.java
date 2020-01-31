@@ -130,7 +130,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> findIdsByTestItemIds(Long launchId, List<Long> itemIds, int logLevel) {
+	public List<Long> findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevel(Long launchId, List<Long> itemIds, int logLevel) {
 
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);

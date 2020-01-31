@@ -151,7 +151,7 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findIdsByItemIds() {
-		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(1L, Arrays.asList(1L, 2L, 3L), 10000);
+		List<Long> idsByTestItemIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevel(1L, Arrays.asList(1L, 2L, 3L), 10000);
 		assertEquals(7, idsByTestItemIds.size());
 	}
 

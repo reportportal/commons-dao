@@ -67,7 +67,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
     List<Long> findIdsByTestItemId(Long testItemId);
 
-    List<Long> findIdsByTestItemIds(Long launchId, List<Long> itemIds, int logLevel);
+    List<Long> findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevel(Long launchId, List<Long> itemIds, int logLevel);
 
     List<Long> findItemLogIdsByLaunchId(Long launchId);
 
