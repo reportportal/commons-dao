@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,5 +37,5 @@ public interface AttachmentRepositoryCustom {
 
 	int deleteAllByIds(Collection<Long> ids);
 
-	List<Attachment> findByItemIdsAndPeriod(Collection<Long> itemIds, Duration period);
+	List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before);
 }

@@ -26,6 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +85,9 @@ class AttachmentRepositoryTest extends BaseTest {
 		Duration duration = Duration.ofDays(6).plusHours(23);
 		final Long itemId = 3L;
 
-		List<Attachment> attachments = attachmentRepository.findByItemIdsAndPeriod(Collections.singletonList(itemId), duration);
+		List<Attachment> attachments = attachmentRepository.findByItemIdsModifiedBefore(Collections.singletonList(itemId),
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+		);
 
 		assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
 		assertEquals(3, attachments.size(), "Incorrect count of attachments");

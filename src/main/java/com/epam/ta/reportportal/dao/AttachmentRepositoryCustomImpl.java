@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.time.Duration;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -91,8 +91,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 		return dsl.deleteFrom(ATTACHMENT).where(ATTACHMENT.ID.in(ids)).execute();
 	}
 
-	@Override
-	public List<Attachment> findByItemIdsAndPeriod(Collection<Long> itemIds, Duration period) {
+	public List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before) {
 		return dsl.select()
 				.from(ATTACHMENT)
 				.join(LOG)
@@ -100,7 +99,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				.join(TEST_ITEM)
 				.on(ATTACHMENT.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
 				.where(TEST_ITEM.ITEM_ID.in(itemIds))
-				.and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period)))
+				.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(before)))
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetch(ATTACHMENT_MAPPER);
 	}

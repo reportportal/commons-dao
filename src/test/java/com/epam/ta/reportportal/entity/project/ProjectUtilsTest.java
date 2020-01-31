@@ -213,6 +213,45 @@ class ProjectUtilsTest {
 		assertFalse(ProjectUtils.isAssignedToProject(user, 2L));
 	}
 
+	@Test
+	void extractProjectAttributesPositiveTest() {
+		Project testProject = getTestProject();
+		testProject.setProjectAttributes(getProjectAttributes());
+
+		Optional<ProjectAttribute> projectAttribute = ProjectUtils.extractAttribute(testProject, ProjectAttributeEnum.KEEP_LOGS);
+		assertTrue(projectAttribute.isPresent());
+		assertEquals(ProjectAttributeEnum.KEEP_LOGS.getAttribute(), projectAttribute.get().getAttribute().getName());
+		assertEquals(ProjectAttributeEnum.KEEP_LOGS.getDefaultValue(), projectAttribute.get().getValue());
+	}
+
+	@Test
+	void extractProjectAttributesNegativeTest() {
+		Project testProject = getTestProject();
+		testProject.setProjectAttributes(getProjectAttributes());
+
+		Optional<ProjectAttribute> projectAttribute = ProjectUtils.extractAttribute(testProject, ProjectAttributeEnum.KEEP_LAUNCHES);
+		assertTrue(projectAttribute.isEmpty());
+	}
+
+	@Test
+	void extractProjectAttributeValuePositiveTest() {
+		Project testProject = getTestProject();
+		testProject.setProjectAttributes(getProjectAttributes());
+
+		Optional<String> value = ProjectUtils.extractAttributeValue(testProject, ProjectAttributeEnum.KEEP_LOGS);
+		assertTrue(value.isPresent());
+		assertEquals(ProjectAttributeEnum.KEEP_LOGS.getDefaultValue(), value.get());
+	}
+
+	@Test
+	void extractProjectAttributeValueNegativeTest() {
+		Project testProject = getTestProject();
+		testProject.setProjectAttributes(getProjectAttributes());
+
+		Optional<String> value = ProjectUtils.extractAttributeValue(testProject, ProjectAttributeEnum.KEEP_LAUNCHES);
+		assertTrue(value.isEmpty());
+	}
+
 	private static Project getTestProject() {
 		Project project = new Project();
 		project.setId(1L);
@@ -253,10 +292,15 @@ class ProjectUtilsTest {
 		attr3.setId(1L);
 		attr3.setName("analyzer.param");
 
+		Attribute keepLogs = new Attribute();
+		keepLogs.setId(1L);
+		keepLogs.setName(ProjectAttributeEnum.KEEP_LOGS.getAttribute());
+
 		Map<Attribute, String> attributeMap = new HashMap<>();
 		attributeMap.put(attr1, "valOne");
 		attributeMap.put(attr2, "valTwo");
 		attributeMap.put(attr3, "value");
+		attributeMap.put(keepLogs, ProjectAttributeEnum.KEEP_LOGS.getDefaultValue());
 		return attributeMap;
 	}
 
