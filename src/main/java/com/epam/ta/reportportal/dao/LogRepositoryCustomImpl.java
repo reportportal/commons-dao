@@ -119,6 +119,27 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
+
+		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME, LOG.ITEM_ID, LOG.LAUNCH_ID, LOG.LAST_MODIFIED)
+				.on(LOG.ID)
+				.from(LOG)
+				.join(childItemTable)
+				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
+				.join(parentItemTable)
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch()
+				.map(LOG_MAPPER);
+	}
+
+	@Override
 	public List<Long> findIdsByFilter(Queryable filter) {
 		Set<String> fields = QueryUtils.collectJoinFields(filter);
 		return dsl.select(fieldName(ID)).from(QueryBuilder.newBuilder(filter, fields).build()).fetchInto(Long.class);
@@ -135,7 +156,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return dsl.select(LOG.ID)
+		return dsl.selectDistinct(LOG.ID)
 				.from(LOG)
 				.join(childItemTable)
 				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))

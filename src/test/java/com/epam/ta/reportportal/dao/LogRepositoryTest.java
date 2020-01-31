@@ -160,6 +160,15 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
+		List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
+				Arrays.asList(1L, 2L, 3L),
+				LogLevel.DEBUG.toInt()
+		);
+		assertEquals(7, logs.size());
+	}
+
+	@Test
 	void findNestedItemsTest() {
 
 		Filter filter = Filter.builder()
