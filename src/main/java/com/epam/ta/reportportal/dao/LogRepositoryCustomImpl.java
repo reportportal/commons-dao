@@ -130,7 +130,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevel(Long launchId, List<Long> itemIds, int logLevel) {
+	public List<Long> findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
 
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
@@ -149,7 +149,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> findItemLogIdsByLaunchId(Long launchId) {
+	public List<Long> findItemLogIdsByLaunchIdAndLogLevelGte(Long launchId, int logLevel) {
 		return dsl.select(LOG.ID)
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
@@ -157,11 +157,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch(LOG.ID, Long.class);
 	}
 
 	@Override
-	public List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds) {
+	public List<Long> findItemLogIdsByLaunchIdsAndLogLevelGte(List<Long> launchIds, int logLevel) {
 		return dsl.select(LOG.ID)
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
@@ -169,6 +170,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(launchIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch(LOG.ID, Long.class);
 	}
 

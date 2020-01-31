@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.apache.commons.collections.CollectionUtils;
@@ -139,19 +140,22 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findItemLogIdsByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchId(1L);
+		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchIdAndLogLevelGte(1L, LogLevel.DEBUG.toInt());
 		assertEquals(7, logIdsByLaunch.size());
 	}
 
 	@Test
 	void findItemLogIdsByLaunchIds() {
-		List<Long> logIds = logRepository.findItemLogIdsByLaunchIds(Arrays.asList(1L, 2L));
+		List<Long> logIds = logRepository.findItemLogIdsByLaunchIdsAndLogLevelGte(Arrays.asList(1L, 2L), LogLevel.DEBUG.toInt());
 		assertEquals(7, logIds.size());
 	}
 
 	@Test
 	void findIdsByItemIds() {
-		List<Long> idsByTestItemIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevel(1L, Arrays.asList(1L, 2L, 3L), 10000);
+		List<Long> idsByTestItemIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
+				Arrays.asList(1L, 2L, 3L),
+				LogLevel.DEBUG.toInt()
+		);
 		assertEquals(7, idsByTestItemIds.size());
 	}
 
