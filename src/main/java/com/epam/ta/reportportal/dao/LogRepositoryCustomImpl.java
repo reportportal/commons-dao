@@ -70,6 +70,9 @@ import static org.jooq.impl.DSL.field;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
+	private static final String PARENT_ITEM_TABLE = "parent";
+	private static final String CHILD_ITEM_TABLE = "child";
+
 	private DSLContext dsl;
 
 	@Autowired
@@ -127,8 +130,24 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> findIdsByTestItemIds(List<Long> itemIds) {
-		return dsl.select(LOG.ID).from(LOG).where(LOG.ITEM_ID.in(itemIds)).fetch(LOG.ID, Long.class);
+	public List<Long> findIdsByTestItemIds(Long launchId, List<Long> itemIds, int logLevel) {
+
+		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.select(LOG.ID)
+				.from(LOG)
+				.join(childItemTable)
+				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
+				.join(parentItemTable)
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.ITEM_ID.in(itemIds))
+				.andNot(childItemTable.HAS_CHILDREN)
+				.andNot(parentItemTable.HAS_CHILDREN)
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetchInto(Long.class);
 	}
 
 	@Override

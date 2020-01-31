@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
-import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -50,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
@@ -482,17 +482,41 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
-		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
-				.from(TEST_ITEM)
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(ISSUE)
-				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.join(LOG)
-				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
-				.and(LOG.LOG_LEVEL.greaterOrEqual(LogLevel.ERROR.toInt()))
+
+		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
+		JTestItem nestedItemTable = TEST_ITEM.as(NESTED);
+
+		return dsl.selectDistinct(fieldName(ID))
+				.from(DSL.select(outerItemTable.ITEM_ID.as(ID))
+						.from(outerItemTable)
+						.join(TEST_ITEM_RESULTS)
+						.on(outerItemTable.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.join(ISSUE)
+						.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+						.where(outerItemTable.LAUNCH_ID.eq(launchId))
+						.and(outerItemTable.HAS_STATS)
+						.andNot(outerItemTable.HAS_CHILDREN)
+						.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
+						.and(DSL.exists(DSL.selectOne()
+								.from(nestedItemTable)
+								.join(LOG)
+								.on(nestedItemTable.ITEM_ID.eq(LOG.ITEM_ID))
+								.where(nestedItemTable.LAUNCH_ID.eq(launchId))
+								.andNot(nestedItemTable.HAS_STATS)
+								.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+								.and(DSL.sql(outerItemTable.PATH + " @> " + nestedItemTable.PATH))))
+						.unionAll(DSL.select(TEST_ITEM.ITEM_ID.as(ID))
+								.from(TEST_ITEM)
+								.join(TEST_ITEM_RESULTS)
+								.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+								.join(ISSUE)
+								.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+								.join(LOG)
+								.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+								.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+								.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
+								.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)))
+						.asTable(ITEM))
 				.fetchInto(Long.class);
 	}
 
