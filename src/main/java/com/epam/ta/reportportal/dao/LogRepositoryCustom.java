@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,12 +64,24 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
      */
     List<Log> findByTestItemId(Long itemId);
 
-	List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel);
+    /**
+     * @param launchId {@link} ID of the {@link Launch} to search {@link Log} under
+     * @param itemIds  {@link List} of the {@link Log#getTestItem()} IDs
+     * @param logLevel {@link Log#getLogLevel()}
+     * @return {@link List} of {@link Log}
+     */
+    List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel);
 
     List<Long> findIdsByFilter(Queryable filter);
 
     List<Long> findIdsByTestItemId(Long testItemId);
 
+    /**
+     * @param launchId {@link} ID of the {@link Launch} to search {@link Log} under
+     * @param itemIds  {@link List} of the {@link Log#getTestItem()} IDs
+     * @param logLevel {@link Log#getLogLevel()}
+     * @return {@link List} of {@link Log#getId()}
+     */
     List<Long> findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel);
 
     List<Long> findItemLogIdsByLaunchIdAndLogLevelGte(Long launchId, int logLevel);

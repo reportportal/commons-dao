@@ -118,6 +118,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.map(LOG_MAPPER);
 	}
 
+	/**
+	 * @return {@link List} of {@link Log} without {@link Log#getAttachment()}
+	 */
 	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
 
