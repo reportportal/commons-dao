@@ -480,6 +480,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetch());
 	}
 
+	/**
+	 * {@link Log} entities are searched from the whole tree under
+	 * {@link TestItem} that matched to the provided `launchId` and `autoAnalyzed` conditions
+	 */
 	@Override
 	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
 
