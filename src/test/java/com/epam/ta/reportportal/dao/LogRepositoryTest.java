@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.apache.commons.collections.CollectionUtils;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +31,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -60,21 +58,6 @@ class LogRepositoryTest extends BaseTest {
 
 		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_LOG_TIME)));
 		assertEquals(1L, (long) number, "Unexpected log page number");
-	}
-
-	@Test
-	void findByTestItemsAndLogLevel() {
-		ArrayList<Long> ids = Lists.newArrayList(3L);
-		Integer logLevel = 30000;
-
-		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
-
-		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
-		logs.forEach(log -> {
-			Long itemId = log.getTestItem().getItemId();
-			assertEquals(3L, (long) itemId, "Incorrect item id");
-			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
-		});
 	}
 
 	@Test
@@ -161,11 +144,18 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
-		List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
-				Arrays.asList(1L, 2L, 3L),
-				LogLevel.DEBUG.toInt()
-		);
-		assertEquals(7, logs.size());
+
+		int logLevel = LogLevel.WARN_INT;
+
+		List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+		List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L, itemIds, logLevel);
+
+		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
+		logs.forEach(log -> {
+			Long itemId = log.getTestItem().getItemId();
+			assertTrue(itemIds.contains(itemId), "Incorrect item id");
+			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
+		});
 	}
 
 	@Test
