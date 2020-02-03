@@ -505,7 +505,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 								.andNot(nestedItemTable.HAS_STATS)
 								.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 								.and(DSL.sql(outerItemTable.PATH + " @> " + nestedItemTable.PATH))))
-						.unionAll(DSL.select(TEST_ITEM.ITEM_ID.as(ID))
+						.unionAll(DSL.selectDistinct(TEST_ITEM.ITEM_ID.as(ID))
 								.from(TEST_ITEM)
 								.join(TEST_ITEM_RESULTS)
 								.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
