@@ -169,7 +169,8 @@ public class RecordMappers {
 		return statistics;
 	};
 
-	public static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
+	public static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.field(ATTACHMENT.ID.getQualifiedName()
+			.toString())).flatMap(idField -> ofNullable(r.get(idField, Long.class)).map(id -> {
 		Attachment attachment = new Attachment();
 		attachment.setId(id);
 		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
@@ -180,7 +181,7 @@ public class RecordMappers {
 		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
 
 		return attachment;
-	}).orElse(null);
+	})).orElse(null);
 
 	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
 		Log log = new Log();
@@ -211,8 +212,7 @@ public class RecordMappers {
 		return testItem;
 	};
 
-	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(
-			r.get(TEST_ITEM.ITEM_ID),
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
 			r.get(TEST_ITEM.NAME),
 			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
 			r.get(HAS_CONTENT, Boolean.class),

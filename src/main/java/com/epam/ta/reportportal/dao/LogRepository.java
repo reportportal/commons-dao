@@ -30,6 +30,4 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 	Optional<Log> findByUuid(String uuid);
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
-
-	List<Log> findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(List<Long> testItemIds, Integer logLevel);
 }
