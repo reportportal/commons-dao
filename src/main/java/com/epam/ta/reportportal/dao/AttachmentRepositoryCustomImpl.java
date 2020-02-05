@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.ATTACHMENT_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
@@ -92,7 +91,15 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	}
 
 	public List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before) {
-		return dsl.select()
+		return dsl.select(
+				ATTACHMENT.ID,
+				ATTACHMENT.THUMBNAIL_ID,
+				ATTACHMENT.FILE_ID,
+				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.ITEM_ID,
+				ATTACHMENT.LAUNCH_ID,
+				ATTACHMENT.PROJECT_ID
+		)
 				.from(ATTACHMENT)
 				.join(LOG)
 				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
@@ -101,6 +108,6 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				.where(TEST_ITEM.ITEM_ID.in(itemIds))
 				.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(before)))
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
-				.fetch(ATTACHMENT_MAPPER);
+				.fetchInto(Attachment.class);
 	}
 }

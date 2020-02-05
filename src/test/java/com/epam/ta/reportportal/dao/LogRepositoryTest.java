@@ -23,8 +23,6 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
-import org.apache.commons.collections.CollectionUtils;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -59,32 +57,6 @@ class LogRepositoryTest extends BaseTest {
 
 		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_LOG_TIME)));
 		assertEquals(1L, (long) number, "Unexpected log page number");
-	}
-
-	@Test
-	void findByTestItemsAndLogLevel() {
-		ArrayList<Long> ids = Lists.newArrayList(3L);
-		Integer logLevel = 30000;
-
-		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
-
-		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
-		logs.forEach(log -> {
-			Long itemId = log.getTestItem().getItemId();
-			assertEquals(3L, (long) itemId, "Incorrect item id");
-			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
-		});
-	}
-
-	@Test
-	void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
-		Duration duration = Duration.ofDays(6).plusHours(23);
-		final Long itemId = 3L;
-
-		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
-
-		assertTrue(CollectionUtils.isNotEmpty(logs), "Logs should not be empty");
-		assertEquals(3, logs.size(), "Incorrect count of logs");
 	}
 
 	@Test
