@@ -143,6 +143,12 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findIdsByItemIdsAndLogLevelGte() {
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.DEBUG.toInt());
+		assertEquals(7, ids.size());
+	}
+
+	@Test
 	void findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
 
 		int logLevel = LogLevel.WARN_INT;

@@ -199,6 +199,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel) {
+		return dsl.select(LOG.ID)
+				.from(LOG)
+				.where(LOG.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch(LOG.ID, Long.class);
+	}
+
+	@Override
 	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
 		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
 				.from(LOG)

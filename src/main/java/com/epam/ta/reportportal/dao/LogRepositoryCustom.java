@@ -88,6 +88,8 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
     List<Long> findItemLogIdsByLaunchIdsAndLogLevelGte(List<Long> launchIds, int logLevel);
 
+    List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel);
+
     /**
      * Load {@link Log} by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} referenced from {@link Log#testItem} and {@link Duration}
      *
