@@ -20,46 +20,37 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.ServerSettings;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.epam.ta.reportportal.dao.ServerSettingsRepositoryCustomImpl.SERVER_SETTING_KEY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-@Sql("/db/fill/server-settings/server-settings-fill.sql")
 class ServerSettingsRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ServerSettingsRepository repository;
 
 	@Test
-	void findByKeyPositive() {
-		final String key = "server.analytics.all";
-		final Optional<ServerSettings> serverSettingsOptional = repository.findByKey(key);
-
-		assertTrue(serverSettingsOptional.isPresent());
-		assertEquals(key, serverSettingsOptional.get().getKey());
+	public void findSettings() {
+		final List<ServerSettings> settings = repository.selectServerSettings();
+		assertEquals(2L, settings.size());
+		settings.forEach(setting -> assertTrue(setting.getKey().startsWith(SERVER_SETTING_KEY)));
 	}
 
 	@Test
-	void findByKeyNegative() {
-		assertFalse(repository.findByKey("no_such_key").isPresent());
-	}
-
-	@Test
-	void streamAll() {
-		final Stream<ServerSettings> serverSettingsStream = repository.streamAll();
-		assertEquals(5, serverSettingsStream.collect(Collectors.toList()).size());
-	}
-
-	@Test
-	void name() {
-		repository.deleteAllByTerm("key");
-		assertEquals(2, repository.findAll().size());
+	public void generateSecret() {
+		final String s = repository.generateSecret();
+		final List<ServerSettings> all = repository.findAll();
+		final ServerSettings serverSettings = all.stream()
+				.filter(it -> !it.getKey().startsWith(SERVER_SETTING_KEY))
+				.findFirst()
+				.orElseThrow();
+		assertEquals(s, serverSettings.getValue());
+		assertEquals(2L, repository.selectServerSettings().size());
 	}
 }
