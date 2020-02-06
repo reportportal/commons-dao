@@ -36,7 +36,6 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
-import org.assertj.core.util.Strings;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -385,32 +384,6 @@ class TestItemRepositoryTest extends BaseTest {
 		final Optional<IssueType> issueType = testItemRepository.selectIssueTypeByLocator(1L, locator);
 		assertTrue(issueType.isPresent(), "IssueType should be present");
 		assertEquals(locator, issueType.get().getLocator(), "Incorrect locator");
-	}
-
-	@Test
-	void retriesFetchingTest() {
-
-		Filter filter = Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(12L), CRITERIA_LAUNCH_ID))
-				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(true), CRITERIA_HAS_RETRIES))
-				.build();
-
-		List<TestItem> items = testItemRepository.findByFilter(filter, PageRequest.of(0, 1)).getContent();
-
-		assertNotNull(items);
-		assertEquals(1L, items.size());
-
-		TestItem retriesParent = items.get(0);
-		Set<TestItem> retries = retriesParent.getRetries();
-
-		assertEquals(3L, retries.size());
-
-		retries.stream().map(TestItem::getLaunchId).forEach(Assertions::assertNull);
-		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> assertEquals(retriesParent.getItemId(), retryOf));
-		retries.forEach(retry -> assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
-				retry.getPath()
-		));
 	}
 
 	@Test

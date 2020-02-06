@@ -111,11 +111,6 @@ public class TestItem implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "retry_of")
-	@Fetch(FetchMode.SUBSELECT)
-	private Set<TestItem> retries = Sets.newLinkedHashSet();
-
 	@OneToMany(mappedBy = "testItem", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@OrderBy(value = "pattern_id")
 	@Fetch(FetchMode.SUBSELECT)
@@ -314,14 +309,6 @@ public class TestItem implements Serializable {
 
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
-	}
-
-	public Set<TestItem> getRetries() {
-		return retries;
-	}
-
-	public void setRetries(Set<TestItem> retries) {
-		this.retries = retries;
 	}
 
 	public Set<PatternTemplateTestItem> getPatternTemplateTestItems() {
