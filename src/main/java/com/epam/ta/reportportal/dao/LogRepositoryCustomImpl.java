@@ -199,17 +199,6 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
-		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
-				.from(LOG)
-				.join(ATTACHMENT)
-				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
-				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
-				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
-				.fetchInto(Log.class);
-	}
-
-	@Override
 	public List<Log> findByFilter(Queryable filter) {
 		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).wrap().build()));
 	}

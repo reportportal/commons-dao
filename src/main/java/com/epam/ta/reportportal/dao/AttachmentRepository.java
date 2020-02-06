@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,4 +28,6 @@ import java.util.Optional;
 public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long>, AttachmentRepositoryCustom {
 
 	Optional<Attachment> findByFileId(String fileId);
+
+	List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
 }

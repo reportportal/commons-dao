@@ -203,6 +203,17 @@ public class ProjectUtils {
 				.matches();
 	}
 
+	public static Optional<ProjectAttribute> extractAttribute(Project project, ProjectAttributeEnum attribute) {
+		return project.getProjectAttributes()
+				.stream()
+				.filter(pa -> pa.getAttribute().getName().equalsIgnoreCase(attribute.getAttribute()))
+				.findFirst();
+	}
+
+	public static Optional<String> extractAttributeValue(Project project, ProjectAttributeEnum attribute) {
+		return extractAttribute(project, attribute).map(ProjectAttribute::getValue);
+	}
+
 	private static Predicate<String> processRecipientsEmails(final Iterable<String> emails) {
 		return input -> stream(emails.spliterator(), false).noneMatch(email -> email.equalsIgnoreCase(input));
 	}
