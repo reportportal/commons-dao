@@ -88,6 +88,8 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	List<Long> findItemLogIdsByLaunchIdsAndLogLevelGte(List<Long> launchIds, int logLevel);
 
+    List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel);
+
 	/**
 	 * Get the specified log's page number
 	 *

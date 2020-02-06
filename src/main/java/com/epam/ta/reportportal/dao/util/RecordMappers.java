@@ -71,6 +71,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
@@ -169,8 +170,7 @@ public class RecordMappers {
 		return statistics;
 	};
 
-	public static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.field(ATTACHMENT.ID.getQualifiedName()
-			.toString())).flatMap(idField -> ofNullable(r.get(idField, Long.class)).map(id -> {
+	public static final RecordMapper<? super Record, Attachment> ATTACHMENT_MAPPER = r -> ofNullable(r.get(ATTACHMENT.ID)).map(id -> {
 		Attachment attachment = new Attachment();
 		attachment.setId(id);
 		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
@@ -181,20 +181,23 @@ public class RecordMappers {
 		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
 
 		return attachment;
-	})).orElse(null);
+	}).orElse(null);
 
-	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
+	public static final RecordMapper<? super Record, Log> LOG_RECORD_MAPPER = result -> {
 		Log log = new Log();
-		log.setId(r.get(LOG.ID, Long.class));
-		log.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
-		log.setLogMessage(r.get(LOG.LOG_MESSAGE, String.class));
-		log.setLastModified(r.get(LOG.LAST_MODIFIED, LocalDateTime.class));
-		log.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+		log.setId(result.get(LOG.ID, Long.class));
+		log.setLogTime(result.get(LOG.LOG_TIME, LocalDateTime.class));
+		log.setLogMessage(result.get(LOG.LOG_MESSAGE, String.class));
+		log.setLastModified(result.get(LOG.LAST_MODIFIED, LocalDateTime.class));
+		log.setLogLevel(result.get(JLog.LOG.LOG_LEVEL, Integer.class));
+		ofNullable(result.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
+		ofNullable(result.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+		return log;
+	};
 
-		log.setAttachment(ATTACHMENT_MAPPER.map(r));
-
-		ofNullable(r.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
-		ofNullable(r.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+	public static final BiFunction<? super Record, RecordMapper<? super Record, Attachment>, Log> LOG_MAPPER = (result, attachmentMapper) -> {
+		Log log = LOG_RECORD_MAPPER.map(result);
+		log.setAttachment(attachmentMapper.map(result));
 		return log;
 	};
 

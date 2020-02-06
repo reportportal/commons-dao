@@ -123,11 +123,29 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findIdsByItemIds() {
-		List<Long> idsByTestItemIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
+		List<Long> errorIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
 				Arrays.asList(1L, 2L, 3L),
 				LogLevel.DEBUG.toInt()
 		);
-		assertEquals(7, idsByTestItemIds.size());
+		List<Log> errorLogs = logRepository.findAllById(errorIds);
+		errorLogs.forEach(log -> assertEquals(40000, log.getLogLevel()));
+		assertEquals(7, errorIds.size());
+		assertEquals(7, errorLogs.size());
+
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.FATAL.toInt());
+		assertEquals(0, ids.size());
+	}
+
+	@Test
+	void findIdsByItemIdsAndLogLevelGte() {
+		List<Long> errorIds = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.DEBUG.toInt());
+		List<Log> errorLogs = logRepository.findAllById(errorIds);
+		errorLogs.forEach(log -> assertEquals(40000, log.getLogLevel()));
+		assertEquals(7, errorIds.size());
+		assertEquals(7, errorLogs.size());
+
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.FATAL.toInt());
+		assertEquals(0, ids.size());
 	}
 
 	@Test

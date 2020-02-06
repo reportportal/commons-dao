@@ -52,7 +52,7 @@ import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.NESTED;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.NESTED_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
@@ -99,7 +99,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.orderBy(LOG.LOG_TIME.asc())
 				.limit(limit)
 				.fetch()
-				.map(LOG_MAPPER);
+				.map(r -> LOG_MAPPER.apply(r, ATTACHMENT_MAPPER));
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.where(LOG.ITEM_ID.eq(itemId))
 				.orderBy(LOG.LOG_TIME.asc())
 				.fetch()
-				.map(LOG_MAPPER);
+				.map(r -> LOG_MAPPER.apply(r, ATTACHMENT_MAPPER));
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.and(parentItemTable.ITEM_ID.in(itemIds))
 				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch()
-				.map(LOG_MAPPER);
+				.map(LOG_RECORD_MAPPER);
 	}
 
 	@Override
@@ -194,6 +194,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(launchIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch(LOG.ID, Long.class);
+	}
+
+	@Override
+	public List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel) {
+		return dsl.select(LOG.ID)
+				.from(LOG)
+				.where(LOG.ITEM_ID.in(itemIds))
 				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch(LOG.ID, Long.class);
 	}

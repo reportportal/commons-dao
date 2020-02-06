@@ -199,7 +199,7 @@ public class ResultFetchers {
 		records.forEach(record -> {
 			Long id = record.get(LOG.ID);
 			if (!logs.containsKey(id)) {
-				logs.put(id, LOG_MAPPER.map(record));
+				logs.put(id, LOG_MAPPER.apply(record, ATTACHMENT_MAPPER));
 			}
 		});
 		return new ArrayList<>(logs.values());
