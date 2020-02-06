@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.ServerSettingsRepositoryCustomImpl.SERVER_SETTING_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,12 +46,8 @@ class ServerSettingsRepositoryTest extends BaseTest {
 	@Test
 	public void generateSecret() {
 		final String s = repository.generateSecret();
-		final List<ServerSettings> all = repository.findAll();
-		final ServerSettings serverSettings = all.stream()
-				.filter(it -> !it.getKey().startsWith(SERVER_SETTING_KEY))
-				.findFirst()
-				.orElseThrow();
-		assertEquals(s, serverSettings.getValue());
-		assertEquals(2L, repository.selectServerSettings().size());
+		final Optional<ServerSettings> byKey = repository.findByKey("secret.key");
+		assertTrue(byKey.isPresent());
+		assertEquals(s, byKey.get().getValue());
 	}
 }
