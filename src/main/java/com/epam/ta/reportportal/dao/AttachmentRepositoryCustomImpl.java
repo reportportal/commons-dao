@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,8 +25,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
+import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 
 /**
@@ -82,5 +88,26 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	@Override
 	public int deleteAllByIds(Collection<Long> ids) {
 		return dsl.deleteFrom(ATTACHMENT).where(ATTACHMENT.ID.in(ids)).execute();
+	}
+
+	public List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before) {
+		return dsl.select(
+				ATTACHMENT.ID,
+				ATTACHMENT.THUMBNAIL_ID,
+				ATTACHMENT.FILE_ID,
+				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.ITEM_ID,
+				ATTACHMENT.LAUNCH_ID,
+				ATTACHMENT.PROJECT_ID
+		)
+				.from(ATTACHMENT)
+				.join(LOG)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.join(TEST_ITEM)
+				.on(ATTACHMENT.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(before)))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
+				.fetchInto(Attachment.class);
 	}
 }

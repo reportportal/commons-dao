@@ -29,7 +29,6 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
-import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
@@ -200,7 +199,7 @@ public class ResultFetchers {
 		records.forEach(record -> {
 			Long id = record.get(LOG.ID);
 			if (!logs.containsKey(id)) {
-				logs.put(id, LOG_MAPPER.map(record));
+				logs.put(id, LOG_MAPPER.apply(record, ATTACHMENT_MAPPER));
 			}
 		});
 		return new ArrayList<>(logs.values());
@@ -342,18 +341,15 @@ public class ResultFetchers {
 					.withProjectDetails(new HashMap<>(records.size()))
 					.withEmail(records.get(0).get(USERS.EMAIL))
 					.build();
-			records.forEach(record -> {
-				ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(record.get(PROJECT_USER.PROJECT_ID,
-						Long.class
-				),
-						record.get(PROJECT.NAME, String.class),
-						ProjectRole.forName(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
-								.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND,
-										record.get(PROJECT_USER.PROJECT_ROLE, String.class)
-								))
-				);
-				user.getProjectDetails().put(record.get(PROJECT.NAME), projectDetails);
-			});
+			records.forEach(record -> ofNullable(record.get(PROJECT_USER.PROJECT_ID, Long.class)).ifPresent(projectId -> {
+				String projectName = record.get(PROJECT.NAME, String.class);
+				ReportPortalUser.ProjectDetails projectDetails = ReportPortalUser.ProjectDetails.builder()
+						.withProjectId(projectId)
+						.withProjectName(projectName)
+						.withProjectRole(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
+						.build();
+				user.getProjectDetails().put(projectName, projectDetails);
+			}));
 			return user;
 		}
 		return null;

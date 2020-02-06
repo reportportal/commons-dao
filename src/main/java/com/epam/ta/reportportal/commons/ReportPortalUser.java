@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.commons;
 
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -114,6 +116,39 @@ public class ReportPortalUser extends User {
 
 		public ProjectRole getProjectRole() {
 			return projectRole;
+		}
+
+		public static ProjectDetailsBuilder builder() {
+			return new ProjectDetailsBuilder();
+		}
+
+		public static class ProjectDetailsBuilder {
+			private Long projectId;
+			private String projectName;
+			private ProjectRole projectRole;
+
+			private ProjectDetailsBuilder() {
+			}
+
+			public ProjectDetailsBuilder withProjectId(Long projectId) {
+				this.projectId = projectId;
+				return this;
+			}
+
+			public ProjectDetailsBuilder withProjectName(String projectName) {
+				this.projectName = projectName;
+				return this;
+			}
+
+			public ProjectDetailsBuilder withProjectRole(String projectRole) {
+				this.projectRole = ProjectRole.forName(projectRole)
+						.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
+				return this;
+			}
+
+			public ProjectDetails build() {
+				return new ProjectDetails(projectId, projectName, projectRole);
+			}
 		}
 	}
 

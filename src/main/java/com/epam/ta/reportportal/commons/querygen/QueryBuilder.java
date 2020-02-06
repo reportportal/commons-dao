@@ -271,18 +271,22 @@ public class QueryBuilder {
 	}
 
 	private void addJoinsToQuery(QuerySupplier query, FilterTarget filterTarget, Set<String> fields) {
-		Map<Table, Condition> joinTables = new LinkedHashMap<>();
+		Map<TableLike, JoinEntity> joinTables = new LinkedHashMap<>();
 		fields.forEach(it -> {
 			if (!joinTables.containsKey(STATISTICS) && it.startsWith(STATISTICS_KEY)) {
-				joinTables.put(STATISTICS, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID));
-				joinTables.put(STATISTICS_FIELD, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
+				joinTables.put(STATISTICS, JoinEntity.of(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID)));
+				joinTables.put(STATISTICS_FIELD,
+						JoinEntity.of(STATISTICS_FIELD, JoinType.LEFT_OUTER_JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				);
 			} else {
-				CriteriaHolder criteriaHolder = filterTarget.getCriteriaByFilter(it).get();
-				if (!joinTables.containsKey(criteriaHolder.getAssociatedTable()) && criteriaHolder.getJoinCondition() != null) {
-					joinTables.put(criteriaHolder.getAssociatedTable(), criteriaHolder.getJoinCondition());
-				}
+				filterTarget.getCriteriaByFilter(it).ifPresent(criteriaHolder -> criteriaHolder.getJoinChain().forEach(joinEntity -> {
+					if (!joinTables.containsKey(joinEntity.getTable())) {
+						joinTables.put(joinEntity.getTable(), joinEntity);
+					}
+				}));
+
 			}
 		});
-		joinTables.forEach((key, value) -> query.addJoin(key, JoinType.LEFT_OUTER_JOIN, value));
+		joinTables.forEach((key, value) -> query.addJoin(value.getTable(), value.getJoinType(), value.getJoinCondition()));
 	}
 }

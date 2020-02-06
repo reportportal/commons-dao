@@ -20,10 +20,9 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
-import org.apache.commons.collections.CollectionUtils;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +30,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -59,32 +57,6 @@ class LogRepositoryTest extends BaseTest {
 
 		Integer number = logRepository.getPageNumber(1L, filter, PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, CRITERIA_LOG_TIME)));
 		assertEquals(1L, (long) number, "Unexpected log page number");
-	}
-
-	@Test
-	void findByTestItemsAndLogLevel() {
-		ArrayList<Long> ids = Lists.newArrayList(3L);
-		Integer logLevel = 30000;
-
-		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
-
-		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
-		logs.forEach(log -> {
-			Long itemId = log.getTestItem().getItemId();
-			assertEquals(3L, (long) itemId, "Incorrect item id");
-			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
-		});
-	}
-
-	@Test
-	void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
-		Duration duration = Duration.ofDays(6).plusHours(23);
-		final Long itemId = 3L;
-
-		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
-
-		assertTrue(CollectionUtils.isNotEmpty(logs), "Logs should not be empty");
-		assertEquals(3, logs.size(), "Incorrect count of logs");
 	}
 
 	@Test
@@ -139,20 +111,57 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findItemLogIdsByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchId(1L);
+		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchIdAndLogLevelGte(1L, LogLevel.DEBUG.toInt());
 		assertEquals(7, logIdsByLaunch.size());
 	}
 
 	@Test
 	void findItemLogIdsByLaunchIds() {
-		List<Long> logIds = logRepository.findItemLogIdsByLaunchIds(Arrays.asList(1L, 2L));
+		List<Long> logIds = logRepository.findItemLogIdsByLaunchIdsAndLogLevelGte(Arrays.asList(1L, 2L), LogLevel.DEBUG.toInt());
 		assertEquals(7, logIds.size());
 	}
 
 	@Test
 	void findIdsByItemIds() {
-		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
-		assertEquals(7, idsByTestItemIds.size());
+		List<Long> errorIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
+				Arrays.asList(1L, 2L, 3L),
+				LogLevel.DEBUG.toInt()
+		);
+		List<Log> errorLogs = logRepository.findAllById(errorIds);
+		errorLogs.forEach(log -> assertEquals(40000, log.getLogLevel()));
+		assertEquals(7, errorIds.size());
+		assertEquals(7, errorLogs.size());
+
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.FATAL.toInt());
+		assertEquals(0, ids.size());
+	}
+
+	@Test
+	void findIdsByItemIdsAndLogLevelGte() {
+		List<Long> errorIds = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.DEBUG.toInt());
+		List<Log> errorLogs = logRepository.findAllById(errorIds);
+		errorLogs.forEach(log -> assertEquals(40000, log.getLogLevel()));
+		assertEquals(7, errorIds.size());
+		assertEquals(7, errorLogs.size());
+
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.FATAL.toInt());
+		assertEquals(0, ids.size());
+	}
+
+	@Test
+	void findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
+
+		int logLevel = LogLevel.WARN_INT;
+
+		List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+		List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L, itemIds, logLevel);
+
+		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
+		logs.forEach(log -> {
+			Long itemId = log.getTestItem().getItemId();
+			assertTrue(itemIds.contains(itemId), "Incorrect item id");
+			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
+		});
 	}
 
 	@Test
@@ -165,5 +174,18 @@ class LogRepositoryTest extends BaseTest {
 				.build();
 
 		logRepository.findNestedItems(2L, false, false, filter, PageRequest.of(2, 1));
+	}
+
+	@Test
+	void findIdsByFilter() {
+
+		Filter failedStatusFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_STATUS, "FAILED").build())
+				.build();
+
+		List<Long> ids = logRepository.findIdsByFilter(failedStatusFilter);
+
+		assertEquals(7, ids.size());
 	}
 }

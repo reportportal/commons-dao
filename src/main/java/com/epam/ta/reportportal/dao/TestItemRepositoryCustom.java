@@ -26,8 +26,10 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.ws.model.issue.Issue;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -272,15 +274,16 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	Map<Long, PathName> selectPathNames(Collection<Long> id, Long porjectId);
 
-    /**
-     * Select item IDs by analyzed status and launch id with log level greater or equals than error
-     *
-     * @param autoAnalyzed {@link com.epam.ta.reportportal.ws.model.issue.Issue#autoAnalyzed}
-     * @param launchId     {@link TestItem#launchId} ID
-     * @param logLevel     {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-     * @return The {@link List} of the {@link TestItem#itemId}
-     */
-    List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
+	/**
+	 * Select item IDs by analyzed status and {@link TestItem#getLaunchId()}
+	 * with {@link Log} having {@link Log#getLogLevel()} greater than or equal to {@link com.epam.ta.reportportal.entity.enums.LogLevel#ERROR_INT}
+	 *
+	 * @param autoAnalyzed {@link Issue#getAutoAnalyzed()}
+	 * @param launchId     {@link TestItem#getLaunchId()}
+	 * @param logLevel     {@link Log#getLogLevel()}
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
 
     /**
      * @param itemId  {@link TestItem#itemId}
