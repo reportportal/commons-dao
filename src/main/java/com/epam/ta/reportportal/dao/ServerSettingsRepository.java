@@ -20,15 +20,14 @@ import com.epam.ta.reportportal.entity.ServerSettings;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * @author Ivan Budaev
  */
 public interface ServerSettingsRepository extends ReportPortalRepository<ServerSettings, Long>, ServerSettingsRepositoryCustom {
 
-	@Query("from ServerSettings ss")
-	Stream<ServerSettings> streamAll();
+	@Query(value = "INSERT INTO server_settings (key, value) VALUES ('secret.key', gen_random_bytes(32)) RETURNING value", nativeQuery = true)
+	String generateSecret();
 
 	Optional<ServerSettings> findByKey(String key);
 }
