@@ -244,6 +244,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
      */
     List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
 
+    List<TestItem> selectRetries(List<Long> retryOfIds);
+
 	//TODO move to project repo
 	List<IssueType> selectIssueLocatorsByProject(Long projectId);
 

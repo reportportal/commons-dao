@@ -420,6 +420,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public List<TestItem> selectRetries(List<Long> retryOfIds) {
+		return dsl.select()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.RETRY_OF.in(retryOfIds))
+				.and(TEST_ITEM.LAUNCH_ID.isNull())
+				.orderBy(TEST_ITEM.START_TIME).fetch(TEST_ITEM_RECORD_MAPPER);
+	}
+
+	@Override
 	public List<IssueType> selectIssueLocatorsByProject(Long projectId) {
 		return dsl.select()
 				.from(PROJECT)

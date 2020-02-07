@@ -387,6 +387,27 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectRetriesTest() {
+
+		Filter filter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(12L), CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(true), CRITERIA_HAS_RETRIES))
+				.build();
+
+		List<TestItem> items = testItemRepository.findByFilter(filter, PageRequest.of(0, 1)).getContent();
+
+		TestItem item = items.get(0);
+
+		List<TestItem> retries = testItemRepository.selectRetries(Lists.newArrayList(item.getItemId()));
+		assertEquals(3, retries.size());
+		retries.forEach(retry -> {
+			assertNotNull(retry.getRetryOf());
+			assertEquals(item.getItemId(), retry.getRetryOf());
+		});
+	}
+
+	@Test
 	void updateStatusAndEndTimeAndDurationById() {
 
 		int result = testItemRepository.updateStatusAndEndTimeById(1L, JStatusEnum.CANCELLED, LocalDateTime.now());
