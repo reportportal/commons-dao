@@ -16,15 +16,15 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.ServerSettings;
+
+import java.util.List;
+
 /**
  * @author Ivan Budaev
  */
 public interface ServerSettingsRepositoryCustom {
 
-	/**
-	 * Delete all {@link com.epam.ta.reportportal.entity.ServerSettings} which key starts with term
-	 *
-	 * @param term Key restriction for {@link com.epam.ta.reportportal.entity.ServerSettings} removing
-	 */
-	void deleteAllByTerm(String term);
+	List<ServerSettings> selectServerSettings();
+
 }

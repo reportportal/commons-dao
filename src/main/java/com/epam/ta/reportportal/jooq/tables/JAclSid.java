@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JAclSidRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAclSid extends TableImpl<JAclSidRecord> {
 
-    private static final long serialVersionUID = 146657695;
+    private static final long serialVersionUID = 1625544088;
 
     /**
      * The reference instance of <code>public.acl_sid</code>

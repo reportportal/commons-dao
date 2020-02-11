@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = -1110466444;
+    private static final long serialVersionUID = -1109638787;
 
     /**
      * The reference instance of <code>public.attachment</code>

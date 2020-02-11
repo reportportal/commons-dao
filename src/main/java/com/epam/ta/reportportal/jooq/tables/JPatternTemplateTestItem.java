@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateTestItemReco
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPatternTemplateTestItem extends TableImpl<JPatternTemplateTestItemRecord> {
 
-    private static final long serialVersionUID = 1385797669;
+    private static final long serialVersionUID = 51065116;
 
     /**
      * The reference instance of <code>public.pattern_template_test_item</code>

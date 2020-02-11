@@ -38,10 +38,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -98,11 +95,17 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void deleteLaunchesByProjectIdAndModifiedBeforeTest() {
-		int removedCount = launchRepository.deleteLaunchesByProjectIdModifiedBefore(1L,
+	void findIdsByProjectIdModifiedBefore() {
+		List<Long> ids = launchRepository.findIdsByProjectIdModifiedBefore(1L,
 				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
 		);
-		assertEquals(12, removedCount);
+		assertEquals(12, ids.size());
+	}
+
+	@Test
+	void deleteAllByIds() {
+		int removedCount = launchRepository.deleteAllByIdIn(Arrays.asList(1L, 2L, 3L));
+		assertEquals(3, removedCount);
 	}
 
 	@Test
@@ -233,7 +236,7 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsWithStatusNotEqual() {
-		final boolean hasItemsWithStatusNotEqual = launchRepository.hasItemsWithStatusNotEqual(100L, StatusEnum.PASSED);
+		final boolean hasItemsWithStatusNotEqual = launchRepository.hasRootItemsWithStatusNotEqual(100L, StatusEnum.PASSED);
 		assertTrue(hasItemsWithStatusNotEqual);
 	}
 

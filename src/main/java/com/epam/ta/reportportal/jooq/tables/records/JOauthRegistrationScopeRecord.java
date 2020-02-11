@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthRegistrationScopeRecord extends UpdatableRecordImpl<JOauthRegistrationScopeRecord> implements Record3<Integer, String, String> {
 
-    private static final long serialVersionUID = 819659867;
+    private static final long serialVersionUID = -1019423880;
 
     /**
      * Setter for <code>public.oauth_registration_scope.id</code>.

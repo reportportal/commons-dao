@@ -12,7 +12,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JOauthAccessTokenRecord;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOauthAccessToken extends TableImpl<JOauthAccessTokenRecord> {
 
-    private static final long serialVersionUID = -893379449;
+    private static final long serialVersionUID = 776696634;
 
     /**
      * The reference instance of <code>public.oauth_access_token</code>

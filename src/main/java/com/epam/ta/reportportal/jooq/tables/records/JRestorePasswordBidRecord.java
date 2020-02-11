@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRestorePasswordBidRecord extends UpdatableRecordImpl<JRestorePasswordBidRecord> implements Record3<String, Timestamp, String> {
 
-    private static final long serialVersionUID = -1455030257;
+    private static final long serialVersionUID = -1080851144;
 
     /**
      * Setter for <code>public.restore_password_bid.uuid</code>.

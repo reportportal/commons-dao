@@ -7,7 +7,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 import com.epam.ta.reportportal.jooq.enums.JSortDirectionEnum;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -29,7 +29,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterSortRecord extends UpdatableRecordImpl<JFilterSortRecord> implements Record4<Long, Long, String, JSortDirectionEnum> {
 
-    private static final long serialVersionUID = 886494729;
+    private static final long serialVersionUID = -1157343158;
 
     /**
      * Setter for <code>public.filter_sort.id</code>.

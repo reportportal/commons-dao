@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStatisticsRecord extends UpdatableRecordImpl<JStatisticsRecord> implements Record5<Long, Integer, Long, Long, Long> {
 
-    private static final long serialVersionUID = 147571798;
+    private static final long serialVersionUID = 104472567;
 
     /**
      * Setter for <code>public.statistics.s_id</code>.

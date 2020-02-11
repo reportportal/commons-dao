@@ -14,20 +14,41 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
+package com.epam.ta.reportportal.entity.item.history;
 
-import com.epam.ta.reportportal.entity.attachment.Attachment;
-
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long>, AttachmentRepositoryCustom {
+public class TestItemHistory implements Serializable {
 
-	Optional<Attachment> findByFileId(String fileId);
+	private Integer testCaseHash;
 
-	List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
+	private List<Long> itemIds;
+
+	public TestItemHistory() {
+	}
+
+	public TestItemHistory(Integer testCaseHash, List<Long> itemIds) {
+		this.testCaseHash = testCaseHash;
+		this.itemIds = itemIds;
+	}
+
+	public Integer getTestCaseHash() {
+		return testCaseHash;
+	}
+
+	public void setTestCaseHash(Integer testCaseHash) {
+		this.testCaseHash = testCaseHash;
+	}
+
+	public List<Long> getItemIds() {
+		return itemIds;
+	}
+
+	public void setItemIds(List<Long> itemIds) {
+		this.itemIds = itemIds;
+	}
 }

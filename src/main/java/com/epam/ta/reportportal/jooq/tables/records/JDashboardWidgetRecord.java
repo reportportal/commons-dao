@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record11;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidgetRecord extends UpdatableRecordImpl<JDashboardWidgetRecord> implements Record11<Long, Long, String, String, String, Integer, Integer, Integer, Integer, Boolean, Boolean> {
 
-    private static final long serialVersionUID = -1098077399;
+    private static final long serialVersionUID = -1860894790;
 
     /**
      * Setter for <code>public.dashboard_widget.dashboard_id</code>.

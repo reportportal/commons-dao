@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record2;
@@ -27,7 +27,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunchNamesRecord extends TableRecordImpl<JLaunchNamesRecord> implements Record2<Long, String> {
 
-    private static final long serialVersionUID = 364043219;
+    private static final long serialVersionUID = -1061800566;
 
     /**
      * Setter for <code>public.launch_names.sender_case_id</code>.

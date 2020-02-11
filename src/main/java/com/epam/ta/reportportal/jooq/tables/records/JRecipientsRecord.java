@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record2;
@@ -27,7 +27,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRecipientsRecord extends TableRecordImpl<JRecipientsRecord> implements Record2<Long, String> {
 
-    private static final long serialVersionUID = 918955702;
+    private static final long serialVersionUID = -334652505;
 
     /**
      * Setter for <code>public.recipients.sender_case_id</code>.

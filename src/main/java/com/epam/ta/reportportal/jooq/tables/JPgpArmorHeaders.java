@@ -7,7 +7,7 @@ package com.epam.ta.reportportal.jooq.tables;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.tables.records.JPgpArmorHeadersRecord;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -34,7 +34,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPgpArmorHeaders extends TableImpl<JPgpArmorHeadersRecord> {
 
-    private static final long serialVersionUID = -1545692967;
+    private static final long serialVersionUID = 939688568;
 
     /**
      * The reference instance of <code>public.pgp_armor_headers</code>

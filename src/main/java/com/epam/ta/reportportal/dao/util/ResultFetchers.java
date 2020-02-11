@@ -29,7 +29,6 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
-import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
@@ -45,9 +44,7 @@ import org.jooq.Result;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -117,34 +114,6 @@ public class ResultFetchers {
 		return new ArrayList<>(launches.values());
 	};
 
-	public static final BiConsumer<List<TestItem>, Result<? extends Record>> RETRIES_FETCHER = (testItems, retries) -> {
-		Map<Long, TestItem> retriesMap = Maps.newLinkedHashMap();
-		retries.forEach(record -> {
-			Long id = record.get(TEST_ITEM.ITEM_ID);
-			TestItem testItem;
-			if (!retriesMap.containsKey(id)) {
-				testItem = record.into(TestItem.class);
-				testItem.setItemId(id);
-				testItem.setName(record.get(TEST_ITEM.NAME));
-				testItem.setItemResults(record.into(TestItemResults.class));
-			} else {
-				testItem = retriesMap.get(id);
-			}
-			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
-			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
-				testItem.getParameters().add(record.into(Parameter.class));
-			});
-			retriesMap.put(id, testItem);
-		});
-
-		Map<Long, TestItem> items = testItems.stream()
-				.collect(HashMap::new, (map, item) -> map.put(item.getItemId(), item), HashMap::putAll);
-		retriesMap.values()
-				.stream()
-				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toCollection(LinkedHashSet::new)))
-				.forEach((key, value) -> items.get(key).setRetries(value));
-	};
-
 	/**
 	 * Fetches records from db results into list of {@link TestItem} objects.
 	 */
@@ -200,7 +169,7 @@ public class ResultFetchers {
 		records.forEach(record -> {
 			Long id = record.get(LOG.ID);
 			if (!logs.containsKey(id)) {
-				logs.put(id, LOG_MAPPER.map(record));
+				logs.put(id, LOG_MAPPER.apply(record, ATTACHMENT_MAPPER));
 			}
 		});
 		return new ArrayList<>(logs.values());
@@ -342,18 +311,15 @@ public class ResultFetchers {
 					.withProjectDetails(new HashMap<>(records.size()))
 					.withEmail(records.get(0).get(USERS.EMAIL))
 					.build();
-			records.forEach(record -> {
-				ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(record.get(PROJECT_USER.PROJECT_ID,
-						Long.class
-				),
-						record.get(PROJECT.NAME, String.class),
-						ProjectRole.forName(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
-								.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND,
-										record.get(PROJECT_USER.PROJECT_ROLE, String.class)
-								))
-				);
-				user.getProjectDetails().put(record.get(PROJECT.NAME), projectDetails);
-			});
+			records.forEach(record -> ofNullable(record.get(PROJECT_USER.PROJECT_ID, Long.class)).ifPresent(projectId -> {
+				String projectName = record.get(PROJECT.NAME, String.class);
+				ReportPortalUser.ProjectDetails projectDetails = ReportPortalUser.ProjectDetails.builder()
+						.withProjectId(projectId)
+						.withProjectName(projectName)
+						.withProjectRole(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
+						.build();
+				user.getProjectDetails().put(projectName, projectDetails);
+			}));
 			return user;
 		}
 		return null;

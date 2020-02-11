@@ -38,9 +38,6 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
-import com.epam.ta.reportportal.entity.ldap.LdapConfig;
-import com.epam.ta.reportportal.entity.ldap.SynchronizationAttributes;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -74,6 +71,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
@@ -185,18 +183,21 @@ public class RecordMappers {
 		return attachment;
 	}).orElse(null);
 
-	public static final RecordMapper<? super Record, Log> LOG_MAPPER = r -> {
+	public static final RecordMapper<? super Record, Log> LOG_RECORD_MAPPER = result -> {
 		Log log = new Log();
-		log.setId(r.get(LOG.ID, Long.class));
-		log.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
-		log.setLogMessage(r.get(LOG.LOG_MESSAGE, String.class));
-		log.setLastModified(r.get(LOG.LAST_MODIFIED, LocalDateTime.class));
-		log.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+		log.setId(result.get(LOG.ID, Long.class));
+		log.setLogTime(result.get(LOG.LOG_TIME, LocalDateTime.class));
+		log.setLogMessage(result.get(LOG.LOG_MESSAGE, String.class));
+		log.setLastModified(result.get(LOG.LAST_MODIFIED, LocalDateTime.class));
+		log.setLogLevel(result.get(JLog.LOG.LOG_LEVEL, Integer.class));
+		ofNullable(result.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
+		ofNullable(result.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+		return log;
+	};
 
-		log.setAttachment(ATTACHMENT_MAPPER.map(r));
-
-		ofNullable(r.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
-		ofNullable(r.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+	public static final BiFunction<? super Record, RecordMapper<? super Record, Attachment>, Log> LOG_MAPPER = (result, attachmentMapper) -> {
+		Log log = LOG_RECORD_MAPPER.map(result);
+		log.setAttachment(attachmentMapper.map(result));
 		return log;
 	};
 
@@ -214,8 +215,7 @@ public class RecordMappers {
 		return testItem;
 	};
 
-	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(
-			r.get(TEST_ITEM.ITEM_ID),
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
 			r.get(TEST_ITEM.NAME),
 			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
 			r.get(HAS_CONTENT, Boolean.class),
@@ -402,16 +402,6 @@ public class RecordMappers {
 		return Optional.of(dashboardWidget);
 	};
 
-	public static final Function<? super Record, SynchronizationAttributes> SYNCHRONIZATION_ATTRIBUTES_MAPPER = r -> {
-		SynchronizationAttributes synchronizationAttributes = new SynchronizationAttributes();
-		synchronizationAttributes.setFullName(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.FULL_NAME));
-		synchronizationAttributes.setEmail(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.EMAIL));
-		synchronizationAttributes.setPhoto(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.PHOTO));
-		synchronizationAttributes.setId(r.get(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
-
-		return synchronizationAttributes;
-	};
-
 	public static final RecordMapper<? super Record, IntegrationType> INTEGRATION_TYPE_MAPPER = r -> {
 		IntegrationType integrationType = new IntegrationType();
 		integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
@@ -475,40 +465,5 @@ public class RecordMappers {
 		integration.setProject(project);
 
 		return integration;
-	};
-
-	public static final RecordMapper<? super Record, LdapConfig> LDAP_CONFIG_MAPPER = r -> {
-
-		LdapConfig ldapConfig = r.into(LdapConfig.class);
-
-		ldapConfig.setEnabled(r.get(INTEGRATION.ENABLED));
-		ldapConfig.setCreator(r.get(INTEGRATION.CREATOR));
-		ldapConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-		ldapConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
-		ldapConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
-
-		INTEGRATION_PARAMS_MAPPER.accept(ldapConfig, r);
-
-		ldapConfig.setId(r.get(LDAP_CONFIG.ID));
-
-		return ldapConfig;
-	};
-
-	public static final RecordMapper<? super Record, ActiveDirectoryConfig> ACTIVE_DIRECTORY_CONFIG_MAPPER = r -> {
-
-		ActiveDirectoryConfig activeDirectoryConfig = r.into(ActiveDirectoryConfig.class);
-
-		activeDirectoryConfig.setEnabled(r.get(INTEGRATION.ENABLED));
-		activeDirectoryConfig.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
-		activeDirectoryConfig.setCreator(r.get(INTEGRATION.CREATOR));
-
-		activeDirectoryConfig.setType(INTEGRATION_TYPE_MAPPER.map(r));
-		activeDirectoryConfig.setSynchronizationAttributes(SYNCHRONIZATION_ATTRIBUTES_MAPPER.apply(r));
-
-		INTEGRATION_PARAMS_MAPPER.accept(activeDirectoryConfig, r);
-
-		activeDirectoryConfig.setId(r.get(ACTIVE_DIRECTORY_CONFIG.ID));
-
-		return activeDirectoryConfig;
 	};
 }

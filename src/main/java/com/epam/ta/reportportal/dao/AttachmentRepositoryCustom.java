@@ -16,10 +16,13 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -33,4 +36,6 @@ public interface AttachmentRepositoryCustom {
 	Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable);
 
 	int deleteAllByIds(Collection<Long> ids);
+
+	List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before);
 }

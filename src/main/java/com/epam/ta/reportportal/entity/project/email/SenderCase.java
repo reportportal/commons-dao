@@ -61,14 +61,18 @@ public class SenderCase implements Serializable {
 	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
+	@Column(name = "enabled")
+	private boolean enabled;
+
 	public SenderCase() {
 	}
 
-	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase) {
+	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase, boolean enabled) {
 		this.recipients = recipients;
 		this.launchNames = launchNames;
 		this.launchAttributeRules = launchAttributeRules;
 		this.sendCase = sendCase;
+		this.enabled = enabled;
 	}
 
 	public Long getId() {
@@ -117,5 +121,13 @@ public class SenderCase implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

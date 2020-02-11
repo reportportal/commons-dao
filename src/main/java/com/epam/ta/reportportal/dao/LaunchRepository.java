@@ -18,10 +18,11 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -29,6 +30,7 @@ import org.springframework.data.repository.query.Param;
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -40,85 +42,93 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
  */
 public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, LaunchRepositoryCustom {
 
-    /**
-     * Finds launch by {@link Launch#id} and sets a lock on the found launch row in the database.
-     * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
-     *
-     * @param id {@link Launch#id}
-     * @return {@link Optional} with {@link Launch} object
-     */
-    @Query(value = "SELECT l FROM Launch l WHERE l.id = :id")
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    Optional<Launch> findByIdForUpdate(@Param("id") Long id);
+	/**
+	 * Finds launch by {@link Launch#id} and sets a lock on the found launch row in the database.
+	 * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
+	 *
+	 * @param id {@link Launch#id}
+	 * @return {@link Optional} with {@link Launch} object
+	 */
+	@Query(value = "SELECT l FROM Launch l WHERE l.id = :id")
+	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+	Optional<Launch> findByIdForUpdate(@Param("id") Long id);
 
-    void deleteByProjectId(Long projectId);
+	void deleteByProjectId(Long projectId);
 
-    List<Launch> findAllByName(String name);
+	List<Launch> findAllByName(String name);
 
-    Optional<Launch> findByUuid(String uuid);
+	Optional<Launch> findByUuid(String uuid);
 
-    /**
-     * Finds launch by {@link Launch#getUuid()} and sets a lock on the found launch row in the database.
-     * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
-     *
-     * @param uuid {@link Launch#getUuid()}
-     * @return {@link Optional} with {@link Launch} object
-     */
-    @Query(value = "SELECT l FROM Launch l WHERE l.uuid = :uuid")
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    Optional<Launch> findByUuidForUpdate(@Param("uuid") String uuid);
+	/**
+	 * Finds launch by {@link Launch#getUuid()} and sets a lock on the found launch row in the database.
+	 * Required for fetching launch from the concurrent environment to provide synchronization between dependant entities
+	 *
+	 * @param uuid {@link Launch#getUuid()}
+	 * @return {@link Optional} with {@link Launch} object
+	 */
+	@Query(value = "SELECT l FROM Launch l WHERE l.uuid = :uuid")
+	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+	Optional<Launch> findByUuidForUpdate(@Param("uuid") String uuid);
 
-    List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
+	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
 
-    @Modifying
-    @Query(value = "DELETE FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
-    int deleteLaunchesByProjectIdModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
+	@Query("SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
+	List<Long> findIdsByProjectIdModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
-    Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
+	int deleteAllByIdIn(Collection<Long> ids);
 
-    @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-    @Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
-    Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status,
-                                                   @Param("before") LocalDateTime before);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
+	Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
-    @Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
-            + "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time DESC, number DESC LIMIT :historyDepth", nativeQuery = true)
-    List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
-                                     @Param("launchName") String launchName, @Param("projectId") Long projectId);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
+	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status,
+			@Param("before") LocalDateTime before);
 
-    @Query(value = "SELECT merge_launch(?1)", nativeQuery = true)
-    void mergeLaunchTestItems(Long launchId);
+	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
+			+ "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time DESC, number DESC LIMIT :historyDepth", nativeQuery = true)
+	List<Launch> findLaunchesHistory(@Param("historyDepth") int historyDepth, @Param("startingLaunchId") Long startingLaunchId,
+			@Param("launchName") String launchName, @Param("projectId") Long projectId);
 
-    /**
-     * Checks if a {@link Launch} has items with retries.
-     *
-     * @param launchId Current {@link Launch#id}
-     * @return True if has
-     */
-    @Query(value = "SELECT exists(SELECT 1 FROM launch JOIN test_item ON launch.id = test_item.launch_id "
-            + "WHERE launch.id = :launchId AND test_item.has_retries LIMIT 1)", nativeQuery = true)
-    boolean hasRetries(@Param("launchId") Long launchId);
+	@Query(value = "SELECT merge_launch(?1)", nativeQuery = true)
+	void mergeLaunchTestItems(Long launchId);
 
-    @Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
-            + " WHERE ti.launch_id = :launchId AND ti.has_stats = TRUE AND tir.status <> cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
-    boolean hasItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+	/**
+	 * Checks if a {@link Launch} has items with retries.
+	 *
+	 * @param launchId Current {@link Launch#id}
+	 * @return True if has
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM launch JOIN test_item ON launch.id = test_item.launch_id "
+			+ "WHERE launch.id = :launchId AND test_item.has_retries LIMIT 1)", nativeQuery = true)
+	boolean hasRetries(@Param("launchId") Long launchId);
 
-    @Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
-            + " WHERE ti.launch_id = :launchId AND ti.has_stats = TRUE AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
-    boolean hasItemsWithStatusEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+	/**
+	 * @param launchId {@link Launch#getId()}
+	 * @param status   {@link TestItemResults#getStatus()}
+	 * @return `true` if {@link TestItem#getLaunchId()} equal to provided `launchId`, {@link TestItem#getParent()} equal to `NULL`
+	 * and {@link TestItemResults#getStatus()} is not equal to provided `status`, otherwise return `false`
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
+			+ " WHERE ti.launch_id = :launchId AND ti.parent_id IS NULL AND ti.has_stats = TRUE "
+			+ " AND tir.status <> cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+	boolean hasRootItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
-    @Query(value = "SELECT exists(SELECT 1 FROM test_item ti WHERE ti.launch_id = :launchId LIMIT 1)", nativeQuery = true)
-    boolean hasItems(@Param("launchId") Long launchId);
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
+			+ " WHERE ti.launch_id = :launchId AND ti.has_stats = TRUE AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+	boolean hasItemsWithStatusEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
 
-    /**
-     * Finds the latest(that has max {@link Launch#number} {@link Launch} with specified {@code name} and {@code projectId}
-     *
-     * @param name      Name of {@link Launch}
-     * @param projectId Id of {@link Project}
-     * @return {@link Optional} if exists, {@link Optional#empty()} if not
-     */
-    @Query(value = "SELECT * FROM launch l WHERE l.name =:name AND l.project_id=:projectId ORDER BY l.number DESC LIMIT 1", nativeQuery = true)
-    Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti WHERE ti.launch_id = :launchId LIMIT 1)", nativeQuery = true)
+	boolean hasItems(@Param("launchId") Long launchId);
+
+	/**
+	 * Finds the latest(that has max {@link Launch#number} {@link Launch} with specified {@code name} and {@code projectId}
+	 *
+	 * @param name      Name of {@link Launch}
+	 * @param projectId Id of {@link Project}
+	 * @return {@link Optional} if exists, {@link Optional#empty()} if not
+	 */
+	@Query(value = "SELECT * FROM launch l WHERE l.name =:name AND l.project_id=:projectId ORDER BY l.number DESC LIMIT 1", nativeQuery = true)
+	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
 }

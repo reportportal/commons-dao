@@ -64,13 +64,17 @@ public final class QueryUtils {
 
 	}
 
-	public static Set<String> collectJoinFields(Queryable filter, Sort sort) {
-		Set<String> joinFields = filter.getFilterConditions()
+	public static Set<String> collectJoinFields(Queryable filter) {
+		return filter.getFilterConditions()
 				.stream()
 				.map(ConvertibleCondition::getAllConditions)
 				.flatMap(Collection::stream)
 				.map(FilterCondition::getSearchCriteria)
 				.collect(toSet());
+	}
+
+	public static Set<String> collectJoinFields(Queryable filter, Sort sort) {
+		Set<String> joinFields = collectJoinFields(filter);
 		joinFields.addAll(sort.get().map(Sort.Order::getProperty).collect(toSet()));
 		return joinFields;
 	}

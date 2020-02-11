@@ -10,7 +10,7 @@ import com.epam.ta.reportportal.jooq.tables.JLaunch;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -32,7 +32,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunchRecord extends UpdatableRecordImpl<JLaunchRecord> implements Record15<Long, String, Long, Long, String, String, Timestamp, Timestamp, Integer, Timestamp, JLaunchModeEnum, JStatusEnum, Boolean, Boolean, Double> {
 
-    private static final long serialVersionUID = 2069932150;
+    private static final long serialVersionUID = 1182620975;
 
     /**
      * Setter for <code>public.launch.id</code>.

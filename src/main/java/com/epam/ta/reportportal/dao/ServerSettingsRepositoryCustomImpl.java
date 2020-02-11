@@ -16,10 +16,13 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.ServerSettings;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import static com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
 
@@ -31,13 +34,18 @@ public class ServerSettingsRepositoryCustomImpl implements ServerSettingsReposit
 
 	private final DSLContext dsl;
 
+	static final String SERVER_SETTING_KEY = "server.";
+
 	@Autowired
 	public ServerSettingsRepositoryCustomImpl(DSLContext dsl) {
 		this.dsl = dsl;
 	}
 
 	@Override
-	public void deleteAllByTerm(String term) {
-		dsl.deleteFrom(SERVER_SETTINGS).where(SERVER_SETTINGS.KEY.like(DSL.escape(term, '\\') + "%")).execute();
+	public List<ServerSettings> selectServerSettings() {
+		return dsl.select()
+				.from(SERVER_SETTINGS)
+				.where(SERVER_SETTINGS.KEY.like(DSL.escape(SERVER_SETTING_KEY, '\\') + "%"))
+				.fetchInto(ServerSettings.class);
 	}
 }

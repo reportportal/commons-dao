@@ -8,7 +8,7 @@ import com.epam.ta.reportportal.jooq.tables.JIntegration;
 
 import java.sql.Timestamp;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.JSONB;
@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationRecord extends UpdatableRecordImpl<JIntegrationRecord> implements Record8<Integer, String, Long, Integer, Boolean, JSONB, String, Timestamp> {
 
-    private static final long serialVersionUID = -770040457;
+    private static final long serialVersionUID = -1231971652;
 
     /**
      * Setter for <code>public.integration.id</code>.

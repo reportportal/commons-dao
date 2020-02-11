@@ -6,7 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPatternTemplateRecord extends UpdatableRecordImpl<JPatternTemplateRecord> implements Record6<Long, String, String, String, Boolean, Long> {
 
-    private static final long serialVersionUID = 1766026285;
+    private static final long serialVersionUID = -2123424736;
 
     /**
      * Setter for <code>public.pattern_template.id</code>.
