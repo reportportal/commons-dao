@@ -44,9 +44,7 @@ import org.jooq.Result;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
@@ -114,34 +112,6 @@ public class ResultFetchers {
 			launches.put(id, launch);
 		});
 		return new ArrayList<>(launches.values());
-	};
-
-	public static final BiConsumer<List<TestItem>, Result<? extends Record>> RETRIES_FETCHER = (testItems, retries) -> {
-		Map<Long, TestItem> retriesMap = Maps.newLinkedHashMap();
-		retries.forEach(record -> {
-			Long id = record.get(TEST_ITEM.ITEM_ID);
-			TestItem testItem;
-			if (!retriesMap.containsKey(id)) {
-				testItem = record.into(TestItem.class);
-				testItem.setItemId(id);
-				testItem.setName(record.get(TEST_ITEM.NAME));
-				testItem.setItemResults(record.into(TestItemResults.class));
-			} else {
-				testItem = retriesMap.get(id);
-			}
-			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
-			Optional.ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(tag -> {
-				testItem.getParameters().add(record.into(Parameter.class));
-			});
-			retriesMap.put(id, testItem);
-		});
-
-		Map<Long, TestItem> items = testItems.stream()
-				.collect(HashMap::new, (map, item) -> map.put(item.getItemId(), item), HashMap::putAll);
-		retriesMap.values()
-				.stream()
-				.collect(Collectors.groupingBy(TestItem::getRetryOf, Collectors.toCollection(LinkedHashSet::new)))
-				.forEach((key, value) -> items.get(key).setRetries(value));
 	};
 
 	/**

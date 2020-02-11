@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -47,7 +46,6 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
@@ -56,7 +54,8 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.PATH_NAMES_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -90,19 +89,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				launchPageable.getSort(),
 				isLatest
 		).with(launchPageable).build().asTable(LAUNCHES);
-		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
-				.with(testItemPageable)
-				.addJointToStart(launchesTable,
-						JoinType.JOIN,
-						TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
-				)
-				.wrap()
-				.withWrapperSort(testItemPageable.getSort())
-				.build()));
 
-		fetchRetries(items);
-
-		return PageableExecutionUtils.getPage(items,
+		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
+						.with(testItemPageable)
+						.addJointToStart(launchesTable,
+								JoinType.JOIN,
+								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
+						)
+						.wrap()
+						.withWrapperSort(testItemPageable.getSort())
+						.build())),
 				testItemPageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
 						.addJointToStart(launchesTable,
@@ -424,6 +420,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public List<TestItem> selectRetries(List<Long> retryOfIds) {
+		return dsl.select()
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.RETRY_OF.in(retryOfIds))
+				.and(TEST_ITEM.LAUNCH_ID.isNull())
+				.orderBy(TEST_ITEM.START_TIME).fetch(TEST_ITEM_RECORD_MAPPER);
+	}
+
+	@Override
 	public List<IssueType> selectIssueLocatorsByProject(Long projectId) {
 		return dsl.select()
 				.from(PROJECT)
@@ -574,9 +581,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findByFilter(Queryable filter) {
-		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
-		fetchRetries(items);
-		return items;
+		return TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
 	}
 
 	@Override
@@ -587,8 +592,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build()));
-
-		fetchRetries(items);
 
 		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
 	}
@@ -650,24 +653,4 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		}
 	}
 
-	private void fetchRetries(List<TestItem> items) {
-
-		List<TestItem> itemsWithRetries = items.stream().filter(TestItem::isHasRetries).collect(toList());
-
-		if (CollectionUtils.isNotEmpty(itemsWithRetries)) {
-			RETRIES_FETCHER.accept(items,
-					dsl.select()
-							.from(TEST_ITEM)
-							.join(TEST_ITEM_RESULTS)
-							.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-							.leftJoin(ITEM_ATTRIBUTE)
-							.on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID))
-							.leftJoin(PARAMETER)
-							.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
-							.where(TEST_ITEM.RETRY_OF.in(itemsWithRetries.stream().map(TestItem::getItemId).collect(Collectors.toList())))
-							.orderBy(TEST_ITEM.START_TIME)
-							.fetch()
-			);
-		}
-	}
 }
