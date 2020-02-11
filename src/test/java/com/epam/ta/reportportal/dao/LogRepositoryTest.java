@@ -20,11 +20,13 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
@@ -34,8 +36,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -187,5 +188,33 @@ class LogRepositoryTest extends BaseTest {
 		List<Long> ids = logRepository.findIdsByFilter(failedStatusFilter);
 
 		assertEquals(7, ids.size());
+	}
+
+	@Test
+	void findAllWithAttachment() {
+		Filter logWithAttachmentsFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.EXISTS)
+						.withSearchCriteria(CRITERIA_LOG_BINARY_CONTENT)
+						.withValue("1")
+						.build())
+				.build();
+
+		Page<Log> logPage = logRepository.findByFilter(logWithAttachmentsFilter, PageRequest.of(0, 10));
+
+		List<Log> logs = logPage.getContent();
+		assertFalse(logs.isEmpty());
+
+		logs.forEach(log -> {
+			Attachment attachment = log.getAttachment();
+			assertNotNull(attachment);
+			assertNotNull(attachment.getId());
+			assertNotNull(attachment.getFileId());
+			assertNotNull(attachment.getContentType());
+			assertNotNull(attachment.getThumbnailId());
+		});
+
+		assertEquals(10, logs.size());
 	}
 }
