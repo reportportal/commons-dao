@@ -22,7 +22,7 @@ plugins {
 }
 
 apply from: 'project-properties.gradle'
-def branch = releaseMode ? '5.1.0' : 'develop'
+def branch = releaseMode ? '5.1.0-RC' : 'develop'
 apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/release-commons.gradle"
 apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/copy-database-scripts.gradle"
 apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/build-quality.gradle"
@@ -37,7 +37,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.0.0-RC-5' : 'com.github.reportportal:commons-bom:7affe20')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.1.0-RC' : 'com.github.reportportal:commons-bom:7affe20')
     }
 }
 
