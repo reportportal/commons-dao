@@ -214,12 +214,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public Page<Log> findByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter,
-				QueryUtils.collectJoinFields(filter, pageable.getSort())
-				).with(pageable).wrap().withWrapperSort(pageable.getSort()).build())),
-				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-		);
+		Set<String> joinFields = QueryUtils.collectJoinFields(filter, pageable.getSort());
+		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, joinFields)
+				.with(pageable)
+				.wrap()
+				.withWrapperSort(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, joinFields).build()));
 	}
 
 	@Override
