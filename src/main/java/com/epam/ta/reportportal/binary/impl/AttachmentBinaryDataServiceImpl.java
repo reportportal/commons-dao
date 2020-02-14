@@ -81,7 +81,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	@Override
 	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
-		try {
+		try (InputStream inputStream = file.getInputStream()) {
 			String contentType = resolveContentType(file);
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
 			String fileName = metaInfo.getLogUuid() + "-" + file.getName() + extension;
@@ -90,7 +90,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(dataStoreService.save(targetPath, file.getInputStream()))
+					.withFileId(dataStoreService.save(targetPath, inputStream))
 					.withThumbnailFileId(createThumbnail(file, fileName, commonPath))
 					.withContentType(contentType)
 					.build());
