@@ -20,8 +20,6 @@ import com.epam.ta.reportportal.filesystem.DataStore;
 import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +35,6 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class EncryptConfiguration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EncryptConfiguration.class);
-
 	private DataStore dataStore;
 
 	@Autowired
@@ -49,16 +45,14 @@ public class EncryptConfiguration {
 	@Bean(name = "basicEncryptor")
 	public BasicTextEncryptor getBasicEncrypt() throws IOException {
 		BasicTextEncryptor basic = new BasicTextEncryptor();
-		String password = IOUtils.toString(dataStore.load("/keystore/secret"), StandardCharsets.UTF_8);
-		LOGGER.info("Encryptor secret '{}'", password);
-		basic.setPassword(password);
+		basic.setPassword(IOUtils.toString(dataStore.load(DataStore.SECRET_INTEGRATION_SALT), StandardCharsets.UTF_8));
 		return basic;
 	}
 
 	@Bean(name = "strongEncryptor")
 	public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
 		StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-		strong.setPassword(IOUtils.toString(dataStore.load("/keystore/secret"), StandardCharsets.UTF_8));
+		strong.setPassword(IOUtils.toString(dataStore.load(DataStore.SECRET_INTEGRATION_SALT), StandardCharsets.UTF_8));
 		strong.setAlgorithm("PBEWithMD5AndTripleDES");
 		return strong;
 	}

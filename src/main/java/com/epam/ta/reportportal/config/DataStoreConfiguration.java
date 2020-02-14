@@ -26,8 +26,6 @@ import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
 import io.minio.MinioClient;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,8 +41,6 @@ import java.util.Base64;
  */
 @Configuration
 public class DataStoreConfiguration {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
 
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
@@ -89,13 +85,12 @@ public class DataStoreConfiguration {
 
 	private void dataStorePostInit(DataStore dataStore) {
 		try {
-			dataStore.load("/keystore/secret");
+			dataStore.load(DataStore.SECRET_INTEGRATION_SALT);
 		} catch (Exception ex) {
 			byte[] bytes = new byte[20];
 			new SecureRandom().nextBytes(bytes);
 			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64.getUrlEncoder().withoutPadding().encode(bytes));
-			String save = dataStore.save("/keystore/secret", byteArrayInputStream);
-			LOGGER.info("Secret path: {}", save);
+			dataStore.save(DataStore.SECRET_INTEGRATION_SALT, byteArrayInputStream);
 		}
 	}
 }

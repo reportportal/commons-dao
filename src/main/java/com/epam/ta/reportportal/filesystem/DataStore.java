@@ -23,6 +23,8 @@ import java.io.InputStream;
  */
 public interface DataStore {
 
+	String SECRET_INTEGRATION_SALT = "/keystore/secret-integration-salt";
+
 	String save(String fileName, InputStream inputStream);
 
 	InputStream load(String filePath);
