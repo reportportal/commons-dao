@@ -16,12 +16,18 @@
 
 package com.epam.ta.reportportal.config;
 
+import com.epam.ta.reportportal.filesystem.DataStore;
+import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encrypt beans configuration for password values
@@ -29,23 +35,30 @@ import org.springframework.context.annotation.DependsOn;
  * @author Andrei_Ramanchuk
  */
 @Configuration
-@DependsOn()
 public class EncryptConfiguration {
 
-	@Value("${rp.encryptor.secret}")
-	private String secret;
+	private static final Logger LOGGER = LoggerFactory.getLogger(EncryptConfiguration.class);
+
+	private DataStore dataStore;
+
+	@Autowired
+	public EncryptConfiguration(DataStore dataStore) {
+		this.dataStore = dataStore;
+	}
 
 	@Bean(name = "basicEncryptor")
-	public BasicTextEncryptor getBasicEncrypt() {
+	public BasicTextEncryptor getBasicEncrypt() throws IOException {
 		BasicTextEncryptor basic = new BasicTextEncryptor();
-		basic.setPassword(secret);
+		String password = IOUtils.toString(dataStore.load("/keystore/secret"), StandardCharsets.UTF_8);
+		LOGGER.info("Encryptor secret '{}'", password);
+		basic.setPassword(password);
 		return basic;
 	}
 
 	@Bean(name = "strongEncryptor")
-	public StandardPBEStringEncryptor getStrongEncryptor() {
+	public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
 		StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-		strong.setPassword(secret);
+		strong.setPassword(IOUtils.toString(dataStore.load("/keystore/secret"), StandardCharsets.UTF_8));
 		strong.setAlgorithm("PBEWithMD5AndTripleDES");
 		return strong;
 	}

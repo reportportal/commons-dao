@@ -70,13 +70,6 @@ public class DataStoreConfiguration {
 		return minioDataStore;
 	}
 
-	private void dataStorePostInit(DataStore dataStore) {
-		byte[] bytes = new byte[20];
-		new SecureRandom().nextBytes(bytes);
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64.getUrlEncoder().withoutPadding().encode(bytes));
-		dataStore.save("/keystore/secret", byteArrayInputStream);
-	}
-
 	@Bean("attachmentThumbnailator")
 	public Thumbnailator attachmentThumbnailator(@Value("${datastore.thumbnail.attachment.width}") int width,
 			@Value("${datastore.thumbnail.attachment.height}") int height) {
@@ -92,5 +85,17 @@ public class DataStoreConfiguration {
 	@Bean
 	public ContentTypeResolver contentTypeResolver() {
 		return new TikaContentTypeResolver();
+	}
+
+	private void dataStorePostInit(DataStore dataStore) {
+		try {
+			dataStore.load("/keystore/secret");
+		} catch (Exception ex) {
+			byte[] bytes = new byte[20];
+			new SecureRandom().nextBytes(bytes);
+			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64.getUrlEncoder().withoutPadding().encode(bytes));
+			String save = dataStore.save("/keystore/secret", byteArrayInputStream);
+			LOGGER.info("Secret path: {}", save);
+		}
 	}
 }
