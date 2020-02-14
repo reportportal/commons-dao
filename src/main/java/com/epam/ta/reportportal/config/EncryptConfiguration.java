@@ -18,8 +18,10 @@ package com.epam.ta.reportportal.config;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * Encrypt beans configuration for password values
@@ -27,21 +29,23 @@ import org.springframework.context.annotation.Configuration;
  * @author Andrei_Ramanchuk
  */
 @Configuration
+@DependsOn()
 public class EncryptConfiguration {
 
-	private static final String DEFAULT_PASS = "reportportal";
+	@Value("${rp.encryptor.secret}")
+	private String secret;
 
 	@Bean(name = "basicEncryptor")
 	public BasicTextEncryptor getBasicEncrypt() {
 		BasicTextEncryptor basic = new BasicTextEncryptor();
-		basic.setPassword(DEFAULT_PASS);
+		basic.setPassword(secret);
 		return basic;
 	}
 
 	@Bean(name = "strongEncryptor")
 	public StandardPBEStringEncryptor getStrongEncryptor() {
 		StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-		strong.setPassword(DEFAULT_PASS);
+		strong.setPassword(secret);
 		strong.setAlgorithm("PBEWithMD5AndTripleDES");
 		return strong;
 	}
