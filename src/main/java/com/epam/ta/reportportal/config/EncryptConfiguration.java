@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -43,16 +44,18 @@ public class EncryptConfiguration {
 	}
 
 	@Bean(name = "basicEncryptor")
-	public BasicTextEncryptor getBasicEncrypt() throws IOException {
+	public BasicTextEncryptor getBasicEncrypt(
+			@Value("${rp.integration.salt.path:/keystore/secret-integration-salt}") String integrationSaltPath) throws IOException {
 		BasicTextEncryptor basic = new BasicTextEncryptor();
-		basic.setPassword(IOUtils.toString(dataStore.load(DataStore.SECRET_INTEGRATION_SALT), StandardCharsets.UTF_8));
+		basic.setPassword(IOUtils.toString(dataStore.load(integrationSaltPath), StandardCharsets.UTF_8));
 		return basic;
 	}
 
 	@Bean(name = "strongEncryptor")
-	public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
+	public StandardPBEStringEncryptor getStrongEncryptor(
+			@Value("${rp.integration.salt.path:/keystore/secret-integration-salt}") String integrationSaltPath) throws IOException {
 		StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-		strong.setPassword(IOUtils.toString(dataStore.load(DataStore.SECRET_INTEGRATION_SALT), StandardCharsets.UTF_8));
+		strong.setPassword(IOUtils.toString(dataStore.load(integrationSaltPath), StandardCharsets.UTF_8));
 		strong.setAlgorithm("PBEWithMD5AndTripleDES");
 		return strong;
 	}

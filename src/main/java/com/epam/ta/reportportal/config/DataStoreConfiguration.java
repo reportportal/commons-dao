@@ -42,6 +42,9 @@ import java.util.Base64;
 @Configuration
 public class DataStoreConfiguration {
 
+	@Value("${rp.integration.salt.path:/keystore/secret-integration-salt}")
+	private String integrationSaltPath;
+
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
@@ -85,12 +88,12 @@ public class DataStoreConfiguration {
 
 	private void dataStorePostInit(DataStore dataStore) {
 		try {
-			dataStore.load(DataStore.SECRET_INTEGRATION_SALT);
+			dataStore.load(integrationSaltPath);
 		} catch (Exception ex) {
 			byte[] bytes = new byte[20];
 			new SecureRandom().nextBytes(bytes);
 			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64.getUrlEncoder().withoutPadding().encode(bytes));
-			dataStore.save(DataStore.SECRET_INTEGRATION_SALT, byteArrayInputStream);
+			dataStore.save(integrationSaltPath, byteArrayInputStream);
 		}
 	}
 }
