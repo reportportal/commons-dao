@@ -20,6 +20,7 @@ import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
@@ -89,7 +90,7 @@ public class DataStoreConfiguration {
 	private void loadOrGenerateIntegrationSalt(DataStore dataStore) {
 		try {
 			dataStore.load(integrationSaltPath);
-		} catch (Exception ex) {
+		} catch (ReportPortalException ex) {
 			byte[] bytes = new byte[20];
 			new SecureRandom().nextBytes(bytes);
 			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64.getUrlEncoder().withoutPadding().encode(bytes));
