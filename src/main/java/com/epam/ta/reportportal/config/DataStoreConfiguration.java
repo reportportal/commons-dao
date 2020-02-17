@@ -49,7 +49,7 @@ public class DataStoreConfiguration {
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
 		LocalDataStore localDataStore = new LocalDataStore(storagePath);
-		dataStorePostInit(localDataStore);
+		loadOrGenerateIntegrationSalt(localDataStore);
 		return localDataStore;
 	}
 
@@ -65,7 +65,7 @@ public class DataStoreConfiguration {
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
 	public DataStore minioDataStore(@Autowired MinioClient minioClient) {
 		MinioDataStore minioDataStore = new MinioDataStore(minioClient);
-		dataStorePostInit(minioDataStore);
+		loadOrGenerateIntegrationSalt(minioDataStore);
 		return minioDataStore;
 	}
 
@@ -86,7 +86,7 @@ public class DataStoreConfiguration {
 		return new TikaContentTypeResolver();
 	}
 
-	private void dataStorePostInit(DataStore dataStore) {
+	private void loadOrGenerateIntegrationSalt(DataStore dataStore) {
 		try {
 			dataStore.load(integrationSaltPath);
 		} catch (Exception ex) {
