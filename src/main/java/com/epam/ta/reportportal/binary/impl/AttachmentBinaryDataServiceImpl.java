@@ -82,7 +82,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try (InputStream inputStream = file.getInputStream()) {
-			String contentType = resolveContentType(file);
+			String contentType = resolveContentType(file.getContentType(), inputStream);
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
 			String fileName = metaInfo.getLogUuid() + "-" + file.getName() + extension;
 
@@ -158,14 +158,14 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	private String createThumbnail(MultipartFile file, String fileName, String commonPath) throws IOException {
 		String thumbnailId = null;
 		if (isImage(file.getContentType())) {
-			thumbnailId = dataStoreService.saveThumbnail(buildThumbnailFileName(commonPath, fileName), file.getInputStream());
+			try (final InputStream inputStream = file.getInputStream()) {
+				thumbnailId = dataStoreService.saveThumbnail(buildThumbnailFileName(commonPath, fileName), inputStream);
+			}
 		}
 		return thumbnailId;
 	}
 
-	private String resolveContentType(MultipartFile file) throws IOException {
-		return isContentTypePresent(file.getContentType()) ?
-				file.getContentType() :
-				contentTypeResolver.detectContentType(file.getInputStream());
+	private String resolveContentType(String contentType, InputStream inputStream) throws IOException {
+		return isContentTypePresent(contentType) ? contentType : contentTypeResolver.detectContentType(inputStream);
 	}
 }
