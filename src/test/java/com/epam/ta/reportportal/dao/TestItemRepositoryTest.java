@@ -511,6 +511,27 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectIdsWithIssueByLaunchTest() {
+		final long launchId = 1L;
+
+		List<Long> ids = testItemRepository.selectIdsWithIssueByLaunch(launchId);
+
+		assertFalse(ids.isEmpty());
+
+		Set<Long> distinctIds = new HashSet<>(ids);
+		assertEquals(ids.size(), distinctIds.size());
+
+		testItemRepository.findAllById(ids).forEach(item -> assertNotNull(item.getItemResults().getIssue()));
+
+		List<TestItem> itemsWithIssue = testItemRepository.findTestItemsByLaunchId(launchId)
+				.stream()
+				.filter(item -> Objects.nonNull(item.getItemResults().getIssue()))
+				.collect(toList());
+
+		assertEquals(itemsWithIssue.size(), ids.size());
+	}
+
+	@Test
 	void findAllInIssueGroupByLaunch() {
 		List<TestItem> withToInvestigate = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
 		withToInvestigate.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
