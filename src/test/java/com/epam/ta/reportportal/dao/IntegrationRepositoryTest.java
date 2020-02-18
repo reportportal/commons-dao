@@ -22,10 +22,12 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import com.epam.ta.reportportal.entity.project.Project;
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -255,11 +257,11 @@ class IntegrationRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findAllByIntegrationTypeNameTest() {
-		String integrationTypeName = "jira";
-		List<Integration> integrations = integrationRepository.findAllByTypeName(integrationTypeName);
+	void findAllPredefinedIntegrations() {
+		List<String> predefinedIntegrationTypes = Arrays.asList("jira", "rally", "email", "saucelabs");
+		List<Integration> integrations = integrationRepository.findAllPredefined();
 		assertNotNull(integrations);
 		assertTrue(CollectionUtils.isNotEmpty(integrations));
-		integrations.stream().map(it -> it.getType().getName()).forEach(it -> assertEquals(integrationTypeName, it));
+		integrations.stream().map(it -> it.getType().getName()).map(predefinedIntegrationTypes::contains).forEach(Assertions::assertTrue);
 	}
 }

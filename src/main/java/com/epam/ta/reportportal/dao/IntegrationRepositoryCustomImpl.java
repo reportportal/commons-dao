@@ -107,12 +107,12 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 	}
 
 	@Override
-	public List<Integration> findAllByTypeName(String typeName) {
+	public List<Integration> findAllPredefined() {
 		return dsl.select()
 				.from(INTEGRATION)
 				.join(INTEGRATION_TYPE)
 				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
-				.where(INTEGRATION_TYPE.NAME.eq(typeName))
+				.where(INTEGRATION_TYPE.NAME.in("jira", "rally", "email", "saucelabs"))
 				.fetch(PROJECT_INTEGRATION_RECORD_MAPPER);
 	}
 }

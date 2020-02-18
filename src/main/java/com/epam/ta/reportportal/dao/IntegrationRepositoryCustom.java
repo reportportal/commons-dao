@@ -59,6 +59,6 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 	 */
 	List<Integration> findAllGlobalNotInIntegrationTypeIds(List<Long> integrationTypeIds);
 
-	List<Integration> findAllByTypeName(String typeName);
+	List<Integration> findAllPredefined();
 
 }
