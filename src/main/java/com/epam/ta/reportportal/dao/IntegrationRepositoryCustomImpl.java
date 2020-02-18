@@ -105,4 +105,14 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.and(INTEGRATION.PROJECT_ID.isNull())
 				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
 	}
+
+	@Override
+	public List<Integration> findAllByTypeName(String typeName) {
+		return dsl.select()
+				.from(INTEGRATION)
+				.join(INTEGRATION_TYPE)
+				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
+				.where(INTEGRATION_TYPE.NAME.eq(typeName))
+				.fetch(PROJECT_INTEGRATION_RECORD_MAPPER);
+	}
 }

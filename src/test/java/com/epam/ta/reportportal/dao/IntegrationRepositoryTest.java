@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import com.epam.ta.reportportal.entity.project.Project;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -253,4 +254,12 @@ class IntegrationRepositoryTest extends BaseTest {
 		integrations.forEach(i -> assertNull(i.getProject()));
 	}
 
+	@Test
+	void findAllByIntegrationTypeNameTest() {
+		String integrationTypeName = "jira";
+		List<Integration> integrations = integrationRepository.findAllByTypeName(integrationTypeName);
+		assertNotNull(integrations);
+		assertTrue(CollectionUtils.isNotEmpty(integrations));
+		integrations.stream().map(it -> it.getType().getName()).forEach(it -> assertEquals(integrationTypeName, it));
+	}
 }
