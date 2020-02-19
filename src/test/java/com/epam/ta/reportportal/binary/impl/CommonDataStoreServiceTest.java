@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -51,12 +52,15 @@ class CommonDataStoreServiceTest extends BaseTest {
 	@Autowired
 	private DataEncoder dataEncoder;
 
+	@Value("${datastore.default.path:/data/store}")
+	private String storageRootPath;
+
 	@Test
 	void saveTest() throws IOException {
 		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
 		String fileId = dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
-		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+		assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
 		dataStoreService.delete(fileId);
 	}
 
@@ -65,7 +69,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 		CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
 		String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
 		assertNotNull(fileId);
-		assertTrue(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+		assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
 		dataStoreService.delete(fileId);
 	}
 

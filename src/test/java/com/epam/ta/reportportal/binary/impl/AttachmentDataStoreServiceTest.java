@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -39,6 +40,9 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 	@Autowired
 	private AttachmentDataStoreService attachmentDataStoreService;
 
+	@Value("${datastore.default.path:/data/store}")
+	private String storageRootPath;
+
 	private static Random random = new Random();
 
 	@Test
@@ -50,13 +54,13 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 		Optional<InputStream> loadedData = attachmentDataStoreService.load(fileId);
 
 		assertTrue(loadedData.isPresent());
-		assertTrue(Files.exists(Paths.get(attachmentDataStoreService.dataEncoder.decode(fileId))));
+		assertTrue(Files.exists(Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(fileId))));
 
 		attachmentDataStoreService.delete(fileId);
 
 		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> attachmentDataStoreService.load(fileId));
 		assertEquals("Incorrect Request. Unable to find file", exception.getMessage());
-		assertFalse(Files.exists(Paths.get(attachmentDataStoreService.dataEncoder.decode(fileId))));
+		assertFalse(Files.exists(Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(fileId))));
 	}
 
 	@Test
@@ -68,12 +72,12 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 		Optional<InputStream> loadedData = attachmentDataStoreService.load(thumbnailId);
 
 		assertTrue(loadedData.isPresent());
-		assertTrue(Files.exists(Paths.get(attachmentDataStoreService.dataEncoder.decode(thumbnailId))));
+		assertTrue(Files.exists(Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(thumbnailId))));
 
 		attachmentDataStoreService.delete(thumbnailId);
 
 		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> attachmentDataStoreService.load(thumbnailId));
 		assertEquals("Incorrect Request. Unable to find file", exception.getMessage());
-		assertFalse(Files.exists(Paths.get(attachmentDataStoreService.dataEncoder.decode(thumbnailId))));
+		assertFalse(Files.exists(Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(thumbnailId))));
 	}
 }

@@ -20,19 +20,22 @@ import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
 import io.minio.MinioClient;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.ByteArrayInputStream;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * @author Dzianis_Shybeka
@@ -40,13 +43,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataStoreConfiguration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
+	@Value("${rp.integration.salt.path:/keystore/secret-integration-salt}")
+	private String integrationSaltPath;
 
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
-
-		return new LocalDataStore(storagePath);
+		LocalDataStore localDataStore = new LocalDataStore(storagePath);
+		loadOrGenerateIntegrationSalt(localDataStore);
+		return localDataStore;
 	}
 
 	@Bean
@@ -60,7 +65,9 @@ public class DataStoreConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
 	public DataStore minioDataStore(@Autowired MinioClient minioClient) {
-		return new MinioDataStore(minioClient);
+		MinioDataStore minioDataStore = new MinioDataStore(minioClient);
+		loadOrGenerateIntegrationSalt(minioDataStore);
+		return minioDataStore;
 	}
 
 	@Bean("attachmentThumbnailator")
@@ -78,5 +85,16 @@ public class DataStoreConfiguration {
 	@Bean
 	public ContentTypeResolver contentTypeResolver() {
 		return new TikaContentTypeResolver();
+	}
+
+	private void loadOrGenerateIntegrationSalt(DataStore dataStore) {
+		try {
+			dataStore.load(integrationSaltPath);
+		} catch (ReportPortalException ex) {
+			byte[] bytes = new byte[20];
+			new SecureRandom().nextBytes(bytes);
+			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64.getUrlEncoder().withoutPadding().encode(bytes));
+			dataStore.save(integrationSaltPath, byteArrayInputStream);
+		}
 	}
 }
