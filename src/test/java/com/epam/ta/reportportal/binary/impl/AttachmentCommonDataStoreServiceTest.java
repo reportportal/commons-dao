@@ -48,11 +48,13 @@ class AttachmentCommonDataStoreServiceTest extends BaseTest {
 		String fileID = "fileID";
 		String thumbnailID = "thumbnailID";
 		String contentType = "content-type";
+		long fileSize = 1024;
 
 		BinaryDataMetaInfo binaryDataMetaInfo = new BinaryDataMetaInfo();
 		binaryDataMetaInfo.setFileId(fileID);
 		binaryDataMetaInfo.setThumbnailFileId(thumbnailID);
 		binaryDataMetaInfo.setContentType(contentType);
+		binaryDataMetaInfo.setFileSize(fileSize);
 
 		Long projectId = 1L;
 		Long itemId = 1L;
@@ -74,5 +76,6 @@ class AttachmentCommonDataStoreServiceTest extends BaseTest {
 		assertEquals(fileID, attachment.get().getFileId());
 		assertEquals(thumbnailID, attachment.get().getThumbnailId());
 		assertEquals(contentType, attachment.get().getContentType());
+		assertEquals(fileSize, attachment.get().getFileSize());
 	}
 }

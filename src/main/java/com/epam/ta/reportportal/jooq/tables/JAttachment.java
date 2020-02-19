@@ -8,13 +8,25 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.processing.Generated;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row8;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -30,7 +42,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = -814683569;
+    private static final long serialVersionUID = 644842657;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -83,7 +95,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     /**
      * The column <code>public.attachment.file_size</code>.
      */
-    public final TableField<JAttachmentRecord, Integer> FILE_SIZE = createField(DSL.name("file_size"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+    public final TableField<JAttachmentRecord, Long> FILE_SIZE = createField(DSL.name("file_size"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * Create a <code>public.attachment</code> table reference
@@ -174,7 +186,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Long, String, String, String, Long, Long, Long, Integer> fieldsRow() {
+    public Row8<Long, String, String, String, Long, Long, Long, Long> fieldsRow() {
         return (Row8) super.fieldsRow();
     }
 }

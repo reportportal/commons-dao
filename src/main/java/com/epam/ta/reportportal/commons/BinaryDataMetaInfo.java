@@ -24,7 +24,7 @@ public class BinaryDataMetaInfo {
 
 	private String contentType;
 
-	private int fileSize;
+	private long fileSize;
 
 	public BinaryDataMetaInfo() {
 	}
@@ -35,7 +35,7 @@ public class BinaryDataMetaInfo {
 	 * @param fileId
 	 * @param thumbnailFileId
 	 */
-	public BinaryDataMetaInfo(String fileId, String thumbnailFileId, String contentType, int fileSize) {
+	public BinaryDataMetaInfo(String fileId, String thumbnailFileId, String contentType, long fileSize) {
 		this.fileId = fileId;
 		this.thumbnailFileId = thumbnailFileId;
 		this.contentType = contentType;
@@ -54,7 +54,7 @@ public class BinaryDataMetaInfo {
 		return contentType;
 	}
 
-	public int getFileSize() {
+	public long getFileSize() {
 		return fileSize;
 	}
 
@@ -70,7 +70,7 @@ public class BinaryDataMetaInfo {
 		this.contentType = contentType;
 	}
 
-	public void setFileSize(int fileSize) {
+	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
 	}
 
@@ -78,7 +78,7 @@ public class BinaryDataMetaInfo {
 		private String fileId;
 		private String thumbnailFileId;
 		private String contentType;
-		private int fileSize;
+		private long fileSize;
 
 		private BinaryDataMetaInfoBuilder() {
 		}
@@ -102,7 +102,7 @@ public class BinaryDataMetaInfo {
 			return this;
 		}
 
-		public BinaryDataMetaInfoBuilder withFileSize(int fileSize) {
+		public BinaryDataMetaInfoBuilder withFileSize(long fileSize) {
 			this.fileSize = fileSize;
 			return this;
 		}

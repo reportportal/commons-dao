@@ -41,7 +41,7 @@ public class Attachment implements Serializable {
 	private String contentType;
 
 	@Column(name = "file_size")
-	private int fileSize;
+	private long fileSize;
 
 	@Column(name = "project_id")
 	private Long projectId;
@@ -87,11 +87,11 @@ public class Attachment implements Serializable {
 		this.contentType = contentType;
 	}
 
-	public int getFileSize() {
+	public long getFileSize() {
 		return fileSize;
 	}
 
-	public void setFileSize(int fileSize) {
+	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
 	}
 
