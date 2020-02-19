@@ -40,6 +40,9 @@ public class Attachment implements Serializable {
 	@Column(name = "content_type")
 	private String contentType;
 
+	@Column(name = "file_size")
+	private int fileSize;
+
 	@Column(name = "project_id")
 	private Long projectId;
 
@@ -84,6 +87,14 @@ public class Attachment implements Serializable {
 		this.contentType = contentType;
 	}
 
+	public int getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(int fileSize) {
+		this.fileSize = fileSize;
+	}
+
 	public Long getProjectId() {
 		return projectId;
 	}
@@ -119,11 +130,11 @@ public class Attachment implements Serializable {
 		Attachment that = (Attachment) o;
 		return Objects.equals(fileId, that.fileId) && Objects.equals(thumbnailId, that.thumbnailId) && Objects.equals(contentType,
 				that.contentType
-		);
+		) && Objects.equals(fileSize, that.fileSize);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(fileId, thumbnailId, contentType);
+		return Objects.hash(fileId, thumbnailId, contentType, fileSize);
 	}
 }

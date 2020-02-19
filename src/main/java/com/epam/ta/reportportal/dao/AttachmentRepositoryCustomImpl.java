@@ -96,6 +96,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				ATTACHMENT.THUMBNAIL_ID,
 				ATTACHMENT.FILE_ID,
 				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.FILE_SIZE,
 				ATTACHMENT.ITEM_ID,
 				ATTACHMENT.LAUNCH_ID,
 				ATTACHMENT.PROJECT_ID

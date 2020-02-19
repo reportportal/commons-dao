@@ -176,6 +176,7 @@ public class RecordMappers {
 		attachment.setFileId(r.get(ATTACHMENT.FILE_ID));
 		attachment.setThumbnailId(r.get(ATTACHMENT.THUMBNAIL_ID));
 		attachment.setContentType(r.get(ATTACHMENT.CONTENT_TYPE));
+		attachment.setFileSize(r.get(ATTACHMENT.FILE_SIZE));
 		attachment.setProjectId(r.get(ATTACHMENT.PROJECT_ID));
 		attachment.setLaunchId(r.get(ATTACHMENT.LAUNCH_ID));
 		attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
