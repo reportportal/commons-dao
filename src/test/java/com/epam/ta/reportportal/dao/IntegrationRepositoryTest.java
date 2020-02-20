@@ -259,7 +259,7 @@ class IntegrationRepositoryTest extends BaseTest {
 	@Test
 	void findAllPredefinedIntegrations() {
 		List<String> predefinedIntegrationTypes = Arrays.asList("jira", "rally", "email", "saucelabs");
-		List<Integration> integrations = integrationRepository.findAllPredefined();
+		List<Integration> integrations = integrationRepository.findAllByTypeIn("jira", "rally", "email", "saucelabs");
 		assertNotNull(integrations);
 		assertTrue(CollectionUtils.isNotEmpty(integrations));
 		integrations.stream().map(it -> it.getType().getName()).map(predefinedIntegrationTypes::contains).forEach(Assertions::assertTrue);
