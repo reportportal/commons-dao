@@ -22,11 +22,10 @@ plugins {
 }
 
 apply from: 'project-properties.gradle'
-def branch = releaseMode ? '5.1.0-RC' : 'develop'
-apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/release-commons.gradle"
-apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/copy-database-scripts.gradle"
-apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/build-quality.gradle"
-apply from: "https://raw.githubusercontent.com/reportportal/gradle-scripts/$branch/jacoco.gradle"
+apply from: "$scriptsUrl/release-commons.gradle"
+apply from: "$scriptsUrl/copy-database-scripts.gradle"
+apply from: "$scriptsUrl/build-quality.gradle"
+apply from: "$scriptsUrl/jacoco.gradle"
 apply from: 'jooq.gradle'
 
 repositories {
