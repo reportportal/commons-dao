@@ -16,10 +16,17 @@
 
 package com.epam.ta.reportportal.config;
 
+import com.epam.ta.reportportal.filesystem.DataStore;
+import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encrypt beans configuration for password values
@@ -29,19 +36,26 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EncryptConfiguration {
 
-	private static final String DEFAULT_PASS = "reportportal";
+	private DataStore dataStore;
+
+	@Autowired
+	public EncryptConfiguration(DataStore dataStore) {
+		this.dataStore = dataStore;
+	}
 
 	@Bean(name = "basicEncryptor")
-	public BasicTextEncryptor getBasicEncrypt() {
+	public BasicTextEncryptor getBasicEncrypt(
+			@Value("${rp.integration.salt.path:/keystore/secret-integration-salt}") String integrationSaltPath) throws IOException {
 		BasicTextEncryptor basic = new BasicTextEncryptor();
-		basic.setPassword(DEFAULT_PASS);
+		basic.setPassword(IOUtils.toString(dataStore.load(integrationSaltPath), StandardCharsets.UTF_8));
 		return basic;
 	}
 
 	@Bean(name = "strongEncryptor")
-	public StandardPBEStringEncryptor getStrongEncryptor() {
+	public StandardPBEStringEncryptor getStrongEncryptor(
+			@Value("${rp.integration.salt.path:/keystore/secret-integration-salt}") String integrationSaltPath) throws IOException {
 		StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-		strong.setPassword(DEFAULT_PASS);
+		strong.setPassword(IOUtils.toString(dataStore.load(integrationSaltPath), StandardCharsets.UTF_8));
 		strong.setAlgorithm("PBEWithMD5AndTripleDES");
 		return strong;
 	}
