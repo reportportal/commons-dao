@@ -83,6 +83,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try (InputStream inputStream = file.getInputStream()) {
 			String contentType = resolveContentType(file.getContentType(), inputStream);
+			long fileSize = file.getSize();
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
 			String fileName = metaInfo.getLogUuid() + "-" + file.getName() + extension;
 
@@ -93,6 +94,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 					.withFileId(dataStoreService.save(targetPath, inputStream))
 					.withThumbnailFileId(createThumbnail(file, fileName, commonPath))
 					.withContentType(contentType)
+					.withFileSize(fileSize)
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
@@ -116,6 +118,8 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			attachment.setFileId(binaryDataMetaInfo.getFileId());
 			attachment.setThumbnailId(binaryDataMetaInfo.getThumbnailFileId());
 			attachment.setContentType(binaryDataMetaInfo.getContentType());
+			attachment.setFileSize(binaryDataMetaInfo.getFileSize());
+
 			attachment.setProjectId(attachmentMetaInfo.getProjectId());
 			attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
 			attachment.setItemId(attachmentMetaInfo.getItemId());
