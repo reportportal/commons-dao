@@ -70,7 +70,7 @@ public class MinioDataStore implements DataStore {
 			minioClient.putObject(minioFile.getBucket(), minioFile.getFilePath(), inputStream, inputStream.available(), Maps.newHashMap());
 			return Paths.get(filePath).toString();
 		} catch (MinioException | IOException | InvalidKeyException | NoSuchAlgorithmException | XmlPullParserException e) {
-			LOGGER.error("Unable to save file ", e);
+			LOGGER.error("Unable to save file '{}'", filePath, e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save file");
 		}
 	}
@@ -81,7 +81,7 @@ public class MinioDataStore implements DataStore {
 		try {
 			return minioClient.getObject(minioFile.getBucket(), minioFile.getFilePath());
 		} catch (Exception e) {
-			LOGGER.error("Unable to find file ", e);
+			LOGGER.error("Unable to find file '{}'", filePath, e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to find file");
 		}
 	}
@@ -92,7 +92,7 @@ public class MinioDataStore implements DataStore {
 		try {
 			minioClient.removeObject(minioFile.getBucket(), minioFile.getFilePath());
 		} catch (Exception e) {
-			LOGGER.error("Unable to delete file ", e);
+			LOGGER.error("Unable to delete file '{}'", filePath, e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
 		}
 	}
