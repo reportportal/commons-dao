@@ -213,6 +213,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
     List<TestItem> findAllInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
 
+	/**
+	 * Select all {@link TestItem#getItemId()} of {@link TestItem} with attached {@link Issue}
+	 * and {@link TestItem#getLaunchId()} equal to provided `launchId`
+	 *
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @return {@link List} of {@link TestItem#getItemId()}
+	 */
+	List<Long> selectIdsWithIssueByLaunch(Long launchId);
+
     /**
      * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
      * was started within the provided 'period'

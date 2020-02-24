@@ -381,6 +381,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public List<Long> selectIdsWithIssueByLaunch(Long launchId) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.fetchInto(Long.class);
+	}
+
+	@Override
 	public Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
 		return dsl.fetchExists(dsl.selectOne()
@@ -427,7 +439,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.RETRY_OF.in(retryOfIds))
 				.and(TEST_ITEM.LAUNCH_ID.isNull())
-				.orderBy(TEST_ITEM.START_TIME).fetch(TEST_ITEM_RECORD_MAPPER);
+				.orderBy(TEST_ITEM.START_TIME)
+				.fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
