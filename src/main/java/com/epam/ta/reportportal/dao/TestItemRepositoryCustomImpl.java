@@ -612,7 +612,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs) {
 		JTestItem nested = TEST_ITEM.as(NESTED);
-		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter).build();
+		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter)).build();
 
 		return dsl.select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
