@@ -22,12 +22,15 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ReportPortal user representation
@@ -205,6 +208,23 @@ public class ReportPortalUser extends User {
 		public ReportPortalUserBuilder withProjectDetails(Map<String, ProjectDetails> projectDetails) {
 			this.projectDetails = projectDetails;
 			return this;
+		}
+
+		public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
+			this.username = user.getLogin();
+			this.email = user.getPassword();
+			this.userId = user.getId();
+			this.userRole = user.getRole();
+			this.authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getAuthority()));
+			this.projectDetails = user.getProjects().stream().collect(Collectors.toMap(
+					it -> it.getProject().getName(),
+					it -> ProjectDetails.builder()
+							.withProjectId(it.getProject().getId())
+							.withProjectRole(it.getProjectRole().name())
+							.withProjectName(it.getProject().getName())
+							.build()
+			));
+			return build();
 		}
 
 		public ReportPortalUser build() {
