@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.lang3.tuple.Pair;
@@ -189,7 +190,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
 				outerItemTable,
 				historyField,
-				baselineCondition,
+				baselineCondition.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)),
 				historyDepth,
 				Pair.of(Boolean.TRUE, pageable)
 		).limit(pageable.getPageSize())
@@ -203,7 +204,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery,
 						outerItemTable,
 						historyField,
-						baselineCondition,
+						baselineCondition.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)),
 						1,
 						Pair.of(Boolean.FALSE, pageable)
 				))
