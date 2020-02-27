@@ -43,7 +43,6 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
@@ -233,7 +232,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return ofNullable(dsl.select(fieldName(ROW_NUMBER))
 				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as(ROW_NUMBER))
 						.from(LOG)
-						.join(QueryBuilder.newBuilder(filter).with(pageable.getSort()).build().asTable(DISTINCT_LOGS_TABLE))
+						.join(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter, pageable.getSort()))
+								.with(pageable.getSort())
+								.build()
+								.asTable(DISTINCT_LOGS_TABLE))
 						.on(LOG.ID.eq(fieldName(DISTINCT_LOGS_TABLE, ID).cast(Long.class))))
 				.where(fieldName(ID).cast(Long.class).eq(id))
 				.fetchAny()).map(r -> {
@@ -327,7 +329,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
 			nestedStepSelect.and(field(DSL.exists(dsl.with(LOGS)
-					.as(QueryBuilder.newBuilder(filter).addCondition(LOG.ITEM_ID.eq(parentId)).build())
+					.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
+							.addCondition(LOG.ITEM_ID.eq(parentId))
+							.build())
 					.select()
 					.from(LOG)
 					.join(LOGS)
@@ -341,7 +345,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
 
-		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getFilterConditions()
+		Queryable logFilter = filter.getFilterConditions()
 				.stream()
 				.flatMap(condition -> condition.getAllConditions().stream())
 				.filter(condition -> CRITERIA_STATUS.equalsIgnoreCase(condition.getSearchCriteria()))
@@ -352,9 +356,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 								.flatMap(simpleCondition -> simpleCondition.getAllConditions().stream())
 								.filter(filterCondition -> !condition.getSearchCriteria()
 										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
-								.collect(Collectors.toList())
+								.collect(toList())
 				))
-				.orElse(filter));
+				.orElse(filter);
+
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter));
 
 		return dsl.with(LOGS)
 				.as(queryBuilder.addCondition(LOG.ITEM_ID.eq(parentId)).build())
