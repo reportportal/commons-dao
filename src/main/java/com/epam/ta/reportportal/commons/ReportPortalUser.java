@@ -30,8 +30,9 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * ReportPortal user representation
@@ -216,7 +217,7 @@ public class ReportPortalUser extends User {
 			this.email = user.getPassword();
 			this.userId = user.getId();
 			this.userRole = user.getRole();
-			this.password = Objects.isNull(user.getPassword()) ? "" : user.getPassword();
+			this.password = ofNullable(user.getPassword()).orElse("");
 			this.authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getAuthority()));
 			this.projectDetails = user.getProjects().stream().collect(Collectors.toMap(
 					it -> it.getProject().getName(),
