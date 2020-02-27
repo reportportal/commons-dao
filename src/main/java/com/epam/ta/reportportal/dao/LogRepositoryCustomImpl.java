@@ -233,7 +233,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return ofNullable(dsl.select(fieldName(ROW_NUMBER))
 				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as(ROW_NUMBER))
 						.from(LOG)
-						.join(QueryBuilder.newBuilder(filter).with(pageable.getSort()).build().asTable(DISTINCT_LOGS_TABLE))
+						.join(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter, pageable.getSort())).with(pageable.getSort()).build().asTable(DISTINCT_LOGS_TABLE))
 						.on(LOG.ID.eq(fieldName(DISTINCT_LOGS_TABLE, ID).cast(Long.class))))
 				.where(fieldName(ID).cast(Long.class).eq(id))
 				.fetchAny()).map(r -> {
@@ -327,7 +327,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
 			nestedStepSelect.and(field(DSL.exists(dsl.with(LOGS)
-					.as(QueryBuilder.newBuilder(filter).addCondition(LOG.ITEM_ID.eq(parentId)).build())
+					.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).addCondition(LOG.ITEM_ID.eq(parentId)).build())
 					.select()
 					.from(LOG)
 					.join(LOGS)
