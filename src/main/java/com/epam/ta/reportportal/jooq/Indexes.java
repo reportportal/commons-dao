@@ -42,6 +42,7 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSchemaMigrations;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -165,6 +166,7 @@ public class Indexes {
     public static final Index RCPNT_SEND_CASE_IDX = Indexes0.RCPNT_SEND_CASE_IDX;
     public static final Index RESTORE_PASSWORD_BID_EMAIL_KEY = Indexes0.RESTORE_PASSWORD_BID_EMAIL_KEY;
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
+    public static final Index SCHEMA_MIGRATIONS_PKEY = Indexes0.SCHEMA_MIGRATIONS_PKEY;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
@@ -194,6 +196,7 @@ public class Indexes {
     public static final Index TI_RETRY_OF_IDX = Indexes0.TI_RETRY_OF_IDX;
     public static final Index TI_UUID_IDX = Indexes0.TI_UUID_IDX;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
+    public static final Index TICKET_ID_IDX = Indexes0.TICKET_ID_IDX;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_SUBMITTER_IDX = Indexes0.TICKET_SUBMITTER_IDX;
     public static final Index USER_BID_PROJECT_IDX = Indexes0.USER_BID_PROJECT_IDX;
@@ -296,6 +299,7 @@ public class Indexes {
         public static Index RCPNT_SEND_CASE_IDX = Internal.createIndex("rcpnt_send_case_idx", JRecipients.RECIPIENTS, new OrderField[] { JRecipients.RECIPIENTS.SENDER_CASE_ID }, false);
         public static Index RESTORE_PASSWORD_BID_EMAIL_KEY = Internal.createIndex("restore_password_bid_email_key", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.EMAIL }, true);
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
+        public static Index SCHEMA_MIGRATIONS_PKEY = Internal.createIndex("schema_migrations_pkey", JSchemaMigrations.SCHEMA_MIGRATIONS, new OrderField[] { JSchemaMigrations.SCHEMA_MIGRATIONS.VERSION }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
@@ -325,6 +329,7 @@ public class Indexes {
         public static Index TI_RETRY_OF_IDX = Internal.createIndex("ti_retry_of_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.RETRY_OF }, false);
         public static Index TI_UUID_IDX = Internal.createIndex("ti_uuid_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.UUID }, false);
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
+        public static Index TICKET_ID_IDX = Internal.createIndex("ticket_id_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, false);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_SUBMITTER_IDX = Internal.createIndex("ticket_submitter_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.SUBMITTER }, false);
         public static Index USER_BID_PROJECT_IDX = Internal.createIndex("user_bid_project_idx", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID }, false);
