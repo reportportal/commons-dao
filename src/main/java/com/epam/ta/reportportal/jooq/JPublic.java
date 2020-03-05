@@ -43,7 +43,6 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSchemaMigrations;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -311,11 +310,6 @@ public class JPublic extends SchemaImpl {
     public final JRestorePasswordBid RESTORE_PASSWORD_BID = com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid.RESTORE_PASSWORD_BID;
 
     /**
-     * The table <code>public.schema_migrations</code>.
-     */
-    public final JSchemaMigrations SCHEMA_MIGRATIONS = com.epam.ta.reportportal.jooq.tables.JSchemaMigrations.SCHEMA_MIGRATIONS;
-
-    /**
      * The table <code>public.sender_case</code>.
      */
     public final JSenderCase SENDER_CASE = com.epam.ta.reportportal.jooq.tables.JSenderCase.SENDER_CASE;
@@ -487,7 +481,6 @@ public class JPublic extends SchemaImpl {
             JProjectUser.PROJECT_USER,
             JRecipients.RECIPIENTS,
             JRestorePasswordBid.RESTORE_PASSWORD_BID,
-            JSchemaMigrations.SCHEMA_MIGRATIONS,
             JSenderCase.SENDER_CASE,
             JServerSettings.SERVER_SETTINGS,
             JShareableEntity.SHAREABLE_ENTITY,

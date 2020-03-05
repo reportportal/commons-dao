@@ -43,7 +43,6 @@ import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
 import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSchemaMigrations;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
@@ -294,11 +293,6 @@ public class Tables {
      * The table <code>public.restore_password_bid</code>.
      */
     public static final JRestorePasswordBid RESTORE_PASSWORD_BID = JRestorePasswordBid.RESTORE_PASSWORD_BID;
-
-    /**
-     * The table <code>public.schema_migrations</code>.
-     */
-    public static final JSchemaMigrations SCHEMA_MIGRATIONS = JSchemaMigrations.SCHEMA_MIGRATIONS;
 
     /**
      * The table <code>public.sender_case</code>.
