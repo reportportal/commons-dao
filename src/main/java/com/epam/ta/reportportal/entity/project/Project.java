@@ -78,6 +78,9 @@ public class Project implements Serializable {
 	@Column(name = "organization")
 	private String organization;
 
+	@Column(name = "allocated_storage")
+	private long allocatedStorage;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
 	private Set<ProjectUser> users = Sets.newHashSet();
 
@@ -124,6 +127,14 @@ public class Project implements Serializable {
 
 	public void setUsers(Set<ProjectUser> users) {
 		this.users = users;
+	}
+
+	public long getAllocatedStorage() {
+		return allocatedStorage;
+	}
+
+	public void setAllocatedStorage(long allocatedStorage) {
+		this.allocatedStorage = allocatedStorage;
 	}
 
 	public Set<PatternTemplate> getPatternTemplates() {
@@ -199,15 +210,16 @@ public class Project implements Serializable {
 			return false;
 		}
 		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(metadata,
-				project.metadata
-		);
+		return Objects.equals(name, project.name) && Objects.equals(allocatedStorage, project.allocatedStorage) && Objects.equals(
+				creationDate,
+				project.creationDate
+		) && Objects.equals(metadata, project.metadata);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(name, creationDate, metadata);
+		return Objects.hash(name, creationDate, metadata, allocatedStorage);
 	}
 
 }

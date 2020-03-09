@@ -17,6 +17,7 @@ jooq {
                 name = 'org.jooq.meta.postgres.PostgresDatabase'
                 inputSchema = 'public'
                 // ...
+                excludes = 'batch_.*|schema_migrations'
             }
             generate {
                 pojos = false

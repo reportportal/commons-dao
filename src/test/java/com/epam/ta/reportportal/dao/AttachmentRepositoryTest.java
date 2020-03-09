@@ -44,6 +44,9 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Autowired
 	private AttachmentRepository attachmentRepository;
 
+	@Autowired
+	private ProjectRepository projectRepository;
+
 	@Test
 	void findAllByProjectId() {
 

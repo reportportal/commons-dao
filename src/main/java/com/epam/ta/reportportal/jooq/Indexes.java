@@ -194,6 +194,7 @@ public class Indexes {
     public static final Index TI_RETRY_OF_IDX = Indexes0.TI_RETRY_OF_IDX;
     public static final Index TI_UUID_IDX = Indexes0.TI_UUID_IDX;
     public static final Index TEST_ITEM_RESULTS_PK = Indexes0.TEST_ITEM_RESULTS_PK;
+    public static final Index TICKET_ID_IDX = Indexes0.TICKET_ID_IDX;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_SUBMITTER_IDX = Indexes0.TICKET_SUBMITTER_IDX;
     public static final Index USER_BID_PROJECT_IDX = Indexes0.USER_BID_PROJECT_IDX;
@@ -325,6 +326,7 @@ public class Indexes {
         public static Index TI_RETRY_OF_IDX = Internal.createIndex("ti_retry_of_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.RETRY_OF }, false);
         public static Index TI_UUID_IDX = Internal.createIndex("ti_uuid_idx", JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.UUID }, false);
         public static Index TEST_ITEM_RESULTS_PK = Internal.createIndex("test_item_results_pk", JTestItemResults.TEST_ITEM_RESULTS, new OrderField[] { JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID }, true);
+        public static Index TICKET_ID_IDX = Internal.createIndex("ticket_id_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, false);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_SUBMITTER_IDX = Internal.createIndex("ticket_submitter_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.SUBMITTER }, false);
         public static Index USER_BID_PROJECT_IDX = Internal.createIndex("user_bid_project_idx", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID }, false);
