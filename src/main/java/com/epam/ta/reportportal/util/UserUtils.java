@@ -16,14 +16,15 @@
 
 package com.epam.ta.reportportal.util;
 
-import org.apache.commons.validator.routines.EmailValidator;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 /**
  * @author Ivan Budaev
  */
 public final class UserUtils {
 
-	private UserUtils(){
+	private UserUtils() {
 		//static only
 	}
 
@@ -34,6 +35,12 @@ public final class UserUtils {
 	 * @return TRUE of email is valid
 	 */
 	public static boolean isEmailValid(String email) {
-		return EmailValidator.getInstance().isValid(email);
+		try {
+			InternetAddress address = new InternetAddress(email);
+			address.validate();
+			return true;
+		} catch (AddressException ignored) {
+			return false;
+		}
 	}
 }
