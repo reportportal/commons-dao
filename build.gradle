@@ -18,7 +18,7 @@ plugins {
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
     id 'java'
     id 'nu.studer.jooq' version '3.0.3'
-    id "org.owasp.dependencycheck" version "5.2.0"
+    id "org.owasp.dependencycheck" version "5.3.1"
 }
 
 apply from: 'project-properties.gradle'
@@ -66,11 +66,11 @@ dependencies {
 
     compile 'org.jasypt:jasypt:1.9.2'
 
-    compile 'io.zonky.test:embedded-postgres:1.2.1'
-    compile 'org.flywaydb:flyway-core:5.2.4'
+    compile 'io.zonky.test:embedded-postgres:1.2.6'
+    compile 'org.flywaydb:flyway-core:6.3.1'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:5.2.1'
+    testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
     testCompile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 }
 
