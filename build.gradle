@@ -64,7 +64,7 @@ dependencies {
     compile 'org.hibernate.validator:hibernate-validator'
 
     compile 'commons-fileupload:commons-fileupload:1.4'
-    compile 'javax.mail:javax.mail-api:1.6.2'
+    compile 'commons-validator:commons-validator:1.6'
 
     compile 'org.jasypt:jasypt:1.9.3'
 
