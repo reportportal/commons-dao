@@ -64,7 +64,9 @@ dependencies {
     compile 'org.hibernate.validator:hibernate-validator'
 
     compile 'commons-fileupload:commons-fileupload:1.4'
-    compile 'commons-validator:commons-validator:1.6'
+    compile('commons-validator:commons-validator:1.6') {
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
 
     compile 'org.jasypt:jasypt:1.9.3'
 
