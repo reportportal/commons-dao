@@ -63,6 +63,7 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
+    compile 'org.apache.commons:commons-collections4:4.4'
     compile 'commons-fileupload:commons-fileupload:1.4'
     compile('commons-validator:commons-validator:1.6') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
@@ -75,7 +76,6 @@ dependencies {
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
-    testCompile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 }
 
 dependencyCheck {
