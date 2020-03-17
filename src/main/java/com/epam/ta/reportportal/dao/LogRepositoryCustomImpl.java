@@ -126,7 +126,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME, LOG.ITEM_ID, LOG.LAUNCH_ID, LOG.LAST_MODIFIED)
+		return dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME, parentItemTable.ITEM_ID.as(LOG.ITEM_ID), LOG.LAUNCH_ID, LOG.LAST_MODIFIED)
 				.on(LOG.ID)
 				.from(LOG)
 				.join(childItemTable)
