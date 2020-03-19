@@ -1,3 +1,5 @@
+import org.owasp.dependencycheck.reporting.ReportGenerator
+
 /*
  * Copyright 2019 EPAM Systems
  *
@@ -15,10 +17,10 @@
  */
 
 plugins {
-    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
     id 'nu.studer.jooq' version '3.0.3'
-    id "org.owasp.dependencycheck" version "5.2.0"
+    id 'org.owasp.dependencycheck' version '5.3.1'
 }
 
 apply from: 'project-properties.gradle'
@@ -36,7 +38,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.1.0-RC' : 'com.github.reportportal:commons-bom:7affe20')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.1.0-RC' : 'com.github.reportportal:commons-bom:7ea4bf3')
     }
 }
 
@@ -46,31 +48,38 @@ dependencies {
         compile 'com.epam.reportportal:commons-rules'
         compile 'com.epam.reportportal:commons-model'
     } else {
-        compile('com.github.reportportal:commons:b10eade')
-        compile 'com.github.reportportal:commons-rules:0fd2060'
-        compile 'com.github.reportportal:commons-model:aad6245'
+        compile 'com.github.reportportal:commons:7480d61'
+        compile 'com.github.reportportal:commons-rules:331c402'
+        compile 'com.github.reportportal:commons-model:22ccaac'
     }
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    compile 'org.hibernate:hibernate-core:5.4.4.Final'
     compile 'org.postgresql:postgresql'
     compile 'org.jooq:jooq'
     jooqRuntime 'org.postgresql:postgresql'
 
-    compile 'io.minio:minio:6.0.10'
+    compile 'io.minio:minio:6.0.13'
 
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    compile 'org.hibernate.validator:hibernate-validator:6.1.0.Final'
+    compile 'org.hibernate.validator:hibernate-validator'
 
+    compile 'org.apache.commons:commons-collections4:4.4'
     compile 'commons-fileupload:commons-fileupload:1.4'
-    compile 'commons-validator:commons-validator:1.6'
-    compile 'org.jasypt:jasypt:1.9.2'
+    compile('commons-validator:commons-validator:1.6') {
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
 
-    compile 'io.zonky.test:embedded-postgres:1.2.1'
-    compile 'org.flywaydb:flyway-core:5.2.4'
+    compile 'org.jasypt:jasypt:1.9.3'
+
+    compile 'io.zonky.test:embedded-postgres:1.2.6'
+    compile 'org.flywaydb:flyway-core:6.3.1'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:5.2.1'
+    testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
+}
+
+dependencyCheck {
+    formats = [ReportGenerator.Format.HTML, ReportGenerator.Format.XML]
 }
 
 test {
