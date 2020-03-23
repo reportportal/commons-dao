@@ -24,9 +24,7 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.item.NestedStep;
-import com.epam.ta.reportportal.entity.item.PathName;
-import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.*;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -36,6 +34,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Lists;
+import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -778,6 +777,53 @@ class TestItemRepositoryTest extends BaseTest {
 		testItemRepository.deleteAllByItemIdIn(ids);
 
 		assertEquals(0, testItemRepository.findAllById(ids).size());
+	}
+
+	@Test
+	void saveItemWith700CharsParam() {
+		String longParam = "pQJlVldHAf4vmEhm9PemBRGjHUCHixdkCfaSpzsPJKWUS29W0wygKgVjiuvu9xe3G4mBcUjjNeOUBqe1ZvM5A9GXYp15NcoVJDrgSBaIJoBdeZId2EEkxGKh0GrL7WMkCAZ36QlzA4JQg52sQgv2S9gdxCc0RteMuau1lxLdzvP8GqRldpvhsYHEBzKhhnes4KcmkLP20zV6nIIj7hdxGRZEPsqKI8vZWcX23P6FQxKtJN3OPVG8wxNekaCAD9e4aOV7XQhHgMk7mx3QCFK4u4KjQv5QF7BKUB4isQM1pMX0gysu6tj5Ss0eWI8Mg6JVb88bm61ByS08indxu7hqefBcLwL3CX6zTAEmeNn2c0BxI06RUFBwZxoa6durIomVhie4JwarzA5dB3qQ9H4UEH6lWqKO95FDH7yYH5CoMDdMCMXwoBnd8Fu61t9KIKrTk06IW1zSaPAPFq00bq2J2cEZk3ybaraMqaNepHX3huw4u7sYxCAXVZnb4COMkXwsFQ5V7ptCiuG4k7ZVgRg1vtQ7WmqbArL86tjGkUSh0f49wkcg2N6eYdBcGC1QNZZoGDQWJzIwydfnoRmGi4Utzt05erQeHa5XpKC05Iii6ZrT6Ib4sZ0QdhCUy8SEuKFxOzcGv7CRenv44Nhv0SdPjEuZ5BEKgAPkIuBknokoOgXAtdL7BFtMwu0IzH7U";
+		TestItem item = new TestItem();
+		item.setStartTime(LocalDateTime.now());
+		item.setName("item");
+		item.setPath("1.2.3");
+		item.setUniqueId("uniqueID");
+		item.setUuid("uuid");
+		item.setTestCaseHash(123);
+		TestItemResults itemResults = new TestItemResults();
+		itemResults.setTestItem(item);
+		itemResults.setStatus(StatusEnum.IN_PROGRESS);
+		item.setItemResults(itemResults);
+		item.setLaunchId(1L);
+		item.setType(TestItemTypeEnum.STEP);
+		Parameter parameter = new Parameter();
+		parameter.setKey(longParam);
+		parameter.setValue(longParam);
+		item.setParameters(Sets.newLinkedHashSet(parameter));
+
+		testItemRepository.save(item);
+	}
+
+	@Test
+	void saveItemWith700CharsTestCaseId() {
+		String longParam = "pQJlVldHAf4vmEhm9PemBRGjHUCHixdkCfaSpzsPJKWUS29W0wygKgVjiuvu9xe3G4mBcUjjNeOUBqe1ZvM5A9GXYp15NcoVJDrgSBaIJoBdeZId2EEkxGKh0GrL7WMkCAZ36QlzA4JQg52sQgv2S9gdxCc0RteMuau1lxLdzvP8GqRldpvhsYHEBzKhhnes4KcmkLP20zV6nIIj7hdxGRZEPsqKI8vZWcX23P6FQxKtJN3OPVG8wxNekaCAD9e4aOV7XQhHgMk7mx3QCFK4u4KjQv5QF7BKUB4isQM1pMX0gysu6tj5Ss0eWI8Mg6JVb88bm61ByS08indxu7hqefBcLwL3CX6zTAEmeNn2c0BxI06RUFBwZxoa6durIomVhie4JwarzA5dB3qQ9H4UEH6lWqKO95FDH7yYH5CoMDdMCMXwoBnd8Fu61t9KIKrTk06IW1zSaPAPFq00bq2J2cEZk3ybaraMqaNepHX3huw4u7sYxCAXVZnb4COMkXwsFQ5V7ptCiuG4k7ZVgRg1vtQ7WmqbArL86tjGkUSh0f49wkcg2N6eYdBcGC1QNZZoGDQWJzIwydfnoRmGi4Utzt05erQeHa5XpKC05Iii6ZrT6Ib4sZ0QdhCUy8SEuKFxOzcGv7CRenv44Nhv0SdPjEuZ5BEKgAPkIuBknokoOgXAtdL7BFtMwu0IzH7U";
+		TestItem item = new TestItem();
+		item.setStartTime(LocalDateTime.now());
+		item.setName("item");
+		item.setPath("1.2.3");
+		item.setUniqueId("uniqueID");
+		item.setUuid("uuid");
+		item.setTestCaseHash(123);
+		item.setTestCaseId(longParam);
+		TestItemResults itemResults = new TestItemResults();
+		itemResults.setTestItem(item);
+		itemResults.setStatus(StatusEnum.IN_PROGRESS);
+		item.setItemResults(itemResults);
+		item.setLaunchId(1L);
+		item.setType(TestItemTypeEnum.STEP);
+		Parameter parameter = new Parameter();
+		item.setParameters(Sets.newLinkedHashSet(parameter));
+
+		testItemRepository.save(item);
 	}
 
 	private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
