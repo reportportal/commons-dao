@@ -180,7 +180,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.parent_id = :parentId AND tir.status != cast(:#{#status.name()} AS STATUS_ENUM))", nativeQuery = true)
+			+ " WHERE ti.parent_id = :parentId AND ti.retry_of IS NULL AND tir.status != cast(:#{#status.name()} AS STATUS_ENUM))", nativeQuery = true)
 	boolean hasDescendantsWithStatusNotEqual(@Param("parentId") Long parentId, @Param("status") StatusEnum status);
 
 	/**

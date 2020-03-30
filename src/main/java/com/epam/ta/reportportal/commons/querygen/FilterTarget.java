@@ -67,6 +67,7 @@ public enum FilterTarget {
 
 	PROJECT_TARGET(Project.class,
 			Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ALLOCATED_STORAGE, PROJECT.ALLOCATED_STORAGE, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE, String.class).get(),
@@ -556,6 +557,7 @@ public enum FilterTarget {
 					ATTACHMENT.FILE_ID,
 					ATTACHMENT.THUMBNAIL_ID,
 					ATTACHMENT.CONTENT_TYPE,
+					ATTACHMENT.FILE_SIZE,
 					ATTACHMENT.PROJECT_ID,
 					ATTACHMENT.LAUNCH_ID,
 					ATTACHMENT.ITEM_ID

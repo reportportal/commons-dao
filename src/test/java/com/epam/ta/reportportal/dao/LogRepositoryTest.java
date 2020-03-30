@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -216,5 +217,26 @@ class LogRepositoryTest extends BaseTest {
 		});
 
 		assertEquals(10, logs.size());
+	}
+
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
+	@Test
+	void findLogMessagesByItemIdAndLogLevelNestedTest() {
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByItemIdAndLevelGte(132L, LogLevel.ERROR.toInt());
+		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
+		assertEquals(1, messagesByItemIdAndLevelGte.size());
+		assertEquals("java.lang.NullPointerException: Oops\n"
+				+ "\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
+				+ "\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
+				+ "\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
+				+ "\tat java.base/java.lang.reflect.Method.invoke(Method.java:566)\n", messagesByItemIdAndLevelGte.get(0));
+	}
+
+	@Test
+	void findLogMessagesByItemIdAndLoLevelGteTest() {
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByItemIdAndLevelGte(3L, LogLevel.WARN.toInt());
+		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
+		assertEquals(7, messagesByItemIdAndLevelGte.size());
+		messagesByItemIdAndLevelGte.forEach(it -> assertEquals("log", it));
 	}
 }

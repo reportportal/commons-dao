@@ -26,8 +26,6 @@ import com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore;
 import io.minio.MinioClient;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,12 +38,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataStoreConfiguration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
-
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
 	public DataStore localDataStore(@Value("${datastore.default.path:/data/store}") String storagePath) {
-
 		return new LocalDataStore(storagePath);
 	}
 

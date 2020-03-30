@@ -58,10 +58,10 @@ public class LocalDataStore implements DataStore {
 
 			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-			return targetPath.toString();
+			return filePath;
 		} catch (IOException e) {
 
-			logger.error("Unable to save log file ", e);
+			logger.error("Unable to save log file '{}'", filePath, e);
 
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
 		}
@@ -72,10 +72,10 @@ public class LocalDataStore implements DataStore {
 
 		try {
 
-			return Files.newInputStream(Paths.get(filePath));
+			return Files.newInputStream(Paths.get(storageRootPath, filePath));
 		} catch (IOException e) {
 
-			logger.error("Unable to find file ", e);
+			logger.error("Unable to find file '{}'", filePath, e);
 
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to find file");
 		}
@@ -86,10 +86,10 @@ public class LocalDataStore implements DataStore {
 
 		try {
 
-			Files.deleteIfExists(Paths.get(filePath));
+			Files.deleteIfExists(Paths.get(storageRootPath, filePath));
 		} catch (IOException e) {
 
-			logger.error("Unable to delete file ", e);
+			logger.error("Unable to delete file '{}'", filePath, e);
 
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
 		}

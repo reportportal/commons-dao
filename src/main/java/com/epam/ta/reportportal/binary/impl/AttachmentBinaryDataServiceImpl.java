@@ -81,8 +81,9 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	@Override
 	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
-		try {
-			String contentType = resolveContentType(file);
+		try (InputStream inputStream = file.getInputStream()) {
+			String contentType = resolveContentType(file.getContentType(), inputStream);
+			long fileSize = file.getSize();
 			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
 			String fileName = metaInfo.getLogUuid() + "-" + file.getName() + extension;
 
@@ -90,9 +91,10 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(dataStoreService.save(targetPath, file.getInputStream()))
+					.withFileId(dataStoreService.save(targetPath, inputStream))
 					.withThumbnailFileId(createThumbnail(file, fileName, commonPath))
 					.withContentType(contentType)
+					.withFileSize(fileSize)
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
@@ -116,6 +118,8 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			attachment.setFileId(binaryDataMetaInfo.getFileId());
 			attachment.setThumbnailId(binaryDataMetaInfo.getThumbnailFileId());
 			attachment.setContentType(binaryDataMetaInfo.getContentType());
+			attachment.setFileSize(binaryDataMetaInfo.getFileSize());
+
 			attachment.setProjectId(attachmentMetaInfo.getProjectId());
 			attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
 			attachment.setItemId(attachmentMetaInfo.getItemId());
@@ -158,14 +162,14 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	private String createThumbnail(MultipartFile file, String fileName, String commonPath) throws IOException {
 		String thumbnailId = null;
 		if (isImage(file.getContentType())) {
-			thumbnailId = dataStoreService.saveThumbnail(buildThumbnailFileName(commonPath, fileName), file.getInputStream());
+			try (final InputStream inputStream = file.getInputStream()) {
+				thumbnailId = dataStoreService.saveThumbnail(buildThumbnailFileName(commonPath, fileName), inputStream);
+			}
 		}
 		return thumbnailId;
 	}
 
-	private String resolveContentType(MultipartFile file) throws IOException {
-		return isContentTypePresent(file.getContentType()) ?
-				file.getContentType() :
-				contentTypeResolver.detectContentType(file.getInputStream());
+	private String resolveContentType(String contentType, InputStream inputStream) throws IOException {
+		return isContentTypePresent(contentType) ? contentType : contentTypeResolver.detectContentType(inputStream);
 	}
 }

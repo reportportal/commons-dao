@@ -1,5 +1,5 @@
 jooq {
-    version = '3.12.3'
+    version = '3.12.4'
     edition = 'OSS'
     sample(sourceSets.main) {
         jdbc {
@@ -17,6 +17,7 @@ jooq {
                 name = 'org.jooq.meta.postgres.PostgresDatabase'
                 inputSchema = 'public'
                 // ...
+                excludes = 'batch_.*|schema_migrations'
             }
             generate {
                 pojos = false

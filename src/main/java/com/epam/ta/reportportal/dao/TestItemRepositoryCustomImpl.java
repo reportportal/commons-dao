@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import org.apache.commons.lang3.tuple.Pair;
@@ -189,7 +190,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
 				outerItemTable,
 				historyField,
-				baselineCondition,
+				baselineCondition.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)),
 				historyDepth,
 				Pair.of(Boolean.TRUE, pageable)
 		).limit(pageable.getPageSize())
@@ -203,7 +204,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery,
 						outerItemTable,
 						historyField,
-						baselineCondition,
+						baselineCondition.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)),
 						1,
 						Pair.of(Boolean.FALSE, pageable)
 				))
@@ -381,6 +382,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public List<Long> selectIdsWithIssueByLaunch(Long launchId) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.fetchInto(Long.class);
+	}
+
+	@Override
 	public Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses) {
 		List<JStatusEnum> jStatuses = Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name())).collect(toList());
 		return dsl.fetchExists(dsl.selectOne()
@@ -427,7 +440,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.RETRY_OF.in(retryOfIds))
 				.and(TEST_ITEM.LAUNCH_ID.isNull())
-				.orderBy(TEST_ITEM.START_TIME).fetch(TEST_ITEM_RECORD_MAPPER);
+				.orderBy(TEST_ITEM.START_TIME)
+				.fetch(TEST_ITEM_RECORD_MAPPER);
 	}
 
 	@Override
@@ -599,7 +613,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs) {
 		JTestItem nested = TEST_ITEM.as(NESTED);
-		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter).build();
+		SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter)).build();
 
 		return dsl.select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
