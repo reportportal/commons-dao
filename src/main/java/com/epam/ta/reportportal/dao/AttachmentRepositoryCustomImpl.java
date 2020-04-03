@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +46,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByProjectId(Long projectId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.PROJECT_ID.eq(projectId))
 						.limit(pageable.getPageSize())
@@ -59,8 +59,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.LAUNCH_ID.eq(launchId))
 						.limit(pageable.getPageSize())
@@ -73,10 +72,14 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.select(ATTACHMENT.ID)
+
+		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
-						.where(ATTACHMENT.ITEM_ID.eq(itemId))
+						.where(ATTACHMENT.ITEM_ID.in(DSL.select(TEST_ITEM.ITEM_ID)
+								.from(TEST_ITEM)
+								.where(DSL.sql(TEST_ITEM.PATH + " <@ " + DSL.field(DSL.select(TEST_ITEM.PATH)
+										.from(TEST_ITEM)
+										.where(TEST_ITEM.ITEM_ID.eq(itemId)))))))
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
@@ -91,8 +94,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	}
 
 	public List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before) {
-		return dsl.select(
-				ATTACHMENT.ID,
+		return dsl.select(ATTACHMENT.ID,
 				ATTACHMENT.THUMBNAIL_ID,
 				ATTACHMENT.FILE_ID,
 				ATTACHMENT.CONTENT_TYPE,
