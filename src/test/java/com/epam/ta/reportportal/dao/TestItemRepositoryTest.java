@@ -52,9 +52,11 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -644,6 +646,22 @@ class TestItemRepositoryTest extends BaseTest {
 		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, 5);
 
 		assertFalse(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryEmptyPage() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "28933", CRITERIA_PARENT_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "DEFAULT", CRITERIA_LAUNCH_MODE))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_PROJECT_ID))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 20, sort), 1L, 5);
+
+		assertTrue(testItemHistories.isEmpty());
 	}
 
 	@Test
