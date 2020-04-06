@@ -74,6 +74,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String OUTER_ITEM_TABLE = "outer_item_table";
 	private static final String INNER_ITEM_TABLE = "inner_item_table";
 	private static final String TEST_CASE_ID_TABLE = "test_case_id_table";
+	private static final String RESULT_OUTER_TABLE = "resultOuterTable";
+	private static final String LATERAL_TABLE = "lateralTable";
+	private static final String RESULT_INNER_TABLE = "resultInnerTable";
+	private static final String ITEM_START_TIME = "itemStartTime";
+	private static final String LAUNCH_START_TIME = "launchStartTime";
 
 	private DSLContext dsl;
 
@@ -183,8 +188,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Condition baselineCondition, int historyDepth,
 			Pageable pageable) {
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
-		Field<Long[]> historyField = DSL.arrayAgg(outerItemTable.ITEM_ID)
-				.orderBy(outerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
+		Field<Long[]> historyField = DSL.arrayAgg(fieldName(RESULT_INNER_TABLE, TEST_ITEM.ITEM_ID.getName()).cast(Long.class))
+				.orderBy(fieldName(RESULT_INNER_TABLE, ITEM_START_TIME).desc(),
+						fieldName(RESULT_INNER_TABLE, LAUNCH_START_TIME).desc(),
+						fieldName(RESULT_INNER_TABLE, LAUNCH.NUMBER.getName()).desc()
+				)
 				.as(HISTORY);
 
 		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
@@ -245,22 +253,38 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		Table<Record2<Integer, Timestamp>> testCaseIdTable = testCaseIdQuery.asTable(TEST_CASE_ID_TABLE);
 
-		return dsl.select(outerItemTable.TEST_CASE_HASH, historyField)
-				.from(outerItemTable)
-				.join(LAUNCH)
-				.on(outerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
-				.join(lateral(select(innerItemTable.ITEM_ID).from(innerItemTable)
-						.join(LAUNCH)
-						.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
-						.join(testCaseIdTable)
-						.on(innerItemTable.TEST_CASE_HASH.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_HASH)))
-						.where(baselineCondition.and(innerItemTable.TEST_CASE_HASH.eq(outerItemTable.TEST_CASE_HASH))
-								.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
-						.orderBy(innerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
-						.limit(historyDepth)).as(INNER_ITEM_TABLE))
-				.on(outerItemTable.ITEM_ID.eq(innerItemTable.ITEM_ID))
-				.where(baselineCondition.and(outerItemTable.TEST_CASE_HASH.in(itemsQuery)))
-				.groupBy(outerItemTable.TEST_CASE_HASH);
+		JTestItem resultTable = TEST_ITEM.as(RESULT_OUTER_TABLE);
+
+		return dsl.select(resultTable.TEST_CASE_HASH, historyField)
+				.from(itemsQuery.asTable(resultTable.getName())
+						.join(lateral(select(outerItemTable.TEST_CASE_HASH,
+								outerItemTable.ITEM_ID,
+								outerItemTable.START_TIME.as(ITEM_START_TIME),
+								LAUNCH.START_TIME.as(LAUNCH_START_TIME),
+								LAUNCH.NUMBER
+						).from(outerItemTable)
+								.join(LAUNCH)
+								.on(outerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
+								.join(lateral(select(innerItemTable.ITEM_ID).from(innerItemTable)
+										.join(LAUNCH)
+										.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
+										.join(testCaseIdTable)
+										.on(innerItemTable.TEST_CASE_HASH.eq(testCaseIdTable.field(TEST_ITEM.TEST_CASE_HASH)))
+										.where(baselineCondition.and(innerItemTable.HAS_STATS)
+												.and(innerItemTable.ITEM_ID.eq(outerItemTable.ITEM_ID))
+												.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
+										.orderBy(innerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())).as(
+										LATERAL_TABLE))
+								.on(DSL.trueCondition())
+								.where(baselineCondition.and(outerItemTable.HAS_STATS)
+										.and(outerItemTable.TEST_CASE_HASH.in(itemsQuery))
+										.and(outerItemTable.TEST_CASE_HASH.eq(resultTable.TEST_CASE_HASH)))
+								.orderBy(outerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
+								.limit(historyDepth)).as(RESULT_INNER_TABLE))
+						.on(resultTable.TEST_CASE_HASH.eq(fieldName(RESULT_INNER_TABLE,
+								TEST_ITEM.TEST_CASE_HASH.getName()
+						).cast(Integer.class))))
+				.groupBy(resultTable.TEST_CASE_HASH);
 	}
 
 	@Override
