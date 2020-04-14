@@ -41,9 +41,6 @@ public class Log implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, precision = 64)
 	private Long id;
 
-	@Column(name = "uuid")
-	private String uuid;
-
 	@Column(name = "log_time", nullable = false)
 	private LocalDateTime logTime;
 
@@ -89,14 +86,6 @@ public class Log implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public TestItem getTestItem() {
