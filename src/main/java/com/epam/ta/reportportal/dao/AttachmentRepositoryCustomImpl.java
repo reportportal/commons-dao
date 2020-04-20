@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +48,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.PROJECT_ID.eq(projectId))
+						.orderBy(ATTACHMENT.ID)
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
@@ -62,6 +62,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.LAUNCH_ID.eq(launchId))
+						.orderBy(ATTACHMENT.ID)
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
@@ -71,20 +72,17 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	}
 
 	@Override
-	public Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable) {
+	public Page<Long> findIdsByTestItemId(Collection<Long> itemIds, Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
-						.where(ATTACHMENT.ITEM_ID.in(DSL.select(TEST_ITEM.ITEM_ID)
-								.from(TEST_ITEM)
-								.where(DSL.sql(TEST_ITEM.PATH + " <@ " + DSL.field(DSL.select(TEST_ITEM.PATH)
-										.from(TEST_ITEM)
-										.where(TEST_ITEM.ITEM_ID.eq(itemId)))))))
+						.where(ATTACHMENT.ITEM_ID.in(itemIds))
+						.orderBy(ATTACHMENT.ID)
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
 				pageable,
-				() -> dsl.fetchCount(dsl.select(ATTACHMENT.ID).from(ATTACHMENT).where(ATTACHMENT.ITEM_ID.eq(itemId)))
+				() -> dsl.fetchCount(dsl.select(ATTACHMENT.ID).from(ATTACHMENT).where(ATTACHMENT.ITEM_ID.in(itemIds)))
 		);
 	}
 
