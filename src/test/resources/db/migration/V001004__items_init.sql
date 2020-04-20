@@ -75,7 +75,7 @@ BEGIN
             VALUES ('test', 'value' || cur_item_id, cur_item_id, NULL, FALSE);
 
             UPDATE test_item
-            SET path = cast(cur_suite_id AS TEXT) || cast(cast(cur_item_id AS TEXT) AS LTREE)
+            SET path = cast((cast(cur_suite_id AS TEXT) || '.' || cast(cur_item_id AS TEXT)) AS LTREE)
             WHERE item_id = cur_item_id;
 
             INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_item_id, 'FAILED', 0.35, now());
@@ -113,7 +113,8 @@ BEGIN
                     END IF;
 
                     UPDATE test_item
-                    SET path = cast(cur_suite_id AS TEXT) || cast(cast(cur_item_id AS TEXT) AS LTREE) || cast(cur_step_id AS TEXT)
+                    SET path = cast((cast(cur_suite_id AS TEXT) || '.' || cast(cur_item_id AS TEXT) || '.' ||
+                                     cast(cur_step_id AS TEXT)) AS LTREE)
                     WHERE item_id = cur_step_id;
 
                     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
