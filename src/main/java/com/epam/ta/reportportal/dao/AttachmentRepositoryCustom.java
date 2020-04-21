@@ -33,7 +33,7 @@ public interface AttachmentRepositoryCustom {
 
 	Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable);
 
-	Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable);
+	Page<Long> findIdsByTestItemId(Collection<Long> itemIds, Pageable pageable);
 
 	int deleteAllByIds(Collection<Long> ids);
 
