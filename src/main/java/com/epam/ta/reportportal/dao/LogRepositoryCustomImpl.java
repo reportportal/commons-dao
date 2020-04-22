@@ -287,7 +287,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		int total = dsl.fetchCount(selectQuery);
 
-		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(sorting)
+		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(sorting, field(ID).asc())
 				.limit(pageable.getPageSize())
 				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable)))), pageable, () -> total);
 
