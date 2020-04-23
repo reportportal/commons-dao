@@ -236,8 +236,9 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsWithStatusNotEqual() {
-		final boolean hasItemsWithStatusNotEqual = launchRepository.hasRootItemsWithStatusNotEqual(100L, StatusEnum.PASSED);
+		final boolean hasItemsWithStatusNotEqual = launchRepository.hasRootItemsWithStatusNotEqual(100L, StatusEnum.PASSED.name());
 		assertTrue(hasItemsWithStatusNotEqual);
+		assertFalse(launchRepository.hasRootItemsWithStatusNotEqual(100L, StatusEnum.PASSED.name(), StatusEnum.FAILED.name()));
 	}
 
 	@Test
@@ -347,12 +348,10 @@ class LaunchRepositoryTest extends BaseTest {
 
 	private Filter buildDefaultFilter(Long projectId) {
 		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE)
-		);
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
+		), new FilterCondition(Condition.EQUALS, false, Mode.DEFAULT.toString(), CRITERIA_LAUNCH_MODE));
 		return new Filter(Launch.class, conditionList);
 	}
 

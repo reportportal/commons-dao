@@ -112,8 +112,8 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
 			+ " WHERE ti.launch_id = :launchId AND ti.parent_id IS NULL AND ti.has_stats = TRUE "
-			+ " AND tir.status <> cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
-	boolean hasRootItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("status") StatusEnum status);
+			+ " AND CAST(tir.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
+	boolean hasRootItemsWithStatusNotEqual(@Param("launchId") Long launchId, @Param("statuses") String... statuses);
 
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
 			+ " WHERE ti.launch_id = :launchId AND ti.has_stats = TRUE AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
