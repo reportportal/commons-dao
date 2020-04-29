@@ -78,7 +78,7 @@ public class Project implements Serializable {
 	@Column(name = "organization")
 	private String organization;
 
-	@Column(name = "allocated_storage")
+	@Column(name = "allocated_storage", updatable = false)
 	private long allocatedStorage;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
