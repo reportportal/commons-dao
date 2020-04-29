@@ -30,8 +30,8 @@ public enum StatusEnum {
 	INTERRUPTED("failed", false),
 	//RESETED("reseted"), //status for items with deleted descendants
 	CANCELLED("cancelled", false), //soupUI specific status
-	INFORMATION("information", true),
-	WARNING("warning", true);
+	INFO("info", true),
+	WARN("warn", true);
 	//@formatter:on
 
 	private final String executionCounterField;
