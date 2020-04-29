@@ -5,12 +5,11 @@ package com.epam.ta.reportportal.jooq.enums;
 
 
 import com.epam.ta.reportportal.jooq.JPublic;
-
-import javax.annotation.processing.Generated;
-
 import org.jooq.Catalog;
 import org.jooq.EnumType;
 import org.jooq.Schema;
+
+import javax.annotation.processing.Generated;
 
 
 /**
@@ -42,9 +41,9 @@ public enum JStatusEnum implements EnumType {
 
     STOPPED("STOPPED"),
 
-    INFORMATION("INFORMATION"),
+    INFO("INFO"),
 
-    WARNING("WARNING");
+    WARN("WARN");
 
     private final String literal;
 
