@@ -186,7 +186,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasStatusNotEqualsWithoutStepItem() {
-		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, StatusEnum.IN_PROGRESS));
+		assertTrue(testItemRepository.hasDescendantsNotInStatusExcludingById(1L, 4L, StatusEnum.IN_PROGRESS.name()));
 	}
 
 	@Test
@@ -369,7 +369,10 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasDescendantsWithStatusNotEqual() {
-		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, StatusEnum.PASSED), "Incorrect status");
+		assertTrue(testItemRepository.hasDescendantsNotInStatus(1L, StatusEnum.PASSED.name()), "Incorrect status");
+		assertFalse(testItemRepository.hasDescendantsNotInStatus(1L, StatusEnum.FAILED.name(), StatusEnum.PASSED.name()),
+				"Incorrect status"
+		);
 	}
 
 	@Test

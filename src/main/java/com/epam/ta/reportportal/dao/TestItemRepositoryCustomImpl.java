@@ -678,7 +678,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 					.on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
 					.join(TEST_ITEM_RESULTS)
 					.on(LOG.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))).and(TEST_ITEM_RESULTS.STATUS.ne(JStatusEnum.PASSED));
+					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+					.and(TEST_ITEM_RESULTS.STATUS.notIn(JStatusEnum.PASSED, JStatusEnum.INFO, JStatusEnum.WARN));
 		} else {
 			return DSL.exists(dsl.with(LOGS)
 					.as(logsSelectQuery)
