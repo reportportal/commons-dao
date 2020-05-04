@@ -218,7 +218,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return True if has
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-			+ "WHERE test_item.parent_id=:parentId AND test_item.item_id!=:stepId AND CAST(result.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
+			+ " WHERE test_item.parent_id =: parentId AND test_item.item_id != :stepId AND test_item.retry_of IS NULL "
+			+ " AND CAST(result.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
 	boolean hasDescendantsNotInStatusExcludingById(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("statuses") String... statuses);
 
