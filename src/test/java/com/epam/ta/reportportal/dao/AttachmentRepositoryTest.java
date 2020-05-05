@@ -68,7 +68,7 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByItemId() {
 
-		List<Long> ids = attachmentRepository.findIdsByTestItemId(3L, PageRequest.of(0, 50)).getContent();
+		List<Long> ids = attachmentRepository.findIdsByTestItemId(Collections.singleton(3L), PageRequest.of(0, 50)).getContent();
 
 		Assertions.assertFalse(ids.isEmpty());
 

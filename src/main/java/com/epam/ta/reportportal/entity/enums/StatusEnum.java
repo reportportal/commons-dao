@@ -29,7 +29,9 @@ public enum StatusEnum {
 	SKIPPED("skipped", false),
 	INTERRUPTED("failed", false),
 	//RESETED("reseted"), //status for items with deleted descendants
-	CANCELLED("cancelled", false); //soupUI specific status
+	CANCELLED("cancelled", false), //soupUI specific status
+	INFO("info", true),
+	WARN("warn", true);
 	//@formatter:on
 
 	private final String executionCounterField;

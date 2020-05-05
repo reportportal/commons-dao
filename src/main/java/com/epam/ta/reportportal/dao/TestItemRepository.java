@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -176,12 +175,12 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * Check for existence of descendants with statuses NOT EQUAL to provided status
 	 *
 	 * @param parentId {@link TestItem#getParent()} ID
-	 * @param status   {@link JStatusEnum}
+	 * @param statuses {@link StatusEnum#name()} Array
 	 * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.parent_id = :parentId AND ti.retry_of IS NULL AND tir.status != cast(:#{#status.name()} AS STATUS_ENUM))", nativeQuery = true)
-	boolean hasDescendantsWithStatusNotEqual(@Param("parentId") Long parentId, @Param("status") StatusEnum status);
+			+ " WHERE ti.parent_id = :parentId AND ti.retry_of IS NULL AND CAST(tir.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
+	boolean hasDescendantsNotInStatus(@Param("parentId") Long parentId, @Param("statuses") String... statuses);
 
 	/**
 	 * True if the parent item has any child items with provided status.
@@ -211,17 +210,18 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
 	/**
 	 * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId},
-	 * has status not equal provided {@code status}
+	 * has status not in provided {@code statuses}
 	 *
 	 * @param parentId Id of parent test item
 	 * @param stepId   Id of test item that should be ignored during the checking
-	 * @param status   status {@link com.epam.ta.reportportal.entity.enums.StatusEnum}
+	 * @param statuses {@link StatusEnum#name()} Array
 	 * @return True if has
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item " + "JOIN test_item_results result ON test_item.item_id = result.result_id "
-			+ "WHERE test_item.parent_id=:parentId AND test_item.item_id!=:stepId AND result.status!=cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
-	boolean hasStatusNotEqualsWithoutStepItem(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
-			@Param("status") StatusEnum status);
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+			+ " WHERE test_item.parent_id = :parentId AND test_item.item_id != :stepId AND test_item.retry_of IS NULL "
+			+ " AND CAST(result.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
+	boolean hasDescendantsNotInStatusExcludingById(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
+			@Param("statuses") String... statuses);
 
 	/**
 	 * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
