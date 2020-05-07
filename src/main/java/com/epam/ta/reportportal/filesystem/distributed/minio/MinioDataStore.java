@@ -40,16 +40,17 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MinioDataStore implements DataStore {
 
-	public static final String BUCKET_PREFIX = "prj-";
-	public static final String DEFAULT_BUCKET = "rp-bucket";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(MinioDataStore.class);
 	private static final Lock CREATE_BUCKET_LOCK = new ReentrantLock();
 
 	private final MinioClient minioClient;
+	private final String bucketPrefix;
+	private final String defaultBucketName;
 
-	public MinioDataStore(MinioClient minioClient) {
+	public MinioDataStore(MinioClient minioClient, String bucketPrefix, String defaultBucketName) {
 		this.minioClient = minioClient;
+		this.bucketPrefix = bucketPrefix;
+		this.defaultBucketName = defaultBucketName;
 	}
 
 	@Override
@@ -101,9 +102,9 @@ public class MinioDataStore implements DataStore {
 		Path targetPath = Paths.get(filePath);
 		int nameCount = targetPath.getNameCount();
 		if (nameCount > 1) {
-			return new MinioFile(BUCKET_PREFIX + retrievePath(targetPath, 0, 1), retrievePath(targetPath, 1, nameCount));
+			return new MinioFile(bucketPrefix + retrievePath(targetPath, 0, 1), retrievePath(targetPath, 1, nameCount));
 		} else {
-			return new MinioFile(DEFAULT_BUCKET, retrievePath(targetPath, 0, 1));
+			return new MinioFile(defaultBucketName, retrievePath(targetPath, 0, 1));
 		}
 
 	}
