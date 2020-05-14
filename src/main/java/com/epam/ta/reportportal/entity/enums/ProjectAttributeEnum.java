@@ -33,8 +33,8 @@ public enum ProjectAttributeEnum {
 	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(false)),
 
 	INTERRUPT_JOB_TIME(Prefix.JOB + "interruptJobTime", String.valueOf(Duration.ofDays(1).toSeconds())),
-	KEEP_LAUNCHES(Prefix.JOB + "keepLaunches", String.valueOf(Duration.ofDays(91).toSeconds())),
-	KEEP_LOGS(Prefix.JOB + "keepLogs", String.valueOf(Duration.ofDays(91).toSeconds())),
+	KEEP_LAUNCHES(Prefix.JOB + "keepLaunches", String.valueOf(Duration.ofDays(90).toSeconds())),
+	KEEP_LOGS(Prefix.JOB + "keepLogs", String.valueOf(Duration.ofDays(90).toSeconds())),
 	KEEP_SCREENSHOTS(Prefix.JOB + "keepScreenshots", String.valueOf(Duration.ofDays(14).toSeconds())),
 
 	MIN_SHOULD_MATCH(Prefix.ANALYZER + "minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
