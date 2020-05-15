@@ -1,5 +1,10 @@
 # Changelog
 
+# Unreleased
+
+### New Features
+* Added `datastore.minio.bucketPrefix` and `datastore.minio.defaultBucketName` configuration properties
+
 ## 3.2.1
 ##### Released: XXX 2017
 

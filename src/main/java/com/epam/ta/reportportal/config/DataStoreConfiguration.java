@@ -54,8 +54,10 @@ public class DataStoreConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
-	public DataStore minioDataStore(@Autowired MinioClient minioClient) {
-		return new MinioDataStore(minioClient);
+	public DataStore minioDataStore(@Autowired MinioClient minioClient,
+			@Value("${datastore.minio.bucketPrefix}") String bucketPrefix,
+			@Value("${datastore.minio.defaultBucketName}") String defaultBucketName) {
+		return new MinioDataStore(minioClient, bucketPrefix, defaultBucketName);
 	}
 
 	@Bean("attachmentThumbnailator")
