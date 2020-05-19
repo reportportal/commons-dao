@@ -269,6 +269,13 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public int deleteByPeriodAndLaunchIds(Duration period, Collection<Long> launchIds) {
+		return dsl.deleteFrom(LOG)
+				.where(LOG.LAUNCH_ID.in(launchIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.execute();
+	}
+
+	@Override
 	public Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter,
 			Pageable pageable) {
 
