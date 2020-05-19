@@ -88,7 +88,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	List<Long> findItemLogIdsByLaunchIdsAndLogLevelGte(List<Long> launchIds, int logLevel);
 
-    List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel);
+	List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel);
 
 	/**
 	 * Get the specified log's page number
@@ -117,6 +117,13 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return Count of removed logs
 	 */
 	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
+
+	/**
+	 * @param period    {@link Duration}
+	 * @param launchIds Collection of the {@link Launch#getId()} referenced from {@link Log#getLaunch()}
+	 * @return Count of removed logs
+	 */
+	int deleteByPeriodAndLaunchIds(Duration period, Collection<Long> launchIds);
 
 	/**
 	 * Retrieve {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities' ids, differentiated by entity type
