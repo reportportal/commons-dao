@@ -276,7 +276,7 @@ BEGIN
     WHILE launchcounter < 7
         LOOP
             INSERT INTO attachment (file_id, thumbnail_id, content_type, project_id, file_size, launch_id, item_id)
-            VALUES ('attach_log ' || launchcounter, 'attachThumb_log ' || launchcounter, 'MIME', 1024, 1, launchcounter, null);
+            VALUES ('attach_log ' || launchcounter, 'attachThumb_log ' || launchcounter, 'MIME', 1, 1024, launchcounter, null);
 
             INSERT INTO log (uuid, log_time, log_message, launch_id, last_modified, log_level, attachment_id)
             VALUES ('lluuid' || launchcounter, now(), 'log', launchcounter, now() - make_interval(days := 14), 40000,
