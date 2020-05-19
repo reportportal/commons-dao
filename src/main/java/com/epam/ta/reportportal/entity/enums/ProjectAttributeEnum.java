@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.enums;
 import com.epam.ta.reportportal.entity.AnalyzeMode;
 import com.epam.ta.reportportal.entity.project.ProjectAnalyzerConfig;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -31,10 +32,10 @@ public enum ProjectAttributeEnum {
 
 	NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(false)),
 
-	INTERRUPT_JOB_TIME(Prefix.JOB + "interruptJobTime", InterruptionJobDelay.ONE_DAY.getValue()),
-	KEEP_LAUNCHES(Prefix.JOB + "keepLaunches", KeepLaunchDelay.THREE_MONTHS.getValue()),
-	KEEP_LOGS(Prefix.JOB + "keepLogs", KeepLogsDelay.THREE_MONTHS.getValue()),
-	KEEP_SCREENSHOTS(Prefix.JOB + "keepScreenshots", KeepScreenshotsDelay.TWO_WEEKS.getValue()),
+	INTERRUPT_JOB_TIME(Prefix.JOB + "interruptJobTime", String.valueOf(Duration.ofDays(1).toSeconds())),
+	KEEP_LAUNCHES(Prefix.JOB + "keepLaunches", String.valueOf(Duration.ofDays(90).toSeconds())),
+	KEEP_LOGS(Prefix.JOB + "keepLogs", String.valueOf(Duration.ofDays(90).toSeconds())),
+	KEEP_SCREENSHOTS(Prefix.JOB + "keepScreenshots", String.valueOf(Duration.ofDays(14).toSeconds())),
 
 	MIN_SHOULD_MATCH(Prefix.ANALYZER + "minShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
 	NUMBER_OF_LOG_LINES(Prefix.ANALYZER + "numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
