@@ -28,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +41,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.*;
-import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -51,6 +52,8 @@ public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserBinaryDataServiceImpl.class);
 
 	private DataStoreService dataStoreService;
+
+	private static final String DEFAULT_USER_PHOTO = "image/defaultAvatar.png";
 
 	@Autowired
 	public UserBinaryDataServiceImpl(@Qualifier("userDataStoreService") DataStoreService dataStoreService) {
@@ -92,15 +95,19 @@ public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 
 	@Override
 	public BinaryData loadUserPhoto(User user, boolean loadThumbnail) {
-		String fileId = ofNullable(loadThumbnail ?
-				user.getAttachmentThumbnail() :
-				user.getAttachment()).orElseThrow(() -> new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-				formattedSupplier("User - '{}' does not have a photo.", user.getLogin())
-		));
-		InputStream data = dataStoreService.load(fileId)
-				.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
+		Optional<String> fileId = ofNullable(loadThumbnail ? user.getAttachmentThumbnail() : user.getAttachment());
+		InputStream data;
+		String contentType;
 		try {
-			return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
+			if (fileId.isPresent()) {
+				contentType = (String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE);
+				data = dataStoreService.load(fileId.get())
+						.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId.get()));
+			} else {
+				data = new ClassPathResource(DEFAULT_USER_PHOTO).getInputStream();
+				contentType = MimeTypeUtils.IMAGE_JPEG_VALUE;
+			}
+			return new BinaryData(contentType, (long) data.available(), data);
 		} catch (IOException e) {
 			LOGGER.error("Unable to load user photo", e);
 			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load user photo");
