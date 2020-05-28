@@ -646,7 +646,16 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
 
-		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, 5);
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				5,
+				true
+		);
+
+		assertFalse(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, 5, false);
 
 		assertFalse(testItemHistories.isEmpty());
 	}
@@ -662,7 +671,16 @@ class TestItemRepositoryTest extends BaseTest {
 
 		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID)));
 
-		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 20, sort), 1L, 5);
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 20, sort),
+				1L,
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 20, sort), 1L, 5, false);
 
 		assertTrue(testItemHistories.isEmpty());
 	}
@@ -680,8 +698,13 @@ class TestItemRepositoryTest extends BaseTest {
 				PageRequest.of(0, 2, sort),
 				1L,
 				"launch name 1",
-				5
+				5,
+				true
 		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, "launch name 1", 5, false);
 
 		assertTrue(testItemHistories.isEmpty());
 	}
@@ -699,7 +722,18 @@ class TestItemRepositoryTest extends BaseTest {
 				PageRequest.of(0, 2, sort),
 				1L,
 				com.google.common.collect.Lists.newArrayList(1L, 2L, 3L),
-				5
+				5,
+				true
+		);
+
+		assertFalse(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				com.google.common.collect.Lists.newArrayList(1L, 2L, 3L),
+				5,
+				false
 		);
 
 		assertFalse(testItemHistories.isEmpty());
@@ -725,7 +759,20 @@ class TestItemRepositoryTest extends BaseTest {
 				PageRequest.of(0, 5),
 				PageRequest.of(0, 2, sort),
 				1L,
-				5
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				5,
+				false
 		);
 
 		assertTrue(testItemHistories.isEmpty());
@@ -752,7 +799,21 @@ class TestItemRepositoryTest extends BaseTest {
 				PageRequest.of(0, 2, sort),
 				1L,
 				"launch name 1",
-				5
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				"launch name 1",
+				5,
+				false
 		);
 
 		assertTrue(testItemHistories.isEmpty());
