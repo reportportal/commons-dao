@@ -256,7 +256,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(LOG.LAST_MODIFIED.gt(TimestampUtils.getTimestampBackFromNow(period)))
+				.and(LOG.LOG_TIME.gt(TimestampUtils.getTimestampBackFromNow(period)))
 				.limit(1));
 	}
 
@@ -264,14 +264,14 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds) {
 
 		return dsl.deleteFrom(LOG)
-				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LOG_TIME.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.execute();
 	}
 
 	@Override
 	public int deleteByPeriodAndLaunchIds(Duration period, Collection<Long> launchIds) {
 		return dsl.deleteFrom(LOG)
-				.where(LOG.LAUNCH_ID.in(launchIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.where(LOG.LAUNCH_ID.in(launchIds).and(LOG.LOG_TIME.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.execute();
 	}
 

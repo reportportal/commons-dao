@@ -254,7 +254,7 @@ BEGIN
             VALUES ('attach ' || logscounter, 'attachThumb' || logscounter, 'MIME', 1024, 1, 1, stepid);
 
             INSERT INTO log (log_time, uuid, log_message, item_id, last_modified, log_level, attachment_id)
-            VALUES (now(), 'uuid' || logscounter, 'log', stepid, now() - make_interval(days := 14), 40000,
+            VALUES (now() - make_interval(days := 14), 'uuid' || logscounter, 'log', stepid, now() - make_interval(days := 14), 40000,
                     (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
 
             logscounter = logscounter + 1;
@@ -279,7 +279,7 @@ BEGIN
             VALUES ('attach_log ' || launchcounter, 'attachThumb_log ' || launchcounter, 'MIME', 1, 1024, launchcounter, null);
 
             INSERT INTO log (uuid, log_time, log_message, launch_id, last_modified, log_level, attachment_id)
-            VALUES ('lluuid' || launchcounter, now(), 'log', launchcounter, now() - make_interval(days := 14), 40000,
+            VALUES ('lluuid' || launchcounter, now() - make_interval(days := 14), 'log', launchcounter, now() - make_interval(days := 14), 40000,
                     (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
             launchcounter = launchcounter + 1;
         END LOOP;
