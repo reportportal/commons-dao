@@ -72,18 +72,18 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 
 	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
 
-	@Query("SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
-	List<Long> findIdsByProjectIdModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
+	@Query("SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.startTime < :before")
+	List<Long> findIdsByProjectIdAndStartTimeBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
 	int deleteAllByIdIn(Collection<Long> ids);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.lastModified < :before")
-	Stream<Long> streamIdsModifiedBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.startTime < :before")
+	Stream<Long> streamIdsByStartTimeBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.lastModified < :before")
-	Stream<Long> streamIdsWithStatusModifiedBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status,
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.startTime < :before")
+	Stream<Long> streamIdsWithStatusAndStartTimeBefore(@Param("projectId") Long projectId, @Param("status") StatusEnum status,
 			@Param("before") LocalDateTime before);
 
 	@Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "

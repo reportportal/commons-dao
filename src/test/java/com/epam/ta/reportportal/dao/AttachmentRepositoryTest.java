@@ -88,7 +88,7 @@ class AttachmentRepositoryTest extends BaseTest {
 		Duration duration = Duration.ofDays(6).plusHours(23);
 		final Long itemId = 3L;
 
-		List<Attachment> attachments = attachmentRepository.findByItemIdsModifiedBefore(Collections.singletonList(itemId),
+		List<Attachment> attachments = attachmentRepository.findByItemIdsAndLogTimeBefore(Collections.singletonList(itemId),
 				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
 		);
 
@@ -103,7 +103,7 @@ class AttachmentRepositoryTest extends BaseTest {
 		Duration duration = Duration.ofDays(6).plusHours(23);
 		final Long launchId = 3L;
 
-		List<Attachment> attachments = attachmentRepository.findByLaunchIdsModifiedBefore(Collections.singletonList(launchId),
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(Collections.singletonList(launchId),
 				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
 		);
 
@@ -118,7 +118,7 @@ class AttachmentRepositoryTest extends BaseTest {
 		Duration duration = Duration.ofDays(14).plusHours(23);
 		final Long launchId = 3L;
 
-		List<Attachment> attachments = attachmentRepository.findByLaunchIdsModifiedBefore(Collections.singletonList(launchId),
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(Collections.singletonList(launchId),
 				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
 		);
 
