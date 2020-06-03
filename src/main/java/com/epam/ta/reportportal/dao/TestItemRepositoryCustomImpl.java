@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -48,6 +49,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
@@ -77,6 +79,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String RESULT_OUTER_TABLE = "resultOuterTable";
 	private static final String LATERAL_TABLE = "lateralTable";
 	private static final String RESULT_INNER_TABLE = "resultInnerTable";
+
+	private static final String CHILD_ITEM_TABLE = "child";
+
 	private static final String ITEM_START_TIME = "itemStartTime";
 	private static final String LAUNCH_START_TIME = "launchStartTime";
 
@@ -623,8 +628,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
+
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
 		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter).build();
-		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID));
+		itemQuery.addJoin(childItemTable, JoinType.JOIN, DSL.condition(childItemTable.PATH + " <@ " + TEST_ITEM.PATH));
+		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, childItemTable.ITEM_ID.eq(LOG.ITEM_ID));
+		filter.getFilterConditions()
+				.stream()
+				.flatMap(it -> it.getAllConditions().stream())
+				.filter(condition -> CRITERIA_LAUNCH_ID.equals(condition.getSearchCriteria()))
+				.findFirst()
+				.ifPresent(launchIdCondition -> itemQuery.addConditions(childItemTable.LAUNCH_ID.eq(NumberUtils.toLong(launchIdCondition.getValue()))));
 		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"));
 
 		return dsl.select(fieldName(ITEMS, ID)).from(itemQuery.asTable(ITEMS)).fetchInto(Long.class);
@@ -633,8 +648,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
+
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
 		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter).build();
-		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID));
+		itemQuery.addJoin(childItemTable, JoinType.JOIN, DSL.condition(childItemTable.PATH + " <@ " + TEST_ITEM.PATH));
+		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, childItemTable.ITEM_ID.eq(LOG.ITEM_ID));
+		filter.getFilterConditions()
+				.stream()
+				.flatMap(it -> it.getAllConditions().stream())
+				.filter(condition -> CRITERIA_LAUNCH_ID.equals(condition.getSearchCriteria()))
+				.findFirst()
+				.ifPresent(launchIdCondition -> itemQuery.addConditions(childItemTable.LAUNCH_ID.eq(NumberUtils.toLong(launchIdCondition.getValue()))));
 		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.likeRegex(pattern));
 
 		return dsl.select(fieldName(ITEMS, ID)).from(itemQuery.asTable(ITEMS)).fetchInto(Long.class);
