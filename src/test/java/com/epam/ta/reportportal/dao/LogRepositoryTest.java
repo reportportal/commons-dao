@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Sql("/db/fill/item/items-fill.sql")
 class LogRepositoryTest extends BaseTest {
+
+	@Autowired
+	private TestItemRepository testItemRepository;
 
 	@Autowired
 	private LogRepository logRepository;
@@ -222,7 +226,14 @@ class LogRepositoryTest extends BaseTest {
 	@Sql("/db/fill/item/items-with-nested-steps.sql")
 	@Test
 	void findLogMessagesByItemIdAndLogLevelNestedTest() {
-		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByItemIdAndLevelGte(132L, LogLevel.ERROR.toInt());
+
+		TestItem testItem = testItemRepository.findById(132L).get();
+
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(testItem.getLaunchId(),
+				testItem.getItemId(),
+				testItem.getPath(),
+				LogLevel.ERROR.toInt()
+		);
 		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
 		assertEquals(1, messagesByItemIdAndLevelGte.size());
 		assertEquals("java.lang.NullPointerException: Oops\n"
@@ -234,7 +245,14 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findLogMessagesByItemIdAndLoLevelGteTest() {
-		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByItemIdAndLevelGte(3L, LogLevel.WARN.toInt());
+
+		TestItem testItem = testItemRepository.findById(3L).get();
+
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(testItem.getLaunchId(),
+				testItem.getItemId(),
+				testItem.getPath(),
+				LogLevel.WARN.toInt()
+		);
 		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
 		assertEquals(7, messagesByItemIdAndLevelGte.size());
 		messagesByItemIdAndLevelGte.forEach(it -> assertEquals("log", it));
