@@ -522,6 +522,16 @@ public enum FilterTarget {
 					Long.class,
 					Lists.newArrayList(JoinEntity.of(TEST_ITEM, JoinType.LEFT_OUTER_JOIN, LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
 			).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_RETRY_PARENT_LAUNCH_ID,
+					TEST_ITEM.as(RETRY_PARENT).LAUNCH_ID,
+					Long.class,
+					Lists.newArrayList(JoinEntity.of(TEST_ITEM, JoinType.LEFT_OUTER_JOIN, LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)),
+							JoinEntity.of(TEST_ITEM.as(RETRY_PARENT),
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.RETRY_OF.eq(TEST_ITEM.as(RETRY_PARENT).ITEM_ID)
+							)
+					)
+			).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_PATH,
 					TEST_ITEM.PATH,
 					String.class,

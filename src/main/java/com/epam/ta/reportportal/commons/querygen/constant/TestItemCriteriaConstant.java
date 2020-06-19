@@ -35,10 +35,13 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_TEST_CASE_HASH = "testCaseHash";
 	public static final String CRITERIA_PARENT_ID = "parentId";
 	public static final String CRITERIA_RETRY_PARENT_ID = "retryParentId";
+	public static final String CRITERIA_RETRY_PARENT_LAUNCH_ID = "retryParentLaunchId";
 	public static final String CRITERIA_DURATION = "duration";
 	public static final String CRITERIA_PARAMETER_KEY = "key";
 	public static final String CRITERIA_PARAMETER_VALUE = "value";
 	public static final String CRITERIA_PATTERN_TEMPLATE_NAME = "patternName";
 	public static final String CRITERIA_TICKET_ID = "ticketId";
+
+	public static final String RETRY_PARENT = "retry_parent";
 
 }
