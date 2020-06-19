@@ -521,8 +521,8 @@ public enum Condition {
 	 * Workaround. Added to be able to use as constant in annotations
 	 */
 	public static final String EQ = "eq.";
-
 	public static final String CNT = "cnt.";
+	public static final String UNDR = "under.";
 
 	public static final String VALUES_SEPARATOR = ",";
 	public static final String TIMESTAMP_SEPARATOR = ";";
