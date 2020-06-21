@@ -29,6 +29,8 @@ import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
@@ -48,6 +50,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
@@ -79,12 +83,34 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String RESULT_INNER_TABLE = "resultInnerTable";
 	private static final String ITEM_START_TIME = "itemStartTime";
 	private static final String LAUNCH_START_TIME = "launchStartTime";
+	private static final String ACCUMULATED_STATISTICS = "accumulated_statistics";
 
 	private DSLContext dsl;
 
 	@Autowired
 	public void setDsl(DSLContext dsl) {
 		this.dsl = dsl;
+	}
+
+	@Override
+	public Set<Statistics> accumulateStatisticsByFilter(Queryable filter) {
+		return dsl.fetch(DSL.with(FILTERED_QUERY)
+				.as(QueryBuilder.newBuilder(filter).build())
+				.select(DSL.sum(STATISTICS.S_COUNTER).as(ACCUMULATED_STATISTICS), STATISTICS_FIELD.NAME)
+				.from(STATISTICS)
+				.join(DSL.table(DSL.name(FILTERED_QUERY)))
+				.on(STATISTICS.ITEM_ID.eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class)))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.groupBy(STATISTICS_FIELD.NAME)
+				.getQuery()).intoSet(r -> {
+					Statistics statistics = new Statistics();
+					StatisticsField statisticsField = new StatisticsField();
+					statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
+					statistics.setStatisticsField(statisticsField);
+					statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
+					return statistics;
+		});
 	}
 
 	@Override
