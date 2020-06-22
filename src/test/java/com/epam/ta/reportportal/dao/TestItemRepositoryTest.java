@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections4.CollectionUtils;
@@ -594,6 +595,16 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items);
 		assertEquals(1L, items.size());
 
+	}
+
+	@Test
+	void accumulateStatisticsByFilter() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+		final Set<Statistics> statistics = testItemRepository.accumulateStatisticsByFilter(itemFilter);
+		assertNotNull(statistics);
 	}
 
 	@Test
