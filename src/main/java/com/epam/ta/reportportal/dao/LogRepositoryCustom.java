@@ -88,7 +88,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 
 	List<Long> findItemLogIdsByLaunchIdsAndLogLevelGte(List<Long> launchIds, int logLevel);
 
-    List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel);
+	List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel);
 
 	/**
 	 * Get the specified log's page number
@@ -136,9 +136,11 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	/**
 	 * Retrieves log message of specified test item with log level greather or equals than {@code level}
 	 *
-	 * @param itemId ID of {@link TestItem}
-	 * @param level  log level
+	 * @param launchId @link TestItem#getLaunchId()}
+	 * @param itemId   ID of {@link Log#getTestItem()}
+	 * @param path     {@link TestItem#getPath()}
+	 * @param level    log level
 	 * @return {@link List} of {@link String} of log messages
 	 */
-	List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level);
+	List<String> findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(Long launchId, Long itemId, String path, Integer level);
 }
