@@ -21,9 +21,13 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
+import com.epam.ta.reportportal.dao.widget.WidgetProviderChain;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
@@ -76,6 +80,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Autowired
 	private DSLContext dsl;
+
+	@Autowired
+	private WidgetProviderChain<HealthCheckTableGetParams, List<HealthCheckTableContent>> healthCheckTableChain;
 
 	private static final List<JTestItemTypeEnum> HAS_METHOD_OR_CLASS = Arrays.stream(JTestItemTypeEnum.values()).filter(it -> {
 		String name = it.name();
@@ -902,6 +909,46 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.filterWhere(fieldName(ITEMS, STATUS).cast(JStatusEnum.class).eq(JStatusEnum.PASSED)))
 						.div(DSL.nullif(DSL.count(fieldName(ITEMS, ITEM_ID)), 0)), 2))
 				.fetch());
+	}
+
+	@Override
+	public void generateComponentHealthCheckTable(HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
+			int launchesLimit, boolean isLatest) {
+		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
+				.with(launchesLimit)
+				.with(launchSort)
+				.build()
+				.asTable(LAUNCHES);
+
+		List<Field<?>> selectFields = Lists.newArrayList(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
+
+		ofNullable(params.getCustomKey()).ifPresent(key -> selectFields.add(fieldName(CUSTOM_ATTRIBUTE, VALUE).as(CUSTOM_COLUMN)));
+
+		SelectOnConditionStep<Record> baseQuery = select(selectFields).from(TEST_ITEM)
+				.join(launchesTable)
+				.on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ITEM_ATTRIBUTE)
+				.on(and(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID).or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
+						ITEM_ATTRIBUTE.KEY.in(params.getAttributeKeys())).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()));
+
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})",
+				DSL.name(params.getViewName()),
+				ofNullable(params.getCustomKey()).map(key -> baseQuery.leftJoin(DSL.select(ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.VALUE)
+						.from(ITEM_ATTRIBUTE)
+						.where(ITEM_ATTRIBUTE.KEY.eq(key))
+						.asTable(CUSTOM_ATTRIBUTE)).on(TEST_ITEM.ITEM_ID.eq(fieldName(CUSTOM_ATTRIBUTE, ITEM_ID).cast(Long.class))))
+						.orElse(baseQuery)
+						.where(params.getItemConditions())
+						.getQuery()
+		).get()));
+
+	}
+
+	@Override
+	public List<HealthCheckTableContent> componentHealthCheckTable(HealthCheckTableGetParams params) {
+		return healthCheckTableChain.apply(params);
 	}
 
 	private SelectSeekStepN<? extends Record> buildLaunchesTableQuery(Collection<Field<?>> selectFields,

@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -510,5 +511,44 @@ public class WidgetContentUtil {
 				return new ComponentHealthCheckContent(attributeValue, total, passingRate);
 			})
 			.collect(Collectors.toList());
+
+	public static final Function<Result<? extends Record>, Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER = result -> {
+
+		Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
+
+		result.forEach(record -> {
+			String attributeValue = record.get(fieldName(VALUE), String.class);
+			String statisticsField = record.get(fieldName(SF_NAME), String.class);
+			Integer counter = record.get(fieldName(SUM), Integer.class);
+
+			HealthCheckTableStatisticsContent content;
+			if (resultMap.containsKey(attributeValue)) {
+				content = resultMap.get(attributeValue);
+			} else {
+				content = new HealthCheckTableStatisticsContent();
+				resultMap.put(attributeValue, content);
+			}
+			content.getStatistics().put(statisticsField, counter);
+
+		});
+
+		resultMap.forEach((key, content) -> {
+			double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) / content.getStatistics()
+					.getOrDefault(EXECUTIONS_TOTAL, 1);
+			content.setPassingRate(passingRate);
+		});
+
+		return resultMap;
+	};
+
+	public static final Function<Result<? extends Record>, Map<String, List<String>>> COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER = result -> {
+
+		Map<String, List<String>> resultMap = Maps.newLinkedHashMapWithExpectedSize(result.size());
+
+		result.forEach(record -> resultMap.put(record.get(fieldName(VALUE), String.class),
+				Lists.newArrayList(record.get(fieldName(AGGREGATED_VALUES), String[].class))
+		));
+		return resultMap;
+	};
 
 }
