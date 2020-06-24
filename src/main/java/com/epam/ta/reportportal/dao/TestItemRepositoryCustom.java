@@ -28,6 +28,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.issue.Issue;
 import org.springframework.data.domain.Page;
@@ -35,28 +36,33 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Pavel Bortnik
  */
 public interface TestItemRepositoryCustom extends FilterableRepository<TestItem> {
 
-    /**
-     * Executes query built for given filters and maps result for given page
-     *
-     * @param isLatest         Flag for retrieving only latest launches
-     * @param launchFilter     {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
-     * @param testItemFilter   {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
-     * @param launchPageable   {@link Pageable} for {@link com.epam.ta.reportportal.entity.launch.Launch} query
-     * @param testItemPageable {@link Pageable} for {@link TestItem} query
-     * @return List of mapped entries found
-     */
-    Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
-                                Pageable testItemPageable);
+	/**
+	 * Gets accumulated statistics of items queried by provided filter
+	 *
+	 * @param filter {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
+	 * @return Set of accumulated statistics;
+	 */
+	Set<Statistics> accumulateStatisticsByFilter(Queryable filter);
+
+	/**
+	 * Executes query built for given filters and maps result for given page
+	 *
+	 * @param isLatest         Flag for retrieving only latest launches
+	 * @param launchFilter     {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+	 * @param testItemFilter   {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
+	 * @param launchPageable   {@link Pageable} for {@link com.epam.ta.reportportal.entity.launch.Launch} query
+	 * @param testItemPageable {@link Pageable} for {@link TestItem} query
+	 * @return List of mapped entries found
+	 */
+	Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
+			Pageable testItemPageable);
 
 	/**
 	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the whole {@link com.epam.ta.reportportal.entity.project.Project}
@@ -151,43 +157,43 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<TestItem> selectAllDescendants(Long itemId);
 
-    /**
-     * Selects all descendants of TestItem with provided id, which has at least one child.
-     *
-     * @param itemId TestItem id
-     * @return List of descendants
-     */
-    List<TestItem> selectAllDescendantsWithChildren(Long itemId);
+	/**
+	 * Selects all descendants of TestItem with provided id, which has at least one child.
+	 *
+	 * @param itemId TestItem id
+	 * @return List of descendants
+	 */
+	List<TestItem> selectAllDescendantsWithChildren(Long itemId);
 
-    /**
-     * Select common items object that have provided status for
-     * specified launch.
-     *
-     * @param launchId Launch
-     * @param statuses Statuses
-     * @return List of items
-     */
-    List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
+	/**
+	 * Select common items object that have provided status for
+	 * specified launch.
+	 *
+	 * @param launchId Launch
+	 * @param statuses Statuses
+	 * @return List of items
+	 */
+	List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
-    /**
-     * Select common items object that have provided status for
-     * specified parent item.
-     *
-     * @param parentId Parent item
-     * @param statuses Statuses
-     * @return List of items
-     */
-    List<TestItem> selectItemsInStatusByParent(Long parentId, StatusEnum... statuses);
+	/**
+	 * Select common items object that have provided status for
+	 * specified parent item.
+	 *
+	 * @param parentId Parent item
+	 * @param statuses Statuses
+	 * @return List of items
+	 */
+	List<TestItem> selectItemsInStatusByParent(Long parentId, StatusEnum... statuses);
 
-    /**
-     * True if the provided launch contains any items with
-     * a specified status.
-     *
-     * @param launchId Checking launch id
-     * @param statuses Checking statuses
-     * @return True if contains, false if not
-     */
-    Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
+	/**
+	 * True if the provided launch contains any items with
+	 * a specified status.
+	 *
+	 * @param launchId Checking launch id
+	 * @param statuses Checking statuses
+	 * @return True if contains, false if not
+	 */
+	Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
 	/**
 	 * Select items that has different issue from provided for
@@ -199,21 +205,21 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<TestItem> findAllNotInIssueByLaunch(Long launchId, String locator);
 
-    /**
-     * Select items that has different issue from provided for
-     * specified launch.
-     *
-     * @param launchId Launch
-     * @param locator  Issue type locator
-     * @return List of items
-     */
-    List<Long> selectIdsNotInIssueByLaunch(Long launchId, String locator);
+	/**
+	 * Select items that has different issue from provided for
+	 * specified launch.
+	 *
+	 * @param launchId Launch
+	 * @param locator  Issue type locator
+	 * @return List of items
+	 */
+	List<Long> selectIdsNotInIssueByLaunch(Long launchId, String locator);
 
-    List<TestItem> findAllNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
+	List<TestItem> findAllNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
 
-    List<Long> selectIdsNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
+	List<Long> selectIdsNotInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
 
-    List<TestItem> findAllInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
+	List<TestItem> findAllInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
 
 	/**
 	 * Select all {@link TestItem#getItemId()} of {@link TestItem} with attached {@link Issue}
@@ -224,58 +230,58 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<Long> selectIdsWithIssueByLaunch(Long launchId);
 
-    /**
-     * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
-     * was started within the provided 'period'
-     *
-     * @param period   {@link Duration}
-     * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-     * @param statuses {@link StatusEnum}
-     * @return true if items(the item) exist(exists)
-     */
-    Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses);
+	/**
+	 * True if the {@link com.epam.ta.reportportal.entity.item.TestItem} with matching 'status' and 'launchId'
+	 * was started within the provided 'period'
+	 *
+	 * @param period   {@link Duration}
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if items(the item) exist(exists)
+	 */
+	Boolean hasItemsInStatusAddedLately(Long launchId, Duration period, StatusEnum... statuses);
 
-    /**
-     * True if {@link TestItem} wasn't modified before the provided 'period' and has logs
-     *
-     * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
-     * @param period   {@link Duration}
-     * @param statuses {@link StatusEnum}
-     * @return true if {@link TestItem} wasn't modified before the provided 'period' and has logs
-     */
-    Boolean hasLogs(Long launchId, Duration period, StatusEnum... statuses);
+	/**
+	 * True if {@link TestItem} wasn't modified before the provided 'period' and has logs
+	 *
+	 * @param launchId {@link com.epam.ta.reportportal.entity.launch.Launch#id}
+	 * @param period   {@link Duration}
+	 * @param statuses {@link StatusEnum}
+	 * @return true if {@link TestItem} wasn't modified before the provided 'period' and has logs
+	 */
+	Boolean hasLogs(Long launchId, Duration period, StatusEnum... statuses);
 
-    /**
-     * Select test items that has issue with provided issue type for
-     * specified launch.
-     *
-     * @param launchId  Launch id
-     * @param issueType Issue type
-     * @return List of items
-     */
-    List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
+	/**
+	 * Select test items that has issue with provided issue type for
+	 * specified launch.
+	 *
+	 * @param launchId  Launch id
+	 * @param issueType Issue type
+	 * @return List of items
+	 */
+	List<TestItem> selectItemsInIssueByLaunch(Long launchId, String issueType);
 
-    List<TestItem> selectRetries(List<Long> retryOfIds);
+	List<TestItem> selectRetries(List<Long> retryOfIds);
 
 	//TODO move to project repo
 	List<IssueType> selectIssueLocatorsByProject(Long projectId);
 
-    /**
-     * Selects issue type object by provided locator for specified project.
-     *
-     * @param projectId Project id
-     * @param locator   Issue type locator
-     * @return Issue type
-     */
-    Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator);
+	/**
+	 * Selects issue type object by provided locator for specified project.
+	 *
+	 * @param projectId Project id
+	 * @param locator   Issue type locator
+	 * @return Issue type
+	 */
+	Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator);
 
-    /**
-     * Select unsorted ids and names of all items in a tree till current.
-     *
-     * @param path itemPath
-     * @return Map of id and name
-     */
-    Map<Long, String> selectPathNames(String path);
+	/**
+	 * Select unsorted ids and names of all items in a tree till current.
+	 *
+	 * @param path itemPath
+	 * @return Map of id and name
+	 */
+	Map<Long, String> selectPathNames(String path);
 
 	/**
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
@@ -298,53 +304,53 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
 
-    /**
-     * @param itemId  {@link TestItem#itemId}
-     * @param status  New status
-     * @param endTime {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
-     * @return 1 if updated, otherwise 0
-     */
-    int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
+	/**
+	 * @param itemId  {@link TestItem#itemId}
+	 * @param status  New status
+	 * @param endTime {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
+	 * @return 1 if updated, otherwise 0
+	 */
+	int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
 
-    /**
-     * @param itemId {@link TestItem#itemId}
-     * @return {@link TestItemTypeEnum}
-     */
-    TestItemTypeEnum getTypeByItemId(Long itemId);
+	/**
+	 * @param itemId {@link TestItem#itemId}
+	 * @return {@link TestItemTypeEnum}
+	 */
+	TestItemTypeEnum getTypeByItemId(Long itemId);
 
-    /**
-     * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
-     * and message is matched by the STRING pattern
-     *
-     * @param filter   {@link Queryable}
-     * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-     * @param pattern  CASE SENSITIVE STRING pattern for log message search
-     * @return The {@link List} of the {@link TestItem#itemId}
-     */
-    List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
+	/**
+	 * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
+	 * and message is matched by the STRING pattern
+	 *
+	 * @param filter   {@link Queryable}
+	 * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
+	 * @param pattern  CASE SENSITIVE STRING pattern for log message search
+	 * @return The {@link List} of the {@link TestItem#itemId}
+	 */
+	List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
 
-    /**
-     * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
-     * and message is matched by the REGEX pattern
-     *
-     * @param filter   {@link Queryable}
-     * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-     * @param pattern  REGEX pattern for log message search
-     * @return The {@link List} of the {@link TestItem#itemId}
-     */
-    List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
+	/**
+	 * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
+	 * and message is matched by the REGEX pattern
+	 *
+	 * @param filter   {@link Queryable}
+	 * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
+	 * @param pattern  REGEX pattern for log message search
+	 * @return The {@link List} of the {@link TestItem#itemId}
+	 */
+	List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
 
-    /**
-     * Select {@link NestedStep} entities by provided 'IDs' with {@link NestedStep#attachmentsCount}
-     * of the {@link com.epam.ta.reportportal.entity.log.Log} entities of all descendants for each {@link NestedStep}
-     * and {@link NestedStep#hasContent} flag to check whether entity is a last one
-     * in the descendants tree or there are {@link com.epam.ta.reportportal.entity.log.Log} or {@link NestedStep} entities exist under it
-     *
-     * @param ids       {@link Collection} of the {@link TestItem#itemId}
-     * @param logFilter {@link Queryable} with {@link com.epam.ta.reportportal.entity.log.Log} target, to evaluate 'hasContent' flag
-     *                  and   attachments count
-     * @return {@link List} of the {@link NestedStep}
-     */
+	/**
+	 * Select {@link NestedStep} entities by provided 'IDs' with {@link NestedStep#attachmentsCount}
+	 * of the {@link com.epam.ta.reportportal.entity.log.Log} entities of all descendants for each {@link NestedStep}
+	 * and {@link NestedStep#hasContent} flag to check whether entity is a last one
+	 * in the descendants tree or there are {@link com.epam.ta.reportportal.entity.log.Log} or {@link NestedStep} entities exist under it
+	 *
+	 * @param ids       {@link Collection} of the {@link TestItem#itemId}
+	 * @param logFilter {@link Queryable} with {@link com.epam.ta.reportportal.entity.log.Log} target, to evaluate 'hasContent' flag
+	 *                  and   attachments count
+	 * @return {@link List} of the {@link NestedStep}
+	 */
 
-    List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs);
+	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs);
 }
