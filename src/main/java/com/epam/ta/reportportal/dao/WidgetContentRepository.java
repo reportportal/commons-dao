@@ -21,6 +21,9 @@ import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
@@ -288,4 +291,9 @@ public interface WidgetContentRepository {
 	 */
 	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
 			Filter testItemFilter, String currentLevelKey);
+
+	void generateComponentHealthCheckTable(HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort, int launchesLimit,
+			boolean isLatest);
+
+	List<HealthCheckTableContent> componentHealthCheckTable(HealthCheckTableGetParams params);
 }

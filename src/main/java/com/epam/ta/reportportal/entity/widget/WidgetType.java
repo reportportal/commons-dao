@@ -47,7 +47,8 @@ public enum WidgetType {
 
 	CUMULATIVE("cumulative", true, false),
 	TOP_PATTERN_TEMPLATES("topPatternTemplates", true, false),
-	COMPONENT_HEALTH_CHECK("componentHealthCheck", true, false);
+	COMPONENT_HEALTH_CHECK("componentHealthCheck", true, false),
+	COMPONENT_HEALTH_CHECK_TABLE("componentHealthCheckTable", true, false);
 
 	private final String type;
 

@@ -25,7 +25,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.widget.content.*;
-import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.*;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
@@ -40,6 +40,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -476,7 +477,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -509,7 +511,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
+				filter,
 				20
 		);
 
@@ -866,7 +869,8 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
+				filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -939,14 +943,16 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				CRITERIA_PROJECT_ID
-		), new FilterCondition(Condition.EQUALS_ANY,
-				false,
-				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-				CRITERIA_STATUS
-		));
+						false,
+						String.valueOf(projectId),
+						CRITERIA_PROJECT_ID
+				),
+				new FilterCondition(Condition.EQUALS_ANY,
+						false,
+						String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+						CRITERIA_STATUS
+				)
+		);
 
 		return new Filter(1L, TestItem.class, conditionList);
 	}
@@ -1200,5 +1206,72 @@ class WidgetContentRepositoryTest extends BaseTest {
 		);
 
 		assertTrue(contents.isEmpty());
+	}
+
+	@Test
+	void componentHealthCheckTable() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter launchFilter = buildDefaultFilter(1L);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
+				new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME)
+		);
+		Sort sort = Sort.by(orderings);
+
+		HealthCheckTableInitParams initParams = HealthCheckTableInitParams.of("first",
+				com.google.common.collect.Lists.newArrayList("build")
+		);
+
+		initParams.setCustomKey("build");
+
+		widgetContentRepository.generateComponentHealthCheckTable(initParams, launchFilter, sort, 600, false);
+
+		List<HealthCheckTableContent> healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams
+				.of("first", "build", Sort.by(Sort.Direction.DESC, "customColumn"), true, new ArrayList<>()));
+
+		assertFalse(healthCheckTableContents.isEmpty());
+
+		initParams = HealthCheckTableInitParams.of("hello",
+				com.google.common.collect.Lists.newArrayList("build")
+		);
+
+		widgetContentRepository.generateComponentHealthCheckTable(initParams, launchFilter, sort, 600, false);
+
+		healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams.of("hello",
+				"hello",
+				Sort.by(Sort.Direction.DESC, "passingRate"),
+				false,
+				com.google.common.collect.Lists.newArrayList(LevelEntry.of("k1", "v1"), LevelEntry.of("k2", "v2"))
+		));
+
+		assertTrue(healthCheckTableContents.isEmpty());
+
+		healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams.of("hello",
+				"build",
+				Sort.by(Sort.Direction.ASC, "passingRate"),
+				false,
+				new ArrayList<>()
+		));
+
+		assertTrue(healthCheckTableContents.isEmpty());
+
+		healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams.of("hello",
+				"build",
+				Sort.by(Sort.Direction.DESC, "statistics$executions$total"),
+				false,
+				new ArrayList<>()
+		));
+
+		assertTrue(healthCheckTableContents.isEmpty());
+
+		healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams.of("hello",
+				"build",
+				Sort.by(Sort.Direction.DESC, "statistics$executions$failed"),
+				false,
+				com.google.common.collect.Lists.newArrayList(LevelEntry.of("k1", "v1"), LevelEntry.of("k2", "v2"))
+		));
+
+		assertTrue(healthCheckTableContents.isEmpty());
 	}
 }

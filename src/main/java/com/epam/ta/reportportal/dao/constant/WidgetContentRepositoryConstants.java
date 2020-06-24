@@ -126,4 +126,10 @@ public class WidgetContentRepositoryConstants {
 	/*Top pattern templates widget constants*/
 	public static final Integer PATTERNS_COUNT = 20;
 
+	/*Health check table widget constants*/
+	public static final String CUSTOM_ATTRIBUTE = "custom_attribute";
+	public static final String AGGREGATED_VALUES = "aggregated_values";
+	public static final String CUSTOM_COLUMN = "custom_column";
+	public static final String CUSTOM_COLUMN_SORTING = "customColumn";
+
 }
