@@ -42,6 +42,8 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -535,7 +537,7 @@ public class WidgetContentUtil {
 		resultMap.forEach((key, content) -> {
 			double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) / content.getStatistics()
 					.getOrDefault(EXECUTIONS_TOTAL, 1);
-			content.setPassingRate(passingRate);
+			content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP).doubleValue());
 		});
 
 		return resultMap;
