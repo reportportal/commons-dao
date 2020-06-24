@@ -30,7 +30,7 @@ public class StatisticsQueryProvider extends AbstractHealthCheckTableQueryProvid
 	protected Select<? extends Record> contentQuery(HealthCheckTableGetParams params, List<Condition> levelConditions) {
 
 		SelectHavingStep<? extends Record3<String, BigDecimal, ?>> selectQuery = DSL.select(STATISTICS_FIELD.NAME,
-				DSL.sum(STATISTICS.S_COUNTER),
+				DSL.sum(STATISTICS.S_COUNTER).as(SUM),
 				fieldName(VALUE)
 		)
 				.from(params.getViewName())

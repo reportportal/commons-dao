@@ -518,7 +518,7 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			String attributeValue = record.get(fieldName(VALUE), String.class);
-			String statisticsField = record.get(fieldName(SF_NAME), String.class);
+			String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
 			Integer counter = record.get(fieldName(SUM), Integer.class);
 
 			HealthCheckTableStatisticsContent content;
