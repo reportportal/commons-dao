@@ -940,7 +940,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.where(ITEM_ATTRIBUTE.KEY.eq(key))
 						.asTable(CUSTOM_ATTRIBUTE)).on(TEST_ITEM.ITEM_ID.eq(fieldName(CUSTOM_ATTRIBUTE, ITEM_ID).cast(Long.class))))
 						.orElse(baseQuery)
-						.where(params.getItemConditions())
+						.where(TEST_ITEM.HAS_STATS.isTrue()
+								.and(TEST_ITEM.HAS_CHILDREN.isFalse())
+								.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+								.and(TEST_ITEM.RETRY_OF.isNull())
+								.and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
 						.getQuery()
 		).get()));
 

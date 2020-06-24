@@ -1220,7 +1220,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 		Sort sort = Sort.by(orderings);
 
 		HealthCheckTableInitParams initParams = HealthCheckTableInitParams.of("first",
-				new ArrayList<>(),
 				com.google.common.collect.Lists.newArrayList("build")
 		);
 
@@ -1234,7 +1233,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 		assertFalse(healthCheckTableContents.isEmpty());
 
 		initParams = HealthCheckTableInitParams.of("hello",
-				new ArrayList<>(),
 				com.google.common.collect.Lists.newArrayList("build")
 		);
 
