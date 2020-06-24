@@ -9,9 +9,13 @@ import java.util.Optional;
  */
 public enum WidgetState {
 
+	CREATED("created"),
+
 	RENDERING("rendering"),
 
-	READY("ready");
+	READY("ready"),
+
+	FAILED("failed");
 
 	WidgetState(String value) {
 		this.value = value;
