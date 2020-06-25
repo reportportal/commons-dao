@@ -292,7 +292,7 @@ public interface WidgetContentRepository {
 	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
 			Filter testItemFilter, String currentLevelKey);
 
-	void generateComponentHealthCheckTable(HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort, int launchesLimit,
+	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort, int launchesLimit,
 			boolean isLatest);
 
 	List<HealthCheckTableContent> componentHealthCheckTable(HealthCheckTableGetParams params);
