@@ -912,8 +912,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public void generateComponentHealthCheckTable(HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
+	public void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
 			int launchesLimit, boolean isLatest) {
+
+		if (refresh) {
+			dsl.execute(DSL.sql(Suppliers.formattedSupplier("REFRESH MATERIALIZED VIEW {}", DSL.name(params.getViewName())).get()));
+			return;
+		}
+
 		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
 				.with(launchesLimit)
 				.with(launchSort)

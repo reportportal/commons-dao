@@ -1225,18 +1225,17 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		initParams.setCustomKey("build");
 
-		widgetContentRepository.generateComponentHealthCheckTable(initParams, launchFilter, sort, 600, false);
+		widgetContentRepository.generateComponentHealthCheckTable(false, initParams, launchFilter, sort, 600, false);
 
 		List<HealthCheckTableContent> healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams
 				.of("first", "build", Sort.by(Sort.Direction.DESC, "customColumn"), true, new ArrayList<>()));
 
 		assertFalse(healthCheckTableContents.isEmpty());
 
-		initParams = HealthCheckTableInitParams.of("hello",
-				com.google.common.collect.Lists.newArrayList("build")
-		);
+		initParams = HealthCheckTableInitParams.of("hello", com.google.common.collect.Lists.newArrayList("build"));
 
-		widgetContentRepository.generateComponentHealthCheckTable(initParams, launchFilter, sort, 600, false);
+		widgetContentRepository.generateComponentHealthCheckTable(false, initParams, launchFilter, sort, 600, false);
+		widgetContentRepository.generateComponentHealthCheckTable(true, initParams, launchFilter, sort, 600, false);
 
 		healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams.of("hello",
 				"hello",
