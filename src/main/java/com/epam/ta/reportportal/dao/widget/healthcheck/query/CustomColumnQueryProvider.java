@@ -27,9 +27,9 @@ public class CustomColumnQueryProvider extends AbstractHealthCheckTableQueryProv
 
 	@Override
 	protected Select<? extends Record> contentQuery(HealthCheckTableGetParams params, List<Condition> levelConditions) {
-		SelectHavingStep<?> selectQuery = DSL.select(DSL.arrayAggDistinct(fieldName(UNNESTED_ARRAY)).as(AGGREGATED_VALUES),
-				fieldName(VALUE)
-		)
+		SelectHavingStep<?> selectQuery = DSL.select(DSL.arrayAggDistinct(fieldName(UNNESTED_ARRAY))
+				.filterWhere(fieldName(UNNESTED_ARRAY).isNotNull())
+				.as(AGGREGATED_VALUES), fieldName(VALUE))
 				.from(DSL.table(params.getViewName()), DSL.table(DSL.sql("unnest(?)", fieldName(CUSTOM_COLUMN))).as(UNNESTED_ARRAY))
 				.where(fieldName(KEY).cast(String.class)
 						.eq(params.getCurrentLevelKey())
