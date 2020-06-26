@@ -548,7 +548,9 @@ public class WidgetContentUtil {
 		Map<String, List<String>> resultMap = Maps.newLinkedHashMapWithExpectedSize(result.size());
 
 		result.forEach(record -> resultMap.put(record.get(fieldName(VALUE), String.class),
-				Lists.newArrayList(record.get(fieldName(AGGREGATED_VALUES), String[].class))
+				ofNullable(record.get(fieldName(AGGREGATED_VALUES),
+						String[].class
+				)).map(values -> (List<String>) Lists.newArrayList(values)).orElseGet(Collections::emptyList)
 		));
 		return resultMap;
 	};
