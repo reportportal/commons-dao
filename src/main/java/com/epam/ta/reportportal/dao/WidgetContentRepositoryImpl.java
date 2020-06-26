@@ -927,7 +927,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> selectFields = Lists.newArrayList(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
 
-		ofNullable(params.getCustomKey()).ifPresent(key -> selectFields.add(fieldName(CUSTOM_ATTRIBUTE, VALUE).as(CUSTOM_COLUMN)));
+		ofNullable(params.getCustomKey()).ifPresent(key -> selectFields.add(DSL.arrayAggDistinct(fieldName(CUSTOM_ATTRIBUTE, VALUE))
+				.filterWhere(fieldName(CUSTOM_ATTRIBUTE, VALUE).isNotNull())
+				.as(CUSTOM_COLUMN)));
 
 		SelectOnConditionStep<Record> baseQuery = select(selectFields).from(TEST_ITEM)
 				.join(launchesTable)
@@ -950,6 +952,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
 								.and(TEST_ITEM.RETRY_OF.isNull())
 								.and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
+						.groupBy(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 						.getQuery()
 		).get()));
 
