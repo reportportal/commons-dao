@@ -19,14 +19,18 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 @Component
 public class CustomColumnQueryProvider extends AbstractHealthCheckTableQueryProvider {
 
+	private static final String UNNESTED_ARRAY = "unnested_array";
+
 	public CustomColumnQueryProvider() {
 		super(Sets.newHashSet(CUSTOM_COLUMN_SORTING));
 	}
 
 	@Override
 	protected Select<? extends Record> contentQuery(HealthCheckTableGetParams params, List<Condition> levelConditions) {
-		SelectHavingStep<?> selectQuery = DSL.select(DSL.arrayAggDistinct(fieldName(CUSTOM_COLUMN)).as(AGGREGATED_VALUES), fieldName(VALUE))
-				.from(params.getViewName())
+		SelectHavingStep<?> selectQuery = DSL.select(DSL.arrayAggDistinct(fieldName(UNNESTED_ARRAY)).as(AGGREGATED_VALUES),
+				fieldName(VALUE)
+		)
+				.from(DSL.table(params.getViewName()), DSL.table(DSL.sql("unnest(?)", fieldName(CUSTOM_COLUMN))).as(UNNESTED_ARRAY))
 				.where(fieldName(KEY).cast(String.class)
 						.eq(params.getCurrentLevelKey())
 						.and(levelConditions.stream().reduce(DSL.noCondition(), Condition::and)))
