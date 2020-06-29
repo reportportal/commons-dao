@@ -31,6 +31,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -942,10 +943,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})",
 				DSL.name(params.getViewName()),
-				ofNullable(params.getCustomKey()).map(key -> baseQuery.leftJoin(DSL.select(ITEM_ATTRIBUTE.ITEM_ID, ITEM_ATTRIBUTE.VALUE)
-						.from(ITEM_ATTRIBUTE)
-						.where(ITEM_ATTRIBUTE.KEY.eq(key))
-						.asTable(CUSTOM_ATTRIBUTE)).on(TEST_ITEM.ITEM_ID.eq(fieldName(CUSTOM_ATTRIBUTE, ITEM_ID).cast(Long.class))))
+				ofNullable(params.getCustomKey()).map(key -> {
+					JItemAttribute customAttribute = ITEM_ATTRIBUTE.as(CUSTOM_ATTRIBUTE);
+					return baseQuery.leftJoin(customAttribute)
+							.on(DSL.condition(Operator.OR,
+									TEST_ITEM.ITEM_ID.eq(customAttribute.ITEM_ID),
+									TEST_ITEM.LAUNCH_ID.eq(customAttribute.LAUNCH_ID)
+							).and(ITEM_ATTRIBUTE.KEY.eq(key)));
+				})
 						.orElse(baseQuery)
 						.where(TEST_ITEM.HAS_STATS.isTrue()
 								.and(TEST_ITEM.HAS_CHILDREN.isFalse())
