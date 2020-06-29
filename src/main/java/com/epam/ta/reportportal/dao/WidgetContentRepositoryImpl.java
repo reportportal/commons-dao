@@ -949,7 +949,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							.on(DSL.condition(Operator.OR,
 									TEST_ITEM.ITEM_ID.eq(customAttribute.ITEM_ID),
 									TEST_ITEM.LAUNCH_ID.eq(customAttribute.LAUNCH_ID)
-							).and(ITEM_ATTRIBUTE.KEY.eq(key)));
+							).and(customAttribute.KEY.eq(key)));
 				})
 						.orElse(baseQuery)
 						.where(TEST_ITEM.HAS_STATS.isTrue()
