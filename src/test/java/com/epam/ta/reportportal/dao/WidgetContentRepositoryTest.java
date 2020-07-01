@@ -1286,7 +1286,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		widgetContentRepository.removeWidgetView("hello");
 		widgetContentRepository.removeWidgetView("first");
-		widgetContentRepository.removeWidgetView("not_existing");
+		widgetContentRepository.removeWidgetView("not_existing_view");
 
 		Result<Record> fetch1 = dslContext.fetch(DSL.sql("SELECT * FROM pg_matviews"));
 
