@@ -32,6 +32,10 @@ import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.assertj.core.util.Lists;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -66,6 +70,9 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
+
+	@Autowired
+	private DSLContext dslContext;
 
 	@Test
 	void overallStatisticsContent() {
@@ -1272,5 +1279,18 @@ class WidgetContentRepositoryTest extends BaseTest {
 		));
 
 		assertTrue(healthCheckTableContents.isEmpty());
+
+		Result<Record> fetch = dslContext.fetch(DSL.sql("SELECT * FROM pg_matviews"));
+
+		assertTrue(fetch.isNotEmpty());
+
+		widgetContentRepository.removeWidgetView("hello");
+		widgetContentRepository.removeWidgetView("first");
+		widgetContentRepository.removeWidgetView("not_existing");
+
+		Result<Record> fetch1 = dslContext.fetch(DSL.sql("SELECT * FROM pg_matviews"));
+
+		assertTrue(fetch1.isEmpty());
+
 	}
 }

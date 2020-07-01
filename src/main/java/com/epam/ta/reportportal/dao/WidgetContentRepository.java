@@ -295,5 +295,7 @@ public interface WidgetContentRepository {
 	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort, int launchesLimit,
 			boolean isLatest);
 
+	void removeWidgetView(String viewName);
+
 	List<HealthCheckTableContent> componentHealthCheckTable(HealthCheckTableGetParams params);
 }
