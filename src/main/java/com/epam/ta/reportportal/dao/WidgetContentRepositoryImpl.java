@@ -917,7 +917,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			int launchesLimit, boolean isLatest) {
 
 		if (refresh) {
-			dsl.execute(DSL.sql(Suppliers.formattedSupplier("DROP MATERIALIZED VIEW {}", DSL.name(params.getViewName())).get()));
+			removeWidgetView(params.getViewName());
 		}
 
 		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
@@ -961,6 +961,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.getQuery()
 		).get()));
 
+	}
+
+	@Override
+	public void removeWidgetView(String viewName) {
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("DROP MATERIALIZED VIEW IF EXISTS {}", DSL.name(viewName)).get()));
 	}
 
 	@Override
