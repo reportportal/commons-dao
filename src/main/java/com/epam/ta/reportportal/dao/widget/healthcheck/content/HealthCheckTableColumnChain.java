@@ -37,10 +37,10 @@ public class HealthCheckTableColumnChain implements WidgetProviderChain<HealthCh
 	}
 
 	@Override
-	public int resolvePriority(HealthCheckTableGetParams input) {
+	public int resolvePriority(HealthCheckTableGetParams params) {
 		return customColumnQueryProvider.getSupportedSorting()
 				.stream()
-				.filter(sorting -> Objects.nonNull(input.getSort().getOrderFor(sorting)))
+				.filter(sorting -> Objects.nonNull(params.getSort().getOrderFor(sorting)))
 				.findAny()
 				.map(it -> 1)
 				.orElse(0);
