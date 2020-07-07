@@ -56,6 +56,9 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, 
 	@Query(value = "SELECT w FROM Widget w WHERE w.project.id = :projectId AND w.widgetType IN :widgetTypes")
 	List<Widget> findAllByProjectIdAndWidgetTypeIn(@Param("projectId") Long projectId, @Param("widgetTypes") List<String> widgetTypes);
 
+	@Query(value = "SELECT w FROM Widget w WHERE w.owner = :owner AND w.widgetType IN :widgetTypes")
+	List<Widget> findAllByOwnerAndWidgetTypeIn(@Param("owner") String username, @Param("widgetTypes") List<String> widgetTypes);
+
 	@Query(value = "SELECT w FROM Widget w WHERE w.project.id = :projectId AND w.widgetType IN :widgetTypes AND :contentField MEMBER w.contentFields")
 	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldsContains(@Param("projectId") Long projectId,
 			@Param("widgetTypes") List<String> widgetTypes, @Param("contentField") String contentField);

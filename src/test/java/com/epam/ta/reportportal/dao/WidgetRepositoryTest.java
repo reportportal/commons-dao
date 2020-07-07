@@ -195,6 +195,26 @@ public class WidgetRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findAllByOwnerAndWidgetTypeInTest() {
+		List<Widget> widgets = repository.findAllByOwnerAndWidgetTypeIn("superadmin",
+				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.ACTIVITY)
+						.stream()
+						.map(WidgetType::getType)
+						.collect(Collectors.toList())
+		);
+
+		assertFalse(widgets.isEmpty());
+		assertEquals(2, widgets.size());
+
+		List<Widget> moreWidgets = repository.findAllByOwnerAndWidgetTypeIn("superadmin",
+				Collections.singletonList(WidgetType.LAUNCH_STATISTICS.getType())
+		);
+
+		assertFalse(moreWidgets.isEmpty());
+		assertEquals(1, moreWidgets.size());
+	}
+
+	@Test
 	void findAllByWidgetTypeInAndContentFieldsContainsTest() {
 		List<Widget> widgets = repository.findAllByProjectIdAndWidgetTypeInAndContentFieldsContains(1L,
 				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.LAUNCHES_TABLE)
