@@ -70,7 +70,6 @@ public class HealthCheckTableStatisticsChain
 			if (resortedResult.isEmpty()) {
 				return result;
 			}
-			resortedResult.keySet().forEach(result::remove);
 			resortedResult.putAll(result);
 			return resortedResult;
 		}).orElse(result);
