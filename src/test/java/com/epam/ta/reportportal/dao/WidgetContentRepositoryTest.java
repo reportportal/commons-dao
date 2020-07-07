@@ -394,7 +394,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		);
 
 		launchStatisticsContents.forEach(content -> {
-			Map<String, String> values = content.getValues();
+			Map<String, Object> values = content.getValues();
 			tableContentFields.forEach(tcf -> {
 				assertTrue(values.containsKey(tcf));
 				assertNotNull(values.get(tcf));
