@@ -52,6 +52,8 @@ import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -145,7 +147,7 @@ public class WidgetContentUtil {
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
 				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
-				itemAttributeIdField.ifPresent(f -> ofNullable(record.get(f)).ifPresent(id -> {
+				itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
 					Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
 
 					ItemAttributeResource attributeResource = new ItemAttributeResource();
@@ -155,17 +157,23 @@ public class WidgetContentUtil {
 					attributes.add(attributeResource);
 
 					content.setAttributes(attributes);
-				}));
+				});
 
 			}
 
-			statisticsField.ifPresent(sf -> ofNullable(record.get(sf, String.class)).ifPresent(v -> content.getValues()
-					.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0"))));
+			statisticsField.flatMap(sf -> ofNullable(record.get(sf, String.class)))
+					.ifPresent(v -> content.getValues()
+							.put(v, ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER), String.class)).orElse("0")));
 
 			resultMap.put(record.get(LAUNCH.ID), content);
 
-			nonStatisticsFields.forEach(cf -> content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf)))));
-
+			nonStatisticsFields.forEach(cf -> {
+				if (CRITERIA_END_TIME.equalsIgnoreCase(cf) || CRITERIA_LAST_MODIFIED.equalsIgnoreCase(cf)) {
+					content.getValues().put(cf, record.get(criteria.get(cf), Timestamp.class));
+				} else {
+					content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf))));
+				}
+			});
 		});
 
 		return new ArrayList<>(resultMap.values());
@@ -257,12 +265,10 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet()
-				.stream()
-				.collect(LinkedHashMap::new,
-						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-						LinkedHashMap::putAll
-				);
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -397,7 +403,8 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 

@@ -34,7 +34,7 @@ public class LaunchesTableContent extends AbstractLaunchStatisticsContent {
 	private Set<ItemAttributeResource> attributes;
 
 	@JsonProperty(value = "values")
-	private Map<String, String> values = new LinkedHashMap<>();
+	private Map<String, Object> values = new LinkedHashMap<>();
 
 	public Set<ItemAttributeResource> getAttributes() {
 		return attributes;
@@ -44,11 +44,11 @@ public class LaunchesTableContent extends AbstractLaunchStatisticsContent {
 		this.attributes = attributes;
 	}
 
-	public Map<String, String> getValues() {
+	public Map<String, Object> getValues() {
 		return values;
 	}
 
-	public void setValues(Map<String, String> values) {
+	public void setValues(Map<String, Object> values) {
 		this.values = values;
 	}
 }
