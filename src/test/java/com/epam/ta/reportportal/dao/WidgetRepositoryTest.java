@@ -32,6 +32,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -171,6 +172,46 @@ public class WidgetRepositoryTest extends BaseTest {
 		int removedCount = repository.deleteRelationByFilterIdAndNotOwner(2L, "superadmin");
 
 		Assertions.assertEquals(1, removedCount);
+	}
+
+	@Test
+	void findAllByProjectIdAndWidgetTypeInTest() {
+		List<Widget> widgets = repository.findAllByProjectIdAndWidgetTypeIn(1L,
+				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.CASES_TREND)
+						.stream()
+						.map(WidgetType::getType)
+						.collect(Collectors.toList())
+		);
+
+		assertFalse(widgets.isEmpty());
+		assertEquals(2, widgets.size());
+
+		List<Widget> moreWidgets = repository.findAllByProjectIdAndWidgetTypeIn(1L,
+				Collections.singletonList(WidgetType.CASES_TREND.getType())
+		);
+
+		assertFalse(moreWidgets.isEmpty());
+		assertEquals(1, moreWidgets.size());
+	}
+
+	@Test
+	void findAllByOwnerAndWidgetTypeInTest() {
+		List<Widget> widgets = repository.findAllByOwnerAndWidgetTypeIn("superadmin",
+				Lists.newArrayList(WidgetType.LAUNCH_STATISTICS, WidgetType.ACTIVITY)
+						.stream()
+						.map(WidgetType::getType)
+						.collect(Collectors.toList())
+		);
+
+		assertFalse(widgets.isEmpty());
+		assertEquals(2, widgets.size());
+
+		List<Widget> moreWidgets = repository.findAllByOwnerAndWidgetTypeIn("superadmin",
+				Collections.singletonList(WidgetType.LAUNCH_STATISTICS.getType())
+		);
+
+		assertFalse(moreWidgets.isEmpty());
+		assertEquals(1, moreWidgets.size());
 	}
 
 	@Test

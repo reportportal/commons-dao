@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -41,6 +42,8 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -517,5 +520,46 @@ public class WidgetContentUtil {
 				return new ComponentHealthCheckContent(attributeValue, total, passingRate);
 			})
 			.collect(Collectors.toList());
+
+	public static final Function<Result<? extends Record>, Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER = result -> {
+
+		Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
+
+		result.forEach(record -> {
+			String attributeValue = record.get(fieldName(VALUE), String.class);
+			String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
+			Integer counter = record.get(fieldName(SUM), Integer.class);
+
+			HealthCheckTableStatisticsContent content;
+			if (resultMap.containsKey(attributeValue)) {
+				content = resultMap.get(attributeValue);
+			} else {
+				content = new HealthCheckTableStatisticsContent();
+				resultMap.put(attributeValue, content);
+			}
+			content.getStatistics().put(statisticsField, counter);
+
+		});
+
+		resultMap.forEach((key, content) -> {
+			double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) / content.getStatistics()
+					.getOrDefault(EXECUTIONS_TOTAL, 1);
+			content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP).doubleValue());
+		});
+
+		return resultMap;
+	};
+
+	public static final Function<Result<? extends Record>, Map<String, List<String>>> COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER = result -> {
+
+		Map<String, List<String>> resultMap = Maps.newLinkedHashMapWithExpectedSize(result.size());
+
+		result.forEach(record -> resultMap.put(record.get(fieldName(VALUE), String.class),
+				ofNullable(record.get(fieldName(AGGREGATED_VALUES),
+						String[].class
+				)).map(values -> (List<String>) Lists.newArrayList(values)).orElseGet(Collections::emptyList)
+		));
+		return resultMap;
+	};
 
 }

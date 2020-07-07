@@ -273,12 +273,12 @@ public enum FilterTarget {
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY,
 					ITEM_ATTRIBUTE.KEY,
-					List.class,
+					String.class,
 					Lists.newArrayList(JoinEntity.of(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID)))
 			).withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)).toString()).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
 					ITEM_ATTRIBUTE.VALUE,
-					List.class,
+					String.class,
 					Lists.newArrayList(JoinEntity.of(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID)))
 			)
 					.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
