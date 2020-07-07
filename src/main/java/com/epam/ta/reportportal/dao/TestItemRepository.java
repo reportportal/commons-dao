@@ -196,6 +196,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			@Param("statuses") String... statuses);
 
 	/**
+	 * True if the launch has any items with issue.
+	 *
+	 * @param launchId parent item {@link TestItem#getItemId()}
+	 * @return True if contains, false if not
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_type WHERE ti.launch_id = :launchId)", nativeQuery = true)
+	boolean hasItemsWithIssueByLaunch(@Param("launchId") Long launchId);
+
+	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the
 	 * launch with provided launchId.
 	 * Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
