@@ -147,6 +147,16 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
+	/**
+	 * Execute sql-function that changes a structure of retries assigning {@link TestItem#getRetryOf()} value
+	 * of the previously inserted retries and previous retries' parent to the new inserted parent id
+	 *
+	 * @param itemId      Previous retries' parent {@link TestItem#getItemId()}
+	 * @param retryParent The new-inserted {@link TestItem#getItemId()}
+	 */
+	@Query(value = "SELECT handle_retry(:itemId, :retryParent)", nativeQuery = true)
+	void handleRetry(@Param("itemId") Long itemId, @Param("retryParent") Long retryParent);
+
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
