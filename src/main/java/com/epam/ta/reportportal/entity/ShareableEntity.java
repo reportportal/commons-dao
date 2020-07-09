@@ -26,7 +26,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "shareable_entity")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class ShareableEntity {
+public class ShareableEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

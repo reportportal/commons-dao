@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.ShareableEntity;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -32,6 +34,7 @@ public interface ShareableEntityRepository extends ReportPortalRepository<Sharea
 	 * @param shared    Shared or not
 	 * @return List of shareable entities
 	 */
-	List<ShareableEntity> findAllByProjectIdAndShared(Long projectId, boolean shared);
+	@Query(value = "SELECT s.id, s.project_id, s.owner, s.shared, 0 as clazz_ FROM shareable_entity s WHERE s.project_id = :projectId AND s.shared = :shared", nativeQuery = true)
+	List<ShareableEntity> findAllByProjectIdAndShared(@Param("projectId") Long projectId, @Param("shared") boolean shared);
 
 }
