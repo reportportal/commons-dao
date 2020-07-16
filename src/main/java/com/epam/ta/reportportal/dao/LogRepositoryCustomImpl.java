@@ -126,7 +126,14 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME, parentItemTable.ITEM_ID.as(LOG.ITEM_ID), LOG.LAUNCH_ID, LOG.LAST_MODIFIED)
+		return dsl.selectDistinct(LOG.ID,
+				LOG.LOG_LEVEL,
+				LOG.LOG_MESSAGE,
+				LOG.LOG_TIME,
+				parentItemTable.ITEM_ID.as(LOG.ITEM_ID),
+				LOG.LAUNCH_ID,
+				LOG.LAST_MODIFIED
+		)
 				.on(LOG.ID)
 				.from(LOG)
 				.join(childItemTable)
@@ -301,13 +308,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level) {
+	public List<String> findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(Long launchId, Long itemId, String path, Integer level) {
 		return dsl.select(LOG.LOG_MESSAGE)
 				.from(LOG)
 				.join(TEST_ITEM)
 				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
 				.where(LOG.LOG_LEVEL.ge(level)
-						.and(LOG.ITEM_ID.eq(itemId).or(TEST_ITEM.HAS_STATS.eq(false).and(TEST_ITEM.PARENT_ID.eq(itemId)))))
+						.and(TEST_ITEM.LAUNCH_ID.eq(launchId))
+						.and(TEST_ITEM.ITEM_ID.eq(itemId)
+								.or(TEST_ITEM.HAS_STATS.eq(false).and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
 				.fetch(LOG.LOG_MESSAGE);
 	}
 
