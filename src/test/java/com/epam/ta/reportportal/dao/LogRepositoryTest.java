@@ -17,14 +17,18 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.commons.querygen.CompositeFilterCondition;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Operator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_RETRY_PARENT_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +51,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Sql("/db/fill/item/items-fill.sql")
 class LogRepositoryTest extends BaseTest {
+
+	@Autowired
+	private TestItemRepository testItemRepository;
 
 	@Autowired
 	private LogRepository logRepository;
@@ -225,10 +233,48 @@ class LogRepositoryTest extends BaseTest {
 		assertEquals(10, logs.size());
 	}
 
+	@Test
+	void findAllWithAttachmentOfRetries() {
+
+		Filter logWithAttachmentsFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.EXISTS)
+						.withSearchCriteria(CRITERIA_LOG_BINARY_CONTENT)
+						.withValue("1")
+						.build())
+				.withCondition(new CompositeFilterCondition(Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_RETRY_PARENT_LAUNCH_ID, String.valueOf(1L)).build(),
+						FilterCondition.builder().eq(CRITERIA_ITEM_LAUNCH_ID, String.valueOf(1L)).withOperator(Operator.OR).build())))
+				.build();
+
+		Page<Log> logPage = logRepository.findByFilter(logWithAttachmentsFilter, PageRequest.of(0, 10));
+
+		List<Log> logs = logPage.getContent();
+		assertFalse(logs.isEmpty());
+
+		logs.forEach(log -> {
+			Attachment attachment = log.getAttachment();
+			assertNotNull(attachment);
+			assertNotNull(attachment.getId());
+			assertNotNull(attachment.getFileId());
+			assertNotNull(attachment.getContentType());
+			assertNotNull(attachment.getThumbnailId());
+		});
+
+		assertEquals(7, logs.size());
+	}
+
 	@Sql("/db/fill/item/items-with-nested-steps.sql")
 	@Test
 	void findLogMessagesByItemIdAndLogLevelNestedTest() {
-		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByItemIdAndLevelGte(132L, LogLevel.ERROR.toInt());
+
+		TestItem testItem = testItemRepository.findById(132L).get();
+
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(testItem.getLaunchId(),
+				testItem.getItemId(),
+				testItem.getPath(),
+				LogLevel.ERROR.toInt()
+		);
 		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
 		assertEquals(1, messagesByItemIdAndLevelGte.size());
 		assertEquals("java.lang.NullPointerException: Oops\n"
@@ -240,7 +286,14 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findLogMessagesByItemIdAndLoLevelGteTest() {
-		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByItemIdAndLevelGte(3L, LogLevel.WARN.toInt());
+
+		TestItem testItem = testItemRepository.findById(3L).get();
+
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(testItem.getLaunchId(),
+				testItem.getItemId(),
+				testItem.getPath(),
+				LogLevel.WARN.toInt()
+		);
 		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
 		assertEquals(7, messagesByItemIdAndLevelGte.size());
 		messagesByItemIdAndLevelGte.forEach(it -> assertEquals("log", it));
