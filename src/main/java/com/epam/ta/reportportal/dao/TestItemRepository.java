@@ -211,7 +211,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param launchId parent item {@link TestItem#getItemId()}
 	 * @return True if contains, false if not
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_type WHERE ti.launch_id = :launchId)", nativeQuery = true)
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_id WHERE ti.launch_id = :launchId)", nativeQuery = true)
 	boolean hasItemsWithIssueByLaunch(@Param("launchId") Long launchId);
 
 	/**
