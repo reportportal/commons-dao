@@ -81,6 +81,12 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void deleteByPeriodAndLaunchIdsTest() {
+		int removedLogsCount = logRepository.deleteByPeriodAndLaunchIds(Duration.ofDays(13).plusHours(20), Collections.singleton(3L));
+		assertEquals(1, removedLogsCount, "Incorrect count of deleted logs");
+	}
+
+	@Test
 	void hasLogsTest() {
 		assertTrue(logRepository.hasLogs(3L));
 		assertFalse(logRepository.hasLogs(100L));

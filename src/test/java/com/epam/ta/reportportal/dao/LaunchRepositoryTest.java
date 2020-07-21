@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.*;
-import com.epam.ta.reportportal.entity.enums.KeepLogsDelay;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -96,8 +95,8 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void findIdsByProjectIdModifiedBefore() {
-		List<Long> ids = launchRepository.findIdsByProjectIdModifiedBefore(1L,
-				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds())
 		);
 		assertEquals(12, ids.size());
 	}
@@ -111,9 +110,9 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void streamLaunchIdsWithStatusTest() {
 
-		Stream<Long> stream = launchRepository.streamIdsWithStatusModifiedBefore(1L,
+		Stream<Long> stream = launchRepository.streamIdsWithStatusAndStartTimeBefore(1L,
 				StatusEnum.IN_PROGRESS,
-				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds())
 		);
 
 		assertNotNull(stream);
@@ -125,8 +124,8 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void streamLaunchIdsTest() {
 
-		Stream<Long> stream = launchRepository.streamIdsModifiedBefore(1L,
-				LocalDateTime.now().minusSeconds(Duration.ofDays(KeepLogsDelay.TWO_WEEKS.getDays() - 1).getSeconds())
+		Stream<Long> stream = launchRepository.streamIdsByStartTimeBefore(1L,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds())
 		);
 
 		assertNotNull(stream);

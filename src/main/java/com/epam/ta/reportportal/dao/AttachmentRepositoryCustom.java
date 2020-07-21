@@ -37,5 +37,7 @@ public interface AttachmentRepositoryCustom {
 
 	int deleteAllByIds(Collection<Long> ids);
 
-	List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before);
+	List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds, LocalDateTime before);
+
+	List<Attachment> findByLaunchIdsAndLogTimeBefore(Collection<Long> launchIds, LocalDateTime before);
 }

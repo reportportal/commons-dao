@@ -91,7 +91,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 		return dsl.deleteFrom(ATTACHMENT).where(ATTACHMENT.ID.in(ids)).execute();
 	}
 
-	public List<Attachment> findByItemIdsModifiedBefore(Collection<Long> itemIds, LocalDateTime before) {
+	@Override
+	public List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds, LocalDateTime before) {
 		return dsl.select(ATTACHMENT.ID,
 				ATTACHMENT.THUMBNAIL_ID,
 				ATTACHMENT.FILE_ID,
@@ -107,7 +108,27 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				.join(TEST_ITEM)
 				.on(ATTACHMENT.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
 				.where(TEST_ITEM.ITEM_ID.in(itemIds))
-				.and(LOG.LAST_MODIFIED.lt(Timestamp.valueOf(before)))
+				.and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
+				.fetchInto(Attachment.class);
+	}
+
+	@Override
+	public List<Attachment> findByLaunchIdsAndLogTimeBefore(Collection<Long> launchIds, LocalDateTime before) {
+		return dsl.select(ATTACHMENT.ID,
+				ATTACHMENT.THUMBNAIL_ID,
+				ATTACHMENT.FILE_ID,
+				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.FILE_SIZE,
+				ATTACHMENT.ITEM_ID,
+				ATTACHMENT.LAUNCH_ID,
+				ATTACHMENT.PROJECT_ID
+		)
+				.from(ATTACHMENT)
+				.join(LOG)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.where(LOG.LAUNCH_ID.in(launchIds))
+				.and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Attachment.class);
 	}

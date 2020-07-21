@@ -147,6 +147,16 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
+	/**
+	 * Execute sql-function that changes a structure of retries assigning {@link TestItem#getRetryOf()} value
+	 * of the previously inserted retries and previous retries' parent to the new inserted parent id
+	 *
+	 * @param itemId      Previous retries' parent {@link TestItem#getItemId()}
+	 * @param retryParent The new-inserted {@link TestItem#getItemId()}
+	 */
+	@Query(value = "SELECT handle_retry(:itemId, :retryParent)", nativeQuery = true)
+	void handleRetry(@Param("itemId") Long itemId, @Param("retryParent") Long retryParent);
+
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
@@ -194,6 +204,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			+ " WHERE ti.path <@ cast(:parentPath AS LTREE) AND ti.item_id != :parentId AND cast(tir.status AS VARCHAR) IN (:statuses))", nativeQuery = true)
 	boolean hasItemsInStatusByParent(@Param("parentId") Long parentId, @Param("parentPath") String parentPath,
 			@Param("statuses") String... statuses);
+
+	/**
+	 * True if the launch has any items with issue.
+	 *
+	 * @param launchId parent item {@link TestItem#getItemId()}
+	 * @return True if contains, false if not
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_id WHERE ti.launch_id = :launchId)", nativeQuery = true)
+	boolean hasItemsWithIssueByLaunch(@Param("launchId") Long launchId);
 
 	/**
 	 * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the

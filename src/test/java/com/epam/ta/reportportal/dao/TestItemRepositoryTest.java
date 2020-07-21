@@ -30,6 +30,8 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -275,7 +277,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final StatusEnum failedStatus = StatusEnum.FAILED;
 		final List<TestItem> items = testItemRepository.selectItemsInStatusByParent(parentId, failedStatus);
 		assertNotNull(items, "Items should not be null");
-		assertTrue(!items.isEmpty(), "Items should not be empty");
+		assertFalse(items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
 			assertEquals(parentId, it.getParent().getItemId(), "Incorrect parent id");
 			assertEquals(failedStatus, it.getItemResults().getStatus(), "Incorrect launch status");
@@ -285,6 +287,11 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void hasItemsInStatusByLaunch() {
 		assertTrue(testItemRepository.hasItemsInStatusByLaunch(1L, StatusEnum.FAILED));
+	}
+
+	@Test
+	void hasItemsWithIssueByLaunch() {
+		assertTrue(testItemRepository.hasItemsWithIssueByLaunch(1L));
 	}
 
 	@Test
@@ -602,6 +609,16 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items);
 		assertEquals(1L, items.size());
 
+	}
+
+	@Test
+	void accumulateStatisticsByFilter() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+		final Set<Statistics> statistics = testItemRepository.accumulateStatisticsByFilter(itemFilter);
+		assertNotNull(statistics);
 	}
 
 	@Test

@@ -119,6 +119,13 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds);
 
 	/**
+	 * @param period    {@link Duration}
+	 * @param launchIds Collection of the {@link Launch#getId()} referenced from {@link Log#getLaunch()}
+	 * @return Count of removed logs
+	 */
+	int deleteByPeriodAndLaunchIds(Duration period, Collection<Long> launchIds);
+
+	/**
 	 * Retrieve {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities' ids, differentiated by entity type
 	 * <p>
 	 * {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities filtered and sorted on the DB level

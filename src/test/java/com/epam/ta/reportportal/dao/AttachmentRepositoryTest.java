@@ -88,7 +88,7 @@ class AttachmentRepositoryTest extends BaseTest {
 		Duration duration = Duration.ofDays(6).plusHours(23);
 		final Long itemId = 3L;
 
-		List<Attachment> attachments = attachmentRepository.findByItemIdsModifiedBefore(Collections.singletonList(itemId),
+		List<Attachment> attachments = attachmentRepository.findByItemIdsAndLogTimeBefore(Collections.singletonList(itemId),
 				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
 		);
 
@@ -96,6 +96,33 @@ class AttachmentRepositoryTest extends BaseTest {
 		assertEquals(3, attachments.size(), "Incorrect count of attachments");
 		attachments.stream().map(it -> null != it.getFileId() || null != it.getThumbnailId()).forEach(Assertions::assertTrue);
 		attachments.stream().map(Attachment::getFileSize).forEach(size -> assertEquals(1024, size));
+	}
+
+	@Test
+	void findByLaunchIdsAndPeriodTest() {
+		Duration duration = Duration.ofDays(6).plusHours(23);
+		final Long launchId = 3L;
+
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(Collections.singletonList(launchId),
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+		);
+
+		assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
+		assertEquals(1, attachments.size(), "Incorrect count of attachments");
+		attachments.stream().map(it -> null != it.getFileId() || null != it.getThumbnailId()).forEach(Assertions::assertTrue);
+		attachments.stream().map(Attachment::getFileSize).forEach(size -> assertEquals(1024, size));
+	}
+
+	@Test
+	void shouldNotFindByLaunchIdsWhenLessThenPeriod() {
+		Duration duration = Duration.ofDays(14).plusHours(23);
+		final Long launchId = 3L;
+
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(Collections.singletonList(launchId),
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+		);
+
+		assertTrue(CollectionUtils.isEmpty(attachments), "Attachments should be empty");
 	}
 
 	@Test
