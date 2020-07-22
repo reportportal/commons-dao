@@ -32,7 +32,6 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Comparators;
@@ -423,6 +422,8 @@ class TestItemRepositoryTest extends BaseTest {
 		retries.forEach(retry -> {
 			assertNotNull(retry.getRetryOf());
 			assertEquals(item.getItemId(), retry.getRetryOf());
+			assertFalse(retry.getParameters().isEmpty());
+			assertEquals(3, retry.getParameters().size());
 		});
 	}
 

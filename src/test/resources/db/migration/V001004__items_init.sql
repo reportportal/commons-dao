@@ -219,6 +219,10 @@ BEGIN
 
             INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (cur_step_id, 'IN_PROGRESS', 0.35, now());
 
+            INSERT INTO parameter (item_id, key, value) VALUES (cur_step_id, 'first key', 'first value');
+            INSERT INTO parameter (item_id, key, value) VALUES (cur_step_id, 'second key', 'second value');
+            INSERT INTO parameter (item_id, key, value) VALUES (cur_step_id, 'third key', 'third value');
+
             functionresult := (SELECT handle_retries(cur_step_id));
 
             retriescounter = retriescounter + 1;
@@ -279,7 +283,8 @@ BEGIN
             VALUES ('attach_log ' || launchcounter, 'attachThumb_log ' || launchcounter, 'MIME', 1, 1024, launchcounter, null);
 
             INSERT INTO log (uuid, log_time, log_message, launch_id, last_modified, log_level, attachment_id)
-            VALUES ('lluuid' || launchcounter, now() - make_interval(days := 14), 'log', launchcounter, now() - make_interval(days := 14), 40000,
+            VALUES ('lluuid' || launchcounter, now() - make_interval(days := 14), 'log', launchcounter, now() - make_interval(days := 14),
+                    40000,
                     (SELECT currval(pg_get_serial_sequence('attachment', 'id'))));
             launchcounter = launchcounter + 1;
         END LOOP;

@@ -51,7 +51,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
@@ -62,8 +61,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.PATH_NAMES_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -110,12 +108,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.groupBy(STATISTICS_FIELD.NAME)
 				.getQuery()).intoSet(r -> {
-					Statistics statistics = new Statistics();
-					StatisticsField statisticsField = new StatisticsField();
-					statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
-					statistics.setStatisticsField(statisticsField);
-					statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
-					return statistics;
+			Statistics statistics = new Statistics();
+			StatisticsField statisticsField = new StatisticsField();
+			statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
+			statistics.setStatisticsField(statisticsField);
+			statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
+			return statistics;
 		});
 	}
 
@@ -522,14 +520,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> selectRetries(List<Long> retryOfIds) {
-		return dsl.select()
+		return TEST_ITEM_RETRY_FETCHER.apply(dsl.select()
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.leftJoin(PARAMETER)
+				.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
 				.where(TEST_ITEM.RETRY_OF.in(retryOfIds))
 				.and(TEST_ITEM.LAUNCH_ID.isNull())
 				.orderBy(TEST_ITEM.START_TIME)
-				.fetch(TEST_ITEM_RECORD_MAPPER);
+				.fetch());
 	}
 
 	@Override
