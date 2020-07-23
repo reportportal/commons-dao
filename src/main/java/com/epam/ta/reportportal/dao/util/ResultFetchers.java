@@ -141,6 +141,20 @@ public class ResultFetchers {
 		return new ArrayList<>(testItems.values());
 	};
 
+	/**
+	 * Fetches records from db results into list of {@link TestItem} objects.
+	 */
+	public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_RETRY_FETCHER = records -> {
+		Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
+		records.forEach(record -> {
+			Long id = record.get(TEST_ITEM.ITEM_ID);
+			TestItem testItem = testItems.computeIfAbsent(id, key -> RecordMappers.TEST_ITEM_RECORD_MAPPER.map(record));
+			ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(it -> testItem.getParameters().add(record.into(Parameter.class)));
+			testItems.put(id, testItem);
+		});
+		return new ArrayList<>(testItems.values());
+	};
+
 	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
 		Map<Long, PathName> content = Maps.newHashMap();
 		JTestItem parentItem = TEST_ITEM.as("parent");
