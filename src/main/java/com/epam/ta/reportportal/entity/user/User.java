@@ -75,7 +75,8 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private UserType userType;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
+			CascadeType.DETACH })
 	private Set<ProjectUser> projects = Sets.newHashSet();
 
 	public User() {
@@ -188,10 +189,10 @@ public class User implements Serializable {
 		User user = (User) o;
 		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
 				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(
-				fullName, user.fullName) && Objects.equals(metadata, user.metadata) && Objects.equals(attachment, user.attachment)
-				&& Objects.equals(
-				attachmentThumbnail, user.attachmentThumbnail) && userType == user.userType;
+		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(fullName, user.fullName) && Objects.equals(metadata,
+				user.metadata
+		) && Objects.equals(attachment, user.attachment) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail)
+				&& userType == user.userType;
 	}
 
 	@Override
