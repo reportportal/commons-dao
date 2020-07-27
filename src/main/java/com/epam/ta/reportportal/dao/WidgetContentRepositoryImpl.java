@@ -126,69 +126,81 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
-		Sort launchSort = Sort.by(Sort.Direction.DESC, CRITERIA_START_TIME);
-		return dsl.with(HISTORY)
-				.as(dsl.with(LAUNCHES)
-						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, launchSort)).with(limit).with(launchSort).build())
-						.select(TEST_ITEM.UNIQUE_ID,
-								TEST_ITEM.NAME,
-								DSL.arrayAgg(when(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class).ge(1),
-										true
-								).otherwise(false)).orderBy(LAUNCH.NUMBER.asc()).as(STATUS_HISTORY),
-								DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
-								DSL.sum(fieldName(CRITERIA_TABLE, CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
-								DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
-						)
-						.from(LAUNCH)
-						.join(LAUNCHES)
-						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-						.join(TEST_ITEM)
-						.on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
-						.join(getTopItemsCriteriaTable(criteria))
-						.on(TEST_ITEM.ITEM_ID.eq(fieldName(CRITERIA_TABLE, ITEM_ID).cast(Long.class)))
-						.where(itemTypeStepCondition(includeMethods))
-						.and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
-						.and(TEST_ITEM.HAS_CHILDREN.eq(false))
-						.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME))
-				.select()
-				.from(DSL.table(DSL.name(HISTORY)))
-				.where(DSL.field(DSL.name(CRITERIA)).greaterThan(ZERO_QUERY_VALUE))
+
+		Table<Record2<Long, BigDecimal>> criteriaTable = getTopItemsCriteriaTable(filter, criteria, limit, includeMethods);
+
+		return dsl.select(TEST_ITEM.UNIQUE_ID,
+				TEST_ITEM.NAME,
+				DSL.arrayAgg(when(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1), true).otherwise(false))
+						.orderBy(LAUNCH.NUMBER.asc())
+						.as(STATUS_HISTORY),
+				DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
+				DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
+				DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
+		)
+				.from(TEST_ITEM)
+				.join(criteriaTable)
+				.on(TEST_ITEM.ITEM_ID.eq(fieldName(criteriaTable.getName(), ITEM_ID).cast(Long.class)))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
+				.having(DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).greaterThan(BigDecimal.ZERO))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(MOST_FAILED_CRITERIA_LIMIT)
 				.fetchInto(CriteriaHistoryItem.class);
 	}
 
-	private Table<Record2<Long, BigDecimal>> getTopItemsCriteriaTable(String criteria) {
-		String[] searchStrings = { StatusEnum.FAILED.getExecutionCounterField(), StatusEnum.SKIPPED.getExecutionCounterField() };
-		if (StringUtils.endsWithAny(criteria, searchStrings)) {
+	private Table<Record2<Long, BigDecimal>> getTopItemsCriteriaTable(Filter filter, String criteria, int limit, boolean includeMethods) {
+		Sort launchSort = Sort.by(Sort.Direction.DESC, CRITERIA_START_TIME);
+		Table<? extends Record> launchesTable = QueryBuilder.newBuilder(filter, collectJoinFields(filter, launchSort))
+				.with(limit)
+				.with(launchSort)
+				.build()
+				.asTable(LAUNCHES);
+
+		return getCommonMostFailedQuery(criteria, launchesTable).where(itemTypeStepCondition(includeMethods))
+				.and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
+				.and(TEST_ITEM.HAS_CHILDREN.eq(false))
+				.groupBy(TEST_ITEM.ITEM_ID)
+				.asTable(CRITERIA_TABLE);
+	}
+
+	private SelectOnConditionStep<Record2<Long, BigDecimal>> getCommonMostFailedQuery(String criteria,
+			Table<? extends Record> launchesTable) {
+		if (StringUtils.endsWithAny(criteria,
+				StatusEnum.FAILED.getExecutionCounterField(),
+				StatusEnum.SKIPPED.getExecutionCounterField()
+		)) {
 			StatusEnum status = StatusEnum.fromValue(StringUtils.substringAfterLast(criteria, STATISTICS_SEPARATOR))
 					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR));
-			return statusCriteriaTable(JStatusEnum.valueOf(status.name()));
+			return statusCriteriaTable(JStatusEnum.valueOf(status.name()), launchesTable);
 		} else {
-			return statisticsCriteriaTable(criteria);
+			return statisticsCriteriaTable(criteria, launchesTable);
 		}
 	}
 
-	private Table<Record2<Long, BigDecimal>> statisticsCriteriaTable(String criteria) {
-		return dsl.select(STATISTICS.ITEM_ID,
-				sum(when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG)
-		)
-				.from(STATISTICS)
+	private SelectOnConditionStep<Record2<Long, BigDecimal>> statisticsCriteriaTable(String criteria,
+			Table<? extends Record> launchesTable) {
+		return dsl.select(TEST_ITEM.ITEM_ID, sum(when(STATISTICS_FIELD.NAME.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG))
+				.from(TEST_ITEM)
+				.join(launchesTable)
+				.on(TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class)))
+				.join(STATISTICS)
+				.on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
 				.join(STATISTICS_FIELD)
-				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				.where(STATISTICS.ITEM_ID.isNotNull())
-				.groupBy(STATISTICS.ITEM_ID)
-				.asTable(CRITERIA_TABLE);
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
 	}
 
-	private Table<Record2<Long, BigDecimal>> statusCriteriaTable(JStatusEnum criteria) {
-		return dsl.select(TEST_ITEM_RESULTS.RESULT_ID.as(ITEM_ID),
+	private SelectOnConditionStep<Record2<Long, BigDecimal>> statusCriteriaTable(JStatusEnum criteria,
+			Table<? extends Record> launchesTable) {
+		return dsl.select(TEST_ITEM.ITEM_ID,
 				sum(when(TEST_ITEM_RESULTS.STATUS.eq(criteria), 1).otherwise(ZERO_QUERY_VALUE)).as(CRITERIA_FLAG)
 		)
-				.from(TEST_ITEM_RESULTS)
-				.where(TEST_ITEM_RESULTS.RESULT_ID.isNotNull())
-				.groupBy(TEST_ITEM_RESULTS.RESULT_ID)
-				.asTable(CRITERIA_TABLE);
+				.from(TEST_ITEM)
+				.join(launchesTable)
+				.on(TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class)))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID));
 	}
 
 	@Override
