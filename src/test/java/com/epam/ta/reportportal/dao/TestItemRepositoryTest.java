@@ -31,7 +31,9 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -188,6 +190,12 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void hasStatusNotEqualsWithoutStepItem() {
 		assertTrue(testItemRepository.hasDescendantsNotInStatusExcludingById(1L, 4L, StatusEnum.IN_PROGRESS.name()));
+	}
+
+	@Test
+	void findByPath() {
+		TestItem testItem = testItemRepository.findById(1L).orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, 1L));
+		assertTrue(testItemRepository.findByPath(testItem.getPath()).isPresent());
 	}
 
 	@Test
@@ -414,6 +422,8 @@ class TestItemRepositoryTest extends BaseTest {
 		retries.forEach(retry -> {
 			assertNotNull(retry.getRetryOf());
 			assertEquals(item.getItemId(), retry.getRetryOf());
+			assertFalse(retry.getParameters().isEmpty());
+			assertEquals(3, retry.getParameters().size());
 		});
 	}
 

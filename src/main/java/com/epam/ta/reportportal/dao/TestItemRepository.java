@@ -147,6 +147,16 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
+	/**
+	 * Execute sql-function that changes a structure of retries assigning {@link TestItem#getRetryOf()} value
+	 * of the previously inserted retries and previous retries' parent to the new inserted parent id
+	 *
+	 * @param itemId      Previous retries' parent {@link TestItem#getItemId()}
+	 * @param retryParent The new-inserted {@link TestItem#getItemId()}
+	 */
+	@Query(value = "SELECT handle_retry(:itemId, :retryParent)", nativeQuery = true)
+	void handleRetry(@Param("itemId") Long itemId, @Param("retryParent") Long retryParent);
+
 	@Query(value = "DELETE FROM test_item WHERE test_item.item_id = :itemId", nativeQuery = true)
 	void deleteTestItem(@Param(value = "itemId") Long itemId);
 
@@ -201,7 +211,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param launchId parent item {@link TestItem#getItemId()}
 	 * @return True if contains, false if not
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_type WHERE ti.launch_id = :launchId)", nativeQuery = true)
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_id WHERE ti.launch_id = :launchId)", nativeQuery = true)
 	boolean hasItemsWithIssueByLaunch(@Param("launchId") Long launchId);
 
 	/**
@@ -231,6 +241,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			+ " AND CAST(result.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
 	boolean hasDescendantsNotInStatusExcludingById(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
 			@Param("statuses") String... statuses);
+
+	/**
+	 * Finds {@link TestItem} with specified {@code path}
+	 *
+	 * @param path     Path of {@link TestItem}
+	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
+	 */
+	@Query(value = "SELECT * FROM test_item t WHERE t.path = cast(:path AS LTREE)", nativeQuery = true)
+	Optional<TestItem> findByPath(@Param("path") String path);
 
 	/**
 	 * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
