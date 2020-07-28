@@ -141,7 +141,6 @@ public class WidgetContentUtil {
 		result.forEach(record -> {
 			LaunchesTableContent content;
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
-
 				content = resultMap.get(record.get(LAUNCH.ID));
 			} else {
 				content = new LaunchesTableContent();
@@ -150,18 +149,6 @@ public class WidgetContentUtil {
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
 				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
-				itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
-					Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
-
-					ItemAttributeResource attributeResource = new ItemAttributeResource();
-					attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
-					attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
-
-					attributes.add(attributeResource);
-
-					content.setAttributes(attributes);
-				});
-
 			}
 
 			statisticsField.flatMap(sf -> ofNullable(record.get(sf, String.class)))
@@ -176,6 +163,18 @@ public class WidgetContentUtil {
 				} else {
 					content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf))));
 				}
+			});
+
+			itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
+				Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
+
+				ItemAttributeResource attributeResource = new ItemAttributeResource();
+				attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
+				attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
+
+				attributes.add(attributeResource);
+
+				content.setAttributes(attributes);
 			});
 		});
 
