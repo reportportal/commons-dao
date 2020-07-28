@@ -67,4 +67,12 @@ VALUES (16, 5, false, 'superadmin', now(), '{
 insert into integration(id, type, enabled, creator, creation_date, name)
 values (17, 2, true, 'superadmin', now(), 'n11');
 
-alter sequence integration_id_seq restart with 18;
+INSERT INTO integration (id, name, type, enabled, creator, creation_date, params) --integration id = 18 (global JIRA)
+VALUES (18, 'jira clone', 6, false, 'superadmin', now(), '{
+  "params": {
+    "url" : "bts.com",
+    "project" : "bts_project"
+  }
+}');
+
+alter sequence integration_id_seq restart with 19;
