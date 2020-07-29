@@ -77,7 +77,7 @@ public class LocalDataStore implements DataStore {
 
 			logger.error("Unable to find file '{}'", filePath, e);
 
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to find file");
+			throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
 		}
 	}
 
