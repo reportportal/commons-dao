@@ -59,7 +59,7 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 		attachmentDataStoreService.delete(fileId);
 
 		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> attachmentDataStoreService.load(fileId));
-		assertEquals("Incorrect Request. Unable to find file", exception.getMessage());
+		assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
 		assertFalse(Files.exists(Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(fileId))));
 	}
 
@@ -77,7 +77,7 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 		attachmentDataStoreService.delete(thumbnailId);
 
 		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> attachmentDataStoreService.load(thumbnailId));
-		assertEquals("Incorrect Request. Unable to find file", exception.getMessage());
+		assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
 		assertFalse(Files.exists(Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(thumbnailId))));
 	}
 }
