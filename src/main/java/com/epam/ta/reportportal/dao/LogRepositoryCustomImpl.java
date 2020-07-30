@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,12 +123,14 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	 */
 	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
-		return buildLogsUnderItemsQuery(launchId, itemIds).and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)).fetch().map(LOG_RECORD_MAPPER);
+		return buildLogsUnderItemsQuery(launchId, itemIds, false).and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch()
+				.map(LOG_RECORD_MAPPER);
 	}
 
 	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds, int limit) {
-		return buildLogsUnderItemsQuery(launchId, itemIds).limit(limit).fetch().map(LOG_RECORD_MAPPER);
+		return buildLogsUnderItemsQuery(launchId, itemIds, true).limit(limit).fetch().map(r -> LOG_MAPPER.apply(r, ATTACHMENT_MAPPER));
 
 	}
 
@@ -303,26 +306,37 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.fetch(LOG.LOG_MESSAGE);
 	}
 
-	private SelectConditionStep<? extends Record> buildLogsUnderItemsQuery(Long launchId, List<Long> itemIds) {
+	private SelectConditionStep<? extends Record> buildLogsUnderItemsQuery(Long launchId, List<Long> itemIds, boolean includeAttachments) {
 
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return dsl.selectDistinct(LOG.ID,
+		List<Field<?>> selectFields = Lists.newArrayList(LOG.ID,
 				LOG.LOG_LEVEL,
 				LOG.LOG_MESSAGE,
 				LOG.LOG_TIME,
 				parentItemTable.ITEM_ID.as(LOG.ITEM_ID),
 				LOG.LAUNCH_ID,
 				LOG.LAST_MODIFIED
-		)
+		);
+
+		if (includeAttachments) {
+			Collections.addAll(selectFields, ATTACHMENT.fields());
+		}
+
+		SelectOnConditionStep<Record> logsSelect = dsl.selectDistinct(selectFields)
 				.on(LOG.ID)
 				.from(LOG)
 				.join(childItemTable)
 				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
 				.join(parentItemTable)
-				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
-				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH));
+
+		if (includeAttachments) {
+			logsSelect = logsSelect.leftJoin(ATTACHMENT).on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
+		}
+
+		return logsSelect.where(childItemTable.LAUNCH_ID.eq(launchId))
 				.and(parentItemTable.LAUNCH_ID.eq(launchId))
 				.and(parentItemTable.ITEM_ID.in(itemIds));
 	}

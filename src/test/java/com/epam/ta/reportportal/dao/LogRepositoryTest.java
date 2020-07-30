@@ -190,6 +190,7 @@ class LogRepositoryTest extends BaseTest {
 		assertEquals(4, logs.size());
 		logs.forEach(log -> {
 			Long itemId = log.getTestItem().getItemId();
+			assertNotNull(log.getAttachment());
 			assertTrue(itemIds.contains(itemId), "Incorrect item id");
 		});
 	}
