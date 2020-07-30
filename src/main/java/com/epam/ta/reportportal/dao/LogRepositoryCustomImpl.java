@@ -122,30 +122,13 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	 */
 	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
+		return buildLogsUnderItemsQuery(launchId, itemIds).and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)).fetch().map(LOG_RECORD_MAPPER);
+	}
 
-		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
-		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+	@Override
+	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds, int limit) {
+		return buildLogsUnderItemsQuery(launchId, itemIds).limit(limit).fetch().map(LOG_RECORD_MAPPER);
 
-		return dsl.selectDistinct(LOG.ID,
-				LOG.LOG_LEVEL,
-				LOG.LOG_MESSAGE,
-				LOG.LOG_TIME,
-				parentItemTable.ITEM_ID.as(LOG.ITEM_ID),
-				LOG.LAUNCH_ID,
-				LOG.LAST_MODIFIED
-		)
-				.on(LOG.ID)
-				.from(LOG)
-				.join(childItemTable)
-				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
-				.join(parentItemTable)
-				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
-				.where(childItemTable.LAUNCH_ID.eq(launchId))
-				.and(parentItemTable.LAUNCH_ID.eq(launchId))
-				.and(parentItemTable.ITEM_ID.in(itemIds))
-				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-				.fetch()
-				.map(LOG_RECORD_MAPPER);
 	}
 
 	@Override
@@ -318,6 +301,30 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 						.and(TEST_ITEM.ITEM_ID.eq(itemId)
 								.or(TEST_ITEM.HAS_STATS.eq(false).and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
 				.fetch(LOG.LOG_MESSAGE);
+	}
+
+	private SelectConditionStep<? extends Record> buildLogsUnderItemsQuery(Long launchId, List<Long> itemIds) {
+
+		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(LOG.ID,
+				LOG.LOG_LEVEL,
+				LOG.LOG_MESSAGE,
+				LOG.LOG_TIME,
+				parentItemTable.ITEM_ID.as(LOG.ITEM_ID),
+				LOG.LAUNCH_ID,
+				LOG.LAST_MODIFIED
+		)
+				.on(LOG.ID)
+				.from(LOG)
+				.join(childItemTable)
+				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
+				.join(parentItemTable)
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.ITEM_ID.in(itemIds));
 	}
 
 	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,

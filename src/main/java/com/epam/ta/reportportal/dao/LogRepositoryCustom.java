@@ -72,6 +72,14 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel);
 
+	/**
+	 * @param launchId {@link} ID of the {@link Launch} to search {@link Log} under
+	 * @param itemIds  {@link List} of the {@link Log#getTestItem()} IDs
+	 * @param limit    Max count of {@link Log} to be loaded
+	 * @return {@link List} of {@link Log}
+	 */
+	List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds, int limit);
+
 	List<Long> findIdsByFilter(Queryable filter);
 
 	List<Long> findIdsByTestItemId(Long testItemId);
