@@ -175,6 +175,7 @@ class LogRepositoryTest extends BaseTest {
 		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
 		logs.forEach(log -> {
 			Long itemId = log.getTestItem().getItemId();
+			assertNotNull(itemId);
 			assertTrue(itemIds.contains(itemId), "Incorrect item id");
 			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
 		});
@@ -190,6 +191,7 @@ class LogRepositoryTest extends BaseTest {
 		assertEquals(4, logs.size());
 		logs.forEach(log -> {
 			Long itemId = log.getTestItem().getItemId();
+			assertNotNull(itemId);
 			assertNotNull(log.getAttachment());
 			assertTrue(itemIds.contains(itemId), "Incorrect item id");
 		});

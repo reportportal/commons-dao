@@ -74,8 +74,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
-import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
+import static com.epam.ta.reportportal.dao.LogRepositoryCustomImpl.ROOT_ITEM_ID;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -184,20 +184,37 @@ public class RecordMappers {
 		return attachment;
 	}).orElse(null);
 
-	public static final RecordMapper<? super Record, Log> LOG_RECORD_MAPPER = result -> {
+	private static final RecordMapper<? super Record, Log> COMMON_LOG_RECORD_MAPPER = result -> {
 		Log log = new Log();
 		log.setId(result.get(LOG.ID, Long.class));
 		log.setLogTime(result.get(LOG.LOG_TIME, LocalDateTime.class));
 		log.setLogMessage(result.get(LOG.LOG_MESSAGE, String.class));
 		log.setLastModified(result.get(LOG.LAST_MODIFIED, LocalDateTime.class));
 		log.setLogLevel(result.get(JLog.LOG.LOG_LEVEL, Integer.class));
-		ofNullable(result.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
 		ofNullable(result.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
+		return log;
+	};
+
+	public static final RecordMapper<? super Record, Log> LOG_RECORD_MAPPER = result -> {
+		Log log = COMMON_LOG_RECORD_MAPPER.map(result);
+		ofNullable(result.get(LOG.ITEM_ID)).map(TestItem::new).ifPresent(log::setTestItem);
+		return log;
+	};
+
+	public static final RecordMapper<? super Record, Log> LOG_UNDER_RECORD_MAPPER = result -> {
+		Log log = COMMON_LOG_RECORD_MAPPER.map(result);
+		ofNullable(result.get(ROOT_ITEM_ID, Long.class)).map(TestItem::new).ifPresent(log::setTestItem);
 		return log;
 	};
 
 	public static final BiFunction<? super Record, RecordMapper<? super Record, Attachment>, Log> LOG_MAPPER = (result, attachmentMapper) -> {
 		Log log = LOG_RECORD_MAPPER.map(result);
+		log.setAttachment(attachmentMapper.map(result));
+		return log;
+	};
+
+	public static final BiFunction<? super Record, RecordMapper<? super Record, Attachment>, Log> LOG_UNDER_MAPPER = (result, attachmentMapper) -> {
+		Log log = LOG_UNDER_RECORD_MAPPER.map(result);
 		log.setAttachment(attachmentMapper.map(result));
 		return log;
 	};

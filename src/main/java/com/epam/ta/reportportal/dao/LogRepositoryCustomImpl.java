@@ -70,6 +70,8 @@ import static org.jooq.impl.DSL.field;
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
+	public static final String ROOT_ITEM_ID = "root_id";
+
 	private static final String PARENT_ITEM_TABLE = "parent";
 	private static final String CHILD_ITEM_TABLE = "child";
 
@@ -125,12 +127,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
 		return buildLogsUnderItemsQuery(launchId, itemIds, false).and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch()
-				.map(LOG_RECORD_MAPPER);
+				.map(LOG_UNDER_RECORD_MAPPER);
 	}
 
 	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds, int limit) {
-		return buildLogsUnderItemsQuery(launchId, itemIds, true).limit(limit).fetch().map(r -> LOG_MAPPER.apply(r, ATTACHMENT_MAPPER));
+		return buildLogsUnderItemsQuery(launchId, itemIds, true).limit(limit).fetch().map(r -> LOG_UNDER_MAPPER.apply(r, ATTACHMENT_MAPPER));
 
 	}
 
@@ -315,7 +317,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				LOG.LOG_LEVEL,
 				LOG.LOG_MESSAGE,
 				LOG.LOG_TIME,
-				parentItemTable.ITEM_ID.as(LOG.ITEM_ID),
+				parentItemTable.ITEM_ID.as(ROOT_ITEM_ID),
 				LOG.LAUNCH_ID,
 				LOG.LAST_MODIFIED
 		);
