@@ -175,8 +175,25 @@ class LogRepositoryTest extends BaseTest {
 		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
 		logs.forEach(log -> {
 			Long itemId = log.getTestItem().getItemId();
+			assertNotNull(itemId);
 			assertTrue(itemIds.contains(itemId), "Incorrect item id");
 			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
+		});
+	}
+
+	@Test
+	void findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit() {
+
+		List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+		List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(1L, itemIds, 4);
+
+		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
+		assertEquals(4, logs.size());
+		logs.forEach(log -> {
+			Long itemId = log.getTestItem().getItemId();
+			assertNotNull(itemId);
+			assertNotNull(log.getAttachment());
+			assertTrue(itemIds.contains(itemId), "Incorrect item id");
 		});
 	}
 
@@ -243,8 +260,11 @@ class LogRepositoryTest extends BaseTest {
 						.withSearchCriteria(CRITERIA_LOG_BINARY_CONTENT)
 						.withValue("1")
 						.build())
-				.withCondition(new CompositeFilterCondition(Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_RETRY_PARENT_LAUNCH_ID, String.valueOf(1L)).build(),
-						FilterCondition.builder().eq(CRITERIA_ITEM_LAUNCH_ID, String.valueOf(1L)).withOperator(Operator.OR).build())))
+				.withCondition(new CompositeFilterCondition(Lists.newArrayList(FilterCondition.builder()
+								.eq(CRITERIA_RETRY_PARENT_LAUNCH_ID, String.valueOf(1L))
+								.build(),
+						FilterCondition.builder().eq(CRITERIA_ITEM_LAUNCH_ID, String.valueOf(1L)).withOperator(Operator.OR).build()
+				)))
 				.build();
 
 		Page<Log> logPage = logRepository.findByFilter(logWithAttachmentsFilter, PageRequest.of(0, 10));
