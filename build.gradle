@@ -54,10 +54,8 @@ dependencies {
     }
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    //https://nvd.nist.gov/vuln/detail/CVE-2020-10683
-    compile ('org.dom4j:dom4j:2.1.3') {
-        exclude group: 'pull-parser', module: 'pull-parser'
-    }
+    //https://nvd.nist.gov/vuln/detail/CVE-2020-10683 (dom4j 2.1.3 version dependency)
+    compile ('org.hibernate:hibernate-core:5.4.14.Final')
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-13692
     compile 'org.postgresql:postgresql:42.2.13'
