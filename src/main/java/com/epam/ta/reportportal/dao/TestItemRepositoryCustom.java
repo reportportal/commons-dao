@@ -281,7 +281,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param path itemPath
 	 * @return Map of id and name
 	 */
-	Map<Long, String> selectPathNames(String path);
+	Map<Long, String> selectPathNames(Long launchId, String path);
 
 	/**
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number

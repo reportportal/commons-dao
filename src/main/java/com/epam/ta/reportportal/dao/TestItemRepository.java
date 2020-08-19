@@ -20,6 +20,8 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,9 +43,8 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launchId = :launchId")
-	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
+	@Query(value = "SELECT ti.itemId FROM TestItem ti WHERE ti.launchId = :launchId")
+	Page<Long> findTestItemIdsByLaunchId(@Param("launchId") Long launchId, Pageable pageable);
 
 	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
 	Optional<TestItem> findParentByChildId(@Param("childId") Long childId);

@@ -32,7 +32,6 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Comparators;
@@ -52,7 +51,6 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
@@ -90,15 +88,18 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void streamItemIdsTest() {
-		Stream<Long> stream = testItemRepository.streamTestItemIdsByLaunchId(1L);
+	void findTestItemIdsByLaunchId() {
 
-		assertNotNull(stream);
+		Page<Long> testItemIdsByLaunchId = testItemRepository.findTestItemIdsByLaunchId(1L,
+				PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "itemId"))
+		);
 
-		List<Long> ids = stream.collect(toList());
+		List<Long> ids = testItemIdsByLaunchId.getContent();
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
 		assertEquals(6, ids.size(), "Incorrect ids size");
+		assertEquals(5, ids.get(1));
+		assertEquals(1, ids.get(5));
 	}
 
 	@Test
@@ -114,7 +115,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectPathNames() {
-		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
+		Map<Long, String> results = testItemRepository.selectPathNames(1L, "1.2.3");
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
 	}

@@ -51,7 +51,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
@@ -560,10 +559,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, String> selectPathNames(String path) {
+	public Map<Long, String> selectPathNames(Long launchId, String path) {
 		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.NAME)
 				.from(TEST_ITEM)
-				.where(DSL.sql(TEST_ITEM.PATH + " @> cast(? AS LTREE)", path))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(DSL.sql(TEST_ITEM.PATH + " @> cast(? AS LTREE)", path))
 				.and(DSL.sql(TEST_ITEM.PATH + " != cast(? AS LTREE)", path))
 				.orderBy(TEST_ITEM.ITEM_ID)
 				.fetch()
