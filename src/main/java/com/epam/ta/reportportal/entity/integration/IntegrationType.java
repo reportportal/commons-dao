@@ -34,7 +34,6 @@ import java.util.Set;
  * @author Yauheni_Martynau
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "details", typeClass = IntegrationTypeDetails.class)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "integration_type", schema = "public")

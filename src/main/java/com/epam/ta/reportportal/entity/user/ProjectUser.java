@@ -31,7 +31,6 @@ import java.util.Objects;
  * @author Andrei Varabyeu
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "project_user", schema = "public")
 public class ProjectUser implements Serializable {
