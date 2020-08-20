@@ -27,7 +27,6 @@ import java.util.Set;
  * @author Andrei Varabyeu
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "oauth_registration", schema = "public")
 public class OAuthRegistration implements Serializable {
 
