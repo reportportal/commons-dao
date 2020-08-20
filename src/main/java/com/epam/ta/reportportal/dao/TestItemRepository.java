@@ -41,10 +41,6 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
-	@Query(value = "SELECT ti.id FROM TestItem ti WHERE ti.launchId = :launchId")
-	Stream<Long> streamTestItemIdsByLaunchId(@Param("launchId") Long launchId);
-
 	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
 	Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
 

@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -36,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static java.util.Optional.ofNullable;
@@ -53,16 +51,8 @@ class ProjectRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllIdsAndProjectAttributesTest() {
-		Filter filter = Filter.builder()
-				.withTarget(Project.class)
-				.withCondition(new FilterCondition(Condition.EQUALS,
-						false,
-						ProjectAttributeEnum.KEEP_LOGS.getAttribute(),
-						CRITERIA_PROJECT_ATTRIBUTE_NAME
-				))
-				.build();
 
-		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(filter, PageRequest.of(0, 2));
+		Page<Project> projects = projectRepository.findAllIdsAndProjectAttributes(PageRequest.of(0, 2));
 
 		assertNotNull(projects);
 		assertTrue(CollectionUtils.isNotEmpty(projects.getContent()));

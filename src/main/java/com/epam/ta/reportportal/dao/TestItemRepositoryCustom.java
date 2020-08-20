@@ -33,6 +33,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.issue.Issue;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -165,6 +166,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	List<TestItem> selectAllDescendantsWithChildren(Long itemId);
 
+	List<Long> findTestItemIdsByLaunchId(@Param("launchId") Long launchId, Pageable pageable);
+
 	/**
 	 * Select common items object that have provided status for
 	 * specified launch.
@@ -281,7 +284,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param path itemPath
 	 * @return Map of id and name
 	 */
-	Map<Long, String> selectPathNames(String path);
+	Map<Long, String> selectPathNames(Long launchId, String path);
 
 	/**
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number

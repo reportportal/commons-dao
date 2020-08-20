@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -87,10 +88,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
-	public Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable) {
+	public Page<Project> findAllIdsAndProjectAttributes(Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
-						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+						.as(QueryBuilder.newBuilder(FilterTarget.PROJECT_TARGET).with(pageable).build())
 						.select(PROJECT.ID, ATTRIBUTE.NAME, PROJECT_ATTRIBUTE.VALUE)
 						.from(PROJECT)
 						.join(PROJECT_ATTRIBUTE)
@@ -100,7 +101,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						.join(DSL.table(name(FILTERED_PROJECT)))
 						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT.ID)))),
 				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(FilterTarget.PROJECT_TARGET).build())
 		);
 	}
 
