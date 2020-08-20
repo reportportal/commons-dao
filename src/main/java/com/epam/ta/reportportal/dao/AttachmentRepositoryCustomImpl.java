@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,8 +25,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
+import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 
 /**
@@ -39,10 +45,10 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByProjectId(Long projectId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.PROJECT_ID.eq(projectId))
+						.orderBy(ATTACHMENT.ID)
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
@@ -53,10 +59,10 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.select(ATTACHMENT.ID)
+		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
 						.where(ATTACHMENT.LAUNCH_ID.eq(launchId))
+						.orderBy(ATTACHMENT.ID)
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
@@ -66,21 +72,64 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	}
 
 	@Override
-	public Page<Long> findIdsByTestItemId(Long itemId, Pageable pageable) {
-		return PageableExecutionUtils.getPage(
-				dsl.select(ATTACHMENT.ID)
+	public Page<Long> findIdsByTestItemId(Collection<Long> itemIds, Pageable pageable) {
+
+		return PageableExecutionUtils.getPage(dsl.select(ATTACHMENT.ID)
 						.from(ATTACHMENT)
-						.where(ATTACHMENT.ITEM_ID.eq(itemId))
+						.where(ATTACHMENT.ITEM_ID.in(itemIds))
+						.orderBy(ATTACHMENT.ID)
 						.limit(pageable.getPageSize())
 						.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable))
 						.fetchInto(Long.class),
 				pageable,
-				() -> dsl.fetchCount(dsl.select(ATTACHMENT.ID).from(ATTACHMENT).where(ATTACHMENT.ITEM_ID.eq(itemId)))
+				() -> dsl.fetchCount(dsl.select(ATTACHMENT.ID).from(ATTACHMENT).where(ATTACHMENT.ITEM_ID.in(itemIds)))
 		);
 	}
 
 	@Override
 	public int deleteAllByIds(Collection<Long> ids) {
 		return dsl.deleteFrom(ATTACHMENT).where(ATTACHMENT.ID.in(ids)).execute();
+	}
+
+	@Override
+	public List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds, LocalDateTime before) {
+		return dsl.select(ATTACHMENT.ID,
+				ATTACHMENT.THUMBNAIL_ID,
+				ATTACHMENT.FILE_ID,
+				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.FILE_SIZE,
+				ATTACHMENT.ITEM_ID,
+				ATTACHMENT.LAUNCH_ID,
+				ATTACHMENT.PROJECT_ID
+		)
+				.from(ATTACHMENT)
+				.join(LOG)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.join(TEST_ITEM)
+				.on(ATTACHMENT.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
+				.fetchInto(Attachment.class);
+	}
+
+	@Override
+	public List<Attachment> findByLaunchIdsAndLogTimeBefore(Collection<Long> launchIds, LocalDateTime before) {
+		return dsl.select(ATTACHMENT.ID,
+				ATTACHMENT.THUMBNAIL_ID,
+				ATTACHMENT.FILE_ID,
+				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.FILE_SIZE,
+				ATTACHMENT.ITEM_ID,
+				ATTACHMENT.LAUNCH_ID,
+				ATTACHMENT.PROJECT_ID
+		)
+				.from(ATTACHMENT)
+				.join(LOG)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.where(LOG.LAUNCH_ID.in(launchIds))
+				.and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
+				.fetchInto(Attachment.class);
 	}
 }

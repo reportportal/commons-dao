@@ -19,11 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
-import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,13 +29,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.GLOBAL_INTEGRATION_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_INTEGRATION_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.INTEGRATION_FETCHER;
-import static com.epam.ta.reportportal.jooq.tables.JActiveDirectoryConfig.ACTIVE_DIRECTORY_CONFIG;
 import static com.epam.ta.reportportal.jooq.tables.JIntegration.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.tables.JIntegrationType.INTEGRATION_TYPE;
-import static com.epam.ta.reportportal.jooq.tables.JLdapConfig.LDAP_CONFIG;
-import static com.epam.ta.reportportal.jooq.tables.JLdapSynchronizationAttributes.LDAP_SYNCHRONIZATION_ATTRIBUTES;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -67,31 +61,6 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
-	}
-
-	@Override
-	public Optional<LdapConfig> findLdap() {
-
-		return ofNullable(buildLdapSelectQuery().fetchAny(LDAP_CONFIG_MAPPER));
-	}
-
-	@Override
-	public Optional<ActiveDirectoryConfig> findActiveDirectory() {
-
-		return ofNullable(buildActiveDirectorySelectQuery().fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
-	}
-
-	@Override
-	public Optional<LdapConfig> findLdap(boolean enabled) {
-
-		return ofNullable(buildLdapSelectQuery().where(INTEGRATION.ENABLED.eq(enabled)).fetchAny(LDAP_CONFIG_MAPPER));
-	}
-
-	@Override
-	public Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled) {
-
-		return ofNullable(buildActiveDirectorySelectQuery().where(INTEGRATION.ENABLED.eq(enabled))
-				.fetchAny(ACTIVE_DIRECTORY_CONFIG_MAPPER));
 	}
 
 	@Override
@@ -136,29 +105,4 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.and(INTEGRATION.PROJECT_ID.isNull())
 				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
 	}
-
-	private SelectOnConditionStep<Record> buildLdapSelectQuery() {
-
-		return dsl.select()
-				.from(LDAP_CONFIG)
-				.join(INTEGRATION)
-				.on(LDAP_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
-				.join(INTEGRATION_TYPE)
-				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
-				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
-				.on(LDAP_CONFIG.SYNC_ATTRIBUTES_ID.eq(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
-	}
-
-	private SelectOnConditionStep<Record> buildActiveDirectorySelectQuery() {
-
-		return dsl.select()
-				.from(ACTIVE_DIRECTORY_CONFIG)
-				.join(INTEGRATION)
-				.on(ACTIVE_DIRECTORY_CONFIG.ID.eq(INTEGRATION.ID.cast(Long.class)))
-				.join(INTEGRATION_TYPE)
-				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
-				.leftJoin(LDAP_SYNCHRONIZATION_ATTRIBUTES)
-				.on(ACTIVE_DIRECTORY_CONFIG.SYNC_ATTRIBUTES_ID.eq(LDAP_SYNCHRONIZATION_ATTRIBUTES.ID));
-	}
-
 }

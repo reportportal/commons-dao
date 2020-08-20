@@ -51,5 +51,4 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 * @return @return The {@link Optional} of the {@link IntegrationType}
 	 */
 	Optional<IntegrationType> findByName(String name);
-
 }

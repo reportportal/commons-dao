@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
+import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
@@ -41,11 +42,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
@@ -54,7 +51,7 @@ import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.NESTED;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.NESTED_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
@@ -71,6 +68,9 @@ import static org.jooq.impl.DSL.field;
  */
 @Repository
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
+
+	private static final String PARENT_ITEM_TABLE = "parent";
+	private static final String CHILD_ITEM_TABLE = "child";
 
 	private DSLContext dsl;
 
@@ -98,7 +98,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.orderBy(LOG.LOG_TIME.asc())
 				.limit(limit)
 				.fetch()
-				.map(LOG_MAPPER);
+				.map(r -> LOG_MAPPER.apply(r, ATTACHMENT_MAPPER));
 	}
 
 	@Override
@@ -114,7 +114,44 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.where(LOG.ITEM_ID.eq(itemId))
 				.orderBy(LOG.LOG_TIME.asc())
 				.fetch()
-				.map(LOG_MAPPER);
+				.map(r -> LOG_MAPPER.apply(r, ATTACHMENT_MAPPER));
+	}
+
+	/**
+	 * @return {@link List} of {@link Log} without {@link Log#getAttachment()}
+	 */
+	@Override
+	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
+
+		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(LOG.ID,
+				LOG.LOG_LEVEL,
+				LOG.LOG_MESSAGE,
+				LOG.LOG_TIME,
+				parentItemTable.ITEM_ID.as(LOG.ITEM_ID),
+				LOG.LAUNCH_ID,
+				LOG.LAST_MODIFIED
+		)
+				.on(LOG.ID)
+				.from(LOG)
+				.join(childItemTable)
+				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
+				.join(parentItemTable)
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch()
+				.map(LOG_RECORD_MAPPER);
+	}
+
+	@Override
+	public List<Long> findIdsByFilter(Queryable filter) {
+		Set<String> fields = QueryUtils.collectJoinFields(filter);
+		return dsl.select(fieldName(ID)).from(QueryBuilder.newBuilder(filter, fields).build()).fetchInto(Long.class);
 	}
 
 	@Override
@@ -123,12 +160,26 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> findIdsByTestItemIds(List<Long> itemIds) {
-		return dsl.select(LOG.ID).from(LOG).where(LOG.ITEM_ID.in(itemIds)).fetch(LOG.ID, Long.class);
+	public List<Long> findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
+
+		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(LOG.ID)
+				.from(LOG)
+				.join(childItemTable)
+				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
+				.join(parentItemTable)
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetchInto(Long.class);
 	}
 
 	@Override
-	public List<Long> findItemLogIdsByLaunchId(Long launchId) {
+	public List<Long> findItemLogIdsByLaunchIdAndLogLevelGte(Long launchId, int logLevel) {
 		return dsl.select(LOG.ID)
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
@@ -136,11 +187,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.eq(launchId))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch(LOG.ID, Long.class);
 	}
 
 	@Override
-	public List<Long> findItemLogIdsByLaunchIds(List<Long> launchIds) {
+	public List<Long> findItemLogIdsByLaunchIdsAndLogLevelGte(List<Long> launchIds, int logLevel) {
 		return dsl.select(LOG.ID)
 				.from(LOG)
 				.leftJoin(TEST_ITEM)
@@ -148,32 +200,32 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.ID.in(launchIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetch(LOG.ID, Long.class);
 	}
 
 	@Override
-	public List<Log> findLogsWithThumbnailByTestItemIdAndPeriod(Long itemId, Duration period) {
-		return dsl.select(LOG.ID, ATTACHMENT.FILE_ID, ATTACHMENT.THUMBNAIL_ID)
+	public List<Long> findIdsByTestItemIdsAndLogLevelGte(List<Long> itemIds, int logLevel) {
+		return dsl.select(LOG.ID)
 				.from(LOG)
-				.join(ATTACHMENT)
-				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
-				.where(LOG.ITEM_ID.eq(itemId).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
-				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
-				.fetchInto(Log.class);
+				.where(LOG.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch(LOG.ID, Long.class);
 	}
 
 	@Override
 	public List<Log> findByFilter(Queryable filter) {
-		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
+		return LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).wrap().build()));
 	}
 
 	@Override
 	public Page<Log> findByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+		Set<String> joinFields = QueryUtils.collectJoinFields(filter, pageable.getSort());
+		return PageableExecutionUtils.getPage(LOG_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, joinFields)
 				.with(pageable)
 				.wrap()
 				.withWrapperSort(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, joinFields).build()));
 	}
 
 	@Override
@@ -187,7 +239,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return ofNullable(dsl.select(fieldName(ROW_NUMBER))
 				.from(dsl.select(LOG.ID, DSL.rowNumber().over(DSL.orderBy(sortField)).as(ROW_NUMBER))
 						.from(LOG)
-						.join(QueryBuilder.newBuilder(filter).with(pageable.getSort()).build().asTable(DISTINCT_LOGS_TABLE))
+						.join(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter, pageable.getSort()))
+								.with(pageable.getSort())
+								.build()
+								.asTable(DISTINCT_LOGS_TABLE))
 						.on(LOG.ID.eq(fieldName(DISTINCT_LOGS_TABLE, ID).cast(Long.class))))
 				.where(fieldName(ID).cast(Long.class).eq(id))
 				.fetchAny()).map(r -> {
@@ -208,7 +263,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
 				.and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-				.and(LOG.LAST_MODIFIED.gt(TimestampUtils.getTimestampBackFromNow(period)))
+				.and(LOG.LOG_TIME.gt(TimestampUtils.getTimestampBackFromNow(period)))
 				.limit(1));
 	}
 
@@ -216,7 +271,14 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	public int deleteByPeriodAndTestItemIds(Duration period, Collection<Long> testItemIds) {
 
 		return dsl.deleteFrom(LOG)
-				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LAST_MODIFIED.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.where(LOG.ITEM_ID.in(testItemIds).and(LOG.LOG_TIME.lt(TimestampUtils.getTimestampBackFromNow(period))))
+				.execute();
+	}
+
+	@Override
+	public int deleteByPeriodAndLaunchIds(Duration period, Collection<Long> launchIds) {
+		return dsl.deleteFrom(LOG)
+				.where(LOG.LAUNCH_ID.in(launchIds).and(LOG.LOG_TIME.lt(TimestampUtils.getTimestampBackFromNow(period))))
 				.execute();
 	}
 
@@ -239,15 +301,23 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		int total = dsl.fetchCount(selectQuery);
 
-		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(sorting)
+		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(sorting, field(ID).asc())
 				.limit(pageable.getPageSize())
 				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable)))), pageable, () -> total);
 
 	}
 
 	@Override
-	public List<String> findMessagesByItemIdAndLevelGte(Long itemId, Integer level) {
-		return dsl.select(LOG.LOG_MESSAGE).from(LOG).where(LOG.ITEM_ID.eq(itemId)).and(LOG.LOG_LEVEL.ge(level)).fetch(LOG.LOG_MESSAGE);
+	public List<String> findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(Long launchId, Long itemId, String path, Integer level) {
+		return dsl.select(LOG.LOG_MESSAGE)
+				.from(LOG)
+				.join(TEST_ITEM)
+				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.where(LOG.LOG_LEVEL.ge(level)
+						.and(TEST_ITEM.LAUNCH_ID.eq(launchId))
+						.and(TEST_ITEM.ITEM_ID.eq(itemId)
+								.or(TEST_ITEM.HAS_STATS.eq(false).and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
+				.fetch(LOG.LOG_MESSAGE);
 	}
 
 	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
@@ -275,7 +345,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
 			nestedStepSelect.and(field(DSL.exists(dsl.with(LOGS)
-					.as(QueryBuilder.newBuilder(filter).addCondition(LOG.ITEM_ID.eq(parentId)).build())
+					.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
+							.addCondition(LOG.ITEM_ID.eq(parentId))
+							.build())
 					.select()
 					.from(LOG)
 					.join(LOGS)
@@ -289,7 +361,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
 
-		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter.getFilterConditions()
+		Queryable logFilter = filter.getFilterConditions()
 				.stream()
 				.flatMap(condition -> condition.getAllConditions().stream())
 				.filter(condition -> CRITERIA_STATUS.equalsIgnoreCase(condition.getSearchCriteria()))
@@ -297,12 +369,14 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.map(condition -> (Queryable) new Filter(filter.getTarget().getClazz(),
 						filter.getFilterConditions()
 								.stream()
-								.flatMap(simpleCondition -> condition.getAllConditions().stream())
+								.flatMap(simpleCondition -> simpleCondition.getAllConditions().stream())
 								.filter(filterCondition -> !condition.getSearchCriteria()
 										.equalsIgnoreCase(filterCondition.getSearchCriteria()))
-								.collect(Collectors.toList())
+								.collect(toList())
 				))
-				.orElse(filter));
+				.orElse(filter);
+
+		QueryBuilder queryBuilder = QueryBuilder.newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter));
 
 		return dsl.with(LOGS)
 				.as(queryBuilder.addCondition(LOG.ITEM_ID.eq(parentId)).build())

@@ -23,7 +23,7 @@ import org.apache.commons.validator.routines.EmailValidator;
  */
 public final class UserUtils {
 
-	private UserUtils(){
+	private UserUtils() {
 		//static only
 	}
 

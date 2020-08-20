@@ -16,9 +16,10 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import org.jooq.Condition;
+import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import org.jooq.Field;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -39,13 +40,13 @@ public class CriteriaHolderBuilder implements Supplier<CriteriaHolder> {
 		return this;
 	}
 
-	public CriteriaHolderBuilder withAggregateCriteria(String aggregateCriteria) {
-		this.criteriaHolder.setAggregateCriteria(aggregateCriteria);
+	public CriteriaHolderBuilder newBuilder(String filterCriteria, Field queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
+		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType, joinChain);
 		return this;
 	}
 
-	public CriteriaHolderBuilder withJoinCondition(Condition joinCondition) {
-		this.criteriaHolder.setJoinCondition(joinCondition);
+	public CriteriaHolderBuilder withAggregateCriteria(String aggregateCriteria) {
+		this.criteriaHolder.setAggregateCriteria(aggregateCriteria);
 		return this;
 	}
 

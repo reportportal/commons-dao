@@ -21,12 +21,17 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
+import com.epam.ta.reportportal.dao.widget.WidgetProviderChain;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -76,6 +81,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Autowired
 	private DSLContext dsl;
+
+	@Autowired
+	private WidgetProviderChain<HealthCheckTableGetParams, List<HealthCheckTableContent>> healthCheckTableChain;
 
 	private static final List<JTestItemTypeEnum> HAS_METHOD_OR_CLASS = Arrays.stream(JTestItemTypeEnum.values()).filter(it -> {
 		String name = it.name();
@@ -702,7 +710,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.groupBy(ITEM_ATTRIBUTE.VALUE)
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
-								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
+								).sort(SortOrder.DESC), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.DESC))
 								.limit(limit)))
 						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
 						.asTable(LAUNCHES_TABLE))
@@ -821,9 +829,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
-			boolean isLatest, int launchesLimit, int attributesLimit) {
+	public List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, @Nullable String attributeKey,
+			@Nullable String patternName, boolean isLatest, int launchesLimit, int attributesLimit) {
 
+		Condition attributeKeyCondition = ofNullable(attributeKey).map(ITEM_ATTRIBUTE.KEY::eq).orElseGet(DSL::noCondition);
 		Field<?> launchIdsField = isLatest ? DSL.max(LAUNCH.ID).as(ID) : DSL.arrayAgg(LAUNCH.ID).as(ID);
 		List<Field<?>> groupingFields = isLatest ?
 				Lists.newArrayList(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE) :
@@ -837,12 +846,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(LAUNCH.ID))
 				.join(ITEM_ATTRIBUTE)
 				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-				.where(ITEM_ATTRIBUTE.KEY.eq(attributeKey))
+				.where(attributeKeyCondition)
 				.and(ITEM_ATTRIBUTE.VALUE.in(dsl.select(ITEM_ATTRIBUTE.VALUE)
 						.from(ITEM_ATTRIBUTE)
 						.join(LAUNCHES)
 						.on(fieldName(LAUNCHES, ID).cast(Long.class).eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-						.where(ITEM_ATTRIBUTE.KEY.eq(attributeKey))
+						.where(attributeKeyCondition)
 						.groupBy(ITEM_ATTRIBUTE.VALUE)
 						.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 								PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
@@ -901,6 +910,67 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.filterWhere(fieldName(ITEMS, STATUS).cast(JStatusEnum.class).eq(JStatusEnum.PASSED)))
 						.div(DSL.nullif(DSL.count(fieldName(ITEMS, ITEM_ID)), 0)), 2))
 				.fetch());
+	}
+
+	@Override
+	public void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
+			int launchesLimit, boolean isLatest) {
+
+		if (refresh) {
+			removeWidgetView(params.getViewName());
+		}
+
+		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, launchSort, isLatest)
+				.with(launchesLimit)
+				.with(launchSort)
+				.build()
+				.asTable(LAUNCHES);
+
+		List<Field<?>> selectFields = Lists.newArrayList(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE);
+
+		ofNullable(params.getCustomKey()).ifPresent(key -> selectFields.add(DSL.arrayAggDistinct(fieldName(CUSTOM_ATTRIBUTE, VALUE))
+				.filterWhere(fieldName(CUSTOM_ATTRIBUTE, VALUE).isNotNull())
+				.as(CUSTOM_COLUMN)));
+
+		SelectOnConditionStep<Record> baseQuery = select(selectFields).from(TEST_ITEM)
+				.join(launchesTable)
+				.on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ITEM_ATTRIBUTE)
+				.on(and(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID).or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
+						ITEM_ATTRIBUTE.KEY.in(params.getAttributeKeys())).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()));
+
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})",
+				DSL.name(params.getViewName()),
+				ofNullable(params.getCustomKey()).map(key -> {
+					JItemAttribute customAttribute = ITEM_ATTRIBUTE.as(CUSTOM_ATTRIBUTE);
+					return baseQuery.leftJoin(customAttribute)
+							.on(DSL.condition(Operator.OR,
+									TEST_ITEM.ITEM_ID.eq(customAttribute.ITEM_ID),
+									TEST_ITEM.LAUNCH_ID.eq(customAttribute.LAUNCH_ID)
+							).and(customAttribute.KEY.eq(key)));
+				})
+						.orElse(baseQuery)
+						.where(TEST_ITEM.HAS_STATS.isTrue()
+								.and(TEST_ITEM.HAS_CHILDREN.isFalse())
+								.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
+								.and(TEST_ITEM.RETRY_OF.isNull())
+								.and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
+						.groupBy(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+						.getQuery()
+		).get()));
+
+	}
+
+	@Override
+	public void removeWidgetView(String viewName) {
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("DROP MATERIALIZED VIEW IF EXISTS {}", DSL.name(viewName)).get()));
+	}
+
+	@Override
+	public List<HealthCheckTableContent> componentHealthCheckTable(HealthCheckTableGetParams params) {
+		return healthCheckTableChain.apply(params);
 	}
 
 	private SelectSeekStepN<? extends Record> buildLaunchesTableQuery(Collection<Field<?>> selectFields,

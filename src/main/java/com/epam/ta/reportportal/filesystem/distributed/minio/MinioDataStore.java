@@ -40,16 +40,17 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MinioDataStore implements DataStore {
 
-	public static final String BUCKET_PREFIX = "prj-";
-	public static final String DEFAULT_BUCKET = "rp-bucket";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(MinioDataStore.class);
 	private static final Lock CREATE_BUCKET_LOCK = new ReentrantLock();
 
 	private final MinioClient minioClient;
+	private final String bucketPrefix;
+	private final String defaultBucketName;
 
-	public MinioDataStore(MinioClient minioClient) {
+	public MinioDataStore(MinioClient minioClient, String bucketPrefix, String defaultBucketName) {
 		this.minioClient = minioClient;
+		this.bucketPrefix = bucketPrefix;
+		this.defaultBucketName = defaultBucketName;
 	}
 
 	@Override
@@ -70,7 +71,7 @@ public class MinioDataStore implements DataStore {
 			minioClient.putObject(minioFile.getBucket(), minioFile.getFilePath(), inputStream, inputStream.available(), Maps.newHashMap());
 			return Paths.get(filePath).toString();
 		} catch (MinioException | IOException | InvalidKeyException | NoSuchAlgorithmException | XmlPullParserException e) {
-			LOGGER.error("Unable to save file ", e);
+			LOGGER.error("Unable to save file '{}'", filePath, e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save file");
 		}
 	}
@@ -81,7 +82,7 @@ public class MinioDataStore implements DataStore {
 		try {
 			return minioClient.getObject(minioFile.getBucket(), minioFile.getFilePath());
 		} catch (Exception e) {
-			LOGGER.error("Unable to find file ", e);
+			LOGGER.error("Unable to find file '{}'", filePath, e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to find file");
 		}
 	}
@@ -92,7 +93,7 @@ public class MinioDataStore implements DataStore {
 		try {
 			minioClient.removeObject(minioFile.getBucket(), minioFile.getFilePath());
 		} catch (Exception e) {
-			LOGGER.error("Unable to delete file ", e);
+			LOGGER.error("Unable to delete file '{}'", filePath, e);
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
 		}
 	}
@@ -101,9 +102,9 @@ public class MinioDataStore implements DataStore {
 		Path targetPath = Paths.get(filePath);
 		int nameCount = targetPath.getNameCount();
 		if (nameCount > 1) {
-			return new MinioFile(BUCKET_PREFIX + retrievePath(targetPath, 0, 1), retrievePath(targetPath, 1, nameCount));
+			return new MinioFile(bucketPrefix + retrievePath(targetPath, 0, 1), retrievePath(targetPath, 1, nameCount));
 		} else {
-			return new MinioFile(DEFAULT_BUCKET, retrievePath(targetPath, 0, 1));
+			return new MinioFile(defaultBucketName, retrievePath(targetPath, 0, 1));
 		}
 
 	}

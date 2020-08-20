@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
-import static com.epam.ta.reportportal.filesystem.distributed.minio.MinioDataStore.DEFAULT_BUCKET;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,11 +31,13 @@ import static org.mockito.Mockito.*;
 class MinioDataStoreTest {
 
 	private static final String FILE_PATH = "someFile";
+	private static final String BUCKET_PREFIX = "prj-";
+	private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
 
 	private final MinioClient minioClient = mock(MinioClient.class);
 	private final InputStream inputStream = mock(InputStream.class);
 
-	private final MinioDataStore minioDataStore = new MinioDataStore(minioClient);
+	private final MinioDataStore minioDataStore = new MinioDataStore(minioClient, BUCKET_PREFIX, DEFAULT_BUCKET_NAME);
 
 	@Test
 	void save() throws Exception {
@@ -46,13 +47,13 @@ class MinioDataStoreTest {
 
 		minioDataStore.save(FILE_PATH, inputStream);
 
-		verify(minioClient, times(1)).putObject(DEFAULT_BUCKET, FILE_PATH, inputStream, inputStream.available(), Maps.newHashMap());
+		verify(minioClient, times(1)).putObject(DEFAULT_BUCKET_NAME, FILE_PATH, inputStream, inputStream.available(), Maps.newHashMap());
 	}
 
 	@Test
 	void load() throws Exception {
 
-		when(minioClient.getObject(DEFAULT_BUCKET, FILE_PATH)).thenReturn(inputStream);
+		when(minioClient.getObject(DEFAULT_BUCKET_NAME, FILE_PATH)).thenReturn(inputStream);
 		InputStream loaded = minioDataStore.load(FILE_PATH);
 
 		Assertions.assertEquals(inputStream, loaded);
@@ -63,6 +64,6 @@ class MinioDataStoreTest {
 
 		minioDataStore.delete(FILE_PATH);
 
-		verify(minioClient, times(1)).removeObject(DEFAULT_BUCKET, FILE_PATH);
+		verify(minioClient, times(1)).removeObject(DEFAULT_BUCKET_NAME, FILE_PATH);
 	}
 }

@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.*;
@@ -26,21 +27,16 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.Field;
-import org.jooq.Table;
-import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Holds mapping between request search criteria and DB engine search criteria. Should be used for
@@ -70,14 +66,9 @@ public class CriteriaHolder {
 	 */
 	private String aggregateCriteria;
 
-	/**
-	 * Table than contains a queryCriteria field in it
-	 */
-	private Table associatedTable;
-
-	private org.jooq.Condition joinCondition;
-
 	private Class<?> dataType;
+
+	private List<JoinEntity> joinChain = Lists.newArrayList();
 
 	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
 		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
@@ -91,14 +82,14 @@ public class CriteriaHolder {
 		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null").getQualifiedName().toString();
 		this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
 		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
-
-		if (queryCriteria instanceof TableField) {
-			associatedTable = ((TableField) queryCriteria).getTable();
-		}
 	}
 
-	public Table getAssociatedTable() {
-		return associatedTable;
+	public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
+		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
+		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null").getQualifiedName().toString();
+		this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
+		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+		this.joinChain = Preconditions.checkNotNull(joinChain, "Join chain should not be null");
 	}
 
 	public String getFilterCriteria() {
@@ -113,20 +104,16 @@ public class CriteriaHolder {
 		return aggregateCriteria;
 	}
 
-	public org.jooq.Condition getJoinCondition() {
-		return joinCondition;
-	}
-
 	public Class<?> getDataType() {
 		return dataType;
 	}
 
-	public void setAggregateCriteria(String aggregateCriteria) {
-		this.aggregateCriteria = aggregateCriteria;
+	public List<JoinEntity> getJoinChain() {
+		return joinChain;
 	}
 
-	public void setJoinCondition(org.jooq.Condition joinCondition) {
-		this.joinCondition = joinCondition;
+	public void setAggregateCriteria(String aggregateCriteria) {
+		this.aggregateCriteria = aggregateCriteria;
 	}
 
 	public Object castValue(String oneValue) {
@@ -147,10 +134,7 @@ public class CriteriaHolder {
 		Object castedValue;
 		if (Number.class.isAssignableFrom(getDataType())) {
 			/* Verify correct number */
-			Long parsedLong = NumberUtils.toLong(oneValue, -1);
-			BusinessRule.expect(parsedLong, FilterRules.numberIsPositive())
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid positive number", oneValue));
-			castedValue = parsedLong;
+			castedValue = parseLong(oneValue, errorType);
 		} else if (Date.class.isAssignableFrom(getDataType())) {
 
 			if (FilterRules.dateInMillis().test(oneValue)) {
@@ -218,6 +202,14 @@ public class CriteriaHolder {
 		}
 
 		return castedValue;
+	}
+
+	private Long parseLong(String value, ErrorType errorType) {
+		try {
+			return Long.parseLong(value);
+		} catch (final NumberFormatException nfe) {
+			throw new ReportPortalException(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid number", value));
+		}
 	}
 
 }

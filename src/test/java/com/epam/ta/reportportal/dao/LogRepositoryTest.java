@@ -17,27 +17,32 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.commons.querygen.CompositeFilterCondition;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
-import org.apache.commons.collections.CollectionUtils;
-import org.assertj.core.util.Lists;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Operator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_RETRY_PARENT_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +51,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Sql("/db/fill/item/items-fill.sql")
 class LogRepositoryTest extends BaseTest {
+
+	@Autowired
+	private TestItemRepository testItemRepository;
 
 	@Autowired
 	private LogRepository logRepository;
@@ -62,32 +70,6 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByTestItemsAndLogLevel() {
-		ArrayList<Long> ids = Lists.newArrayList(3L);
-		Integer logLevel = 30000;
-
-		List<Log> logs = logRepository.findAllByTestItemItemIdInAndLogLevelIsGreaterThanEqual(ids, logLevel);
-
-		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
-		logs.forEach(log -> {
-			Long itemId = log.getTestItem().getItemId();
-			assertEquals(3L, (long) itemId, "Incorrect item id");
-			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
-		});
-	}
-
-	@Test
-	void findLogsWithThumbnailByTestItemIdAndPeriodTest() {
-		Duration duration = Duration.ofDays(6).plusHours(23);
-		final Long itemId = 3L;
-
-		List<Log> logs = logRepository.findLogsWithThumbnailByTestItemIdAndPeriod(itemId, duration);
-
-		assertTrue(CollectionUtils.isNotEmpty(logs), "Logs should not be empty");
-		assertEquals(3, logs.size(), "Incorrect count of logs");
-	}
-
-	@Test
 	void hasLogsAddedLatelyTest() {
 		assertTrue(logRepository.hasLogsAddedLately(Duration.ofDays(13).plusHours(23), 1L, StatusEnum.FAILED));
 	}
@@ -96,6 +78,12 @@ class LogRepositoryTest extends BaseTest {
 	void deleteByPeriodAndTestItemIdsTest() {
 		int removedLogsCount = logRepository.deleteByPeriodAndTestItemIds(Duration.ofDays(13).plusHours(20), Collections.singleton(3L));
 		assertEquals(3, removedLogsCount, "Incorrect count of deleted logs");
+	}
+
+	@Test
+	void deleteByPeriodAndLaunchIdsTest() {
+		int removedLogsCount = logRepository.deleteByPeriodAndLaunchIds(Duration.ofDays(13).plusHours(20), Collections.singleton(3L));
+		assertEquals(1, removedLogsCount, "Incorrect count of deleted logs");
 	}
 
 	@Test
@@ -139,20 +127,57 @@ class LogRepositoryTest extends BaseTest {
 
 	@Test
 	void findItemLogIdsByLaunchId() {
-		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchId(1L);
+		List<Long> logIdsByLaunch = logRepository.findItemLogIdsByLaunchIdAndLogLevelGte(1L, LogLevel.DEBUG.toInt());
 		assertEquals(7, logIdsByLaunch.size());
 	}
 
 	@Test
 	void findItemLogIdsByLaunchIds() {
-		List<Long> logIds = logRepository.findItemLogIdsByLaunchIds(Arrays.asList(1L, 2L));
+		List<Long> logIds = logRepository.findItemLogIdsByLaunchIdsAndLogLevelGte(Arrays.asList(1L, 2L), LogLevel.DEBUG.toInt());
 		assertEquals(7, logIds.size());
 	}
 
 	@Test
 	void findIdsByItemIds() {
-		List<Long> idsByTestItemIds = logRepository.findIdsByTestItemIds(Arrays.asList(1L, 2L, 3L));
-		assertEquals(7, idsByTestItemIds.size());
+		List<Long> errorIds = logRepository.findIdsUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
+				Arrays.asList(1L, 2L, 3L),
+				LogLevel.DEBUG.toInt()
+		);
+		List<Log> errorLogs = logRepository.findAllById(errorIds);
+		errorLogs.forEach(log -> assertEquals(40000, log.getLogLevel()));
+		assertEquals(7, errorIds.size());
+		assertEquals(7, errorLogs.size());
+
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.FATAL.toInt());
+		assertEquals(0, ids.size());
+	}
+
+	@Test
+	void findIdsByItemIdsAndLogLevelGte() {
+		List<Long> errorIds = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.DEBUG.toInt());
+		List<Log> errorLogs = logRepository.findAllById(errorIds);
+		errorLogs.forEach(log -> assertEquals(40000, log.getLogLevel()));
+		assertEquals(7, errorIds.size());
+		assertEquals(7, errorLogs.size());
+
+		List<Long> ids = logRepository.findIdsByTestItemIdsAndLogLevelGte(Arrays.asList(1L, 2L, 3L), LogLevel.FATAL.toInt());
+		assertEquals(0, ids.size());
+	}
+
+	@Test
+	void findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
+
+		int logLevel = LogLevel.WARN_INT;
+
+		List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+		List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L, itemIds, logLevel);
+
+		assertTrue(logs != null && logs.size() != 0, "Logs should be not null or empty");
+		logs.forEach(log -> {
+			Long itemId = log.getTestItem().getItemId();
+			assertTrue(itemIds.contains(itemId), "Incorrect item id");
+			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
+		});
 	}
 
 	@Test
@@ -165,5 +190,112 @@ class LogRepositoryTest extends BaseTest {
 				.build();
 
 		logRepository.findNestedItems(2L, false, false, filter, PageRequest.of(2, 1));
+	}
+
+	@Test
+	void findIdsByFilter() {
+
+		Filter failedStatusFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_STATUS, "FAILED").build())
+				.build();
+
+		List<Long> ids = logRepository.findIdsByFilter(failedStatusFilter);
+
+		assertEquals(7, ids.size());
+	}
+
+	@Test
+	void findAllWithAttachment() {
+		Filter logWithAttachmentsFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.EXISTS)
+						.withSearchCriteria(CRITERIA_LOG_BINARY_CONTENT)
+						.withValue("1")
+						.build())
+				.build();
+
+		Page<Log> logPage = logRepository.findByFilter(logWithAttachmentsFilter, PageRequest.of(0, 10));
+
+		List<Log> logs = logPage.getContent();
+		assertFalse(logs.isEmpty());
+
+		logs.forEach(log -> {
+			Attachment attachment = log.getAttachment();
+			assertNotNull(attachment);
+			assertNotNull(attachment.getId());
+			assertNotNull(attachment.getFileId());
+			assertNotNull(attachment.getContentType());
+			assertNotNull(attachment.getThumbnailId());
+		});
+
+		assertEquals(10, logs.size());
+	}
+
+	@Test
+	void findAllWithAttachmentOfRetries() {
+
+		Filter logWithAttachmentsFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.EXISTS)
+						.withSearchCriteria(CRITERIA_LOG_BINARY_CONTENT)
+						.withValue("1")
+						.build())
+				.withCondition(new CompositeFilterCondition(Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_RETRY_PARENT_LAUNCH_ID, String.valueOf(1L)).build(),
+						FilterCondition.builder().eq(CRITERIA_ITEM_LAUNCH_ID, String.valueOf(1L)).withOperator(Operator.OR).build())))
+				.build();
+
+		Page<Log> logPage = logRepository.findByFilter(logWithAttachmentsFilter, PageRequest.of(0, 10));
+
+		List<Log> logs = logPage.getContent();
+		assertFalse(logs.isEmpty());
+
+		logs.forEach(log -> {
+			Attachment attachment = log.getAttachment();
+			assertNotNull(attachment);
+			assertNotNull(attachment.getId());
+			assertNotNull(attachment.getFileId());
+			assertNotNull(attachment.getContentType());
+			assertNotNull(attachment.getThumbnailId());
+		});
+
+		assertEquals(7, logs.size());
+	}
+
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
+	@Test
+	void findLogMessagesByItemIdAndLogLevelNestedTest() {
+
+		TestItem testItem = testItemRepository.findById(132L).get();
+
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(testItem.getLaunchId(),
+				testItem.getItemId(),
+				testItem.getPath(),
+				LogLevel.ERROR.toInt()
+		);
+		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
+		assertEquals(1, messagesByItemIdAndLevelGte.size());
+		assertEquals("java.lang.NullPointerException: Oops\n"
+				+ "\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
+				+ "\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
+				+ "\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
+				+ "\tat java.base/java.lang.reflect.Method.invoke(Method.java:566)\n", messagesByItemIdAndLevelGte.get(0));
+	}
+
+	@Test
+	void findLogMessagesByItemIdAndLoLevelGteTest() {
+
+		TestItem testItem = testItemRepository.findById(3L).get();
+
+		List<String> messagesByItemIdAndLevelGte = logRepository.findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(testItem.getLaunchId(),
+				testItem.getItemId(),
+				testItem.getPath(),
+				LogLevel.WARN.toInt()
+		);
+		assertTrue(CollectionUtils.isNotEmpty(messagesByItemIdAndLevelGte));
+		assertEquals(7, messagesByItemIdAndLevelGte.size());
+		messagesByItemIdAndLevelGte.forEach(it -> assertEquals("log", it));
 	}
 }

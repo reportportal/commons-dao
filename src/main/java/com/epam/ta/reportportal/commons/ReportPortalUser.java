@@ -18,14 +18,21 @@ package com.epam.ta.reportportal.commons;
 
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * ReportPortal user representation
@@ -115,6 +122,39 @@ public class ReportPortalUser extends User {
 		public ProjectRole getProjectRole() {
 			return projectRole;
 		}
+
+		public static ProjectDetailsBuilder builder() {
+			return new ProjectDetailsBuilder();
+		}
+
+		public static class ProjectDetailsBuilder {
+			private Long projectId;
+			private String projectName;
+			private ProjectRole projectRole;
+
+			private ProjectDetailsBuilder() {
+			}
+
+			public ProjectDetailsBuilder withProjectId(Long projectId) {
+				this.projectId = projectId;
+				return this;
+			}
+
+			public ProjectDetailsBuilder withProjectName(String projectName) {
+				this.projectName = projectName;
+				return this;
+			}
+
+			public ProjectDetailsBuilder withProjectRole(String projectRole) {
+				this.projectRole = ProjectRole.forName(projectRole)
+						.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
+				return this;
+			}
+
+			public ProjectDetails build() {
+				return new ProjectDetails(projectId, projectName, projectRole);
+			}
+		}
 	}
 
 	public static class ReportPortalUserBuilder {
@@ -170,6 +210,24 @@ public class ReportPortalUser extends User {
 		public ReportPortalUserBuilder withProjectDetails(Map<String, ProjectDetails> projectDetails) {
 			this.projectDetails = projectDetails;
 			return this;
+		}
+
+		public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
+			this.username = user.getLogin();
+			this.email = user.getPassword();
+			this.userId = user.getId();
+			this.userRole = user.getRole();
+			this.password = ofNullable(user.getPassword()).orElse("");
+			this.authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getAuthority()));
+			this.projectDetails = user.getProjects().stream().collect(Collectors.toMap(
+					it -> it.getProject().getName(),
+					it -> ProjectDetails.builder()
+							.withProjectId(it.getProject().getId())
+							.withProjectRole(it.getProjectRole().name())
+							.withProjectName(it.getProject().getName())
+							.build()
+			));
+			return build();
 		}
 
 		public ReportPortalUser build() {

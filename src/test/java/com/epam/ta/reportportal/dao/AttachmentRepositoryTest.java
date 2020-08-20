@@ -18,16 +18,22 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -37,6 +43,9 @@ class AttachmentRepositoryTest extends BaseTest {
 
 	@Autowired
 	private AttachmentRepository attachmentRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Test
 	void findAllByProjectId() {
@@ -59,7 +68,7 @@ class AttachmentRepositoryTest extends BaseTest {
 	@Test
 	void findAllByItemId() {
 
-		List<Long> ids = attachmentRepository.findIdsByTestItemId(3L, PageRequest.of(0, 50)).getContent();
+		List<Long> ids = attachmentRepository.findIdsByTestItemId(Collections.singleton(3L), PageRequest.of(0, 50)).getContent();
 
 		Assertions.assertFalse(ids.isEmpty());
 
@@ -72,5 +81,56 @@ class AttachmentRepositoryTest extends BaseTest {
 		int count = attachmentRepository.deleteAllByIds(ids);
 
 		assertEquals(ids.size(), count);
+	}
+
+	@Test
+	void findByItemIdsAndPeriodTest() {
+		Duration duration = Duration.ofDays(6).plusHours(23);
+		final Long itemId = 3L;
+
+		List<Attachment> attachments = attachmentRepository.findByItemIdsAndLogTimeBefore(Collections.singletonList(itemId),
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+		);
+
+		assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
+		assertEquals(3, attachments.size(), "Incorrect count of attachments");
+		attachments.stream().map(it -> null != it.getFileId() || null != it.getThumbnailId()).forEach(Assertions::assertTrue);
+		attachments.stream().map(Attachment::getFileSize).forEach(size -> assertEquals(1024, size));
+	}
+
+	@Test
+	void findByLaunchIdsAndPeriodTest() {
+		Duration duration = Duration.ofDays(6).plusHours(23);
+		final Long launchId = 3L;
+
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(Collections.singletonList(launchId),
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+		);
+
+		assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
+		assertEquals(1, attachments.size(), "Incorrect count of attachments");
+		attachments.stream().map(it -> null != it.getFileId() || null != it.getThumbnailId()).forEach(Assertions::assertTrue);
+		attachments.stream().map(Attachment::getFileSize).forEach(size -> assertEquals(1024, size));
+	}
+
+	@Test
+	void shouldNotFindByLaunchIdsWhenLessThenPeriod() {
+		Duration duration = Duration.ofDays(14).plusHours(23);
+		final Long launchId = 3L;
+
+		List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(Collections.singletonList(launchId),
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+		);
+
+		assertTrue(CollectionUtils.isEmpty(attachments), "Attachments should be empty");
+	}
+
+	@Test
+	void deleteAllByLaunchIdsIn() {
+		List<Long> launchIds = Arrays.asList(1L, 2L);
+		List<Attachment> attachments = attachmentRepository.findAllByLaunchIdIn(launchIds);
+		assertNotNull(attachments);
+		assertEquals(9, attachments.size());
+		attachments.stream().map(Attachment::getLaunchId).distinct().map(launchIds::contains).forEach(Assertions::assertTrue);
 	}
 }

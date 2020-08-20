@@ -1,5 +1,5 @@
 language: java
-dist: trusty
+dist: xenial
 
 script: ./gradlew build --full-stacktrace
 
@@ -8,7 +8,7 @@ env:
     - GRADLE_OPTS="-Xms128m -Xmx1g"
 
 jdk:
-  - oraclejdk8
+  - openjdk11
 
 cache:
   directories:

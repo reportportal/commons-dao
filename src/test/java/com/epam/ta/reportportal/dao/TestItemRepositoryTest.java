@@ -24,18 +24,21 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.item.NestedStep;
-import com.epam.ta.reportportal.entity.item.PathName;
-import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.*;
+import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.statistics.Statistics;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Comparators;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Lists;
-import org.assertj.core.util.Strings;
+import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,14 +52,15 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Ivan Budaev
  */
-@Sql({"/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
+@Sql({ "/db/fill/item/items-fill.sql", "/db/fill/issue/issue-fill.sql" })
 class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
@@ -127,28 +131,6 @@ class TestItemRepositoryTest extends BaseTest {
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
 	}
 
-	@Test
-	void loadItemsHistoryShouldReturnhLimitedCountOfItemsPerLaunch() {
-		//GIVEN
-		List<String> uniqueIds = Lists.newArrayList("unqIdSTEP7", "unqIdSTEP8", "unqIdSTEP9");
-		List<Long> launchesIds = Lists.newArrayList(7L, 8L, 9L);
-
-		int limit = 6;
-		int historyDepth = launchesIds.size();
-		int itemsLimitPerLaunch = limit / historyDepth;
-
-		//WHEN
-		List<TestItem> items = testItemRepository.loadItemsHistory(uniqueIds, launchesIds, itemsLimitPerLaunch);
-
-		//THEN
-		assertEquals(limit, items.size(), String.format("Items size should be %d", limit));
-
-		Map<Long, List<TestItem>> itemsGroupedByLaunch = items.stream().collect(Collectors.groupingBy(TestItem::getLaunchId));
-		assertGroupedItems(7L, itemsGroupedByLaunch, itemsLimitPerLaunch);
-		assertGroupedItems(8L, itemsGroupedByLaunch, itemsLimitPerLaunch);
-		assertGroupedItems(9L, itemsGroupedByLaunch, itemsLimitPerLaunch);
-	}
-
 	private void assertGroupedItems(Long launchId, Map<Long, List<TestItem>> itemsGroupedByLaunch, int itemsLimitPerLaunch) {
 		List<TestItem> items = itemsGroupedByLaunch.get(launchId);
 		assertEquals(itemsLimitPerLaunch, items.size());
@@ -208,7 +190,13 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasStatusNotEqualsWithoutStepItem() {
-		assertTrue(testItemRepository.hasStatusNotEqualsWithoutStepItem(1L, 4L, StatusEnum.IN_PROGRESS));
+		assertTrue(testItemRepository.hasDescendantsNotInStatusExcludingById(1L, 4L, StatusEnum.IN_PROGRESS.name()));
+	}
+
+	@Test
+	void findByPath() {
+		TestItem testItem = testItemRepository.findById(1L).orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, 1L));
+		assertTrue(testItemRepository.findByPath(testItem.getPath()).isPresent());
 	}
 
 	@Test
@@ -289,7 +277,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final StatusEnum failedStatus = StatusEnum.FAILED;
 		final List<TestItem> items = testItemRepository.selectItemsInStatusByParent(parentId, failedStatus);
 		assertNotNull(items, "Items should not be null");
-		assertTrue(!items.isEmpty(), "Items should not be empty");
+		assertFalse(items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
 			assertEquals(parentId, it.getParent().getItemId(), "Incorrect parent id");
 			assertEquals(failedStatus, it.getItemResults().getStatus(), "Incorrect launch status");
@@ -302,8 +290,18 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void hasItemsWithIssueByLaunch() {
+		assertTrue(testItemRepository.hasItemsWithIssueByLaunch(1L));
+	}
+
+	@Test
 	void hasItemsInStatusByParent() {
-		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED));
+		assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED.name()));
+	}
+
+	@Test
+	void hasItemsInStatusByParentNegative() {
+		assertFalse(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.SKIPPED.name(), StatusEnum.PASSED.name()));
 	}
 
 	@Test
@@ -386,7 +384,10 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasDescendantsWithStatusNotEqual() {
-		assertTrue(testItemRepository.hasDescendantsWithStatusNotEqual(1L, JStatusEnum.PASSED), "Incorrect status");
+		assertTrue(testItemRepository.hasDescendantsNotInStatus(1L, StatusEnum.PASSED.name()), "Incorrect status");
+		assertFalse(testItemRepository.hasDescendantsNotInStatus(1L, StatusEnum.FAILED.name(), StatusEnum.PASSED.name()),
+				"Incorrect status"
+		);
 	}
 
 	@Test
@@ -405,7 +406,7 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void retriesFetchingTest() {
+	void selectRetriesTest() {
 
 		Filter filter = Filter.builder()
 				.withTarget(TestItem.class)
@@ -415,19 +416,14 @@ class TestItemRepositoryTest extends BaseTest {
 
 		List<TestItem> items = testItemRepository.findByFilter(filter, PageRequest.of(0, 1)).getContent();
 
-		assertNotNull(items);
-		assertEquals(1L, items.size());
+		TestItem item = items.get(0);
 
-		TestItem retriesParent = items.get(0);
-		Set<TestItem> retries = retriesParent.getRetries();
-
-		assertEquals(3L, retries.size());
-
-		retries.stream().map(TestItem::getLaunchId).forEach(Assertions::assertNull);
-		retries.stream().map(TestItem::getRetryOf).forEach(retryOf -> assertEquals(retriesParent.getItemId(), retryOf));
-		retries.forEach(retry -> assertEquals(Strings.concat(retriesParent.getPath(), ".", String.valueOf(retry.getItemId())),
-				retry.getPath()
-		));
+		List<TestItem> retries = testItemRepository.selectRetries(Lists.newArrayList(item.getItemId()));
+		assertEquals(3, retries.size());
+		retries.forEach(retry -> {
+			assertNotNull(retry.getRetryOf());
+			assertEquals(item.getItemId(), retry.getRetryOf());
+		});
 	}
 
 	@Test
@@ -534,6 +530,27 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void selectIdsWithIssueByLaunchTest() {
+		final long launchId = 1L;
+
+		List<Long> ids = testItemRepository.selectIdsWithIssueByLaunch(launchId);
+
+		assertFalse(ids.isEmpty());
+
+		Set<Long> distinctIds = new HashSet<>(ids);
+		assertEquals(ids.size(), distinctIds.size());
+
+		testItemRepository.findAllById(ids).forEach(item -> assertNotNull(item.getItemResults().getIssue()));
+
+		List<TestItem> itemsWithIssue = testItemRepository.findTestItemsByLaunchId(launchId)
+				.stream()
+				.filter(item -> Objects.nonNull(item.getItemResults().getIssue()))
+				.collect(toList());
+
+		assertEquals(itemsWithIssue.size(), ids.size());
+	}
+
+	@Test
 	void findAllInIssueGroupByLaunch() {
 		List<TestItem> withToInvestigate = testItemRepository.findAllInIssueGroupByLaunch(3L, TestItemIssueGroup.TO_INVESTIGATE);
 		withToInvestigate.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
@@ -595,6 +612,16 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void accumulateStatisticsByFilter() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+		final Set<Statistics> statistics = testItemRepository.accumulateStatisticsByFilter(itemFilter);
+		assertNotNull(statistics);
+	}
+
+	@Test
 	void findAllNestedStepsByIds() {
 
 		Filter logFilter = Filter.builder()
@@ -636,6 +663,188 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void testItemHistoryPage() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				5,
+				true
+		);
+
+		assertFalse(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, 5, false);
+
+		assertFalse(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryEmptyPage() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "28933", CRITERIA_PARENT_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "DEFAULT", CRITERIA_LAUNCH_MODE))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_PROJECT_ID))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, ID)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 20, sort),
+				1L,
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 20, sort), 1L, 5, false);
+
+		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchName() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				"launch name 1",
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter, PageRequest.of(0, 2, sort), 1L, "launch name 1", 5, false);
+
+		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchIds() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				com.google.common.collect.Lists.newArrayList(1L, 2L, 3L),
+				5,
+				true
+		);
+
+		assertFalse(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(itemFilter,
+				PageRequest.of(0, 2, sort),
+				1L,
+				com.google.common.collect.Lists.newArrayList(1L, 2L, 3L),
+				5,
+				false
+		);
+
+		assertFalse(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchFilter() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Filter launchFilter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				5,
+				false
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Test
+	void testItemHistoryPageWithLaunchFilterAndLaunchName() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Filter launchFilter = Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.build();
+
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+
+		Page<TestItemHistory> testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				"launch name 1",
+				5,
+				true
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+
+		testItemHistories = testItemRepository.loadItemsHistoryPage(false,
+				launchFilter,
+				itemFilter,
+				PageRequest.of(0, 5),
+				PageRequest.of(0, 2, sort),
+				1L,
+				"launch name 1",
+				5,
+				false
+		);
+
+		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Test
 	void findByFilterShouldReturnItemsWithIssueAndWithoutTicketsWhenIssueExistsAndTicketsNotExistFiltersAreSelected() {
 		//GIVEN
 		Filter filter = Filter.builder()
@@ -659,6 +868,69 @@ class TestItemRepositoryTest extends BaseTest {
 		assertIssueExistsAndTicketsEmpty(firstTestItem, expectedFirstTestItemId);
 		Long expectedSecondTestItemId = 106L;
 		assertIssueExistsAndTicketsEmpty(secondTestItem, expectedSecondTestItemId);
+	}
+
+	@Test
+	void selectAllDescendantsIdsTest() {
+		TestItem item = testItemRepository.findById(1L).get();
+		List<Long> ids = testItemRepository.selectAllDescendantsIds(item.getPath());
+
+		testItemRepository.findAllById(ids).stream().map(TestItem::getPath).forEach(it -> assertTrue(it.startsWith("1")));
+	}
+
+	@Test
+	void deleteAllByItemIdTest() {
+		ArrayList<Long> ids = Lists.newArrayList(1L, 10L);
+		testItemRepository.deleteAllByItemIdIn(ids);
+
+		assertEquals(0, testItemRepository.findAllById(ids).size());
+	}
+
+	@Test
+	void saveItemWith700CharsParam() {
+		String longParam = "pQJlVldHAf4vmEhm9PemBRGjHUCHixdkCfaSpzsPJKWUS29W0wygKgVjiuvu9xe3G4mBcUjjNeOUBqe1ZvM5A9GXYp15NcoVJDrgSBaIJoBdeZId2EEkxGKh0GrL7WMkCAZ36QlzA4JQg52sQgv2S9gdxCc0RteMuau1lxLdzvP8GqRldpvhsYHEBzKhhnes4KcmkLP20zV6nIIj7hdxGRZEPsqKI8vZWcX23P6FQxKtJN3OPVG8wxNekaCAD9e4aOV7XQhHgMk7mx3QCFK4u4KjQv5QF7BKUB4isQM1pMX0gysu6tj5Ss0eWI8Mg6JVb88bm61ByS08indxu7hqefBcLwL3CX6zTAEmeNn2c0BxI06RUFBwZxoa6durIomVhie4JwarzA5dB3qQ9H4UEH6lWqKO95FDH7yYH5CoMDdMCMXwoBnd8Fu61t9KIKrTk06IW1zSaPAPFq00bq2J2cEZk3ybaraMqaNepHX3huw4u7sYxCAXVZnb4COMkXwsFQ5V7ptCiuG4k7ZVgRg1vtQ7WmqbArL86tjGkUSh0f49wkcg2N6eYdBcGC1QNZZoGDQWJzIwydfnoRmGi4Utzt05erQeHa5XpKC05Iii6ZrT6Ib4sZ0QdhCUy8SEuKFxOzcGv7CRenv44Nhv0SdPjEuZ5BEKgAPkIuBknokoOgXAtdL7BFtMwu0IzH7U";
+		TestItem item = new TestItem();
+		item.setStartTime(LocalDateTime.now());
+		item.setName("item");
+		item.setPath("1.2.3");
+		item.setUniqueId("uniqueID");
+		item.setUuid("uuid");
+		item.setTestCaseHash(123);
+		TestItemResults itemResults = new TestItemResults();
+		itemResults.setTestItem(item);
+		itemResults.setStatus(StatusEnum.IN_PROGRESS);
+		item.setItemResults(itemResults);
+		item.setLaunchId(1L);
+		item.setType(TestItemTypeEnum.STEP);
+		Parameter parameter = new Parameter();
+		parameter.setKey(longParam);
+		parameter.setValue(longParam);
+		item.setParameters(Sets.newLinkedHashSet(parameter));
+
+		testItemRepository.save(item);
+	}
+
+	@Test
+	void saveItemWith700CharsTestCaseId() {
+		String longParam = "pQJlVldHAf4vmEhm9PemBRGjHUCHixdkCfaSpzsPJKWUS29W0wygKgVjiuvu9xe3G4mBcUjjNeOUBqe1ZvM5A9GXYp15NcoVJDrgSBaIJoBdeZId2EEkxGKh0GrL7WMkCAZ36QlzA4JQg52sQgv2S9gdxCc0RteMuau1lxLdzvP8GqRldpvhsYHEBzKhhnes4KcmkLP20zV6nIIj7hdxGRZEPsqKI8vZWcX23P6FQxKtJN3OPVG8wxNekaCAD9e4aOV7XQhHgMk7mx3QCFK4u4KjQv5QF7BKUB4isQM1pMX0gysu6tj5Ss0eWI8Mg6JVb88bm61ByS08indxu7hqefBcLwL3CX6zTAEmeNn2c0BxI06RUFBwZxoa6durIomVhie4JwarzA5dB3qQ9H4UEH6lWqKO95FDH7yYH5CoMDdMCMXwoBnd8Fu61t9KIKrTk06IW1zSaPAPFq00bq2J2cEZk3ybaraMqaNepHX3huw4u7sYxCAXVZnb4COMkXwsFQ5V7ptCiuG4k7ZVgRg1vtQ7WmqbArL86tjGkUSh0f49wkcg2N6eYdBcGC1QNZZoGDQWJzIwydfnoRmGi4Utzt05erQeHa5XpKC05Iii6ZrT6Ib4sZ0QdhCUy8SEuKFxOzcGv7CRenv44Nhv0SdPjEuZ5BEKgAPkIuBknokoOgXAtdL7BFtMwu0IzH7U";
+		TestItem item = new TestItem();
+		item.setStartTime(LocalDateTime.now());
+		item.setName("item");
+		item.setPath("1.2.3");
+		item.setUniqueId("uniqueID");
+		item.setUuid("uuid");
+		item.setTestCaseHash(123);
+		item.setTestCaseId(longParam);
+		TestItemResults itemResults = new TestItemResults();
+		itemResults.setTestItem(item);
+		itemResults.setStatus(StatusEnum.IN_PROGRESS);
+		item.setItemResults(itemResults);
+		item.setLaunchId(1L);
+		item.setType(TestItemTypeEnum.STEP);
+		Parameter parameter = new Parameter();
+		item.setParameters(Sets.newLinkedHashSet(parameter));
+
+		testItemRepository.save(item);
 	}
 
 	private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {

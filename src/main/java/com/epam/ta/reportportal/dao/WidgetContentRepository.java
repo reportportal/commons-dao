@@ -18,8 +18,12 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import org.springframework.data.domain.Sort;
 
@@ -225,7 +229,7 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic with own sorting
 	 * @param contentFields     Custom fields for select query building
-	 * @param customColumns     Map of the custom column name as key and {@link com.epam.ta.reportportal.entity.ItemAttribute#key} as value
+	 * @param customColumns     Map of the custom column name as key and {@link ItemAttribute#getKey()} as value
 	 * @param isLatest          Flag for retrieving only latest launches
 	 * @param limit             Results limit
 	 * @return Map grouped by filter name with {@link com.epam.ta.reportportal.entity.filter.UserFilter#getName()} as key and list of {@link ProductStatusStatisticsContent} as value
@@ -238,7 +242,7 @@ public interface WidgetContentRepository {
 	 *
 	 * @param filter        {@link Filter}
 	 * @param contentFields Custom fields for select query building
-	 * @param customColumns Map of the custom column name as key and {@link com.epam.ta.reportportal.entity.ItemAttribute#key} as value
+	 * @param customColumns Map of the custom column name as key and {@link ItemAttribute#getKey()} as value
 	 * @param sort          {@link Sort}
 	 * @param isLatest      Flag for retrieving only latest launches
 	 * @param limit         Results limit
@@ -258,18 +262,18 @@ public interface WidgetContentRepository {
 
 	/**
 	 * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate} entities with matched items count,
-	 * grouped by {@link ItemAttribute#value} and {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 * grouped by {@link ItemAttribute#getValue()} and {@link PatternTemplate#getName()}
 	 *
 	 * @param filter          {@link Filter}
 	 * @param sort            {@link Sort}
-	 * @param attributeKey    {@link ItemAttribute#key}
-	 * @param patternName     {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate#name}
+	 * @param attributeKey    {@link ItemAttribute#getKey()}
+	 * @param patternName     {@link PatternTemplate#getName()}
 	 * @param isLatest        Flag for retrieving only latest launches
 	 * @param launchesLimit   Launches count limit
 	 * @param attributesLimit Attributes count limit
 	 * @return The {@link List} of the {@link TopPatternTemplatesContent}
 	 */
-	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, String attributeKey, @Nullable String patternName,
+	List<TopPatternTemplatesContent> patternTemplate(Filter filter, Sort sort, @Nullable String attributeKey, @Nullable String patternName,
 			boolean isLatest, int launchesLimit, int attributesLimit);
 
 	/**
@@ -287,4 +291,11 @@ public interface WidgetContentRepository {
 	 */
 	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
 			Filter testItemFilter, String currentLevelKey);
+
+	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort, int launchesLimit,
+			boolean isLatest);
+
+	void removeWidgetView(String viewName);
+
+	List<HealthCheckTableContent> componentHealthCheckTable(HealthCheckTableGetParams params);
 }

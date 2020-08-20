@@ -24,7 +24,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ class ProjectRepositoryTest extends BaseTest {
 		projects.getContent().forEach(project -> {
 			assertNotNull(project.getId());
 			assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
-			assertEquals(14, project.getProjectAttributes().size());
+			assertEquals(12, project.getProjectAttributes().size());
 			assertTrue(project.getProjectAttributes()
 					.stream()
 					.anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()

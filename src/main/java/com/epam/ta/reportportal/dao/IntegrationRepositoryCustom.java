@@ -17,8 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.ldap.ActiveDirectoryConfig;
-import com.epam.ta.reportportal.entity.ldap.LdapConfig;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,14 +25,6 @@ import java.util.Optional;
  * @author Yauheni_Martynau
  */
 public interface IntegrationRepositoryCustom extends FilterableRepository<Integration> {
-
-	Optional<LdapConfig> findLdap();
-
-	Optional<ActiveDirectoryConfig> findActiveDirectory();
-
-	Optional<LdapConfig> findLdap(boolean enabled);
-
-	Optional<ActiveDirectoryConfig> findActiveDirectory(boolean enabled);
 
 	/**
 	 * Retrieve integration with {@link Integration#project} == null by integration ID
@@ -68,5 +58,4 @@ public interface IntegrationRepositoryCustom extends FilterableRepository<Integr
 	 * @return The {@link List} of the {@link Integration}
 	 */
 	List<Integration> findAllGlobalNotInIntegrationTypeIds(List<Long> integrationTypeIds);
-
 }

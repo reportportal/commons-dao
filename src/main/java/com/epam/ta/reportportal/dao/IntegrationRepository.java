@@ -162,4 +162,15 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE type = :integrationTypeId", nativeQuery = true)
 	void updateEnabledStateByIntegrationTypeId(@Param("enabled") boolean enabled, @Param("integrationTypeId") Long integrationTypeId);
+
+	Optional<Integration> findByNameAndTypeId(String name, Long integrationTypeId);
+
+	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type FROM integration i JOIN integration_type it ON i.type = it.id WHERE i.name = :name AND it.name = :typeName AND it.group_type = cast('AUTH' AS INTEGRATION_GROUP_ENUM)", nativeQuery = true)
+	Optional<Integration> findAuthByNameAndTypeName(@Param("name") String name, @Param("typeName") String typeName);
+
+	@Query(value = "SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type FROM integration i JOIN integration_type it ON i.type = it.id WHERE i.name = :name AND it.name = :name AND it.group_type = cast('AUTH' AS INTEGRATION_GROUP_ENUM)", nativeQuery = true)
+	Optional<Integration> findExclusiveAuth(@Param("name") String name);
+
+	@Query(value = "SELECT * FROM integration i LEFT OUTER JOIN integration_type it ON i.type = it.id WHERE it.name IN (:types)", nativeQuery = true)
+	List<Integration> findAllByTypeIn(@Param("types") String... types);
 }
