@@ -38,7 +38,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:7ea4bf3')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:efc4947e')
     }
 }
 
@@ -48,15 +48,22 @@ dependencies {
         compile 'com.epam.reportportal:commons-rules'
         compile 'com.epam.reportportal:commons-model'
     } else {
-        compile 'com.github.reportportal:commons:7480d61'
+        compile 'com.github.reportportal:commons:def053af'
         compile 'com.github.reportportal:commons-rules:331c402'
         compile 'com.github.reportportal:commons-model:22ccaac'
     }
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    compile 'org.postgresql:postgresql'
+    //https://nvd.nist.gov/vuln/detail/CVE-2020-10683 (dom4j 2.1.3 version dependency) AND https://nvd.nist.gov/vuln/detail/CVE-2019-14900
+    compile('org.springframework.boot:spring-boot-starter-data-jpa') {
+        exclude group: 'org.hibernate', module: 'hibernate-core'
+    }
+    compile('org.hibernate:hibernate-core:5.4.18.Final')
+    //
+
+    //https://nvd.nist.gov/vuln/detail/CVE-2020-13692
+    compile 'org.postgresql:postgresql:42.2.13'
     compile 'org.jooq:jooq'
-    jooqRuntime 'org.postgresql:postgresql'
+    jooqRuntime 'org.postgresql:postgresql:42.2.13'
 
     compile 'io.minio:minio:6.0.13'
 
