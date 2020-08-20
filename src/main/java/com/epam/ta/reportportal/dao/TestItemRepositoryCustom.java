@@ -33,6 +33,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.issue.Issue;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -164,6 +165,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return List of descendants
 	 */
 	List<TestItem> selectAllDescendantsWithChildren(Long itemId);
+
+	List<Long> findTestItemIdsByLaunchId(@Param("launchId") Long launchId, Pageable pageable);
 
 	/**
 	 * Select common items object that have provided status for

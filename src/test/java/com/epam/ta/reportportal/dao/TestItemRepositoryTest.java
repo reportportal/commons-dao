@@ -90,16 +90,12 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void findTestItemIdsByLaunchId() {
 
-		Page<Long> testItemIdsByLaunchId = testItemRepository.findTestItemIdsByLaunchId(1L,
-				PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "itemId"))
-		);
-
-		List<Long> ids = testItemIdsByLaunchId.getContent();
+		List<Long> ids = testItemRepository.findTestItemIdsByLaunchId(1L, PageRequest.of(0, 6));
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
 		assertEquals(6, ids.size(), "Incorrect ids size");
-		assertEquals(5, ids.get(1));
-		assertEquals(1, ids.get(5));
+		assertEquals(1, ids.get(0));
+		assertEquals(5, ids.get(4));
 	}
 
 	@Test

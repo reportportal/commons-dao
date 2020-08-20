@@ -53,6 +53,7 @@ import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
@@ -109,12 +110,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.groupBy(STATISTICS_FIELD.NAME)
 				.getQuery()).intoSet(r -> {
-					Statistics statistics = new Statistics();
-					StatisticsField statisticsField = new StatisticsField();
-					statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
-					statistics.setStatisticsField(statisticsField);
-					statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
-					return statistics;
+			Statistics statistics = new Statistics();
+			StatisticsField statisticsField = new StatisticsField();
+			statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
+			statistics.setStatisticsField(statisticsField);
+			statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
+			return statistics;
 		});
 	}
 
@@ -310,7 +311,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		if (pageableConfig.getKey()) {
 			int limit = pageableConfig.getValue().getPageSize();
-			int offset = QueryBuilder.retrieveOffsetAndApplyBoundaries(pageableConfig.getValue());
+			int offset = retrieveOffsetAndApplyBoundaries(pageableConfig.getValue());
 			testCaseIdQuery.limit(limit);
 			testCaseIdQuery.offset(offset);
 			itemsQuery.limit(limit);
@@ -365,6 +366,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.on(TEST_ITEM.ITEM_ID.eq(childTestItem.PARENT_ID))
 						.where(TEST_ITEM.PARENT_ID.eq(itemId))))
 				.fetch(TEST_ITEM_RECORD_MAPPER);
+	}
+
+	@Override
+	public List<Long> findTestItemIdsByLaunchId(Long launchId, Pageable pageable) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.orderBy(TEST_ITEM.ITEM_ID)
+				.limit(pageable.getPageSize())
+				.offset(retrieveOffsetAndApplyBoundaries(pageable))
+				.fetchInto(Long.class);
 	}
 
 	@Override
