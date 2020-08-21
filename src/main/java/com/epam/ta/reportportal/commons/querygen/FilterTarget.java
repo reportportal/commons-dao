@@ -71,12 +71,27 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION, PROJECT.ORGANIZATION, String.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME, ATTRIBUTE.NAME, String.class).get(),
-
-					new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
-							.withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
-							.get(),
-					new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME,
+							ATTRIBUTE.NAME,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(PROJECT_ATTRIBUTE,
+									JoinType.LEFT_OUTER_JOIN,
+									PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID)
+							), JoinEntity.of(ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID)))
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY,
+							USERS_QUANTITY,
+							Long.class,
+							Lists.newArrayList(JoinEntity.of(PROJECT_USER,
+									JoinType.LEFT_OUTER_JOIN,
+									PROJECT.ID.eq(PROJECT_USER.PROJECT_ID)
+							))
+					).withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString()).get(),
+					new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY,
+							LAUNCHES_QUANTITY,
+							Long.class,
+							Lists.newArrayList(JoinEntity.of(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID)))
+					)
 							.withAggregateCriteria(DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
 									.and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
 							.get()
@@ -111,6 +126,11 @@ public enum FilterTarget {
 			query.addJoin(PROJECT_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_ATTRIBUTE.PROJECT_ID));
 			query.addJoin(ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, PROJECT_ATTRIBUTE.ATTRIBUTE_ID.eq(ATTRIBUTE.ID));
 			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+		}
+
+		@Override
+		protected void joinTablesForFilter(QuerySupplier query) {
+
 		}
 
 		@Override

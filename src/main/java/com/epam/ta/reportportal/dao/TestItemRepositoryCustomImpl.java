@@ -571,16 +571,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, String> selectPathNames(Long launchId, String path) {
-		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.NAME)
-				.from(TEST_ITEM)
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-				.and(DSL.sql(TEST_ITEM.PATH + " @> cast(? AS LTREE)", path))
-				.and(DSL.sql(TEST_ITEM.PATH + " != cast(? AS LTREE)", path))
-				.orderBy(TEST_ITEM.ITEM_ID)
+	public Map<Long, String> selectPathNames(Long itemId, Long projectId) {
+
+		JTestItem parentItem = TEST_ITEM.as("parent");
+		JTestItem childItem = TEST_ITEM.as("child");
+		return dsl.select(parentItem.ITEM_ID, parentItem.NAME)
+				.from(childItem)
+				.leftJoin(parentItem)
+				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
+				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
+				.join(LAUNCH)
+				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(childItem.ITEM_ID.eq(itemId))
+				.and(LAUNCH.PROJECT_ID.eq(projectId))
+				.orderBy(parentItem.ITEM_ID)
 				.fetch()
 				.stream()
-				.collect(MoreCollectors.toLinkedMap(r -> r.get(TEST_ITEM.ITEM_ID), r -> r.get(TEST_ITEM.NAME)));
+				.collect(MoreCollectors.toLinkedMap(r -> r.get(parentItem.ITEM_ID), r -> r.get(parentItem.NAME)));
 	}
 
 	@Override

@@ -279,22 +279,23 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator);
 
 	/**
-	 * Select unsorted ids and names of all items in a tree till current.
+	 * Select ids and names of all items in a tree till current for provided item id
 	 *
-	 * @param path itemPath
-	 * @return Map of id and name
+	 * @param itemId    {@link TestItem#getItemId()}
+	 * @param projectId Project
+	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, String> selectPathNames(Long launchId, String path);
+	Map<Long, String> selectPathNames(Long itemId, Long projectId);
 
 	/**
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
 	 * for each item id from the provided collection
 	 *
 	 * @param ids       {@link Collection} of {@link TestItem#getItemId()}
-	 * @param porjectId Project
+	 * @param projectId Project
 	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, PathName> selectPathNames(Collection<Long> id, Long porjectId);
+	Map<Long, PathName> selectPathNames(Collection<Long> ids, Long projectId);
 
 	/**
 	 * Select item IDs by analyzed status and {@link TestItem#getLaunchId()}
