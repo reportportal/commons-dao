@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.MoreCollectors;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
@@ -587,7 +586,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.orderBy(parentItem.ITEM_ID)
 				.fetch()
 				.stream()
-				.collect(MoreCollectors.toLinkedMap(r -> r.get(parentItem.ITEM_ID), r -> r.get(parentItem.NAME)));
+				.collect(LinkedHashMap::new,
+						(m, result) -> ofNullable(result.get(parentItem.ITEM_ID)).ifPresent(id -> m.put(id, result.get(parentItem.NAME))),
+						LinkedHashMap::putAll
+				);
 	}
 
 	@Override
