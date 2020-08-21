@@ -35,6 +35,11 @@ public class CriteriaHolderBuilder implements Supplier<CriteriaHolder> {
 		return this;
 	}
 
+	public CriteriaHolderBuilder newBuilder(String filterCriteria, String queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
+		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType, joinChain);
+		return this;
+	}
+
 	public CriteriaHolderBuilder newBuilder(String filterCriteria, Field queryCriteria, Class<?> dataType) {
 		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType);
 		return this;

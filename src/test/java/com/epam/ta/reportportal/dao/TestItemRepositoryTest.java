@@ -111,7 +111,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectPathNames() {
-		Map<Long, String> results = testItemRepository.selectPathNames(1L, "1.2.3");
+		Map<Long, String> results = testItemRepository.selectPathNames(3L, 1L);
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
 	}
