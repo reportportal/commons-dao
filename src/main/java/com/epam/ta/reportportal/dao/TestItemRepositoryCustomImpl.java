@@ -270,19 +270,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		return PageableExecutionUtils.getPage(result,
 				pageable,
-				() -> dsl.fetchCount(buildHistoryQuery(filteringQuery,
-						innerItemTable,
-						outerItemTable,
-						resultTable,
-						historyField,
-						baselineCondition.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)),
-						1,
-						Pair.of(Boolean.FALSE, pageable),
-						TEST_ITEM.field(historyGroupingField),
-						resultTable.field(historyGroupingField),
-						outerItemTable.field(historyGroupingField),
-						innerItemTable.field(historyGroupingField)
-				))
+				() -> dsl.fetchCount(with(ITEMS).as(filteringQuery)
+						.select(TEST_ITEM.field(historyGroupingField))
+						.from(TEST_ITEM)
+						.join(ITEMS)
+						.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+						.groupBy(TEST_ITEM.field(historyGroupingField)))
 		);
 	}
 
