@@ -393,36 +393,61 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Optional<Long> loadHistoryItem(Queryable filter, Pageable pageable, Long projectId) {
-		List<Sort.Order> orders = pageable.getSort().get().collect(toList());
+		return loadHistoryItem(filter, pageable.getSort(), LAUNCH.PROJECT_ID.eq(projectId));
+	}
+
+	@Override
+	public Optional<Long> loadHistoryItem(Queryable filter, Pageable pageable, Long projectId, String launchName) {
+		return loadHistoryItem(filter, pageable.getSort(), LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)));
+	}
+
+	private Optional<Long> loadHistoryItem(Queryable filter, Sort sort, Condition baselineCondition) {
+		List<Sort.Order> orders = sort.get().collect(toList());
 		orders.add(new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME));
-		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(Sort.by(orders)).with(1).build();
-		build.addConditions(LAUNCH.PROJECT_ID.eq(projectId));
-		return dsl.select(fieldName(HISTORY, ID).cast(Long.class)).from(build.asTable(HISTORY)).fetchInto(Long.class).stream().findFirst();
+		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(Sort.by(orders)).with(1).build();
+		selectQuery.addConditions(baselineCondition);
+		return dsl.select(fieldName(HISTORY, ID).cast(Long.class))
+				.from(selectQuery.asTable(HISTORY))
+				.fetchInto(Long.class)
+				.stream()
+				.findFirst();
 	}
 
 	@Override
 	public List<Long> loadHistory(LocalDateTime startTime, Long itemId, Integer hash, Long projectId, int historyDepth) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
-				.from(TEST_ITEM)
-				.join(LAUNCH)
-				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.PROJECT_ID.eq(projectId))
-				.and(TEST_ITEM.TEST_CASE_HASH.eq(hash))
-				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
-				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
-				.orderBy(TEST_ITEM.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
-				.limit(historyDepth)
-				.fetchInto(Long.class);
+		return loadHistory(startTime, itemId, LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.TEST_CASE_HASH.eq(hash)), historyDepth);
 	}
 
 	@Override
 	public List<Long> loadHistory(LocalDateTime startTime, Long itemId, String uniqueId, Long projectId, int historyDepth) {
+		return loadHistory(startTime, itemId, LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.UNIQUE_ID.eq(uniqueId)), historyDepth);
+	}
+
+	@Override
+	public List<Long> loadHistory(LocalDateTime startTime, Long itemId, Integer hash, Long projectId, String launchName, int historyDepth) {
+		return loadHistory(startTime,
+				itemId,
+				LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)).and(TEST_ITEM.TEST_CASE_HASH.eq(hash)),
+				historyDepth
+		);
+	}
+
+	@Override
+	public List<Long> loadHistory(LocalDateTime startTime, Long itemId, String uniqueId, Long projectId, String launchName,
+			int historyDepth) {
+		return loadHistory(startTime,
+				itemId,
+				LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)).and(TEST_ITEM.UNIQUE_ID.eq(uniqueId)),
+				historyDepth
+		);
+	}
+
+	private List<Long> loadHistory(LocalDateTime startTime, Long itemId, Condition baselineCondition, int historyDepth) {
 		return dsl.select(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(LAUNCH.PROJECT_ID.eq(projectId))
-				.and(TEST_ITEM.UNIQUE_ID.eq(uniqueId))
+				.where(baselineCondition)
 				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
 				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
 				.limit(historyDepth)
