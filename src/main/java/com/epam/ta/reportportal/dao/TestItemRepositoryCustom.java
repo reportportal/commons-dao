@@ -152,6 +152,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
 	Page<String> loadHistoryBaseline(Queryable filter, Pageable pageable, Long projectId, boolean usingHash);
 
+	Page<String> loadHistoryBaseline(Queryable filter, Pageable pageable, Long projectId, String launchName, boolean usingHash);
+
 	Optional<Long> loadHistoryItem(Queryable filter, Pageable pageable, Long projectId);
 
 	List<Long> loadHistory(LocalDateTime startTime, Long itemId, Integer hash, Long projectId, int historyDepth);
