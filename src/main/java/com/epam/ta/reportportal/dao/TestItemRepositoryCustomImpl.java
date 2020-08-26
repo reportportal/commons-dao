@@ -212,6 +212,66 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		);
 	}
 
+	public Page<String> loadHistoryBaseline(Queryable filter, Pageable pageable, Long projectId, boolean usingHash) {
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
+		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
+
+		return PageableExecutionUtils.getPage(dsl.with(ITEMS)
+						.as(filteringQuery)
+						.select(historyGroupingField)
+						.from(TEST_ITEM)
+						.join(ITEMS)
+						.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+						.join(LAUNCH)
+						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+						.where(LAUNCH.PROJECT_ID.eq(projectId))
+						.groupBy(historyGroupingField)
+						.limit(pageable.getPageSize())
+						.offset(retrieveOffsetAndApplyBoundaries(pageable))
+						.fetchInto(String.class),
+				pageable,
+				() -> dsl.fetchCount(with(ITEMS).as(filteringQuery)
+						.select(TEST_ITEM.field(historyGroupingField))
+						.from(TEST_ITEM)
+						.join(ITEMS)
+						.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+						.groupBy(TEST_ITEM.field(historyGroupingField)))
+		);
+
+	}
+
+	public Optional<Long> loadHistoryItem(Queryable filter, Pageable pageable, Long projectId) {
+		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(pageable.getSort()).with(1).build();
+		build.addConditions(LAUNCH.PROJECT_ID.eq(projectId));
+		return dsl.select(fieldName(HISTORY, ID).cast(Long.class)).from(build.asTable(HISTORY)).fetchInto(Long.class).stream().findFirst();
+	}
+
+	public List<Long> loadHistory(LocalDateTime startTime, Long itemId, Integer hash, Long projectId, int historyDepth) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(TEST_ITEM.TEST_CASE_HASH.eq(hash))
+				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
+				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
+				.limit(historyDepth)
+				.fetchInto(Long.class);
+	}
+
+	public List<Long> loadHistory(LocalDateTime startTime, Long itemId, String uniqueId, Long projectId, int historyDepth) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(TEST_ITEM.UNIQUE_ID.eq(uniqueId))
+				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
+				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
+				.limit(historyDepth)
+				.fetchInto(Long.class);
+	}
+
 	private SelectQuery<? extends Record> buildCompositeFilterHistoryQuery(boolean isLatest, Queryable launchFilter,
 			Queryable testItemFilter, Pageable launchPageable, Pageable testItemPageable) {
 		Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter,

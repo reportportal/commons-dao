@@ -150,6 +150,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Page<TestItemHistory> loadItemsHistoryPage(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable, Long projectId, String launchName, int historyDepth, boolean usingHash);
 
+	Page<String> loadHistoryBaseline(Queryable filter, Pageable pageable, Long projectId, boolean usingHash);
+
+	Optional<Long> loadHistoryItem(Queryable filter, Pageable pageable, Long projectId);
+
+	List<Long> loadHistory(LocalDateTime startTime, Long itemId, Integer hash, Long projectId, int historyDepth);
+
+	List<Long> loadHistory(LocalDateTime startTime, Long itemId, String uniqueId, Long projectId, int historyDepth);
+
 	/**
 	 * Selects all descendants of TestItem with provided id.
 	 *

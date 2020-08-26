@@ -17,9 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -839,6 +837,57 @@ class TestItemRepositoryTest extends BaseTest {
 		);
 
 		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Autowired
+	private TestItemRepositoryCustomImpl custom;
+
+	@Test
+	void stepHistoryWithUniqueIdTest() {
+
+		List<ConvertibleCondition> commonConditions = Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_HAS_STATS, "true").build(),
+				FilterCondition.builder().eq(CRITERIA_HAS_CHILDREN, "false").build(),
+				FilterCondition.builder().eq(CRITERIA_TYPE, "STEP").build(),
+				FilterCondition.builder().eq(CRITERIA_LAUNCH_ID, "1").build()
+		);
+
+		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
+
+		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
+		custom.loadHistoryBaseline(baseFilter, pageable, 1L, false).getContent().forEach(uniqueId -> {
+			Filter historyFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), Lists.newArrayList()).withConditions(
+					commonConditions).withCondition(FilterCondition.builder().eq(CRITERIA_UNIQUE_ID, String.valueOf(uniqueId)).build());
+
+			custom.loadHistoryItem(historyFilter, pageable, 1L).ifPresent(itemId -> testItemRepository.findById(itemId).ifPresent(item -> {
+				List<Long> history = custom.loadHistory(item.getStartTime(), itemId, item.getUniqueId(), 1L, 30);
+				assertFalse(history.isEmpty());
+			}));
+		});
+
+	}
+
+	@Test
+	void stepHistoryWithTestCaseHashTest() {
+
+		List<ConvertibleCondition> commonConditions = Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_HAS_STATS, "true").build(),
+				FilterCondition.builder().eq(CRITERIA_HAS_CHILDREN, "false").build(),
+				FilterCondition.builder().eq(CRITERIA_TYPE, "STEP").build(),
+				FilterCondition.builder().eq(CRITERIA_LAUNCH_ID, "1").build()
+		);
+
+		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
+
+		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
+		custom.loadHistoryBaseline(baseFilter, pageable, 1L, true).getContent().stream().filter(hash -> !hash.equals("8")).forEach(hash -> {
+			Filter historyFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), Lists.newArrayList()).withConditions(
+					commonConditions).withCondition(FilterCondition.builder().eq(CRITERIA_TEST_CASE_HASH, hash).build());
+
+			custom.loadHistoryItem(historyFilter, pageable, 1L).ifPresent(itemId -> testItemRepository.findById(itemId).ifPresent(item -> {
+				List<Long> history = custom.loadHistory(item.getStartTime(), itemId, item.getTestCaseHash(), 1L, 30);
+				assertFalse(history.isEmpty());
+			}));
+		});
+
 	}
 
 	@Test
