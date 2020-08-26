@@ -42,6 +42,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -54,6 +55,7 @@ import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
@@ -391,7 +393,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Optional<Long> loadHistoryItem(Queryable filter, Pageable pageable, Long projectId) {
-		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(pageable.getSort()).with(1).build();
+		List<Sort.Order> orders = pageable.getSort().get().collect(toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME));
+		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(Sort.by(orders)).with(1).build();
 		build.addConditions(LAUNCH.PROJECT_ID.eq(projectId));
 		return dsl.select(fieldName(HISTORY, ID).cast(Long.class)).from(build.asTable(HISTORY)).fetchInto(Long.class).stream().findFirst();
 	}
@@ -406,6 +410,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.and(TEST_ITEM.TEST_CASE_HASH.eq(hash))
 				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
 				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
+				.orderBy(TEST_ITEM.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
 				.limit(historyDepth)
 				.fetchInto(Long.class);
 	}
