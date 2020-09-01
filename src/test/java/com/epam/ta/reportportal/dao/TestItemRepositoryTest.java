@@ -854,15 +854,9 @@ class TestItemRepositoryTest extends BaseTest {
 		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
 
 		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
-		custom.loadHistoryBaseline(baseFilter, pageable, 1L, false).getContent().forEach(uniqueId -> {
-			Filter historyFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), Lists.newArrayList()).withConditions(
-					commonConditions).withCondition(FilterCondition.builder().eq(CRITERIA_UNIQUE_ID, String.valueOf(uniqueId)).build());
+		List<TestItemHistory> content = custom.loadItemsHistoryPage(baseFilter, pageable, 1L, 30, false).getContent();
 
-			custom.loadHistoryItem(historyFilter, pageable, 1L).ifPresent(itemId -> testItemRepository.findById(itemId).ifPresent(item -> {
-				List<Long> history = custom.loadHistory(item.getStartTime(), itemId, item.getUniqueId(), 1L, 30);
-				assertFalse(history.isEmpty());
-			}));
-		});
+		assertFalse(content.isEmpty());
 
 	}
 
@@ -878,16 +872,9 @@ class TestItemRepositoryTest extends BaseTest {
 		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
 
 		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
-		custom.loadHistoryBaseline(baseFilter, pageable, 1L, true).getContent().stream().filter(hash -> !hash.equals("8")).forEach(hash -> {
-			Filter historyFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), Lists.newArrayList()).withConditions(
-					commonConditions).withCondition(FilterCondition.builder().eq(CRITERIA_TEST_CASE_HASH, hash).build());
+		List<TestItemHistory> content = custom.loadItemsHistoryPage(baseFilter, pageable, 1L, 30, true).getContent();
 
-			custom.loadHistoryItem(historyFilter, pageable, 1L).ifPresent(itemId -> testItemRepository.findById(itemId).ifPresent(item -> {
-				List<Long> history = custom.loadHistory(item.getStartTime(), itemId, item.getTestCaseHash(), 1L, 30);
-				assertFalse(history.isEmpty());
-			}));
-		});
-
+		assertFalse(content.isEmpty());
 	}
 
 	@Test
