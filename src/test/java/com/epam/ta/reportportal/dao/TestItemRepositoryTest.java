@@ -17,9 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -839,6 +837,44 @@ class TestItemRepositoryTest extends BaseTest {
 		);
 
 		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Autowired
+	private TestItemRepositoryCustomImpl custom;
+
+	@Test
+	void stepHistoryWithUniqueIdTest() {
+
+		List<ConvertibleCondition> commonConditions = Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_HAS_STATS, "true").build(),
+				FilterCondition.builder().eq(CRITERIA_HAS_CHILDREN, "false").build(),
+				FilterCondition.builder().eq(CRITERIA_TYPE, "STEP").build(),
+				FilterCondition.builder().eq(CRITERIA_LAUNCH_ID, "1").build()
+		);
+
+		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
+
+		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
+		List<TestItemHistory> content = custom.loadItemsHistoryPage(baseFilter, pageable, 1L, 30, false).getContent();
+
+		assertFalse(content.isEmpty());
+
+	}
+
+	@Test
+	void stepHistoryWithTestCaseHashTest() {
+
+		List<ConvertibleCondition> commonConditions = Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_HAS_STATS, "true").build(),
+				FilterCondition.builder().eq(CRITERIA_HAS_CHILDREN, "false").build(),
+				FilterCondition.builder().eq(CRITERIA_TYPE, "STEP").build(),
+				FilterCondition.builder().eq(CRITERIA_LAUNCH_ID, "1").build()
+		);
+
+		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
+
+		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
+		List<TestItemHistory> content = custom.loadItemsHistoryPage(baseFilter, pageable, 1L, 30, true).getContent();
+
+		assertFalse(content.isEmpty());
 	}
 
 	@Test

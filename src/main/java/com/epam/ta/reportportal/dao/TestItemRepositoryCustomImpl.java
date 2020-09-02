@@ -16,8 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -32,16 +31,18 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
-import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.Condition;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -49,11 +50,15 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TEST_CASE_HASH;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
@@ -150,35 +155,69 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth,
 			boolean usingHash) {
 		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
-		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId), historyDepth, pageable, usingHash);
+		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
+		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery, historyGroupingField, LAUNCH.PROJECT_ID.eq(projectId), pageable);
+
+		List<TestItemHistory> itemHistories = historyBaseline.getContent().stream().map(value -> {
+			List<Long> itemIds = loadHistoryItem(getHistoryFilter(filter, usingHash, value),
+					pageable.getSort(),
+					LAUNCH.PROJECT_ID.eq(projectId)
+			).map(testItem -> getHistoryIds(testItem, usingHash, projectId, historyDepth - 1)).orElseGet(Collections::emptyList);
+			return new TestItemHistory(value, itemIds);
+		}).collect(Collectors.toList());
+
+		return new PageImpl<>(itemHistories, pageable, historyBaseline.getTotalElements());
+
 	}
 
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, String launchName,
 			int historyDepth, boolean usingHash) {
 		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
-		return fetchHistory(filteringQuery,
+		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
+		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
+				historyGroupingField,
 				LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)),
-				historyDepth,
-				pageable,
-				usingHash
+				pageable
 		);
+
+		List<TestItemHistory> itemHistories = historyBaseline.getContent().stream().map(value -> {
+			List<Long> itemIds = loadHistoryItem(getHistoryFilter(filter, usingHash, value),
+					pageable.getSort(),
+					LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName))
+			).map(testItem -> getHistoryIds(testItem, usingHash, projectId, launchName, historyDepth - 1))
+					.orElseGet(Collections::emptyList);
+			return new TestItemHistory(value, itemIds);
+		}).collect(Collectors.toList());
+
+		return new PageImpl<>(itemHistories, pageable, historyBaseline.getTotalElements());
+
 	}
 
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, List<Long> launchIds,
 			int historyDepth, boolean usingHash) {
-
 		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter)
 				.with(pageable.getSort())
 				.addCondition(LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId)))
 				.build();
-		return fetchHistory(filteringQuery,
-				LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.ID.in(launchIds)),
-				historyDepth,
-				pageable,
-				usingHash
+
+		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
+		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
+				historyGroupingField,
+				LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId)),
+				pageable
 		);
+
+		List<TestItemHistory> itemHistories = historyBaseline.getContent().stream().map(value -> {
+			List<Long> itemIds = loadHistoryItem(getHistoryFilter(filter, usingHash, value),
+					pageable.getSort(),
+					LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId))
+			).map(testItem -> getHistoryIds(testItem, usingHash, projectId, historyDepth - 1)).orElseGet(Collections::emptyList);
+			return new TestItemHistory(value, itemIds);
+		}).collect(Collectors.toList());
+
+		return new PageImpl<>(itemHistories, pageable, historyBaseline.getTotalElements());
 
 	}
 
@@ -191,8 +230,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				launchPageable,
 				testItemPageable
 		);
-		return fetchHistory(filteringQuery, LAUNCH.PROJECT_ID.eq(projectId), historyDepth, testItemPageable, usingHash);
 
+		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
+		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
+				historyGroupingField,
+				LAUNCH.PROJECT_ID.eq(projectId),
+				testItemPageable
+		);
+
+		List<TestItemHistory> itemHistories = historyBaseline.getContent().stream().map(value -> {
+			List<Long> itemIds = loadHistoryItem(getHistoryFilter(testItemFilter, usingHash, value),
+					testItemPageable.getSort(),
+					LAUNCH.PROJECT_ID.eq(projectId)
+			).map(testItem -> getHistoryIds(testItem, usingHash, projectId, historyDepth - 1)).orElseGet(Collections::emptyList);
+			return new TestItemHistory(value, itemIds);
+		}).collect(Collectors.toList());
+
+		return new PageImpl<>(itemHistories, testItemPageable, historyBaseline.getTotalElements());
 	}
 
 	@Override
@@ -204,12 +258,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				launchPageable,
 				testItemPageable
 		);
-		return fetchHistory(filteringQuery,
+
+		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
+		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
+				historyGroupingField,
 				LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)),
-				historyDepth,
-				testItemPageable,
-				usingHash
+				testItemPageable
 		);
+
+		List<TestItemHistory> itemHistories = historyBaseline.getContent().stream().map(value -> {
+			List<Long> itemIds = loadHistoryItem(getHistoryFilter(testItemFilter, usingHash, value),
+					testItemPageable.getSort(),
+					LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName))
+			).map(testItem -> getHistoryIds(testItem, usingHash, projectId, historyDepth - 1)).orElseGet(Collections::emptyList);
+			return new TestItemHistory(value, itemIds);
+		}).collect(Collectors.toList());
+
+		return new PageImpl<>(itemHistories, testItemPageable, historyBaseline.getTotalElements());
 	}
 
 	private SelectQuery<? extends Record> buildCompositeFilterHistoryQuery(boolean isLatest, Queryable launchFilter,
@@ -228,47 +293,22 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.build();
 	}
 
-	private Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Condition baselineCondition, int historyDepth,
-			Pageable pageable, boolean usingHash) {
-		return usingHash ?
-				fetchHistory(filteringQuery, baselineCondition, historyDepth, pageable, TEST_ITEM.TEST_CASE_HASH) :
-				fetchHistory(filteringQuery, baselineCondition, historyDepth, pageable, TEST_ITEM.UNIQUE_ID);
-	}
-
-	private <T> Page<TestItemHistory> fetchHistory(SelectQuery<? extends Record> filteringQuery, Condition baselineCondition,
-			int historyDepth, Pageable pageable, Field<T> historyGroupingField) {
-		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
-		Field<Long[]> historyField = DSL.arrayAgg(fieldName(RESULT_INNER_TABLE, TEST_ITEM.ITEM_ID.getName()).cast(Long.class))
-				.orderBy(fieldName(RESULT_INNER_TABLE, ITEM_START_TIME).desc(),
-						fieldName(RESULT_INNER_TABLE, LAUNCH_START_TIME).desc(),
-						fieldName(RESULT_INNER_TABLE, LAUNCH.NUMBER.getName()).desc()
-				)
-				.as(HISTORY);
-
-		JTestItem innerItemTable = TEST_ITEM.as(INNER_ITEM_TABLE);
-		JTestItem resultTable = TEST_ITEM.as(RESULT_OUTER_TABLE);
-
-		List<TestItemHistory> result = buildHistoryQuery(filteringQuery,
-				innerItemTable,
-				outerItemTable,
-				resultTable,
-				historyField,
-				baselineCondition.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)),
-				historyDepth,
-				Pair.of(Boolean.TRUE, pageable),
-				TEST_ITEM.field(historyGroupingField),
-				resultTable.field(historyGroupingField),
-				outerItemTable.field(historyGroupingField),
-				innerItemTable.field(historyGroupingField)
-		).limit(pageable.getPageSize())
-				.fetch()
-				.stream()
-				.map(record -> new TestItemHistory(String.valueOf(record.get(outerItemTable.field(historyGroupingField))),
-						Arrays.asList(record.get(historyField))
-				))
-				.collect(toList());
-
-		return PageableExecutionUtils.getPage(result,
+	private Page<String> loadHistoryBaseline(SelectQuery<? extends Record> filteringQuery, Field<?> historyGroupingField,
+			Condition baselineCondition, Pageable pageable) {
+		return PageableExecutionUtils.getPage(dsl.with(ITEMS)
+						.as(filteringQuery)
+						.select(historyGroupingField)
+						.from(TEST_ITEM)
+						.join(ITEMS)
+						.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
+						.join(LAUNCH)
+						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+						.where(baselineCondition)
+						.groupBy(historyGroupingField)
+						.orderBy(max(TEST_ITEM.START_TIME))
+						.limit(pageable.getPageSize())
+						.offset(retrieveOffsetAndApplyBoundaries(pageable))
+						.fetchInto(String.class),
 				pageable,
 				() -> dsl.fetchCount(with(ITEMS).as(filteringQuery)
 						.select(TEST_ITEM.field(historyGroupingField))
@@ -279,68 +319,80 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		);
 	}
 
-	private <T> SelectHavingStep<Record2<T, Long[]>> buildHistoryQuery(SelectQuery<? extends Record> filteringQuery,
-			JTestItem innerItemTable, JTestItem outerItemTable, JTestItem resultItemTable, Field<Long[]> historyField,
-			Condition baselineCondition, int historyDepth, Pair<Boolean, Pageable> pageableConfig, Field<T> commonHistoryField,
-			Field<T> resultTableHistoryField, Field<T> outerTableHistoryField, Field<T> innerTableHistoryField) {
+	private Filter getHistoryFilter(Queryable filter, boolean usingHash, String historyValue) {
+		List<ConvertibleCondition> commonConditions = filter.getFilterConditions();
+		return new Filter(filter.getTarget().getClazz(), Lists.newArrayList()).withConditions(commonConditions)
+				.withCondition(usingHash ?
+						FilterCondition.builder().eq(CRITERIA_TEST_CASE_HASH, historyValue).build() :
+						FilterCondition.builder().eq(CRITERIA_UNIQUE_ID, historyValue).build());
+	}
 
-		Field<Timestamp> maxStartTimeField = max(TEST_ITEM.START_TIME).as(START_TIME);
-		SelectLimitStep<Record2<T, Timestamp>> testCaseIdQuery = with(ITEMS).as(filteringQuery)
-				.select(commonHistoryField, maxStartTimeField)
-				.from(TEST_ITEM)
-				.join(ITEMS)
-				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.groupBy(commonHistoryField)
-				.orderBy(max(TEST_ITEM.START_TIME));
+	private List<Long> getHistoryIds(TestItem testItem, boolean usingHash, Long projectId, int historyDepth) {
+		List<Long> historyIds = usingHash ?
+				loadHistory(testItem.getStartTime(),
+						testItem.getItemId(),
+						LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.TEST_CASE_HASH.eq(testItem.getTestCaseHash())),
+						historyDepth
+				) :
+				loadHistory(testItem.getStartTime(),
+						testItem.getItemId(),
+						LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.UNIQUE_ID.eq(testItem.getUniqueId())),
+						historyDepth
+				);
+		historyIds.add(0, testItem.getItemId());
+		return historyIds;
+	}
 
-		SelectLimitStep<Record1<T>> itemsQuery = with(ITEMS).as(filteringQuery)
-				.select(commonHistoryField)
-				.from(TEST_ITEM)
-				.join(ITEMS)
-				.on(TEST_ITEM.ITEM_ID.eq(fieldName(ITEMS, ID).cast(Long.class)))
-				.groupBy(commonHistoryField)
-				.orderBy(max(TEST_ITEM.START_TIME));
-
-		if (pageableConfig.getKey()) {
-			int limit = pageableConfig.getValue().getPageSize();
-			int offset = retrieveOffsetAndApplyBoundaries(pageableConfig.getValue());
-			testCaseIdQuery.limit(limit);
-			testCaseIdQuery.offset(offset);
-			itemsQuery.limit(limit);
-			itemsQuery.offset(offset);
+	private List<Long> getHistoryIds(TestItem testItem, boolean usingHash, Long projectId, String launchName, int historyDepth) {
+		if (historyDepth > 0) {
+			List<Long> historyIds = usingHash ?
+					loadHistory(testItem.getStartTime(),
+							testItem.getItemId(),
+							LAUNCH.PROJECT_ID.eq(projectId)
+									.and(LAUNCH.NAME.eq(launchName))
+									.and(TEST_ITEM.TEST_CASE_HASH.eq(testItem.getTestCaseHash())),
+							historyDepth
+					) :
+					loadHistory(testItem.getStartTime(),
+							testItem.getItemId(),
+							LAUNCH.PROJECT_ID.eq(projectId)
+									.and(LAUNCH.NAME.eq(launchName))
+									.and(TEST_ITEM.UNIQUE_ID.eq(testItem.getUniqueId())),
+							historyDepth
+					);
+			historyIds.add(0, testItem.getItemId());
+			return historyIds;
 		}
+		return Lists.newArrayList(testItem.getItemId());
+	}
 
-		Table<Record2<T, Timestamp>> testCaseIdTable = testCaseIdQuery.asTable(TEST_CASE_ID_TABLE);
+	private Optional<TestItem> loadHistoryItem(Queryable filter, Sort sort, Condition baselineCondition) {
+		List<Sort.Order> orders = sort.get().collect(toList());
+		orders.add(new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME));
+		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(Sort.by(orders)).with(1).build();
+		selectQuery.addConditions(baselineCondition);
 
-		return dsl.select(resultTableHistoryField, historyField)
-				.from(itemsQuery.asTable(resultItemTable.getName())
-						.join(lateral(select(outerTableHistoryField,
-								outerItemTable.ITEM_ID,
-								outerItemTable.START_TIME.as(ITEM_START_TIME),
-								LAUNCH.START_TIME.as(LAUNCH_START_TIME),
-								LAUNCH.NUMBER
-						).from(outerItemTable)
-								.join(LAUNCH)
-								.on(outerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
-								.join(lateral(select(innerItemTable.ITEM_ID).from(innerItemTable)
-										.join(LAUNCH)
-										.on(innerItemTable.LAUNCH_ID.eq(LAUNCH.ID))
-										.join(testCaseIdTable)
-										.on(innerTableHistoryField.eq(testCaseIdTable.field(commonHistoryField)))
-										.where(baselineCondition.and(innerItemTable.HAS_STATS)
-												.and(innerItemTable.ITEM_ID.eq(outerItemTable.ITEM_ID))
-												.and(innerItemTable.START_TIME.lessOrEqual(testCaseIdTable.field(maxStartTimeField))))
-										.orderBy(innerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())).as(
-										LATERAL_TABLE))
-								.on(DSL.trueCondition())
-								.where(baselineCondition.and(outerItemTable.HAS_STATS)
-										.and(outerTableHistoryField.in(itemsQuery))
-										.and(outerTableHistoryField.eq(resultTableHistoryField)))
-								.orderBy(outerItemTable.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
-								.limit(historyDepth)).as(RESULT_INNER_TABLE))
-						.on(resultTableHistoryField.eq(fieldName(RESULT_INNER_TABLE, commonHistoryField.getName()).cast(
-								resultTableHistoryField.getDataType().getType()))))
-				.groupBy(resultTableHistoryField);
+		return dsl.with(HISTORY)
+				.as(selectQuery)
+				.select()
+				.from(TEST_ITEM)
+				.join(HISTORY)
+				.on(TEST_ITEM.ITEM_ID.eq(fieldName(HISTORY, ID).cast(Long.class)))
+				.fetchInto(TestItem.class)
+				.stream()
+				.findFirst();
+	}
+
+	private List<Long> loadHistory(LocalDateTime startTime, Long itemId, Condition baselineCondition, int historyDepth) {
+		return dsl.select(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(baselineCondition)
+				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
+				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
+				.limit(historyDepth)
+				.fetchInto(Long.class);
 	}
 
 	@Override
