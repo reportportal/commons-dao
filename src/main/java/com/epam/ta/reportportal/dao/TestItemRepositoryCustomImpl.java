@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -31,6 +32,7 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
@@ -57,6 +59,7 @@ import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QU
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TEST_CASE_HASH;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
@@ -304,6 +307,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.join(LAUNCH)
 						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 						.where(baselineCondition)
+						.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
 						.groupBy(historyGroupingField)
 						.orderBy(max(TEST_ITEM.START_TIME))
 						.limit(pageable.getPageSize())
@@ -324,7 +328,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return new Filter(filter.getTarget().getClazz(), Lists.newArrayList()).withConditions(commonConditions)
 				.withCondition(usingHash ?
 						FilterCondition.builder().eq(CRITERIA_TEST_CASE_HASH, historyValue).build() :
-						FilterCondition.builder().eq(CRITERIA_UNIQUE_ID, historyValue).build());
+						FilterCondition.builder().eq(CRITERIA_UNIQUE_ID, historyValue).build())
+				.withCondition(FilterCondition.builder().eq(CRITERIA_LAUNCH_MODE, LaunchModeEnum.DEFAULT.name()).build());
 	}
 
 	private List<Long> getHistoryIds(TestItem testItem, boolean usingHash, Long projectId, int historyDepth) {
@@ -391,6 +396,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(baselineCondition)
 				.and(TEST_ITEM.ITEM_ID.notEqual(itemId))
 				.and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
+				.orderBy(TEST_ITEM.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
 				.limit(historyDepth)
 				.fetchInto(Long.class);
 	}
