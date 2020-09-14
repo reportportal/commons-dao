@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.name;
@@ -48,16 +50,17 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 	@Override
 	public List<Project> findByFilter(Queryable filter) {
-		return PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
+		return PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter)).wrap().build()));
 	}
 
 	@Override
 	public Page<Project> findByFilter(Queryable filter, Pageable pageable) {
-		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-				.with(pageable)
-				.wrap()
-				.withWrapperSort(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter,
+				collectJoinFields(filter, pageable.getSort())
+				).with(pageable).wrap().withWrapperSort(pageable.getSort()).build())),
+				pageable,
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+		);
 	}
 
 	@Override
@@ -87,10 +90,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
-	public Page<Project> findAllIdsAndProjectAttributes(Queryable filter, Pageable pageable) {
+	public Page<Project> findAllIdsAndProjectAttributes(Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
-						.as(QueryBuilder.newBuilder(filter).with(pageable).build())
+						.as(QueryBuilder.newBuilder(FilterTarget.PROJECT_TARGET, collectJoinFields(pageable.getSort())).with(pageable).build())
 						.select(PROJECT.ID, ATTRIBUTE.NAME, PROJECT_ATTRIBUTE.VALUE)
 						.from(PROJECT)
 						.join(PROJECT_ATTRIBUTE)
@@ -100,7 +103,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 						.join(DSL.table(name(FILTERED_PROJECT)))
 						.on(fieldName(FILTERED_PROJECT, PROJECT.ID.getName()).cast(Long.class).eq(PROJECT.ID)))),
 				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(FilterTarget.PROJECT_TARGET).build())
 		);
 	}
 

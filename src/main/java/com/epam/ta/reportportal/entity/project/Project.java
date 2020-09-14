@@ -37,7 +37,6 @@ import java.util.Set;
  * @author Ivan Budayeu
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "json", typeClass = Metadata.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {

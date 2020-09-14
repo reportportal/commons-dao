@@ -17,9 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.commons.querygen.Condition;
-import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -31,7 +29,6 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
@@ -52,7 +49,6 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
@@ -90,15 +86,14 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void streamItemIdsTest() {
-		Stream<Long> stream = testItemRepository.streamTestItemIdsByLaunchId(1L);
+	void findTestItemIdsByLaunchId() {
 
-		assertNotNull(stream);
-
-		List<Long> ids = stream.collect(toList());
+		List<Long> ids = testItemRepository.findTestItemIdsByLaunchId(1L, PageRequest.of(0, 6));
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
 		assertEquals(6, ids.size(), "Incorrect ids size");
+		assertEquals(1, ids.get(0));
+		assertEquals(5, ids.get(4));
 	}
 
 	@Test
@@ -114,7 +109,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectPathNames() {
-		Map<Long, String> results = testItemRepository.selectPathNames("1.2.3");
+		Map<Long, String> results = testItemRepository.selectPathNames(3L, 1L);
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
 	}
@@ -842,6 +837,44 @@ class TestItemRepositoryTest extends BaseTest {
 		);
 
 		assertTrue(testItemHistories.isEmpty());
+	}
+
+	@Autowired
+	private TestItemRepositoryCustomImpl custom;
+
+	@Test
+	void stepHistoryWithUniqueIdTest() {
+
+		List<ConvertibleCondition> commonConditions = Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_HAS_STATS, "true").build(),
+				FilterCondition.builder().eq(CRITERIA_HAS_CHILDREN, "false").build(),
+				FilterCondition.builder().eq(CRITERIA_TYPE, "STEP").build(),
+				FilterCondition.builder().eq(CRITERIA_LAUNCH_ID, "1").build()
+		);
+
+		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
+
+		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
+		List<TestItemHistory> content = custom.loadItemsHistoryPage(baseFilter, pageable, 1L, 30, false).getContent();
+
+		assertFalse(content.isEmpty());
+
+	}
+
+	@Test
+	void stepHistoryWithTestCaseHashTest() {
+
+		List<ConvertibleCondition> commonConditions = Lists.newArrayList(FilterCondition.builder().eq(CRITERIA_HAS_STATS, "true").build(),
+				FilterCondition.builder().eq(CRITERIA_HAS_CHILDREN, "false").build(),
+				FilterCondition.builder().eq(CRITERIA_TYPE, "STEP").build(),
+				FilterCondition.builder().eq(CRITERIA_LAUNCH_ID, "1").build()
+		);
+
+		Filter baseFilter = new Filter(FilterTarget.TEST_ITEM_TARGET.getClazz(), commonConditions);
+
+		PageRequest pageable = PageRequest.of(0, 20, Sort.by(CRITERIA_ID));
+		List<TestItemHistory> content = custom.loadItemsHistoryPage(baseFilter, pageable, 1L, 30, true).getContent();
+
+		assertFalse(content.isEmpty());
 	}
 
 	@Test

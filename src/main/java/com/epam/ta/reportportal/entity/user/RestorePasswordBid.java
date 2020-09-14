@@ -30,7 +30,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "restore_password_bid")
-@EntityListeners(AuditingEntityListener.class)
 public class RestorePasswordBid implements Serializable, Modifiable {
 
 	/**
