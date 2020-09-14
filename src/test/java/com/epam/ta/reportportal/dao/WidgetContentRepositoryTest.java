@@ -53,8 +53,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -1231,6 +1230,12 @@ class WidgetContentRepositoryTest extends BaseTest {
 		);
 
 		initParams.setCustomKey("build");
+
+		launchFilter.withCondition(FilterCondition.builder()
+				.withCondition(Condition.ANY)
+				.withSearchCriteria(CRITERIA_ITEM_ATTRIBUTE_KEY)
+				.withValue("build")
+				.build());
 
 		widgetContentRepository.generateComponentHealthCheckTable(false, initParams, launchFilter, sort, 600, false);
 
