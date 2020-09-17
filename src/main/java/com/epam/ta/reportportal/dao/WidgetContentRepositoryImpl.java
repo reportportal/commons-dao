@@ -819,7 +819,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit) {
 		return dsl.with(ITEMS)
-				.as(QueryBuilder.newBuilder(filter).with(limit).build())
+				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter)).with(limit).build())
 				.select(TEST_ITEM.ITEM_ID.as(ID),
 						TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,
@@ -898,7 +898,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.div(DSL.nullif(DSL.count(fieldName(ITEMS, ITEM_ID)), 0)), 2).as(PASSING_RATE)
 		)
 				.from(dsl.with(ITEMS)
-						.as(QueryBuilder.newBuilder(testItemFilter)
+						.as(QueryBuilder.newBuilder(testItemFilter, collectJoinFields(testItemFilter))
 								.addJointToStart(launchesTable,
 										JoinType.JOIN,
 										TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
