@@ -26,7 +26,6 @@ import java.util.Objects;
  * @author Andrei Varabyeu
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "oauth_registration_scope", schema = "public")
 public class OAuthRegistrationScope implements Serializable {
 

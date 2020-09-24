@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "oauth_registration_restriction", schema = "public")
 public class OAuthRegistrationRestriction implements Serializable {
 

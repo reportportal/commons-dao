@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "server_settings", schema = "public")
 public class ServerSettings implements Serializable {
 

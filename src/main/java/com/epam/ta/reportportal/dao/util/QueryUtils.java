@@ -73,9 +73,13 @@ public final class QueryUtils {
 				.collect(toSet());
 	}
 
+	public static Set<String> collectJoinFields(Sort sort) {
+		return sort.get().map(Sort.Order::getProperty).collect(toSet());
+	}
+
 	public static Set<String> collectJoinFields(Queryable filter, Sort sort) {
 		Set<String> joinFields = collectJoinFields(filter);
-		joinFields.addAll(sort.get().map(Sort.Order::getProperty).collect(toSet()));
+		joinFields.addAll(collectJoinFields(sort));
 		return joinFields;
 	}
 

@@ -86,6 +86,12 @@ public class QueryBuilder {
 		query = target.getQuery();
 	}
 
+	private QueryBuilder(FilterTarget filterTarget, Set<String> fields) {
+		this.filterTarget = filterTarget;
+		this.query = this.filterTarget.getQuery();
+		addJoinsToQuery(this.query, this.filterTarget, fields);
+	}
+
 	private QueryBuilder(Queryable query) {
 		filterTarget = query.getTarget();
 		this.query = query.toQuery();
@@ -99,6 +105,10 @@ public class QueryBuilder {
 
 	public static QueryBuilder newBuilder(FilterTarget target) {
 		return new QueryBuilder(target);
+	}
+
+	public static QueryBuilder newBuilder(FilterTarget target, Set<String> fields) {
+		return new QueryBuilder(target, fields);
 	}
 
 	public static QueryBuilder newBuilder(Queryable queryable) {
