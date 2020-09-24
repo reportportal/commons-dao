@@ -60,8 +60,7 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOff
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TEST_CASE_HASH;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
@@ -420,9 +419,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> findTestItemIdsByLaunchId(Long launchId, Pageable pageable) {
+		JTestItem retryParent = TEST_ITEM.as(RETRY_PARENT);
 		return dsl.select(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.leftJoin(retryParent)
+				.on(TEST_ITEM.RETRY_OF.eq(retryParent.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).or(retryParent.LAUNCH_ID.eq(launchId)))
 				.orderBy(TEST_ITEM.ITEM_ID)
 				.limit(pageable.getPageSize())
 				.offset(retrieveOffsetAndApplyBoundaries(pageable))
