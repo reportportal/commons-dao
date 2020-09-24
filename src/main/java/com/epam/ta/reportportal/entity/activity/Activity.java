@@ -33,7 +33,6 @@ import java.util.Optional;
  * @author Andrei Varabyeu
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "activity", schema = "public")
 @TypeDef(name = "activityDetails", typeClass = ActivityDetails.class)
 public class Activity implements Serializable {

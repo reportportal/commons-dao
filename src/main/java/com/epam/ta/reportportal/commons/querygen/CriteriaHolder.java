@@ -77,6 +77,14 @@ public class CriteriaHolder {
 		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
 	}
 
+	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
+		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
+		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null");
+		this.aggregateCriteria = queryCriteria;
+		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+		this.joinChain = Preconditions.checkNotNull(joinChain, "Join chain should not be null");
+	}
+
 	public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType) {
 		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
 		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null").getQualifiedName().toString();

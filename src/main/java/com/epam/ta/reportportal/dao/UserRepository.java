@@ -56,7 +56,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
     @Query(value = "SELECT u FROM User u WHERE u.userType = :userType AND u.isExpired = :isExpired")
     Page<User> findAllByUserTypeAndExpired(@Param("userType") UserType userType, @Param("isExpired") boolean isExpired, Pageable pageable);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata-> 'metadata' ->> 'last_login' AS DOUBLE PRECISION) < (extract(EPOCH FROM CAST (:lastLogin AS TIMESTAMP)) * 1000);", nativeQuery = true)
     void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
 
@@ -66,7 +66,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
      * @param lastLogin Last login date
      * @param username  User
      */
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(extract(EPOCH FROM CAST (:lastLogin AS TIMESTAMP)) * 1000), TRUE ) WHERE login = :username", nativeQuery = true)
     void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin, @Param("username") String username);
 

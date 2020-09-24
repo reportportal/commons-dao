@@ -308,6 +308,17 @@ public enum Condition {
 		@Override
 		public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
 			this.validate(criteriaHolder, filter.getValue(), filter.isNegative(), INCORRECT_FILTER_PARAMETERS);
+			if (String.class.equals(criteriaHolder.getDataType())) {
+				return DSL.condition(Operator.AND,
+						PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), String[][].class),
+								DSL.array(DSL.val(this.castValue(criteriaHolder,
+										filter.getValue(),
+										INCORRECT_FILTER_PARAMETERS
+								)).cast(String[].class))
+						)
+				);
+
+			}
 			return DSL.condition(Operator.AND,
 					PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
 							DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))

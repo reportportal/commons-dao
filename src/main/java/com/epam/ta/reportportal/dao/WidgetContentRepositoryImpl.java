@@ -126,7 +126,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
-
 		Table<Record2<Long, BigDecimal>> criteriaTable = getTopItemsCriteriaTable(filter, criteria, limit, includeMethods);
 
 		return dsl.select(TEST_ITEM.UNIQUE_ID,
@@ -722,7 +721,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								.groupBy(ITEM_ATTRIBUTE.VALUE)
 								.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 										PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
-								), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
+								).sort(SortOrder.DESC), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.DESC))
 								.limit(limit)))
 						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.VALUE)
 						.asTable(LAUNCHES_TABLE))

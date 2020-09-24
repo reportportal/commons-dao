@@ -31,7 +31,6 @@ import java.util.Set;
  * @author Andrei Varabyeu
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
