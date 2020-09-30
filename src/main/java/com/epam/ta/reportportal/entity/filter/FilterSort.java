@@ -79,11 +79,11 @@ public class FilterSort implements Serializable {
 			return false;
 		}
 		FilterSort that = (FilterSort) o;
-		return Objects.equals(id, that.id) && Objects.equals(field, that.field) && direction == that.direction;
+		return Objects.equals(field, that.field) && direction == that.direction;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, field, direction);
+		return Objects.hash(field, direction);
 	}
 }
