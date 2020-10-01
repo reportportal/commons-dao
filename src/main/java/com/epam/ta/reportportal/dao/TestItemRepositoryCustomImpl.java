@@ -107,7 +107,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Set<Statistics> accumulateStatisticsByFilter(Queryable filter) {
 		return dsl.fetch(DSL.with(FILTERED_QUERY)
-				.as(QueryBuilder.newBuilder(filter).build())
+				.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build())
 				.select(DSL.sum(STATISTICS.S_COUNTER).as(ACCUMULATED_STATISTICS), STATISTICS_FIELD.NAME)
 				.from(STATISTICS)
 				.join(DSL.table(DSL.name(FILTERED_QUERY)))
@@ -134,7 +134,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				isLatest
 		).with(launchPageable).build().asTable(LAUNCHES);
 
-		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter)
+		Set<String> joinFields = QueryUtils.collectJoinFields(testItemFilter, testItemPageable.getSort());
+
+		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter, joinFields)
 						.with(testItemPageable)
 						.addJointToStart(launchesTable,
 								JoinType.JOIN,
@@ -144,7 +146,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.withWrapperSort(testItemPageable.getSort())
 						.build())),
 				testItemPageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter)
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(testItemFilter, joinFields)
 						.addJointToStart(launchesTable,
 								JoinType.JOIN,
 								TEST_ITEM.LAUNCH_ID.eq(fieldName(launchesTable.getName(), ID).cast(Long.class))
@@ -156,7 +158,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, int historyDepth,
 			boolean usingHash) {
-		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter,
+				QueryUtils.collectJoinFields(filter, pageable.getSort())
+		).with(pageable.getSort()).build();
 		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
 		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery, historyGroupingField, LAUNCH.PROJECT_ID.eq(projectId), pageable);
 
@@ -175,7 +179,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, String launchName,
 			int historyDepth, boolean usingHash) {
-		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter).with(pageable.getSort()).build();
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter,
+				QueryUtils.collectJoinFields(filter, pageable.getSort())
+		).with(pageable.getSort()).build();
 		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
 		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
 				historyGroupingField,
@@ -199,10 +205,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItemHistory> loadItemsHistoryPage(Queryable filter, Pageable pageable, Long projectId, List<Long> launchIds,
 			int historyDepth, boolean usingHash) {
-		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter)
-				.with(pageable.getSort())
-				.addCondition(LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId)))
-				.build();
+		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter,
+				QueryUtils.collectJoinFields(filter, pageable.getSort())
+		).with(pageable.getSort()).addCondition(LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId))).build();
 
 		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
 		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
@@ -286,7 +291,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				isLatest
 		).with(launchPageable).build().asTable(LAUNCHES);
 
-		return QueryBuilder.newBuilder(testItemFilter)
+		return QueryBuilder.newBuilder(testItemFilter, QueryUtils.collectJoinFields(testItemFilter, testItemPageable.getSort()))
 				.with(testItemPageable.getSort())
 				.addJointToStart(launchesTable,
 						JoinType.JOIN,
@@ -373,7 +378,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private Optional<TestItem> loadHistoryItem(Queryable filter, Sort sort, Condition baselineCondition) {
 		List<Sort.Order> orders = sort.get().collect(toList());
 		orders.add(new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME));
-		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter).with(Sort.by(orders)).with(1).build();
+
+		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter, sort)).with(Sort.by(orders)).with(1).build();
 		selectQuery.addConditions(baselineCondition);
 
 		return dsl.with(HISTORY)
@@ -732,7 +738,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter).build();
+		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build();
 		itemQuery.addJoin(childItemTable, JoinType.JOIN, DSL.condition(childItemTable.PATH + " <@ " + TEST_ITEM.PATH));
 		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, childItemTable.ITEM_ID.eq(LOG.ITEM_ID));
 		filter.getFilterConditions()
@@ -752,7 +758,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter).build();
+		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build();
 		itemQuery.addJoin(childItemTable, JoinType.JOIN, DSL.condition(childItemTable.PATH + " <@ " + TEST_ITEM.PATH));
 		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, childItemTable.ITEM_ID.eq(LOG.ITEM_ID));
 		filter.getFilterConditions()
@@ -777,19 +783,20 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> findByFilter(Queryable filter) {
-		return TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).wrap().build()));
+		return TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).wrap().build()));
 	}
 
 	@Override
 	public Page<TestItem> findByFilter(Queryable filter, Pageable pageable) {
 
-		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
+		Set<String> joinFields = QueryUtils.collectJoinFields(filter, pageable.getSort());
+		List<TestItem> items = TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, joinFields)
 				.with(pageable)
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build()));
 
-		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+		return PageableExecutionUtils.getPage(items, pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, joinFields).build()));
 	}
 
 	@Override
