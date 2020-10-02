@@ -380,45 +380,151 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, TEST_ITEM.HAS_RETRIES, Boolean.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_STATS, TEST_ITEM.HAS_STATS, Boolean.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS, TEST_ITEM_RESULTS.STATUS, JStatusEnum.class)
-							.withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString())
-							.get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_END_TIME, TEST_ITEM_RESULTS.END_TIME, Timestamp.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_DURATION, TEST_ITEM_RESULTS.DURATION, Long.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_STATUS,
+							TEST_ITEM_RESULTS.STATUS,
+							JStatusEnum.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							))
+					).withAggregateCriteria(DSL.max(TEST_ITEM_RESULTS.STATUS).toString()).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_END_TIME,
+							TEST_ITEM_RESULTS.END_TIME,
+							Timestamp.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							))
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_DURATION,
+							TEST_ITEM_RESULTS.DURATION,
+							Long.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							))
+					).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_KEY, PARAMETER.KEY, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_VALUE, PARAMETER.VALUE, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_KEY,
+							PARAMETER.KEY,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID)))
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARAMETER_VALUE,
+							PARAMETER.VALUE,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID)))
+					).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_ID, ISSUE.ISSUE_ID, Long.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_ID,
+							ISSUE.ISSUE_ID,
+							Long.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							), JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)))
+					).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_TYPE, ISSUE_TYPE.LOCATOR, String.class)
-							.withAggregateCriteria(DSL.max(ISSUE_TYPE.LOCATOR).toString())
-							.get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_TYPE,
+							ISSUE_TYPE.LOCATOR,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+									),
+									JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)),
+									JoinEntity.of(ISSUE_TYPE, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+							)
+					).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_AUTO_ANALYZED, ISSUE.AUTO_ANALYZED, Boolean.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_IGNORE_ANALYZER, ISSUE.IGNORE_ANALYZER, Boolean.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_COMMENT, ISSUE.ISSUE_DESCRIPTION, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_LOCATOR, ISSUE_TYPE.LOCATOR, String.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_GROUP_ID, ISSUE_TYPE.ISSUE_GROUP_ID, Short.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_AUTO_ANALYZED,
+							ISSUE.AUTO_ANALYZED,
+							Boolean.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							), JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)))
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_IGNORE_ANALYZER,
+							ISSUE.IGNORE_ANALYZER,
+							Boolean.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							), JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)))
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_COMMENT,
+							ISSUE.ISSUE_DESCRIPTION,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+							), JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)))
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_LOCATOR,
+							ISSUE_TYPE.LOCATOR,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+									),
+									JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)),
+									JoinEntity.of(ISSUE_TYPE, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+							)
+					).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_GROUP_ID,
+							ISSUE_TYPE.ISSUE_GROUP_ID,
+							Short.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+									),
+									JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)),
+									JoinEntity.of(ISSUE_TYPE, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+							)
+					).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_ID, TEST_ITEM.LAUNCH_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE, JLaunchModeEnum.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PARENT_ID, TEST_ITEM.PARENT_ID, Long.class).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_RETRY_PARENT_ID, TEST_ITEM.RETRY_OF, Long.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY, ITEM_ATTRIBUTE.KEY, List.class)
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_KEY,
+							ITEM_ATTRIBUTE.KEY,
+							List.class,
+							Lists.newArrayList(JoinEntity.of(ITEM_ATTRIBUTE,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
+							))
+					)
 							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY)
 									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
 									.toString())
 							.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE, ITEM_ATTRIBUTE.VALUE, List.class)
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ITEM_ATTRIBUTE_VALUE,
+							ITEM_ATTRIBUTE.VALUE,
+							List.class,
+							Lists.newArrayList(JoinEntity.of(ITEM_ATTRIBUTE,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
+							))
+					)
 							.withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
 									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
 									.toString())
 							.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE, ITEM_ATTRIBUTE.KEY, List.class)
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE,
+							ITEM_ATTRIBUTE.KEY,
+							List.class,
+							Lists.newArrayList(JoinEntity.of(ITEM_ATTRIBUTE,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
+									),
+									JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
+							)
+					)
 							.withAggregateCriteria(DSL.field("array_cat({0}, {1})::varchar[]",
 									DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
 											DSL.val(KEY_VALUE_SEPARATOR),
@@ -431,12 +537,31 @@ public enum FilterTarget {
 							).toString())
 							.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME, PATTERN_TEMPLATE.NAME, List.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString())
-							.get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_TICKET_ID, TICKET.TICKET_ID, String.class)
-							.withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString())
-							.get()
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
+							PATTERN_TEMPLATE.NAME,
+							List.class,
+							Lists.newArrayList(JoinEntity.of(PATTERN_TEMPLATE_TEST_ITEM,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID)
+									),
+									JoinEntity.of(PATTERN_TEMPLATE,
+											JoinType.LEFT_OUTER_JOIN,
+											PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID.eq(PATTERN_TEMPLATE.ID)
+									)
+							)
+					).withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString()).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_TICKET_ID,
+							TICKET.TICKET_ID,
+							String.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+									),
+									JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID)),
+									JoinEntity.of(ISSUE_TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_ID.eq(ISSUE_TICKET.ISSUE_ID)),
+									JoinEntity.of(TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE_TICKET.TICKET_ID.eq(TICKET.ID))
+							)
+					).withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString()).get()
 			)
 	) {
 		@Override
@@ -514,6 +639,11 @@ public enum FilterTarget {
 			query.addJoin(TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE_TICKET.TICKET_ID.eq(TICKET.ID));
 			query.addJoin(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID));
 			query.addJoin(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID));
+		}
+
+		@Override
+		protected void joinTablesForFilter(QuerySupplier query) {
+			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID));
 		}
 	},
 
