@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
@@ -49,6 +50,15 @@ import static org.jooq.impl.DSL.field;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class QueryBuilder {
+
+	private final static Map<FilterTarget, JoinEntity> STATISTICS_TARGET_MAPPING = ImmutableMap.<FilterTarget, JoinEntity>builder().put(
+			FilterTarget.LAUNCH_TARGET,
+			JoinEntity.of(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+	)
+			.put(FilterTarget.TEST_ITEM_TARGET,
+					JoinEntity.of(STATISTICS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
+			)
+			.build();
 
 	/**
 	 * Key word for statistics criteria. Query builder works a little bit in another way
@@ -284,10 +294,15 @@ public class QueryBuilder {
 		Map<TableLike, JoinEntity> joinTables = new LinkedHashMap<>();
 		fields.forEach(it -> {
 			if (!joinTables.containsKey(STATISTICS) && it.startsWith(STATISTICS_KEY)) {
-				joinTables.put(STATISTICS, JoinEntity.of(STATISTICS, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(STATISTICS.LAUNCH_ID)));
-				joinTables.put(STATISTICS_FIELD,
-						JoinEntity.of(STATISTICS_FIELD, JoinType.LEFT_OUTER_JOIN, STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				);
+				ofNullable(STATISTICS_TARGET_MAPPING.get(filterTarget)).ifPresent(joinEntity -> {
+					joinTables.put(STATISTICS, joinEntity);
+					joinTables.put(STATISTICS_FIELD,
+							JoinEntity.of(STATISTICS_FIELD,
+									JoinType.LEFT_OUTER_JOIN,
+									STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID)
+							)
+					);
+				});
 			} else {
 				filterTarget.getCriteriaByFilter(it).ifPresent(criteriaHolder -> criteriaHolder.getJoinChain().forEach(joinEntity -> {
 					if (!joinTables.containsKey(joinEntity.getTable())) {
