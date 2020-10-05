@@ -88,12 +88,17 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void findTestItemIdsByLaunchId() {
 
-		List<Long> ids = testItemRepository.findTestItemIdsByLaunchId(1L, PageRequest.of(0, 6));
+		List<Long> ids = testItemRepository.findTestItemIdsByLaunchId(12L, PageRequest.of(0, 14));
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
-		assertEquals(6, ids.size(), "Incorrect ids size");
-		assertEquals(1, ids.get(0));
-		assertEquals(5, ids.get(4));
+		assertEquals(14, ids.size(), "Incorrect ids size");
+		assertEquals(91, ids.get(0));
+		assertEquals(102, ids.get(11));
+
+		List<TestItem> retries = testItemRepository.findAllById(Lists.newArrayList(ids.get(12), ids.get(13)));
+		assertEquals(2, retries.size(), "Incorrect ids size");
+
+		retries.stream().map(TestItem::getRetryOf).forEach(Assertions::assertNotNull);
 	}
 
 	@Test
