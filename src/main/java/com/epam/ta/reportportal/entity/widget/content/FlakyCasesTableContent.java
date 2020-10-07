@@ -32,7 +32,7 @@ public class FlakyCasesTableContent implements Serializable {
 
 	@JsonProperty(value = STATUSES)
 	@Column(name = STATUSES)
-	private List<String> statuses;
+	private String[] statuses;
 
 	@JsonProperty(value = FLAKY_COUNT)
 	@Column(name = FLAKY_COUNT)
@@ -57,11 +57,11 @@ public class FlakyCasesTableContent implements Serializable {
 	public FlakyCasesTableContent() {
 	}
 
-	public List<String> getStatuses() {
+	public String[] getStatuses() {
 		return statuses;
 	}
 
-	public void setStatuses(List<String> statuses) {
+	public void setStatuses(String[] statuses) {
 		this.statuses = statuses;
 	}
 

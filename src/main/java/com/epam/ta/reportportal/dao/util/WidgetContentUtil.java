@@ -267,10 +267,12 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return filterMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -405,8 +407,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
@@ -415,6 +416,19 @@ public class WidgetContentUtil {
 
 		return content;
 	};
+
+	public static final Function<Result<? extends Record>, List<FlakyCasesTableContent>> FLAKY_CASES_TABLE_FETCHER = result -> result.stream()
+			.map(record -> {
+				FlakyCasesTableContent entry = new FlakyCasesTableContent();
+				entry.setStatuses((String[]) record.get(DSL.field(fieldName(STATUSES))));
+				entry.setFlakyCount(record.get(DSL.field(fieldName(FLAKY_COUNT)), Long.class));
+				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
+				entry.setItemName(record.get(DSL.field(fieldName(ITEM_NAME)), String.class));
+				entry.setUniqueId(record.get(DSL.field(fieldName(UNIQUE_ID)), String.class));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				return entry;
+			})
+			.collect(Collectors.toList());
 
 	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
 			STATISTICS_FETCHER.apply(result).values());
