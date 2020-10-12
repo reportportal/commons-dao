@@ -205,12 +205,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
 
-		return dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
+		return FLAKY_CASES_TABLE_FETCHER.apply(dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
 				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
 				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
-				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, START_TIME)))
-						.orderBy(field(name(FLAKY_TABLE_RESULTS, START_TIME)))
-						.as(START_TIME_HISTORY),
+				DSL.max(field(name(FLAKY_TABLE_RESULTS, START_TIME))).as(START_TIME_HISTORY),
 				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
 				count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
 		)
@@ -252,7 +250,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).gt(BigDecimal.ZERO)))
 				.orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
 				.limit(FLAKY_CASES_LIMIT)
-				.fetchInto(FlakyCasesTableContent.class);
+				.fetch());
 	}
 
 	@Override
