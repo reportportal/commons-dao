@@ -690,7 +690,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return content;
 	}
 
-
 	@Override
 	public Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(Map<Filter, Sort> filterSortMapping,
 			List<String> contentFields, Map<String, String> customColumns, boolean isLatest, int limit) {
@@ -874,7 +873,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 				.asTable(latestLaunches);
 
-		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name("view"), DSL.select(
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
 				LATEST_LAUNCHES_TABLE.field("id"),
 				LATEST_LAUNCHES_TABLE.field("ids"),
 				LATEST_LAUNCHES_TABLE.field("name"),
