@@ -212,19 +212,6 @@ public interface WidgetContentRepository {
 	List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit);
 
 	/**
-	 * Loading cumulative trend statistics grouped by {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()}
-	 *
-	 * @param filter              {@link Filter}
-	 * @param contentFields       Custom fields for select query building
-	 * @param sort                {@link Sort}
-	 * @param primaryAttributeKey {@link ItemAttribute#getKey()} ()}
-	 * @param limit               Attributes limit
-	 * @return Map with {@link com.epam.ta.reportportal.entity.ItemAttribute#getValue()} as key and list of {@link CumulativeTrendChartContent} as value
-	 */
-	List<CumulativeTrendChartEntry> cumulativeTrendStatistics(Filter filter, List<String> contentFields, Sort sort,
-			String primaryAttributeKey, String subAttributeKey, int limit);
-
-	/**
 	 * Loading the product status statistics grouped by one or more {@link Filter}
 	 *
 	 * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic with own sorting
@@ -292,8 +279,21 @@ public interface WidgetContentRepository {
 	List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort, boolean isLatest, int launchesLimit,
 			Filter testItemFilter, String currentLevelKey);
 
-	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort, int launchesLimit,
-			boolean isLatest);
+	/**
+	 * Generate a materialized view for cumulative trend chart widget.
+	 *
+	 * @param refresh             Refreshed state
+	 * @param viewName            View name
+	 * @param launchFilter        Launches filter
+	 * @param primaryAttributeKey Primary attribute key
+	 * @param subAttributeKey     Sub attribute key
+	 * @param launchesLimit       Launches limit for widget
+	 */
+	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, String primaryAttributeKey,
+			String subAttributeKey, int launchesLimit);
+
+	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
+			int launchesLimit, boolean isLatest);
 
 	void removeWidgetView(String viewName);
 
