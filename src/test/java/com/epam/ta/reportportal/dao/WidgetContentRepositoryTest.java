@@ -36,6 +36,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -450,10 +451,16 @@ class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	void cumulativeTendChartView() {
 		Filter filter = buildDefaultFilter(2L);
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME));
-		Sort sort = Sort.by(orderings);
-		widgetContentRepository.generateCumulativeTrendChartView(false, "kek", filter, "level", "build", 100);
+		widgetContentRepository.generateCumulativeTrendChartView(false, "matView", filter, Lists.newArrayList("level", "build"), 100);
+//		Assert.assertTrue(dslContext.select().from("matView").fetch().isNotEmpty());
+	}
 
+	@Test
+	void cumulativeTendChartViewSelectFirst() {
+		Filter filter = buildDefaultFilter(2L);
+		widgetContentRepository.generateCumulativeTrendChartView(false, "view", filter, Lists.newArrayList("build"), 100);
+		final List<CumulativeTrendChartEntry> results = widgetContentRepository.cumulativeTrendChart("view", "build");
+//		System.out.println();
 	}
 
 	@Test

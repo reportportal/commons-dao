@@ -852,33 +852,32 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, String primaryAttributeKey,
-			String subAttributeKey, int launchesLimit) {
+	public void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes, int launchesLimit) {
 
 		if (refresh) {
 			removeWidgetView(viewName);
 		}
 
-		final String latestLaunches = "latest_launches";
+		final String LATEST_LAUNCHES = "latest_launches";
 
 		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(launchFilter).with(launchesLimit).build())
-				.select(max(LAUNCH.ID).as("id"), arrayAgg(LAUNCH.ID).as("ids"), LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+				.select(max(LAUNCH.ID).as(ID), arrayAgg(LAUNCH.ID).as("ids"), LAUNCH.NAME, ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE))
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
 				.join(ITEM_ATTRIBUTE)
 				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-				.and(ITEM_ATTRIBUTE.KEY.in(primaryAttributeKey, subAttributeKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
+				.and(ITEM_ATTRIBUTE.KEY.in(attributes).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
 				.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
-				.asTable(latestLaunches);
+				.asTable(LATEST_LAUNCHES);
 
 		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
-				LATEST_LAUNCHES_TABLE.field("id"),
+				LATEST_LAUNCHES_TABLE.field(ID),
 				LATEST_LAUNCHES_TABLE.field("ids"),
-				LATEST_LAUNCHES_TABLE.field("name"),
-				LATEST_LAUNCHES_TABLE.field("key"),
-				LATEST_LAUNCHES_TABLE.field("value"),
+				LATEST_LAUNCHES_TABLE.field(NAME),
+				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_KEY),
+				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_VALUE),
 				TEST_ITEM.ITEM_ID
 		)
 				.from(LATEST_LAUNCHES_TABLE)
@@ -893,6 +892,27 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
 				.getQuery()).get()));
 
+	}
+
+	@Override
+	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String primaryAttributeKey) {
+		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(ID),
+				fieldName(viewName, ATTRIBUTE_VALUE),
+				STATISTICS_FIELD.NAME,
+				DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
+		)
+				.from(viewName)
+				.join(STATISTICS)
+				.on(fieldName(viewName, ITEM_ID).cast(Long.class).eq(STATISTICS.ITEM_ID))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(primaryAttributeKey))
+				.groupBy(fieldName(ID), fieldName(ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
+				.orderBy(DSL.when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
+						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
+								.cast(Integer[].class)
+				), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
+				.fetch());
 	}
 
 	@Override

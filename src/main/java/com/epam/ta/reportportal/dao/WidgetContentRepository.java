@@ -289,8 +289,9 @@ public interface WidgetContentRepository {
 	 * @param subAttributeKey     Sub attribute key
 	 * @param launchesLimit       Launches limit for widget
 	 */
-	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, String primaryAttributeKey,
-			String subAttributeKey, int launchesLimit);
+	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes, int launchesLimit);
+
+	List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey);
 
 	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
 			int launchesLimit, boolean isLatest);
