@@ -908,7 +908,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				fieldName(viewName, ATTRIBUTE_VALUE),
 				STATISTICS_FIELD.NAME,
 				sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
-		).from(viewName)
+		)
+				.from(viewName)
 				.join(STATISTICS)
 				.on(fieldName(viewName, ITEM_ID).cast(Long.class).eq(STATISTICS.ITEM_ID))
 				.join(STATISTICS_FIELD)
@@ -917,8 +918,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
 			Table<?> unnestedArray = table(select(field(sql("unnest(?)", max(fieldName("ids")))).as(ID)).from(viewName)
-					.where(field(viewName, ATTRIBUTE_KEY).eq(split[0]))
-					.and(field(viewName, ATTRIBUTE_VALUE).eq(split[1]))).as(UNNESTED_ARRAY);
+					.where(field(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
+					.and(field(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))).as(UNNESTED_ARRAY);
 			baseQuery.join(unnestedArray).on(fieldName(viewName, ID).cast(Long.class).eq(unnestedArray.field(ID).cast(Long.class)));
 		}
 
