@@ -275,12 +275,12 @@ class UserRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllMembersByProjectManagerRole() {
-		List<String> namesByProjectAndRole = userRepository.findNamesByProjectAndRole(1L, ProjectRole.PROJECT_MANAGER);
+		List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.PROJECT_MANAGER);
 
-		assertFalse(namesByProjectAndRole.isEmpty());
+		assertFalse(emails.isEmpty());
 
-		namesByProjectAndRole.forEach(u -> {
-			User user = userRepository.findByLogin(u).get();
+		emails.forEach(e -> {
+			User user = userRepository.findByEmail(e).get();
 			assertEquals(ProjectRole.PROJECT_MANAGER,
 					user.getProjects()
 							.stream()
@@ -294,9 +294,17 @@ class UserRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllMembersByMemberRole() {
-		List<String> namesByProjectAndRole = userRepository.findNamesByProjectAndRole(1L, ProjectRole.MEMBER);
+		List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.MEMBER);
 
-		assertTrue(namesByProjectAndRole.isEmpty());
+		assertTrue(emails.isEmpty());
+	}
+
+	@Test
+	void findAllMembersByProject() {
+		List<String> emails = userRepository.findEmailsByProject(1L);
+
+		assertFalse(emails.isEmpty());
+		assertEquals(1, emails.size());
 	}
 
 	private Filter buildDefaultUserFilter() {

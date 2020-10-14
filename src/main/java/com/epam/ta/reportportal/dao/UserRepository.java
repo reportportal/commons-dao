@@ -74,8 +74,11 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
     @Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
     List<String> findNamesByProject(@Param("projectId") Long projectId);
 
-    @Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND pu.project_role = cast(:#{#projectRole.name()} AS PROJECT_ROLE_ENUM)", nativeQuery = true)
-    List<String> findNamesByProjectAndRole(@Param("projectId") Long projectId, @Param("projectRole") ProjectRole projectRole);
+    @Query(value = "SELECT u.email FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
+    List<String> findEmailsByProject(@Param("projectId") Long projectId);
+
+    @Query(value = "SELECT u.email FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND pu.project_role = cast(:#{#projectRole.name()} AS PROJECT_ROLE_ENUM)", nativeQuery = true)
+    List<String> findEmailsByProjectAndRole(@Param("projectId") Long projectId, @Param("projectRole") ProjectRole projectRole);
 
     @Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND u.login LIKE %:term%", nativeQuery = true)
     List<String> findNamesByProject(@Param("projectId") Long projectId, @Param("term") String term);
