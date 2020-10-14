@@ -52,11 +52,13 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
+import static com.epam.ta.reportportal.dao.widget.healthcheck.query.CustomColumnQueryProvider.UNNESTED_ARRAY;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -852,7 +854,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes, int launchesLimit) {
+	public void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes,
+			int launchesLimit) {
 
 		if (refresh) {
 			removeWidgetView(viewName);
@@ -862,7 +865,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(launchFilter).with(launchesLimit).build())
-				.select(max(LAUNCH.ID).as(ID), arrayAgg(LAUNCH.ID).as("ids"), LAUNCH.NAME, ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE))
+				.select(max(LAUNCH.ID).as(ID),
+						arrayAgg(LAUNCH.ID).as("ids"),
+						LAUNCH.NAME,
+						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
+						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
+				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
@@ -895,18 +903,26 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String primaryAttributeKey) {
-		return CUMULATIVE_TREND_CHART_FETCHER.apply(dsl.select(fieldName(ID),
+	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, String parentAttribute) {
+		final SelectOnConditionStep<? extends Record4> baseQuery = select(fieldName(ID),
 				fieldName(viewName, ATTRIBUTE_VALUE),
 				STATISTICS_FIELD.NAME,
-				DSL.sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
-		)
-				.from(viewName)
+				sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
+		).from(viewName)
 				.join(STATISTICS)
 				.on(fieldName(viewName, ITEM_ID).cast(Long.class).eq(STATISTICS.ITEM_ID))
 				.join(STATISTICS_FIELD)
-				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(primaryAttributeKey))
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
+
+		if (parentAttribute != null) {
+			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
+			Table<?> unnestedArray = table(select(field(sql("unnest(?)", max(fieldName("ids")))).as(ID)).from(viewName)
+					.where(field(viewName, ATTRIBUTE_KEY).eq(split[0]))
+					.and(field(viewName, ATTRIBUTE_VALUE).eq(split[1]))).as(UNNESTED_ARRAY);
+			baseQuery.join(unnestedArray).on(fieldName(viewName, ID).cast(Long.class).eq(unnestedArray.field(ID).cast(Long.class)));
+		}
+
+		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))
 				.groupBy(fieldName(ID), fieldName(ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
 				.orderBy(DSL.when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)

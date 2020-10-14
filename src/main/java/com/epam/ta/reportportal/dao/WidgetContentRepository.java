@@ -291,7 +291,7 @@ public interface WidgetContentRepository {
 	 */
 	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes, int launchesLimit);
 
-	List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey);
+	List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, String parentAttrbute);
 
 	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
 			int launchesLimit, boolean isLatest);
