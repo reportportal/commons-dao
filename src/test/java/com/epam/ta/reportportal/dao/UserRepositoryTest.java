@@ -273,6 +273,32 @@ class UserRepositoryTest extends BaseTest {
 		usernamesWithProjectRoles.values().forEach(Assertions::assertNotNull);
 	}
 
+	@Test
+	void findAllMembersByProjectManagerRole() {
+		List<String> namesByProjectAndRole = userRepository.findNamesByProjectAndRole(1L, ProjectRole.PROJECT_MANAGER);
+
+		assertFalse(namesByProjectAndRole.isEmpty());
+
+		namesByProjectAndRole.forEach(u -> {
+			User user = userRepository.findByLogin(u).get();
+			assertEquals(ProjectRole.PROJECT_MANAGER,
+					user.getProjects()
+							.stream()
+							.filter(it -> it.getId().getProjectId().equals(1L))
+							.map(ProjectUser::getProjectRole)
+							.findFirst()
+							.get()
+			);
+		});
+	}
+
+	@Test
+	void findAllMembersByMemberRole() {
+		List<String> namesByProjectAndRole = userRepository.findNamesByProjectAndRole(1L, ProjectRole.MEMBER);
+
+		assertTrue(namesByProjectAndRole.isEmpty());
+	}
+
 	private Filter buildDefaultUserFilter() {
 		return Filter.builder()
 				.withTarget(User.class)
