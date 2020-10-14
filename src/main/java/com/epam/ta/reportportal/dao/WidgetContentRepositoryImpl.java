@@ -924,7 +924,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		}
 
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))
-				.groupBy(fieldName(ID), fieldName(ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
+				.groupBy(fieldName(viewName, ID), fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
 				.orderBy(DSL.when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
 								.cast(Integer[].class)
