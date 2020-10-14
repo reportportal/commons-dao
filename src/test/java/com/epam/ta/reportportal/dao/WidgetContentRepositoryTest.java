@@ -459,7 +459,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void cumulativeTendChartViewSelectFirst() {
 		Filter filter = buildDefaultFilter(2L);
 		widgetContentRepository.generateCumulativeTrendChartView(false, "view", filter, Lists.newArrayList("build"), 100);
-		final List<CumulativeTrendChartEntry> results = widgetContentRepository.cumulativeTrendChart("view", "build");
+		final List<CumulativeTrendChartEntry> results = widgetContentRepository.cumulativeTrendChart("view", "build", null);
 //		System.out.println();
 	}
 

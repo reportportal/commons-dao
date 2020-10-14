@@ -904,7 +904,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, String parentAttribute) {
-		final SelectOnConditionStep<? extends Record4> baseQuery = select(fieldName(ID),
+		final SelectOnConditionStep<? extends Record4> baseQuery = dsl.select(fieldName(ID),
 				fieldName(viewName, ATTRIBUTE_VALUE),
 				STATISTICS_FIELD.NAME,
 				sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
