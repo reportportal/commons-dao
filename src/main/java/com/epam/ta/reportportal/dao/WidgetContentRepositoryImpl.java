@@ -864,7 +864,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		final String LATEST_LAUNCHES = "latest_launches";
 
 		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter)).with(launchesLimit).build())
+				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, Sort.unsorted(), true)
+						.with(launchesLimit).build())
 				.select(max(LAUNCH.ID).as(ID),
 						arrayAgg(LAUNCH.ID).as("ids"),
 						LAUNCH.NAME,
