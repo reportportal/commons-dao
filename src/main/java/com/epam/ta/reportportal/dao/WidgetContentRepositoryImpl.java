@@ -854,8 +854,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes,
-			int launchesLimit) {
+	public void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, Sort launchesSort,
+			List<String> attributes, int launchesLimit) {
 
 		if (refresh) {
 			removeWidgetView(viewName);
@@ -864,8 +864,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		final String LATEST_LAUNCHES = "latest_launches";
 
 		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
-				.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(launchFilter, Sort.unsorted(), true)
-						.with(launchesLimit).build())
+				.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter)).with(launchesSort).with(launchesLimit).build())
 				.select(max(LAUNCH.ID).as(ID),
 						arrayAgg(LAUNCH.ID).as("ids"),
 						LAUNCH.NAME,

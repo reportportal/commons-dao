@@ -285,11 +285,9 @@ public interface WidgetContentRepository {
 	 * @param refresh             Refreshed state
 	 * @param viewName            View name
 	 * @param launchFilter        Launches filter
-	 * @param primaryAttributeKey Primary attribute key
-	 * @param subAttributeKey     Sub attribute key
 	 * @param launchesLimit       Launches limit for widget
 	 */
-	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, List<String> attributes, int launchesLimit);
+	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, Sort launchesSort, List<String> attributes, int launchesLimit);
 
 	List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, String parentAttrbute);
 
