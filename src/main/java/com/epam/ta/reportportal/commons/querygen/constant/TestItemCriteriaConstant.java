@@ -31,6 +31,7 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_ISSUE_TYPE = "issueType";
 	public static final String CRITERIA_ISSUE_GROUP_ID = "issueGroupId";
 	public static final String CRITERIA_UNIQUE_ID = "uniqueId";
+	public static final String CRITERIA_UUID = "uuid";
 	public static final String CRITERIA_TEST_CASE_ID = "testCaseId";
 	public static final String CRITERIA_TEST_CASE_HASH = "testCaseHash";
 	public static final String CRITERIA_PARENT_ID = "parentId";
