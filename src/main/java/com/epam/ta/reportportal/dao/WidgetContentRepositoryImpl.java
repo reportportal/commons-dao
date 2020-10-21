@@ -917,7 +917,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
-			Table<?> unnestedArray = table(select(field(sql("unnest(?)", max(fieldName("ids")))).as(ID)).from(viewName)
+			Table<?> unnestedArray = table(select(fieldName(ID)).from(viewName)
 					.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
 					.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))).as(UNNESTED_ARRAY);
 			baseQuery.join(unnestedArray).on(fieldName(viewName, ID).cast(Long.class).eq(unnestedArray.field(ID).cast(Long.class)));
