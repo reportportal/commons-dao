@@ -58,7 +58,6 @@ import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.*;
-import static com.epam.ta.reportportal.dao.widget.healthcheck.query.CustomColumnQueryProvider.UNNESTED_ARRAY;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
@@ -865,12 +864,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter)).with(launchesSort).with(launchesLimit).build())
-				.select(max(LAUNCH.ID).as(ID),
-						arrayAgg(LAUNCH.ID).as("ids"),
-						LAUNCH.NAME,
-						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
-						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
-				)
+				.select(max(LAUNCH.ID).as(ID), LAUNCH.NAME, ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE))
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
@@ -882,7 +876,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
 				LATEST_LAUNCHES_TABLE.field(ID),
-				LATEST_LAUNCHES_TABLE.field("ids"),
 				LATEST_LAUNCHES_TABLE.field(NAME),
 				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_KEY),
 				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_VALUE),
@@ -890,7 +883,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		)
 				.from(LATEST_LAUNCHES_TABLE)
 				.leftJoin(TEST_ITEM)
-				.on(LATEST_LAUNCHES_TABLE.field("id").cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
+				.on(LATEST_LAUNCHES_TABLE.field(ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.HAS_STATS.isTrue()
@@ -917,10 +910,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
-			Table<?> unnestedArray = table(select(fieldName(ID)).from(viewName)
-					.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
-					.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))).as(UNNESTED_ARRAY);
-			baseQuery.join(unnestedArray).on(fieldName(viewName, ID).cast(Long.class).eq(unnestedArray.field(ID).cast(Long.class)));
+			baseQuery.where(fieldName(viewName, ID).cast(Long.class)
+					.in(select(fieldName(viewName, ID).cast(Long.class)).from(viewName)
+							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
+							.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
 		}
 
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))

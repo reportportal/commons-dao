@@ -808,6 +808,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		return dsl.select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
+				TEST_ITEM.UUID,
 				TEST_ITEM.START_TIME,
 				TEST_ITEM.TYPE,
 				TEST_ITEM_RESULTS.STATUS,

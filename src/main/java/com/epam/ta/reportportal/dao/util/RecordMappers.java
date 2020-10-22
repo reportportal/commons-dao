@@ -235,6 +235,7 @@ public class RecordMappers {
 
 	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
 			r.get(TEST_ITEM.NAME),
+			r.get(TEST_ITEM.UUID),
 			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
 			r.get(HAS_CONTENT, Boolean.class),
 			r.get(ATTACHMENTS_COUNT, Integer.class),
