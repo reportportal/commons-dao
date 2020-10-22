@@ -881,6 +881,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
 				LATEST_LAUNCHES_TABLE.field(ID),
+				LATEST_LAUNCHES_TABLE.field(AGGREGATED_LAUNCHES_IDS),
 				LATEST_LAUNCHES_TABLE.field(NAME),
 				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_KEY),
 				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_VALUE),
