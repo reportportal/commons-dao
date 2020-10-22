@@ -921,8 +921,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							"unnest(?)",
 							arrayAggDistinct(fieldName(AGGREGATED_LAUNCHES_IDS))
 					)).cast(Long.class)).from(viewName)
-							.where(field(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
-							.and(field(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
+							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
+							.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
 		}
 
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))
