@@ -917,9 +917,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
 			baseQuery.where(fieldName(viewName, ID).cast(Long.class)
-					.in(select(field(sql(
+					.in(selectDistinct(field(sql(
 							"unnest(?)",
-							arrayAggDistinct(fieldName(AGGREGATED_LAUNCHES_IDS))
+							fieldName(AGGREGATED_LAUNCHES_IDS)
 					)).cast(Long.class)).from(viewName)
 							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
 							.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
