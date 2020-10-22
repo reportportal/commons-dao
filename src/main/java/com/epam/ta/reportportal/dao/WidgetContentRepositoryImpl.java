@@ -864,7 +864,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
 				.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter)).with(launchesSort).with(launchesLimit).build())
-				.select(max(LAUNCH.ID).as(ID), LAUNCH.NAME, ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY), ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE))
+				.select(max(LAUNCH.ID).as(ID),
+						arrayAggDistinct(LAUNCH.ID).as(AGGREGATED_LAUNCHES_IDS),
+						LAUNCH.NAME,
+						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
+						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
+				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
@@ -911,9 +916,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
 			baseQuery.where(fieldName(viewName, ID).cast(Long.class)
-					.in(select(fieldName(viewName, ID).cast(Long.class)).from(viewName)
-							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
-							.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
+					.in(select(field(sql(
+							"unnest(?)",
+							arrayAggDistinct(fieldName(AGGREGATED_LAUNCHES_IDS))
+					)).cast(Long.class)).from(viewName)
+							.where(field(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
+							.and(field(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
 		}
 
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))
