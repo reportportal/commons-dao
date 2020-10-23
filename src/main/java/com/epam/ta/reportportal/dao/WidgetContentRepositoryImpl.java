@@ -902,7 +902,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, String parentAttribute) {
+	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, @Nullable String subAttributeKey,
+			@Nullable String parentAttribute) {
 		final SelectOnConditionStep<? extends Record4> baseQuery = dsl.select(fieldName(viewName, ID),
 				fieldName(viewName, ATTRIBUTE_VALUE),
 				STATISTICS_FIELD.NAME,
@@ -916,8 +917,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
-			final SelectConditionStep<Record1<Long>> unnestedLaunches = selectDistinct(field(sql(
-					"unnest(?)",
+			final SelectConditionStep<Record1<Long>> unnestedLaunches = selectDistinct(field(sql("unnest(?)",
 					fieldName(AGGREGATED_LAUNCHES_IDS)
 			)).cast(Long.class)).from(viewName)
 					.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
@@ -925,13 +925,27 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			baseQuery.where(condition(sql("{0} && array({1})", fieldName(AGGREGATED_LAUNCHES_IDS), unnestedLaunches)));
 		}
 
-		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))
+		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(
+				String.class).eq(levelAttributeKey))
 				.groupBy(fieldName(viewName, ID), fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
-				.orderBy(DSL.when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
+				.orderBy(when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
 								.cast(Integer[].class)
 				), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
 				.fetch());
+
+		if (!StringUtils.isEmpty(subAttributeKey)) {
+			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
+					dsl.select(fieldName(viewName, ID), fieldName(viewName, ATTRIBUTE_KEY), fieldName(viewName, ATTRIBUTE_VALUE))
+							.from(viewName)
+							.where(ITEM_ATTRIBUTE.KEY.eq(subAttributeKey)
+									.and(LAUNCH.ID.in(accumulatedLaunches.stream()
+											.flatMap(it -> it.getContent().getLaunchIds().stream())
+											.collect(toList()))))
+							.fetch()
+			);
+		}
+		return accumulatedLaunches;
 	}
 
 	@Override
