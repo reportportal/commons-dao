@@ -916,13 +916,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
-			baseQuery.where(fieldName(viewName, ID).cast(Long.class)
-					.in(selectDistinct(field(sql(
-							"unnest(?)",
-							fieldName(AGGREGATED_LAUNCHES_IDS)
-					)).cast(Long.class)).from(viewName)
-							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
-							.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]))));
+			final SelectConditionStep<Record1<Long>> unnestedLaunches = selectDistinct(field(sql(
+					"unnest(?)",
+					fieldName(AGGREGATED_LAUNCHES_IDS)
+			)).cast(Long.class)).from(viewName)
+					.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
+					.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]));
+			baseQuery.where(condition(sql("{0} && array({1})", fieldName(AGGREGATED_LAUNCHES_IDS), unnestedLaunches)));
 		}
 
 		return CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(String.class).eq(levelAttributeKey))
