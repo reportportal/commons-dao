@@ -938,7 +938,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
 					dsl.select(fieldName(viewName, ID), fieldName(viewName, ATTRIBUTE_KEY), fieldName(viewName, ATTRIBUTE_VALUE))
 							.from(viewName)
-							.where(ITEM_ATTRIBUTE.KEY.eq(subAttributeKey)
+							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class)
+									.eq(subAttributeKey)
 									.and(LAUNCH.ID.in(accumulatedLaunches.stream()
 											.flatMap(it -> it.getContent().getLaunchIds().stream())
 											.collect(toList()))))
