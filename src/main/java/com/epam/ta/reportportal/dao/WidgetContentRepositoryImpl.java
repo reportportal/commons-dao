@@ -940,7 +940,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							.from(viewName)
 							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class)
 									.eq(subAttributeKey)
-									.and(LAUNCH.ID.in(accumulatedLaunches.stream()
+									.and(fieldName(viewName, ID).in(accumulatedLaunches.stream()
 											.flatMap(it -> it.getContent().getLaunchIds().stream())
 											.collect(toList()))))
 							.fetch()
