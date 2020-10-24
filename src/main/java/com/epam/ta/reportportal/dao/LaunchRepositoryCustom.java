@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -54,7 +55,7 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
 
     Optional<Launch> findLatestByFilter(Filter filter);
 
-    Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable);
+    Page<Launch> findAllLatestByFilter(Queryable filter, Pageable pageable);
 
     /**
      * Finds launch ids of project with provided id
