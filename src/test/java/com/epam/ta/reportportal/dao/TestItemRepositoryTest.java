@@ -362,10 +362,13 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
+		List<Long> itemIds = testItemRepository.findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED, 1, 0L);
+		Assertions.assertEquals(1, itemIds.size());
 
+		itemIds = testItemRepository.findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED, 1, 1L);
+		Assertions.assertEquals(1, itemIds.size());
+
+		itemIds = testItemRepository.findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED, 2, 0L);
 		Assertions.assertEquals(2, itemIds.size());
 	}
 

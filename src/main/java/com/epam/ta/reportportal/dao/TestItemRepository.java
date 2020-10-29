@@ -96,13 +96,12 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return the {@link List} of the {@link TestItem#itemId}
 	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
 	 */
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
 			+ " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
-			+ " ORDER BY nlevel(test_item.path) DESC", nativeQuery = true)
-	Stream<BigInteger> streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
-			@Param("status") StatusEnum status);
+			+ " ORDER BY nlevel(test_item.path) DESC LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
+	List<Long> findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
+			@Param("status") StatusEnum status, @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
 	List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
@@ -241,7 +240,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	/**
 	 * Finds {@link TestItem} with specified {@code path}
 	 *
-	 * @param path     Path of {@link TestItem}
+	 * @param path Path of {@link TestItem}
 	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
 	 */
 	@Query(value = "SELECT * FROM test_item t WHERE t.path = cast(:path AS LTREE)", nativeQuery = true)
