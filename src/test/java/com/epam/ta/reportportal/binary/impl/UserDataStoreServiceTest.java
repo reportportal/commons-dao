@@ -59,7 +59,7 @@ class UserDataStoreServiceTest extends BaseTest {
 		userDataStoreService.delete(fileId);
 
 		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> userDataStoreService.load(fileId));
-		assertEquals("Incorrect Request. Unable to find file", exception.getMessage());
+		assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
 		assertFalse(Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
 	}
 
@@ -77,7 +77,7 @@ class UserDataStoreServiceTest extends BaseTest {
 		userDataStoreService.delete(thumbnailId);
 
 		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> userDataStoreService.load(thumbnailId));
-		assertEquals("Incorrect Request. Unable to find file", exception.getMessage());
+		assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
 		assertFalse(Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
 	}
 }

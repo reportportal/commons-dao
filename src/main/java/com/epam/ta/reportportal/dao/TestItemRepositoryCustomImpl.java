@@ -60,8 +60,7 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOff
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TEST_CASE_HASH;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
@@ -69,8 +68,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.PATH_NAMES_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -427,9 +425,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> findTestItemIdsByLaunchId(Long launchId, Pageable pageable) {
+		JTestItem retryParent = TEST_ITEM.as(RETRY_PARENT);
 		return dsl.select(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
-				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.leftJoin(retryParent)
+				.on(TEST_ITEM.RETRY_OF.eq(retryParent.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId).or(retryParent.LAUNCH_ID.eq(launchId)))
 				.orderBy(TEST_ITEM.ITEM_ID)
 				.limit(pageable.getPageSize())
 				.offset(retrieveOffsetAndApplyBoundaries(pageable))
@@ -590,14 +591,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<TestItem> selectRetries(List<Long> retryOfIds) {
-		return dsl.select()
+		return TEST_ITEM_RETRY_FETCHER.apply(dsl.select()
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.leftJoin(PARAMETER)
+				.on(TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID))
 				.where(TEST_ITEM.RETRY_OF.in(retryOfIds))
 				.and(TEST_ITEM.LAUNCH_ID.isNull())
 				.orderBy(TEST_ITEM.START_TIME)
-				.fetch(TEST_ITEM_RECORD_MAPPER);
+				.fetch());
 	}
 
 	@Override
@@ -805,6 +808,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		return dsl.select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.NAME,
+				TEST_ITEM.UUID,
 				TEST_ITEM.START_TIME,
 				TEST_ITEM.TYPE,
 				TEST_ITEM_RESULTS.STATUS,

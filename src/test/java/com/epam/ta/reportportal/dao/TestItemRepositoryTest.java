@@ -45,7 +45,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -88,12 +87,17 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void findTestItemIdsByLaunchId() {
 
-		List<Long> ids = testItemRepository.findTestItemIdsByLaunchId(1L, PageRequest.of(0, 6));
+		List<Long> ids = testItemRepository.findTestItemIdsByLaunchId(12L, PageRequest.of(0, 14));
 
 		assertTrue(CollectionUtils.isNotEmpty(ids), "Ids not found");
-		assertEquals(6, ids.size(), "Incorrect ids size");
-		assertEquals(1, ids.get(0));
-		assertEquals(5, ids.get(4));
+		assertEquals(14, ids.size(), "Incorrect ids size");
+		assertEquals(91, ids.get(0));
+		assertEquals(102, ids.get(11));
+
+		List<TestItem> retries = testItemRepository.findAllById(Lists.newArrayList(ids.get(12), ids.get(13)));
+		assertEquals(2, retries.size(), "Incorrect ids size");
+
+		retries.stream().map(TestItem::getRetryOf).forEach(Assertions::assertNotNull);
 	}
 
 	@Test
@@ -327,40 +331,52 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void streamIdsByNotHasChildrenAndLaunchIdAndStatus() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
+		List<Long> itemIds = testItemRepository.findIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED, 1, 0L);
+		Assertions.assertEquals(1, itemIds.size());
 
+		itemIds = testItemRepository.findIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED, 1, 1L);
+		Assertions.assertEquals(1, itemIds.size());
+
+		itemIds = testItemRepository.findIdsByNotHasChildrenAndLaunchIdAndStatus(1L, StatusEnum.FAILED, 2, 0L);
 		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
 	void streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
+		List<Long> itemIds = testItemRepository.findIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED, 1, 0L);
+		Assertions.assertEquals(1, itemIds.size());
 
+		itemIds = testItemRepository.findIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED, 3, 1L);
+		Assertions.assertEquals(2, itemIds.size());
+
+		itemIds = testItemRepository.findIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(1L, StatusEnum.FAILED, 3, 0L);
 		Assertions.assertEquals(3, itemIds.size());
 	}
 
 	@Test
 	void streamIdsByNotHasChildrenAndParentPathAndStatus() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
+		List<Long> itemIds = testItemRepository.findIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED, 1, 0L);
+		Assertions.assertEquals(1, itemIds.size());
 
+		itemIds = testItemRepository.findIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED, 1, 1L);
+		Assertions.assertEquals(1, itemIds.size());
+
+		itemIds = testItemRepository.findIdsByNotHasChildrenAndParentPathAndStatus("1.2", StatusEnum.FAILED, 2, 0L);
 		Assertions.assertEquals(2, itemIds.size());
 	}
 
 	@Test
 	void streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel() {
 
-		List<Long> itemIds = testItemRepository.streamIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED)
-				.map(BigInteger::longValue)
-				.collect(toList());
+		List<Long> itemIds = testItemRepository.findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED, 1, 0L);
+		Assertions.assertEquals(1, itemIds.size());
 
+		itemIds = testItemRepository.findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED, 1, 1L);
+		Assertions.assertEquals(1, itemIds.size());
+
+		itemIds = testItemRepository.findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel("1", StatusEnum.FAILED, 2, 0L);
 		Assertions.assertEquals(2, itemIds.size());
 	}
 
@@ -418,6 +434,8 @@ class TestItemRepositoryTest extends BaseTest {
 		retries.forEach(retry -> {
 			assertNotNull(retry.getRetryOf());
 			assertEquals(item.getItemId(), retry.getRetryOf());
+			assertFalse(retry.getParameters().isEmpty());
+			assertEquals(3, retry.getParameters().size());
 		});
 	}
 

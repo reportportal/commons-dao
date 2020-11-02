@@ -31,7 +31,9 @@ public class NestedStep implements Serializable {
 	private Long id;
 
 	private String name;
-	
+
+	private String uuid;
+
 	private TestItemTypeEnum type;
 
 	private boolean hasContent;
@@ -50,10 +52,11 @@ public class NestedStep implements Serializable {
 
 	}
 
-	public NestedStep(Long id, String name, TestItemTypeEnum type, boolean hasContent, Integer attachmentsCount, StatusEnum status,
-			LocalDateTime startTime, LocalDateTime endTime, Double duration) {
+	public NestedStep(Long id, String name, String uuid, TestItemTypeEnum type, boolean hasContent, Integer attachmentsCount,
+			StatusEnum status, LocalDateTime startTime, LocalDateTime endTime, Double duration) {
 		this.id = id;
 		this.name = name;
+		this.uuid = uuid;
 		this.type = type;
 		this.hasContent = hasContent;
 		this.attachmentsCount = attachmentsCount;
@@ -135,6 +138,14 @@ public class NestedStep implements Serializable {
 		this.duration = duration;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -147,11 +158,14 @@ public class NestedStep implements Serializable {
 		return hasContent == that.hasContent && Objects.equals(id, that.id) && Objects.equals(name, that.name) && type == that.type
 				&& Objects.equals(attachmentsCount, that.attachmentsCount) && status == that.status && Objects.equals(startTime,
 				that.startTime
-		) && Objects.equals(endTime, that.endTime) && Objects.equals(duration, that.duration);
+		) && Objects.equals(uuid, that.uuid) && Objects.equals(endTime, that.endTime) && Objects.equals(
+				duration,
+				that.duration
+		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, type, hasContent, attachmentsCount, status, startTime, endTime, duration);
+		return Objects.hash(id, name, uuid, type, hasContent, attachmentsCount, status, startTime, endTime, duration);
 	}
 }

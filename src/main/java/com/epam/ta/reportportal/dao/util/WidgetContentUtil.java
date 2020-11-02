@@ -141,7 +141,6 @@ public class WidgetContentUtil {
 		result.forEach(record -> {
 			LaunchesTableContent content;
 			if (resultMap.containsKey(record.get(LAUNCH.ID))) {
-
 				content = resultMap.get(record.get(LAUNCH.ID));
 			} else {
 				content = new LaunchesTableContent();
@@ -150,18 +149,6 @@ public class WidgetContentUtil {
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
 				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
-				itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
-					Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
-
-					ItemAttributeResource attributeResource = new ItemAttributeResource();
-					attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
-					attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
-
-					attributes.add(attributeResource);
-
-					content.setAttributes(attributes);
-				});
-
 			}
 
 			statisticsField.flatMap(sf -> ofNullable(record.get(sf, String.class)))
@@ -176,6 +163,18 @@ public class WidgetContentUtil {
 				} else {
 					content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf))));
 				}
+			});
+
+			itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
+				Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
+
+				ItemAttributeResource attributeResource = new ItemAttributeResource();
+				attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
+				attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
+
+				attributes.add(attributeResource);
+
+				content.setAttributes(attributes);
 			});
 		});
 
@@ -268,10 +267,12 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return filterMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -386,9 +387,9 @@ public class WidgetContentUtil {
 
 	public static final BiConsumer<List<CumulativeTrendChartEntry>, Result<? extends Record>> CUMULATIVE_TOOLTIP_FETCHER = (cumulative, tooltipResult) -> {
 		tooltipResult.forEach(record -> {
-			Long launchId = record.get(LAUNCH.ID);
-			String attributeKey = record.get(ITEM_ATTRIBUTE.KEY);
-			String attributeValue = record.get(ITEM_ATTRIBUTE.VALUE);
+			Long launchId = record.get(ID, Long.class);
+			String attributeKey = record.get(ATTRIBUTE_KEY, String.class);
+			String attributeValue = record.get(ATTRIBUTE_VALUE, String.class);
 			cumulative.forEach(it -> it.getContent()
 					.getLaunchIds()
 					.stream()
@@ -406,8 +407,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
@@ -416,6 +416,19 @@ public class WidgetContentUtil {
 
 		return content;
 	};
+
+	public static final Function<Result<? extends Record>, List<FlakyCasesTableContent>> FLAKY_CASES_TABLE_FETCHER = result -> result.stream()
+			.map(record -> {
+				FlakyCasesTableContent entry = new FlakyCasesTableContent();
+				entry.setStatuses((String[]) record.get(DSL.field(fieldName(STATUSES))));
+				entry.setFlakyCount(record.get(DSL.field(fieldName(FLAKY_COUNT)), Long.class));
+				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
+				entry.setItemName(record.get(DSL.field(fieldName(ITEM_NAME)), String.class));
+				entry.setUniqueId(record.get(DSL.field(fieldName(UNIQUE_ID)), String.class));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				return entry;
+			})
+			.collect(Collectors.toList());
 
 	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
 			STATISTICS_FETCHER.apply(result).values());

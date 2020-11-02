@@ -196,7 +196,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param statuses Checking statuses
 	 * @return True if contains, false if not
 	 */
-	Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
+	Boolean
+	hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
 	/**
 	 * Select items that has different issue from provided for

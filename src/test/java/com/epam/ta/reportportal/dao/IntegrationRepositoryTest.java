@@ -45,7 +45,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 	private static final long GLOBAL_EMAIL_INTEGRATIONS_COUNT = 1L;
 	private static final long SUPERADMIN_PROJECT_BTS_INTEGRATIONS_COUNT = 4L;
-	private static final long GLOBAL_BTS_INTEGRATIONS_COUNT = 2L;
+	private static final int GLOBAL_BTS_INTEGRATIONS_COUNT = 3;
 
 	private static final Long RALLY_INTEGRATION_TYPE_ID = 5L;
 	private static final Long JIRA_INTEGRATION_TYPE_ID = 6L;
@@ -120,7 +120,7 @@ class IntegrationRepositoryTest extends BaseTest {
 	@Test
 	void findAllGlobal() {
 		List<Integration> global = integrationRepository.findAllGlobal();
-		assertThat(global, hasSize(3));
+		assertThat(global, hasSize(4));
 		global.forEach(it -> assertThat(it.getProject(), equalTo(null)));
 	}
 
@@ -151,7 +151,7 @@ class IntegrationRepositoryTest extends BaseTest {
 	@Test
 	void findAllGlobalByIntegrationGroup() {
 		List<Integration> integrations = integrationRepository.findAllGlobalByGroup(IntegrationGroupEnum.BTS);
-		assertThat(integrations, hasSize(2));
+		assertThat(integrations, hasSize(GLOBAL_BTS_INTEGRATIONS_COUNT));
 		integrations.forEach(it -> assertThat(it.getType().getIntegrationGroup(), equalTo(IntegrationGroupEnum.BTS)));
 	}
 

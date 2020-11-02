@@ -145,7 +145,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Page<Launch> findAllLatestByFilter(Filter filter, Pageable pageable) {
+	public Page<Launch> findAllLatestByFilter(Queryable filter, Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.with(FILTERED_QUERY)
 						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, pageable.getSort(), true).with(pageable).build())

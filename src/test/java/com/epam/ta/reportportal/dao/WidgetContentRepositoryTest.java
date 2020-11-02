@@ -36,9 +36,11 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
@@ -53,7 +55,8 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -362,7 +365,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 			Map<Long, Map<String, Integer>> preDefinedStatistics = buildNotPassedCasesStatistics();
 
 			Map<String, Integer> testStatistics = preDefinedStatistics.get(content.getId());
-			int executionsSum = testStatistics.entrySet().stream().mapToInt(Map.Entry::getValue).sum();
+			int executionsSum = testStatistics.values().stream().mapToInt(i -> i).sum();
 
 			assertEquals(Double.parseDouble(currentStatistics.get(NOT_PASSED_STATISTICS_KEY)),
 					BigDecimal.valueOf((double) 100 * (testStatistics.get("statistics$executions$skipped") + testStatistics.get(
@@ -446,27 +449,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void cumulativeTrendChart() {
-		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildContentFields();
-
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$no_defect$nd001"),
-				new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)
-		);
-
-		Sort sort = Sort.by(orderings);
-		List<CumulativeTrendChartEntry> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
-				contentFields,
-				sort,
-				"build",
-				"level",
-				10
-		);
-
-		assertNotNull(launchesStatisticsContents);
-	}
-
-	@Test
 	void productStatusFilterGroupedWidget() {
 
 		List<Sort.Order> firstOrdering = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, "statistics$defects$product_bug$pb001"));
@@ -483,8 +465,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -517,8 +498,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 	void mostTimeConsumingTestCases() {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
-		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(
-				filter,
+		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
 				20
 		);
 
@@ -829,30 +809,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void cumulativeTrendChartSorting() {
-		String sortingColumn = "statistics$defects$no_defect$nd001";
-		Filter filter = buildDefaultFilter(1L);
-		List<String> contentFields = buildContentFields();
-
-		List<Sort.Order> orders = filter.getTarget()
-				.getCriteriaHolders()
-				.stream()
-				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
-				.collect(Collectors.toList());
-		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
-		Sort sort = Sort.by(orders);
-		List<CumulativeTrendChartEntry> launchesStatisticsContents = widgetContentRepository.cumulativeTrendStatistics(filter,
-				contentFields,
-				sort,
-				"build",
-				null,
-				10
-		);
-
-		assertNotNull(launchesStatisticsContents);
-	}
-
-	@Test
 	void productStatusFilterGroupedWidgetSorting() {
 
 		String sortingColumn = "statistics$defects$no_defect$nd001";
@@ -875,8 +831,7 @@ class WidgetContentRepositoryTest extends BaseTest {
 		tags.put("firstColumn", "build");
 		tags.put("secondColumn", "hello");
 
-		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(
-				filterSortMapping,
+		Map<String, List<ProductStatusStatisticsContent>> result = widgetContentRepository.productStatusGroupedByFilterStatistics(filterSortMapping,
 				buildProductStatusContentFields(),
 				tags,
 				false,
@@ -949,16 +904,14 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {
 		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
-						false,
-						String.valueOf(projectId),
-						CRITERIA_PROJECT_ID
-				),
-				new FilterCondition(Condition.EQUALS_ANY,
-						false,
-						String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
-						CRITERIA_STATUS
-				)
-		);
+				false,
+				String.valueOf(projectId),
+				CRITERIA_PROJECT_ID
+		), new FilterCondition(Condition.EQUALS_ANY,
+				false,
+				String.join(",", JStatusEnum.PASSED.getLiteral(), JStatusEnum.FAILED.getLiteral()),
+				CRITERIA_STATUS
+		));
 
 		return new Filter(1L, TestItem.class, conditionList);
 	}

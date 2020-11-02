@@ -140,7 +140,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 */
 	@Query(value =
 			"SELECT i.id, i.name, i.enabled, i.project_id, i.creator, i.creation_date, i.params, i.type, 0 AS clazz_ FROM integration i "
-					+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :btsProject AND i.project_id IS NULL", nativeQuery = true)
+					+ " WHERE params->'params'->>'url' = :url AND i.params->'params'->>'project' = :btsProject AND i.project_id IS NULL LIMIT 1", nativeQuery = true)
 	Optional<Integration> findGlobalBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject);
 
 	/**

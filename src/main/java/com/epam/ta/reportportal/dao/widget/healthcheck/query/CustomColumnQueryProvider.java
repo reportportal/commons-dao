@@ -19,7 +19,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 @Component
 public class CustomColumnQueryProvider extends AbstractHealthCheckTableQueryProvider {
 
-	private static final String UNNESTED_ARRAY = "unnested_array";
+	public static final String UNNESTED_ARRAY = "unnested_array";
 
 	public CustomColumnQueryProvider() {
 		super(Sets.newHashSet(CUSTOM_COLUMN_SORTING));
