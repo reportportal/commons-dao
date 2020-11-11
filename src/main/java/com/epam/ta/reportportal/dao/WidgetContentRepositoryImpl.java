@@ -891,7 +891,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(FIRST_LEVEL)
 				.union(dsl.select(max(LAUNCH.ID).as(ID),
 						LAUNCH.NAME,
-						max(fieldName(FIRST_LEVEL, ID)).as(FIRST_LEVEL_ID).cast(Long.class),
+						max(fieldName(FIRST_LEVEL, ID)).cast(Long.class).as(FIRST_LEVEL_ID),
 						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
 						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
 				)
