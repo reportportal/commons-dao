@@ -897,7 +897,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				)
 						.from(FIRST_LEVEL)
 						.join(LAUNCH)
-						.on(LAUNCH.ID.equal(any(fieldName(FIRST_LEVEL, AGGREGATED_LAUNCHES_IDS).cast(Long[].class))))
+						.on(Suppliers.formattedSupplier("{} = any({})", LAUNCH.ID, AGGREGATED_LAUNCHES_IDS).get())
 						.join(ITEM_ATTRIBUTE)
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 						.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(1)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
