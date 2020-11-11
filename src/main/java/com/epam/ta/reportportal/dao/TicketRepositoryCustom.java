@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.project.Project;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +33,16 @@ public interface TicketRepositoryCustom {
 	 * @param term     A part of ticket id
 	 * @return List of ticket ids
 	 */
-	List<String> findByTerm(Long launchId, String term);
+	List<String> findByLaunchIdAndTerm(Long launchId, String term);
+
+	/**
+	 * Find tickets that contains a term as a part inside for specified project
+	 *
+	 * @param projectId {@link Project#getId()}
+	 * @param term      A part of ticket id
+	 * @return List of ticket ids
+	 */
+	List<String> findByProjectIdAndTerm(Long projectId, String term);
 
 	/**
 	 * Returns number of unique tickets on specified project posted before {@code from} parameter
