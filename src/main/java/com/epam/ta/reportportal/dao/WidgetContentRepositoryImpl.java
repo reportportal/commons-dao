@@ -882,11 +882,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 						.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(0)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
 						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE))
-				.select(fieldName(FIRST_LEVEL, ID).cast(Long.class),
-						fieldName(FIRST_LEVEL, NAME).cast(String.class),
-						DSL.val(null, fieldName(FIRST_LEVEL, ID).as(FIRST_LEVEL_ID).cast(Long.class)),
-						fieldName(FIRST_LEVEL, ATTRIBUTE_KEY).cast(String.class),
-						fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE).cast(String.class)
+				.select(fieldName(FIRST_LEVEL, ID).cast(Long.class).as(ID),
+						fieldName(FIRST_LEVEL, NAME).cast(String.class).as(NAME),
+						DSL.val(null, fieldName(FIRST_LEVEL, ID).cast(Long.class)).as(FIRST_LEVEL_ID),
+						fieldName(FIRST_LEVEL, ATTRIBUTE_KEY).cast(String.class).as(ATTRIBUTE_KEY),
+						fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE).cast(String.class).as(ATTRIBUTE_VALUE)
 				)
 				.from(FIRST_LEVEL)
 				.union(dsl.select(max(LAUNCH.ID).as(ID),
