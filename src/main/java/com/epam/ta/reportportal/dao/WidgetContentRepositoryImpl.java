@@ -861,28 +861,58 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		}
 
 		final String LATEST_LAUNCHES = "latest_launches";
+		final String FIRST_LEVEL = "first_level";
 
-		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(LAUNCHES)
-				.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter)).with(launchesSort).with(launchesLimit).build())
-				.select(max(LAUNCH.ID).as(ID),
-						arrayAggDistinct(LAUNCH.ID).as(AGGREGATED_LAUNCHES_IDS),
+		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(FIRST_LEVEL)
+				.as(dsl.with(LAUNCHES)
+						.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter))
+								.with(launchesSort)
+								.with(launchesLimit)
+								.build())
+						.select(max(LAUNCH.ID).as(ID),
+								LAUNCH.NAME,
+								arrayAggDistinct(LAUNCH.ID).as(AGGREGATED_LAUNCHES_IDS),
+								ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
+								ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
+						)
+						.from(LAUNCH)
+						.join(LAUNCHES)
+						.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
+						.join(ITEM_ATTRIBUTE)
+						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+						.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(0)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
+						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE))
+				.select(fieldName(FIRST_LEVEL, ID).cast(Long.class).as(ID),
+						fieldName(FIRST_LEVEL, NAME).cast(String.class).as(NAME),
+						DSL.val(null, fieldName(FIRST_LEVEL, ID).cast(Long.class)).as(FIRST_LEVEL_ID),
+						fieldName(FIRST_LEVEL, ATTRIBUTE_KEY).cast(String.class).as(ATTRIBUTE_KEY),
+						fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE).cast(String.class).as(ATTRIBUTE_VALUE)
+				)
+				.from(FIRST_LEVEL)
+				.union(dsl.select(max(LAUNCH.ID).as(ID),
 						LAUNCH.NAME,
+						max(fieldName(FIRST_LEVEL, ID)).cast(Long.class).as(FIRST_LEVEL_ID),
 						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
 						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
 				)
-				.from(LAUNCH)
-				.join(LAUNCHES)
-				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-				.join(ITEM_ATTRIBUTE)
-				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-				.and(ITEM_ATTRIBUTE.KEY.in(attributes).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
-				.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+						.from(FIRST_LEVEL)
+						.join(LAUNCH)
+						.on(Suppliers.formattedSupplier("{} = any({})", LAUNCH.ID, AGGREGATED_LAUNCHES_IDS).get())
+						.join(ITEM_ATTRIBUTE)
+						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+						.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(1)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
+						.groupBy(LAUNCH.NAME,
+								fieldName(FIRST_LEVEL, ATTRIBUTE_KEY),
+								fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE),
+								ITEM_ATTRIBUTE.KEY,
+								ITEM_ATTRIBUTE.VALUE
+						))
 				.asTable(LATEST_LAUNCHES);
 
 		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
 				LATEST_LAUNCHES_TABLE.field(ID),
-				LATEST_LAUNCHES_TABLE.field(AGGREGATED_LAUNCHES_IDS),
 				LATEST_LAUNCHES_TABLE.field(NAME),
+				LATEST_LAUNCHES_TABLE.field(FIRST_LEVEL_ID),
 				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_KEY),
 				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_VALUE),
 				TEST_ITEM.ITEM_ID
@@ -904,7 +934,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	@Override
 	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, @Nullable String subAttributeKey,
 			@Nullable String parentAttribute) {
-		final SelectOnConditionStep<? extends Record4> baseQuery = dsl.select(fieldName(viewName, ID),
+		final SelectOnConditionStep<? extends Record5> baseQuery = dsl.select(fieldName(viewName, ID),
+				fieldName(viewName, NAME),
 				fieldName(viewName, ATTRIBUTE_VALUE),
 				STATISTICS_FIELD.NAME,
 				sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
@@ -917,17 +948,17 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		if (parentAttribute != null) {
 			String[] split = parentAttribute.split(KEY_VALUE_SEPARATOR);
-			final SelectConditionStep<Record1<Long>> unnestedLaunches = selectDistinct(field(sql("unnest(?)",
-					fieldName(AGGREGATED_LAUNCHES_IDS)
-			)).cast(Long.class)).from(viewName)
+
+			final SelectConditionStep<Record1<Long>> subLevelLaunches = selectDistinct(fieldName(viewName, ID).cast(Long.class)).from(
+					viewName)
 					.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class).eq(split[0]))
 					.and(fieldName(viewName, ATTRIBUTE_VALUE).cast(String.class).eq(split[1]));
-			baseQuery.where(condition(sql("{0} && array({1})", fieldName(AGGREGATED_LAUNCHES_IDS), unnestedLaunches)));
+			baseQuery.where(fieldName(viewName, FIRST_LEVEL_ID).cast(Long.class).in(subLevelLaunches));
 		}
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(
 				String.class).eq(levelAttributeKey))
-				.groupBy(fieldName(viewName, ID), fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
+				.groupBy(fieldName(viewName, ID), fieldName(viewName, NAME), fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
 				.orderBy(when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
 								.cast(Integer[].class)
