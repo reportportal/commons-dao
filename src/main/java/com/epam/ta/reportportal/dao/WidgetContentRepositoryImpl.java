@@ -891,13 +891,13 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.from(FIRST_LEVEL)
 				.union(dsl.select(max(LAUNCH.ID).as(ID),
 						LAUNCH.NAME,
-						max(fieldName(FIRST_LEVEL, ID).as(FIRST_LEVEL_ID)).cast(Long.class),
+						max(fieldName(FIRST_LEVEL, ID)).as(FIRST_LEVEL_ID).cast(Long.class),
 						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
 						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
 				)
 						.from(FIRST_LEVEL)
 						.join(LAUNCH)
-						.on(LAUNCH.ID.eq(any(fieldName(FIRST_LEVEL, AGGREGATED_LAUNCHES_IDS).cast(Long.class))))
+						.on(LAUNCH.ID.equal(any(fieldName(FIRST_LEVEL, AGGREGATED_LAUNCHES_IDS).cast(Long[].class))))
 						.join(ITEM_ATTRIBUTE)
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 						.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(1)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
