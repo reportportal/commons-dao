@@ -863,7 +863,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		final String LATEST_LAUNCHES = "latest_launches";
 		final String FIRST_LEVEL = "first_level";
 
-		Table<? extends Record> LATEST_LAUNCHES_TABLE = dsl.with(FIRST_LEVEL)
+		final SelectJoinStep<Record5<Long, String, Long, String, String>> FIRST_LEVEL_TABLE = dsl.with(FIRST_LEVEL)
 				.as(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter))
 								.with(launchesSort)
@@ -884,30 +884,37 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.groupBy(LAUNCH.NAME, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE))
 				.select(fieldName(FIRST_LEVEL, ID).cast(Long.class).as(ID),
 						fieldName(FIRST_LEVEL, NAME).cast(String.class).as(NAME),
-						DSL.val(null, fieldName(FIRST_LEVEL, ID).cast(Long.class)).as(FIRST_LEVEL_ID),
+						val(null, fieldName(FIRST_LEVEL, ID).cast(Long.class)).as(FIRST_LEVEL_ID),
 						fieldName(FIRST_LEVEL, ATTRIBUTE_KEY).cast(String.class).as(ATTRIBUTE_KEY),
 						fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE).cast(String.class).as(ATTRIBUTE_VALUE)
 				)
-				.from(FIRST_LEVEL)
-				.union(dsl.select(max(LAUNCH.ID).as(ID),
-						LAUNCH.NAME,
-						max(fieldName(FIRST_LEVEL, ID)).cast(Long.class).as(FIRST_LEVEL_ID),
-						ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
-						ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
-				)
-						.from(FIRST_LEVEL)
-						.join(LAUNCH)
-						.on(Suppliers.formattedSupplier("{} = any({})", LAUNCH.ID, AGGREGATED_LAUNCHES_IDS).get())
-						.join(ITEM_ATTRIBUTE)
-						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-						.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(1)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
-						.groupBy(LAUNCH.NAME,
-								fieldName(FIRST_LEVEL, ATTRIBUTE_KEY),
-								fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE),
-								ITEM_ATTRIBUTE.KEY,
-								ITEM_ATTRIBUTE.VALUE
-						))
-				.asTable(LATEST_LAUNCHES);
+				.from(FIRST_LEVEL);
+
+		Table<? extends Record> LATEST_LAUNCHES_TABLE;
+
+		if (attributes.size() == 2 && attributes.get(1) != null) {
+			final SelectHavingStep<Record5<Long, String, Long, String, String>> SECOND_LEVEL_TABLE = dsl.select(max(LAUNCH.ID).as(ID),
+					LAUNCH.NAME,
+					max(fieldName(FIRST_LEVEL, ID)).cast(Long.class).as(FIRST_LEVEL_ID),
+					ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
+					ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE)
+			)
+					.from(FIRST_LEVEL)
+					.join(LAUNCH)
+					.on(Suppliers.formattedSupplier("{} = any({})", LAUNCH.ID, AGGREGATED_LAUNCHES_IDS).get())
+					.join(ITEM_ATTRIBUTE)
+					.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+					.and(ITEM_ATTRIBUTE.KEY.eq(attributes.get(1)).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()))
+					.groupBy(LAUNCH.NAME,
+							fieldName(FIRST_LEVEL, ATTRIBUTE_KEY),
+							fieldName(FIRST_LEVEL, ATTRIBUTE_VALUE),
+							ITEM_ATTRIBUTE.KEY,
+							ITEM_ATTRIBUTE.VALUE
+					);
+			LATEST_LAUNCHES_TABLE = FIRST_LEVEL_TABLE.union(SECOND_LEVEL_TABLE).asTable(LATEST_LAUNCHES);
+		} else {
+			LATEST_LAUNCHES_TABLE = FIRST_LEVEL_TABLE.asTable(LATEST_LAUNCHES);
+		}
 
 		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
 				LATEST_LAUNCHES_TABLE.field(ID),
