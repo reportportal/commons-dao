@@ -890,7 +890,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				)
 				.from(FIRST_LEVEL);
 
-		Table<? extends Record> LATEST_LAUNCHES_TABLE;
+		SelectQuery<Record5<Long, String, Long, String, String>> query;
 
 		if (attributes.size() == 2 && attributes.get(1) != null) {
 			final SelectHavingStep<Record5<Long, String, Long, String, String>> SECOND_LEVEL_TABLE = dsl.select(max(LAUNCH.ID).as(ID),
@@ -911,45 +911,24 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							ITEM_ATTRIBUTE.KEY,
 							ITEM_ATTRIBUTE.VALUE
 					);
-			LATEST_LAUNCHES_TABLE = FIRST_LEVEL_TABLE.union(SECOND_LEVEL_TABLE).asTable(LATEST_LAUNCHES);
+			query = FIRST_LEVEL_TABLE.union(SECOND_LEVEL_TABLE).getQuery();
 		} else {
-			LATEST_LAUNCHES_TABLE = FIRST_LEVEL_TABLE.asTable(LATEST_LAUNCHES);
+			query = FIRST_LEVEL_TABLE.getQuery();
 		}
-
-		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), DSL.select(
-				LATEST_LAUNCHES_TABLE.field(ID),
-				LATEST_LAUNCHES_TABLE.field(NAME),
-				LATEST_LAUNCHES_TABLE.field(FIRST_LEVEL_ID),
-				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_KEY),
-				LATEST_LAUNCHES_TABLE.field(ATTRIBUTE_VALUE),
-				TEST_ITEM.ITEM_ID
-		)
-				.from(LATEST_LAUNCHES_TABLE)
-				.leftJoin(TEST_ITEM)
-				.on(LATEST_LAUNCHES_TABLE.field(ID).cast(Long.class).eq(TEST_ITEM.LAUNCH_ID))
-				.join(TEST_ITEM_RESULTS)
-				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-				.where(TEST_ITEM.HAS_STATS.isTrue()
-						.and(TEST_ITEM.HAS_CHILDREN.isFalse())
-						.and(TEST_ITEM.TYPE.eq(JTestItemTypeEnum.STEP))
-						.and(TEST_ITEM.RETRY_OF.isNull())
-						.and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
-				.getQuery()).get()));
-
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), query).get()));
 	}
 
 	@Override
 	public List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, @Nullable String subAttributeKey,
 			@Nullable String parentAttribute) {
-		final SelectOnConditionStep<? extends Record5> baseQuery = dsl.select(fieldName(viewName, ID),
-				fieldName(viewName, NAME),
+		final SelectOnConditionStep<? extends Record4> baseQuery = dsl.select(DSL.arrayAgg(fieldName(viewName, ID)).as(LAUNCHES),
 				fieldName(viewName, ATTRIBUTE_VALUE),
 				STATISTICS_FIELD.NAME,
 				sum(STATISTICS.S_COUNTER).as(STATISTICS_COUNTER)
 		)
 				.from(viewName)
 				.join(STATISTICS)
-				.on(fieldName(viewName, ITEM_ID).cast(Long.class).eq(STATISTICS.ITEM_ID))
+				.on(fieldName(viewName, ID).cast(Long.class).eq(STATISTICS.LAUNCH_ID))
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID));
 
@@ -964,13 +943,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		}
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(
-				String.class).eq(levelAttributeKey))
-				.groupBy(fieldName(viewName, ID), fieldName(viewName, NAME), fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
-				.orderBy(when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
-						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
-								.cast(Integer[].class)
-				), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
-				.fetch());
+				String.class).eq(levelAttributeKey)).groupBy(fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME).orderBy(when(
+				fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
+				PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER).cast(Integer[].class)
+		), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC)).fetch());
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
 			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
