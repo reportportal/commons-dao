@@ -51,7 +51,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
 
 	@Override
 	public List<String> findByProjectIdAndTerm(Long projectId, String term) {
-		return dsl.select(TICKET.TICKET_ID)
+		return dsl.selectDistinct(TICKET.TICKET_ID)
 				.from(TICKET)
 				.join(ISSUE_TICKET)
 				.on(TICKET.ID.eq(ISSUE_TICKET.TICKET_ID))
