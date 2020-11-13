@@ -890,7 +890,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				)
 				.from(FIRST_LEVEL);
 
-		Table<? extends Record> LATEST_LAUNCHES_TABLE;
+		SelectQuery<Record5<Long, String, Long, String, String>> query;
 
 		if (attributes.size() == 2 && attributes.get(1) != null) {
 			final SelectHavingStep<Record5<Long, String, Long, String, String>> SECOND_LEVEL_TABLE = dsl.select(max(LAUNCH.ID).as(ID),
@@ -911,14 +911,11 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							ITEM_ATTRIBUTE.KEY,
 							ITEM_ATTRIBUTE.VALUE
 					);
-			LATEST_LAUNCHES_TABLE = FIRST_LEVEL_TABLE.union(SECOND_LEVEL_TABLE).asTable(LATEST_LAUNCHES);
+			query = FIRST_LEVEL_TABLE.union(SECOND_LEVEL_TABLE).getQuery();
 		} else {
-			LATEST_LAUNCHES_TABLE = FIRST_LEVEL_TABLE.asTable(LATEST_LAUNCHES);
+			query = FIRST_LEVEL_TABLE.getQuery();
 		}
-
-		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), LATEST_LAUNCHES_TABLE)
-				.get()));
-
+		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), query).get()));
 	}
 
 	@Override
@@ -946,13 +943,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		}
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(
-				String.class).eq(levelAttributeKey))
-				.groupBy(fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
-				.orderBy(when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
-						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
-								.cast(Integer[].class)
-				), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
-				.fetch());
+				String.class).eq(levelAttributeKey)).groupBy(fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME).orderBy(when(
+				fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
+				PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER).cast(Integer[].class)
+		), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC)).fetch());
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
 			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
