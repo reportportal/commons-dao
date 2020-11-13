@@ -267,12 +267,10 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet()
-				.stream()
-				.collect(LinkedHashMap::new,
-						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-						LinkedHashMap::putAll
-				);
+		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
+				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+				LinkedHashMap::putAll
+		);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -366,13 +364,17 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			String attributeValue = record.get(fieldName(LAUNCHES_TABLE, ATTRIBUTE_VALUE), String.class);
-			Long launchId = record.get(LAUNCH.ID, Long.class);
+
 			String statistics = record.get(STATISTICS_FIELD.NAME, String.class);
 			Integer counter = record.get(STATISTICS_COUNTER, Integer.class);
 
 			CumulativeTrendChartContent content = attributesMapping.getOrDefault(attributeValue, new CumulativeTrendChartContent());
 
-			content.getLaunchIds().add(launchId);
+			Long[] launchIds = record.get(LAUNCHES, Long[].class);
+			if (content.getLaunchIds().isEmpty()) {
+				content.getLaunchIds().addAll(Arrays.stream(launchIds).collect(Collectors.toList()));
+			}
+
 			content.getStatistics().computeIfPresent(statistics, (k, v) -> v + counter);
 			content.getStatistics().putIfAbsent(statistics, counter);
 
@@ -407,7 +409,8 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues()
+					.put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
@@ -570,7 +573,8 @@ public class WidgetContentUtil {
 		result.forEach(record -> resultMap.put(record.get(fieldName(VALUE), String.class),
 				ofNullable(record.get(fieldName(AGGREGATED_VALUES),
 						String[].class
-				)).map(values -> (List<String>) Lists.newArrayList(values)).orElseGet(Collections::emptyList)
+				)).map(values -> (List<String>) Lists.newArrayList(values))
+						.orElseGet(Collections::emptyList)
 		));
 		return resultMap;
 	};
