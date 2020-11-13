@@ -211,6 +211,18 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByNameAndLaunchWithoutParents() {
+		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
+	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
+		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
 
 		Filter filter = Filter.builder()
