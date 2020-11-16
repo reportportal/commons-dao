@@ -41,6 +41,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -260,7 +261,11 @@ public class ResultFetchers {
 				userFilter.setProject(project);
 			}
 			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
-			userFilter.getFilterSorts().add(r.into(FilterSort.class));
+			FilterSort filterSort = new FilterSort();
+			filterSort.setId(r.get(FILTER_SORT.ID));
+			filterSort.setField(r.get(FILTER_SORT.FIELD));
+			filterSort.setDirection(Sort.Direction.valueOf(r.get(FILTER_SORT.DIRECTION).toString()));
+			userFilter.getFilterSorts().add(filterSort);
 			userFilterMap.put(userFilterID, userFilter);
 		});
 		return Lists.newArrayList(userFilterMap.values());
