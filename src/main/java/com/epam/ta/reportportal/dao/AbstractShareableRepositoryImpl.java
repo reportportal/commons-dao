@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.util.ShareableUtils.*;
+import static com.epam.ta.reportportal.jooq.Tables.SHAREABLE_ENTITY;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -49,7 +50,10 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 
 		return PageableExecutionUtils.getPage(
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(permittedCondition(userName)).with(pageable).wrap().withWrapperSort(pageable.getSort())
+						.addCondition(permittedCondition(userName))
+						.with(pageable)
+						.wrap()
+						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(permittedCondition(userName)).build())
@@ -61,7 +65,10 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 			String userName) {
 		return PageableExecutionUtils.getPage(
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(ownCondition(userName)).with(pageable).wrap().withWrapperSort(pageable.getSort())
+						.addCondition(ownCondition(userName))
+						.with(pageable)
+						.wrap()
+						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(ownCondition(userName)).build())
@@ -72,10 +79,18 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 			String userName) {
 		return PageableExecutionUtils.getPage(
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(sharedCondition(userName)).with(pageable).wrap().withWrapperSort(pageable.getSort())
+						.addCondition(sharedCondition(userName))
+						.with(pageable)
+						.wrap()
+						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(sharedCondition(userName)).build())
 		);
+	}
+
+	@Override
+	public void updateSharingFlag(List<Long> ids, boolean isShared) {
+		dsl.update(SHAREABLE_ENTITY).set(SHAREABLE_ENTITY.SHARED, isShared).where(SHAREABLE_ENTITY.ID.in(ids)).execute();
 	}
 }

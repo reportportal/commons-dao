@@ -20,6 +20,11 @@ import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.ShareableEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -40,5 +45,10 @@ public interface ShareableRepository<T extends ShareableEntity> {
 	 * Get all shared objects user without own objects
 	 */
 	Page<T> getShared(ProjectFilter filter, Pageable pageable, String userName);
+
+	/**
+	 * Update share flag for provided shareable entities ids.
+	 */
+	void updateSharingFlag(List<Long> ids, boolean isShared);
 
 }
