@@ -860,7 +860,6 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			removeWidgetView(viewName);
 		}
 
-		final String LATEST_LAUNCHES = "latest_launches";
 		final String FIRST_LEVEL = "first_level";
 
 		final SelectJoinStep<Record5<Long, String, Long, String, String>> FIRST_LEVEL_TABLE = dsl.with(FIRST_LEVEL)
@@ -949,16 +948,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC)).fetch());
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
-			CUMULATIVE_TOOLTIP_FETCHER.accept(accumulatedLaunches,
-					dsl.select(fieldName(viewName, ID), fieldName(viewName, ATTRIBUTE_KEY), fieldName(viewName, ATTRIBUTE_VALUE))
+			accumulatedLaunches.forEach(attributeLaunches -> CUMULATIVE_TOOLTIP_FETCHER.accept(
+					attributeLaunches,
+					dsl.selectDistinct(fieldName(viewName, ATTRIBUTE_KEY), fieldName(viewName, ATTRIBUTE_VALUE))
 							.from(viewName)
 							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class)
 									.eq(subAttributeKey)
-									.and(fieldName(viewName, ID).in(accumulatedLaunches.stream()
-											.flatMap(it -> it.getContent().getLaunchIds().stream())
-											.collect(toList()))))
+									.and(fieldName(viewName, ID).in(attributeLaunches.getContent().getLaunchIds())))
 							.fetch()
-			);
+			));
 		}
 		return accumulatedLaunches;
 	}
