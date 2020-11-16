@@ -202,9 +202,9 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder with(Sort sort) {
 
-		Set<Pair<String, Sort.Direction>> sortingSelect = Sets.newHashSet();
+		Set<Pair<String, Sort.Direction>> sortingSelect = Sets.newLinkedHashSet();
 
-		ofNullable(sort).ifPresent(s -> StreamSupport.stream(s.spliterator(), false).forEach(order -> {
+		ofNullable(sort).ifPresent(s -> s.get().forEach(order -> {
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
 			Pair<String, Sort.Direction> sorting = Pair.of(criteria.getFilterCriteria(), order.getDirection());
