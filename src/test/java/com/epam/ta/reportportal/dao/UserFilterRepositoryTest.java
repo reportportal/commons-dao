@@ -47,6 +47,13 @@ class UserFilterRepositoryTest extends BaseTest {
 	private UserFilterRepository userFilterRepository;
 
 	@Test
+	public void updateSharing() {
+		userFilterRepository.updateSharingFlag(Lists.newArrayList(1L), true);
+		final Optional<UserFilter> filter = userFilterRepository.findById(1L);
+		assertTrue(filter.get().isShared());
+	}
+
+	@Test
 	public void shouldFindByIdAndProjectIdWhenExists() {
 		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(1L, 1L);
 
@@ -92,8 +99,7 @@ class UserFilterRepositoryTest extends BaseTest {
 
 	@Test
 	void getSharedFilters() {
-		Page<UserFilter> superadminSharedFilters = userFilterRepository.getShared(
-				ProjectFilter.of(buildDefaultFilter(), 2L),
+		Page<UserFilter> superadminSharedFilters = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
 				PageRequest.of(0, 3),
 				"superadmin"
 		);
@@ -120,8 +126,7 @@ class UserFilterRepositoryTest extends BaseTest {
 		);
 		assertEquals(2, adminPermittedFilters.getTotalElements(), "Unexpected shared filters count");
 
-		Page<UserFilter> defaultPermittedFilters = userFilterRepository.getPermitted(
-				ProjectFilter.of(buildDefaultFilter(), 2L),
+		Page<UserFilter> defaultPermittedFilters = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
 				PageRequest.of(0, 3),
 				"default"
 		);
@@ -136,8 +141,7 @@ class UserFilterRepositoryTest extends BaseTest {
 
 	@Test
 	void getOwnFilters() {
-		Page<UserFilter> superadminOwnFilters = userFilterRepository.getOwn(
-				ProjectFilter.of(buildDefaultFilter(), 1L),
+		Page<UserFilter> superadminOwnFilters = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L),
 				PageRequest.of(0, 3),
 				"superadmin"
 		);
