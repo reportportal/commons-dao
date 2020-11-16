@@ -948,12 +948,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC)).fetch());
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
-			accumulatedLaunches.forEach(attributeLaunches -> CUMULATIVE_TOOLTIP_FETCHER.accept(attributeLaunches, dsl.selectDistinct(fieldName(viewName, ATTRIBUTE_VALUE))
-					.from(viewName)
-					.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class)
-							.eq(subAttributeKey)
-							.and(fieldName(viewName, ID).in(attributeLaunches.getContent().getLaunchIds())))
-					.fetch()));
+			accumulatedLaunches.forEach(attributeLaunches -> CUMULATIVE_TOOLTIP_FETCHER.accept(
+					attributeLaunches,
+					dsl.selectDistinct(fieldName(viewName, ATTRIBUTE_KEY), fieldName(viewName, ATTRIBUTE_VALUE))
+							.from(viewName)
+							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class)
+									.eq(subAttributeKey)
+									.and(fieldName(viewName, ID).in(attributeLaunches.getContent().getLaunchIds())))
+							.fetch()
+			));
 		}
 		return accumulatedLaunches;
 	}
