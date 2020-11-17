@@ -914,7 +914,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		} else {
 			query = FIRST_LEVEL_TABLE.getQuery();
 		}
-		dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})", DSL.name(viewName), query).get()));
+		dsl.execute(DSL.sql(String.format("CREATE MATERIALIZED VIEW %s AS (%s)", DSL.name(viewName), query.toString())));
 	}
 
 	@Override
