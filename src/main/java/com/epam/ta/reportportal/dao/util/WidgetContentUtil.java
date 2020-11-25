@@ -34,6 +34,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -371,8 +372,8 @@ public class WidgetContentUtil {
 			CumulativeTrendChartContent content = attributesMapping.getOrDefault(attributeValue, new CumulativeTrendChartContent());
 
 			Long[] launchIds = record.get(LAUNCHES, Long[].class);
-			if (content.getLaunchIds().isEmpty()) {
-				content.getLaunchIds().addAll(Arrays.stream(launchIds).collect(Collectors.toList()));
+			if (ArrayUtils.isNotEmpty(launchIds)) {
+				content.getLaunchIds().addAll(Arrays.stream(launchIds).collect(Collectors.toSet()));
 			}
 
 			content.getStatistics().computeIfPresent(statistics, (k, v) -> v + counter);
