@@ -50,6 +50,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.Condition.VALUES_SEPARATOR;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
@@ -959,6 +960,27 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			));
 		}
 		return accumulatedLaunches;
+	}
+
+	@Override
+	public List<Long> getCumulativeLevelRedirectLaunchIds(String viewName, String attributes) {
+		String[] attributeLevels = attributes.split(VALUES_SEPARATOR);
+
+		SelectConditionStep<Record1<Long>> firstLevelCondition = dsl.select(fieldName(viewName, ID).cast(Long.class)).from(viewName).where(concat(
+				coalesce(fieldName(viewName, ATTRIBUTE_KEY), ""),
+				val(KEY_VALUE_SEPARATOR),
+				fieldName(viewName, ATTRIBUTE_VALUE)
+		).eq(attributeLevels[0]));
+
+		if (attributeLevels.length == 2) {
+			return dsl.select(fieldName(viewName, ID)).from(viewName).where(concat(
+					coalesce(fieldName(viewName, ATTRIBUTE_KEY), ""),
+					val(KEY_VALUE_SEPARATOR),
+					fieldName(viewName, ATTRIBUTE_VALUE)
+			).eq(attributeLevels[1])).and(fieldName(viewName, FIRST_LEVEL_ID).cast(Long.class).in(firstLevelCondition)).fetchInto(Long.class);
+		}
+
+		return firstLevelCondition.fetchInto(Long.class);
 	}
 
 	@Override

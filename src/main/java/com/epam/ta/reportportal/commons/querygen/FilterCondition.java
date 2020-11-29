@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -272,6 +273,11 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 
 		public FilterCondition.ConditionBuilder eq(String searchCriteria, String value) {
 			return withCondition(Condition.EQUALS).withSearchCriteria(searchCriteria).withValue(value);
+		}
+
+		public FilterCondition.ConditionBuilder in(String searchCriteria, List<?> value) {
+			return withSearchCriteria(searchCriteria).withCondition(Condition.IN)
+					.withValue(value.stream().map(Object::toString).collect(Collectors.joining(",")));
 		}
 
 		public FilterCondition build() {
