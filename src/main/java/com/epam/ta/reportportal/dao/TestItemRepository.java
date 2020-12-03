@@ -267,6 +267,21 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
 	/**
+	 * Finds latest {@link TestItem} with specified {@code uniqueId}, {@code launchId}, {@code parentId} and not equal {@code itemId}
+	 *
+	 * @param uniqueId {@link TestItem#getUniqueId()} ()}
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @param parentId {@link TestItem#getParent()} id
+	 * @param itemId   {@link TestItem#getItemId()}
+	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
+	 */
+	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+			+ " AND t.parent_id = :parentId AND t.item_id != :itemId AND t.has_stats AND t.retry_of IS NULL"
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
+	Optional<TestItem> findLatestByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId,
+			@Param("launchId") Long launchId, @Param("parentId") Long parentId, @Param("itemId") Long itemId);
+
+	/**
 	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id
 	 *
 	 * @param path Path of {@link TestItem}
