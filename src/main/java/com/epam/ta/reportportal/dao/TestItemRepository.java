@@ -111,6 +111,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	@Query(value = "SELECT * FROM test_item ti WHERE ti.uuid = :uuid FOR UPDATE", nativeQuery = true)
 	Optional<TestItem> findByUuidForUpdate(@Param("uuid") String uuid);
 
+	@Query(value = "SELECT ti.uuid FROM test_item ti WHERE ti.uuid = :uuid FOR UPDATE", nativeQuery = true)
+	Optional<String> findUuidByUuidForUpdate(@Param("uuid") String uuid);
+
 	/**
 	 * Finds all {@link TestItem} by specified launch id
 	 *
