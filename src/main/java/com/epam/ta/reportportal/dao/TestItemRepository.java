@@ -20,12 +20,10 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.persistence.LockModeType;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -110,8 +108,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param uuid {@link TestItem#getUuid()}
 	 * @return {@link Optional} with {@link TestItem} object
 	 */
-	@Query(value = "SELECT ti FROM TestItem ti WHERE ti.uuid = :uuid")
-	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+	@Query(value = "SELECT * FROM test_item ti WHERE ti.uuid = :uuid FOR UPDATE", nativeQuery = true)
 	Optional<TestItem> findByUuidForUpdate(@Param("uuid") String uuid);
 
 	/**
