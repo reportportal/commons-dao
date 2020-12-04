@@ -256,7 +256,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final List<TestItem> items = testItemRepository.selectAllDescendants(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
-		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId(), "Item has incorrect parent id"));
+		items.forEach(it -> assertEquals(itemId, it.getParentId(), "Item has incorrect parent id"));
 	}
 
 	@Test
@@ -270,7 +270,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
-		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId()));
+		items.forEach(it -> assertEquals(itemId, it.getParentId()));
 	}
 
 	@Test
@@ -302,7 +302,7 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items, "Items should not be null");
 		assertFalse(items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
-			assertEquals(parentId, it.getParent().getItemId(), "Incorrect parent id");
+			assertEquals(parentId, it.getParentId(), "Incorrect parent id");
 			assertEquals(failedStatus, it.getItemResults().getStatus(), "Incorrect launch status");
 		});
 	}

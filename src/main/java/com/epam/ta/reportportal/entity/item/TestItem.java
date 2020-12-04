@@ -104,9 +104,8 @@ public class TestItem implements Serializable {
 	@Column(name = "retry_of", precision = 64)
 	private Long retryOf;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "parent_id")
-	private TestItem parent;
+	@Column(name = "parent_id")
+	private Long parentId;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
 	private TestItemResults itemResults;
@@ -287,12 +286,12 @@ public class TestItem implements Serializable {
 		this.retryOf = retryOf;
 	}
 
-	public TestItem getParent() {
-		return parent;
+	public Long getParentId() {
+		return parentId;
 	}
 
-	public void setParent(TestItem parent) {
-		this.parent = parent;
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
 	}
 
 	public TestItemResults getItemResults() {
