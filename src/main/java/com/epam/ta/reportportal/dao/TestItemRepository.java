@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>, TestItemRepositoryCustom {
 
-	@Query(value = "SELECT parent FROM TestItem child JOIN child.parent parent WHERE child.itemId = :childId")
+	@Query(value = "SELECT * FROM test_item WHERE item_id = (SELECT parent_id FROM test_item WHERE item_id = :childId)", nativeQuery = true)
 	Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
 
 	/**
