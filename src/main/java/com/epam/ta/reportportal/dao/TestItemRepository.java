@@ -132,7 +132,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with the same {@link TestItem#getUniqueId()}
 	 *
 	 * @param itemId The new-inserted {@link TestItem#getItemId()}
+	 * @deprecated {@link TestItemRepository#handleRetry(Long, Long)} should be used instead
 	 */
+	@Deprecated
 	@Query(value = "SELECT handle_retries(:itemId)", nativeQuery = true)
 	void handleRetries(@Param("itemId") Long itemId);
 
@@ -269,17 +271,16 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	/**
 	 * Finds latest {@link TestItem} with specified {@code uniqueId}, {@code launchId}, {@code parentId} and not equal {@code itemId}
 	 *
-	 * @param uniqueId {@link TestItem#getUniqueId()} ()}
+	 * @param uniqueId {@link TestItem#getUniqueId()}
 	 * @param launchId {@link TestItem#getLaunchId()}
-	 * @param parentId {@link TestItem#getParent()} id
-	 * @param itemId   {@link TestItem#getItemId()}
+	 * @param parentId {@link TestItem#getParentId()}
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT * FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
-			+ " AND t.parent_id = :parentId AND t.item_id != :itemId AND t.has_stats AND t.retry_of IS NULL"
+			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
-	Optional<TestItem> findLatestByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId,
-			@Param("launchId") Long launchId, @Param("parentId") Long parentId, @Param("itemId") Long itemId);
+	Optional<TestItem> findLatestByUniqueIdAndLaunchIdAndParentId(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
+			@Param("parentId") Long parentId);
 
 	/**
 	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id

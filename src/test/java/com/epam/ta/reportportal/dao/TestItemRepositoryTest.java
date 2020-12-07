@@ -223,6 +223,12 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findLatestByUniqueIdAndLaunchIdAndParentId() {
+		final Optional<TestItem> latestItem = testItemRepository.findLatestByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
 	void selectIdsByStringPatternMatchedLogMessage() {
 
 		Filter filter = Filter.builder()
