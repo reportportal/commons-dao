@@ -250,7 +250,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId AND t.parent_id IS NULL "
-			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
 	Optional<TestItem> findLatestByTestCaseHashAndLaunchIdWithoutParents(@Param("testCaseHash") Integer testCaseHash,
 			@Param("launchId") Long launchId);
 
@@ -259,12 +259,12 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 *
 	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
 	 * @param launchId     {@link TestItem#getLaunchId()}
-	 * @param parentId     {@link TestItem#getParent()} id¬
+	 * @param parentId     {@link TestItem#getParentId()}
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
 			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
-			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
 	Optional<TestItem> findLatestByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
@@ -278,7 +278,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT * FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
 			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
-			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
 	Optional<TestItem> findLatestByUniqueIdAndLaunchIdAndParentId(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
 			@Param("parentId") Long parentId);
 
