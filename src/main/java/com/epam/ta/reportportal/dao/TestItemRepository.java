@@ -241,26 +241,30 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	Optional<TestItem> findByPath(@Param("path") String path);
 
 	/**
-	 * Finds root(without any parent) {@link TestItem} with specified {@code name} and {@code launchId}
+	 * Finds latest root(without any parent) {@link TestItem} with specified {@code testCaseHash} and {@code launchId}
 	 *
-	 * @param name     Name of {@link TestItem}
-	 * @param launchId ID of {@link Launch}
-	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
+	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
+	 * @param launchId     {@link TestItem#getLaunchId()}
+	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
-	@Query("SELECT t FROM TestItem t WHERE t.name=:name AND t.parent IS NULL AND t.launchId=:launchId")
-	Optional<TestItem> findByNameAndLaunchWithoutParents(@Param("name") String name, @Param("launchId") Long launchId);
+	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId AND t.parent_id IS NULL "
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
+	Optional<TestItem> findLatestByTestCaseHashAndLaunchIdWithoutParents(@Param("testCaseHash") Integer testCaseHash,
+			@Param("launchId") Long launchId);
 
 	/**
-	 * Finds {@link TestItem} with specified {@code name} and {@code launchId} under {@code path}
+	 * Finds latest {@link TestItem} with specified {@code testCaseHash}, {@code launchId} and {@code parentId}
 	 *
-	 * @param name     Name of {@link TestItem}
-	 * @param launchId ID of {@link Launch}
-	 * @param path     Path of {@link TestItem}
-	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
+	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
+	 * @param launchId     {@link TestItem#getLaunchId()}
+	 * @param parentId     {@link TestItem#getParent()} id¬
+	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
-	@Query(value = "SELECT * FROM test_item t WHERE t.name=:name AND t.launch_id=:launchId AND t.path <@ cast(:path AS LTREE)", nativeQuery = true)
-	Optional<TestItem> findByNameAndLaunchUnderPath(@Param("name") String name, @Param("launchId") Long launchId,
-			@Param("path") String path);
+	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1", nativeQuery = true)
+	Optional<TestItem> findLatestByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
+			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
 	/**
 	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id

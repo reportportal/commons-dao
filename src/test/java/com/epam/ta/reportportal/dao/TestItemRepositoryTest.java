@@ -74,13 +74,25 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findTicketsByTerm() {
-		List<String> tickets = ticketRepository.findByTerm(1l, "ticket");
+		List<String> tickets = ticketRepository.findByLaunchIdAndTerm(1L, "ticket");
 		Assertions.assertFalse(tickets.isEmpty());
 	}
 
 	@Test
 	void findTicketsByTermNegative() {
-		List<String> tickets = ticketRepository.findByTerm(1l, "unknown");
+		List<String> tickets = ticketRepository.findByLaunchIdAndTerm(1L, "unknown");
+		Assertions.assertTrue(tickets.isEmpty());
+	}
+
+	@Test
+	void findTicketsByProjectIdAndTerm() {
+		List<String> tickets = ticketRepository.findByProjectIdAndTerm(1L, "ticket");
+		Assertions.assertFalse(tickets.isEmpty());
+	}
+
+	@Test
+	void findTicketsByProjectIdAndTermNegative() {
+		List<String> tickets = ticketRepository.findByProjectIdAndTerm(1L, "unknown");
 		Assertions.assertTrue(tickets.isEmpty());
 	}
 
@@ -196,6 +208,18 @@ class TestItemRepositoryTest extends BaseTest {
 	void findByPath() {
 		TestItem testItem = testItemRepository.findById(1L).orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, 1L));
 		assertTrue(testItemRepository.findByPath(testItem.getPath()).isPresent());
+	}
+
+	@Test
+	void findByNameAndLaunchWithoutParents() {
+		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
+	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
+		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
+		assertTrue(latestItem.isPresent());
 	}
 
 	@Test
