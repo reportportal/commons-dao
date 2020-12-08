@@ -102,17 +102,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	Optional<TestItem> findByUuid(String uuid);
 
 	/**
-	 * Finds {@link TestItem} by {@link TestItem#getUuid()} and sets a lock on the found 'item' row in the database.
+	 * Finds {@link TestItem#getItemId()} by {@link TestItem#getUuid()} and sets a lock on the found 'item' row in the database.
 	 * Required for fetching 'item' from the concurrent environment to provide synchronization between dependant entities
 	 *
 	 * @param uuid {@link TestItem#getUuid()}
 	 * @return {@link Optional} with {@link TestItem} object
 	 */
-	@Query(value = "SELECT * FROM test_item ti WHERE ti.uuid = :uuid FOR UPDATE", nativeQuery = true)
-	Optional<TestItem> findByUuidForUpdate(@Param("uuid") String uuid);
-
-	@Query(value = "SELECT ti.uuid FROM test_item ti WHERE ti.uuid = :uuid FOR UPDATE", nativeQuery = true)
-	Optional<String> findUuidByUuidForUpdate(@Param("uuid") String uuid);
+	@Query(value = "SELECT ti.item_id FROM test_item ti WHERE ti.uuid = :uuid FOR UPDATE", nativeQuery = true)
+	Optional<Long> findIdByUuidForUpdate(@Param("uuid") String uuid);
 
 	/**
 	 * Finds all {@link TestItem} by specified launch id
