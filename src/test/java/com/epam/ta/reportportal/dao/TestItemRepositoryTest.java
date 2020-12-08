@@ -212,19 +212,19 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findByNameAndLaunchWithoutParents() {
-		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
 		assertTrue(latestItem.isPresent());
 	}
 
 	@Test
 	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
-		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
 		assertTrue(latestItem.isPresent());
 	}
 
 	@Test
 	void findLatestByUniqueIdAndLaunchIdAndParentId() {
-		final Optional<TestItem> latestItem = testItemRepository.findLatestByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
 		assertTrue(latestItem.isPresent());
 	}
 

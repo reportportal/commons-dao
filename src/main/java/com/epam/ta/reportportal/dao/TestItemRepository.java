@@ -247,39 +247,39 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 *
 	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
 	 * @param launchId     {@link TestItem#getLaunchId()}
-	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
+	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
 	 */
-	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId AND t.parent_id IS NULL "
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId AND t.parent_id IS NULL "
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<TestItem> findLatestByTestCaseHashAndLaunchIdWithoutParents(@Param("testCaseHash") Integer testCaseHash,
+	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdWithoutParents(@Param("testCaseHash") Integer testCaseHash,
 			@Param("launchId") Long launchId);
 
 	/**
-	 * Finds latest {@link TestItem} with specified {@code testCaseHash}, {@code launchId} and {@code parentId}
+	 * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and {@code parentId}
 	 *
 	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
 	 * @param launchId     {@link TestItem#getLaunchId()}
 	 * @param parentId     {@link TestItem#getParentId()}
-	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
+	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
 	 */
-	@Query(value = "SELECT * FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
 			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<TestItem> findLatestByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
+	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
 	/**
-	 * Finds latest {@link TestItem} with specified {@code uniqueId}, {@code launchId}, {@code parentId} and not equal {@code itemId}
+	 * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId}, {@code parentId} and not equal {@code itemId}
 	 *
 	 * @param uniqueId {@link TestItem#getUniqueId()}
 	 * @param launchId {@link TestItem#getLaunchId()}
 	 * @param parentId {@link TestItem#getParentId()}
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
-	@Query(value = "SELECT * FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
 			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<TestItem> findLatestByUniqueIdAndLaunchIdAndParentId(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
+	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentId(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
 			@Param("parentId") Long parentId);
 
 	/**
