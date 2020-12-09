@@ -46,7 +46,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children "
-			+ " AND result.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
+			+ " AND result.status = cast(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
 	List<Long> findIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status,
 			@Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
@@ -75,7 +75,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
+			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
 	List<Long> findIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath, @Param("status") StatusEnum status,
 			@Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
