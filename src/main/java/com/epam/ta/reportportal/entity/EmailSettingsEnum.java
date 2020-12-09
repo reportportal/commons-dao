@@ -25,6 +25,7 @@ import java.util.Optional;
  */
 public enum EmailSettingsEnum {
 
+	RP_HOST("rpHost"),
 	HOST("host"),
 	PORT("port"),
 	PROTOCOL("protocol"),
