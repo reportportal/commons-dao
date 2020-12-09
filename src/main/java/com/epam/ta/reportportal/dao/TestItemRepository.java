@@ -274,10 +274,10 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
-			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+			+ " AND t.parent_id = :parentId AND t.item_id != :itemId AND t.has_stats AND t.retry_of IS NULL"
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentId(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
-			@Param("parentId") Long parentId);
+	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
+			@Param("parentId") Long parentId, @Param("itemId") Long itemId);
 
 	/**
 	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id
