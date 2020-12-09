@@ -224,6 +224,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findLatestByUniqueIdAndLaunchIdAndParentId() {
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
+	void findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual() {
 		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual("unqIdSTEP_R12", 12L, 101L, 100L);
 		assertTrue(latestItem.isPresent());
 	}

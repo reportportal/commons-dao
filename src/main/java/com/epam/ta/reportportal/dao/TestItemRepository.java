@@ -266,11 +266,26 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
 	/**
+	 * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId}, {@code parentId}
+	 *
+	 * @param uniqueId {@link TestItem#getUniqueId()}
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @param parentId {@link TestItem#getParentId()}
+	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
+	 */
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
+			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
+	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentId(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
+			@Param("parentId") Long parentId);
+
+	/**
 	 * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId}, {@code parentId} and not equal {@code itemId}
 	 *
 	 * @param uniqueId {@link TestItem#getUniqueId()}
 	 * @param launchId {@link TestItem#getLaunchId()}
 	 * @param parentId {@link TestItem#getParentId()}
+	 * @param itemId {@link TestItem#getItemId()} ()}
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
