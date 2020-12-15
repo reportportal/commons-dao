@@ -17,6 +17,9 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,4 +33,9 @@ public interface AttachmentRepository extends ReportPortalRepository<Attachment,
 	Optional<Attachment> findByFileId(String fileId);
 
 	List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
+
+	@Modifying
+	@Query(value = "UPDATE attachment SET launch_id = :newLaunchId WHERE project_id = :projectId AND launch_id = :currentLaunchId", nativeQuery = true)
+	void updateLaunchIdByProjectIdAndLaunchId(@Param("projectId") Long projectId, @Param("currentLaunchId") Long currentLaunchId,
+			@Param("newLaunchId") Long newLaunchId);
 }
