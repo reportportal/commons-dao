@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,23 @@ class AttachmentRepositoryTest extends BaseTest {
 
 	@Autowired
 	private ProjectRepository projectRepository;
+
+	@Test
+	void updateLaunchIdByProjectIdAndLaunchId() {
+		final List<Attachment> firstLaunchAttachments = attachmentRepository.findAllByLaunchIdIn(Lists.newArrayList(1L));
+		Assertions.assertFalse(firstLaunchAttachments.isEmpty());
+		attachmentRepository.updateLaunchIdByProjectIdAndLaunchId(1L, 1L, 2L);
+
+		final List<Attachment> secondLaunchAttachments = attachmentRepository.findAllByLaunchIdIn(Lists.newArrayList(2L));
+
+		final List<Long> secondLaunchAttachmentsIds = secondLaunchAttachments.stream().map(Attachment::getId).collect(Collectors.toList());
+		Assertions.assertFalse(secondLaunchAttachments.isEmpty());
+		Assertions.assertTrue(secondLaunchAttachmentsIds.containsAll(firstLaunchAttachments.stream()
+				.map(Attachment::getId)
+				.collect(Collectors.toList())));
+
+		Assertions.assertTrue(attachmentRepository.findAllByLaunchIdIn(Lists.newArrayList(1L)).isEmpty());
+	}
 
 	@Test
 	void findAllByProjectId() {
