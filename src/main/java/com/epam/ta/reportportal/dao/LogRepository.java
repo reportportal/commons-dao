@@ -17,6 +17,9 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.log.Log;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -30,4 +33,8 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 	Optional<Log> findByUuid(String uuid);
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
+
+	@Modifying
+	@Query(value = "UPDATE log SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
+	void updateLaunchIdByLaunchId(@Param("currentLaunchId") Long currentLaunchId, @Param("newLaunchId") Long newLaunchId);
 }
