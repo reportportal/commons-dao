@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Operator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,6 +58,31 @@ class LogRepositoryTest extends BaseTest {
 
 	@Autowired
 	private LogRepository logRepository;
+
+	@Test
+	void updateLaunchIdByLaunchId() {
+
+		final Filter firstLaunchFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_LOG_LAUNCH_ID, String.valueOf(1L)).build())
+				.build();
+
+		final Filter secondLaunchFilter = Filter.builder()
+				.withTarget(Log.class)
+				.withCondition(FilterCondition.builder().eq(CRITERIA_LOG_LAUNCH_ID, String.valueOf(2L)).build())
+				.build();
+
+		final List<Long> firstLaunchLogIds = logRepository.findIdsByFilter(firstLaunchFilter);
+		Assertions.assertFalse(firstLaunchLogIds.isEmpty());
+		logRepository.updateLaunchIdByLaunchId(1L, 2L);
+
+		final List<Long> secondLaunchLogIds = logRepository.findIdsByFilter(secondLaunchFilter);
+
+		Assertions.assertFalse(secondLaunchLogIds.isEmpty());
+		Assertions.assertTrue(secondLaunchLogIds.containsAll(firstLaunchLogIds));
+
+		Assertions.assertTrue(logRepository.findIdsByFilter(firstLaunchFilter).isEmpty());
+	}
 
 	@Test
 	void getPageNumberTest() {
