@@ -51,7 +51,7 @@ class IntegrationRepositoryTest extends BaseTest {
 	private static final Long JIRA_INTEGRATION_TYPE_ID = 6L;
 
 	private static final Long RALLY_INTEGRATION_ID = 7L;
-	private static final Long JIRA_INTEGRATION_ID = 2L;
+	private static final Long JIRA_INTEGRATION_ID = 13L;
 
 	@Autowired
 	private IntegrationRepository integrationRepository;
@@ -80,6 +80,22 @@ class IntegrationRepositoryTest extends BaseTest {
 		List<Integration> enabledAfter = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
 		enabledAfter.forEach(integration -> assertTrue(integration.isEnabled()));
+	}
+
+	@Test
+	void findByIdAndTypeId() {
+		final Integration jiraIntegration = integrationRepository.findByIdAndTypeIdAndProjectIdIsNull(JIRA_INTEGRATION_ID, JIRA_INTEGRATION_TYPE_ID).get();
+		assertEquals("jira", jiraIntegration.getName());
+		assertEquals(JIRA_INTEGRATION_ID, jiraIntegration.getId());
+		assertEquals(JIRA_INTEGRATION_TYPE_ID, jiraIntegration.getType().getId());
+	}
+
+	@Test
+	void findByNameAndTypeId() {
+		final Integration jiraIntegration = integrationRepository.findByNameAndTypeIdAndProjectIdIsNull("jira", JIRA_INTEGRATION_TYPE_ID).get();
+		assertEquals("jira", jiraIntegration.getName());
+		assertEquals(JIRA_INTEGRATION_ID, jiraIntegration.getId());
+		assertEquals(JIRA_INTEGRATION_TYPE_ID, jiraIntegration.getType().getId());
 	}
 
 	@Test
