@@ -545,6 +545,7 @@ public enum Condition {
 	 */
 	public static final String EQ = "eq.";
 	public static final String CNT = "cnt.";
+	public static final String HAS_FILTER = "has.";
 	public static final String UNDR = "under.";
 
 	public static final String VALUES_SEPARATOR = ",";
