@@ -94,11 +94,19 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findIdsByProjectIdModifiedBefore() {
+	void findIdsByProjectIdAndStartTimeBeforeLimit() {
 		List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
-				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds())
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()), 5
 		);
-		assertEquals(12, ids.size());
+		assertEquals(5, ids.size());
+	}
+
+	@Test
+	void findIdsByProjectIdAndStartTimeBeforeLimitWithOffset() {
+		List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()), 3, 10L
+		);
+		assertEquals(2, ids.size());
 	}
 
 	@Test
