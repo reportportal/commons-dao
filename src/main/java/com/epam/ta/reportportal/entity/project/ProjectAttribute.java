@@ -45,6 +45,15 @@ public class ProjectAttribute implements Serializable {
 	@JoinColumn(name = "project_id")
 	private Project project;
 
+	public ProjectAttribute() {
+	}
+
+	public ProjectAttribute(Attribute attribute, String value, Project project) {
+		this.attribute = attribute;
+		this.value = value;
+		this.project = project;
+	}
+
 	public Attribute getAttribute() {
 		return attribute;
 	}
