@@ -144,6 +144,21 @@ class AttachmentRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByProjectIdsAndLogTimeBeforeTest() {
+		Duration duration = Duration.ofDays(6).plusHours(23);
+		final Long projectId = 1L;
+
+		List<Attachment> attachments = attachmentRepository.findByProjectIdsAndLogTimeBefore(projectId,
+				LocalDateTime.now(ZoneOffset.UTC).minus(duration), 3, 6
+		);
+
+		assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
+		assertEquals(3, attachments.size(), "Incorrect count of attachments");
+		attachments.stream().map(it -> null != it.getFileId() || null != it.getThumbnailId()).forEach(Assertions::assertTrue);
+		attachments.stream().map(Attachment::getFileSize).forEach(size -> assertEquals(1024, size));
+	}
+
+	@Test
 	void deleteAllByLaunchIdsIn() {
 		List<Long> launchIds = Arrays.asList(1L, 2L);
 		List<Attachment> attachments = attachmentRepository.findAllByLaunchIdIn(launchIds);

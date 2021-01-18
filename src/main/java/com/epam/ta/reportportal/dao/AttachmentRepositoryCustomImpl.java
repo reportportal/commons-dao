@@ -132,4 +132,27 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Attachment.class);
 	}
+
+	@Override
+	public List<Attachment> findByProjectIdsAndLogTimeBefore(Long projectId, LocalDateTime before, int limit, long offset) {
+		return dsl.select(ATTACHMENT.ID,
+				ATTACHMENT.THUMBNAIL_ID,
+				ATTACHMENT.FILE_ID,
+				ATTACHMENT.CONTENT_TYPE,
+				ATTACHMENT.FILE_SIZE,
+				ATTACHMENT.ITEM_ID,
+				ATTACHMENT.LAUNCH_ID,
+				ATTACHMENT.PROJECT_ID
+		)
+				.from(ATTACHMENT)
+				.join(LOG)
+				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
+				.where(ATTACHMENT.PROJECT_ID.eq(projectId))
+				.and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
+				.orderBy(ATTACHMENT.ID)
+				.limit(limit)
+				.offset(offset)
+				.fetchInto(Attachment.class);
+	}
 }

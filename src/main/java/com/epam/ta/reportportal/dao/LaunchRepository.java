@@ -72,8 +72,11 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 
 	List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after, LaunchModeEnum mode);
 
-	@Query("SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.startTime < :before")
-	List<Long> findIdsByProjectIdAndStartTimeBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before);
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.project_id = :projectId AND l.start_time < :before ORDER BY l.id LIMIT :size", nativeQuery = true)
+	List<Long> findIdsByProjectIdAndStartTimeBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before, @Param("size") int limit);
+
+	@Query(value = "SELECT l.id FROM Launch l WHERE l.project_id = :projectId AND l.start_time < :before ORDER BY l.id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
+	List<Long> findIdsByProjectIdAndStartTimeBefore(@Param("projectId") Long projectId, @Param("before") LocalDateTime before, @Param("pageSize") int limit, @Param("pageOffset") long offset);
 
 	int deleteAllByIdIn(Collection<Long> ids);
 

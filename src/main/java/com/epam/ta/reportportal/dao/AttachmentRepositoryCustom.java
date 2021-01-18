@@ -40,4 +40,6 @@ public interface AttachmentRepositoryCustom {
 	List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds, LocalDateTime before);
 
 	List<Attachment> findByLaunchIdsAndLogTimeBefore(Collection<Long> launchIds, LocalDateTime before);
+
+	List<Attachment> findByProjectIdsAndLogTimeBefore(Long projectId, LocalDateTime before, int limit, long offset);
 }
