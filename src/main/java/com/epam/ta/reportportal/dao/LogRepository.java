@@ -44,5 +44,5 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 			+ " item_id IN (SELECT item.item_id FROM test_item item LEFT JOIN test_item retry_parent ON item.retry_of = retry_parent.item_id "
 			+ " WHERE item.launch_id = :launchId OR (item.launch_id IS NULL AND retry_parent.launch_id = :launchId))) "
 			+ " AND log_time <= :before", nativeQuery = true)
-	int deleteLogsUnderLaunchByLogTimeBefore(@Param("launchId") Long launchId, @Param("before") LocalDateTime before);
+	int deleteUnderLaunchByLogTimeBefore(@Param("launchId") Long launchId, @Param("before") LocalDateTime before);
 }

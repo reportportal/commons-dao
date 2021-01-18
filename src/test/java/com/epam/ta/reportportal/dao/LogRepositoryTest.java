@@ -88,7 +88,7 @@ class LogRepositoryTest extends BaseTest {
 	@Test
 	void deleteLogsUnderLaunchByLogTimeBefore() {
 		final LocalDateTime before = LocalDateTime.now().minusDays(13).minusHours(23);
-		final int removed = logRepository.deleteLogsUnderLaunchByLogTimeBefore(1L, before);
+		final int removed = logRepository.deleteUnderLaunchByLogTimeBefore(1L, before);
 		Assertions.assertEquals(4, removed);
 	}
 
