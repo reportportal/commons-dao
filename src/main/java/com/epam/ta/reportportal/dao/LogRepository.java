@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,11 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 	@Modifying
 	@Query(value = "UPDATE log SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
 	void updateLaunchIdByLaunchId(@Param("currentLaunchId") Long currentLaunchId, @Param("newLaunchId") Long newLaunchId);
+
+	@Modifying
+	@Query(value = "DELETE FROM log WHERE (launch_id = :launchId OR "
+			+ " item_id IN (SELECT item.item_id FROM test_item item LEFT JOIN test_item retry_parent ON item.retry_of = retry_parent.item_id "
+			+ " WHERE item.launch_id = :launchId OR (item.launch_id IS NULL AND retry_parent.launch_id = :launchId))) "
+			+ " AND log_time <= :before", nativeQuery = true)
+	int deleteLogsUnderLaunchByLogTimeBefore(@Param("launchId") Long launchId, @Param("before") LocalDateTime before);
 }

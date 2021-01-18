@@ -38,6 +38,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +83,13 @@ class LogRepositoryTest extends BaseTest {
 		Assertions.assertTrue(secondLaunchLogIds.containsAll(firstLaunchLogIds));
 
 		Assertions.assertTrue(logRepository.findIdsByFilter(firstLaunchFilter).isEmpty());
+	}
+
+	@Test
+	void deleteLogsUnderLaunchByLogTimeBefore() {
+		final LocalDateTime before = LocalDateTime.now().minusDays(13).minusHours(23);
+		final int removed = logRepository.deleteLogsUnderLaunchByLogTimeBefore(1L, before);
+		Assertions.assertEquals(4, removed);
 	}
 
 	@Test
