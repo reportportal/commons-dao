@@ -127,7 +127,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 				.from(ATTACHMENT)
 				.join(LOG)
 				.on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
-				.where(LOG.LAUNCH_ID.in(launchIds))
+				.where(ATTACHMENT.LAUNCH_ID.in(launchIds))
 				.and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
 				.and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
 				.fetchInto(Attachment.class);
