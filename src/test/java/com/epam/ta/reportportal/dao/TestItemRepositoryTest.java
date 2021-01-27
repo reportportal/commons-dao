@@ -212,13 +212,25 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findByNameAndLaunchWithoutParents() {
-		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
 		assertTrue(latestItem.isPresent());
 	}
 
 	@Test
 	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
-		final Optional<TestItem> latestItem = testItemRepository.findLatestByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
+	void findLatestByUniqueIdAndLaunchIdAndParentId() {
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
+		assertTrue(latestItem.isPresent());
+	}
+
+	@Test
+	void findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual() {
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual("unqIdSTEP_R12", 12L, 101L, 100L);
 		assertTrue(latestItem.isPresent());
 	}
 
@@ -256,7 +268,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final List<TestItem> items = testItemRepository.selectAllDescendants(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
-		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId(), "Item has incorrect parent id"));
+		items.forEach(it -> assertEquals(itemId, it.getParentId(), "Item has incorrect parent id"));
 	}
 
 	@Test
@@ -270,7 +282,7 @@ class TestItemRepositoryTest extends BaseTest {
 		final List<TestItem> items = testItemRepository.selectAllDescendantsWithChildren(itemId);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
-		items.forEach(it -> assertEquals(itemId, it.getParent().getItemId()));
+		items.forEach(it -> assertEquals(itemId, it.getParentId()));
 	}
 
 	@Test
@@ -302,7 +314,7 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(items, "Items should not be null");
 		assertFalse(items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
-			assertEquals(parentId, it.getParent().getItemId(), "Incorrect parent id");
+			assertEquals(parentId, it.getParentId(), "Incorrect parent id");
 			assertEquals(failedStatus, it.getItemResults().getStatus(), "Incorrect launch status");
 		});
 	}
