@@ -85,6 +85,27 @@ public interface ItemAttributeRepositoryCustom {
 	List<String> findTestItemAttributeValues(Long launchId, String key, String value, boolean system);
 
 	/**
+	 * Retrieves test item attribute keys by project id and part of value.
+	 * Used for autocompletion functionality
+	 *
+	 * @param projectId Id of {@link com.epam.ta.reportportal.entity.project.Project} which items' attribute keys should be found
+	 * @param keyPart    part of key
+	 * @return List of matched attribute keys
+	 */
+	List<String> findTestItemKeysByProjectId(Long projectId, String keyPart, boolean system);
+
+	/**
+	 * Retrieves test item attribute values by project id, specified key and part of value.
+	 * Used for autocompletion functionality
+	 *
+	 * @param projectId Id of {@link com.epam.ta.reportportal.entity.project.Project} which items' attribute values should be found
+	 * @param key      Specified key
+	 * @param valuePart    Part of value
+	 * @return List of matched attribute values
+	 */
+	List<String> findTestItemValuesByProjectId(Long projectId, String key, String valuePart, boolean system);
+
+	/**
 	 * Save item attribute by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}
 	 *
 	 * @param itemId   {@link ItemAttribute#testItem} ID

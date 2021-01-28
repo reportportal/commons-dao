@@ -31,6 +31,7 @@ import java.util.List;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static org.jooq.impl.DSL.not;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -130,6 +131,37 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.leftJoin(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(condition)
+				.fetch(ITEM_ATTRIBUTE.VALUE);
+	}
+
+	@Override
+	public List<String> findTestItemKeysByProjectId(Long projectId, String keyPart, boolean system) {
+		return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
+				.from(ITEM_ATTRIBUTE)
+				.join(TEST_ITEM)
+				.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(TEST_ITEM.HAS_STATS)
+				.and(not(TEST_ITEM.HAS_CHILDREN))
+				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
+				.and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(keyPart, '\\') + "%"))
+				.fetch(ITEM_ATTRIBUTE.KEY);
+	}
+
+	@Override
+	public List<String> findTestItemValuesByProjectId(Long projectId, String key, String valuePart, boolean system) {
+		Condition condition = prepareFetchingValuesCondition(LAUNCH.PROJECT_ID, projectId, key, valuePart, system);
+		return dslContext.selectDistinct(ITEM_ATTRIBUTE.VALUE)
+				.from(ITEM_ATTRIBUTE)
+				.join(TEST_ITEM)
+				.on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(condition)
+				.and(TEST_ITEM.HAS_STATS)
+				.and(not(TEST_ITEM.HAS_CHILDREN))
 				.fetch(ITEM_ATTRIBUTE.VALUE);
 	}
 
