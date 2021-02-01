@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -88,22 +89,25 @@ public interface ItemAttributeRepositoryCustom {
 	 * Retrieves test item attribute keys by project id and part of value.
 	 * Used for autocompletion functionality
 	 *
-	 * @param projectId Id of {@link com.epam.ta.reportportal.entity.project.Project} which items' attribute keys should be found
+	 * @param projectId  Id of {@link com.epam.ta.reportportal.entity.project.Project} which items' attribute keys should be found
+	 * @param launchName {@link Launch#getName()} which items' attributes should be found
 	 * @param keyPart    part of key
 	 * @return List of matched attribute keys
 	 */
-	List<String> findTestItemKeysByProjectId(Long projectId, String keyPart, boolean system);
+	List<String> findTestItemKeysByProjectIdAndLaunchName(Long projectId, String launchName, String keyPart, boolean system);
 
 	/**
 	 * Retrieves test item attribute values by project id, specified key and part of value.
 	 * Used for autocompletion functionality
 	 *
-	 * @param projectId Id of {@link com.epam.ta.reportportal.entity.project.Project} which items' attribute values should be found
-	 * @param key      Specified key
-	 * @param valuePart    Part of value
+	 * @param projectId  Id of {@link com.epam.ta.reportportal.entity.project.Project} which items' attribute values should be found
+	 * @param launchName {@link Launch#getName()} which items' attributes should be found
+	 * @param key        Specified key
+	 * @param valuePart  Part of value
 	 * @return List of matched attribute values
 	 */
-	List<String> findTestItemValuesByProjectId(Long projectId, String key, String valuePart, boolean system);
+	List<String> findTestItemValuesByProjectIdAndLaunchName(Long projectId, String launchName, String key, String valuePart,
+			boolean system);
 
 	/**
 	 * Save item attribute by {@link com.epam.ta.reportportal.entity.item.TestItem#itemId}

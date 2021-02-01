@@ -81,9 +81,10 @@ class ItemAttributeRepositoryTest extends BaseTest {
 	@Test
 	void findTestItemKeysByProjectId() {
 		final Long projectId = 1L;
+		final String launchName = "name 1";
 		final String partOfItemKey = "st";
 
-		final List<String> keys = repository.findTestItemKeysByProjectId(projectId, partOfItemKey, false);
+		final List<String> keys = repository.findTestItemKeysByProjectIdAndLaunchName(projectId, launchName, partOfItemKey, false);
 		assertNotNull(keys, "Should not be null");
 		assertTrue(!keys.isEmpty(), "Should not be empty");
 		keys.forEach(it -> assertTrue(it.contains(partOfItemKey), "Key not matches"));
@@ -92,10 +93,11 @@ class ItemAttributeRepositoryTest extends BaseTest {
 	@Test
 	void findTestItemValuesByProjectId() {
 		final Long projectId = 1L;
+		final String launchName = "name 1";
 		final String stepKey = "step";
 		final String partOfItemValue = "val";
 
-		final List<String> values = repository.findTestItemValuesByProjectId(projectId, stepKey, partOfItemValue, false);
+		final List<String> values = repository.findTestItemValuesByProjectIdAndLaunchName(projectId, launchName, stepKey, partOfItemValue, false);
 		assertNotNull(values, "Should not be null");
 		assertTrue(!values.isEmpty(), "Should not be empty");
 		values.forEach(it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));

@@ -135,7 +135,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findTestItemKeysByProjectId(Long projectId, String keyPart, boolean system) {
+	public List<String> findTestItemKeysByProjectIdAndLaunchName(Long projectId, String launchName, String keyPart, boolean system) {
 		return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
 				.from(ITEM_ATTRIBUTE)
 				.join(TEST_ITEM)
@@ -143,6 +143,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.NAME.eq(launchName))
 				.and(TEST_ITEM.HAS_STATS)
 				.and(not(TEST_ITEM.HAS_CHILDREN))
 				.and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
@@ -151,7 +152,8 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
-	public List<String> findTestItemValuesByProjectId(Long projectId, String key, String valuePart, boolean system) {
+	public List<String> findTestItemValuesByProjectIdAndLaunchName(Long projectId, String launchName, String key, String valuePart,
+			boolean system) {
 		Condition condition = prepareFetchingValuesCondition(LAUNCH.PROJECT_ID, projectId, key, valuePart, system);
 		return dslContext.selectDistinct(ITEM_ATTRIBUTE.VALUE)
 				.from(ITEM_ATTRIBUTE)
@@ -160,6 +162,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 				.join(LAUNCH)
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(condition)
+				.and(LAUNCH.NAME.eq(launchName))
 				.and(TEST_ITEM.HAS_STATS)
 				.and(not(TEST_ITEM.HAS_CHILDREN))
 				.fetch(ITEM_ATTRIBUTE.VALUE);
