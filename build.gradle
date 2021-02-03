@@ -31,8 +31,7 @@ apply from: "$scriptsUrl/jacoco.gradle"
 apply from: 'jooq.gradle'
 
 repositories {
-    mavenLocal()
-    mavenCentral()
+    mavenCentral { url "https://repo1.maven.org/maven2" }
     releaseMode ? maven { url "http://dl.bintray.com/epam/reportportal" } : maven { url 'https://jitpack.io' }
 }
 
