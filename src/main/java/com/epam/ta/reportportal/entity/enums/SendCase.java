@@ -29,6 +29,7 @@ public enum SendCase {
 	//@formatter:off
 	ALWAYS("always"),
 	FAILED("failed"),
+	UNTESTED("untested"),
 	TO_INVESTIGATE("toInvestigate"),
 	MORE_10("more10"),
 	MORE_20("more20"),

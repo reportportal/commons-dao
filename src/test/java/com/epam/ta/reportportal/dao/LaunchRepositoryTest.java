@@ -236,7 +236,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void hasItemsInStatuses() {
 		final boolean hasItemsInStatuses = launchRepository.hasItemsInStatuses(100L,
-				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED)
+				Lists.newArrayList(JStatusEnum.FAILED, JStatusEnum.SKIPPED, JStatusEnum.UNTESTED)
 		);
 		assertTrue(hasItemsInStatuses);
 	}

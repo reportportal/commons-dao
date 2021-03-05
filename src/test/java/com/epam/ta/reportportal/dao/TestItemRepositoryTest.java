@@ -336,7 +336,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void hasItemsInStatusByParentNegative() {
-		assertFalse(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.SKIPPED.name(), StatusEnum.PASSED.name()));
+		assertFalse(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.SKIPPED.name(), StatusEnum.PASSED.name(), StatusEnum.UNTESTED.name()));
 	}
 
 	@Test
