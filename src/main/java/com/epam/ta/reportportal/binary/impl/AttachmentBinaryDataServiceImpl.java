@@ -29,7 +29,6 @@ import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,18 +82,19 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try (InputStream inputStream = file.getInputStream()) {
 			String contentType = resolveContentType(file.getContentType(), inputStream);
-			long fileSize = file.getSize();
-			String extension = resolveExtension(contentType).orElse("." + FilenameUtils.getExtension(file.getOriginalFilename()));
-			String fileName = metaInfo.getLogUuid() + "-" + file.getName() + extension;
+			String fileName = resolveFileName(metaInfo, file, contentType);
 
 			String commonPath = filePathGenerator.generate(metaInfo);
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
+			final String fileId = dataStoreService.save(targetPath, inputStream);
+			final String thumbnailFileId = createThumbnail(file, fileName, commonPath);
+
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(dataStoreService.save(targetPath, inputStream))
-					.withThumbnailFileId(createThumbnail(file, fileName, commonPath))
+					.withFileId(fileId)
+					.withThumbnailFileId(thumbnailFileId)
 					.withContentType(contentType)
-					.withFileSize(fileSize)
+					.withFileSize(file.getSize())
 					.build());
 		} catch (IOException e) {
 			LOGGER.error("Unable to save binary data", e);
@@ -104,6 +104,11 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			}
 		}
 		return result;
+	}
+
+	private String resolveFileName(AttachmentMetaInfo metaInfo, MultipartFile file, String contentType) {
+		String extension = resolveExtension(contentType).orElse(resolveExtension(true, file));
+		return metaInfo.getLogUuid() + "-" + file.getName() + extension;
 	}
 
 	@Override
@@ -123,6 +128,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			attachment.setProjectId(attachmentMetaInfo.getProjectId());
 			attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
 			attachment.setItemId(attachmentMetaInfo.getItemId());
+			attachment.setCreationDate(attachmentMetaInfo.getCreationDate());
 
 			createLogAttachmentService.create(attachment, attachmentMetaInfo.getLogId());
 		} catch (Exception exception) {

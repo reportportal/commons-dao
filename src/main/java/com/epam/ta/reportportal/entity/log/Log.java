@@ -65,6 +65,9 @@ public class Log implements Serializable {
 	@JoinColumn(name = "launch_id")
 	private Launch launch;
 
+	@Column(name = "project_id")
+	private Long projectId;
+
 	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "attachment_id")
 	private Attachment attachment;
@@ -153,6 +156,14 @@ public class Log implements Serializable {
 
 	public void setAttachment(Attachment attachment) {
 		this.attachment = attachment;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
 	}
 
 	@Override

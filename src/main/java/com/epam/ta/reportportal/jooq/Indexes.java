@@ -139,6 +139,7 @@ public class Indexes {
     public static final Index LOG_LAUNCH_ID_IDX = Indexes0.LOG_LAUNCH_ID_IDX;
     public static final Index LOG_MESSAGE_TRGM_IDX = Indexes0.LOG_MESSAGE_TRGM_IDX;
     public static final Index LOG_PK = Indexes0.LOG_PK;
+    public static final Index LOG_PROJECT_ID_IDX = Indexes0.LOG_PROJECT_ID_IDX;
     public static final Index LOG_TI_IDX = Indexes0.LOG_TI_IDX;
     public static final Index OAUTH_ACCESS_TOKEN_PKEY = Indexes0.OAUTH_ACCESS_TOKEN_PKEY;
     public static final Index OAUTH_AT_USER_IDX = Indexes0.OAUTH_AT_USER_IDX;
@@ -263,6 +264,7 @@ public class Indexes {
         public static Index LOG_LAUNCH_ID_IDX = Internal.createIndex("log_launch_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.LAUNCH_ID }, false);
         public static Index LOG_MESSAGE_TRGM_IDX = Internal.createIndex("log_message_trgm_idx", JLog.LOG, new OrderField[] { JLog.LOG.LOG_MESSAGE }, false);
         public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
+        public static Index LOG_PROJECT_ID_IDX = Internal.createIndex("log_project_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID }, false);
         public static Index LOG_TI_IDX = Internal.createIndex("log_ti_idx", JLog.LOG, new OrderField[] { JLog.LOG.ITEM_ID }, false);
         public static Index OAUTH_ACCESS_TOKEN_PKEY = Internal.createIndex("oauth_access_token_pkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID }, true);
         public static Index OAUTH_AT_USER_IDX = Internal.createIndex("oauth_at_user_idx", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID }, false);

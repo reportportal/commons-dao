@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row8;
+import org.jooq.Row9;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = 172911074;
+    private static final long serialVersionUID = 1859892484;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -96,6 +97,11 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
      * The column <code>public.attachment.file_size</code>.
      */
     public final TableField<JAttachmentRecord, Long> FILE_SIZE = createField(DSL.name("file_size"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.attachment.creation_date</code>.
+     */
+    public final TableField<JAttachmentRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
 
     /**
      * Create a <code>public.attachment</code> table reference
@@ -182,11 +188,11 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row8 type methods
+    // Row9 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Long, String, String, String, Long, Long, Long, Long> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row9<Long, String, String, String, Long, Long, Long, Long, Timestamp> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 }
