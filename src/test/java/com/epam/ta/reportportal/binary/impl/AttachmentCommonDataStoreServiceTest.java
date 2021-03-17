@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,11 +46,12 @@ class AttachmentCommonDataStoreServiceTest extends BaseTest {
 
 	@Test
 	@Sql("/db/fill/data-store/data-store-fill.sql")
-	void AttachFileToEsistLogTest() {
+	void AttachFileToExistingLogTest() {
 		String fileID = "fileID";
 		String thumbnailID = "thumbnailID";
 		String contentType = "content-type";
 		long fileSize = 1024;
+		final LocalDateTime creationDate = LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1);
 
 		BinaryDataMetaInfo binaryDataMetaInfo = new BinaryDataMetaInfo();
 		binaryDataMetaInfo.setFileId(fileID);
@@ -63,6 +66,7 @@ class AttachmentCommonDataStoreServiceTest extends BaseTest {
 				.withLaunchId(1L)
 				.withItemId(itemId)
 				.withLogId(1L)
+				.withCreationDate(creationDate)
 				.build();
 
 		attachmentBinaryDataService.attachToLog(binaryDataMetaInfo, attachmentMetaInfo);
@@ -77,5 +81,6 @@ class AttachmentCommonDataStoreServiceTest extends BaseTest {
 		assertEquals(thumbnailID, attachment.get().getThumbnailId());
 		assertEquals(contentType, attachment.get().getContentType());
 		assertEquals(fileSize, attachment.get().getFileSize());
+		assertEquals(creationDate, attachment.get().getCreationDate());
 	}
 }

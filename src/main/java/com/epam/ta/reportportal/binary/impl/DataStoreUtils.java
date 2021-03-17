@@ -17,11 +17,13 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.google.common.base.Strings;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +37,8 @@ public class DataStoreUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
 
 	private static final String THUMBNAIL_PREFIX = "thumbnail-";
+
+	private static final String DOT = ".";
 
 	static final String ROOT_USER_PHOTO_DIR = "users";
 
@@ -52,6 +56,11 @@ public class DataStoreUtils {
 			LOGGER.warn("Cannot resolve file extension from content type '{}'", contentType, e);
 		}
 		return result;
+	}
+
+	public static String resolveExtension(boolean prefixDot, MultipartFile file) {
+		final String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+		return prefixDot ? DOT + extension : extension;
 	}
 
 	public static String buildThumbnailFileName(String commonPath, String fileName) {

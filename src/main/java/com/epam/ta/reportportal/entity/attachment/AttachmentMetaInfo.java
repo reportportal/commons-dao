@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.entity.attachment;
 
 import com.google.common.base.Preconditions;
 
+import java.time.LocalDateTime;
+
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
@@ -35,13 +37,16 @@ public class AttachmentMetaInfo {
 
 	private String logUuid;
 
-	public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId, String launchUuid, String logUuid) {
+	private LocalDateTime creationDate;
+
+	public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId, String launchUuid, String logUuid, LocalDateTime creationDate) {
 		this.projectId = projectId;
 		this.launchId = launchId;
 		this.itemId = itemId;
 		this.logId = logId;
 		this.launchUuid = launchUuid;
 		this.logUuid = logUuid;
+		this.creationDate = creationDate;
 	}
 
 	public static AttachmentMetaInfoBuilder builder() {
@@ -72,6 +77,10 @@ public class AttachmentMetaInfo {
 		return logUuid;
 	}
 
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+
 	public static class AttachmentMetaInfoBuilder {
 		private Long projectId;
 
@@ -84,6 +93,8 @@ public class AttachmentMetaInfo {
 		private String launchUuid;
 
 		private String logUuid;
+
+		private LocalDateTime creationDate;
 
 		private AttachmentMetaInfoBuilder() {
 		}
@@ -119,8 +130,13 @@ public class AttachmentMetaInfo {
 			return this;
 		}
 
+		public AttachmentMetaInfoBuilder withCreationDate(LocalDateTime creationDate) {
+			this.creationDate = creationDate;
+			return this;
+		}
+
 		public AttachmentMetaInfo build() {
-			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId, this.launchUuid, this.logUuid);
+			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId, this.launchUuid, this.logUuid, this.creationDate);
 		}
 	}
 }
