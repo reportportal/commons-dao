@@ -88,11 +88,9 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
 			final String fileId = dataStoreService.save(targetPath, inputStream);
-			final String thumbnailFileId = createThumbnail(file, fileName, commonPath);
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(fileId)
-					.withThumbnailFileId(thumbnailFileId)
 					.withContentType(contentType)
 					.withFileSize(file.getSize())
 					.build());
@@ -163,16 +161,6 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			dataStoreService.delete(fileId);
 			attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
 		}
-	}
-
-	private String createThumbnail(MultipartFile file, String fileName, String commonPath) throws IOException {
-		String thumbnailId = null;
-		if (isImage(file.getContentType())) {
-			try (final InputStream inputStream = file.getInputStream()) {
-				thumbnailId = dataStoreService.saveThumbnail(buildThumbnailFileName(commonPath, fileName), inputStream);
-			}
-		}
-		return thumbnailId;
 	}
 
 	private String resolveContentType(String contentType, InputStream inputStream) throws IOException {
