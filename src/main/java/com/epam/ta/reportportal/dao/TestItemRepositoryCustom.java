@@ -324,11 +324,13 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	TestItemTypeEnum getTypeByItemId(Long itemId);
 
 	/**
+	 * @param launchId
 	 * @param filter
-	 * @param pageable
+	 * @param limit
+	 * @param offset
 	 * @return
 	 */
-	List<Long> selectIdsByFilter(Long launchId, Queryable filter, Pageable pageable);
+	List<Long> selectIdsByFilter(Long launchId, Queryable filter, int limit, int offset);
 
 	/**
 	 * @param itemIds

@@ -195,6 +195,17 @@ public class QueryBuilder {
 	}
 
 	/**
+	 * Add offset
+	 *
+	 * @param offset offset
+	 * @return QueryBuilder
+	 */
+	public QueryBuilder withOffset(int offset) {
+		query.addOffset(offset);
+		return this;
+	}
+
+	/**
 	 * Convert properties to query criteria and add sorting {@link Sort}
 	 *
 	 * @param sort Sort condition

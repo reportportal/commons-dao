@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
@@ -734,9 +735,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByFilter(Long launchId, Queryable filter, Pageable pageable) {
+	public List<Long> selectIdsByFilter(Long launchId, Queryable filter, int limit, int offset) {
 		final SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
-				.with(pageable)
+				.with(limit)
+				.withOffset(offset)
+				.with(Sort.by(Sort.Order.asc(CRITERIA_ID)))
 				.build();
 		selectQuery.addConditions(TEST_ITEM.LAUNCH_ID.eq(launchId));
 		return dsl.select(fieldName(ITEMS, ID))
