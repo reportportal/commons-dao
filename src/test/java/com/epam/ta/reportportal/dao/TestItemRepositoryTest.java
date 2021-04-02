@@ -242,7 +242,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
 				.build();
 
-		List<Long> itemIds = testItemRepository.selectIdsByFilter(1L, filter, 0,1);
+		List<Long> itemIds = testItemRepository.selectIdsByFilter(1L, filter, 1,0);
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
