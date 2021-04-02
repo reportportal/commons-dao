@@ -242,7 +242,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
 				.build();
 
-		List<Long> itemIds = testItemRepository.selectIdsByFilter(filter, PageRequest.of(0, 1, Sort.by(Sort.Order.asc(CRITERIA_ID))));
+		List<Long> itemIds = testItemRepository.selectIdsByFilter(1L, filter, PageRequest.of(0, 1, Sort.by(Sort.Order.asc(CRITERIA_ID))));
 
 		Assertions.assertEquals(1, itemIds.size());
 	}

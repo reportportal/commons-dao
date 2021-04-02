@@ -734,9 +734,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByFilter(Queryable filter, Pageable pageable) {
+	public List<Long> selectIdsByFilter(Long launchId, Queryable filter, Pageable pageable) {
+		final SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
+				.with(pageable)
+				.build();
+		selectQuery.addConditions(TEST_ITEM.LAUNCH_ID.eq(launchId));
 		return dsl.select(fieldName(ITEMS, ID))
-				.from(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).with(pageable).build().asTable(ITEMS))
+				.from(selectQuery.asTable(ITEMS))
 				.fetchInto(Long.class);
 	}
 

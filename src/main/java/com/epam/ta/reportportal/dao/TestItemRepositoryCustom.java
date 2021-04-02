@@ -328,7 +328,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param pageable
 	 * @return
 	 */
-	List<Long> selectIdsByFilter(Queryable filter, Pageable pageable);
+	List<Long> selectIdsByFilter(Long launchId, Queryable filter, Pageable pageable);
 
 	/**
 	 * @param itemIds
