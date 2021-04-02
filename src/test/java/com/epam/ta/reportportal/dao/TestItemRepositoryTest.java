@@ -235,31 +235,55 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void selectIdsByStringPatternMatchedLogMessage() {
-
+	void selectIdsByFilter() {
 		Filter filter = Filter.builder()
 				.withTarget(TestItem.class)
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
 				.build();
 
-		List<Long> itemIds = testItemRepository.selectIdsByStringPatternMatchedLogMessage(filter, 40000, "o");
+		List<Long> itemIds = testItemRepository.selectIdsByFilter(filter, PageRequest.of(0, 1, Sort.by(Sort.Order.asc(CRITERIA_ID))));
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
 
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
 	@Test
-	void selectIdsByRegexPatternMatchedLogMessage() {
+	void selectIdsByHasDescendants() {
+		final List<Long> itemIds = testItemRepository.selectIdsByHasDescendants(List.of(130L,131L,132L,133L));
+		Assertions.assertEquals(3, itemIds.size());
+	}
 
-		Filter filter = Filter.builder()
-				.withTarget(TestItem.class)
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
-				.build();
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
+	@Test
+	void selectIdsByStringLogMessage() {
+		final List<Long> result = testItemRepository.selectIdsByStringLogMessage(List.of(130L, 132L), LogLevel.ERROR_INT, "NullPointer");
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(130L, result.get(0));
+	}
 
-		List<Long> itemIds = testItemRepository.selectIdsByRegexPatternMatchedLogMessage(filter, 40000, "[a-z]{3,3}");
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
+	@Test
+	void selectIdsByPatternLogMessage() {
+		final List<Long> result = testItemRepository.selectIdsByRegexLogMessage(List.of(130L, 132L), LogLevel.ERROR_INT, "[A-Za-z]*");
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(130L, result.get(0));
+	}
 
-		Assertions.assertEquals(1, itemIds.size());
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
+	@Test
+	void selectIdsUnderByStringLogMessage() {
+		final List<Long> result = testItemRepository.selectIdsUnderByStringLogMessage(10L, List.of(132L, 133L), LogLevel.ERROR_INT, "NullPointer");
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(132L, result.get(0));
+	}
+
+	@Sql("/db/fill/item/items-with-nested-steps.sql")
+	@Test
+	void selectIdsUnderByRegexLogMessage() {
+		final List<Long> result = testItemRepository.selectIdsUnderByRegexLogMessage(10L, List.of(132L, 133L), LogLevel.ERROR_INT, "[A-Za-z]*");
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(132L, result.get(0));
 	}
 
 	@Test
