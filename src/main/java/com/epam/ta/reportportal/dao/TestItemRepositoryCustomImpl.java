@@ -762,7 +762,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByStringLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(LOG)
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
@@ -774,7 +774,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public List<Long> selectIdsByRegexLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern) {
-		return dsl.select(TEST_ITEM.ITEM_ID)
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(LOG)
 				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
@@ -788,7 +788,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public List<Long> selectIdsUnderByStringLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern) {
 		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return dsl.select(TEST_ITEM.ITEM_ID)
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(child)
 				.on(TEST_ITEM.PATH + " @> " + child.PATH)
@@ -807,7 +807,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public List<Long> selectIdsUnderByRegexLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern) {
 		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return dsl.select(TEST_ITEM.ITEM_ID)
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
 				.from(TEST_ITEM)
 				.join(child)
 				.on(TEST_ITEM.PATH + " @> " + child.PATH)
