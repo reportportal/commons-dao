@@ -196,8 +196,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param statuses Checking statuses
 	 * @return True if contains, false if not
 	 */
-	Boolean
-	hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
+	Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses);
 
 	/**
 	 * Select items that has different issue from provided for
@@ -324,26 +323,63 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	TestItemTypeEnum getTypeByItemId(Long itemId);
 
 	/**
-	 * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
-	 * and message is matched by the STRING pattern
-	 *
-	 * @param filter   {@link Queryable}
-	 * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-	 * @param pattern  CASE SENSITIVE STRING pattern for log message search
-	 * @return The {@link List} of the {@link TestItem#itemId}
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @param filter   {@link Queryable} for additional dynamic filtering
+	 * @param limit    query limit
+	 * @param offset   query offset
+	 * @return {@link List} of {@link TestItem#getItemId()}
 	 */
-	List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
+	List<Long> selectIdsByFilter(Long launchId, Queryable filter, int limit, int offset);
 
 	/**
-	 * Select item IDs by launch ID and issue type ID with logs which level is greater than or equal to provided
-	 * and message is matched by the REGEX pattern
+	 * Select ids of items that has descendants
 	 *
-	 * @param filter   {@link Queryable}
-	 * @param logLevel {@link com.epam.ta.reportportal.entity.log.Log#logLevel}
-	 * @param pattern  REGEX pattern for log message search
-	 * @return The {@link List} of the {@link TestItem#itemId}
+	 * @param itemIds {@link Collection} of {@link TestItem#getItemId()} that should be filtered by having descendants
+	 * @return {@link List} of {@link TestItem#getItemId()}
 	 */
-	List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern);
+	List<Long> selectIdsByHasDescendants(Collection<Long> itemIds);
+
+	/**
+	 * Select item IDs which log's level is greater than or equal to provided and log's message match to the STRING pattern
+	 *
+	 * @param itemIds  {@link Collection} of {@link TestItem#getItemId()} which logs should match
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @param pattern  CASE SENSITIVE STRING pattern for log message search
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectIdsByStringLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern);
+
+	/**
+	 * Select item IDs which log's level is greater than or equal to provided and log's message match to the REGEX pattern
+	 *
+	 * @param itemIds  {@link Collection} of {@link TestItem#getItemId()} which logs should match
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @param pattern  REGEX pattern for log message search
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectIdsByRegexLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern);
+
+	/**
+	 * Select item IDs which descendants' log's level is greater than or equal to provided and log's message match to the REGEX pattern
+	 *
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @param itemIds  {@link Collection} of {@link TestItem#getItemId()} which logs should match
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @param pattern  REGEX pattern for log message search
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectIdsUnderByStringLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern);
+
+	/**
+	 * Select item IDs which descendants' log's level is greater than or equal to provided and log's message match to the REGEX pattern
+	 *
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @param itemIds  {@link Collection} of {@link TestItem#getItemId()} which logs should match
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @param pattern  REGEX pattern for log message search
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectIdsUnderByRegexLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern);
 
 	/**
 	 * Select {@link NestedStep} entities by provided 'IDs' with {@link NestedStep#attachmentsCount}
