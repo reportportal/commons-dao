@@ -29,6 +29,38 @@ import java.util.List;
  */
 public interface AttachmentRepositoryCustom {
 
+	/**
+	 * Moves attachments to the deletion table for further removing from file storage by project
+	 *
+	 * @param projectId Project id
+	 * @return Number of moved attachments
+	 */
+	int moveForDeletionByProjectId(Long projectId);
+
+	/**
+	 * Moves attachments to the deletion table for further removing from file storage by launch
+	 *
+	 * @param launchId Launch id
+	 * @return Number of moved attachments
+	 */
+	int moveForDeletionByLaunchId(Long launchId);
+
+	/**
+	 * Moves attachments to the deletion table for further removing from file storage by items
+	 *
+	 * @param itemIds Collection of item ids
+	 * @return Number of moved attachments
+	 */
+	int moveForDeletionByItems(Collection<Long> itemIds);
+
+	/**
+	 * Moves attachments to the deletion table for further removing from file storage by id
+	 *
+	 * @param attachmentIds Collection of attachments ids
+	 * @return Number of moved attachments
+	 */
+	int moveForDeletion(Collection<Long> attachmentIds);
+
 	Page<Long> findIdsByProjectId(Long projectId, Pageable pageable);
 
 	Page<Long> findIdsByLaunchId(Long launchId, Pageable pageable);
