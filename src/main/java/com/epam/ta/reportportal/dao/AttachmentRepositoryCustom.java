@@ -46,12 +46,28 @@ public interface AttachmentRepositoryCustom {
 	int moveForDeletionByLaunchId(Long launchId);
 
 	/**
+	 * Moves attachments to the deletion table for further removing from file storage by launches
+	 *
+	 * @param launchIds Launch ids
+	 * @return Number of moved attachments
+	 */
+	int moveForDeletionByLaunchIds(Collection<Long> launchIds);
+
+	/**
 	 * Moves attachments to the deletion table for further removing from file storage by items
 	 *
 	 * @param itemIds Collection of item ids
 	 * @return Number of moved attachments
 	 */
 	int moveForDeletionByItems(Collection<Long> itemIds);
+
+	/**
+	 * Moves attachment to the deletion table for further removing from file storage by id
+	 *
+	 * @param attachmentId Attachment id
+	 * @return Number of moved attachments
+	 */
+	int moveForDeletion(Long attachmentId);
 
 	/**
 	 * Moves attachments to the deletion table for further removing from file storage by id
