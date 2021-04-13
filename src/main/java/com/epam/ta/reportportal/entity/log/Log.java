@@ -178,11 +178,11 @@ public class Log implements Serializable {
 		return Objects.equals(id, log.id) && Objects.equals(logTime, log.logTime) && Objects.equals(logMessage, log.logMessage)
 				&& Objects.equals(lastModified, log.lastModified) && Objects.equals(logLevel, log.logLevel) && Objects.equals(testItem,
 				log.testItem
-		) && Objects.equals(launch, log.launch);
+		) && Objects.equals(launch, log.launch) && Objects.equals(projectId, log.projectId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem, launch);
+		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem, launch, projectId);
 	}
 }
