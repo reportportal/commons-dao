@@ -64,8 +64,20 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 	}
 
 	@Override
+	public int moveForDeletionByLaunchIds(Collection<Long> launchIds) {
+		String condition = DSL.condition(Operator.AND, ATTACHMENT.LAUNCH_ID.in(launchIds)).toString();
+		return executeMoveQuery(condition);
+	}
+
+	@Override
 	public int moveForDeletionByItems(Collection<Long> itemIds) {
 		String condition = DSL.condition(Operator.AND, ATTACHMENT.ITEM_ID.in(itemIds)).toString();
+		return executeMoveQuery(condition);
+	}
+
+	@Override
+	public int moveForDeletion(Long attachmentId) {
+		String condition = DSL.condition(Operator.AND, ATTACHMENT.ID.eq(attachmentId)).toString();
 		return executeMoveQuery(condition);
 	}
 
