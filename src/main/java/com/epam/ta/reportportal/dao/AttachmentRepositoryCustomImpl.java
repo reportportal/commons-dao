@@ -53,7 +53,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
 	@Override
 	public int moveForDeletionByProjectId(Long projectId) {
-		String condition = DSL.condition(Operator.AND, ATTACHMENT.LAUNCH_ID.eq(projectId)).toString();
+		String condition = DSL.condition(Operator.AND, ATTACHMENT.PROJECT_ID.eq(projectId)).toString();
 		return executeMoveQuery(condition);
 	}
 
