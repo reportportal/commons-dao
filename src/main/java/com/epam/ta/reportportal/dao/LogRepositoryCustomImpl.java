@@ -311,7 +311,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public int deleteLogsByProjectId(Long projectId) {
+	public int deleteByProjectId(Long projectId) {
 		return dsl.deleteFrom(LOG).where(LOG.PROJECT_ID.eq(projectId)).execute();
 	}
 

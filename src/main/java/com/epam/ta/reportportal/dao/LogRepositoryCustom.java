@@ -159,5 +159,5 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 */
 	List<String> findMessagesByLaunchIdAndItemIdAndPathAndLevelGte(Long launchId, Long itemId, String path, Integer level);
 
-	int deleteLogsByProjectId(Long projectId);
+	int deleteByProjectId(Long projectId);
 }
