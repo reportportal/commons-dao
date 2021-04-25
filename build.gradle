@@ -25,6 +25,7 @@ plugins {
 
 apply from: 'project-properties.gradle'
 apply from: "$scriptsUrl/release-commons.gradle"
+apply from: "$scriptsUrl/release-github.gradle"
 apply from: "$scriptsUrl/copy-database-scripts.gradle"
 apply from: "$scriptsUrl/build-quality.gradle"
 apply from: "$scriptsUrl/jacoco.gradle"
@@ -97,7 +98,6 @@ test {
     }
 }
 
-afterReleaseBuild.dependsOn bintrayUpload
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport
