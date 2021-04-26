@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.widget.content.*;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
@@ -98,12 +99,10 @@ public interface WidgetContentRepository {
 	/**
 	 * Launch passing rate result for depending on the filter conditions
 	 *
-	 * @param filter {@link Filter}
-	 * @param sort   {@link Sort}
-	 * @param limit  Results limit
+	 * @param launchId {@link Launch#getId()}
 	 * @return {@link PassingRateStatisticsResult}
 	 */
-	PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Sort sort, int limit);
+	PassingRateStatisticsResult passingRatePerLaunchStatistics(Long launchId);
 
 	/**
 	 * Summary passing rate result for launches depending on the filter conditions
@@ -282,14 +281,18 @@ public interface WidgetContentRepository {
 	/**
 	 * Generate a materialized view for cumulative trend chart widget.
 	 *
-	 * @param refresh             Refreshed state
-	 * @param viewName            View name
-	 * @param launchFilter        Launches filter
-	 * @param launchesLimit       Launches limit for widget
+	 * @param refresh       Refreshed state
+	 * @param viewName      View name
+	 * @param launchFilter  Launches filter
+	 * @param launchesLimit Launches limit for widget
 	 */
-	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, Sort launchesSort, List<String> attributes, int launchesLimit);
+	void generateCumulativeTrendChartView(boolean refresh, String viewName, Filter launchFilter, Sort launchesSort, List<String> attributes,
+			int launchesLimit);
 
-	List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey,  String subAttributeKey, String parentAttrbute);
+	List<CumulativeTrendChartEntry> cumulativeTrendChart(String viewName, String levelAttributeKey, String subAttributeKey,
+			String parentAttribute);
+
+	List<Long> getCumulativeLevelRedirectLaunchIds(String viewName, String attributes);
 
 	void generateComponentHealthCheckTable(boolean refresh, HealthCheckTableInitParams params, Filter launchFilter, Sort launchSort,
 			int launchesLimit, boolean isLatest);

@@ -132,7 +132,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds, int limit) {
-		return buildLogsUnderItemsQuery(launchId, itemIds, true).limit(limit).fetch().map(r -> LOG_UNDER_MAPPER.apply(r, ATTACHMENT_MAPPER));
+		return buildLogsUnderItemsQuery(launchId, itemIds, true).limit(limit)
+				.fetch()
+				.map(r -> LOG_UNDER_MAPPER.apply(r, ATTACHMENT_MAPPER));
 
 	}
 
@@ -306,6 +308,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 						.and(TEST_ITEM.ITEM_ID.eq(itemId)
 								.or(TEST_ITEM.HAS_STATS.eq(false).and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
 				.fetch(LOG.LOG_MESSAGE);
+	}
+
+	@Override
+	public int deleteByProjectId(Long projectId) {
+		return dsl.deleteFrom(LOG).where(LOG.PROJECT_ID.eq(projectId)).execute();
 	}
 
 	private SelectConditionStep<? extends Record> buildLogsUnderItemsQuery(Long launchId, List<Long> itemIds, boolean includeAttachments) {

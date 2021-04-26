@@ -21,7 +21,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row9;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = -1419673410;
+    private static final long serialVersionUID = -1118661703;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -104,6 +104,11 @@ public class JLog extends TableImpl<JLogRecord> {
     public final TableField<JLogRecord, Long> ATTACHMENT_ID = createField(DSL.name("attachment_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
+     * The column <code>public.log.project_id</code>.
+     */
+    public final TableField<JLogRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
      * Create a <code>public.log</code> table reference
      */
     public JLog() {
@@ -143,7 +148,7 @@ public class JLog extends TableImpl<JLogRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_TI_IDX);
+        return Arrays.<Index>asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_PROJECT_ID_IDX, Indexes.LOG_TI_IDX);
     }
 
     @Override
@@ -163,7 +168,7 @@ public class JLog extends TableImpl<JLogRecord> {
 
     @Override
     public List<ForeignKey<JLogRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY, Keys.LOG__LOG_LAUNCH_ID_FKEY, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
+        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY, Keys.LOG__LOG_LAUNCH_ID_FKEY, Keys.LOG__LOG_ATTACHMENT_ID_FKEY, Keys.LOG__LOG_PROJECT_ID_FKEY);
     }
 
     public JTestItem testItem() {
@@ -176,6 +181,10 @@ public class JLog extends TableImpl<JLogRecord> {
 
     public JAttachment attachment() {
         return new JAttachment(this, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
+    }
+
+    public JProject project() {
+        return new JProject(this, Keys.LOG__LOG_PROJECT_ID_FKEY);
     }
 
     @Override
@@ -205,11 +214,11 @@ public class JLog extends TableImpl<JLogRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row9 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Row10<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long, Long> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 }

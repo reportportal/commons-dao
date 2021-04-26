@@ -50,6 +50,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.Condition.VALUES_SEPARATOR;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
@@ -228,8 +229,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
 												TEST_ITEM.START_TIME.desc()
-										)))), 1).otherwise(ZERO_QUERY_VALUE)
-										.as(SWITCH_FLAG)
+										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)
 						.join(LAUNCHES)
@@ -388,16 +388,22 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	}
 
 	@Override
-	public PassingRateStatisticsResult passingRatePerLaunchStatistics(Filter filter, Sort sort, int limit) {
+	public PassingRateStatisticsResult passingRatePerLaunchStatistics(Long launchId) {
 
-		List<Field<Object>> groupingFields = WidgetSortUtils.fieldTransformer(filter.getTarget()).apply(sort, LAUNCHES);
-
-		return buildPassingRateSelect(filter, sort, limit).groupBy(groupingFields)
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES))
-				.fetchInto(PassingRateStatisticsResult.class)
-				.stream()
-				.findFirst()
-				.orElseThrow(() -> new ReportPortalException("No results for filter were found"));
+		return dsl.select(LAUNCH.ID,
+				LAUNCH.NUMBER.as(NUMBER),
+				sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED), STATISTICS.S_COUNTER).otherwise(0)).as(PASSED),
+				sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL), STATISTICS.S_COUNTER).otherwise(0)).as(TOTAL)
+		)
+				.from(LAUNCH)
+				.leftJoin(STATISTICS)
+				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
+				.leftJoin(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.and(STATISTICS_FIELD.NAME.in(EXECUTIONS_PASSED, EXECUTIONS_TOTAL))
+				.where(LAUNCH.ID.eq(launchId))
+				.groupBy(LAUNCH.ID)
+				.fetchOneInto(PassingRateStatisticsResult.class);
 	}
 
 	@Override
@@ -726,14 +732,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 		List<Field<?>> selectFields = getCommonProductStatusFields(filter, contentFields);
 
-		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(buildProductStatusQuery(
-				filter,
-				isLatest,
-				sort,
-				limit,
-				selectFields,
-				contentFields,
-				customColumns
+		List<ProductStatusStatisticsContent> productStatusStatisticsResult = PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER.apply(
+				buildProductStatusQuery(filter,
+						isLatest,
+						sort,
+						limit,
+						selectFields,
+						contentFields,
+						customColumns
 				).orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES)).fetch(),
 				customColumns
 		);
@@ -839,9 +845,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						.join(TEST_ITEM_RESULTS)
 						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 						.join(ITEM_ATTRIBUTE)
-						.on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
-								.or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(ITEM_ATTRIBUTE.KEY.eq(currentLevelKey)
-								.and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
+						.on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID).or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
+								ITEM_ATTRIBUTE.KEY.eq(currentLevelKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
 						.groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
 						.asTable(ITEMS))
 				.groupBy(fieldName(ITEMS, VALUE))
@@ -942,14 +947,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		}
 
 		List<CumulativeTrendChartEntry> accumulatedLaunches = CUMULATIVE_TREND_CHART_FETCHER.apply(baseQuery.where(fieldName(ATTRIBUTE_KEY).cast(
-				String.class).eq(levelAttributeKey)).groupBy(fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME).orderBy(when(
-				fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
-				PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER).cast(Integer[].class)
-		), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC)).fetch());
+				String.class).eq(levelAttributeKey))
+				.groupBy(fieldName(viewName, ATTRIBUTE_VALUE), STATISTICS_FIELD.NAME)
+				.orderBy(when(fieldName(viewName, ATTRIBUTE_VALUE).likeRegex(VERSION_PATTERN),
+						PostgresDSL.stringToArray(field(name(viewName, ATTRIBUTE_VALUE), String.class), VERSION_DELIMITER)
+								.cast(Integer[].class)
+				), fieldName(viewName, ATTRIBUTE_VALUE).sort(SortOrder.ASC))
+				.fetch());
 
 		if (!StringUtils.isEmpty(subAttributeKey)) {
-			accumulatedLaunches.forEach(attributeLaunches -> CUMULATIVE_TOOLTIP_FETCHER.accept(
-					attributeLaunches,
+			accumulatedLaunches.forEach(attributeLaunches -> CUMULATIVE_TOOLTIP_FETCHER.accept(attributeLaunches,
 					dsl.selectDistinct(fieldName(viewName, ATTRIBUTE_KEY), fieldName(viewName, ATTRIBUTE_VALUE))
 							.from(viewName)
 							.where(fieldName(viewName, ATTRIBUTE_KEY).cast(String.class)
@@ -959,6 +966,31 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 			));
 		}
 		return accumulatedLaunches;
+	}
+
+	@Override
+	public List<Long> getCumulativeLevelRedirectLaunchIds(String viewName, String attributes) {
+		String[] attributeLevels = attributes.split(VALUES_SEPARATOR);
+
+		SelectConditionStep<Record1<Long>> firstLevelCondition = dsl.select(fieldName(viewName, ID).cast(Long.class))
+				.from(viewName)
+				.where(concat(coalesce(fieldName(viewName, ATTRIBUTE_KEY), ""),
+						val(KEY_VALUE_SEPARATOR),
+						fieldName(viewName, ATTRIBUTE_VALUE)
+				).eq(attributeLevels[0]));
+
+		if (attributeLevels.length == 2) {
+			return dsl.select(fieldName(viewName, ID))
+					.from(viewName)
+					.where(concat(coalesce(fieldName(viewName, ATTRIBUTE_KEY), ""),
+							val(KEY_VALUE_SEPARATOR),
+							fieldName(viewName, ATTRIBUTE_VALUE)
+					).eq(attributeLevels[1]))
+					.and(fieldName(viewName, FIRST_LEVEL_ID).cast(Long.class).in(firstLevelCondition))
+					.fetchInto(Long.class);
+		}
+
+		return firstLevelCondition.fetchInto(Long.class);
 	}
 
 	@Override
@@ -998,8 +1030,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 							.on(DSL.condition(Operator.OR,
 									TEST_ITEM.ITEM_ID.eq(customAttribute.ITEM_ID),
 									TEST_ITEM.LAUNCH_ID.eq(customAttribute.LAUNCH_ID)
-							)
-									.and(customAttribute.KEY.eq(key)));
+							).and(customAttribute.KEY.eq(key)));
 				})
 						.orElse(baseQuery)
 						.where(TEST_ITEM.HAS_STATS.isTrue()
@@ -1054,9 +1085,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit).build())
 				.select(sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_PASSED),
 						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(PASSED), sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
-						fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
-				).otherwise(0)).as(TOTAL), max(LAUNCH.NUMBER).as(NUMBER))
+						).otherwise(0)).as(PASSED),
+						sum(when(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq(EXECUTIONS_TOTAL),
+								fieldName(STATISTICS_TABLE, STATISTICS_COUNTER).cast(Integer.class)
+						).otherwise(0)).as(TOTAL),
+						max(LAUNCH.NUMBER).as(NUMBER)
+				)
 				.from(LAUNCH)
 				.join(LAUNCHES)
 				.on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))

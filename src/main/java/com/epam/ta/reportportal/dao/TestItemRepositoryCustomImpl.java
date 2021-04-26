@@ -36,7 +36,6 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.Condition;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -57,7 +56,7 @@ import java.util.stream.Collectors;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
@@ -736,42 +735,91 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public List<Long> selectIdsByStringPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
-
-		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
-
-		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build();
-		itemQuery.addJoin(childItemTable, JoinType.JOIN, DSL.condition(childItemTable.PATH + " <@ " + TEST_ITEM.PATH));
-		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, childItemTable.ITEM_ID.eq(LOG.ITEM_ID));
-		filter.getFilterConditions()
-				.stream()
-				.flatMap(it -> it.getAllConditions().stream())
-				.filter(condition -> CRITERIA_LAUNCH_ID.equals(condition.getSearchCriteria()))
-				.findFirst()
-				.ifPresent(launchIdCondition -> itemQuery.addConditions(childItemTable.LAUNCH_ID.eq(NumberUtils.toLong(launchIdCondition.getValue()))));
-		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"));
-
-		return dsl.select(fieldName(ITEMS, ID)).from(itemQuery.asTable(ITEMS)).fetchInto(Long.class);
-
+	public List<Long> selectIdsByFilter(Long launchId, Queryable filter, int limit, int offset) {
+		final SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
+				.with(limit)
+				.withOffset(offset)
+				.with(Sort.by(Sort.Order.asc(CRITERIA_ID)))
+				.build();
+		selectQuery.addConditions(TEST_ITEM.LAUNCH_ID.eq(launchId));
+		return dsl.select(fieldName(ITEMS, ID))
+				.from(selectQuery.asTable(ITEMS))
+				.fetchInto(Long.class);
 	}
 
 	@Override
-	public List<Long> selectIdsByRegexPatternMatchedLogMessage(Queryable filter, Integer logLevel, String pattern) {
+	public List<Long> selectIdsByHasDescendants(Collection<Long> itemIds) {
+		final JTestItem parent = TEST_ITEM.as(OUTER_ITEM_TABLE);
+		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
+		return dsl.select(parent.ITEM_ID)
+				.from(parent)
+				.join(child)
+				.on(parent.ITEM_ID.eq(child.PARENT_ID))
+				.where(parent.ITEM_ID.in(itemIds))
+				.groupBy(parent.ITEM_ID)
+				.fetchInto(Long.class);
+	}
 
-		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+	@Override
+	public List<Long> selectIdsByStringLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern) {
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"))
+				.fetchInto(Long.class);
+	}
 
-		SelectQuery<? extends Record> itemQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build();
-		itemQuery.addJoin(childItemTable, JoinType.JOIN, DSL.condition(childItemTable.PATH + " <@ " + TEST_ITEM.PATH));
-		itemQuery.addJoin(LOG, JoinType.LEFT_OUTER_JOIN, childItemTable.ITEM_ID.eq(LOG.ITEM_ID));
-		filter.getFilterConditions()
-				.stream()
-				.flatMap(it -> it.getAllConditions().stream())
-				.filter(condition -> CRITERIA_LAUNCH_ID.equals(condition.getSearchCriteria()))
-				.findFirst()
-				.ifPresent(launchIdCondition -> itemQuery.addConditions(childItemTable.LAUNCH_ID.eq(NumberUtils.toLong(launchIdCondition.getValue()))));
-		itemQuery.addConditions(LOG.LOG_LEVEL.greaterOrEqual(logLevel), LOG.LOG_MESSAGE.likeRegex(pattern));
+	@Override
+	public List<Long> selectIdsByRegexLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern) {
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.and(LOG.LOG_MESSAGE.likeRegex(pattern))
+				.fetchInto(Long.class);
+	}
 
-		return dsl.select(fieldName(ITEMS, ID)).from(itemQuery.asTable(ITEMS)).fetchInto(Long.class);
+	@Override
+	public List<Long> selectIdsUnderByStringLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern) {
+		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(child)
+				.on(TEST_ITEM.PATH + " @> " + child.PATH)
+				.and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
+				.join(LOG)
+				.on(child.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(child.LAUNCH_ID.eq(launchId))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"))
+				.groupBy(TEST_ITEM.ITEM_ID)
+				.fetchInto(Long.class);
+	}
+
+	@Override
+	public List<Long> selectIdsUnderByRegexLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern) {
+		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
+				.from(TEST_ITEM)
+				.join(child)
+				.on(TEST_ITEM.PATH + " @> " + child.PATH)
+				.and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
+				.join(LOG)
+				.on(child.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(child.LAUNCH_ID.eq(launchId))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.and(LOG.LOG_MESSAGE.likeRegex(pattern))
+				.groupBy(TEST_ITEM.ITEM_ID)
+				.fetchInto(Long.class);
 	}
 
 	/**

@@ -34,7 +34,15 @@ public class Attribute implements Serializable {
     @Column(name = "name")
     private String name;
 
-    public Long getId() {
+	public Attribute() {
+	}
+
+	public Attribute(Long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public Long getId() {
         return id;
     }
 

@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.attachment;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -42,6 +43,9 @@ public class Attachment implements Serializable {
 
 	@Column(name = "file_size")
 	private long fileSize;
+
+	@Column(name = "creation_date")
+	private LocalDateTime creationDate;
 
 	@Column(name = "project_id")
 	private Long projectId;
@@ -95,6 +99,14 @@ public class Attachment implements Serializable {
 		this.fileSize = fileSize;
 	}
 
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
 	public Long getProjectId() {
 		return projectId;
 	}
@@ -130,11 +142,11 @@ public class Attachment implements Serializable {
 		Attachment that = (Attachment) o;
 		return Objects.equals(fileId, that.fileId) && Objects.equals(thumbnailId, that.thumbnailId) && Objects.equals(contentType,
 				that.contentType
-		) && Objects.equals(fileSize, that.fileSize);
+		) && Objects.equals(fileSize, that.fileSize) && Objects.equals(creationDate, that.creationDate);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(fileId, thumbnailId, contentType, fileSize);
+		return Objects.hash(fileId, thumbnailId, contentType, fileSize, creationDate);
 	}
 }

@@ -36,17 +36,18 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
@@ -66,6 +67,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Sql("/db/fill/widget-content/widget-content-fill.sql")
 class WidgetContentRepositoryTest extends BaseTest {
+
+	@Autowired
+	private LaunchRepository launchRepository;
 
 	@Autowired
 	private WidgetContentRepository widgetContentRepository;
@@ -191,13 +195,12 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name 1", CRITERIA_NAME));
 
-		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME));
+		final Launch launch = launchRepository.findLatestByFilter(filter).get();
 
-		Sort sort = Sort.by(orderings);
-
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter, sort, 1);
+		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(launch.getId());
 
 		assertNotNull(passStatisticsResult);
+		assertEquals(4L, passStatisticsResult.getId());
 		assertEquals(4, passStatisticsResult.getNumber());
 		assertEquals(3, passStatisticsResult.getPassed());
 		assertEquals(12, passStatisticsResult.getTotal());
@@ -599,26 +602,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 		List<ChartStatisticsContent> chartStatisticsContents = widgetContentRepository.timelineInvestigatedStatistics(filter, sort, 4);
 		assertNotNull(chartStatisticsContents);
 		assertEquals(4, chartStatisticsContents.size());
-	}
-
-	@Test
-	void launchPassPerLaunchStatisticsSorting() {
-		String sortingColumn = "statistics$defects$no_defect$nd001";
-		Filter filter = buildDefaultFilter(1L);
-
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "launch name 1", CRITERIA_NAME));
-
-		List<Sort.Order> orders = filter.getTarget()
-				.getCriteriaHolders()
-				.stream()
-				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
-				.collect(Collectors.toList());
-		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
-		Sort sort = Sort.by(orders);
-
-		PassingRateStatisticsResult passStatisticsResult = widgetContentRepository.passingRatePerLaunchStatistics(filter, sort, 1);
-
-		assertNotNull(passStatisticsResult);
 	}
 
 	@Test

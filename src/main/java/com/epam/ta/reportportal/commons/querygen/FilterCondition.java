@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -28,13 +27,10 @@ import org.jooq.Operator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Filter condition class for filters specifics
@@ -274,10 +270,15 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
 			return withCondition(Condition.EQUALS).withSearchCriteria(searchCriteria).withValue(value);
 		}
 
+		public FilterCondition.ConditionBuilder in(String searchCriteria, List<?> value) {
+			return withSearchCriteria(searchCriteria).withCondition(Condition.IN)
+					.withValue(value.stream().map(Object::toString).collect(Collectors.joining(",")));
+		}
+
 		public FilterCondition build() {
-			Preconditions.checkArgument(null != condition, "Condition should not be null");
-			Preconditions.checkArgument(!isNullOrEmpty(value), "Value should not be empty");
-			Preconditions.checkArgument(!isNullOrEmpty(searchCriteria), "Search criteria should not be empty");
+			BusinessRule.expect(condition, Objects::nonNull).verify(ErrorType.BAD_REQUEST_ERROR, "Condition should not be null");
+			BusinessRule.expect(value, Objects::nonNull).verify(ErrorType.BAD_REQUEST_ERROR, "Value should not be null");
+			BusinessRule.expect(searchCriteria, Objects::nonNull).verify(ErrorType.BAD_REQUEST_ERROR, "Search criteria should not be null");
 			BusinessRule.expect(condition, c -> c != Condition.EQUALS || !negative)
 					.verify(ErrorType.BAD_REQUEST_ERROR, "Use 'ne' instead of '!eq");
 			return new FilterCondition(operator, condition, negative, value, searchCriteria);
