@@ -25,7 +25,7 @@ plugins {
 
 apply from: 'project-properties.gradle'
 apply from: "$scriptsUrl/release-commons.gradle"
-apply from: "$scriptsUrl/release-github.gradle"
+apply from: "$scriptsUrl/signing.gradle"
 apply from: "$scriptsUrl/copy-database-scripts.gradle"
 apply from: "$scriptsUrl/build-quality.gradle"
 apply from: "$scriptsUrl/jacoco.gradle"
@@ -33,7 +33,19 @@ apply from: 'jooq.gradle'
 
 repositories {
     mavenCentral { url "https://repo1.maven.org/maven2" }
-    releaseMode ? maven { url "http://dl.bintray.com/epam/reportportal" } : maven { url 'https://jitpack.io' }
+    if (releaseMode) {
+        dependencyRepos.forEach { path ->
+            maven {
+                setUrl("https://maven.pkg.github.com/reportportal/${path}")
+                credentials {
+                    username = findProperty("githubUserName")
+                    password = findProperty("githubToken")
+                }
+            }
+        }
+    } else {
+        maven { url 'https://jitpack.io' }
+    }
 }
 
 dependencyManagement {
