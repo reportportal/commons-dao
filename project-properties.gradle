@@ -6,6 +6,7 @@ def migrationsScriptsUrl = 'https://raw.githubusercontent.com/reportportal/migra
 
 project.ext {
     releaseMode = project.hasProperty("releaseMode")
+    hasDBSchema = project.hasProperty("DB_SCHEMA_POSTGRES")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
     migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'develop')
     //TODO refactor with archive download
