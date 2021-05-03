@@ -1007,10 +1007,6 @@ class TestItemRepositoryTest extends BaseTest {
 		item.setUniqueId("uniqueID");
 		item.setUuid("uuid");
 		item.setTestCaseHash(123);
-		TestItemResults itemResults = new TestItemResults();
-		itemResults.setTestItem(item);
-		itemResults.setStatus(StatusEnum.IN_PROGRESS);
-		item.setItemResults(itemResults);
 		item.setLaunchId(1L);
 		item.setType(TestItemTypeEnum.STEP);
 		Parameter parameter = new Parameter();
@@ -1032,10 +1028,6 @@ class TestItemRepositoryTest extends BaseTest {
 		item.setUuid("uuid");
 		item.setTestCaseHash(123);
 		item.setTestCaseId(longParam);
-		TestItemResults itemResults = new TestItemResults();
-		itemResults.setTestItem(item);
-		itemResults.setStatus(StatusEnum.IN_PROGRESS);
-		item.setItemResults(itemResults);
 		item.setLaunchId(1L);
 		item.setType(TestItemTypeEnum.STEP);
 		Parameter parameter = new Parameter();
