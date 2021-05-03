@@ -62,11 +62,6 @@ public class TestItemResults implements Serializable {
 	@Fetch(FetchMode.SUBSELECT)
 	private Set<Statistics> statistics = Sets.newHashSet();
 
-	@OneToOne
-	@MapsId
-	@JoinColumn(name = "result_id")
-	private TestItem testItem;
-
 	public TestItemResults() {
 	}
 
@@ -118,11 +113,4 @@ public class TestItemResults implements Serializable {
 		this.statistics = statistics;
 	}
 
-	public TestItem getTestItem() {
-		return testItem;
-	}
-
-	public void setTestItem(TestItem testItem) {
-		this.testItem = testItem;
-	}
 }

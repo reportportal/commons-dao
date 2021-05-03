@@ -107,9 +107,6 @@ public class TestItem implements Serializable {
 	@Column(name = "parent_id")
 	private Long parentId;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem")
-	private TestItemResults itemResults;
-
 	@OneToMany(mappedBy = "testItem", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@OrderBy(value = "pattern_id")
 	@Fetch(FetchMode.SUBSELECT)
@@ -292,14 +289,6 @@ public class TestItem implements Serializable {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
-	}
-
-	public TestItemResults getItemResults() {
-		return itemResults;
-	}
-
-	public void setItemResults(TestItemResults itemResults) {
-		this.itemResults = itemResults;
 	}
 
 	public boolean isHasChildren() {
