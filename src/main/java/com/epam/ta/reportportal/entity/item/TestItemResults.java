@@ -54,6 +54,11 @@ public class TestItemResults implements Serializable {
 	@Column(name = "duration")
 	private Double duration;
 
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	@MapsId
+	@JoinColumn(name = "result_id")
+	private TestItem testItem;
+
 	@OneToOne(mappedBy = "testItemResults", cascade = { CascadeType.MERGE, CascadeType.REMOVE })
 	private IssueEntity issue;
 
@@ -95,6 +100,14 @@ public class TestItemResults implements Serializable {
 
 	public void setDuration(Double duration) {
 		this.duration = duration;
+	}
+
+	public TestItem getTestItem() {
+		return testItem;
+	}
+
+	public void setTestItem(TestItem testItem) {
+		this.testItem = testItem;
 	}
 
 	public IssueEntity getIssue() {

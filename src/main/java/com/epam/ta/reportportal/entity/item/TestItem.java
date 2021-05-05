@@ -107,7 +107,7 @@ public class TestItem implements Serializable {
 	@Column(name = "parent_id")
 	private Long parentId;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "testItem", fetch = FetchType.LAZY)
+	@OneToOne(optional = false, cascade = CascadeType.ALL, mappedBy = "testItem", fetch = FetchType.LAZY)
 	private TestItemResults itemResults;
 
 	@OneToMany(mappedBy = "testItem", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
