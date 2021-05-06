@@ -230,7 +230,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual() {
-		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual("unqIdSTEP_R12", 12L, 101L, 100L);
+		final Optional<TestItem> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual("unqIdSTEP_R12", 12L, 101L, 100L);
 		assertTrue(latestItem.isPresent());
 	}
 
