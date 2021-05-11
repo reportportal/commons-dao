@@ -210,18 +210,6 @@ class TestItemRepositoryTest extends BaseTest {
 		assertTrue(testItemRepository.findByPath(testItem.getPath()).isPresent());
 	}
 
-//	@Test
-//	void findByNameAndLaunchWithoutParents() {
-//		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
-//		assertTrue(latestItem.isPresent());
-//	}
-//
-//	@Test
-//	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
-//		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
-//		assertTrue(latestItem.isPresent());
-//	}
-
 	@Test
 	void findLatestByUniqueIdAndLaunchIdAndParentId() {
 		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
