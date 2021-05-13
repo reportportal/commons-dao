@@ -241,6 +241,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID)
 				.from(LAUNCH)
 				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
 				.and(DSL.exists(DSL.selectOne()
 						.from(TEST_ITEM)
 						.join(TEST_ITEM_RESULTS)
