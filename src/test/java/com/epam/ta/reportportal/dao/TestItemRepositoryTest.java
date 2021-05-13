@@ -211,18 +211,6 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findByNameAndLaunchWithoutParents() {
-		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
-		assertTrue(latestItem.isPresent());
-	}
-
-	@Test
-	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
-		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
-		assertTrue(latestItem.isPresent());
-	}
-
-	@Test
 	void findLatestByUniqueIdAndLaunchIdAndParentId() {
 		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentId("unqIdSTEP_R12", 12L, 101L);
 		assertTrue(latestItem.isPresent());
@@ -707,6 +695,23 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
+	}
+
+	@Test
+	void findOneByFilterTest() {
+		final Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_CASE_HASH))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EXISTS, true, "1", CRITERIA_PARENT_ID))
+				.build();
+
+		final Sort sort = Sort.by(Sort.Order.desc(CRITERIA_START_TIME));
+
+		final Optional<Long> foundId = testItemRepository.findIdByFilter(itemFilter, sort);
+
+		assertTrue(foundId.isPresent());
+
 	}
 
 	@Test
