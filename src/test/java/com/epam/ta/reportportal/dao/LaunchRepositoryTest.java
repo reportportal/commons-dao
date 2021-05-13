@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections4.CollectionUtils;
@@ -231,6 +232,15 @@ class LaunchRepositoryTest extends BaseTest {
 		);
 		assertNotNull(map.get("default"));
 		assertEquals(3, (int) map.get("default"));
+	}
+
+	@Test
+	void findIndexLaunchByProjectId() {
+		final List<IndexLaunch> indexLaunchByProjectId = launchRepository.findIndexLaunchByProjectId(2L, 1, 0);
+		assertEquals(1, indexLaunchByProjectId.size());
+
+		final List<IndexLaunch> empty = launchRepository.findIndexLaunchByProjectId(2L, 10, 1);
+		assertTrue(empty.isEmpty());
 	}
 
 	@Test

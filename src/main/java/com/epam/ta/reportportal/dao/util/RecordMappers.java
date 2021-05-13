@@ -53,6 +53,7 @@ import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -265,6 +266,14 @@ public class RecordMappers {
 		launch.setName(r.get(LAUNCH.NAME));
 		launch.setUserId(r.get(LAUNCH.USER_ID));
 		return launch;
+	};
+
+	public static final RecordMapper<? super Record, IndexLaunch> INDEX_LAUNCH_RECORD_MAPPER = record -> {
+		final IndexLaunch indexLaunch = new IndexLaunch();
+		indexLaunch.setLaunchId(record.get(LAUNCH.ID));
+		indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
+		indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
+		return indexLaunch;
 	};
 
 	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
