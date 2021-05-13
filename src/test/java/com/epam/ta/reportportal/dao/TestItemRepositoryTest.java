@@ -31,7 +31,9 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -695,6 +697,14 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
+	}
+
+	@Test
+	void findIndexTestItemByLaunchId() {
+		final List<IndexTestItem> items = testItemRepository.findIndexTestItemByLaunchId(1L,
+				List.of(JTestItemTypeEnum.STEP)
+		);
+		assertEquals(3, items.size());
 	}
 
 	@Test

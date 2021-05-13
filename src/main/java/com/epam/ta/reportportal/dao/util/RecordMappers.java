@@ -54,6 +54,7 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -232,6 +233,17 @@ public class RecordMappers {
 		ofNullable(r.get(TEST_ITEM.LAUNCH_ID)).ifPresent(testItem::setLaunchId);
 		ofNullable(r.get(TEST_ITEM.PARENT_ID)).ifPresent(testItem::setParentId);
 		return testItem;
+	};
+
+	public static final RecordMapper<? super Record, IndexTestItem> INDEX_TEST_ITEM_RECORD_MAPPER = record -> {
+		final IndexTestItem indexTestItem = new IndexTestItem();
+		indexTestItem.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME).toLocalDateTime());
+		indexTestItem.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
+		indexTestItem.setTestCaseHash(record.get(TEST_ITEM.TEST_CASE_HASH));
+		indexTestItem.setAutoAnalyzed(record.get(ISSUE.AUTO_ANALYZED));
+		indexTestItem.setIssueTypeLocator(record.get(ISSUE_TYPE.LOCATOR));
+		return indexTestItem;
 	};
 
 	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),

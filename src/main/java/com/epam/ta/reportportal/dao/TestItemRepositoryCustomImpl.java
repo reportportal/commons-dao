@@ -34,7 +34,9 @@ import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.google.common.collect.Lists;
 import org.jooq.Condition;
 import org.jooq.*;
@@ -128,9 +130,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 		final Set<String> joinFields = QueryUtils.collectJoinFields(filter, sort);
 
-		return dsl.select(fieldName(ID)).from(QueryBuilder.newBuilder(filter, joinFields)
-				.with(sort)
-				.with(1).build().asTable(ITEM)).fetchOptionalInto(Long.class);
+		return dsl.select(fieldName(ID))
+				.from(QueryBuilder.newBuilder(filter, joinFields).with(sort).with(1).build().asTable(ITEM))
+				.fetchOptionalInto(Long.class);
 
 	}
 
@@ -894,6 +896,29 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
 				.where(TEST_ITEM.ITEM_ID.in(ids))
 				.fetch(NESTED_STEP_RECORD_MAPPER);
+	}
+
+	@Override
+	public List<IndexTestItem> findIndexTestItemByLaunchId(Long launchId, Collection<JTestItemTypeEnum> itemTypes) {
+		return dsl.select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.START_TIME,
+				TEST_ITEM.UNIQUE_ID,
+				TEST_ITEM.TEST_CASE_HASH,
+				ISSUE.AUTO_ANALYZED,
+				ISSUE_TYPE.LOCATOR
+		)
+				.from(TEST_ITEM)
+				.join(TEST_ITEM_RESULTS)
+				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				.join(ISSUE)
+				.on(TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+				.join(ISSUE_TYPE)
+				.on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM.TYPE.in(itemTypes))
+				.and(ISSUE.IGNORE_ANALYZER.isFalse())
+				.fetch(INDEX_TEST_ITEM_RECORD_MAPPER);
+
 	}
 
 	private Condition hasContentQuery(JTestItem nested, SelectQuery<? extends Record> logsSelectQuery, boolean excludePassedLogs) {
