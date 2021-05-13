@@ -124,6 +124,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public Optional<Long> findIdByFilter(Queryable filter, Sort sort) {
+
+		final Set<String> joinFields = QueryUtils.collectJoinFields(filter, sort);
+
+		return dsl.select(fieldName(ID)).from(QueryBuilder.newBuilder(filter, joinFields)
+				.with(sort)
+				.with(1).build().asTable(ITEM)).fetchOptionalInto(Long.class);
+
+	}
+
+	@Override
 	public Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable) {
 
@@ -377,7 +388,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		List<Sort.Order> orders = sort.get().collect(toList());
 		orders.add(new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME));
 
-		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter, sort)).with(Sort.by(orders)).with(1).build();
+		SelectQuery<? extends Record> selectQuery = QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter, sort))
+				.with(Sort.by(orders))
+				.with(1)
+				.build();
 		selectQuery.addConditions(baselineCondition);
 
 		return dsl.with(HISTORY)
@@ -742,9 +756,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.with(Sort.by(Sort.Order.asc(CRITERIA_ID)))
 				.build();
 		selectQuery.addConditions(TEST_ITEM.LAUNCH_ID.eq(launchId));
-		return dsl.select(fieldName(ITEMS, ID))
-				.from(selectQuery.asTable(ITEMS))
-				.fetchInto(Long.class);
+		return dsl.select(fieldName(ITEMS, ID)).from(selectQuery.asTable(ITEMS)).fetchInto(Long.class);
 	}
 
 	@Override
