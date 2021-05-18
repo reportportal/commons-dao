@@ -110,8 +110,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build())
 				.select(DSL.sum(STATISTICS.S_COUNTER).as(ACCUMULATED_STATISTICS), STATISTICS_FIELD.NAME)
 				.from(STATISTICS)
-				.join(DSL.table(DSL.name(FILTERED_QUERY)))
-				.on(STATISTICS.ITEM_ID.eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class)))
+				.join(DSL.table(name(FILTERED_QUERY)))
+				.on(STATISTICS.ITEM_ID.eq(field(name(FILTERED_QUERY, FILTERED_ID), Long.class)))
 				.join(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.groupBy(STATISTICS_FIELD.NAME)
@@ -218,7 +218,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 			int historyDepth, boolean usingHash) {
 		SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter,
 				QueryUtils.collectJoinFields(filter, pageable.getSort())
-		).with(pageable.getSort()).addCondition(LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId))).build();
+		)
+				.with(pageable.getSort())
+				.addCondition(LAUNCH.ID.in(launchIds).and(LAUNCH.PROJECT_ID.eq(projectId)))
+				.build();
 
 		Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
 		Page<String> historyBaseline = loadHistoryBaseline(filteringQuery,
@@ -348,38 +351,32 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	private List<Long> getHistoryIds(TestItem testItem, boolean usingHash, Long projectId, int historyDepth) {
-		List<Long> historyIds = usingHash ?
-				loadHistory(testItem.getStartTime(),
-						testItem.getItemId(),
-						LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.TEST_CASE_HASH.eq(testItem.getTestCaseHash())),
-						historyDepth
-				) :
-				loadHistory(testItem.getStartTime(),
-						testItem.getItemId(),
-						LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.UNIQUE_ID.eq(testItem.getUniqueId())),
-						historyDepth
-				);
+		List<Long> historyIds = usingHash ? loadHistory(testItem.getStartTime(),
+				testItem.getItemId(),
+				LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.TEST_CASE_HASH.eq(testItem.getTestCaseHash())),
+				historyDepth
+		) : loadHistory(testItem.getStartTime(),
+				testItem.getItemId(),
+				LAUNCH.PROJECT_ID.eq(projectId).and(TEST_ITEM.UNIQUE_ID.eq(testItem.getUniqueId())),
+				historyDepth
+		);
 		historyIds.add(0, testItem.getItemId());
 		return historyIds;
 	}
 
 	private List<Long> getHistoryIds(TestItem testItem, boolean usingHash, Long projectId, String launchName, int historyDepth) {
 		if (historyDepth > 0) {
-			List<Long> historyIds = usingHash ?
-					loadHistory(testItem.getStartTime(),
-							testItem.getItemId(),
-							LAUNCH.PROJECT_ID.eq(projectId)
-									.and(LAUNCH.NAME.eq(launchName))
-									.and(TEST_ITEM.TEST_CASE_HASH.eq(testItem.getTestCaseHash())),
-							historyDepth
-					) :
-					loadHistory(testItem.getStartTime(),
-							testItem.getItemId(),
-							LAUNCH.PROJECT_ID.eq(projectId)
-									.and(LAUNCH.NAME.eq(launchName))
-									.and(TEST_ITEM.UNIQUE_ID.eq(testItem.getUniqueId())),
-							historyDepth
-					);
+			List<Long> historyIds = usingHash ? loadHistory(testItem.getStartTime(),
+					testItem.getItemId(),
+					LAUNCH.PROJECT_ID.eq(projectId)
+							.and(LAUNCH.NAME.eq(launchName))
+							.and(TEST_ITEM.TEST_CASE_HASH.eq(testItem.getTestCaseHash())),
+					historyDepth
+			) : loadHistory(testItem.getStartTime(),
+					testItem.getItemId(),
+					LAUNCH.PROJECT_ID.eq(projectId).and(LAUNCH.NAME.eq(launchName)).and(TEST_ITEM.UNIQUE_ID.eq(testItem.getUniqueId())),
+					historyDepth
+			);
 			historyIds.add(0, testItem.getItemId());
 			return historyIds;
 		}
@@ -647,43 +644,61 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	@Override
 	public Map<Long, String> selectPathNames(Long itemId, Long projectId) {
-
-		JTestItem parentItem = TEST_ITEM.as("parent");
-		JTestItem childItem = TEST_ITEM.as("child");
-		return dsl.select(parentItem.ITEM_ID, parentItem.NAME)
-				.from(childItem)
-				.leftJoin(parentItem)
-				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
-				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
-				.join(LAUNCH)
-				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(childItem.ITEM_ID.eq(itemId))
-				.and(LAUNCH.PROJECT_ID.eq(projectId))
-				.orderBy(parentItem.ITEM_ID)
-				.fetch()
-				.stream()
+		return getPathNamesResult(Collections.singletonList(itemId), projectId).stream()
 				.collect(LinkedHashMap::new,
-						(m, result) -> ofNullable(result.get(parentItem.ITEM_ID)).ifPresent(id -> m.put(id, result.get(parentItem.NAME))),
+						(m, result) -> ofNullable(result.get(fieldName("parent_id"))).ifPresent(id -> m.put((Long) id,
+								result.get(fieldName("parent_name")).toString()
+						)),
 						LinkedHashMap::putAll
 				);
 	}
 
 	@Override
 	public Map<Long, PathName> selectPathNames(Collection<Long> ids, Long projectId) {
+		return PATH_NAMES_FETCHER.apply(getPathNamesResult(ids, projectId));
+	}
 
-		JTestItem parentItem = TEST_ITEM.as("parent");
-		JTestItem childItem = TEST_ITEM.as("child");
-		return PATH_NAMES_FETCHER.apply(dsl.select(childItem.ITEM_ID, parentItem.ITEM_ID, parentItem.NAME, LAUNCH.NAME, LAUNCH.NUMBER)
-				.from(childItem)
-				.leftJoin(parentItem)
-				.on(DSL.sql(childItem.PATH + " <@ " + parentItem.PATH))
-				.and(childItem.ITEM_ID.notEqual(parentItem.ITEM_ID))
+	public Result<Record5<Long, Long, String, Integer, String>> getPathNamesResult(Collection<Long> ids, Long projectId) {
+		final String tree = "supplytree";
+		Table<Record> supplytree = table(name(tree));
+		Field<Long> TREE_ITEM_ID = field(name(tree, "item_id"), Long.class);
+		Field<Long> PARENT_ID = field(sql("unnest(?)", fieldName("ids")), Long.class).as("parent_id");
+		Field<String> LAUNCH_NAME = field(name(tree, "launch_name"), String.class);
+		Field<Integer> NUMBER = field(name(tree, "number"), Integer.class);
+		Field<String> PARENT_NAME = field(sql("unnest(?)", fieldName("names")), String.class).as("parent_name");
+
+		return dsl.selectFrom(withRecursive(tree).as(select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.PARENT_ID,
+				TEST_ITEM.NAME.as("leaf_name"),
+				LAUNCH.NAME.as("launch_name"),
+				LAUNCH.NUMBER,
+				field(sql("ARRAY [CAST(? AS TEXT)] AS names", TEST_ITEM.NAME)),
+				field(sql("ARRAY [?] AS ids", TEST_ITEM.ITEM_ID))
+		).from(TEST_ITEM)
 				.join(LAUNCH)
-				.on(childItem.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(childItem.ITEM_ID.in(ids))
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(TEST_ITEM.PARENT_ID.isNull())
 				.and(LAUNCH.PROJECT_ID.eq(projectId))
-				.orderBy(childItem.ITEM_ID, parentItem.START_TIME.asc())
-				.fetch());
+				.unionAll(select(TEST_ITEM.ITEM_ID,
+						TEST_ITEM.PARENT_ID,
+						TEST_ITEM.NAME.as("leaf_name"),
+						LAUNCH.NAME.as("launch_name"),
+						LAUNCH.NUMBER,
+						field(sql("? || CAST(? AS TEXT) AS names", fieldName("names"), TEST_ITEM.NAME)),
+						field(sql("? || ? AS ids", fieldName("ids"), TEST_ITEM.ITEM_ID))
+				).from(TEST_ITEM)
+						.join(LAUNCH)
+						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+						.join(supplytree)
+						.on(TEST_ITEM.PARENT_ID.eq(TREE_ITEM_ID))
+						.where(LAUNCH.PROJECT_ID.eq(projectId))))
+				.select(TREE_ITEM_ID, PARENT_ID, LAUNCH_NAME, NUMBER, PARENT_NAME)
+				.from(supplytree)
+				.where(TREE_ITEM_ID.in(ids))
+				.orderBy(TREE_ITEM_ID)
+				.asTable("full_tree")
+				.where(fieldName("item_id").cast(Long.class).notEqual(fieldName("parent_id").cast(Long.class)))).fetch();
+
 	}
 
 	/**
