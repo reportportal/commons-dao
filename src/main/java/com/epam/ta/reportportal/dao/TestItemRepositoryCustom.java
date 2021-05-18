@@ -30,9 +30,12 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.epam.ta.reportportal.ws.model.issue.Issue;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Duration;
@@ -51,6 +54,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return Set of accumulated statistics;
 	 */
 	Set<Statistics> accumulateStatisticsByFilter(Queryable filter);
+
+	Optional<Long> findIdByFilter(Queryable filter, Sort sort);
 
 	/**
 	 * Executes query built for given filters and maps result for given page
@@ -394,4 +399,6 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 
 	List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter, boolean excludePassedLogs);
+
+	List<IndexTestItem> findIndexTestItemByLaunchId(Long launchId, Collection<JTestItemTypeEnum> itemTypes);
 }
