@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Pair;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
@@ -197,6 +198,12 @@ class TestItemRepositoryTest extends BaseTest {
 	void hasChildrenWithStats() {
 		assertTrue(testItemRepository.hasChildrenWithStats(1L));
 		assertFalse(testItemRepository.hasChildrenWithStats(3L));
+	}
+
+	@Test
+	void selectPathName() {
+		final Optional<Pair<Long, String>> pathName = testItemRepository.selectPathName("uuid 1_1");
+		assertTrue(pathName.isPresent());
 	}
 
 	@Test

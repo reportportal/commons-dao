@@ -37,6 +37,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.util.Pair;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -282,6 +283,14 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return Issue type
 	 */
 	Optional<IssueType> selectIssueTypeByLocator(Long projectId, String locator);
+
+	/**
+	 * Select id and path for item by uuid
+	 *
+	 * @param uuid {@link TestItem#getUuid()} ()}
+	 * @return id from collection -> {@link PathName}
+	 */
+	Optional<Pair<Long, String>> selectPathName(String uuid);
 
 	/**
 	 * Select ids and names of all items in a tree till current for provided item id

@@ -47,6 +47,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -643,6 +644,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.where(ISSUE_TYPE_PROJECT.PROJECT_ID.eq(projectId))
 				.and(ISSUE_TYPE.LOCATOR.eq(locator))
 				.fetchOne(ISSUE_TYPE_RECORD_MAPPER));
+	}
+
+	@Override
+	public Optional<Pair<Long, String>> selectPathName(String uuid) {
+		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.PATH)
+				.from(TEST_ITEM)
+				.where(TEST_ITEM.UUID.eq(uuid))
+				.fetchOptional(r -> Pair.of(r.get(TEST_ITEM.ITEM_ID), r.get(TEST_ITEM.PATH, String.class)));
 	}
 
 	@Override
