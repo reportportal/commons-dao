@@ -658,49 +658,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		return PATH_NAMES_FETCHER.apply(getPathNamesResult(ids, projectId));
 	}
 
-	public Result<Record5<Long, Long, String, Integer, String>> getPathNamesResult(Collection<Long> ids, Long projectId) {
-		final String tree = "supplytree";
-		Table<Record> supplytree = table(name(tree));
-		Field<Long> TREE_ITEM_ID = field(name(tree, "item_id"), Long.class);
-		Field<Long> PARENT_ID = field(sql("unnest(?)", fieldName("ids")), Long.class).as("parent_id");
-		Field<String> LAUNCH_NAME = field(name(tree, "launch_name"), String.class);
-		Field<Integer> NUMBER = field(name(tree, "number"), Integer.class);
-		Field<String> PARENT_NAME = field(sql("unnest(?)", fieldName("names")), String.class).as("parent_name");
-
-		return dsl.selectFrom(withRecursive(tree).as(select(TEST_ITEM.ITEM_ID,
-				TEST_ITEM.PARENT_ID,
-				TEST_ITEM.NAME.as("leaf_name"),
-				LAUNCH.NAME.as("launch_name"),
-				LAUNCH.NUMBER,
-				field(sql("ARRAY [CAST(? AS TEXT)] AS names", TEST_ITEM.NAME)),
-				field(sql("ARRAY [?] AS ids", TEST_ITEM.ITEM_ID))
-		).from(TEST_ITEM)
-				.join(LAUNCH)
-				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(TEST_ITEM.PARENT_ID.isNull())
-				.and(LAUNCH.PROJECT_ID.eq(projectId))
-				.unionAll(select(TEST_ITEM.ITEM_ID,
-						TEST_ITEM.PARENT_ID,
-						TEST_ITEM.NAME.as("leaf_name"),
-						LAUNCH.NAME.as("launch_name"),
-						LAUNCH.NUMBER,
-						field(sql("? || CAST(? AS TEXT) AS names", fieldName("names"), TEST_ITEM.NAME)),
-						field(sql("? || ? AS ids", fieldName("ids"), TEST_ITEM.ITEM_ID))
-				).from(TEST_ITEM)
-						.join(LAUNCH)
-						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-						.join(supplytree)
-						.on(TEST_ITEM.PARENT_ID.eq(TREE_ITEM_ID))
-						.where(LAUNCH.PROJECT_ID.eq(projectId))))
-				.select(TREE_ITEM_ID, PARENT_ID, LAUNCH_NAME, NUMBER, PARENT_NAME)
-				.from(supplytree)
-				.where(TREE_ITEM_ID.in(ids))
-				.orderBy(TREE_ITEM_ID)
-				.asTable("full_tree")
-				.where(fieldName("item_id").cast(Long.class).notEqual(fieldName("parent_id").cast(Long.class)))).fetch();
-
-	}
-
 	/**
 	 * {@link Log} entities are searched from the whole tree under
 	 * {@link TestItem} that matched to the provided `launchId` and `autoAnalyzed` conditions
@@ -958,6 +915,48 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
 					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse())));
 		}
+	}
+
+	private Result<Record5<Long, Long, String, Integer, String>> getPathNamesResult(Collection<Long> ids, Long projectId) {
+		final String tree = "supplytree";
+		Table<Record> supplytree = table(name(tree));
+		Field<Long> TREE_ITEM_ID = field(name(tree, "item_id"), Long.class);
+		Field<Long> PARENT_ID = field(sql("unnest(?)", fieldName("ids")), Long.class).as("parent_id");
+		Field<String> LAUNCH_NAME = field(name(tree, "launch_name"), String.class);
+		Field<Integer> NUMBER = field(name(tree, "number"), Integer.class);
+		Field<String> PARENT_NAME = field(sql("unnest(?)", fieldName("names")), String.class).as("parent_name");
+
+		return dsl.selectFrom(withRecursive(tree).as(select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.PARENT_ID,
+				TEST_ITEM.NAME.as("leaf_name"),
+				LAUNCH.NAME.as("launch_name"),
+				LAUNCH.NUMBER,
+				field(sql("ARRAY [CAST(? AS TEXT)] AS names", TEST_ITEM.NAME)),
+				field(sql("ARRAY [?] AS ids", TEST_ITEM.ITEM_ID))
+		).from(TEST_ITEM)
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(TEST_ITEM.PARENT_ID.isNull())
+				.and(LAUNCH.PROJECT_ID.eq(projectId))
+				.unionAll(select(TEST_ITEM.ITEM_ID,
+						TEST_ITEM.PARENT_ID,
+						TEST_ITEM.NAME.as("leaf_name"),
+						LAUNCH.NAME.as("launch_name"),
+						LAUNCH.NUMBER,
+						field(sql("? || CAST(? AS TEXT) AS names", fieldName("names"), TEST_ITEM.NAME)),
+						field(sql("? || ? AS ids", fieldName("ids"), TEST_ITEM.ITEM_ID))
+				).from(TEST_ITEM)
+						.join(LAUNCH)
+						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+						.join(supplytree)
+						.on(TEST_ITEM.PARENT_ID.eq(TREE_ITEM_ID))
+						.where(LAUNCH.PROJECT_ID.eq(projectId))))
+				.select(TREE_ITEM_ID, PARENT_ID, LAUNCH_NAME, NUMBER, PARENT_NAME)
+				.from(supplytree)
+				.where(TREE_ITEM_ID.in(ids))
+				.orderBy(TREE_ITEM_ID)
+				.asTable("full_tree")
+				.where(fieldName("item_id").cast(Long.class).notEqual(fieldName("parent_id").cast(Long.class)))).fetch();
 	}
 
 }
