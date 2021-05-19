@@ -194,6 +194,12 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void hasChildrenWithStats() {
+		assertTrue(testItemRepository.hasChildrenWithStats(1L));
+		assertFalse(testItemRepository.hasChildrenWithStats(3L));
+	}
+
+	@Test
 	void interruptInProgressItems() {
 		final Long launchId = 1L;
 		testItemRepository.interruptInProgressItems(launchId);

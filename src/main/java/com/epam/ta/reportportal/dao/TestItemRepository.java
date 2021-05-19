@@ -112,6 +112,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	Optional<Long> findIdByUuidForUpdate(@Param("uuid") String uuid);
 
 	/**
+	 * Finds {@link TestItem#getItemId()} by {@link TestItem#getUuid()}
+	 *
+	 * @param uuid {@link TestItem#getUuid()}
+	 * @return {@link Optional} with {@link TestItem} object
+	 */
+	@Query(value = "SELECT ti.item_id FROM test_item ti WHERE ti.uuid = :uuid", nativeQuery = true)
+	Optional<Long> findIdByUuid(@Param("uuid") String uuid);
+
+	/**
 	 * Finds all {@link TestItem} by specified launch id
 	 *
 	 * @param launchId {@link Launch#getId()}
@@ -156,6 +165,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
+
+	/**
+	 * Checks does test item have children with {@link TestItem#isHasStats()} == true.
+	 *
+	 * @param itemId Parent item id
+	 * @return True if has
+	 */
+	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.parent_id = :itemId AND t.has_stats)", nativeQuery = true)
+	boolean hasChildrenWithStats(@Param("itemId") Long itemId);
 
 	/**
 	 * Checks does test item have parent with provided status.
@@ -259,14 +277,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param uniqueId {@link TestItem#getUniqueId()}
 	 * @param launchId {@link TestItem#getLaunchId()}
 	 * @param parentId {@link TestItem#getParentId()}
-	 * @param itemId {@link TestItem#getItemId()} ()}
+	 * @param itemId   {@link TestItem#getItemId()} ()}
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
 			+ " AND t.parent_id = :parentId AND t.item_id != :itemId AND t.has_stats AND t.retry_of IS NULL"
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
-			@Param("parentId") Long parentId, @Param("itemId") Long itemId);
+	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId,
+			@Param("launchId") Long launchId, @Param("parentId") Long parentId, @Param("itemId") Long itemId);
 
 	/**
 	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id
