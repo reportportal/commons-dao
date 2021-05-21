@@ -647,7 +647,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Optional<Pair<Long, String>> selectPathName(String uuid) {
+	public Optional<Pair<Long, String>> selectPath(String uuid) {
 		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.PATH)
 				.from(TEST_ITEM)
 				.where(TEST_ITEM.UUID.eq(uuid))

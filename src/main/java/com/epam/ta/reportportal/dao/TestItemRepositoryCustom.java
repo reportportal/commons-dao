@@ -290,7 +290,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param uuid {@link TestItem#getUuid()} ()}
 	 * @return id from collection -> {@link PathName}
 	 */
-	Optional<Pair<Long, String>> selectPathName(String uuid);
+	Optional<Pair<Long, String>> selectPath(String uuid);
 
 	/**
 	 * Select ids and names of all items in a tree till current for provided item id

@@ -202,7 +202,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectPathName() {
-		final Optional<Pair<Long, String>> pathName = testItemRepository.selectPathName("uuid 1_1");
+		final Optional<Pair<Long, String>> pathName = testItemRepository.selectPath("uuid 1_1");
 		assertTrue(pathName.isPresent());
 	}
 
