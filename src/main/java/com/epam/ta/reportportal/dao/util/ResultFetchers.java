@@ -41,6 +41,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 
@@ -48,6 +50,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -158,17 +161,17 @@ public class ResultFetchers {
 
 	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
 		Map<Long, PathName> content = Maps.newHashMap();
-		JTestItem parentItem = TEST_ITEM.as("parent");
-		JTestItem childItem = TEST_ITEM.as("child");
 		result.forEach(record -> {
-			Long childItemId = record.get(childItem.ITEM_ID);
+			Long childItemId = record.get(fieldName("item_id"), Long.class);
 			PathName pathName = content.computeIfAbsent(childItemId, k -> {
-				LaunchPathName launchPathName = new LaunchPathName(record.get(LAUNCH.NAME), record.get(LAUNCH.NUMBER));
+				LaunchPathName launchPathName = new LaunchPathName(record.get(fieldName("launch_name"), String.class),
+						record.get(fieldName("number"), Integer.class)
+				);
 				return new PathName(launchPathName, Lists.newArrayList());
 			});
 
-			ofNullable(record.get(parentItem.ITEM_ID)).ifPresent(parentItemId -> {
-				String parentName = record.get(parentItem.NAME);
+			ofNullable(record.get(fieldName("item_id"), Long.class)).ifPresent(parentItemId -> {
+				String parentName = record.get(fieldName("parent_name"), String.class);
 				pathName.getItemPaths().add(new ItemPathName(parentItemId, parentName));
 			});
 		});
