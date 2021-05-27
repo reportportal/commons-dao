@@ -29,6 +29,7 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -54,7 +55,8 @@ public class TestItemResults implements Serializable {
 	@Column(name = "duration")
 	private Double duration;
 
-	@OneToOne(mappedBy = "testItemResults", cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+	@PrimaryKeyJoinColumn
+	@OneToOne(mappedBy = "testItemResults", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	private IssueEntity issue;
 
 	@OneToMany
@@ -124,5 +126,25 @@ public class TestItemResults implements Serializable {
 
 	public void setTestItem(TestItem testItem) {
 		this.testItem = testItem;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TestItemResults that = (TestItemResults) o;
+		return Objects.equals(itemId, that.itemId) && status == that.status && Objects.equals(endTime, that.endTime) && Objects.equals(
+				duration,
+				that.duration
+		);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(itemId, status, endTime, duration);
 	}
 }
