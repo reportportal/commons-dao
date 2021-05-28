@@ -654,9 +654,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Map<Long, String> selectPathNames(Long itemId, Long projectId) {
 		return getPathNamesResult(Collections.singletonList(itemId), projectId).stream()
+				.filter(result -> !itemId.equals(result.get(fieldName("id"))))
 				.collect(LinkedHashMap::new,
-						(m, result) -> ofNullable(result.get(fieldName("parent_id"))).ifPresent(id -> m.put((Long) id,
-								result.get(fieldName("parent_name")).toString()
+						(m, result) -> ofNullable(result.get(fieldName("id"))).ifPresent(id -> m.put((Long) id,
+								result.get(fieldName("name")).toString()
 						)),
 						LinkedHashMap::putAll
 				);
@@ -930,10 +931,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		final String tree = "supplytree";
 		Table<Record> supplytree = table(name(tree));
 		Field<Long> TREE_ITEM_ID = field(name(tree, "item_id"), Long.class);
-		Field<Long> PARENT_ID = field(sql("unnest(?)", fieldName("ids")), Long.class).as("parent_id");
+		Field<Long> ID = field(sql("unnest(?)", fieldName("ids")), Long.class).as("id");
 		Field<String> LAUNCH_NAME = field(name(tree, "launch_name"), String.class);
 		Field<Integer> NUMBER = field(name(tree, "number"), Integer.class);
-		Field<String> PARENT_NAME = field(sql("unnest(?)", fieldName("names")), String.class).as("parent_name");
+		Field<String> NAME = field(sql("unnest(?)", fieldName("names")), String.class).as("name");
 
 		return dsl.selectFrom(withRecursive(tree).as(select(TEST_ITEM.ITEM_ID,
 				TEST_ITEM.PARENT_ID,
@@ -960,12 +961,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.join(supplytree)
 						.on(TEST_ITEM.PARENT_ID.eq(TREE_ITEM_ID))
 						.where(LAUNCH.PROJECT_ID.eq(projectId))))
-				.select(TREE_ITEM_ID, PARENT_ID, LAUNCH_NAME, NUMBER, PARENT_NAME)
+				.select(TREE_ITEM_ID, ID, LAUNCH_NAME, NUMBER, NAME)
 				.from(supplytree)
 				.where(TREE_ITEM_ID.in(ids))
 				.orderBy(TREE_ITEM_ID)
-				.asTable("full_tree")
-				.where(fieldName("item_id").cast(Long.class).notEqual(fieldName("parent_id").cast(Long.class)))).fetch();
+				.asTable("full_tree")).fetch();
 	}
 
 }
