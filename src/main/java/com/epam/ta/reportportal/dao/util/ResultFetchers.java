@@ -170,7 +170,7 @@ public class ResultFetchers {
 				return new PathName(launchPathName, Lists.newArrayList());
 			});
 
-			ofNullable(record.get(fieldName("item_id"), Long.class)).ifPresent(parentItemId -> {
+			ofNullable(record.get(fieldName("parent_id"), Long.class)).ifPresent(parentItemId -> {
 				String parentName = record.get(fieldName("parent_name"), String.class);
 				pathName.getItemPaths().add(new ItemPathName(parentItemId, parentName));
 			});
