@@ -18,6 +18,9 @@ VALUES (2, 2, 'uuid2', 'STEP', now(), now(), false, true, null, 100);
 INSERT INTO public.test_item_results(result_id, status, end_time, duration)
 VALUES (2, 'FAILED', now(), 1);
 
+INSERT INTO public.issue(issue_id, issue_type, issue_description)
+VALUES (2, 1, 'fail');
+
 
 INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified, mode, status)
 VALUES (200, 'uuid3', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');

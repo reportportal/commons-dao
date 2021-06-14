@@ -31,7 +31,9 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.google.common.collect.Comparators;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -208,18 +210,6 @@ class TestItemRepositoryTest extends BaseTest {
 	void findByPath() {
 		TestItem testItem = testItemRepository.findById(1L).orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, 1L));
 		assertTrue(testItemRepository.findByPath(testItem.getPath()).isPresent());
-	}
-
-	@Test
-	void findByNameAndLaunchWithoutParents() {
-		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdWithoutParents(1, 1L);
-		assertTrue(latestItem.isPresent());
-	}
-
-	@Test
-	void findByNameAndTestCaseHashAndLaunchIdAndParentId() {
-		final Optional<Long> latestItem = testItemRepository.findLatestIdByTestCaseHashAndLaunchIdAndParentId(3, 1L, 2L);
-		assertTrue(latestItem.isPresent());
 	}
 
 	@Test
@@ -707,6 +697,31 @@ class TestItemRepositoryTest extends BaseTest {
 		assertNotNull(allNestedStepsByIds);
 		assertFalse(allNestedStepsByIds.isEmpty());
 		assertEquals(3, allNestedStepsByIds.size());
+	}
+
+	@Test
+	void findIndexTestItemByLaunchId() {
+		final List<IndexTestItem> items = testItemRepository.findIndexTestItemByLaunchId(1L,
+				List.of(JTestItemTypeEnum.STEP)
+		);
+		assertEquals(3, items.size());
+	}
+
+	@Test
+	void findOneByFilterTest() {
+		final Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_TEST_CASE_HASH))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.withCondition(new FilterCondition(Condition.EXISTS, true, "1", CRITERIA_PARENT_ID))
+				.build();
+
+		final Sort sort = Sort.by(Sort.Order.desc(CRITERIA_START_TIME));
+
+		final Optional<Long> foundId = testItemRepository.findIdByFilter(itemFilter, sort);
+
+		assertTrue(foundId.isPresent());
+
 	}
 
 	@Test

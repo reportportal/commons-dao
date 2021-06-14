@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.util.SortUtils;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QU
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.INDEX_LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static java.util.Optional.ofNullable;
@@ -232,6 +234,25 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 								.and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
 				.groupBy(USERS.LOGIN)
 				.fetchMap(USERS.LOGIN, field("count", Integer.class));
+	}
+
+	@Override
+	public List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit, long offset) {
+		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID)
+				.from(LAUNCH)
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
+				.and(DSL.exists(DSL.selectOne()
+						.from(TEST_ITEM)
+						.join(TEST_ITEM_RESULTS)
+						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.join(ISSUE)
+						.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+						.where(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))))
+				.orderBy(LAUNCH.ID)
+				.limit(limit)
+				.offset(offset)
+				.fetch(INDEX_LAUNCH_RECORD_MAPPER);
 	}
 
 }
