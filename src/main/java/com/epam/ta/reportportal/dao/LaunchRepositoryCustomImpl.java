@@ -40,15 +40,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.INDEX_LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.*;
 
 /**
  * @author Pavel Bortnik
@@ -255,4 +257,42 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.fetch(INDEX_LAUNCH_RECORD_MAPPER);
 	}
 
+	@Override
+	public Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchId(Long projectId, String name, String[] launchAttributes, Long launchId) {
+		return dsl.select().from(LAUNCH)
+				.where(LAUNCH.ID.in(dsl.select(LAUNCH.ID).from(LAUNCH)
+					.leftJoin(ITEM_ATTRIBUTE)
+					.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+					.where(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+					.and(LAUNCH.PROJECT_ID.eq(projectId))
+					.and(LAUNCH.NAME.eq(name))
+					.and(LAUNCH.ID.lt(launchId))
+					.groupBy(LAUNCH.ID)
+					.having(arrayAgg(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""),
+							val(KEY_VALUE_SEPARATOR),
+							ITEM_ATTRIBUTE.VALUE
+					).cast(String.class)).contains(launchAttributes))))
+				.orderBy(LAUNCH.NUMBER.desc())
+				.limit(1)
+				.fetchOptionalInto(Launch.class);
+	}
+
+	@Override
+	public Optional<Launch> findLatestLaunchByProjectIdAndNameAndAttributes(Long projectId, String name, String[] launchAttributes) {
+		return dsl.select().from(LAUNCH)
+				.where(LAUNCH.ID.in(dsl.select(LAUNCH.ID).from(LAUNCH)
+						.leftJoin(ITEM_ATTRIBUTE)
+						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+						.where(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+						.and(LAUNCH.PROJECT_ID.eq(projectId))
+						.and(LAUNCH.NAME.eq(name))
+						.groupBy(LAUNCH.ID)
+						.having(arrayAgg(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""),
+								val(KEY_VALUE_SEPARATOR),
+								ITEM_ATTRIBUTE.VALUE
+						).cast(String.class)).contains(launchAttributes))))
+				.orderBy(LAUNCH.NUMBER.desc())
+				.limit(1)
+				.fetchOptionalInto(Launch.class);
+	}
 }
