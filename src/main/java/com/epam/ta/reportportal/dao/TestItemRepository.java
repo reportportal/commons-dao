@@ -46,7 +46,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE test_item.launch_id = :launchId AND NOT test_item.has_children "
-			+ " AND result.status = cast(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
+			+ " AND result.status = CAST(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
 	List<Long> findIdsByNotHasChildrenAndLaunchIdAndStatus(@Param("launchId") Long launchId, @Param("status") StatusEnum status,
 			@Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
@@ -60,7 +60,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
 	 */
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
+			+ " WHERE test_item.launch_id = :launchId AND test_item.has_children AND result.status = CAST(:#{#status.name()} AS STATUS_ENUM)"
 			+ " ORDER BY nlevel(test_item.path) DESC, test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
 	List<Long> findIdsByHasChildrenAndLaunchIdAndStatusOrderedByPathLevel(@Param("launchId") Long launchId,
 			@Param("status") StatusEnum status, @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
@@ -74,8 +74,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return the {@link List} of the {@link TestItem#getItemId()}
 	 */
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-			+ " AND NOT test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
+			+ " WHERE CAST(:parentPath AS LTREE) @> test_item.path AND CAST(:parentPath AS LTREE) != test_item.path "
+			+ " AND NOT test_item.has_children AND result.status = CAST(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
 	List<Long> findIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath, @Param("status") StatusEnum status,
 			@Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
@@ -89,8 +89,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
 	 */
 	@Query(value = "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-			+ " WHERE cast(:parentPath AS LTREE) @> test_item.path AND cast(:parentPath AS LTREE) != test_item.path "
-			+ " AND test_item.has_children AND result.status = cast(:#{#status.name()} AS STATUS_ENUM)"
+			+ " WHERE CAST(:parentPath AS LTREE) @> test_item.path AND CAST(:parentPath AS LTREE) != test_item.path "
+			+ " AND test_item.has_children AND result.status = CAST(:#{#status.name()} AS STATUS_ENUM)"
 			+ " ORDER BY nlevel(test_item.path) DESC, test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
 	List<Long> findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(@Param("parentPath") String parentPath,
 			@Param("status") StatusEnum status, @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
@@ -154,7 +154,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemPath Current item path in a tree
 	 * @return True if has
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.path <@ cast(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ CAST(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
 	boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
 	/**
@@ -165,8 +165,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param status   {@link StatusEnum}
 	 * @return 'True' if has, otherwise 'false'
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.path @> cast(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = cast(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
+			+ " WHERE ti.path @> CAST(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = CAST(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
 	boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath, @Param("status") StatusEnum status);
 
 	/**
@@ -176,7 +176,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param statuses {@link StatusEnum#name()} Array
 	 * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
 			+ " WHERE ti.parent_id = :parentId AND ti.retry_of IS NULL AND CAST(tir.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
 	boolean hasDescendantsNotInStatus(@Param("parentId") Long parentId, @Param("statuses") String... statuses);
 
@@ -188,8 +188,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param statuses   child item {@link TestItemResults#getStatus()}
 	 * @return True if contains, false if not
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-			+ " WHERE ti.path <@ cast(:parentPath AS LTREE) AND ti.item_id != :parentId AND cast(tir.status AS VARCHAR) IN (:statuses))", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
+			+ " WHERE ti.path <@ CAST(:parentPath AS LTREE) AND ti.item_id != :parentId AND CAST(tir.status AS VARCHAR) IN (:statuses))", nativeQuery = true)
 	boolean hasItemsInStatusByParent(@Param("parentId") Long parentId, @Param("parentPath") String parentPath,
 			@Param("statuses") String... statuses);
 
@@ -199,7 +199,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param launchId parent item {@link TestItem#getItemId()}
 	 * @return True if contains, false if not
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_id WHERE ti.launch_id = :launchId)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN issue i ON ti.item_id = i.issue_id WHERE ti.launch_id = :launchId)", nativeQuery = true)
 	boolean hasItemsWithIssueByLaunch(@Param("launchId") Long launchId);
 
 	/**
@@ -211,7 +211,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 */
 	@Modifying
 	@Query(value =
-			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = current_timestamp, duration = EXTRACT(EPOCH FROM current_timestamp - i.start_time)"
+			"UPDATE test_item_results SET status = 'INTERRUPTED', end_time = CURRENT_TIMESTAMP, duration = EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - i.start_time)"
 					+ "FROM test_item i WHERE i.item_id = result_id AND i.launch_id = :launchId AND status = 'IN_PROGRESS'", nativeQuery = true)
 	void interruptInProgressItems(@Param("launchId") Long launchId);
 
@@ -224,7 +224,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param statuses {@link StatusEnum#name()} Array
 	 * @return True if has
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
 			+ " WHERE test_item.parent_id = :parentId AND test_item.item_id != :stepId AND test_item.retry_of IS NULL "
 			+ " AND CAST(result.status AS VARCHAR) NOT IN (:statuses))", nativeQuery = true)
 	boolean hasDescendantsNotInStatusExcludingById(@Param("parentId") Long parentId, @Param("stepId") Long stepId,
@@ -236,7 +236,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param path Path of {@link TestItem}
 	 * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
 	 */
-	@Query(value = "SELECT * FROM test_item t WHERE t.path = cast(:path AS LTREE)", nativeQuery = true)
+	@Query(value = "SELECT * FROM test_item t WHERE t.path = CAST(:path AS LTREE)", nativeQuery = true)
 	Optional<TestItem> findByPath(@Param("path") String path);
 
 	/**
@@ -259,14 +259,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param uniqueId {@link TestItem#getUniqueId()}
 	 * @param launchId {@link TestItem#getLaunchId()}
 	 * @param parentId {@link TestItem#getParentId()}
-	 * @param itemId {@link TestItem#getItemId()} ()}
+	 * @param itemId   {@link TestItem#getItemId()} ()}
 	 * @return {@link Optional} of {@link TestItem} if exists otherwise {@link Optional#empty()}
 	 */
 	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.unique_id = :uniqueId AND t.launch_id = :launchId "
 			+ " AND t.parent_id = :parentId AND t.item_id != :itemId AND t.has_stats AND t.retry_of IS NULL"
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId, @Param("launchId") Long launchId,
-			@Param("parentId") Long parentId, @Param("itemId") Long itemId);
+	Optional<Long> findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(@Param("uniqueId") String uniqueId,
+			@Param("launchId") Long launchId, @Param("parentId") Long parentId, @Param("itemId") Long itemId);
 
 	/**
 	 * Finds all descendants ids of {@link TestItem} with {@code path} include its own id
@@ -274,8 +274,35 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param path Path of {@link TestItem}
 	 * @return {@link List<Long>} of test item ids
 	 */
-	@Query(value = "SELECT item_id FROM test_item WHERE path <@ cast(:path AS LTREE)", nativeQuery = true)
+	@Query(value = "SELECT item_id FROM test_item WHERE path <@ CAST(:path AS LTREE)", nativeQuery = true)
 	List<Long> selectAllDescendantsIds(@Param("path") String path);
 
 	void deleteAllByItemIdIn(Collection<Long> ids);
+
+	/**
+	 * Finds latest root(without any parent) {@link TestItem} with specified {@code testCaseHash} and {@code launchId}
+	 *
+	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
+	 * @param launchId     {@link TestItem#getLaunchId()}
+	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
+	 */
+	@Query(value =
+			"SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId AND t.parent_id IS NULL "
+					+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
+	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdWithoutParents(@Param("testCaseHash") Integer testCaseHash,
+			@Param("launchId") Long launchId);
+
+	/**
+	 * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and {@code parentId}
+	 *
+	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
+	 * @param launchId     {@link TestItem#getLaunchId()}
+	 * @param parentId     {@link TestItem#getParentId()}
+	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
+	 */
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
+	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
+			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 }
