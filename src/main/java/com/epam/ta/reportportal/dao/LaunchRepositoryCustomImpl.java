@@ -276,23 +276,4 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.limit(1)
 				.fetchOptionalInto(Launch.class);
 	}
-
-	@Override
-	public Optional<Launch> findLatestLaunchByProjectIdAndNameAndAttributes(Long projectId, String name, String[] launchAttributes) {
-		return dsl.select().from(LAUNCH)
-				.where(LAUNCH.ID.in(dsl.select(LAUNCH.ID).from(LAUNCH)
-						.leftJoin(ITEM_ATTRIBUTE)
-						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-						.where(ITEM_ATTRIBUTE.SYSTEM.eq(false))
-						.and(LAUNCH.PROJECT_ID.eq(projectId))
-						.and(LAUNCH.NAME.eq(name))
-						.groupBy(LAUNCH.ID)
-						.having(arrayAgg(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""),
-								val(KEY_VALUE_SEPARATOR),
-								ITEM_ATTRIBUTE.VALUE
-						).cast(String.class)).contains(launchAttributes))))
-				.orderBy(LAUNCH.NUMBER.desc())
-				.limit(1)
-				.fetchOptionalInto(Launch.class);
-	}
 }

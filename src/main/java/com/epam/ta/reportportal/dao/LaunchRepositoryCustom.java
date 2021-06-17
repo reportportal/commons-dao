@@ -107,6 +107,4 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
     List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit, long offset);
 
     Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchId(Long projectId, String name, String[] attributes, Long launchId);
-
-    Optional<Launch> findLatestLaunchByProjectIdAndNameAndAttributes(Long projectId, String name, String[] attributes);
 }
