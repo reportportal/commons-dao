@@ -51,7 +51,8 @@ project.ext {
             (migrationsUrl + '/migrations/37_create_log_message_trgm_idx.up.sql')        : 'V037__create_log_message_trgm_idx.sql',
             (migrationsUrl + '/migrations/38_add_not_null_log_project_id.up.sql')        : 'V038__add_not_null_log_project_id.sql',
             (migrationsUrl + '/migrations/39_attachment_creation_date.up.sql')           : 'V039__attachment_creation_date.sql',
-            (migrationsUrl + '/migrations/40_attachment_creation_date_fill.up.sql')      : 'V040__attachment_creation_date_fill.sql',
+            // NTV instead V for avoid transaction wrapping from flyway(workaround, to avoid psql specific error)
+            (migrationsUrl + '/migrations/40_attachment_creation_date_fill.up.sql')      : 'NTV040__attachment_creation_date_fill.sql',
             (migrationsUrl + '/migrations/41_attachment_creation_date_not_null.up.sql')  : 'V041__attachment_creation_date_not_null.sql',
             (migrationsUrl + '/migrations/42_shedlock_table.up.sql')                     : 'V042__shedlock_table.sql',
             (migrationsUrl + '/migrations/43_attachment_for_deletion_table.up.sql')      : 'V043__attachment_for_deletion_table.sql',
