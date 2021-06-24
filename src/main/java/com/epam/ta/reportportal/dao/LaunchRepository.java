@@ -134,4 +134,6 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>, 
 	 */
 	@Query(value = "SELECT * FROM launch l WHERE l.name =:name AND l.project_id=:projectId ORDER BY l.number DESC LIMIT 1", nativeQuery = true)
 	Optional<Launch> findLatestByNameAndProjectId(@Param("name") String name, @Param("projectId") Long projectId);
+
+	Optional<Launch> findLaunchByProjectIdAndNameAndNumberAndIdNot(Long projectId, String name, Long number, Long launchId);
 }
