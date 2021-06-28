@@ -131,15 +131,6 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
-	public List<Log> findLatestUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, Long itemId, int logLevel, int limit) {
-		return Lists.reverse(buildLogsUnderItemsQuery(launchId, Collections.singletonList(itemId), false).and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-				.orderBy(LOG.LOG_TIME.desc())
-				.limit(limit)
-				.fetch()
-				.map(LOG_UNDER_RECORD_MAPPER));
-	}
-
-	@Override
 	public List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds, int limit) {
 		return buildLogsUnderItemsQuery(launchId, itemIds, true).limit(limit)
 				.fetch()
@@ -343,6 +334,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		}
 
 		SelectOnConditionStep<Record> logsSelect = dsl.selectDistinct(selectFields)
+				.on(LOG.ID)
 				.from(LOG)
 				.join(childItemTable)
 				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
