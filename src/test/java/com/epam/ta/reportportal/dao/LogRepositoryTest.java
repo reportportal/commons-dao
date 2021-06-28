@@ -208,6 +208,23 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findLatestUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
+
+		int logLevel = LogLevel.WARN_INT;
+
+		Long itemId = 1L;
+		List<Log> logs = logRepository.findLatestUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L, itemId, logLevel, 3);
+
+		assertTrue(logs != null && logs.size() == 3, "Logs should be not null or empty");
+		logs.forEach(log -> {
+			Long id = log.getTestItem().getItemId();
+			assertNotNull(id);
+			assertEquals(itemId, id, "Incorrect item id");
+			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
+		});
+	}
+
+	@Test
 	void findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit() {
 
 		List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
