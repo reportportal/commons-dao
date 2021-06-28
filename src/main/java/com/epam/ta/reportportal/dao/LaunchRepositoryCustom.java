@@ -105,4 +105,6 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
     Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 
     List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit, long offset);
+
+    Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchId(Long projectId, String name, String[] attributes, Long launchId);
 }
