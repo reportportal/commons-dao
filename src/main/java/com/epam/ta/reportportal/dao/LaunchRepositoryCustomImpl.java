@@ -258,7 +258,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchId(Long projectId, String name, String[] launchAttributes, Long launchId) {
+	public Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(
+			Long projectId, String name, String[] launchAttributes, Long launchId, JLaunchModeEnum mode
+	) {
 		return dsl.select().from(LAUNCH)
 				.where(LAUNCH.ID.in(dsl.select(LAUNCH.ID).from(LAUNCH)
 					.leftJoin(ITEM_ATTRIBUTE)
@@ -267,6 +269,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 					.and(LAUNCH.PROJECT_ID.eq(projectId))
 					.and(LAUNCH.NAME.eq(name))
 					.and(LAUNCH.ID.lt(launchId))
+					.and(LAUNCH.MODE.ne(mode))
 					.groupBy(LAUNCH.ID)
 					.having(arrayAgg(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""),
 							val(KEY_VALUE_SEPARATOR),
