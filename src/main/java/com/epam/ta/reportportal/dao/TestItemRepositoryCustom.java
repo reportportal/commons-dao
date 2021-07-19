@@ -296,20 +296,22 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * Select ids and names of all items in a tree till current for provided item id
 	 *
 	 * @param itemId    {@link TestItem#getItemId()}
+	 * @param launchId  {@link TestItem#getLaunchId()}()}
 	 * @param projectId Project
 	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, String> selectPathNames(Long itemId, Long projectId);
+	Map<Long, String> selectPathNames(Long itemId, Long launchId, Long projectId);
 
 	/**
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
 	 * for each item id from the provided collection
 	 *
 	 * @param ids       {@link Collection} of {@link TestItem#getItemId()}
+	 * @param launchIds {@link Collection} of {@link TestItem#getLaunchId()}()}
 	 * @param projectId Project
 	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, PathName> selectPathNames(Collection<Long> ids, Long projectId);
+	Map<Long, PathName> selectPathNames(Collection<Long> ids, Collection<Long> launchIds, Long projectId);
 
 	/**
 	 * Select item IDs by analyzed status and {@link TestItem#getLaunchId()}
