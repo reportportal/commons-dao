@@ -78,9 +78,7 @@ public enum FilterTarget {
 					USERS_QUANTITY,
 					Long.class,
 					Lists.newArrayList(JoinEntity.of(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID)))
-			)
-					.withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
-					.get(),
+			).withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString()).get(),
 			new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY,
 					LAUNCHES_QUANTITY,
 					Long.class,
@@ -302,18 +300,12 @@ public enum FilterTarget {
 					List.class,
 					Lists.newArrayList(JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID)))
 			)
-					.withAggregateCriteria(DSL.field("array_cat({0}, {1})::varchar[]",
-							DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
-									DSL.val(KEY_VALUE_SEPARATOR),
-									ITEM_ATTRIBUTE.VALUE
-							))
-									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
-							DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
-									DSL.val(KEY_VALUE_SEPARATOR),
-									LAUNCH_ATTRIBUTE.VALUE
-							))
-									.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
-					).toString())
+					.withAggregateCriteria(DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
+							DSL.val(KEY_VALUE_SEPARATOR),
+							LAUNCH_ATTRIBUTE.VALUE
+					))
+							.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
+							.toString())
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER,
 					USERS.LOGIN,
@@ -543,13 +535,16 @@ public enum FilterTarget {
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
 							PATTERN_TEMPLATE.NAME,
 							List.class,
-							Lists.newArrayList(JoinEntity.of(PATTERN_TEMPLATE_TEST_ITEM,
-									JoinType.LEFT_OUTER_JOIN,
-									TEST_ITEM.ITEM_ID.eq(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID)
-							), JoinEntity.of(PATTERN_TEMPLATE,
-									JoinType.LEFT_OUTER_JOIN,
-									PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID.eq(PATTERN_TEMPLATE.ID)
-							))
+							Lists.newArrayList(
+									JoinEntity.of(PATTERN_TEMPLATE_TEST_ITEM,
+											JoinType.LEFT_OUTER_JOIN,
+											TEST_ITEM.ITEM_ID.eq(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID)
+									),
+									JoinEntity.of(PATTERN_TEMPLATE,
+											JoinType.LEFT_OUTER_JOIN,
+											PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID.eq(PATTERN_TEMPLATE.ID)
+									)
+							)
 					).withAggregateCriteria(DSL.arrayAggDistinct(PATTERN_TEMPLATE.NAME).toString()).get(),
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_TICKET_ID, TICKET.TICKET_ID, String.class, Lists.newArrayList(
 							JoinEntity.of(TEST_ITEM_RESULTS, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)),
