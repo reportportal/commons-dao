@@ -300,12 +300,13 @@ public enum FilterTarget {
 					List.class,
 					Lists.newArrayList(JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID)))
 			)
-					.withAggregateCriteria(DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
-							DSL.val(KEY_VALUE_SEPARATOR),
-							LAUNCH_ATTRIBUTE.VALUE
-					))
-							.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
-							.toString())
+					.withAggregateCriteria(DSL.field("{0}::varchar[]",
+							DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
+									DSL.val(KEY_VALUE_SEPARATOR),
+									LAUNCH_ATTRIBUTE.VALUE
+							))
+									.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
+					).toString())
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER,
 					USERS.LOGIN,
