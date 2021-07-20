@@ -309,17 +309,12 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.KEY,
 					List.class,
 					Lists.newArrayList(JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID)))
-			)
-					.withAggregateCriteria(DSL.field("array_cat({0}, {1}, {2})::varchar[]",
-							DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ":"),
-							LAUNCH_ATTRIBUTE.VALUE,
-							DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
-									DSL.val(KEY_VALUE_SEPARATOR),
-									LAUNCH_ATTRIBUTE.VALUE
-							))
-									.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
-					).toString())
-					.get(),
+			).withAggregateCriteria(DSL.field("{0}::varchar[], {1}::varchar[], {2}::varchar[]",
+					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":")).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+					DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), DSL.val(KEY_VALUE_SEPARATOR), LAUNCH_ATTRIBUTE.VALUE))
+							.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
+			).toString()).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER,
 					USERS.LOGIN,
 					String.class,
