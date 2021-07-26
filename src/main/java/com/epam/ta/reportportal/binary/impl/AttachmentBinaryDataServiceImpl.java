@@ -38,6 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -80,8 +82,12 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	@Override
 	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
-		try (InputStream inputStream = file.getInputStream()) {
-			String contentType = resolveContentType(file.getContentType(), inputStream);
+		try (InputStream inputStream = file.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+			inputStream.transferTo(outputStream);
+			String contentType;
+			try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
+				contentType = resolveContentType(file.getContentType(), copy);
+			}
 			String fileName = resolveFileName(metaInfo, file, contentType);
 
 			String commonPath = filePathGenerator.generate(metaInfo);
