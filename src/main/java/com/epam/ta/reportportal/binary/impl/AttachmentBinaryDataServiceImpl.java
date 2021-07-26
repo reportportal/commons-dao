@@ -93,7 +93,10 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 			String commonPath = filePathGenerator.generate(metaInfo);
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
-			final String fileId = dataStoreService.save(targetPath, inputStream);
+			String fileId;
+			try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
+				fileId = dataStoreService.save(targetPath, copy);
+			}
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(fileId)
