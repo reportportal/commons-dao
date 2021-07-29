@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
+import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import org.springframework.data.domain.Page;
@@ -105,4 +106,8 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
     Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 
     List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit, long offset);
+
+    Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(
+            Long projectId, String name, String[] attributes, Long launchId, JLaunchModeEnum mode
+    );
 }
