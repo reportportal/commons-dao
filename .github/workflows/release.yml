@@ -11,9 +11,9 @@ on:
 
 env:
   GH_USER_NAME: github.actor
-  SCRIPTS_VERSION: 5.4.0
-  BOM_VERSION: 5.4.0
-  MIGRATIONS_VERSION: 5.4.0
+  SCRIPTS_VERSION: 5.5.0
+  BOM_VERSION: 5.5.0
+  MIGRATIONS_VERSION: 5.5.0
 
 jobs:
   release:
