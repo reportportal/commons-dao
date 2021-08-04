@@ -11,10 +11,10 @@ on:
 
 env:
   GH_USER_NAME: github.actor
-  RELEASE_VERSION: 5.5.0
   SCRIPTS_VERSION: 5.5.0
   BOM_VERSION: 5.5.0
   MIGRATIONS_VERSION: 5.5.0
+  RELEASE_VERSION: 5.5.0
 
 jobs:
   release:
