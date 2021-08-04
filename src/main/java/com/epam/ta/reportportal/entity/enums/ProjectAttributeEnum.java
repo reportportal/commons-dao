@@ -44,6 +44,7 @@ public enum ProjectAttributeEnum {
 	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(false)),
 	AUTO_ANALYZER_MODE(Prefix.ANALYZER + "autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue());
 
+	public static final String FOREVER_ALIAS = "0";
 	private String attribute;
 	private String defaultValue;
 
