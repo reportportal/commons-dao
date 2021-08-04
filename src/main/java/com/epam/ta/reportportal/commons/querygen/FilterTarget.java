@@ -305,6 +305,17 @@ public enum FilterTarget {
 							.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
 							.toString())
 					.get(),
+			new CriteriaHolderBuilder().newBuilder(
+					CRITERIA_COMPOSITE_ATTRIBUTE,
+					ITEM_ATTRIBUTE.KEY,
+					List.class,
+					Lists.newArrayList(JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID)))
+			).withAggregateCriteria(DSL.field("{0}::varchar[] || {1}::varchar[] || {2}::varchar[]",
+					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":")).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+					DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), DSL.val(KEY_VALUE_SEPARATOR), LAUNCH_ATTRIBUTE.VALUE))
+							.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
+			).toString()).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER,
 					USERS.LOGIN,
 					String.class,
@@ -516,7 +527,8 @@ public enum FilterTarget {
 									.toString())
 							.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE,
+					new CriteriaHolderBuilder().newBuilder(
+							CRITERIA_LEVEL_ATTRIBUTE,
 							ITEM_ATTRIBUTE.KEY,
 							List.class,
 							Lists.newArrayList(JoinEntity.of(ITEM_ATTRIBUTE,
@@ -537,6 +549,27 @@ public enum FilterTarget {
 									)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false))
 							).toString())
 							.get(),
+
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE, ITEM_ATTRIBUTE.KEY, List.class, Lists.newArrayList(
+							JoinEntity.of(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)),
+							JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
+					)).withAggregateCriteria(DSL.field(
+							"{0}::varchar[] || {1}::varchar[] || {2}::varchar[] || {3}::varchar[] || {4}::varchar[] || {5}::varchar[]",
+							DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":")).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+							DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+							DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
+									DSL.val(KEY_VALUE_SEPARATOR),
+									LAUNCH_ATTRIBUTE.VALUE
+							))
+									.filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
+							DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":")).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
+							DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.VALUE)).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
+							DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
+									DSL.val(KEY_VALUE_SEPARATOR),
+									ITEM_ATTRIBUTE.VALUE
+							))
+									.filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+					).toString()).get(),
 
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
 							PATTERN_TEMPLATE.NAME,
