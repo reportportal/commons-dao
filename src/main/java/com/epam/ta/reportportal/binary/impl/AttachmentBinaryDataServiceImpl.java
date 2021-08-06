@@ -38,10 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -84,10 +81,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
 		try (InputStream inputStream = file.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 			inputStream.transferTo(outputStream);
-			String contentType;
-			try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
-				contentType = resolveContentType(file.getContentType(), copy);
-			}
+			String contentType = resolveContentType(file.getContentType(), outputStream);
 			String fileName = resolveFileName(metaInfo, file, contentType);
 
 			String commonPath = filePathGenerator.generate(metaInfo);
@@ -172,7 +166,12 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		}
 	}
 
-	private String resolveContentType(String contentType, InputStream inputStream) throws IOException {
-		return isContentTypePresent(contentType) ? contentType : contentTypeResolver.detectContentType(inputStream);
+	private String resolveContentType(String contentType, ByteArrayOutputStream outputStream) throws IOException {
+		if (isContentTypePresent(contentType)) {
+			return contentType;
+		}
+		try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
+			return contentTypeResolver.detectContentType(copy);
+		}
 	}
 }
