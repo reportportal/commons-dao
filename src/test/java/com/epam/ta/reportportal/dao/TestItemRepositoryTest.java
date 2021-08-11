@@ -128,14 +128,14 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectPathNames() {
-		Map<Long, String> results = testItemRepository.selectPathNames(3L, 1L);
+		Map<Long, String> results = testItemRepository.selectPathNames(3L, 1L, 1L);
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
 		assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
 	}
 
 	@Test
 	void selectMultiplePathNames() {
-		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L), 1L);
+		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L), Lists.newArrayList(1L), 1L);
 		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
 		results.values()
 				.forEach(pathName -> assertThat("Incorrect class type",
@@ -233,7 +233,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual() {
-		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual("unqIdSTEP_R12", 12L, 101L, 100L);
+		final Optional<Long> latestItem = testItemRepository.findLatestIdByUniqueIdAndLaunchIdAndParentIdAndItemIdNotEqual(
+				"unqIdSTEP_R12",
+				12L,
+				101L,
+				100L
+		);
 		assertTrue(latestItem.isPresent());
 	}
 
@@ -245,7 +250,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
 				.build();
 
-		List<Long> itemIds = testItemRepository.selectIdsByFilter(1L, filter, 1,0);
+		List<Long> itemIds = testItemRepository.selectIdsByFilter(1L, filter, 1, 0);
 
 		Assertions.assertEquals(1, itemIds.size());
 	}
@@ -253,7 +258,7 @@ class TestItemRepositoryTest extends BaseTest {
 	@Sql("/db/fill/item/items-with-nested-steps.sql")
 	@Test
 	void selectIdsByHasDescendants() {
-		final List<Long> itemIds = testItemRepository.selectIdsByHasDescendants(List.of(130L,131L,132L,133L));
+		final List<Long> itemIds = testItemRepository.selectIdsByHasDescendants(List.of(130L, 131L, 132L, 133L));
 		Assertions.assertEquals(3, itemIds.size());
 	}
 
@@ -276,7 +281,12 @@ class TestItemRepositoryTest extends BaseTest {
 	@Sql("/db/fill/item/items-with-nested-steps.sql")
 	@Test
 	void selectIdsUnderByStringLogMessage() {
-		final List<Long> result = testItemRepository.selectIdsUnderByStringLogMessage(10L, List.of(132L, 133L), LogLevel.ERROR_INT, "NullPointer");
+		final List<Long> result = testItemRepository.selectIdsUnderByStringLogMessage(
+				10L,
+				List.of(132L, 133L),
+				LogLevel.ERROR_INT,
+				"NullPointer"
+		);
 		Assertions.assertEquals(1, result.size());
 		Assertions.assertEquals(132L, result.get(0));
 	}
@@ -284,7 +294,12 @@ class TestItemRepositoryTest extends BaseTest {
 	@Sql("/db/fill/item/items-with-nested-steps.sql")
 	@Test
 	void selectIdsUnderByRegexLogMessage() {
-		final List<Long> result = testItemRepository.selectIdsUnderByRegexLogMessage(10L, List.of(132L, 133L), LogLevel.ERROR_INT, "[A-Za-z]*");
+		final List<Long> result = testItemRepository.selectIdsUnderByRegexLogMessage(
+				10L,
+				List.of(132L, 133L),
+				LogLevel.ERROR_INT,
+				"[A-Za-z]*"
+		);
 		Assertions.assertEquals(1, result.size());
 		Assertions.assertEquals(132L, result.get(0));
 	}
@@ -714,9 +729,7 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void findIndexTestItemByLaunchId() {
-		final List<IndexTestItem> items = testItemRepository.findIndexTestItemByLaunchId(1L,
-				List.of(JTestItemTypeEnum.STEP)
-		);
+		final List<IndexTestItem> items = testItemRepository.findIndexTestItemByLaunchId(1L, List.of(JTestItemTypeEnum.STEP));
 		assertEquals(3, items.size());
 	}
 

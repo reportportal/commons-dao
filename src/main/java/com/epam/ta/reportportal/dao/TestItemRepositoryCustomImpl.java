@@ -652,8 +652,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, String> selectPathNames(Long itemId, Long projectId) {
-		return getPathNamesResult(Collections.singletonList(itemId), projectId).stream()
+	public Map<Long, String> selectPathNames(Long itemId, Long launchId, Long projectId) {
+		return getPathNamesResult(Collections.singletonList(itemId), Collections.singletonList(launchId), projectId).stream()
 				.filter(result -> !itemId.equals(result.get(fieldName("id"))))
 				.collect(LinkedHashMap::new,
 						(m, result) -> ofNullable(result.get(fieldName("id"))).ifPresent(id -> m.put((Long) id,
@@ -664,8 +664,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
-	public Map<Long, PathName> selectPathNames(Collection<Long> ids, Long projectId) {
-		return PATH_NAMES_FETCHER.apply(getPathNamesResult(ids, projectId));
+	public Map<Long, PathName> selectPathNames(Collection<Long> ids, Collection<Long> launchIds, Long projectId) {
+		return PATH_NAMES_FETCHER.apply(getPathNamesResult(ids, launchIds, projectId));
 	}
 
 	/**
@@ -927,7 +927,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		}
 	}
 
-	private Result<Record5<Long, Long, String, Integer, String>> getPathNamesResult(Collection<Long> ids, Long projectId) {
+	private Result<Record5<Long, Long, String, Integer, String>> getPathNamesResult(Collection<Long> ids, Collection<Long> launchIds,
+			Long projectId) {
 		final String tree = "supplytree";
 		Table<Record> supplytree = table(name(tree));
 		Field<Long> TREE_ITEM_ID = field(name(tree, "item_id"), Long.class);
@@ -948,6 +949,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 				.where(TEST_ITEM.PARENT_ID.isNull())
 				.and(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(TEST_ITEM.LAUNCH_ID.in(launchIds))
 				.unionAll(select(TEST_ITEM.ITEM_ID,
 						TEST_ITEM.PARENT_ID,
 						TEST_ITEM.NAME.as("leaf_name"),
@@ -960,7 +962,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
 						.join(supplytree)
 						.on(TEST_ITEM.PARENT_ID.eq(TREE_ITEM_ID))
-						.where(LAUNCH.PROJECT_ID.eq(projectId))))
+						.where(LAUNCH.PROJECT_ID.eq(projectId))
+						.and(TEST_ITEM.LAUNCH_ID.in(launchIds))))
 				.select(TREE_ITEM_ID, ID, LAUNCH_NAME, NUMBER, NAME)
 				.from(supplytree)
 				.where(TREE_ITEM_ID.in(ids))
