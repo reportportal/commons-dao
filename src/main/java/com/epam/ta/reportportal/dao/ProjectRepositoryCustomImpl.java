@@ -90,6 +90,18 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 	}
 
 	@Override
+	public List<Project> findAllByUserLogin(String login) {
+		return PROJECT_FETCHER.apply(dsl.select(PROJECT.fields())
+				.from(PROJECT)
+				.join(PROJECT_USER)
+				.on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+				.join(USERS)
+				.on(PROJECT_USER.USER_ID.eq(USERS.ID))
+				.where(USERS.LOGIN.eq(login))
+				.fetch());
+	}
+
+	@Override
 	public Page<Project> findAllIdsAndProjectAttributes(Pageable pageable) {
 
 		return PageableExecutionUtils.getPage(PROJECT_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_PROJECT)
