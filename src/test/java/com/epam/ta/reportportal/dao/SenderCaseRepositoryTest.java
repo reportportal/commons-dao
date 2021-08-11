@@ -8,13 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Collections;
+import java.util.List;
 
+@Sql("/db/fill/sendercase/sender-case-fill.sql")
 public class SenderCaseRepositoryTest extends BaseTest {
 
 	@Autowired
 	private SenderCaseRepository senderCaseRepository;
 
-	@Sql("/db/fill/sendercase/sender-case-fill.sql")
+	@Test
+	void findAllByProjectId() {
+		final List<SenderCase> senderCases = senderCaseRepository.findAllByProjectId(1L);
+		Assertions.assertFalse(senderCases.isEmpty());
+	}
+
 	@Test
 	void deleteRecipients() {
 		final int removed = senderCaseRepository.deleteRecipients(1L, Collections.singleton("first"));
