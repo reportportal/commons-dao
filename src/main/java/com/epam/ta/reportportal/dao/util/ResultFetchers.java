@@ -34,15 +34,12 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.Table;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 
@@ -83,10 +80,9 @@ public class ResultFetchers {
 			} else {
 				project = projects.get(id);
 			}
-			project.getProjectAttributes()
-					.add(new ProjectAttribute().withProject(project)
-							.withAttribute(ATTRIBUTE_MAPPER.map(record))
-							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
+			ofNullable(record.field(PROJECT_ATTRIBUTE.VALUE)).flatMap(f -> ofNullable(record.get(f)))
+					.ifPresent(field -> project.getProjectAttributes()
+							.add(new ProjectAttribute().withProject(project).withAttribute(ATTRIBUTE_MAPPER.map(record)).withValue(field)));
 			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).flatMap(f -> ofNullable(record.get(f))).ifPresent(field -> {
 				Set<ProjectUser> projectUsers = ofNullable(project.getUsers()).orElseGet(Sets::newHashSet);
 				projectUsers.add(PROJECT_USER_MAPPER.map(record));

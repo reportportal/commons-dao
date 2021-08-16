@@ -25,7 +25,6 @@ import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -54,17 +53,17 @@ public class Project implements Serializable {
 	@Column(name = "project_type")
 	private ProjectType projectType;
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	private Set<Integration> integrations = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@OrderBy(value = "issue_type_id")
 	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER, orphanRemoval = true)
 	private Set<SenderCase> senderCases = Sets.newHashSet();
 
 	@Column(name = "creation_date")
@@ -83,7 +82,7 @@ public class Project implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
 	private Set<ProjectUser> users = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "project_id", updatable = false)
 	@OrderBy
 	private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
