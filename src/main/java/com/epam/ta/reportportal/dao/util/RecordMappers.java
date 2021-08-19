@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -319,6 +320,13 @@ public class RecordMappers {
 		projectUser.setProject(project);
 		projectUser.setUser(user);
 		return projectUser;
+	};
+
+	public static final RecordMapper<Record, ReportPortalUser.ProjectDetails> PROJECT_DETAILS_MAPPER = r -> {
+		final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
+		final String projectName = r.get(PROJECT.NAME);
+		final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
+		return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
 	};
 
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
