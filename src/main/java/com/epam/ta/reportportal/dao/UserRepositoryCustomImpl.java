@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.REPORT_PORTAL_USER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.REPORTPORTAL_USER_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -112,6 +113,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
 				.where(USERS.LOGIN.eq(login))
 				.fetch()));
+	}
+
+	@Override
+	public Optional<ReportPortalUser> findReportPortalUser(String login) {
+		return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL)
+				.from(USERS)
+				.where(USERS.LOGIN.eq(login))
+				.fetchOptional(REPORT_PORTAL_USER_MAPPER);
 	}
 
 }

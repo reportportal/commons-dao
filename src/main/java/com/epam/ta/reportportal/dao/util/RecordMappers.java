@@ -47,6 +47,7 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -69,10 +70,7 @@ import org.jooq.Result;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -289,6 +287,16 @@ public class RecordMappers {
 		return indexLaunch;
 	};
 
+	public static final RecordMapper<Record, ReportPortalUser> REPORT_PORTAL_USER_MAPPER = r -> ReportPortalUser.userBuilder()
+			.withUserName(r.get(USERS.LOGIN))
+			.withPassword(ofNullable(r.get(USERS.PASSWORD)).orElse(""))
+			.withAuthorities(Collections.emptyList())
+			.withUserId(r.get(USERS.ID))
+			.withUserRole(UserRole.findByName(r.get(USERS.ROLE))
+					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR)))
+			.withEmail(r.get(USERS.EMAIL))
+			.build();
+
 	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
 		User user = r.into(USERS.fieldStream().filter(f -> fieldExcludingPredicate(USERS.METADATA).test(f)).toArray(Field[]::new))
 				.into(User.class);
@@ -373,8 +381,8 @@ public class RecordMappers {
 		});
 	};
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD))
-			.ifPresent(field -> {
+	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD)).ifPresent(
+			field -> {
 				Set<String> contentFields = ofNullable(widget.getContentFields()).orElseGet(Sets::newLinkedHashSet);
 				contentFields.add(field);
 				widget.setContentFields(contentFields);
