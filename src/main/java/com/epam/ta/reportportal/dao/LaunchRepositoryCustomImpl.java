@@ -239,21 +239,27 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit, long offset) {
+	public List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit) {
 		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID)
 				.from(LAUNCH)
 				.where(LAUNCH.PROJECT_ID.eq(projectId))
 				.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
-				.and(DSL.exists(DSL.selectOne()
-						.from(TEST_ITEM)
-						.join(TEST_ITEM_RESULTS)
-						.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.join(ISSUE)
-						.on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-						.where(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))))
+				.and(LAUNCH.STATUS.notEqual(JStatusEnum.PASSED))
 				.orderBy(LAUNCH.ID)
 				.limit(limit)
-				.offset(offset)
+				.fetch(INDEX_LAUNCH_RECORD_MAPPER);
+	}
+
+	@Override
+	public List<IndexLaunch> findIndexLaunchByProjectIdAfterId(Long projectId, Long launchId, int limit) {
+		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID)
+				.from(LAUNCH)
+				.where(LAUNCH.PROJECT_ID.eq(projectId))
+				.and(LAUNCH.ID.gt(launchId))
+				.and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
+				.and(LAUNCH.STATUS.notEqual(JStatusEnum.PASSED))
+				.orderBy(LAUNCH.ID)
+				.limit(limit)
 				.fetch(INDEX_LAUNCH_RECORD_MAPPER);
 	}
 
