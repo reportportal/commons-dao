@@ -236,11 +236,23 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void findIndexLaunchByProjectId() {
-		final List<IndexLaunch> indexLaunchByProjectId = launchRepository.findIndexLaunchByProjectId(2L, 1, 0);
-		assertEquals(1, indexLaunchByProjectId.size());
+		final List<IndexLaunch> result = launchRepository.findIndexLaunchByProjectId(2L, 1);
+		assertEquals(1, result.size());
 
-		final List<IndexLaunch> empty = launchRepository.findIndexLaunchByProjectId(2L, 10, 1);
-		assertTrue(empty.isEmpty());
+		final List<IndexLaunch> secondResult = launchRepository.findIndexLaunchByProjectId(2L, 2);
+		assertEquals(2, secondResult.size());
+	}
+
+	@Test
+	void findIndexLaunchByProjectIdAfterId() {
+		final List<IndexLaunch> result = launchRepository.findIndexLaunchByProjectIdAfterId(2L, 1L, 3);
+		assertEquals(3, result.size());
+
+		final List<IndexLaunch> secondResult = launchRepository.findIndexLaunchByProjectIdAfterId(2L, 100L, 2);
+		assertEquals(2, secondResult.size());
+
+		final List<IndexLaunch> thirdResult = launchRepository.findIndexLaunchByProjectIdAfterId(2L, 200L, 2);
+		assertEquals(1, thirdResult.size());
 	}
 
 	@Test
