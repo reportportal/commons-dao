@@ -155,28 +155,6 @@ public class ResultFetchers {
 		return new ArrayList<>(testItems.values());
 	};
 
-	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
-		Map<Long, PathName> content = Maps.newHashMap();
-		result.forEach(record -> {
-			Long childItemId = record.get(fieldName("item_id"), Long.class);
-			PathName pathName = content.computeIfAbsent(childItemId, k -> {
-				LaunchPathName launchPathName = new LaunchPathName(record.get(fieldName("launch_name"), String.class),
-						record.get(fieldName("number"), Integer.class)
-				);
-				return new PathName(launchPathName, Lists.newArrayList());
-			});
-
-			ofNullable(record.get(fieldName("id"), Long.class)).ifPresent(id -> {
-				if (!childItemId.equals(id)) {
-					String parentName = record.get(fieldName("name"), String.class);
-					pathName.getItemPaths().add(new ItemPathName(id, parentName));
-				}
-			});
-		});
-
-		return content;
-	};
-
 	/**
 	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log} objects.
 	 */
