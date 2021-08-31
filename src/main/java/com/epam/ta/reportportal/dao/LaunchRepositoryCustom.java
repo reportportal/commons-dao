@@ -105,7 +105,12 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
      */
     Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
 
-    List<IndexLaunch> findIndexLaunchByProjectId(Long projectId, int limit, long offset);
+    List<Long> findIdsByProjectIdAndModeAndStatusNotEq(Long projectId, JLaunchModeEnum mode, JStatusEnum status, int limit);
+
+    List<Long> findIdsByProjectIdAndModeAndStatusNotEqAfterId(Long projectId, JLaunchModeEnum mode, JStatusEnum status, Long launchId,
+            int limit);
+
+    List<IndexLaunch> findIndexLaunchByIdsAndLogLevel(List<Long> ids, Integer logLevel);
 
     Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(
             Long projectId, String name, String[] attributes, Long launchId, JLaunchModeEnum mode
