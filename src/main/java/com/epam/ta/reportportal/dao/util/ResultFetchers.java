@@ -23,7 +23,9 @@ import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.item.*;
+import com.epam.ta.reportportal.entity.item.NestedItem;
+import com.epam.ta.reportportal.entity.item.Parameter;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
@@ -47,7 +49,6 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -221,6 +222,12 @@ public class ResultFetchers {
 
 			users.put(id, user);
 		});
+		return new ArrayList<>(users.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<User>> USER_WITHOUT_PROJECT_FETCHER = records -> {
+		Map<Long, User> users = Maps.newLinkedHashMap();
+		records.forEach(record -> users.computeIfAbsent(record.get(USERS.ID), key -> record.map(USER_MAPPER)));
 		return new ArrayList<>(users.values());
 	};
 
