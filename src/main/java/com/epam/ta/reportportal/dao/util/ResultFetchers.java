@@ -250,6 +250,12 @@ public class ResultFetchers {
 		return new ArrayList<>(users.values());
 	};
 
+	public static final Function<Result<? extends Record>, List<User>> USER_WITHOUT_PROJECT_FETCHER = records -> {
+		Map<Long, User> users = Maps.newLinkedHashMap();
+		records.forEach(record -> users.computeIfAbsent(record.get(USERS.ID), key -> record.map(USER_MAPPER)));
+		return new ArrayList<>(users.values());
+	};
+
 	public static final Function<Result<? extends Record>, List<UserFilter>> USER_FILTER_FETCHER = result -> {
 		Map<Long, UserFilter> userFilterMap = Maps.newLinkedHashMap();
 		result.forEach(r -> {
