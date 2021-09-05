@@ -80,4 +80,18 @@ public class CompositeFilter implements Queryable {
 	public List<ConvertibleCondition> getFilterConditions() {
 		return filters.stream().flatMap(it -> it.getFilterConditions().stream()).collect(Collectors.toList());
 	}
+
+	public boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition) {
+		if (oldCondition == null || newCondition == null) {
+			return false;
+		}
+
+		for (Queryable filter : filters) {
+			if (filter.replaceSearchCriteria(oldCondition, newCondition)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
