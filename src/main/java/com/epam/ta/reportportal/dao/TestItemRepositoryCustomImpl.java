@@ -866,6 +866,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<IndexTestItem> findIndexTestItemByLaunchId(Long launchId, Collection<JTestItemTypeEnum> itemTypes) {
 		return dsl.select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.NAME,
 				TEST_ITEM.START_TIME,
 				TEST_ITEM.UNIQUE_ID,
 				TEST_ITEM.TEST_CASE_HASH,

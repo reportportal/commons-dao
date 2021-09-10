@@ -712,6 +712,7 @@ class TestItemRepositoryTest extends BaseTest {
 	void findIndexTestItemByLaunchId() {
 		final List<IndexTestItem> items = testItemRepository.findIndexTestItemByLaunchId(1L, List.of(JTestItemTypeEnum.STEP));
 		assertEquals(3, items.size());
+		items.forEach(it -> assertNotNull(it.getTestItemName()));
 	}
 
 	@Test
