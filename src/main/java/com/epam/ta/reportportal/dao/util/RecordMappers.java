@@ -237,6 +237,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, IndexTestItem> INDEX_TEST_ITEM_RECORD_MAPPER = record -> {
 		final IndexTestItem indexTestItem = new IndexTestItem();
 		indexTestItem.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
+		indexTestItem.setTestItemName(record.get(TEST_ITEM.NAME));
 		indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME).toLocalDateTime());
 		indexTestItem.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
 		indexTestItem.setTestCaseHash(record.get(TEST_ITEM.TEST_CASE_HASH));
