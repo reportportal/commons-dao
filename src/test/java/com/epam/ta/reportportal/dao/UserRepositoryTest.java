@@ -296,6 +296,21 @@ class UserRepositoryTest extends BaseTest {
 		assertEquals(1, users.getTotalElements());
 	}
 
+	@Test
+	void shouldFindByIdExcludingProjects() {
+		final Optional<User> user = userRepository.findByIdExcludingProjects(1L);
+		assertTrue(user.isPresent());
+		assertEquals(1L, user.get().getId());
+		assertEquals("superadmin", user.get().getLogin());
+		assertTrue(user.get().getProjects().isEmpty());
+	}
+
+	@Test
+	void shouldNotFindByIdExcludingProjects() {
+		final Optional<User> user = userRepository.findByIdExcludingProjects(123L);
+		assertTrue(user.isEmpty());
+	}
+
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void createUserTest() {
