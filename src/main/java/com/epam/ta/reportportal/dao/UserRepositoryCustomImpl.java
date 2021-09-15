@@ -79,7 +79,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public Optional<User> findByIdExcludingProjects(Long id) {
+	public Optional<User> findRawById(Long id) {
 		return dsl.select().from(USERS).where(USERS.ID.eq(id)).fetchOptional(USER_MAPPER);
 	}
 
