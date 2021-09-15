@@ -23,9 +23,7 @@ import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.item.NestedStep;
-import com.epam.ta.reportportal.entity.item.PathName;
-import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.*;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
@@ -38,6 +36,8 @@ import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.jooq.Condition;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -651,23 +651,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.fetchOptional(r -> Pair.of(r.get(TEST_ITEM.ITEM_ID), r.get(TEST_ITEM.PATH, String.class)));
 	}
 
-	@Override
-	public Map<Long, String> selectPathNames(Long itemId, Long launchId, Long projectId) {
-		return getPathNamesResult(Collections.singletonList(itemId), Collections.singletonList(launchId), projectId).stream()
-				.filter(result -> !itemId.equals(result.get(fieldName("id"))))
-				.collect(LinkedHashMap::new,
-						(m, result) -> ofNullable(result.get(fieldName("id"))).ifPresent(id -> m.put((Long) id,
-								result.get(fieldName("name")).toString()
-						)),
-						LinkedHashMap::putAll
-				);
-	}
-
-	@Override
-	public Map<Long, PathName> selectPathNames(Collection<Long> ids, Collection<Long> launchIds, Long projectId) {
-		return PATH_NAMES_FETCHER.apply(getPathNamesResult(ids, launchIds, projectId));
-	}
-
 	/**
 	 * {@link Log} entities are searched from the whole tree under
 	 * {@link TestItem} that matched to the provided `launchId` and `autoAnalyzed` conditions
@@ -883,6 +866,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public List<IndexTestItem> findIndexTestItemByLaunchId(Long launchId, Collection<JTestItemTypeEnum> itemTypes) {
 		return dsl.select(TEST_ITEM.ITEM_ID,
+				TEST_ITEM.NAME,
 				TEST_ITEM.START_TIME,
 				TEST_ITEM.UNIQUE_ID,
 				TEST_ITEM.TEST_CASE_HASH,
@@ -927,48 +911,83 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		}
 	}
 
-	private Result<Record5<Long, Long, String, Integer, String>> getPathNamesResult(Collection<Long> ids, Collection<Long> launchIds,
-			Long projectId) {
-		final String tree = "supplytree";
-		Table<Record> supplytree = table(name(tree));
-		Field<Long> TREE_ITEM_ID = field(name(tree, "item_id"), Long.class);
-		Field<Long> ID = field(sql("unnest(?)", fieldName("ids")), Long.class).as("id");
-		Field<String> LAUNCH_NAME = field(name(tree, "launch_name"), String.class);
-		Field<Integer> NUMBER = field(name(tree, "number"), Integer.class);
-		Field<String> NAME = field(sql("unnest(?)", fieldName("names")), String.class).as("name");
+	/**
+	 * @return Map<testITemId, PathName>
+	 */
+	@Override
+	public Map<Long, PathName> selectPathNames(Collection<TestItem> testItems) {
+		if (CollectionUtils.isEmpty(testItems)) return new HashMap<>();
 
-		return dsl.selectFrom(withRecursive(tree).as(select(TEST_ITEM.ITEM_ID,
-				TEST_ITEM.PARENT_ID,
-				TEST_ITEM.NAME.as("leaf_name"),
-				LAUNCH.NAME.as("launch_name"),
-				LAUNCH.NUMBER,
-				field(sql("ARRAY [CAST(? AS TEXT)] AS names", TEST_ITEM.NAME)),
-				field(sql("ARRAY [?] AS ids", TEST_ITEM.ITEM_ID))
-		).from(TEST_ITEM)
-				.join(LAUNCH)
-				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-				.where(TEST_ITEM.PARENT_ID.isNull())
-				.and(LAUNCH.PROJECT_ID.eq(projectId))
-				.and(TEST_ITEM.LAUNCH_ID.in(launchIds))
-				.unionAll(select(TEST_ITEM.ITEM_ID,
-						TEST_ITEM.PARENT_ID,
-						TEST_ITEM.NAME.as("leaf_name"),
-						LAUNCH.NAME.as("launch_name"),
-						LAUNCH.NUMBER,
-						field(sql("? || CAST(? AS TEXT) AS names", fieldName("names"), TEST_ITEM.NAME)),
-						field(sql("? || ? AS ids", fieldName("ids"), TEST_ITEM.ITEM_ID))
-				).from(TEST_ITEM)
-						.join(LAUNCH)
-						.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-						.join(supplytree)
-						.on(TEST_ITEM.PARENT_ID.eq(TREE_ITEM_ID))
-						.where(LAUNCH.PROJECT_ID.eq(projectId))
-						.and(TEST_ITEM.LAUNCH_ID.in(launchIds))))
-				.select(TREE_ITEM_ID, ID, LAUNCH_NAME, NUMBER, NAME)
-				.from(supplytree)
-				.where(TREE_ITEM_ID.in(ids))
-				.orderBy(TREE_ITEM_ID)
-				.asTable("full_tree")).fetch();
+		// Item ids for search
+		Set<Long> testItemIds = new HashSet<>();
+		// Structure for creating return object
+		Map<Long, List<Long>> testItemWithPathIds = new HashMap<>();
+
+		for (TestItem testItem : testItems) {
+			String path = testItem.getPath();
+			// For normal case is redundant, but not sure for current situation, better to check
+			// and skip testItem without path, cause of incorrect state.
+			if (Strings.isBlank(path)) {
+				continue;
+			}
+			String[] pathIds = path.split("\\.");
+			Arrays.asList(pathIds).forEach(
+				pathItemId -> {
+					long itemIdFromPath = Long.parseLong(pathItemId);
+					testItemIds.add(itemIdFromPath);
+
+					List<Long> itemPaths = testItemWithPathIds.getOrDefault(testItem.getItemId(), new ArrayList<>());
+					itemPaths.add(itemIdFromPath);
+					testItemWithPathIds.put(testItem.getItemId(), itemPaths);
+				}
+			);
+		}
+
+		Map<Long, Record4<Long, String, Integer, String>> resultMap = new HashMap<>();
+		// Convert database data to more useful form
+		getTestItemAndLaunchIdName(testItemIds).forEach(record -> resultMap.put(
+				record.get(fieldName("item_id"), Long.class), record
+		));
+
+		Map<Long, PathName> testItemPathNames = new HashMap<>();
+		testItemWithPathIds.forEach((testItemId, pathIds) -> {
+			var record = resultMap.get(testItemId);
+			if (record == null) {
+				return;
+			}
+
+			LaunchPathName launchPathName = new LaunchPathName(
+					record.get(fieldName("launch_name"), String.class),
+					record.get(fieldName("number"), Integer.class)
+			);
+
+			List<ItemPathName> itemPathNames = new ArrayList<>();
+			pathIds.forEach(pathItemId -> {
+				// Base testItem don't add
+				if (!testItemId.equals(pathItemId) && resultMap.containsKey(pathItemId)) {
+					var record2 = resultMap.get(pathItemId);
+					String pathItemName = record2.get(fieldName("name"), String.class);
+					itemPathNames.add(new ItemPathName(pathItemId, pathItemName));
+				}
+			});
+			PathName pathName = new PathName(launchPathName, itemPathNames);
+			testItemPathNames.put(testItemId, pathName);
+		});
+
+
+		return testItemPathNames;
 	}
 
+	/**
+	 * @param testItemIds Collection<Long>
+	 * @return Result<Record4<testItemId, testItemName, launchNumber, launchName>>
+	 */
+	private Result<Record4<Long, String, Integer, String>> getTestItemAndLaunchIdName(Collection<Long> testItemIds) {
+		return dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.NAME, LAUNCH.NUMBER, LAUNCH.NAME.as("launch_name"))
+				.from(TEST_ITEM)
+				.join(LAUNCH)
+				.on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+				.where(TEST_ITEM.ITEM_ID.in(testItemIds))
+				.fetch();
+	}
 }

@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.commons.querygen.CompositeFilterCondition;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -30,6 +31,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
+import org.jooq.Operator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +44,8 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -151,6 +153,23 @@ class UserRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void shouldFindReportPortalUserByLogin() {
+		Optional<ReportPortalUser> chubaka = userRepository.findReportPortalUser("chubaka");
+		assertTrue(chubaka.isPresent(), "User not found");
+		assertThat(chubaka.get().getUsername(), Matchers.equalTo("chubaka"));
+		assertThat(chubaka.get().getUserId(), Matchers.notNullValue());
+		assertThat(chubaka.get().getPassword(), Matchers.equalTo("601c4731aeff3b84f76672ad024bb2a0"));
+		assertThat(chubaka.get().getEmail(), Matchers.equalTo("chybaka@domain.com"));
+		assertThat(chubaka.get().getUserRole(), Matchers.equalTo(UserRole.USER));
+	}
+
+	@Test
+	void shouldNotFindReportPortalUserByLoginWhenNotExists() {
+		Optional<ReportPortalUser> user = userRepository.findReportPortalUser("not existing user");
+		assertFalse(user.isPresent(), "User found");
+	}
+
+	@Test
 	void findByLogin() {
 		final String login = "han_solo";
 
@@ -190,7 +209,7 @@ class UserRepositoryTest extends BaseTest {
 	void findAllByRole() {
 		List<User> users = userRepository.findAllByRole(UserRole.USER);
 
-		assertEquals(3, users.size());
+		assertEquals(4, users.size());
 		users.forEach(it -> assertEquals(UserRole.USER, it.getRole()));
 	}
 
@@ -199,7 +218,7 @@ class UserRepositoryTest extends BaseTest {
 		Page<User> users = userRepository.findAllByUserTypeAndExpired(UserType.INTERNAL, false, Pageable.unpaged());
 
 		assertNotNull(users);
-		assertEquals(5, users.getNumberOfElements());
+		assertEquals(6, users.getNumberOfElements());
 	}
 
 	@Test
@@ -231,6 +250,50 @@ class UserRepositoryTest extends BaseTest {
 		PageRequest pageRequest = PageRequest.of(0, 5, Sort.Direction.ASC, CRITERIA_PROJECT);
 		Page<User> result = userRepository.findByFilter(filter, pageRequest);
 		assertEquals(2, result.getTotalElements());
+	}
+
+	@Test
+	void findByFilterExcludingProjects() {
+		final CompositeFilterCondition userCondition = new CompositeFilterCondition(List.of(new FilterCondition(Operator.OR,
+						Condition.CONTAINS,
+						false,
+						"ch",
+						CRITERIA_USER
+				),
+				new FilterCondition(Operator.OR, Condition.CONTAINS, false, "ch", CRITERIA_FULL_NAME),
+				new FilterCondition(Operator.OR, Condition.CONTAINS, false, "ch", CRITERIA_EMAIL)
+		), Operator.AND);
+
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(userCondition)
+				.withCondition(new FilterCondition(Operator.AND, Condition.ANY, true, "superadmin_personal", CRITERIA_PROJECT))
+				.build();
+
+		Page<User> users = userRepository.findByFilterExcludingProjects(filter, PageRequest.of(0, 5));
+		assertEquals(3, users.getTotalElements());
+	}
+
+	@Test
+	void shouldNotFindByFilterExcludingProjects() {
+		final CompositeFilterCondition userCondition = new CompositeFilterCondition(List.of(new FilterCondition(Operator.OR,
+						Condition.CONTAINS,
+						false,
+						"ch",
+						CRITERIA_USER
+				),
+				new FilterCondition(Operator.OR, Condition.CONTAINS, false, "ch", CRITERIA_FULL_NAME),
+				new FilterCondition(Operator.OR, Condition.CONTAINS, false, "ch", CRITERIA_EMAIL)
+		), Operator.AND);
+
+		Filter filter = Filter.builder()
+				.withTarget(User.class)
+				.withCondition(userCondition)
+				.withCondition(new FilterCondition(Operator.AND, Condition.ANY, true, "millennium_falcon", CRITERIA_PROJECT))
+				.build();
+
+		Page<User> users = userRepository.findByFilterExcludingProjects(filter, PageRequest.of(0, 5));
+		assertEquals(1, users.getTotalElements());
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")

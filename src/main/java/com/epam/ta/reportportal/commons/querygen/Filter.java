@@ -205,4 +205,35 @@ public class Filter implements Serializable, Queryable {
 		}
 	}
 
+	public boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition) {
+		if (oldCondition == null || newCondition == null) {
+			return false;
+		}
+
+		return replaceSearchCriteria(oldCondition, newCondition, filterConditions);
+	}
+
+	private boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition,
+										  List<ConvertibleCondition> filterConditionList) {
+		for (int i = 0, filterConditionListSize = filterConditionList.size(); i < filterConditionListSize; i++) {
+			ConvertibleCondition filterCondition = filterConditionList.get(i);
+			if (filterCondition instanceof FilterCondition) {
+				FilterCondition filterCondition1 = (FilterCondition) filterCondition;
+				if (filterCondition1.getCondition() == oldCondition.getCondition() &&
+					filterCondition1.isNegative() == oldCondition.isNegative() &&
+					Objects.equals(filterCondition1.getSearchCriteria(), oldCondition.getSearchCriteria())
+				) {
+					filterConditionList.set(i, newCondition);
+					return true;
+				}
+			} else if (filterCondition instanceof CompositeFilterCondition) {
+				if (replaceSearchCriteria(oldCondition, newCondition,
+						((CompositeFilterCondition) filterCondition).getConditions())) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 }

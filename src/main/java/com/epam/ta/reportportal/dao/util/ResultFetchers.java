@@ -23,7 +23,9 @@ import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.item.*;
+import com.epam.ta.reportportal.entity.item.NestedItem;
+import com.epam.ta.reportportal.entity.item.Parameter;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
@@ -34,15 +36,12 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.Table;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 
@@ -50,7 +49,6 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -83,10 +81,9 @@ public class ResultFetchers {
 			} else {
 				project = projects.get(id);
 			}
-			project.getProjectAttributes()
-					.add(new ProjectAttribute().withProject(project)
-							.withAttribute(ATTRIBUTE_MAPPER.map(record))
-							.withValue(record.get(PROJECT_ATTRIBUTE.VALUE)));
+			ofNullable(record.field(PROJECT_ATTRIBUTE.VALUE)).flatMap(f -> ofNullable(record.get(f)))
+					.ifPresent(field -> project.getProjectAttributes()
+							.add(new ProjectAttribute().withProject(project).withAttribute(ATTRIBUTE_MAPPER.map(record)).withValue(field)));
 			ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).flatMap(f -> ofNullable(record.get(f))).ifPresent(field -> {
 				Set<ProjectUser> projectUsers = ofNullable(project.getUsers()).orElseGet(Sets::newHashSet);
 				projectUsers.add(PROJECT_USER_MAPPER.map(record));
@@ -159,28 +156,6 @@ public class ResultFetchers {
 		return new ArrayList<>(testItems.values());
 	};
 
-	public static final Function<Result<? extends Record>, Map<Long, PathName>> PATH_NAMES_FETCHER = result -> {
-		Map<Long, PathName> content = Maps.newHashMap();
-		result.forEach(record -> {
-			Long childItemId = record.get(fieldName("item_id"), Long.class);
-			PathName pathName = content.computeIfAbsent(childItemId, k -> {
-				LaunchPathName launchPathName = new LaunchPathName(record.get(fieldName("launch_name"), String.class),
-						record.get(fieldName("number"), Integer.class)
-				);
-				return new PathName(launchPathName, Lists.newArrayList());
-			});
-
-			ofNullable(record.get(fieldName("id"), Long.class)).ifPresent(id -> {
-				if (!childItemId.equals(id)) {
-					String parentName = record.get(fieldName("name"), String.class);
-					pathName.getItemPaths().add(new ItemPathName(id, parentName));
-				}
-			});
-		});
-
-		return content;
-	};
-
 	/**
 	 * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log} objects.
 	 */
@@ -247,6 +222,12 @@ public class ResultFetchers {
 
 			users.put(id, user);
 		});
+		return new ArrayList<>(users.values());
+	};
+
+	public static final Function<Result<? extends Record>, List<User>> USER_WITHOUT_PROJECT_FETCHER = records -> {
+		Map<Long, User> users = Maps.newLinkedHashMap();
+		records.forEach(record -> users.computeIfAbsent(record.get(USERS.ID), key -> record.map(USER_MAPPER)));
 		return new ArrayList<>(users.values());
 	};
 

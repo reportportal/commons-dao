@@ -29,6 +29,7 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_TYPE = "type";
 	public static final String CRITERIA_PATH = "path";
 	public static final String CRITERIA_ISSUE_TYPE = "issueType";
+	public static final String CRITERIA_ISSUE_TYPE_ID = "issueTypeId";
 	public static final String CRITERIA_ISSUE_GROUP_ID = "issueGroupId";
 	public static final String CRITERIA_UNIQUE_ID = "uniqueId";
 	public static final String CRITERIA_UUID = "uuid";
