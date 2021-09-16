@@ -296,6 +296,21 @@ class UserRepositoryTest extends BaseTest {
 		assertEquals(1, users.getTotalElements());
 	}
 
+	@Test
+	void shouldFindRawById() {
+		final Optional<User> user = userRepository.findRawById(1L);
+		assertTrue(user.isPresent());
+		assertEquals(1L, user.get().getId());
+		assertEquals("superadmin", user.get().getLogin());
+		assertTrue(user.get().getProjects().isEmpty());
+	}
+
+	@Test
+	void shouldNotFindRawById() {
+		final Optional<User> user = userRepository.findRawById(123L);
+		assertTrue(user.isEmpty());
+	}
+
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void createUserTest() {

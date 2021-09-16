@@ -33,6 +33,8 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
 
 	Page<User> findByFilterExcludingProjects(Queryable filter, Pageable pageable);
 
+	Optional<User> findRawById(Long id);
+
 	/**
 	 * Finds entities list according provided filter
 	 *
