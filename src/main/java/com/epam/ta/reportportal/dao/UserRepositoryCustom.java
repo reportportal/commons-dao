@@ -31,6 +31,10 @@ import java.util.Optional;
  */
 public interface UserRepositoryCustom extends FilterableRepository<User> {
 
+	Page<User> findByFilterExcludingProjects(Queryable filter, Pageable pageable);
+
+	Optional<User> findRawById(Long id);
+
 	/**
 	 * Finds entities list according provided filter
 	 *
@@ -51,4 +55,5 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
 	 */
 	Optional<ReportPortalUser> findUserDetails(String login);
 
+	Optional<ReportPortalUser> findReportPortalUser(String login);
 }
