@@ -805,7 +805,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.groupBy(groupingFields)
 				.orderBy(DSL.when(ITEM_ATTRIBUTE.VALUE.likeRegex(VERSION_PATTERN),
 						PostgresDSL.stringToArray(ITEM_ATTRIBUTE.VALUE, VERSION_DELIMITER).cast(Integer[].class)
-				), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.ASC))
+				), ITEM_ATTRIBUTE.VALUE.sort(SortOrder.DESC))
 				.fetch(), isLatest);
 
 		return StringUtils.isBlank(patternName) ?
