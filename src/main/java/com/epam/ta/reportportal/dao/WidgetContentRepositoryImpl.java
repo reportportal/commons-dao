@@ -752,8 +752,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
 	@Override
 	public List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesStatistics(Filter filter, int limit) {
+		final SelectQuery<? extends Record> filteringQuery = QueryBuilder.newBuilder(filter, collectJoinFields(filter))
+				.with(limit)
+				.build();
+		filteringQuery.addOrderBy(max(TEST_ITEM_RESULTS.DURATION).desc());
 		return dsl.with(ITEMS)
-				.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter)).with(limit).build())
+				.as(filteringQuery)
 				.select(TEST_ITEM.ITEM_ID.as(ID),
 						TEST_ITEM.UNIQUE_ID,
 						TEST_ITEM.NAME,

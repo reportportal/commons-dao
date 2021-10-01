@@ -499,10 +499,16 @@ class WidgetContentRepositoryTest extends BaseTest {
 		Filter filter = buildMostTimeConsumingFilter(1L);
 		filter = updateFilter(filter, "launch name 1", 1L, true);
 		List<MostTimeConsumingTestCasesContent> mostTimeConsumingTestCasesContents = widgetContentRepository.mostTimeConsumingTestCasesStatistics(filter,
-				20
+				3
 		);
 
 		assertNotNull(mostTimeConsumingTestCasesContents);
+		assertEquals(3, mostTimeConsumingTestCasesContents.size());
+
+		mostTimeConsumingTestCasesContents.stream().reduce((prev, current) -> {
+			assertTrue(current.getDuration() < prev.getDuration());
+			return current;
+		}).get();
 	}
 
 	@Test
