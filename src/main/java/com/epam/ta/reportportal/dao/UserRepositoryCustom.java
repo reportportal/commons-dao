@@ -31,6 +31,8 @@ import java.util.Optional;
  */
 public interface UserRepositoryCustom extends FilterableRepository<User> {
 
+	Page<User> findByFilterExcludingProjects(Queryable filter, Pageable pageable);
+
 	/**
 	 * Finds entities list according provided filter
 	 *

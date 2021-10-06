@@ -438,6 +438,17 @@ public enum FilterTarget {
 							)
 					).get(),
 
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_TYPE_ID,
+							ISSUE.ISSUE_TYPE,
+							Long.class,
+							Lists.newArrayList(JoinEntity.of(TEST_ITEM_RESULTS,
+									JoinType.LEFT_OUTER_JOIN,
+									TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID)
+									),
+									JoinEntity.of(ISSUE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM_RESULTS.RESULT_ID.eq(ISSUE.ISSUE_ID))
+							)
+					).get(),
+
 					new CriteriaHolderBuilder().newBuilder(CRITERIA_ISSUE_AUTO_ANALYZED,
 							ISSUE.AUTO_ANALYZED,
 							Boolean.class,
