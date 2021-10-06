@@ -1,5 +1,3 @@
-import org.owasp.dependencycheck.reporting.ReportGenerator
-
 /*
  * Copyright 2019 EPAM Systems
  *
@@ -15,6 +13,8 @@ import org.owasp.dependencycheck.reporting.ReportGenerator
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.owasp.dependencycheck.reporting.ReportGenerator
 
 plugins {
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
