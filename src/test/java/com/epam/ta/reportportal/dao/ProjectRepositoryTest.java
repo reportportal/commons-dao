@@ -122,6 +122,18 @@ class ProjectRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void shouldFindProjectByName() {
+		final Optional<Project> project = projectRepository.findRawByName("superadmin_personal");
+		assertTrue(project.isPresent());
+	}
+
+	@Test
+	void shouldNotFindProjectByName() {
+		final Optional<Project> project = projectRepository.findRawByName("some_random_name");
+		assertFalse(project.isPresent());
+	}
+
+	@Test
 	void findProjectInfoByFilter() {
 		final List<ProjectInfo> projectInfos = projectRepository.findProjectInfoByFilter(new Filter(ProjectInfo.class,
 				Condition.GREATER_THAN_OR_EQUALS,
