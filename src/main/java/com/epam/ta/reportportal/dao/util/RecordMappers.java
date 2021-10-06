@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -47,7 +46,6 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -70,7 +68,10 @@ import org.jooq.Result;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -237,7 +238,6 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, IndexTestItem> INDEX_TEST_ITEM_RECORD_MAPPER = record -> {
 		final IndexTestItem indexTestItem = new IndexTestItem();
 		indexTestItem.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
-		indexTestItem.setTestItemName(record.get(TEST_ITEM.NAME));
 		indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME).toLocalDateTime());
 		indexTestItem.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
 		indexTestItem.setTestCaseHash(record.get(TEST_ITEM.TEST_CASE_HASH));
@@ -288,16 +288,6 @@ public class RecordMappers {
 		return indexLaunch;
 	};
 
-	public static final RecordMapper<Record, ReportPortalUser> REPORT_PORTAL_USER_MAPPER = r -> ReportPortalUser.userBuilder()
-			.withUserName(r.get(USERS.LOGIN))
-			.withPassword(ofNullable(r.get(USERS.PASSWORD)).orElse(""))
-			.withAuthorities(Collections.emptyList())
-			.withUserId(r.get(USERS.ID))
-			.withUserRole(UserRole.findByName(r.get(USERS.ROLE))
-					.orElseThrow(() -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR)))
-			.withEmail(r.get(USERS.EMAIL))
-			.build();
-
 	public static final RecordMapper<Record, User> USER_MAPPER = r -> {
 		User user = r.into(USERS.fieldStream().filter(f -> fieldExcludingPredicate(USERS.METADATA).test(f)).toArray(Field[]::new))
 				.into(User.class);
@@ -329,13 +319,6 @@ public class RecordMappers {
 		projectUser.setProject(project);
 		projectUser.setUser(user);
 		return projectUser;
-	};
-
-	public static final RecordMapper<Record, ReportPortalUser.ProjectDetails> PROJECT_DETAILS_MAPPER = r -> {
-		final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
-		final String projectName = r.get(PROJECT.NAME);
-		final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
-		return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
 	};
 
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
@@ -382,8 +365,8 @@ public class RecordMappers {
 		});
 	};
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD)).ifPresent(
-			field -> {
+	private static final BiConsumer<Widget, ? super Record> WIDGET_CONTENT_FIELD_MAPPER = (widget, res) -> ofNullable(res.get(CONTENT_FIELD.FIELD))
+			.ifPresent(field -> {
 				Set<String> contentFields = ofNullable(widget.getContentFields()).orElseGet(Sets::newLinkedHashSet);
 				contentFields.add(field);
 				widget.setContentFields(contentFields);

@@ -21,9 +21,6 @@ VALUES (2, 'FAILED', now(), 1);
 INSERT INTO public.issue(issue_id, issue_type, issue_description)
 VALUES (2, 1, 'fail');
 
-INSERT INTO public.log(uuid, log_time, log_message, item_id, launch_id, last_modified, log_level, attachment_id, project_id)
-VALUES ('log uid', now(), 'message', 2, null, now(), 40000, null, 2);
-
 
 INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified, mode, status)
 VALUES (200, 'uuid3', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
@@ -34,8 +31,6 @@ VALUES (3, 3, 'uuid4', 'STEP', now(), now(), false, false, null, 200);
 INSERT INTO public.test_item_results(result_id, status, end_time, duration)
 VALUES (3, 'IN_PROGRESS', now(), 1);
 
-INSERT INTO public.log(uuid, log_time, log_message, item_id, launch_id, last_modified, log_level, attachment_id, project_id)
-VALUES ('log uid', now(), 'message', 3, null, now(), 40000, null, 2);
 
 INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified, mode, status)
 VALUES (300, 'uuid5', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');

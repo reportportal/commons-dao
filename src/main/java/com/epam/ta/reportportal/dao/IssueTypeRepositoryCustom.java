@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,7 +26,5 @@ import java.util.List;
 public interface IssueTypeRepositoryCustom {
 
 	List<IssueType> getDefaultIssueTypes();
-
-	List<Long> getIssueTypeIdsByLocators(Collection<String> locators);
 
 }

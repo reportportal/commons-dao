@@ -64,8 +64,6 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
 	 */
 	List<String> findAllProjectNamesByTerm(String term);
 
-	List<Project> findAllByUserLogin(String login);
-
 	/**
 	 * Get {@link Page} of {@link Project#getId()} with attributes
 	 *

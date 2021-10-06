@@ -35,10 +35,6 @@ BEGIN
 
   INSERT INTO project_user (user_id, project_id, project_role) VALUES (fake_chubaka, falcon, 'MEMBER');
 
-  INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
-  VALUES ('ch_not_assigned', '601c4731aeff3b84f76672ad024bb2a0', 'ch_not_assigned@domain.com', 'USER', 'INTERNAL', 'Ch Not Assigned', FALSE,
-          '{"metadata": {"last_login": "1551187023768"}}');
-
   INSERT INTO issue_type_project (project_id, issue_type_id)
   VALUES (falcon, 1),
          (falcon, 2),

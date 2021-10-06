@@ -107,13 +107,6 @@ class ProjectRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findAllByUserLogin() {
-		List<Project> projects = projectRepository.findAllByUserLogin("default");
-		assertNotNull(projects);
-		assertEquals(1, projects.size());
-	}
-
-	@Test
 	void findUserProjectByLoginAndType() {
 		List<Project> userProjects = projectRepository.findUserProjects("superadmin", "PERSONAL");
 		assertNotNull(userProjects);

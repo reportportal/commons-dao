@@ -21,7 +21,6 @@ import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
@@ -98,8 +97,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findIdsByProjectIdAndStartTimeBeforeLimit() {
 		List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
-				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()),
-				5
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()), 5
 		);
 		assertEquals(5, ids.size());
 	}
@@ -107,9 +105,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void findIdsByProjectIdAndStartTimeBeforeLimitWithOffset() {
 		List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
-				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()),
-				3,
-				10L
+				LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()), 3, 10L
 		);
 		assertEquals(2, ids.size());
 	}
@@ -240,54 +236,11 @@ class LaunchRepositoryTest extends BaseTest {
 
 	@Test
 	void findIndexLaunchByProjectId() {
-		final List<Long> result = launchRepository.findIdsByProjectIdAndModeAndStatusNotEq(2L,
-				JLaunchModeEnum.DEFAULT,
-				JStatusEnum.PASSED,
-				1
-		);
-		assertEquals(1, result.size());
+		final List<IndexLaunch> indexLaunchByProjectId = launchRepository.findIndexLaunchByProjectId(2L, 1, 0);
+		assertEquals(1, indexLaunchByProjectId.size());
 
-		final List<Long> secondResult = launchRepository.findIdsByProjectIdAndModeAndStatusNotEq(2L,
-				JLaunchModeEnum.DEFAULT,
-				JStatusEnum.PASSED,
-				2
-		);
-		assertEquals(2, secondResult.size());
-	}
-
-	@Test
-	void findIndexLaunchByProjectIdAfterId() {
-		final List<Long> result = launchRepository.findIdsByProjectIdAndModeAndStatusNotEqAfterId(2L,
-				JLaunchModeEnum.DEFAULT,
-				JStatusEnum.PASSED,
-				1L,
-				3
-		);
-		assertEquals(3, result.size());
-
-		final List<Long> secondResult = launchRepository.findIdsByProjectIdAndModeAndStatusNotEqAfterId(2L,
-				JLaunchModeEnum.DEFAULT,
-				JStatusEnum.PASSED,
-				100L,
-				2
-		);
-		assertEquals(2, secondResult.size());
-
-		final List<Long> thirdResult = launchRepository.findIdsByProjectIdAndModeAndStatusNotEqAfterId(2L,
-				JLaunchModeEnum.DEFAULT,
-				JStatusEnum.PASSED,
-				200L,
-				2
-		);
-		assertEquals(1, thirdResult.size());
-	}
-
-	@Test
-	void findIndexLaunchByIdsAndLogLevel() {
-		final List<IndexLaunch> result = launchRepository.findIndexLaunchByIdsAndLogLevel(List.of(100L, 200L, 300L),
-				0
-		);
-		assertEquals(2, result.size());
+		final List<IndexLaunch> empty = launchRepository.findIndexLaunchByProjectId(2L, 10, 1);
+		assertTrue(empty.isEmpty());
 	}
 
 	@Test

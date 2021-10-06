@@ -55,5 +55,4 @@ public interface Queryable {
 	 */
 	List<ConvertibleCondition> getFilterConditions();
 
-	boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition);
 }

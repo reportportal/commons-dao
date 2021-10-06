@@ -126,6 +126,25 @@ class TestItemRepositoryTest extends BaseTest {
 		assertFalse(testItemRepository.hasLogs(1L, Duration.ofDays(12).plusHours(23), StatusEnum.IN_PROGRESS));
 	}
 
+	@Test
+	void selectPathNames() {
+		Map<Long, String> results = testItemRepository.selectPathNames(3L, 1L, 1L);
+		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(LinkedHashMap.class));
+		assertThat("Incorrect items size", results.size(), Matchers.equalTo(2));
+	}
+
+	@Test
+	void selectMultiplePathNames() {
+		Map<Long, PathName> results = testItemRepository.selectPathNames(Lists.newArrayList(3L, 4L, 2L), Lists.newArrayList(1L), 1L);
+		assertThat("Incorrect class type", results.getClass(), Matchers.theInstance(HashMap.class));
+		results.values()
+				.forEach(pathName -> assertThat("Incorrect class type",
+						pathName.getItemPaths().getClass(),
+						Matchers.theInstance(ArrayList.class)
+				));
+		assertThat("Incorrect items size", results.size(), Matchers.equalTo(3));
+	}
+
 	private void assertGroupedItems(Long launchId, Map<Long, List<TestItem>> itemsGroupedByLaunch, int itemsLimitPerLaunch) {
 		List<TestItem> items = itemsGroupedByLaunch.get(launchId);
 		assertEquals(itemsLimitPerLaunch, items.size());
@@ -712,7 +731,6 @@ class TestItemRepositoryTest extends BaseTest {
 	void findIndexTestItemByLaunchId() {
 		final List<IndexTestItem> items = testItemRepository.findIndexTestItemByLaunchId(1L, List.of(JTestItemTypeEnum.STEP));
 		assertEquals(3, items.size());
-		items.forEach(it -> assertNotNull(it.getTestItemName()));
 	}
 
 	@Test

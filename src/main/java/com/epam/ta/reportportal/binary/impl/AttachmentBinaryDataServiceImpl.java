@@ -38,7 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -79,18 +80,14 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 	@Override
 	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
 		Optional<BinaryDataMetaInfo> result = Optional.empty();
-		try (InputStream inputStream = file.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-			inputStream.transferTo(outputStream);
-			String contentType = resolveContentType(file.getContentType(), outputStream);
+		try (InputStream inputStream = file.getInputStream()) {
+			String contentType = resolveContentType(file.getContentType(), inputStream);
 			String fileName = resolveFileName(metaInfo, file, contentType);
 
 			String commonPath = filePathGenerator.generate(metaInfo);
 			String targetPath = Paths.get(commonPath, fileName).toString();
 
-			String fileId;
-			try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
-				fileId = dataStoreService.save(targetPath, copy);
-			}
+			final String fileId = dataStoreService.save(targetPath, inputStream);
 
 			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(fileId)
@@ -166,12 +163,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 		}
 	}
 
-	private String resolveContentType(String contentType, ByteArrayOutputStream outputStream) throws IOException {
-		if (isContentTypePresent(contentType)) {
-			return contentType;
-		}
-		try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
-			return contentTypeResolver.detectContentType(copy);
-		}
+	private String resolveContentType(String contentType, InputStream inputStream) throws IOException {
+		return isContentTypePresent(contentType) ? contentType : contentTypeResolver.detectContentType(inputStream);
 	}
 }

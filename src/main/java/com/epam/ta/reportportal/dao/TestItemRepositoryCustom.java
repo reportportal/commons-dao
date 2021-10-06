@@ -293,13 +293,25 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Optional<Pair<Long, String>> selectPath(String uuid);
 
 	/**
+	 * Select ids and names of all items in a tree till current for provided item id
+	 *
+	 * @param itemId    {@link TestItem#getItemId()}
+	 * @param launchId  {@link TestItem#getLaunchId()}()}
+	 * @param projectId Project
+	 * @return id from collection -> {@link PathName}
+	 */
+	Map<Long, String> selectPathNames(Long itemId, Long launchId, Long projectId);
+
+	/**
 	 * Select {@link PathName} containing ids and names of all items in a tree till current and launch name and number
 	 * for each item id from the provided collection
 	 *
-	 * @param testItems {@link Collection} of {@link TestItem}
-	 * @return testItemId from collection -> {@link PathName}
+	 * @param ids       {@link Collection} of {@link TestItem#getItemId()}
+	 * @param launchIds {@link Collection} of {@link TestItem#getLaunchId()}()}
+	 * @param projectId Project
+	 * @return id from collection -> {@link PathName}
 	 */
-	Map<Long, PathName> selectPathNames(Collection<TestItem> testItems);
+	Map<Long, PathName> selectPathNames(Collection<Long> ids, Collection<Long> launchIds, Long projectId);
 
 	/**
 	 * Select item IDs by analyzed status and {@link TestItem#getLaunchId()}

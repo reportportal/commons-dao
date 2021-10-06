@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
@@ -53,12 +52,5 @@ public class IssueTypeRepositoryCustomImpl implements IssueTypeRepositoryCustom 
 						.map(TestItemIssueGroup::getLocator)
 						.toArray(String[]::new)))
 				.fetch(ISSUE_TYPE_RECORD_MAPPER);
-	}
-
-	@Override
-	public List<Long> getIssueTypeIdsByLocators(Collection<String> locators) {
-		return dsl.select(ISSUE_TYPE.ID).from(ISSUE_TYPE)
-				.where(ISSUE_TYPE.LOCATOR.in(locators))
-				.fetch(ISSUE_TYPE.ID);
 	}
 }
