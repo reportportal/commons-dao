@@ -8,6 +8,7 @@ on:
       - '.github/**'
       - README.md
       - gradle.properties
+  workflow_dispatch:
 
 env:
   GH_USER_NAME: github.actor
