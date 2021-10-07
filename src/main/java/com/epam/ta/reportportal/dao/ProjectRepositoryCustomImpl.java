@@ -33,9 +33,11 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.PROJECT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static org.jooq.impl.DSL.name;
@@ -61,6 +63,11 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 				pageable,
 				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
+	}
+
+	@Override
+	public Optional<Project> findRawByName(String name) {
+		return dsl.select(PROJECT.fields()).from(PROJECT).where(PROJECT.NAME.eq(name)).fetchOptional(PROJECT_MAPPER);
 	}
 
 	@Override

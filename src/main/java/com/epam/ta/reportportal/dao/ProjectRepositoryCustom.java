@@ -27,11 +27,20 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
 public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
+
+	/**
+	 * Find project entity without fetching related entities
+	 *
+	 * @param name Project name to search
+	 * @return {@link Optional} with {@link Project}
+	 */
+	Optional<Project> findRawByName(String name);
 
 	/**
 	 * Find projects info by filter
