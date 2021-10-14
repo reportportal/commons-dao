@@ -711,6 +711,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public int updateStatusAndEndTimeByRetryOfId(Long retryOfId, JStatusEnum from, JStatusEnum to, LocalDateTime endTime) {
+		return dsl.update(TEST_ITEM_RESULTS)
+				.set(TEST_ITEM_RESULTS.STATUS, to)
+				.set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
+				.set(TEST_ITEM_RESULTS.DURATION,
+						dsl.select(DSL.extract(endTime, DatePart.EPOCH)
+								.minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
+								.cast(Double.class)).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+				)
+				.where(TEST_ITEM_RESULTS.RESULT_ID.in(DSL.select(TEST_ITEM.ITEM_ID)
+						.from(TEST_ITEM)
+						.where(TEST_ITEM.RETRY_OF.eq(retryOfId))))
+				.and(TEST_ITEM_RESULTS.STATUS.eq(from))
+				.execute();
+	}
+
+	@Override
 	public TestItemTypeEnum getTypeByItemId(Long itemId) {
 		return dsl.select(TEST_ITEM.TYPE).from(TEST_ITEM).where(TEST_ITEM.ITEM_ID.eq(itemId)).fetchOneInto(TestItemTypeEnum.class);
 	}

@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedStep;
 import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -319,6 +320,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return 1 if updated, otherwise 0
 	 */
 	int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
+
+	/**
+	 * @param retryOfId {@link TestItem#getRetryOf()}
+	 * @param from      Previous item {@link TestItemResults#getStatus()} criteria to update
+	 * @param to        New {@link TestItemResults#getStatus()}
+	 * @param endTime   New {@link TestItemResults#getEndTime()}
+	 * @return amount of updated items
+	 */
+	int updateStatusAndEndTimeByRetryOfId(Long retryOfId, JStatusEnum from, JStatusEnum to, LocalDateTime endTime);
 
 	/**
 	 * @param itemId {@link TestItem#itemId}
