@@ -509,6 +509,25 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void updateStatusAndEndTimeByRetryOfId() {
+
+		final LocalDateTime endTime = LocalDateTime.now();
+		int passedUpdated = testItemRepository.updateStatusAndEndTimeByRetryOfId(102L, JStatusEnum.PASSED, JStatusEnum.FAILED, endTime);
+		int inProgressUpdated = testItemRepository.updateStatusAndEndTimeByRetryOfId(102L,
+				JStatusEnum.IN_PROGRESS,
+				JStatusEnum.FAILED,
+				endTime
+		);
+
+		Assertions.assertEquals(0, passedUpdated);
+		Assertions.assertEquals(3, inProgressUpdated);
+
+		final List<TestItem> retries = testItemRepository.selectRetries(Collections.singletonList(102L));
+		assertFalse(retries.isEmpty());
+		retries.forEach(retry -> assertEquals(StatusEnum.FAILED, retry.getItemResults().getStatus()));
+	}
+
+	@Test
 	void getStatusByItemId() {
 
 		TestItemTypeEnum type = testItemRepository.getTypeByItemId(1L);
