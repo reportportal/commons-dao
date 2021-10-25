@@ -9,7 +9,7 @@ project.ext {
     dependencyRepos = ["commons", "commons-rules", "commons-model", "commons-bom"]
     releaseMode = project.hasProperty("releaseMode")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'develop')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'EPMRPP-59808-cluster-entities')
     //TODO refactor with archive download
     testScriptsSrc = [
             (migrationsUrl + '/migrations/0_extensions.up.sql')                        : 'V001__extensions.sql',
@@ -60,6 +60,7 @@ project.ext {
             (migrationsUrl + '/migrations/45_add_jobs_indexes.up.sql')                 : 'V045__add_jobs_indexes.sql',
             (migrationsUrl + '/migrations/46_job_values_bound.up.sql')                 : 'V046__job_values_bound.sql',
             (migrationsUrl + '/migrations/48_composite_attribute.up.sql')              : 'V048__composite_attribute.sql',
+            (migrationsUrl + '/migrations/51_cluster.up.sql')                          : 'V051__cluster.sql',
 
     ]
     excludeTests = [
