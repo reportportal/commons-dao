@@ -85,6 +85,20 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void updateClusterIdByIds() {
+
+		final List<Long> logIds = List.of(1L, 2L, 3L);
+
+		final int updated = logRepository.updateClusterIdByIdIn(1L, logIds);
+
+		assertEquals(3, updated);
+
+		final List<Log> logs = logRepository.findAllById(logIds);
+
+		logs.forEach(l -> assertEquals(1L, l.getClusterId()));
+	}
+
+	@Test
 	void getPageNumberTest() {
 		Filter filter = Filter.builder()
 				.withTarget(Log.class)

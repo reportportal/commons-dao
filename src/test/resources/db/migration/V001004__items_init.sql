@@ -291,3 +291,6 @@ BEGIN
 END;
 $$
     LANGUAGE plpgsql;
+
+INSERT INTO clusters(id, launch_id, message)
+VALUES (1, (SELECT id FROM launch ORDER BY id limit 1), 'Message');
