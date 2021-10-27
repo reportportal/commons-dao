@@ -22,12 +22,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -66,10 +71,12 @@ class ClusterRepositoryTest extends BaseTest {
 
 	@Test
 	void shouldFindByLaunchId() {
-		final List<Cluster> clusters = clusterRepository.findAllByLaunchIdOrderById(LAUNCH_ID);
+
+		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
+		final Page<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID, pageable);
 		assertFalse(clusters.isEmpty());
-		assertEquals(3, clusters.size());
-		clusters.forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
+		assertEquals(3, clusters.getContent().size());
+		clusters.getContent().forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
 	}
 
 	@Test
@@ -77,7 +84,8 @@ class ClusterRepositoryTest extends BaseTest {
 		final int removed = clusterRepository.deleteAllByLaunchId(LAUNCH_ID);
 		assertEquals(3, removed);
 
-		final List<Cluster> clusters = clusterRepository.findAllByLaunchIdOrderById(LAUNCH_ID);
+		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
+		final Page<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID, pageable);
 		assertTrue(clusters.isEmpty());
 	}
 
@@ -86,7 +94,8 @@ class ClusterRepositoryTest extends BaseTest {
 		final int removed = clusterRepository.deleteAllByProjectId(PROJECT_ID);
 		assertEquals(3, removed);
 
-		final List<Cluster> clusters = clusterRepository.findAllByLaunchIdOrderById(LAUNCH_ID);
+		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
+		final Page<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID, pageable);
 		assertTrue(clusters.isEmpty());
 	}
 

@@ -17,15 +17,15 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.cluster.Cluster;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public interface ClusterRepository extends ReportPortalRepository<Cluster, Long> {
 
-	List<Cluster> findAllByLaunchIdOrderById(Long launchId);
+	Page<Cluster> findAllByLaunchId(Long launchId, Pageable pageable);
 
 	int deleteAllByProjectId(Long projectId);
 
