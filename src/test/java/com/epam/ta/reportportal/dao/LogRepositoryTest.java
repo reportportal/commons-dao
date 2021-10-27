@@ -99,6 +99,24 @@ class LogRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void updateClusterIdSetNullByLaunchId() {
+
+		final List<Long> logIds = List.of(1L, 2L, 3L);
+
+		final int updated = logRepository.updateClusterIdByIdIn(1L, logIds);
+
+		assertEquals(3, updated);
+
+		final int nullUpdated = logRepository.updateClusterIdSetNullByLaunchId(1L);
+
+		assertEquals(3, nullUpdated);
+
+		final List<Log> logs = logRepository.findAllById(logIds);
+
+		logs.forEach(l -> assertNull(l.getClusterId()));
+	}
+
+	@Test
 	void getPageNumberTest() {
 		Filter filter = Filter.builder()
 				.withTarget(Log.class)

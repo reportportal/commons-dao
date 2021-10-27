@@ -42,4 +42,8 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 	@Modifying
 	@Query(value = "UPDATE log SET cluster_id = :clusterId WHERE id IN (:ids)", nativeQuery = true)
 	int updateClusterIdByIdIn(@Param("clusterId") Long clusterId, @Param("ids") Collection<Long> ids);
+
+	@Modifying
+	@Query(value = "UPDATE log SET cluster_id = NULL WHERE cluster_id IN (SELECT id FROM clusters WHERE clusters.launch_id = :launchId)", nativeQuery = true)
+	int updateClusterIdSetNullByLaunchId(@Param("launchId") Long launchId);
 }
