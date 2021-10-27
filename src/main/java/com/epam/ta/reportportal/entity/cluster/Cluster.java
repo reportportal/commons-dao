@@ -33,6 +33,9 @@ public class Cluster implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
+	@Column(name = "project_id")
+	private Long project_id;
+
 	@Column(name = "launch_id")
 	private Long launchId;
 
@@ -48,6 +51,14 @@ public class Cluster implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getProject_id() {
+		return project_id;
+	}
+
+	public void setProject_id(Long project_id) {
+		this.project_id = project_id;
 	}
 
 	public Long getLaunchId() {

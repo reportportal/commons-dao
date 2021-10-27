@@ -38,6 +38,7 @@ class ClusterRepositoryTest extends BaseTest {
 
 	private static final long CLUSTER_ID_START_VALUE = 1L;
 	private static final long CLUSTER_ID_END_VALUE = 4L;
+	private static final long PROJECT_ID = 1L;
 	private static final long LAUNCH_ID = 1L;
 
 	@Autowired
@@ -73,6 +74,15 @@ class ClusterRepositoryTest extends BaseTest {
 	@Test
 	void shouldDeleteByLaunchId() {
 		final int removed = clusterRepository.deleteAllByLaunchId(LAUNCH_ID);
+		assertEquals(3, removed);
+
+		final List<Cluster> clusters = clusterRepository.findAllByLaunchIdOrderById(LAUNCH_ID);
+		assertTrue(clusters.isEmpty());
+	}
+
+	@Test
+	void shouldDeleteByProjectId() {
+		final int removed = clusterRepository.deleteAllByProjectId(PROJECT_ID);
 		assertEquals(3, removed);
 
 		final List<Cluster> clusters = clusterRepository.findAllByLaunchIdOrderById(LAUNCH_ID);

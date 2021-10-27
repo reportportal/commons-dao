@@ -27,5 +27,7 @@ public interface ClusterRepository extends ReportPortalRepository<Cluster, Long>
 
 	List<Cluster> findAllByLaunchIdOrderById(Long launchId);
 
+	int deleteAllByProjectId(Long projectId);
+
 	int deleteAllByLaunchId(Long launchId);
 }
