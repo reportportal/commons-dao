@@ -49,6 +49,7 @@ class ClusterRepositoryTest extends BaseTest {
 		final List<Cluster> clusters = LongStream.range(CLUSTER_ID_START_VALUE, CLUSTER_ID_END_VALUE).mapToObj(id -> {
 			final Cluster cluster = new Cluster();
 			cluster.setId(id);
+			cluster.setProjectId(PROJECT_ID);
 			cluster.setLaunchId(LAUNCH_ID);
 			cluster.setMessage("Message");
 			return cluster;
