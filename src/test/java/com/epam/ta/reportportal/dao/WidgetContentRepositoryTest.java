@@ -390,7 +390,6 @@ class WidgetContentRepositoryTest extends BaseTest {
 		assertEquals(3, launchStatisticsContents.size());
 
 		List<String> tableContentFields = Lists.newArrayList(CRITERIA_END_TIME,
-				CRITERIA_DESCRIPTION,
 				CRITERIA_LAST_MODIFIED,
 				CRITERIA_USER
 		);

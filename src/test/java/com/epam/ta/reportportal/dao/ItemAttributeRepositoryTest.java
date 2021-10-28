@@ -149,4 +149,18 @@ class ItemAttributeRepositoryTest extends BaseTest {
 		Assertions.assertFalse(attributeKeys.isEmpty());
 		Assertions.assertTrue(attributeKeys.stream().anyMatch(k -> k.equals("new key")));
 	}
+
+	@Test
+	void saveItemAttributeByLaunchId() {
+		int result = repository.saveByLaunchId(1L, "new", "new value", false);
+
+		Assertions.assertEquals(1, result);
+
+		final Optional<ItemAttribute> attribute = repository.findByLaunchIdAndKeyAndSystem(1L, "new", false);
+
+		Assertions.assertTrue(attribute.isPresent());
+		Assertions.assertEquals("new", attribute.get().getKey());
+		Assertions.assertEquals("new value", attribute.get().getValue());
+		Assertions.assertEquals(false, attribute.get().isSystem());
+	}
 }

@@ -121,6 +121,10 @@ public class WidgetContentUtil {
 		return new OverallStatisticsContent(values);
 	};
 
+	public static <K, V> void consumeIfNotNull(K key, V value, BiConsumer<K, V> consumer) {
+		ofNullable(key).ifPresent(k -> ofNullable(value).ifPresent(v -> consumer.accept(k, v)));
+	}
+
 	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesTableContent>> LAUNCHES_TABLE_FETCHER = (result, contentFields) -> {
 
 		List<String> nonStatisticsFields = contentFields.stream().filter(cf -> !cf.startsWith(STATISTICS_KEY)).collect(Collectors.toList());
@@ -160,9 +164,9 @@ public class WidgetContentUtil {
 
 			nonStatisticsFields.forEach(cf -> {
 				if (CRITERIA_END_TIME.equalsIgnoreCase(cf) || CRITERIA_LAST_MODIFIED.equalsIgnoreCase(cf)) {
-					content.getValues().put(cf, record.get(criteria.get(cf), Timestamp.class));
+					consumeIfNotNull(cf, record.get(criteria.get(cf), Timestamp.class), (k, v) -> content.getValues().put(k, v));
 				} else {
-					content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf))));
+					consumeIfNotNull(cf, record.get(criteria.get(cf)), (k, v) -> content.getValues().put(k, String.valueOf(v)));
 				}
 			});
 
@@ -268,10 +272,12 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return filterMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -404,8 +410,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
@@ -522,8 +527,7 @@ public class WidgetContentUtil {
 		return new ArrayList<>(content.values());
 	};
 
-	public static final Function<Result<? extends Record>, List<ComponentHealthCheckContent>> COMPONENT_HEALTH_CHECK_FETCHER = result -> result
-			.stream()
+	public static final Function<Result<? extends Record>, List<ComponentHealthCheckContent>> COMPONENT_HEALTH_CHECK_FETCHER = result -> result.stream()
 			.map(record -> {
 				String attributeValue = record.get(fieldName(VALUE), String.class);
 				Long total = record.get(fieldName(TOTAL), Long.class);
@@ -568,8 +572,7 @@ public class WidgetContentUtil {
 		result.forEach(record -> resultMap.put(record.get(fieldName(VALUE), String.class),
 				ofNullable(record.get(fieldName(AGGREGATED_VALUES),
 						String[].class
-				)).map(values -> (List<String>) Lists.newArrayList(values))
-						.orElseGet(Collections::emptyList)
+				)).map(values -> (List<String>) Lists.newArrayList(values)).orElseGet(Collections::emptyList)
 		));
 		return resultMap;
 	};
