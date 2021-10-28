@@ -177,6 +177,14 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
 	}
 
 	@Override
+	public int saveByLaunchId(Long launchId, String key, String value, boolean isSystem) {
+		return dslContext.insertInto(ITEM_ATTRIBUTE)
+				.columns(ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE, ITEM_ATTRIBUTE.LAUNCH_ID, ITEM_ATTRIBUTE.SYSTEM)
+				.values(key, value, launchId, isSystem)
+				.execute();
+	}
+
+	@Override
 	public int saveMultiple(List<ItemAttributePojo> itemAttributes) {
 
 		InsertValuesStep4<JItemAttributeRecord, Long, String, String, Boolean> columns = dslContext.insertInto(ITEM_ATTRIBUTE)
