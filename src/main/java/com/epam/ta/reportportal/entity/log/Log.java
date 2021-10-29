@@ -68,6 +68,9 @@ public class Log implements Serializable {
 	@Column(name = "project_id")
 	private Long projectId;
 
+	@Column(name = "cluster_id")
+	private Long clusterId;
+
 	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "attachment_id")
 	private Attachment attachment;
@@ -166,6 +169,14 @@ public class Log implements Serializable {
 		this.projectId = projectId;
 	}
 
+	public Long getClusterId() {
+		return clusterId;
+	}
+
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -178,11 +189,11 @@ public class Log implements Serializable {
 		return Objects.equals(id, log.id) && Objects.equals(logTime, log.logTime) && Objects.equals(logMessage, log.logMessage)
 				&& Objects.equals(lastModified, log.lastModified) && Objects.equals(logLevel, log.logLevel) && Objects.equals(testItem,
 				log.testItem
-		) && Objects.equals(launch, log.launch) && Objects.equals(projectId, log.projectId);
+		) && Objects.equals(launch, log.launch) && Objects.equals(projectId, log.projectId) && Objects.equals(clusterId, log.clusterId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem, launch, projectId);
+		return Objects.hash(id, logTime, logMessage, lastModified, logLevel, testItem, launch, projectId, clusterId);
 	}
 }

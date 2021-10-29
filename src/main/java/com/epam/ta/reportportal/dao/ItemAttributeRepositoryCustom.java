@@ -121,6 +121,13 @@ public interface ItemAttributeRepositoryCustom {
 	int saveByItemId(Long itemId, String key, String value, boolean isSystem);
 
 	/**
+	 * Save item attribute by {@link Launch#getId()}
+	 *
+	 * @return 1 if inserted, otherwise 0
+	 */
+	int saveByLaunchId(Long launchId, String key, String value, boolean isSystem);
+
+	/**
 	 * Method for batch inserting of the {@link ItemAttribute}. Used for performance improvement
 	 *
 	 * @param itemAttributes The {@link List} of the {@link ItemAttributePojo}

@@ -1,3 +1,6 @@
+alter sequence sender_case_id_seq
+    restart with 1;
+
 INSERT INTO sender_case (send_case, project_id, enabled)
 VALUES ('ALWAYS', 1, true);
 
