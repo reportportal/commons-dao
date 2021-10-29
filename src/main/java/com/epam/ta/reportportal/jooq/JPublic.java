@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -86,7 +87,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 807980663;
+    private static final long serialVersionUID = -687331530;
 
     /**
      * The reference instance of <code>public</code>
@@ -242,6 +243,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.oauth_registration_scope</code>.
      */
     public final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
+
+    /**
+     * The table <code>public.onboarding</code>.
+     */
+    public final JOnboarding ONBOARDING = com.epam.ta.reportportal.jooq.tables.JOnboarding.ONBOARDING;
 
     /**
      * The table <code>public.parameter</code>.
@@ -417,6 +423,7 @@ public class JPublic extends SchemaImpl {
             Sequences.OAUTH_ACCESS_TOKEN_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
+            Sequences.ONBOARDING_ID_SEQ,
             Sequences.PATTERN_TEMPLATE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
@@ -472,6 +479,7 @@ public class JPublic extends SchemaImpl {
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
+            JOnboarding.ONBOARDING,
             JParameter.PARAMETER,
             JPatternTemplate.PATTERN_TEMPLATE,
             JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM,
