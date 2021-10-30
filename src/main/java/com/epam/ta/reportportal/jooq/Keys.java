@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -85,6 +86,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JOauthAccessTokenRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JOnboardingRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JParameterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateTestItemRecord;
@@ -154,6 +156,7 @@ public class Keys {
     public static final Identity<JOauthAccessTokenRecord, Long> IDENTITY_OAUTH_ACCESS_TOKEN = Identities0.IDENTITY_OAUTH_ACCESS_TOKEN;
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
+    public static final Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Identities0.IDENTITY_ONBOARDING;
     public static final Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Identities0.IDENTITY_PATTERN_TEMPLATE;
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Identities0.IDENTITY_PROJECT_ATTRIBUTE;
@@ -213,6 +216,7 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
+    public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = UniqueKeys0.ONBOARDING_PK;
     public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = UniqueKeys0.PATTERN_TEMPLATE_PK;
     public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = UniqueKeys0.UNQ_NAME_PROJECTID;
     public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = UniqueKeys0.PATTERN_ITEM_UNQ;
@@ -339,6 +343,7 @@ public class Keys {
         public static Identity<JOauthAccessTokenRecord, Long> IDENTITY_OAUTH_ACCESS_TOKEN = Internal.createIdentity(JOauthAccessToken.OAUTH_ACCESS_TOKEN, JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID);
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
+        public static Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Internal.createIdentity(JOnboarding.ONBOARDING, JOnboarding.ONBOARDING.ID);
         public static Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Internal.createIdentity(JPatternTemplate.PATTERN_TEMPLATE, JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Internal.createIdentity(JProjectAttribute.PROJECT_ATTRIBUTE, JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
@@ -396,6 +401,7 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createUniqueKey(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
+        public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = Internal.createUniqueKey(JOnboarding.ONBOARDING, "onboarding_pk", JOnboarding.ONBOARDING.ID);
         public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
         public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = Internal.createUniqueKey(JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID);

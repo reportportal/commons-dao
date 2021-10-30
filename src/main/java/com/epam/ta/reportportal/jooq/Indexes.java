@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -150,6 +151,7 @@ public class Indexes {
     public static final Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Indexes0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Indexes0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
+    public static final Index ONBOARDING_PK = Indexes0.ONBOARDING_PK;
     public static final Index PARAMETER_TI_IDX = Indexes0.PARAMETER_TI_IDX;
     public static final Index PATTERN_TEMPLATE_PK = Indexes0.PATTERN_TEMPLATE_PK;
     public static final Index UNQ_NAME_PROJECTID = Indexes0.UNQ_NAME_PROJECTID;
@@ -275,6 +277,7 @@ public class Indexes {
         public static Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createIndex("oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_PK = Internal.createIndex("oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createIndex("oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK }, true);
+        public static Index ONBOARDING_PK = Internal.createIndex("onboarding_pk", JOnboarding.ONBOARDING, new OrderField[] { JOnboarding.ONBOARDING.ID }, true);
         public static Index PARAMETER_TI_IDX = Internal.createIndex("parameter_ti_idx", JParameter.PARAMETER, new OrderField[] { JParameter.PARAMETER.ITEM_ID }, false);
         public static Index PATTERN_TEMPLATE_PK = Internal.createIndex("pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE, new OrderField[] { JPatternTemplate.PATTERN_TEMPLATE.ID }, true);
         public static Index UNQ_NAME_PROJECTID = Internal.createIndex("unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE, new OrderField[] { JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID }, true);
