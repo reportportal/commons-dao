@@ -310,7 +310,7 @@ public enum FilterTarget {
 					ITEM_ATTRIBUTE.KEY,
 					List.class,
 					Lists.newArrayList(JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID)))
-			).withAggregateCriteria(DSL.field("{0}::varchar[] || {1}::varchar[] || {2}::varchar[]",
+			).withAggregateCriteria(DSL.field("{0}::text[] || {1}::text[] || {2}::text[]",
 					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":")).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
 					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
 					DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), DSL.val(KEY_VALUE_SEPARATOR), LAUNCH_ATTRIBUTE.VALUE))
@@ -549,7 +549,7 @@ public enum FilterTarget {
 									JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
 							)
 					)
-							.withAggregateCriteria(DSL.field("array_cat({0}, {1})::varchar[]",
+							.withAggregateCriteria(DSL.field("array_cat({0}, {1})::text[]",
 									DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
 											DSL.val(KEY_VALUE_SEPARATOR),
 											ITEM_ATTRIBUTE.VALUE
@@ -565,7 +565,7 @@ public enum FilterTarget {
 							JoinEntity.of(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)),
 							JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
 					)).withAggregateCriteria(DSL.field(
-							"{0}::varchar[] || {1}::varchar[] || {2}::varchar[] || {3}::varchar[] || {4}::varchar[] || {5}::varchar[]",
+							"{0}::text[] || {1}::text[] || {2}::text[] || {3}::text[] || {4}::text[] || {5}::text[]",
 							DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":")).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
 							DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE)).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
 							DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
