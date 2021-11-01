@@ -70,6 +70,14 @@ class ClusterRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void shouldFindAllByLaunchId() {
+		final List<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID);
+		assertFalse(clusters.isEmpty());
+		assertEquals(3, clusters.size());
+		clusters.forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
+	}
+
+	@Test
 	void shouldFindByLaunchId() {
 
 		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));

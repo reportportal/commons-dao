@@ -205,6 +205,7 @@ public class RecordMappers {
 	public static final RecordMapper<? super Record, Log> LOG_UNDER_RECORD_MAPPER = result -> {
 		Log log = COMMON_LOG_RECORD_MAPPER.map(result);
 		ofNullable(result.get(ROOT_ITEM_ID, Long.class)).map(TestItem::new).ifPresent(log::setTestItem);
+		log.setClusterId(result.get(LOG.CLUSTER_ID, Long.class));
 		return log;
 	};
 
