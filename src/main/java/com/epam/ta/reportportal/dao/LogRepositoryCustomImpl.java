@@ -335,14 +335,15 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				LOG.LOG_TIME,
 				parentItemTable.ITEM_ID.as(ROOT_ITEM_ID),
 				LOG.LAUNCH_ID,
-				LOG.LAST_MODIFIED
+				LOG.LAST_MODIFIED,
+				LOG.CLUSTER_ID
 		);
 
 		if (includeAttachments) {
 			Collections.addAll(selectFields, ATTACHMENT.fields());
 		}
 
-		SelectOnConditionStep<Record> logsSelect = dsl.selectDistinct(selectFields)
+		SelectOnConditionStep<Record> logsSelect = dsl.selectDistinct(selectFields).on(LOG.ID, LOG.LOG_TIME)
 				.from(LOG)
 				.join(childItemTable)
 				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))

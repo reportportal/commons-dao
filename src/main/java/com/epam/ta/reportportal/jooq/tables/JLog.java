@@ -8,26 +8,14 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.processing.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.processing.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Row10;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -43,7 +31,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = -1118661703;
+    private static final long serialVersionUID = -198837446;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -106,7 +94,12 @@ public class JLog extends TableImpl<JLogRecord> {
     /**
      * The column <code>public.log.project_id</code>.
      */
-    public final TableField<JLogRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JLogRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+
+    /**
+     * The column <code>public.log.cluster_id</code>.
+     */
+    public final TableField<JLogRecord, Long> CLUSTER_ID = createField(DSL.name("cluster_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.log</code> table reference
@@ -148,7 +141,7 @@ public class JLog extends TableImpl<JLogRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_PROJECT_ID_IDX, Indexes.LOG_TI_IDX);
+        return Arrays.<Index>asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_CLUSTER_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_PROJECT_ID_LOG_TIME_IDX, Indexes.LOG_PROJECT_IDX, Indexes.LOG_TI_IDX);
     }
 
     @Override
@@ -168,7 +161,7 @@ public class JLog extends TableImpl<JLogRecord> {
 
     @Override
     public List<ForeignKey<JLogRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY, Keys.LOG__LOG_LAUNCH_ID_FKEY, Keys.LOG__LOG_ATTACHMENT_ID_FKEY, Keys.LOG__LOG_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JLogRecord, ?>>asList(Keys.LOG__LOG_ITEM_ID_FKEY, Keys.LOG__LOG_LAUNCH_ID_FKEY, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
     }
 
     public JTestItem testItem() {
@@ -181,10 +174,6 @@ public class JLog extends TableImpl<JLogRecord> {
 
     public JAttachment attachment() {
         return new JAttachment(this, Keys.LOG__LOG_ATTACHMENT_ID_FKEY);
-    }
-
-    public JProject project() {
-        return new JProject(this, Keys.LOG__LOG_PROJECT_ID_FKEY);
     }
 
     @Override
@@ -214,11 +203,11 @@ public class JLog extends TableImpl<JLogRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row11 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long, Long> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row11<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long, Long, Long> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 }

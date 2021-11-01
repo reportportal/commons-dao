@@ -109,7 +109,7 @@ class LogRepositoryTest extends BaseTest {
 
 		final int nullUpdated = logRepository.updateClusterIdSetNullByLaunchId(1L);
 
-		assertEquals(3, nullUpdated);
+		assertEquals(6, nullUpdated);
 
 		final List<Log> logs = logRepository.findAllById(logIds);
 
