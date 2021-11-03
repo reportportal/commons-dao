@@ -47,9 +47,11 @@ public class Indexes {
     public static final Index ATT_PROJECT_IDX = Indexes0.ATT_PROJECT_IDX;
     public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
+    public static final Index CLUSTER_INDEX_ID_IDX = Indexes0.CLUSTER_INDEX_ID_IDX;
     public static final Index CLUSTER_LAUNCH_IDX = Indexes0.CLUSTER_LAUNCH_IDX;
     public static final Index CLUSTER_PROJECT_IDX = Indexes0.CLUSTER_PROJECT_IDX;
-    public static final Index CLUSTERS_PKEY = Indexes0.CLUSTERS_PKEY;
+    public static final Index CLUSTERS_PK = Indexes0.CLUSTERS_PK;
+    public static final Index INDEX_ID_LAUNCH_ID_UNQ = Indexes0.INDEX_ID_LAUNCH_ID_UNQ;
     public static final Index CONTENT_FIELD_IDX = Indexes0.CONTENT_FIELD_IDX;
     public static final Index CONTENT_FIELD_WIDGET_IDX = Indexes0.CONTENT_FIELD_WIDGET_IDX;
     public static final Index DASHBOARD_PKEY = Indexes0.DASHBOARD_PKEY;
@@ -178,9 +180,11 @@ public class Indexes {
         public static Index ATT_PROJECT_IDX = Internal.createIndex("att_project_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID }, false);
         public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
+        public static Index CLUSTER_INDEX_ID_IDX = Internal.createIndex("cluster_index_id_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.INDEX_ID }, false);
         public static Index CLUSTER_LAUNCH_IDX = Internal.createIndex("cluster_launch_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.LAUNCH_ID }, false);
         public static Index CLUSTER_PROJECT_IDX = Internal.createIndex("cluster_project_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.PROJECT_ID }, false);
-        public static Index CLUSTERS_PKEY = Internal.createIndex("clusters_pkey", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.ID }, true);
+        public static Index CLUSTERS_PK = Internal.createIndex("clusters_pk", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.ID }, true);
+        public static Index INDEX_ID_LAUNCH_ID_UNQ = Internal.createIndex("index_id_launch_id_unq", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID }, true);
         public static Index CONTENT_FIELD_IDX = Internal.createIndex("content_field_idx", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.FIELD }, false);
         public static Index CONTENT_FIELD_WIDGET_IDX = Internal.createIndex("content_field_widget_idx", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.ID }, false);
         public static Index DASHBOARD_PKEY = Internal.createIndex("dashboard_pkey", JDashboard.DASHBOARD, new OrderField[] { JDashboard.DASHBOARD.ID }, true);

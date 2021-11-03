@@ -4,10 +4,10 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import javax.annotation.processing.Generated;
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
+
+import javax.annotation.processing.Generated;
 
 
 /**
@@ -57,6 +57,11 @@ public class Sequences {
      * The sequence <code>public.attribute_id_seq</code>
      */
     public static final Sequence<Long> ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.clusters_id_seq</code>
+     */
+    public static final Sequence<Long> CLUSTERS_ID_SEQ = new SequenceImpl<Long>("clusters_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.filter_condition_id_seq</code>
