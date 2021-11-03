@@ -52,7 +52,6 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
-import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
@@ -78,7 +77,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.LogRepositoryCustomImpl.ROOT_ITEM_ID;
-import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
 import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -220,7 +220,7 @@ public class RecordMappers {
 			indexLog.setLogId(r.get(LOG.ID, Long.class));
 			indexLog.setMessage(r.get(LOG.LOG_MESSAGE, String.class));
 			indexLog.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
-			indexLog.setClusterId(r.get(JClusters.CLUSTERS.INDEX_ID));
+			indexLog.setClusterId(r.get(CLUSTERS.INDEX_ID));
 
 			ofNullable(indexLogMapping.get(itemId)).ifPresentOrElse(indexLogs -> indexLogs.add(indexLog), () -> {
 				final List<IndexLog> indexLogs = new ArrayList<>();
