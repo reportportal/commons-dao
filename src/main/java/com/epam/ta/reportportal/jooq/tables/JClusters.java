@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JClusters extends TableImpl<JClustersRecord> {
 
-    private static final long serialVersionUID = 599550214;
+    private static final long serialVersionUID = -1432286641;
 
     /**
      * The reference instance of <code>public.clusters</code>
@@ -48,7 +48,12 @@ public class JClusters extends TableImpl<JClustersRecord> {
     /**
      * The column <code>public.clusters.id</code>.
      */
-    public final TableField<JClustersRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JClustersRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('clusters_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.clusters.index_id</code>.
+     */
+    public final TableField<JClustersRecord, Long> INDEX_ID = createField(DSL.name("index_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.clusters.project_id</code>.
@@ -105,17 +110,22 @@ public class JClusters extends TableImpl<JClustersRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.CLUSTER_LAUNCH_IDX, Indexes.CLUSTER_PROJECT_IDX, Indexes.CLUSTERS_PKEY);
+        return Arrays.<Index>asList(Indexes.CLUSTER_INDEX_ID_IDX, Indexes.CLUSTER_LAUNCH_IDX, Indexes.CLUSTER_PROJECT_IDX, Indexes.CLUSTERS_PK, Indexes.INDEX_ID_LAUNCH_ID_UNQ);
+    }
+
+    @Override
+    public Identity<JClustersRecord, Long> getIdentity() {
+        return Keys.IDENTITY_CLUSTERS;
     }
 
     @Override
     public UniqueKey<JClustersRecord> getPrimaryKey() {
-        return Keys.CLUSTERS_PKEY;
+        return Keys.CLUSTERS_PK;
     }
 
     @Override
     public List<UniqueKey<JClustersRecord>> getKeys() {
-        return Arrays.<UniqueKey<JClustersRecord>>asList(Keys.CLUSTERS_PKEY);
+        return Arrays.<UniqueKey<JClustersRecord>>asList(Keys.CLUSTERS_PK, Keys.INDEX_ID_LAUNCH_ID_UNQ);
     }
 
     @Override
@@ -145,11 +155,11 @@ public class JClusters extends TableImpl<JClustersRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Long, Long, Long, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Long, Long, Long, Long, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

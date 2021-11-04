@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -46,6 +47,8 @@ class ClusterRepositoryTest extends BaseTest {
 	private static final long PROJECT_ID = 1L;
 	private static final long LAUNCH_ID = 1L;
 
+	private final List<Long> savedIds = new ArrayList<>();
+
 	@Autowired
 	private ClusterRepository clusterRepository;
 
@@ -53,20 +56,20 @@ class ClusterRepositoryTest extends BaseTest {
 	void insertClusters() {
 		final List<Cluster> clusters = LongStream.range(CLUSTER_ID_START_VALUE, CLUSTER_ID_END_VALUE).mapToObj(id -> {
 			final Cluster cluster = new Cluster();
-			cluster.setId(id);
+			cluster.setIndexId(id);
 			cluster.setProjectId(PROJECT_ID);
 			cluster.setLaunchId(LAUNCH_ID);
 			cluster.setMessage("Message");
 			return cluster;
 		}).collect(Collectors.toList());
 		clusterRepository.saveAll(clusters);
+		clusters.stream().map(Cluster::getId).forEach(savedIds::add);
 	}
 
 	@AfterEach
 	void removeClusters() {
-		LongStream.range(CLUSTER_ID_START_VALUE, CLUSTER_ID_END_VALUE)
-				.mapToObj(clusterRepository::findById)
-				.forEach(cluster -> cluster.ifPresent(clusterRepository::delete));
+		savedIds.stream().map(clusterRepository::findById).forEach(c -> c.ifPresent(clusterRepository::delete));
+		savedIds.clear();
 	}
 
 	@Test

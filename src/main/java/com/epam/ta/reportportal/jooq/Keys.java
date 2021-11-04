@@ -39,6 +39,7 @@ public class Keys {
     public static final Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Identities0.IDENTITY_ACTIVITY;
     public static final Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Identities0.IDENTITY_ATTACHMENT;
     public static final Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Identities0.IDENTITY_ATTRIBUTE;
+    public static final Identity<JClustersRecord, Long> IDENTITY_CLUSTERS = Identities0.IDENTITY_CLUSTERS;
     public static final Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Identities0.IDENTITY_FILTER_CONDITION;
     public static final Identity<JFilterSortRecord, Long> IDENTITY_FILTER_SORT = Identities0.IDENTITY_FILTER_SORT;
     public static final Identity<JIntegrationRecord, Integer> IDENTITY_INTEGRATION = Identities0.IDENTITY_INTEGRATION;
@@ -82,7 +83,8 @@ public class Keys {
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
-    public static final UniqueKey<JClustersRecord> CLUSTERS_PKEY = UniqueKeys0.CLUSTERS_PKEY;
+    public static final UniqueKey<JClustersRecord> CLUSTERS_PK = UniqueKeys0.CLUSTERS_PK;
+    public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = UniqueKeys0.INDEX_ID_LAUNCH_ID_UNQ;
     public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = UniqueKeys0.DASHBOARD_PKEY;
     public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = UniqueKeys0.DASHBOARD_WIDGET_PK;
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
@@ -226,6 +228,7 @@ public class Keys {
         public static Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Internal.createIdentity(JActivity.ACTIVITY, JActivity.ACTIVITY.ID);
         public static Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Internal.createIdentity(JAttachment.ATTACHMENT, JAttachment.ATTACHMENT.ID);
         public static Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Internal.createIdentity(JAttribute.ATTRIBUTE, JAttribute.ATTRIBUTE.ID);
+        public static Identity<JClustersRecord, Long> IDENTITY_CLUSTERS = Internal.createIdentity(JClusters.CLUSTERS, JClusters.CLUSTERS.ID);
         public static Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Internal.createIdentity(JFilterCondition.FILTER_CONDITION, JFilterCondition.FILTER_CONDITION.ID);
         public static Identity<JFilterSortRecord, Long> IDENTITY_FILTER_SORT = Internal.createIdentity(JFilterSort.FILTER_SORT, JFilterSort.FILTER_SORT.ID);
         public static Identity<JIntegrationRecord, Integer> IDENTITY_INTEGRATION = Internal.createIdentity(JIntegration.INTEGRATION, JIntegration.INTEGRATION.ID);
@@ -267,7 +270,8 @@ public class Keys {
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
-        public static final UniqueKey<JClustersRecord> CLUSTERS_PKEY = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pkey", JClusters.CLUSTERS.ID);
+        public static final UniqueKey<JClustersRecord> CLUSTERS_PK = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pk", JClusters.CLUSTERS.ID);
+        public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = Internal.createUniqueKey(JClusters.CLUSTERS, "index_id_launch_id_unq", JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pkey", JDashboard.DASHBOARD.ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER);

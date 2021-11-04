@@ -23,12 +23,14 @@ import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pavel Bortnik
@@ -71,6 +73,17 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return {@link List} of {@link Log}
 	 */
 	List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel);
+
+	/**
+	 * Find logs as {@link IndexLog} under {@link TestItem} and group by {@link Log#getTestItem()} ID
+	 *
+	 * @param launchId {@link} ID of the {@link Launch} to search {@link Log} under
+	 * @param itemIds  {@link List} of the {@link Log#getTestItem()} IDs
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @return {@link List} of {@link Log}
+	 */
+	Map<Long, List<IndexLog>> findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds,
+			int logLevel);
 
 	/**
 	 * Find n latest logs for item

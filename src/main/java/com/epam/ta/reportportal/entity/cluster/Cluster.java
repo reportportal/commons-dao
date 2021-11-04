@@ -16,10 +16,7 @@
 
 package com.epam.ta.reportportal.entity.cluster;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -30,8 +27,12 @@ import java.io.Serializable;
 public class Cluster implements Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
+
+	@Column(name = "index_id")
+	private Long indexId;
 
 	@Column(name = "project_id")
 	private Long projectId;
@@ -51,6 +52,14 @@ public class Cluster implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIndexId() {
+		return indexId;
+	}
+
+	public void setIndexId(Long indexId) {
+		this.indexId = indexId;
 	}
 
 	public Long getProjectId() {

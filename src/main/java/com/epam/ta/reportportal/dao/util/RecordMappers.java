@@ -56,6 +56,7 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,7 +77,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.LogRepositoryCustomImpl.ROOT_ITEM_ID;
-import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
+import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
 import static com.epam.ta.reportportal.dao.util.RecordMapperUtils.fieldExcludingPredicate;
 import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -207,6 +209,26 @@ public class RecordMappers {
 		ofNullable(result.get(ROOT_ITEM_ID, Long.class)).map(TestItem::new).ifPresent(log::setTestItem);
 		log.setClusterId(result.get(LOG.CLUSTER_ID, Long.class));
 		return log;
+	};
+
+	public static final Function<Result<? extends Record>, Map<Long, List<IndexLog>>> INDEX_LOG_FETCHER = result -> {
+		final Map<Long, List<IndexLog>> indexLogMapping = new HashMap<>();
+		result.forEach(r -> {
+			final Long itemId = r.get(ROOT_ITEM_ID, Long.class);
+
+			final IndexLog indexLog = new IndexLog();
+			indexLog.setLogId(r.get(LOG.ID, Long.class));
+			indexLog.setMessage(r.get(LOG.LOG_MESSAGE, String.class));
+			indexLog.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+			indexLog.setClusterId(r.get(CLUSTERS.INDEX_ID));
+
+			ofNullable(indexLogMapping.get(itemId)).ifPresentOrElse(indexLogs -> indexLogs.add(indexLog), () -> {
+				final List<IndexLog> indexLogs = new ArrayList<>();
+				indexLogs.add(indexLog);
+				indexLogMapping.put(itemId, indexLogs);
+			});
+		});
+		return indexLogMapping;
 	};
 
 	public static final BiFunction<? super Record, RecordMapper<? super Record, Attachment>, Log> LOG_MAPPER = (result, attachmentMapper) -> {
