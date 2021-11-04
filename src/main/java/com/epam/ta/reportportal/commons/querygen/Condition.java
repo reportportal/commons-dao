@@ -634,7 +634,7 @@ public enum Condition {
 	public Object[] castArray(CriteriaHolder criteriaHolder, String value, ErrorType errorType) {
 		String[] values = value.split(VALUES_SEPARATOR);
 		Object[] castedValues = new Object[values.length];
-		if (!String.class.equals(criteriaHolder.getDataType()) || !String[].class.equals(criteriaHolder.getDataType())) {
+		if (!String.class.equals(criteriaHolder.getDataType()) && !String[].class.equals(criteriaHolder.getDataType())) {
 			for (int index = 0; index < values.length; index++) {
 				castedValues[index] = criteriaHolder.castValue(values[index].trim(), errorType);
 			}
