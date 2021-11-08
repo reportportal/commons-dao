@@ -30,6 +30,8 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -108,6 +110,19 @@ class ClusterRepositoryTest extends BaseTest {
 		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
 		final Page<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID, pageable);
 		assertTrue(clusters.isEmpty());
+	}
+
+	@Test
+	void shouldSaveClusterTestItems() {
+		final Cluster cluster = clusterRepository.findAllByLaunchId(LAUNCH_ID).get(0);
+		final int inserted = clusterRepository.saveClusterTestItems(cluster, Set.of(1L, 2L));
+		assertEquals(2, inserted);
+	}
+
+	@Test
+	void shouldFindByIndexAndLaunchId() {
+		final Optional<Cluster> cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L);
+		assertTrue(cluster.isPresent());
 	}
 
 }

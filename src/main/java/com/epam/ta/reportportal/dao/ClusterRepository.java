@@ -21,11 +21,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface ClusterRepository extends ReportPortalRepository<Cluster, Long> {
+public interface ClusterRepository extends ReportPortalRepository<Cluster, Long>, ClusterRepositoryCustom {
+
+	Optional<Cluster> findByIndexIdAndLaunchId(Long indexId, Long launchId);
 
 	List<Cluster> findAllByLaunchId(Long launchId);
 
