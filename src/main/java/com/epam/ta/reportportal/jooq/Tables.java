@@ -57,11 +57,6 @@ public class Tables {
     public static final JAttachment ATTACHMENT = JAttachment.ATTACHMENT;
 
     /**
-     * The table <code>public.attachment_deletion</code>.
-     */
-    public static final JAttachmentDeletion ATTACHMENT_DELETION = JAttachmentDeletion.ATTACHMENT_DELETION;
-
-    /**
      * The table <code>public.attribute</code>.
      */
     public static final JAttribute ATTRIBUTE = JAttribute.ATTRIBUTE;
@@ -276,11 +271,6 @@ public class Tables {
      * The table <code>public.shareable_entity</code>.
      */
     public static final JShareableEntity SHAREABLE_ENTITY = JShareableEntity.SHAREABLE_ENTITY;
-
-    /**
-     * The table <code>public.shedlock</code>.
-     */
-    public static final JShedlock SHEDLOCK = JShedlock.SHEDLOCK;
 
     /**
      * The table <code>public.statistics</code>.

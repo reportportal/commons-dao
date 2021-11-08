@@ -82,7 +82,6 @@ public class Keys {
     public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = UniqueKeys0.UNIQUE_UK_1;
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
-    public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = UniqueKeys0.ATTACHMENT_DELETION_PKEY;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JClustersRecord> CLUSTERS_PK = UniqueKeys0.CLUSTERS_PK;
     public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = UniqueKeys0.INDEX_ID_LAUNCH_ID_UNQ;
@@ -132,7 +131,6 @@ public class Keys {
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = UniqueKeys0.SERVER_SETTINGS_KEY_KEY;
     public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
-    public static final UniqueKey<JShedlockRecord> SHEDLOCK_PKEY = UniqueKeys0.SHEDLOCK_PKEY;
     public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = UniqueKeys0.STATISTICS_PK;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = UniqueKeys0.UNIQUE_STATS_LAUNCH;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = UniqueKeys0.UNIQUE_STATS_ITEM;
@@ -272,7 +270,6 @@ public class Keys {
         public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = Internal.createUniqueKey(JAclSid.ACL_SID, "unique_uk_1", JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL);
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
-        public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = Internal.createUniqueKey(JAttachmentDeletion.ATTACHMENT_DELETION, "attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JClustersRecord> CLUSTERS_PK = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pk", JClusters.CLUSTERS.ID);
         public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = Internal.createUniqueKey(JClusters.CLUSTERS, "index_id_launch_id_unq", JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID);
@@ -322,7 +319,6 @@ public class Keys {
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_id", JServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_key_key", JServerSettings.SERVER_SETTINGS.KEY);
         public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JShareableEntity.SHAREABLE_ENTITY, "shareable_pk", JShareableEntity.SHAREABLE_ENTITY.ID);
-        public static final UniqueKey<JShedlockRecord> SHEDLOCK_PKEY = Internal.createUniqueKey(JShedlock.SHEDLOCK, "shedlock_pkey", JShedlock.SHEDLOCK.NAME);
         public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = Internal.createUniqueKey(JStatistics.STATISTICS, "statistics_pk", JStatistics.STATISTICS.S_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_launch", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_item", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID);
