@@ -82,9 +82,11 @@ public class Keys {
     public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = UniqueKeys0.UNIQUE_UK_1;
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
+    public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = UniqueKeys0.ATTACHMENT_DELETION_PKEY;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JClustersRecord> CLUSTERS_PK = UniqueKeys0.CLUSTERS_PK;
     public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = UniqueKeys0.INDEX_ID_LAUNCH_ID_UNQ;
+    public static final UniqueKey<JClustersTestItemRecord> CLUSTER_ITEM_UNQ = UniqueKeys0.CLUSTER_ITEM_UNQ;
     public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = UniqueKeys0.DASHBOARD_PKEY;
     public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = UniqueKeys0.DASHBOARD_WIDGET_PK;
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
@@ -130,6 +132,7 @@ public class Keys {
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = UniqueKeys0.SERVER_SETTINGS_KEY_KEY;
     public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
+    public static final UniqueKey<JShedlockRecord> SHEDLOCK_PKEY = UniqueKeys0.SHEDLOCK_PKEY;
     public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = UniqueKeys0.STATISTICS_PK;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = UniqueKeys0.UNIQUE_STATS_LAUNCH;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = UniqueKeys0.UNIQUE_STATS_ITEM;
@@ -269,9 +272,11 @@ public class Keys {
         public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = Internal.createUniqueKey(JAclSid.ACL_SID, "unique_uk_1", JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL);
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
+        public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = Internal.createUniqueKey(JAttachmentDeletion.ATTACHMENT_DELETION, "attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JClustersRecord> CLUSTERS_PK = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pk", JClusters.CLUSTERS.ID);
         public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = Internal.createUniqueKey(JClusters.CLUSTERS, "index_id_launch_id_unq", JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID);
+        public static final UniqueKey<JClustersTestItemRecord> CLUSTER_ITEM_UNQ = Internal.createUniqueKey(JClustersTestItem.CLUSTERS_TEST_ITEM, "cluster_item_unq", JClustersTestItem.CLUSTERS_TEST_ITEM.CLUSTER_ID, JClustersTestItem.CLUSTERS_TEST_ITEM.ITEM_ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pkey", JDashboard.DASHBOARD.ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER);
@@ -317,6 +322,7 @@ public class Keys {
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_id", JServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_key_key", JServerSettings.SERVER_SETTINGS.KEY);
         public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JShareableEntity.SHAREABLE_ENTITY, "shareable_pk", JShareableEntity.SHAREABLE_ENTITY.ID);
+        public static final UniqueKey<JShedlockRecord> SHEDLOCK_PKEY = Internal.createUniqueKey(JShedlock.SHEDLOCK, "shedlock_pkey", JShedlock.SHEDLOCK.NAME);
         public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = Internal.createUniqueKey(JStatistics.STATISTICS, "statistics_pk", JStatistics.STATISTICS.S_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_launch", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_item", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID);

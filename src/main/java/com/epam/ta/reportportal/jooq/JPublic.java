@@ -28,7 +28,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1418605675;
+    private static final long serialVersionUID = -1370382793;
 
     /**
      * The reference instance of <code>public</code>
@@ -66,6 +66,11 @@ public class JPublic extends SchemaImpl {
     public final JAttachment ATTACHMENT = com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 
     /**
+     * The table <code>public.attachment_deletion</code>.
+     */
+    public final JAttachmentDeletion ATTACHMENT_DELETION = com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion.ATTACHMENT_DELETION;
+
+    /**
      * The table <code>public.attribute</code>.
      */
     public final JAttribute ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
@@ -74,6 +79,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.clusters</code>.
      */
     public final JClusters CLUSTERS = com.epam.ta.reportportal.jooq.tables.JClusters.CLUSTERS;
+
+    /**
+     * The table <code>public.clusters_test_item</code>.
+     */
+    public final JClustersTestItem CLUSTERS_TEST_ITEM = com.epam.ta.reportportal.jooq.tables.JClustersTestItem.CLUSTERS_TEST_ITEM;
 
     /**
      * The table <code>public.content_field</code>.
@@ -277,6 +287,11 @@ public class JPublic extends SchemaImpl {
     public final JShareableEntity SHAREABLE_ENTITY = com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
 
     /**
+     * The table <code>public.shedlock</code>.
+     */
+    public final JShedlock SHEDLOCK = com.epam.ta.reportportal.jooq.tables.JShedlock.SHEDLOCK;
+
+    /**
      * The table <code>public.statistics</code>.
      */
     public final JStatistics STATISTICS = com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
@@ -402,8 +417,10 @@ public class JPublic extends SchemaImpl {
             JAclSid.ACL_SID,
             JActivity.ACTIVITY,
             JAttachment.ATTACHMENT,
+            JAttachmentDeletion.ATTACHMENT_DELETION,
             JAttribute.ATTRIBUTE,
             JClusters.CLUSTERS,
+            JClustersTestItem.CLUSTERS_TEST_ITEM,
             JContentField.CONTENT_FIELD,
             JDashboard.DASHBOARD,
             JDashboardWidget.DASHBOARD_WIDGET,
@@ -440,6 +457,7 @@ public class JPublic extends SchemaImpl {
             JSenderCase.SENDER_CASE,
             JServerSettings.SERVER_SETTINGS,
             JShareableEntity.SHAREABLE_ENTITY,
+            JShedlock.SHEDLOCK,
             JStatistics.STATISTICS,
             JStatisticsField.STATISTICS_FIELD,
             JTestItem.TEST_ITEM,

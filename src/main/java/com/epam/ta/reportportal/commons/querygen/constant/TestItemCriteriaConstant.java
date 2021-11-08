@@ -43,6 +43,7 @@ public final class TestItemCriteriaConstant {
 	public static final String CRITERIA_PARAMETER_VALUE = "value";
 	public static final String CRITERIA_PATTERN_TEMPLATE_NAME = "patternName";
 	public static final String CRITERIA_TICKET_ID = "ticketId";
+	public static final String CRITERIA_CLUSTER_ID = "clusterId";
 
 	public static final String RETRY_PARENT = "retry_parent";
 

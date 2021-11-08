@@ -57,6 +57,11 @@ public class Tables {
     public static final JAttachment ATTACHMENT = JAttachment.ATTACHMENT;
 
     /**
+     * The table <code>public.attachment_deletion</code>.
+     */
+    public static final JAttachmentDeletion ATTACHMENT_DELETION = JAttachmentDeletion.ATTACHMENT_DELETION;
+
+    /**
      * The table <code>public.attribute</code>.
      */
     public static final JAttribute ATTRIBUTE = JAttribute.ATTRIBUTE;
@@ -65,6 +70,11 @@ public class Tables {
      * The table <code>public.clusters</code>.
      */
     public static final JClusters CLUSTERS = JClusters.CLUSTERS;
+
+    /**
+     * The table <code>public.clusters_test_item</code>.
+     */
+    public static final JClustersTestItem CLUSTERS_TEST_ITEM = JClustersTestItem.CLUSTERS_TEST_ITEM;
 
     /**
      * The table <code>public.content_field</code>.
@@ -266,6 +276,11 @@ public class Tables {
      * The table <code>public.shareable_entity</code>.
      */
     public static final JShareableEntity SHAREABLE_ENTITY = JShareableEntity.SHAREABLE_ENTITY;
+
+    /**
+     * The table <code>public.shedlock</code>.
+     */
+    public static final JShedlock SHEDLOCK = JShedlock.SHEDLOCK;
 
     /**
      * The table <code>public.statistics</code>.
