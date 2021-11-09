@@ -558,7 +558,7 @@ class TestItemRepositoryTest extends BaseTest {
 				.withCondition(new FilterCondition(Condition.ANY, false, "1", CRITERIA_CLUSTER_ID))
 				.build();
 
-		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_ID)));
+		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_CLUSTER_ID)));
 
 		List<TestItem> testItems = testItemRepository.findByFilter(filter, PageRequest.of(0, 20, sort)).getContent();
 
