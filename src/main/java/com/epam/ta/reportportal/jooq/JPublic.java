@@ -28,7 +28,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1418605675;
+    private static final long serialVersionUID = -1370382793;
 
     /**
      * The reference instance of <code>public</code>
@@ -74,6 +74,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.clusters</code>.
      */
     public final JClusters CLUSTERS = com.epam.ta.reportportal.jooq.tables.JClusters.CLUSTERS;
+
+    /**
+     * The table <code>public.clusters_test_item</code>.
+     */
+    public final JClustersTestItem CLUSTERS_TEST_ITEM = com.epam.ta.reportportal.jooq.tables.JClustersTestItem.CLUSTERS_TEST_ITEM;
 
     /**
      * The table <code>public.content_field</code>.
@@ -404,6 +409,7 @@ public class JPublic extends SchemaImpl {
             JAttachment.ATTACHMENT,
             JAttribute.ATTRIBUTE,
             JClusters.CLUSTERS,
+            JClustersTestItem.CLUSTERS_TEST_ITEM,
             JContentField.CONTENT_FIELD,
             JDashboard.DASHBOARD,
             JDashboardWidget.DASHBOARD_WIDGET,

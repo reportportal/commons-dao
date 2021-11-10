@@ -67,6 +67,11 @@ public class Tables {
     public static final JClusters CLUSTERS = JClusters.CLUSTERS;
 
     /**
+     * The table <code>public.clusters_test_item</code>.
+     */
+    public static final JClustersTestItem CLUSTERS_TEST_ITEM = JClustersTestItem.CLUSTERS_TEST_ITEM;
+
+    /**
      * The table <code>public.content_field</code>.
      */
     public static final JContentField CONTENT_FIELD = JContentField.CONTENT_FIELD;

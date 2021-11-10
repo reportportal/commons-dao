@@ -85,6 +85,7 @@ public class Keys {
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JClustersRecord> CLUSTERS_PK = UniqueKeys0.CLUSTERS_PK;
     public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = UniqueKeys0.INDEX_ID_LAUNCH_ID_UNQ;
+    public static final UniqueKey<JClustersTestItemRecord> CLUSTER_ITEM_UNQ = UniqueKeys0.CLUSTER_ITEM_UNQ;
     public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = UniqueKeys0.DASHBOARD_PKEY;
     public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = UniqueKeys0.DASHBOARD_WIDGET_PK;
     public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = UniqueKeys0.WIDGET_ON_DASHBOARD_UNQ;
@@ -272,6 +273,7 @@ public class Keys {
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JClustersRecord> CLUSTERS_PK = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pk", JClusters.CLUSTERS.ID);
         public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = Internal.createUniqueKey(JClusters.CLUSTERS, "index_id_launch_id_unq", JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID);
+        public static final UniqueKey<JClustersTestItemRecord> CLUSTER_ITEM_UNQ = Internal.createUniqueKey(JClustersTestItem.CLUSTERS_TEST_ITEM, "cluster_item_unq", JClustersTestItem.CLUSTERS_TEST_ITEM.CLUSTER_ID, JClustersTestItem.CLUSTERS_TEST_ITEM.ITEM_ID);
         public static final UniqueKey<JDashboardRecord> DASHBOARD_PKEY = Internal.createUniqueKey(JDashboard.DASHBOARD, "dashboard_pkey", JDashboard.DASHBOARD.ID);
         public static final UniqueKey<JDashboardWidgetRecord> DASHBOARD_WIDGET_PK = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget_pk", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
         public static final UniqueKey<JDashboardWidgetRecord> WIDGET_ON_DASHBOARD_UNQ = Internal.createUniqueKey(JDashboardWidget.DASHBOARD_WIDGET, "widget_on_dashboard_unq", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_NAME, JDashboardWidget.DASHBOARD_WIDGET.WIDGET_OWNER);
