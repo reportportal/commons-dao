@@ -19,6 +19,9 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.cluster.Cluster;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,4 +40,16 @@ public interface ClusterRepository extends ReportPortalRepository<Cluster, Long>
 	int deleteAllByProjectId(Long projectId);
 
 	int deleteAllByLaunchId(Long launchId);
+
+	@Modifying
+	@Query(value = "DELETE FROM clusters_test_item WHERE cluster_id IN (SELECT id FROM clusters WHERE project_id = :projectId)", nativeQuery = true)
+	int deleteClusterTestItemsByProjectId(@Param("projectId") Long projectId);
+
+	@Modifying
+	@Query(value = "DELETE FROM clusters_test_item WHERE cluster_id IN (SELECT id FROM clusters WHERE launch_id = :launchId)", nativeQuery = true)
+	int deleteClusterTestItemsByLaunchId(@Param("launchId") Long launchId);
+
+	@Modifying
+	@Query(value = "DELETE FROM clusters_test_item WHERE item_id = :itemId", nativeQuery = true)
+	int deleteClusterTestItemsByItemId(@Param("itemId") Long itemId);
 }

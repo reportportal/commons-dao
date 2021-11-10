@@ -93,6 +93,16 @@ class ClusterRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void shouldDeleteByProjectId() {
+		final int removed = clusterRepository.deleteAllByProjectId(PROJECT_ID);
+		assertEquals(3, removed);
+
+		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
+		final Page<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID, pageable);
+		assertTrue(clusters.isEmpty());
+	}
+
+	@Test
 	void shouldDeleteByLaunchId() {
 		final int removed = clusterRepository.deleteAllByLaunchId(LAUNCH_ID);
 		assertEquals(3, removed);
@@ -103,13 +113,30 @@ class ClusterRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void shouldDeleteByProjectId() {
-		final int removed = clusterRepository.deleteAllByProjectId(PROJECT_ID);
-		assertEquals(3, removed);
+	void shouldDeleteClusterTestItemsByProjectId() {
+		final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
+		clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
 
-		final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
-		final Page<Cluster> clusters = clusterRepository.findAllByLaunchId(LAUNCH_ID, pageable);
-		assertTrue(clusters.isEmpty());
+		final int removed = clusterRepository.deleteClusterTestItemsByProjectId(1L);
+		assertEquals(1, removed);
+	}
+
+	@Test
+	void shouldDeleteClusterTestItemsByLaunchId() {
+		final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
+		clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
+
+		final int removed = clusterRepository.deleteClusterTestItemsByLaunchId(1L);
+		assertEquals(1, removed);
+	}
+
+	@Test
+	void shouldDeleteClusterTestItemsByItemId() {
+		final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
+		clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
+
+		final int removed = clusterRepository.deleteClusterTestItemsByItemId(1L);
+		assertEquals(1, removed);
 	}
 
 	@Test
