@@ -1,21 +1,17 @@
-name: Release
+name: manually-release
 
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - '.github/**'
-      - README.md
-      - gradle.properties
   workflow_dispatch:
-
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
 env:
   GH_USER_NAME: github.actor
-  RELEASE_VERSION: 5.5.1
   SCRIPTS_VERSION: 5.5.0
   BOM_VERSION: 5.5.1
   MIGRATIONS_VERSION: 5.5.0
+  RELEASE_VERSION: 5.5.1
 
 jobs:
   release:

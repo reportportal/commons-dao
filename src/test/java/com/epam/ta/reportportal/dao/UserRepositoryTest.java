@@ -153,23 +153,6 @@ class UserRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void shouldFindReportPortalUserByLogin() {
-		Optional<ReportPortalUser> chubaka = userRepository.findReportPortalUser("chubaka");
-		assertTrue(chubaka.isPresent(), "User not found");
-		assertThat(chubaka.get().getUsername(), Matchers.equalTo("chubaka"));
-		assertThat(chubaka.get().getUserId(), Matchers.notNullValue());
-		assertThat(chubaka.get().getPassword(), Matchers.equalTo("601c4731aeff3b84f76672ad024bb2a0"));
-		assertThat(chubaka.get().getEmail(), Matchers.equalTo("chybaka@domain.com"));
-		assertThat(chubaka.get().getUserRole(), Matchers.equalTo(UserRole.USER));
-	}
-
-	@Test
-	void shouldNotFindReportPortalUserByLoginWhenNotExists() {
-		Optional<ReportPortalUser> user = userRepository.findReportPortalUser("not existing user");
-		assertFalse(user.isPresent(), "User found");
-	}
-
-	@Test
 	void findByLogin() {
 		final String login = "han_solo";
 
@@ -294,21 +277,6 @@ class UserRepositoryTest extends BaseTest {
 
 		Page<User> users = userRepository.findByFilterExcludingProjects(filter, PageRequest.of(0, 5));
 		assertEquals(1, users.getTotalElements());
-	}
-
-	@Test
-	void shouldFindRawById() {
-		final Optional<User> user = userRepository.findRawById(1L);
-		assertTrue(user.isPresent());
-		assertEquals(1L, user.get().getId());
-		assertEquals("superadmin", user.get().getLogin());
-		assertTrue(user.get().getProjects().isEmpty());
-	}
-
-	@Test
-	void shouldNotFindRawById() {
-		final Optional<User> user = userRepository.findRawById(123L);
-		assertTrue(user.isEmpty());
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
