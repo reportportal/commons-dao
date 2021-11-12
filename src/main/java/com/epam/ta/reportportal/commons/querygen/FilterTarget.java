@@ -308,7 +308,7 @@ public enum FilterTarget {
 			new CriteriaHolderBuilder().newBuilder(
 					CRITERIA_COMPOSITE_ATTRIBUTE,
 					ITEM_ATTRIBUTE.KEY,
-					List.class,
+					String[].class,
 					Lists.newArrayList(JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID)))
 			).withAggregateCriteria(DSL.field("{0}::varchar[] || {1}::varchar[] || {2}::varchar[]",
 					DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":")).filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
@@ -561,7 +561,7 @@ public enum FilterTarget {
 							).toString())
 							.get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE, ITEM_ATTRIBUTE.KEY, List.class, Lists.newArrayList(
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_ATTRIBUTE, ITEM_ATTRIBUTE.KEY, String[].class, Lists.newArrayList(
 							JoinEntity.of(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)),
 							JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
 					)).withAggregateCriteria(DSL.field(

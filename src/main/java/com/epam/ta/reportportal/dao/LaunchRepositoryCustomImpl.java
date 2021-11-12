@@ -280,23 +280,29 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(
-			Long projectId, String name, String[] launchAttributes, Long launchId, JLaunchModeEnum mode
-	) {
-		return dsl.select().from(LAUNCH)
-				.where(LAUNCH.ID.in(dsl.select(LAUNCH.ID).from(LAUNCH)
-					.leftJoin(ITEM_ATTRIBUTE)
-					.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
-					.where(ITEM_ATTRIBUTE.SYSTEM.eq(false))
-					.and(LAUNCH.PROJECT_ID.eq(projectId))
-					.and(LAUNCH.NAME.eq(name))
-					.and(LAUNCH.ID.lt(launchId))
-					.and(LAUNCH.MODE.ne(mode))
-					.groupBy(LAUNCH.ID)
-					.having(arrayAgg(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""),
-							val(KEY_VALUE_SEPARATOR),
-							ITEM_ATTRIBUTE.VALUE
-					).cast(String.class)).contains(launchAttributes))))
+	public Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(Long projectId, String name,
+			String[] launchAttributes, Long launchId, JLaunchModeEnum mode) {
+		return dsl.select()
+				.from(LAUNCH)
+				.where(LAUNCH.ID.in(dsl.select(LAUNCH.ID)
+						.from(LAUNCH)
+						.leftJoin(ITEM_ATTRIBUTE)
+						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+						.where(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+						.and(LAUNCH.PROJECT_ID.eq(projectId))
+						.and(LAUNCH.NAME.eq(name))
+						.and(LAUNCH.ID.lt(launchId))
+						.and(LAUNCH.MODE.ne(mode))
+						.groupBy(LAUNCH.ID)
+						.having(field("{0}::varchar[] || {1}::varchar[] || {2}::varchar[]",
+								arrayAggDistinct(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""))).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
+								arrayAggDistinct(concat(KEY_VALUE_SEPARATOR, ITEM_ATTRIBUTE.VALUE)).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(
+										false)),
+								arrayAgg(concat(coalesce(ITEM_ATTRIBUTE.KEY, ""),
+										val(KEY_VALUE_SEPARATOR),
+										ITEM_ATTRIBUTE.VALUE
+								)).filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+						).contains(launchAttributes))))
 				.orderBy(LAUNCH.NUMBER.desc())
 				.limit(1)
 				.fetchOptionalInto(Launch.class);
