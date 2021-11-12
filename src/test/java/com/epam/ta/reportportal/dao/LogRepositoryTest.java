@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Operator;
@@ -38,9 +39,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_RETRY_PARENT_LAUNCH_ID;
@@ -82,6 +81,38 @@ class LogRepositoryTest extends BaseTest {
 		Assertions.assertTrue(secondLaunchLogIds.containsAll(firstLaunchLogIds));
 
 		Assertions.assertTrue(logRepository.findIdsByFilter(firstLaunchFilter).isEmpty());
+	}
+
+	@Test
+	void updateClusterIdByIds() {
+
+		final List<Long> logIds = List.of(1L, 2L, 3L);
+
+		final int updated = logRepository.updateClusterIdByIdIn(1L, logIds);
+
+		assertEquals(3, updated);
+
+		final List<Log> logs = logRepository.findAllById(logIds);
+
+		logs.forEach(l -> assertEquals(1L, l.getClusterId()));
+	}
+
+	@Test
+	void updateClusterIdSetNullByLaunchId() {
+
+		final List<Long> logIds = List.of(1L, 2L, 3L);
+
+		final int updated = logRepository.updateClusterIdByIdIn(1L, logIds);
+
+		assertEquals(3, updated);
+
+		final int nullUpdated = logRepository.updateClusterIdSetNullByLaunchId(1L);
+
+		assertEquals(6, nullUpdated);
+
+		final List<Log> logs = logRepository.findAllById(logIds);
+
+		logs.forEach(l -> assertNull(l.getClusterId()));
 	}
 
 	@Test
@@ -204,6 +235,31 @@ class LogRepositoryTest extends BaseTest {
 			assertNotNull(itemId);
 			assertTrue(itemIds.contains(itemId), "Incorrect item id");
 			assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level");
+		});
+	}
+
+	@Test
+	void findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte() {
+		int logLevel = LogLevel.WARN_INT;
+
+		final Set<Long> logsWithCluster = Set.of(4L, 5L, 6L);
+
+		List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+		final Map<Long, List<IndexLog>> logMapping = logRepository.findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(1L,
+				itemIds,
+				logLevel
+		);
+
+		assertFalse(logMapping.isEmpty(), "Logs should be not empty");
+		logMapping.forEach((itemId, logs) -> {
+			assertNotNull(itemId);
+			assertTrue(itemIds.contains(itemId), "Incorrect item id");
+			logs.forEach(logIndex -> {
+				if (logsWithCluster.contains(logIndex.getLogId())) {
+					assertNotNull(logIndex.getClusterId());
+				}
+				assertTrue(logIndex.getLogLevel() >= logLevel, "Unexpected log level");
+			});
 		});
 	}
 

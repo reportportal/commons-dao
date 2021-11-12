@@ -29,6 +29,7 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -57,6 +58,7 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.NESTED_ITEM_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.CLUSTERS;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
@@ -131,12 +133,30 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public Map<Long, List<IndexLog>> findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, List<Long> itemIds, int logLevel) {
+		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return INDEX_LOG_FETCHER.apply(dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, parentItemTable.ITEM_ID.as(ROOT_ITEM_ID), CLUSTERS.INDEX_ID)
+				.on(LOG.ID)
+				.from(LOG)
+				.join(childItemTable)
+				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
+				.join(parentItemTable)
+				.on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+				.leftJoin(CLUSTERS)
+				.on(LOG.CLUSTER_ID.eq(CLUSTERS.ID))
+				.where(childItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.LAUNCH_ID.eq(launchId))
+				.and(parentItemTable.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetch());
+	}
+
+	@Override
 	public List<Log> findLatestUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId, Long itemId, int logLevel, int limit) {
-		return Lists.reverse(buildLogsUnderItemsQuery(launchId, Collections.singletonList(itemId), false).and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-				.orderBy(LOG.LOG_TIME.desc())
-				.limit(limit)
-				.fetch()
-				.map(LOG_UNDER_RECORD_MAPPER));
+		return Lists.reverse(buildLogsUnderItemsQuery(launchId, Collections.singletonList(itemId), false).and(LOG.LOG_LEVEL.greaterOrEqual(
+				logLevel)).orderBy(LOG.LOG_TIME.desc()).limit(limit).fetch().map(LOG_UNDER_RECORD_MAPPER));
 	}
 
 	@Override
@@ -335,7 +355,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				LOG.LOG_TIME,
 				parentItemTable.ITEM_ID.as(ROOT_ITEM_ID),
 				LOG.LAUNCH_ID,
-				LOG.LAST_MODIFIED
+				LOG.LAST_MODIFIED,
+				LOG.CLUSTER_ID
 		);
 
 		if (includeAttachments) {
@@ -343,6 +364,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		}
 
 		SelectOnConditionStep<Record> logsSelect = dsl.selectDistinct(selectFields)
+				.on(LOG.ID, LOG.LOG_TIME)
 				.from(LOG)
 				.join(childItemTable)
 				.on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
@@ -362,9 +384,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 			Queryable filter) {
 
 		SelectConditionStep<Record3<Long, Timestamp, String>> nestedStepSelect = dsl.select(TEST_ITEM.ITEM_ID.as(ID),
-				TEST_ITEM.START_TIME.as(TIME),
-				DSL.val(ITEM).as(TYPE)
-		)
+						TEST_ITEM.START_TIME.as(TIME),
+						DSL.val(ITEM).as(TYPE)
+				)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
 				.on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
@@ -383,14 +405,14 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		if (excludeEmptySteps) {
 			JTestItem nested = TEST_ITEM.as(NESTED);
 			nestedStepSelect.and(field(DSL.exists(dsl.with(LOGS)
-					.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
-							.addCondition(LOG.ITEM_ID.eq(parentId))
-							.build())
-					.select()
-					.from(LOG)
-					.join(LOGS)
-					.on(LOG.ID.eq(field(LOGS, ID).cast(Long.class)))
-					.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
+							.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter))
+									.addCondition(LOG.ITEM_ID.eq(parentId))
+									.build())
+							.select()
+							.from(LOG)
+							.join(LOGS)
+							.on(LOG.ID.eq(field(LOGS, ID).cast(Long.class)))
+							.where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
 					.orExists(dsl.select().from(nested).where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID)))));
 		}
 

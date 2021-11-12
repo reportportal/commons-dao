@@ -4,63 +4,12 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAttachment;
-import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
-import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRecipients;
-import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
-import com.epam.ta.reportportal.jooq.tables.JUserPreference;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-
-import javax.annotation.processing.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
+
+import javax.annotation.processing.Generated;
 
 
 /**
@@ -97,7 +46,16 @@ public class Indexes {
     public static final Index ATT_LAUNCH_IDX = Indexes0.ATT_LAUNCH_IDX;
     public static final Index ATT_PROJECT_IDX = Indexes0.ATT_PROJECT_IDX;
     public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
+    public static final Index ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX = Indexes0.ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
+    public static final Index CLUSTER_INDEX_ID_IDX = Indexes0.CLUSTER_INDEX_ID_IDX;
+    public static final Index CLUSTER_LAUNCH_IDX = Indexes0.CLUSTER_LAUNCH_IDX;
+    public static final Index CLUSTER_PROJECT_IDX = Indexes0.CLUSTER_PROJECT_IDX;
+    public static final Index CLUSTERS_PK = Indexes0.CLUSTERS_PK;
+    public static final Index INDEX_ID_LAUNCH_ID_UNQ = Indexes0.INDEX_ID_LAUNCH_ID_UNQ;
+    public static final Index CLUSTER_ITEM_CLUSTER_IDX = Indexes0.CLUSTER_ITEM_CLUSTER_IDX;
+    public static final Index CLUSTER_ITEM_ITEM_IDX = Indexes0.CLUSTER_ITEM_ITEM_IDX;
+    public static final Index CLUSTER_ITEM_UNQ = Indexes0.CLUSTER_ITEM_UNQ;
     public static final Index CONTENT_FIELD_IDX = Indexes0.CONTENT_FIELD_IDX;
     public static final Index CONTENT_FIELD_WIDGET_IDX = Indexes0.CONTENT_FIELD_WIDGET_IDX;
     public static final Index DASHBOARD_PKEY = Indexes0.DASHBOARD_PKEY;
@@ -126,7 +84,7 @@ public class Indexes {
     public static final Index ITEM_ATTR_TI_IDX = Indexes0.ITEM_ATTR_TI_IDX;
     public static final Index ITEM_ATTRIBUTE_PK = Indexes0.ITEM_ATTRIBUTE_PK;
     public static final Index LAUNCH_PK = Indexes0.LAUNCH_PK;
-    public static final Index LAUNCH_PROJECT_IDX = Indexes0.LAUNCH_PROJECT_IDX;
+    public static final Index LAUNCH_PROJECT_START_TIME_IDX = Indexes0.LAUNCH_PROJECT_START_TIME_IDX;
     public static final Index LAUNCH_USER_IDX = Indexes0.LAUNCH_USER_IDX;
     public static final Index LAUNCH_UUID_KEY = Indexes0.LAUNCH_UUID_KEY;
     public static final Index UNQ_NAME_NUMBER = Indexes0.UNQ_NAME_NUMBER;
@@ -136,10 +94,12 @@ public class Indexes {
     public static final Index LAUNCH_NUMBER_PK = Indexes0.LAUNCH_NUMBER_PK;
     public static final Index UNQ_PROJECT_NAME = Indexes0.UNQ_PROJECT_NAME;
     public static final Index LOG_ATTACH_ID_IDX = Indexes0.LOG_ATTACH_ID_IDX;
+    public static final Index LOG_CLUSTER_IDX = Indexes0.LOG_CLUSTER_IDX;
     public static final Index LOG_LAUNCH_ID_IDX = Indexes0.LOG_LAUNCH_ID_IDX;
     public static final Index LOG_MESSAGE_TRGM_IDX = Indexes0.LOG_MESSAGE_TRGM_IDX;
     public static final Index LOG_PK = Indexes0.LOG_PK;
-    public static final Index LOG_PROJECT_ID_IDX = Indexes0.LOG_PROJECT_ID_IDX;
+    public static final Index LOG_PROJECT_ID_LOG_TIME_IDX = Indexes0.LOG_PROJECT_ID_LOG_TIME_IDX;
+    public static final Index LOG_PROJECT_IDX = Indexes0.LOG_PROJECT_IDX;
     public static final Index LOG_TI_IDX = Indexes0.LOG_TI_IDX;
     public static final Index OAUTH_ACCESS_TOKEN_PKEY = Indexes0.OAUTH_ACCESS_TOKEN_PKEY;
     public static final Index OAUTH_AT_USER_IDX = Indexes0.OAUTH_AT_USER_IDX;
@@ -150,6 +110,7 @@ public class Indexes {
     public static final Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Indexes0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Indexes0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
+    public static final Index ONBOARDING_PK = Indexes0.ONBOARDING_PK;
     public static final Index PARAMETER_TI_IDX = Indexes0.PARAMETER_TI_IDX;
     public static final Index PATTERN_TEMPLATE_PK = Indexes0.PATTERN_TEMPLATE_PK;
     public static final Index UNQ_NAME_PROJECTID = Indexes0.UNQ_NAME_PROJECTID;
@@ -222,7 +183,16 @@ public class Indexes {
         public static Index ATT_LAUNCH_IDX = Internal.createIndex("att_launch_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.LAUNCH_ID }, false);
         public static Index ATT_PROJECT_IDX = Internal.createIndex("att_project_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID }, false);
         public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
+        public static Index ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX = Internal.createIndex("attachment_project_id_creation_time_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID, JAttachment.ATTACHMENT.CREATION_DATE }, false);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
+        public static Index CLUSTER_INDEX_ID_IDX = Internal.createIndex("cluster_index_id_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.INDEX_ID }, false);
+        public static Index CLUSTER_LAUNCH_IDX = Internal.createIndex("cluster_launch_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.LAUNCH_ID }, false);
+        public static Index CLUSTER_PROJECT_IDX = Internal.createIndex("cluster_project_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.PROJECT_ID }, false);
+        public static Index CLUSTERS_PK = Internal.createIndex("clusters_pk", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.ID }, true);
+        public static Index INDEX_ID_LAUNCH_ID_UNQ = Internal.createIndex("index_id_launch_id_unq", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID }, true);
+        public static Index CLUSTER_ITEM_CLUSTER_IDX = Internal.createIndex("cluster_item_cluster_idx", JClustersTestItem.CLUSTERS_TEST_ITEM, new OrderField[] { JClustersTestItem.CLUSTERS_TEST_ITEM.CLUSTER_ID }, false);
+        public static Index CLUSTER_ITEM_ITEM_IDX = Internal.createIndex("cluster_item_item_idx", JClustersTestItem.CLUSTERS_TEST_ITEM, new OrderField[] { JClustersTestItem.CLUSTERS_TEST_ITEM.ITEM_ID }, false);
+        public static Index CLUSTER_ITEM_UNQ = Internal.createIndex("cluster_item_unq", JClustersTestItem.CLUSTERS_TEST_ITEM, new OrderField[] { JClustersTestItem.CLUSTERS_TEST_ITEM.CLUSTER_ID, JClustersTestItem.CLUSTERS_TEST_ITEM.ITEM_ID }, true);
         public static Index CONTENT_FIELD_IDX = Internal.createIndex("content_field_idx", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.FIELD }, false);
         public static Index CONTENT_FIELD_WIDGET_IDX = Internal.createIndex("content_field_widget_idx", JContentField.CONTENT_FIELD, new OrderField[] { JContentField.CONTENT_FIELD.ID }, false);
         public static Index DASHBOARD_PKEY = Internal.createIndex("dashboard_pkey", JDashboard.DASHBOARD, new OrderField[] { JDashboard.DASHBOARD.ID }, true);
@@ -251,7 +221,7 @@ public class Indexes {
         public static Index ITEM_ATTR_TI_IDX = Internal.createIndex("item_attr_ti_idx", JItemAttribute.ITEM_ATTRIBUTE, new OrderField[] { JItemAttribute.ITEM_ATTRIBUTE.ITEM_ID }, false);
         public static Index ITEM_ATTRIBUTE_PK = Internal.createIndex("item_attribute_pk", JItemAttribute.ITEM_ATTRIBUTE, new OrderField[] { JItemAttribute.ITEM_ATTRIBUTE.ID }, true);
         public static Index LAUNCH_PK = Internal.createIndex("launch_pk", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.ID }, true);
-        public static Index LAUNCH_PROJECT_IDX = Internal.createIndex("launch_project_idx", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.PROJECT_ID }, false);
+        public static Index LAUNCH_PROJECT_START_TIME_IDX = Internal.createIndex("launch_project_start_time_idx", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.START_TIME }, false);
         public static Index LAUNCH_USER_IDX = Internal.createIndex("launch_user_idx", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.USER_ID }, false);
         public static Index LAUNCH_UUID_KEY = Internal.createIndex("launch_uuid_key", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.UUID }, true);
         public static Index UNQ_NAME_NUMBER = Internal.createIndex("unq_name_number", JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.NAME, JLaunch.LAUNCH.NUMBER, JLaunch.LAUNCH.PROJECT_ID }, true);
@@ -261,10 +231,12 @@ public class Indexes {
         public static Index LAUNCH_NUMBER_PK = Internal.createIndex("launch_number_pk", JLaunchNumber.LAUNCH_NUMBER, new OrderField[] { JLaunchNumber.LAUNCH_NUMBER.ID }, true);
         public static Index UNQ_PROJECT_NAME = Internal.createIndex("unq_project_name", JLaunchNumber.LAUNCH_NUMBER, new OrderField[] { JLaunchNumber.LAUNCH_NUMBER.PROJECT_ID, JLaunchNumber.LAUNCH_NUMBER.LAUNCH_NAME }, true);
         public static Index LOG_ATTACH_ID_IDX = Internal.createIndex("log_attach_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.ATTACHMENT_ID }, false);
+        public static Index LOG_CLUSTER_IDX = Internal.createIndex("log_cluster_idx", JLog.LOG, new OrderField[] { JLog.LOG.CLUSTER_ID }, false);
         public static Index LOG_LAUNCH_ID_IDX = Internal.createIndex("log_launch_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.LAUNCH_ID }, false);
         public static Index LOG_MESSAGE_TRGM_IDX = Internal.createIndex("log_message_trgm_idx", JLog.LOG, new OrderField[] { JLog.LOG.LOG_MESSAGE }, false);
         public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
-        public static Index LOG_PROJECT_ID_IDX = Internal.createIndex("log_project_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID }, false);
+        public static Index LOG_PROJECT_ID_LOG_TIME_IDX = Internal.createIndex("log_project_id_log_time_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID, JLog.LOG.LOG_TIME }, false);
+        public static Index LOG_PROJECT_IDX = Internal.createIndex("log_project_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID }, false);
         public static Index LOG_TI_IDX = Internal.createIndex("log_ti_idx", JLog.LOG, new OrderField[] { JLog.LOG.ITEM_ID }, false);
         public static Index OAUTH_ACCESS_TOKEN_PKEY = Internal.createIndex("oauth_access_token_pkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID }, true);
         public static Index OAUTH_AT_USER_IDX = Internal.createIndex("oauth_at_user_idx", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID }, false);
@@ -275,6 +247,7 @@ public class Indexes {
         public static Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createIndex("oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_PK = Internal.createIndex("oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createIndex("oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK }, true);
+        public static Index ONBOARDING_PK = Internal.createIndex("onboarding_pk", JOnboarding.ONBOARDING, new OrderField[] { JOnboarding.ONBOARDING.ID }, true);
         public static Index PARAMETER_TI_IDX = Internal.createIndex("parameter_ti_idx", JParameter.PARAMETER, new OrderField[] { JParameter.PARAMETER.ITEM_ID }, false);
         public static Index PATTERN_TEMPLATE_PK = Internal.createIndex("pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE, new OrderField[] { JPatternTemplate.PATTERN_TEMPLATE.ID }, true);
         public static Index UNQ_NAME_PROJECTID = Internal.createIndex("unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE, new OrderField[] { JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID }, true);

@@ -606,7 +606,14 @@ public enum FilterTarget {
 									JoinEntity.of(ISSUE_TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE.ISSUE_ID.eq(ISSUE_TICKET.ISSUE_ID)),
 									JoinEntity.of(TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE_TICKET.TICKET_ID.eq(TICKET.ID))
 							)
-					).withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString()).get()
+					).withAggregateCriteria(DSL.arrayAggDistinct(TICKET.TICKET_ID).toString()).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_CLUSTER_ID,
+							CLUSTERS_TEST_ITEM.CLUSTER_ID,
+							Long.class,
+							Lists.newArrayList(
+									JoinEntity.of(CLUSTERS_TEST_ITEM, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(CLUSTERS_TEST_ITEM.ITEM_ID))
+							)
+					).withAggregateCriteria(DSL.arrayAggDistinct(CLUSTERS_TEST_ITEM.CLUSTER_ID).toString()).get()
 			)
 	) {
 		@Override
@@ -685,6 +692,7 @@ public enum FilterTarget {
 			query.addJoin(TICKET, JoinType.LEFT_OUTER_JOIN, ISSUE_TICKET.TICKET_ID.eq(TICKET.ID));
 			query.addJoin(PARAMETER, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(PARAMETER.ITEM_ID));
 			query.addJoin(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID));
+			query.addJoin(CLUSTERS_TEST_ITEM, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.ITEM_ID.eq(CLUSTERS_TEST_ITEM.ITEM_ID));
 		}
 
 		@Override

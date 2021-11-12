@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,12 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 	@Modifying
 	@Query(value = "UPDATE log SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
 	void updateLaunchIdByLaunchId(@Param("currentLaunchId") Long currentLaunchId, @Param("newLaunchId") Long newLaunchId);
+
+	@Modifying
+	@Query(value = "UPDATE log SET cluster_id = :clusterId WHERE id IN (:ids)", nativeQuery = true)
+	int updateClusterIdByIdIn(@Param("clusterId") Long clusterId, @Param("ids") Collection<Long> ids);
+
+	@Modifying
+	@Query(value = "UPDATE log SET cluster_id = NULL WHERE cluster_id IN (SELECT id FROM clusters WHERE clusters.launch_id = :launchId)", nativeQuery = true)
+	int updateClusterIdSetNullByLaunchId(@Param("launchId") Long launchId);
 }

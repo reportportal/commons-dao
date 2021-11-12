@@ -43,7 +43,8 @@ public enum ProjectAttributeEnum {
 	AUTO_PATTERN_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoPatternAnalyzerEnabled", String.valueOf(false)),
 	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(false)),
 	AUTO_ANALYZER_MODE(Prefix.ANALYZER + "autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue()),
-	ALL_MESSAGES_SHOULD_MATCH(Prefix.ANALYZER + "allMessagesShouldMatch", String.valueOf(false));
+	ALL_MESSAGES_SHOULD_MATCH(Prefix.ANALYZER + "allMessagesShouldMatch", String.valueOf(false)),
+	SEARCH_LOGS_MIN_SHOULD_MATCH(Prefix.ANALYZER + "searchLogsMinShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH));
 
 	public static final String FOREVER_ALIAS = "0";
 	private String attribute;

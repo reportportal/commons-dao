@@ -88,6 +88,6 @@ class AttributeRepositoryTest extends BaseTest {
 	void deleteById() {
 		final Long attrId = 100L;
 		attributeRepository.deleteById(attrId);
-		assertEquals(12, attributeRepository.findAll().size());
+		assertEquals(13, attributeRepository.findAll().size());
 	}
 }
