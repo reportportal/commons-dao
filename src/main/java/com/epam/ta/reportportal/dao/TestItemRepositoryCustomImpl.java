@@ -656,10 +656,12 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	 * {@link TestItem} that matched to the provided `launchId` and `autoAnalyzed` conditions
 	 */
 	@Override
-	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel) {
+	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId, int logLevel) {
 
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
 		JTestItem nestedItemTable = TEST_ITEM.as(NESTED);
+
+		final Condition issueCondition = ISSUE.AUTO_ANALYZED.eq(autoAnalyzed).and(ISSUE.IGNORE_ANALYZER.eq(ignoreAnalyzer));
 
 		return dsl.selectDistinct(fieldName(ID))
 				.from(DSL.select(outerItemTable.ITEM_ID.as(ID))
@@ -671,7 +673,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						.where(outerItemTable.LAUNCH_ID.eq(launchId))
 						.and(outerItemTable.HAS_STATS)
 						.andNot(outerItemTable.HAS_CHILDREN)
-						.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
+						.and(issueCondition)
 						.and(DSL.exists(DSL.selectOne()
 								.from(nestedItemTable)
 								.join(LOG)
@@ -689,7 +691,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 								.join(LOG)
 								.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
 								.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-								.and(ISSUE.AUTO_ANALYZED.eq(autoAnalyzed))
+								.and(issueCondition)
 								.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)))
 						.asTable(ITEM))
 				.fetchInto(Long.class);
