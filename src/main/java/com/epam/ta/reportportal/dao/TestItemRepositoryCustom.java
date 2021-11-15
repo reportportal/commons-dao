@@ -311,7 +311,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param logLevel     {@link Log#getLogLevel()}
 	 * @return The {@link List} of the {@link TestItem#getItemId()}
 	 */
-	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
+	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId, int logLevel);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}

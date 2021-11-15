@@ -381,10 +381,16 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void selectByAutoAnalyzedStatus() {
-		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, 1L, LogLevel.ERROR.toInt());
+	void selectByAutoAnalyzedStatusNotIgnoreAnalyzer() {
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, false, 1L, LogLevel.ERROR.toInt());
 		assertNotNull(itemIds);
 		assertThat(itemIds, Matchers.hasSize(1));
+	}
+
+	@Test
+	void selectByAutoAnalyzedStatusIgnoreAnalyzer() {
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, true, 1L, LogLevel.ERROR.toInt());
+		assertTrue(itemIds.isEmpty());
 	}
 
 	@Test
