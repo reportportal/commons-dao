@@ -125,10 +125,9 @@ class LogRepositoryTest extends BaseTest {
 		assertEquals(3, updated);
 
 		final List<Long> itemIds = List.of(3L, 4L, 5L);
-		final List<Long> foundLogIds = logRepository.findIdsByTestItemIdsAndLogLevelGte(itemIds, 0);
 		final int nullUpdated = logRepository.updateClusterIdSetNullByItemIds(itemIds);
 
-		assertEquals(foundLogIds.size(), nullUpdated);
+		assertEquals(6, nullUpdated);
 
 		final List<Log> logs = logRepository.findAllById(logIds);
 
