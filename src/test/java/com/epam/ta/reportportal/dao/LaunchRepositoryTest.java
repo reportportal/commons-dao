@@ -20,9 +20,11 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Comparators;
@@ -283,11 +285,16 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findIndexLaunchByIdsAndLogLevel() {
-		final List<IndexLaunch> result = launchRepository.findIndexLaunchByIdsAndLogLevel(List.of(100L, 200L, 300L),
-				0
-		);
-		assertEquals(2, result.size());
+	void hasItemsWithLogsWithLogLevel() {
+		assertTrue(launchRepository.hasItemsWithLogsWithLogLevel(100L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+		assertFalse(launchRepository.hasItemsWithLogsWithLogLevel(200L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+		assertFalse(launchRepository.hasItemsWithLogsWithLogLevel(300L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+	}
+
+	@Test
+	void findIndexLaunchByIds() {
+		final List<IndexLaunch> result = launchRepository.findIndexLaunchByIds(List.of(100L, 200L, 300L));
+		assertEquals(3, result.size());
 	}
 
 	@Test
