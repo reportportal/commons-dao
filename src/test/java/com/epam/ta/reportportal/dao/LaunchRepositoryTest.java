@@ -287,7 +287,7 @@ class LaunchRepositoryTest extends BaseTest {
 	@Test
 	void hasItemsWithLogsWithLogLevel() {
 		assertTrue(launchRepository.hasItemsWithLogsWithLogLevel(100L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
-		assertFalse(launchRepository.hasItemsWithLogsWithLogLevel(200L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+		assertTrue(launchRepository.hasItemsWithLogsWithLogLevel(200L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
 		assertFalse(launchRepository.hasItemsWithLogsWithLogLevel(300L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
 	}
 
