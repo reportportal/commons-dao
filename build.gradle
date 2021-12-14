@@ -71,6 +71,7 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
     compile('org.hibernate:hibernate-core:5.4.18.Final')
+    compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
     //
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-13692
