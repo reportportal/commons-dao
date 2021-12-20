@@ -798,6 +798,36 @@ class TestItemRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findAllNotFromBaseline() {
+
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "true", CRITERIA_HAS_STATS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "false", CRITERIA_HAS_CHILDREN))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "STEP", CRITERIA_TYPE))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.build();
+
+		Filter baseline = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "true", CRITERIA_HAS_STATS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "false", CRITERIA_HAS_CHILDREN))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "STEP", CRITERIA_TYPE))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_LAUNCH_ID))
+				.build();
+
+		final Page<TestItem> result = testItemRepository.findAllNotFromBaseline(itemFilter,
+				baseline,
+				PageRequest.of(0, 20, Sort.by(Sort.Order.asc("name")))
+		);
+
+		assertEquals(1, result.getNumberOfElements());
+		assertEquals(1, result.getTotalElements());
+	}
+
+	@Test
 	void testItemHistoryPage() {
 		Filter itemFilter = Filter.builder()
 				.withTarget(TestItem.class)

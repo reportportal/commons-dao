@@ -72,6 +72,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable);
 
+	Page<TestItem> findAllNotFromBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable);
+
 	/**
 	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the whole {@link com.epam.ta.reportportal.entity.project.Project}
 	 * grouped by {@link TestItem#getTestCaseHash()} and ordered by {@link TestItem#getStartTime()} `DESCENDING` within group.

@@ -69,6 +69,7 @@ import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -93,6 +94,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	private static final String RESULT_INNER_TABLE = "resultInnerTable";
 
 	private static final String CHILD_ITEM_TABLE = "child";
+
+	private static final String BASELINE_TABLE = "baseline";
 
 	private static final String ITEM_START_TIME = "itemStartTime";
 	private static final String LAUNCH_START_TIME = "launchStartTime";
@@ -165,6 +168,41 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						)
 						.build())
 		);
+	}
+
+	@Override
+	public Page<TestItem> findAllNotFromBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable) {
+
+		final SelectQuery<? extends Record> contentQuery = getQueryWithBaseline(targetFilter, baselineFilter, pageable).with(pageable)
+				.wrap()
+				.withWrapperSort(pageable.getSort())
+				.build();
+		final SelectQuery<? extends Record> pagingQuery = getQueryWithBaseline(targetFilter, baselineFilter, pageable).build();
+
+		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(contentQuery)),
+				pageable,
+				() -> dsl.fetchCount(pagingQuery)
+		);
+
+	}
+
+	private QueryBuilder getQueryWithBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable) {
+
+		final SelectQuery<? extends Record> baselineQuery = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter))
+				.build();
+		baselineQuery.addSelect(TEST_ITEM.TEST_CASE_HASH);
+		final Table<? extends Record> baseline = baselineQuery.asTable(BASELINE_TABLE);
+
+		//https://github.com/jOOQ/jOOQ/issues/11238
+		final Condition baselineHashIsNull = condition(
+				"array_agg(baseline.test_case_hash) filter (where baseline.test_case_hash is not null) is null");
+
+		return QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter, pageable.getSort()))
+				.addJoinToEnd(baseline,
+						JoinType.LEFT_OUTER_JOIN,
+						TEST_ITEM.TEST_CASE_HASH.eq(fieldName(baseline.getName(), TEST_ITEM.TEST_CASE_HASH.getName()).cast(Integer.class))
+				)
+				.addHavingCondition(baselineHashIsNull);
 	}
 
 	@Override
