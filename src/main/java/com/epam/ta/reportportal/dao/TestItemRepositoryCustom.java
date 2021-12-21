@@ -57,6 +57,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	Set<Statistics> accumulateStatisticsByFilter(Queryable filter);
 
+	Set<Statistics> accumulateStatisticsByFilterNotFromBaseline(Queryable targetFilter, Queryable baselineFilter);
+
 	Optional<Long> findIdByFilter(Queryable filter, Sort sort);
 
 	/**

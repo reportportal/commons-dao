@@ -22,7 +22,10 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.ta.reportportal.entity.item.*;
+import com.epam.ta.reportportal.entity.item.NestedStep;
+import com.epam.ta.reportportal.entity.item.Parameter;
+import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -730,6 +733,31 @@ class TestItemRepositoryTest extends BaseTest {
 				.build();
 		final Set<Statistics> statistics = testItemRepository.accumulateStatisticsByFilter(itemFilter);
 		assertNotNull(statistics);
+	}
+
+	@Test
+	void accumulateStatisticsByFilterNotFromBaseline() {
+		Filter itemFilter = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "true", CRITERIA_HAS_STATS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "false", CRITERIA_HAS_CHILDREN))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "STEP", CRITERIA_TYPE))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
+				.build();
+
+		Filter baseline = Filter.builder()
+				.withTarget(TestItem.class)
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "FAILED", CRITERIA_STATUS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "true", CRITERIA_HAS_STATS))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "false", CRITERIA_HAS_CHILDREN))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "STEP", CRITERIA_TYPE))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "3", CRITERIA_LAUNCH_ID))
+				.build();
+
+		final Set<Statistics> result = testItemRepository.accumulateStatisticsByFilterNotFromBaseline(itemFilter, baseline);
+		assertFalse(result.isEmpty());
+		assertEquals(2, result.size());
 	}
 
 	@Test

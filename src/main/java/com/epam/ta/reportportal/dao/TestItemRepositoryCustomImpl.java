@@ -130,6 +130,31 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public Set<Statistics> accumulateStatisticsByFilterNotFromBaseline(Queryable targetFilter, Queryable baselineFilter) {
+		final QueryBuilder targetBuilder = QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter));
+		final QueryBuilder baselineBuilder = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter));
+		final SelectQuery<? extends Record> contentQuery = getQueryWithBaseline(targetBuilder, baselineBuilder).build();
+
+		return dsl.fetch(DSL.with(FILTERED_QUERY)
+				.as(contentQuery)
+				.select(DSL.sum(STATISTICS.S_COUNTER).as(ACCUMULATED_STATISTICS), STATISTICS_FIELD.NAME)
+				.from(STATISTICS)
+				.join(DSL.table(name(FILTERED_QUERY)))
+				.on(STATISTICS.ITEM_ID.eq(field(name(FILTERED_QUERY, FILTERED_ID), Long.class)))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.groupBy(STATISTICS_FIELD.NAME)
+				.getQuery()).intoSet(r -> {
+			Statistics statistics = new Statistics();
+			StatisticsField statisticsField = new StatisticsField();
+			statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
+			statistics.setStatisticsField(statisticsField);
+			statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
+			return statistics;
+		});
+	}
+
+	@Override
 	public Optional<Long> findIdByFilter(Queryable filter, Sort sort) {
 
 		final Set<String> joinFields = QueryUtils.collectJoinFields(filter, sort);
@@ -173,11 +198,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	@Override
 	public Page<TestItem> findAllNotFromBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable) {
 
-		final SelectQuery<? extends Record> contentQuery = getQueryWithBaseline(targetFilter, baselineFilter, pageable).with(pageable)
+		final QueryBuilder targetBuilder = QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter, pageable.getSort()));
+		final QueryBuilder baselineBuilder = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter));
+		final SelectQuery<? extends Record> contentQuery = getQueryWithBaseline(targetBuilder, baselineBuilder).with(pageable)
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build();
-		final SelectQuery<? extends Record> pagingQuery = getQueryWithBaseline(targetFilter, baselineFilter, pageable).build();
+
+		final QueryBuilder targetPagingBuilder = QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter, pageable.getSort()));
+		final QueryBuilder baselinePagingBuilder = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter));
+		final SelectQuery<? extends Record> pagingQuery = getQueryWithBaseline(targetPagingBuilder, baselinePagingBuilder).build();
 
 		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(contentQuery)),
 				pageable,
@@ -186,9 +216,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	}
 
-	private QueryBuilder getQueryWithBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable) {
+	private QueryBuilder getQueryWithBaseline(QueryBuilder targetBuilder, QueryBuilder baselineBuilder) {
 
-		final SelectQuery<? extends Record> baselineQuery = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter))
+		final SelectQuery<? extends Record> baselineQuery = baselineBuilder
 				.build();
 		baselineQuery.addSelect(TEST_ITEM.TEST_CASE_HASH);
 		final Table<? extends Record> baseline = baselineQuery.asTable(BASELINE_TABLE);
@@ -197,7 +227,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 		final Condition baselineHashIsNull = condition(
 				"array_agg(baseline.test_case_hash) filter (where baseline.test_case_hash is not null) is null");
 
-		return QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter, pageable.getSort()))
+		return targetBuilder
 				.addJoinToEnd(baseline,
 						JoinType.LEFT_OUTER_JOIN,
 						TEST_ITEM.TEST_CASE_HASH.eq(fieldName(baseline.getName(), TEST_ITEM.TEST_CASE_HASH.getName()).cast(Integer.class))
