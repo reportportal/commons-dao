@@ -56,7 +56,7 @@ public class Ticket implements Serializable {
 	@Column(name = "url")
 	private String url;
 
-	@Column(name = "pluginName")
+	@Column(name = "plugin_name")
 	private String pluginName;
 
 	@ManyToMany(mappedBy = "tickets")
