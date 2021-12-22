@@ -69,6 +69,7 @@ import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -94,6 +95,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
 	private static final String CHILD_ITEM_TABLE = "child";
 
+	private static final String BASELINE_TABLE = "baseline";
+
 	private static final String ITEM_START_TIME = "itemStartTime";
 	private static final String LAUNCH_START_TIME = "launchStartTime";
 	private static final String ACCUMULATED_STATISTICS = "accumulated_statistics";
@@ -109,6 +112,31 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	public Set<Statistics> accumulateStatisticsByFilter(Queryable filter) {
 		return dsl.fetch(DSL.with(FILTERED_QUERY)
 				.as(QueryBuilder.newBuilder(filter, QueryUtils.collectJoinFields(filter)).build())
+				.select(DSL.sum(STATISTICS.S_COUNTER).as(ACCUMULATED_STATISTICS), STATISTICS_FIELD.NAME)
+				.from(STATISTICS)
+				.join(DSL.table(name(FILTERED_QUERY)))
+				.on(STATISTICS.ITEM_ID.eq(field(name(FILTERED_QUERY, FILTERED_ID), Long.class)))
+				.join(STATISTICS_FIELD)
+				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+				.groupBy(STATISTICS_FIELD.NAME)
+				.getQuery()).intoSet(r -> {
+			Statistics statistics = new Statistics();
+			StatisticsField statisticsField = new StatisticsField();
+			statisticsField.setName(r.get(STATISTICS_FIELD.NAME));
+			statistics.setStatisticsField(statisticsField);
+			statistics.setCounter(ofNullable(r.get(ACCUMULATED_STATISTICS, Integer.class)).orElse(0));
+			return statistics;
+		});
+	}
+
+	@Override
+	public Set<Statistics> accumulateStatisticsByFilterNotFromBaseline(Queryable targetFilter, Queryable baselineFilter) {
+		final QueryBuilder targetBuilder = QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter));
+		final QueryBuilder baselineBuilder = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter));
+		final SelectQuery<? extends Record> contentQuery = getQueryWithBaseline(targetBuilder, baselineBuilder).build();
+
+		return dsl.fetch(DSL.with(FILTERED_QUERY)
+				.as(contentQuery)
 				.select(DSL.sum(STATISTICS.S_COUNTER).as(ACCUMULATED_STATISTICS), STATISTICS_FIELD.NAME)
 				.from(STATISTICS)
 				.join(DSL.table(name(FILTERED_QUERY)))
@@ -165,6 +193,46 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 						)
 						.build())
 		);
+	}
+
+	@Override
+	public Page<TestItem> findAllNotFromBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable) {
+
+		final QueryBuilder targetBuilder = QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter, pageable.getSort()));
+		final QueryBuilder baselineBuilder = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter));
+		final SelectQuery<? extends Record> contentQuery = getQueryWithBaseline(targetBuilder, baselineBuilder).with(pageable)
+				.wrap()
+				.withWrapperSort(pageable.getSort())
+				.build();
+
+		final QueryBuilder targetPagingBuilder = QueryBuilder.newBuilder(targetFilter, collectJoinFields(targetFilter, pageable.getSort()));
+		final QueryBuilder baselinePagingBuilder = QueryBuilder.newBuilder(baselineFilter, collectJoinFields(baselineFilter));
+		final SelectQuery<? extends Record> pagingQuery = getQueryWithBaseline(targetPagingBuilder, baselinePagingBuilder).build();
+
+		return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(contentQuery)),
+				pageable,
+				() -> dsl.fetchCount(pagingQuery)
+		);
+
+	}
+
+	private QueryBuilder getQueryWithBaseline(QueryBuilder targetBuilder, QueryBuilder baselineBuilder) {
+
+		final SelectQuery<? extends Record> baselineQuery = baselineBuilder
+				.build();
+		baselineQuery.addSelect(TEST_ITEM.TEST_CASE_HASH);
+		final Table<? extends Record> baseline = baselineQuery.asTable(BASELINE_TABLE);
+
+		//https://github.com/jOOQ/jOOQ/issues/11238
+		final Condition baselineHashIsNull = condition(
+				"array_agg(baseline.test_case_hash) filter (where baseline.test_case_hash is not null) is null");
+
+		return targetBuilder
+				.addJoinToEnd(baseline,
+						JoinType.LEFT_OUTER_JOIN,
+						TEST_ITEM.TEST_CASE_HASH.eq(fieldName(baseline.getName(), TEST_ITEM.TEST_CASE_HASH.getName()).cast(Integer.class))
+				)
+				.addHavingCondition(baselineHashIsNull);
 	}
 
 	@Override
