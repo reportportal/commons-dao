@@ -49,7 +49,6 @@ import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
 import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
-import com.epam.ta.reportportal.jooq.tables.JShedlock;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
@@ -187,7 +186,6 @@ public class Indexes {
     public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
     public static final Index SHARED_ENTITY_OWNERX = Indexes0.SHARED_ENTITY_OWNERX;
     public static final Index SHARED_ENTITY_PROJECT_IDX = Indexes0.SHARED_ENTITY_PROJECT_IDX;
-    public static final Index SHEDLOCK_PKEY = Indexes0.SHEDLOCK_PKEY;
     public static final Index STATISTICS_LAUNCH_IDX = Indexes0.STATISTICS_LAUNCH_IDX;
     public static final Index STATISTICS_PK = Indexes0.STATISTICS_PK;
     public static final Index STATISTICS_TI_IDX = Indexes0.STATISTICS_TI_IDX;
@@ -326,7 +324,6 @@ public class Indexes {
         public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.ID }, true);
         public static Index SHARED_ENTITY_OWNERX = Internal.createIndex("shared_entity_ownerx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.OWNER }, false);
         public static Index SHARED_ENTITY_PROJECT_IDX = Internal.createIndex("shared_entity_project_idx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.PROJECT_ID }, false);
-        public static Index SHEDLOCK_PKEY = Internal.createIndex("shedlock_pkey", JShedlock.SHEDLOCK, new OrderField[] { JShedlock.SHEDLOCK.NAME }, true);
         public static Index STATISTICS_LAUNCH_IDX = Internal.createIndex("statistics_launch_idx", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.LAUNCH_ID }, false);
         public static Index STATISTICS_PK = Internal.createIndex("statistics_pk", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
         public static Index STATISTICS_TI_IDX = Internal.createIndex("statistics_ti_idx", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.ITEM_ID }, false);
