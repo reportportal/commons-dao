@@ -4,13 +4,138 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.*;
+import com.epam.ta.reportportal.jooq.tables.JAclClass;
+import com.epam.ta.reportportal.jooq.tables.JAclEntry;
+import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
+import com.epam.ta.reportportal.jooq.tables.JAclSid;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttachment;
+import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JClusters;
+import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
+import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
+import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
+import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
+import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
+import com.epam.ta.reportportal.jooq.tables.JPgStatStatements;
+import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRecipients;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
+import com.epam.ta.reportportal.jooq.tables.JShedlock;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserPreference;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.JWidget_103752_24588;
+import com.epam.ta.reportportal.jooq.tables.JWidget_103846_24787;
+import com.epam.ta.reportportal.jooq.tables.JWidget_103971_25016;
+import com.epam.ta.reportportal.jooq.tables.JWidget_104021_25179;
+import com.epam.ta.reportportal.jooq.tables.JWidget_104694_25588;
+import com.epam.ta.reportportal.jooq.tables.JWidget_105200_25958;
+import com.epam.ta.reportportal.jooq.tables.JWidget_111846_27878;
+import com.epam.ta.reportportal.jooq.tables.JWidget_111949_28071;
+import com.epam.ta.reportportal.jooq.tables.JWidget_113970_28705;
+import com.epam.ta.reportportal.jooq.tables.JWidget_115748_29078;
+import com.epam.ta.reportportal.jooq.tables.JWidget_118515_30088;
+import com.epam.ta.reportportal.jooq.tables.JWidget_141667_36456;
+import com.epam.ta.reportportal.jooq.tables.JWidget_142266_36836;
+import com.epam.ta.reportportal.jooq.tables.JWidget_146466_37857;
+import com.epam.ta.reportportal.jooq.tables.JWidget_154588_40067;
+import com.epam.ta.reportportal.jooq.tables.JWidget_154593_40071;
+import com.epam.ta.reportportal.jooq.tables.JWidget_154631_40077;
+import com.epam.ta.reportportal.jooq.tables.JWidget_157161_40500;
+import com.epam.ta.reportportal.jooq.tables.JWidget_157166_40504;
+import com.epam.ta.reportportal.jooq.tables.JWidget_157173_40510;
+import com.epam.ta.reportportal.jooq.tables.JWidget_176269_45476;
+import com.epam.ta.reportportal.jooq.tables.JWidget_182000_47644;
+import com.epam.ta.reportportal.jooq.tables.JWidget_184600_48082;
+import com.epam.ta.reportportal.jooq.tables.JWidget_187167_48598;
+import com.epam.ta.reportportal.jooq.tables.JWidget_192430_50503;
+import com.epam.ta.reportportal.jooq.tables.JWidget_200975_52899;
+import com.epam.ta.reportportal.jooq.tables.JWidget_216342_56471;
+import com.epam.ta.reportportal.jooq.tables.JWidget_226956_59319;
+import com.epam.ta.reportportal.jooq.tables.JWidget_232392_60657;
+import com.epam.ta.reportportal.jooq.tables.JWidget_237921_61796;
+import com.epam.ta.reportportal.jooq.tables.JWidget_246971_63870;
+import com.epam.ta.reportportal.jooq.tables.JWidget_267196_68101;
+import com.epam.ta.reportportal.jooq.tables.JWidget_278283_71282;
+import com.epam.ta.reportportal.jooq.tables.JWidget_282835_72398;
+import com.epam.ta.reportportal.jooq.tables.JWidget_287619_73196;
+import com.epam.ta.reportportal.jooq.tables.JWidget_291228_73904;
+import com.epam.ta.reportportal.jooq.tables.JWidget_291258_73935;
+import com.epam.ta.reportportal.jooq.tables.JWidget_314702_79581;
+import com.epam.ta.reportportal.jooq.tables.JWidget_318086_80714;
+import com.epam.ta.reportportal.jooq.tables.JWidget_330231_83965;
+import com.epam.ta.reportportal.jooq.tables.JWidget_331791_84160;
+import com.epam.ta.reportportal.jooq.tables.JWidget_341092_86478;
+import com.epam.ta.reportportal.jooq.tables.JWidget_341112_86489;
+import com.epam.ta.reportportal.jooq.tables.JWidget_341213_86696;
+import com.epam.ta.reportportal.jooq.tables.JWidget_341295_86870;
+import com.epam.ta.reportportal.jooq.tables.JWidget_347885_88349;
+import com.epam.ta.reportportal.jooq.tables.JWidget_348060_88745;
+import com.epam.ta.reportportal.jooq.tables.JWidget_348688_89170;
+import com.epam.ta.reportportal.jooq.tables.JWidget_348758_89371;
+import com.epam.ta.reportportal.jooq.tables.JWidget_348893_89617;
+import com.epam.ta.reportportal.jooq.tables.JWidget_349047_89919;
+import com.epam.ta.reportportal.jooq.tables.JWidget_351738_90929;
+import com.epam.ta.reportportal.jooq.tables.JWidget_356495_91790;
+import com.epam.ta.reportportal.jooq.tables.JWidget_364426_93737;
+import com.epam.ta.reportportal.jooq.tables.JWidget_367881_94743;
+import com.epam.ta.reportportal.jooq.tables.JWidget_370844_95325;
+import com.epam.ta.reportportal.jooq.tables.JWidget_399921_102785;
+import com.epam.ta.reportportal.jooq.tables.JWidget_407467_104458;
+import com.epam.ta.reportportal.jooq.tables.JWidget_4150_9701;
+import com.epam.ta.reportportal.jooq.tables.JWidget_4189_1144;
+import com.epam.ta.reportportal.jooq.tables.JWidget_424133_108287;
+import com.epam.ta.reportportal.jooq.tables.JWidget_445963_113365;
+import com.epam.ta.reportportal.jooq.tables.JWidget_476112_119516;
+import com.epam.ta.reportportal.jooq.tables.JWidget_7488_1974;
+import com.epam.ta.reportportal.jooq.tables.JWidget_7623_2220;
+import com.epam.ta.reportportal.jooq.tables.JWidget_7758_2466;
+import com.epam.ta.reportportal.jooq.tables.JWidget_78789_18699;
 import com.epam.ta.reportportal.jooq.tables.records.JPgpArmorHeadersRecord;
+
+import javax.annotation.processing.Generated;
+
 import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Result;
-
-import javax.annotation.processing.Generated;
 
 
 /**
@@ -55,6 +180,11 @@ public class Tables {
      * The table <code>public.attachment</code>.
      */
     public static final JAttachment ATTACHMENT = JAttachment.ATTACHMENT;
+
+    /**
+     * The table <code>public.attachment_deletion</code>.
+     */
+    public static final JAttachmentDeletion ATTACHMENT_DELETION = JAttachmentDeletion.ATTACHMENT_DELETION;
 
     /**
      * The table <code>public.attribute</code>.
@@ -207,6 +337,11 @@ public class Tables {
     public static final JPatternTemplateTestItem PATTERN_TEMPLATE_TEST_ITEM = JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM;
 
     /**
+     * The table <code>public.pg_stat_statements</code>.
+     */
+    public static final JPgStatStatements PG_STAT_STATEMENTS = JPgStatStatements.PG_STAT_STATEMENTS;
+
+    /**
      * The table <code>public.pgp_armor_headers</code>.
      */
     public static final JPgpArmorHeaders PGP_ARMOR_HEADERS = JPgpArmorHeaders.PGP_ARMOR_HEADERS;
@@ -273,6 +408,11 @@ public class Tables {
     public static final JShareableEntity SHAREABLE_ENTITY = JShareableEntity.SHAREABLE_ENTITY;
 
     /**
+     * The table <code>public.shedlock</code>.
+     */
+    public static final JShedlock SHEDLOCK = JShedlock.SHEDLOCK;
+
+    /**
      * The table <code>public.statistics</code>.
      */
     public static final JStatistics STATISTICS = JStatistics.STATISTICS;
@@ -316,6 +456,341 @@ public class Tables {
      * The table <code>public.widget</code>.
      */
     public static final JWidget WIDGET = JWidget.WIDGET;
+
+    /**
+     * The table <code>public.widget_103752_24588</code>.
+     */
+    public static final JWidget_103752_24588 WIDGET_103752_24588 = JWidget_103752_24588.WIDGET_103752_24588;
+
+    /**
+     * The table <code>public.widget_103846_24787</code>.
+     */
+    public static final JWidget_103846_24787 WIDGET_103846_24787 = JWidget_103846_24787.WIDGET_103846_24787;
+
+    /**
+     * The table <code>public.widget_103971_25016</code>.
+     */
+    public static final JWidget_103971_25016 WIDGET_103971_25016 = JWidget_103971_25016.WIDGET_103971_25016;
+
+    /**
+     * The table <code>public.widget_104021_25179</code>.
+     */
+    public static final JWidget_104021_25179 WIDGET_104021_25179 = JWidget_104021_25179.WIDGET_104021_25179;
+
+    /**
+     * The table <code>public.widget_104694_25588</code>.
+     */
+    public static final JWidget_104694_25588 WIDGET_104694_25588 = JWidget_104694_25588.WIDGET_104694_25588;
+
+    /**
+     * The table <code>public.widget_105200_25958</code>.
+     */
+    public static final JWidget_105200_25958 WIDGET_105200_25958 = JWidget_105200_25958.WIDGET_105200_25958;
+
+    /**
+     * The table <code>public.widget_111846_27878</code>.
+     */
+    public static final JWidget_111846_27878 WIDGET_111846_27878 = JWidget_111846_27878.WIDGET_111846_27878;
+
+    /**
+     * The table <code>public.widget_111949_28071</code>.
+     */
+    public static final JWidget_111949_28071 WIDGET_111949_28071 = JWidget_111949_28071.WIDGET_111949_28071;
+
+    /**
+     * The table <code>public.widget_113970_28705</code>.
+     */
+    public static final JWidget_113970_28705 WIDGET_113970_28705 = JWidget_113970_28705.WIDGET_113970_28705;
+
+    /**
+     * The table <code>public.widget_115748_29078</code>.
+     */
+    public static final JWidget_115748_29078 WIDGET_115748_29078 = JWidget_115748_29078.WIDGET_115748_29078;
+
+    /**
+     * The table <code>public.widget_118515_30088</code>.
+     */
+    public static final JWidget_118515_30088 WIDGET_118515_30088 = JWidget_118515_30088.WIDGET_118515_30088;
+
+    /**
+     * The table <code>public.widget_141667_36456</code>.
+     */
+    public static final JWidget_141667_36456 WIDGET_141667_36456 = JWidget_141667_36456.WIDGET_141667_36456;
+
+    /**
+     * The table <code>public.widget_142266_36836</code>.
+     */
+    public static final JWidget_142266_36836 WIDGET_142266_36836 = JWidget_142266_36836.WIDGET_142266_36836;
+
+    /**
+     * The table <code>public.widget_146466_37857</code>.
+     */
+    public static final JWidget_146466_37857 WIDGET_146466_37857 = JWidget_146466_37857.WIDGET_146466_37857;
+
+    /**
+     * The table <code>public.widget_154588_40067</code>.
+     */
+    public static final JWidget_154588_40067 WIDGET_154588_40067 = JWidget_154588_40067.WIDGET_154588_40067;
+
+    /**
+     * The table <code>public.widget_154593_40071</code>.
+     */
+    public static final JWidget_154593_40071 WIDGET_154593_40071 = JWidget_154593_40071.WIDGET_154593_40071;
+
+    /**
+     * The table <code>public.widget_154631_40077</code>.
+     */
+    public static final JWidget_154631_40077 WIDGET_154631_40077 = JWidget_154631_40077.WIDGET_154631_40077;
+
+    /**
+     * The table <code>public.widget_157161_40500</code>.
+     */
+    public static final JWidget_157161_40500 WIDGET_157161_40500 = JWidget_157161_40500.WIDGET_157161_40500;
+
+    /**
+     * The table <code>public.widget_157166_40504</code>.
+     */
+    public static final JWidget_157166_40504 WIDGET_157166_40504 = JWidget_157166_40504.WIDGET_157166_40504;
+
+    /**
+     * The table <code>public.widget_157173_40510</code>.
+     */
+    public static final JWidget_157173_40510 WIDGET_157173_40510 = JWidget_157173_40510.WIDGET_157173_40510;
+
+    /**
+     * The table <code>public.widget_176269_45476</code>.
+     */
+    public static final JWidget_176269_45476 WIDGET_176269_45476 = JWidget_176269_45476.WIDGET_176269_45476;
+
+    /**
+     * The table <code>public.widget_182000_47644</code>.
+     */
+    public static final JWidget_182000_47644 WIDGET_182000_47644 = JWidget_182000_47644.WIDGET_182000_47644;
+
+    /**
+     * The table <code>public.widget_184600_48082</code>.
+     */
+    public static final JWidget_184600_48082 WIDGET_184600_48082 = JWidget_184600_48082.WIDGET_184600_48082;
+
+    /**
+     * The table <code>public.widget_187167_48598</code>.
+     */
+    public static final JWidget_187167_48598 WIDGET_187167_48598 = JWidget_187167_48598.WIDGET_187167_48598;
+
+    /**
+     * The table <code>public.widget_192430_50503</code>.
+     */
+    public static final JWidget_192430_50503 WIDGET_192430_50503 = JWidget_192430_50503.WIDGET_192430_50503;
+
+    /**
+     * The table <code>public.widget_200975_52899</code>.
+     */
+    public static final JWidget_200975_52899 WIDGET_200975_52899 = JWidget_200975_52899.WIDGET_200975_52899;
+
+    /**
+     * The table <code>public.widget_216342_56471</code>.
+     */
+    public static final JWidget_216342_56471 WIDGET_216342_56471 = JWidget_216342_56471.WIDGET_216342_56471;
+
+    /**
+     * The table <code>public.widget_226956_59319</code>.
+     */
+    public static final JWidget_226956_59319 WIDGET_226956_59319 = JWidget_226956_59319.WIDGET_226956_59319;
+
+    /**
+     * The table <code>public.widget_232392_60657</code>.
+     */
+    public static final JWidget_232392_60657 WIDGET_232392_60657 = JWidget_232392_60657.WIDGET_232392_60657;
+
+    /**
+     * The table <code>public.widget_237921_61796</code>.
+     */
+    public static final JWidget_237921_61796 WIDGET_237921_61796 = JWidget_237921_61796.WIDGET_237921_61796;
+
+    /**
+     * The table <code>public.widget_246971_63870</code>.
+     */
+    public static final JWidget_246971_63870 WIDGET_246971_63870 = JWidget_246971_63870.WIDGET_246971_63870;
+
+    /**
+     * The table <code>public.widget_267196_68101</code>.
+     */
+    public static final JWidget_267196_68101 WIDGET_267196_68101 = JWidget_267196_68101.WIDGET_267196_68101;
+
+    /**
+     * The table <code>public.widget_278283_71282</code>.
+     */
+    public static final JWidget_278283_71282 WIDGET_278283_71282 = JWidget_278283_71282.WIDGET_278283_71282;
+
+    /**
+     * The table <code>public.widget_282835_72398</code>.
+     */
+    public static final JWidget_282835_72398 WIDGET_282835_72398 = JWidget_282835_72398.WIDGET_282835_72398;
+
+    /**
+     * The table <code>public.widget_287619_73196</code>.
+     */
+    public static final JWidget_287619_73196 WIDGET_287619_73196 = JWidget_287619_73196.WIDGET_287619_73196;
+
+    /**
+     * The table <code>public.widget_291228_73904</code>.
+     */
+    public static final JWidget_291228_73904 WIDGET_291228_73904 = JWidget_291228_73904.WIDGET_291228_73904;
+
+    /**
+     * The table <code>public.widget_291258_73935</code>.
+     */
+    public static final JWidget_291258_73935 WIDGET_291258_73935 = JWidget_291258_73935.WIDGET_291258_73935;
+
+    /**
+     * The table <code>public.widget_314702_79581</code>.
+     */
+    public static final JWidget_314702_79581 WIDGET_314702_79581 = JWidget_314702_79581.WIDGET_314702_79581;
+
+    /**
+     * The table <code>public.widget_318086_80714</code>.
+     */
+    public static final JWidget_318086_80714 WIDGET_318086_80714 = JWidget_318086_80714.WIDGET_318086_80714;
+
+    /**
+     * The table <code>public.widget_330231_83965</code>.
+     */
+    public static final JWidget_330231_83965 WIDGET_330231_83965 = JWidget_330231_83965.WIDGET_330231_83965;
+
+    /**
+     * The table <code>public.widget_331791_84160</code>.
+     */
+    public static final JWidget_331791_84160 WIDGET_331791_84160 = JWidget_331791_84160.WIDGET_331791_84160;
+
+    /**
+     * The table <code>public.widget_341092_86478</code>.
+     */
+    public static final JWidget_341092_86478 WIDGET_341092_86478 = JWidget_341092_86478.WIDGET_341092_86478;
+
+    /**
+     * The table <code>public.widget_341112_86489</code>.
+     */
+    public static final JWidget_341112_86489 WIDGET_341112_86489 = JWidget_341112_86489.WIDGET_341112_86489;
+
+    /**
+     * The table <code>public.widget_341213_86696</code>.
+     */
+    public static final JWidget_341213_86696 WIDGET_341213_86696 = JWidget_341213_86696.WIDGET_341213_86696;
+
+    /**
+     * The table <code>public.widget_341295_86870</code>.
+     */
+    public static final JWidget_341295_86870 WIDGET_341295_86870 = JWidget_341295_86870.WIDGET_341295_86870;
+
+    /**
+     * The table <code>public.widget_347885_88349</code>.
+     */
+    public static final JWidget_347885_88349 WIDGET_347885_88349 = JWidget_347885_88349.WIDGET_347885_88349;
+
+    /**
+     * The table <code>public.widget_348060_88745</code>.
+     */
+    public static final JWidget_348060_88745 WIDGET_348060_88745 = JWidget_348060_88745.WIDGET_348060_88745;
+
+    /**
+     * The table <code>public.widget_348688_89170</code>.
+     */
+    public static final JWidget_348688_89170 WIDGET_348688_89170 = JWidget_348688_89170.WIDGET_348688_89170;
+
+    /**
+     * The table <code>public.widget_348758_89371</code>.
+     */
+    public static final JWidget_348758_89371 WIDGET_348758_89371 = JWidget_348758_89371.WIDGET_348758_89371;
+
+    /**
+     * The table <code>public.widget_348893_89617</code>.
+     */
+    public static final JWidget_348893_89617 WIDGET_348893_89617 = JWidget_348893_89617.WIDGET_348893_89617;
+
+    /**
+     * The table <code>public.widget_349047_89919</code>.
+     */
+    public static final JWidget_349047_89919 WIDGET_349047_89919 = JWidget_349047_89919.WIDGET_349047_89919;
+
+    /**
+     * The table <code>public.widget_351738_90929</code>.
+     */
+    public static final JWidget_351738_90929 WIDGET_351738_90929 = JWidget_351738_90929.WIDGET_351738_90929;
+
+    /**
+     * The table <code>public.widget_356495_91790</code>.
+     */
+    public static final JWidget_356495_91790 WIDGET_356495_91790 = JWidget_356495_91790.WIDGET_356495_91790;
+
+    /**
+     * The table <code>public.widget_364426_93737</code>.
+     */
+    public static final JWidget_364426_93737 WIDGET_364426_93737 = JWidget_364426_93737.WIDGET_364426_93737;
+
+    /**
+     * The table <code>public.widget_367881_94743</code>.
+     */
+    public static final JWidget_367881_94743 WIDGET_367881_94743 = JWidget_367881_94743.WIDGET_367881_94743;
+
+    /**
+     * The table <code>public.widget_370844_95325</code>.
+     */
+    public static final JWidget_370844_95325 WIDGET_370844_95325 = JWidget_370844_95325.WIDGET_370844_95325;
+
+    /**
+     * The table <code>public.widget_399921_102785</code>.
+     */
+    public static final JWidget_399921_102785 WIDGET_399921_102785 = JWidget_399921_102785.WIDGET_399921_102785;
+
+    /**
+     * The table <code>public.widget_407467_104458</code>.
+     */
+    public static final JWidget_407467_104458 WIDGET_407467_104458 = JWidget_407467_104458.WIDGET_407467_104458;
+
+    /**
+     * The table <code>public.widget_4150_9701</code>.
+     */
+    public static final JWidget_4150_9701 WIDGET_4150_9701 = JWidget_4150_9701.WIDGET_4150_9701;
+
+    /**
+     * The table <code>public.widget_4189_1144</code>.
+     */
+    public static final JWidget_4189_1144 WIDGET_4189_1144 = JWidget_4189_1144.WIDGET_4189_1144;
+
+    /**
+     * The table <code>public.widget_424133_108287</code>.
+     */
+    public static final JWidget_424133_108287 WIDGET_424133_108287 = JWidget_424133_108287.WIDGET_424133_108287;
+
+    /**
+     * The table <code>public.widget_445963_113365</code>.
+     */
+    public static final JWidget_445963_113365 WIDGET_445963_113365 = JWidget_445963_113365.WIDGET_445963_113365;
+
+    /**
+     * The table <code>public.widget_476112_119516</code>.
+     */
+    public static final JWidget_476112_119516 WIDGET_476112_119516 = JWidget_476112_119516.WIDGET_476112_119516;
+
+    /**
+     * The table <code>public.widget_7488_1974</code>.
+     */
+    public static final JWidget_7488_1974 WIDGET_7488_1974 = JWidget_7488_1974.WIDGET_7488_1974;
+
+    /**
+     * The table <code>public.widget_7623_2220</code>.
+     */
+    public static final JWidget_7623_2220 WIDGET_7623_2220 = JWidget_7623_2220.WIDGET_7623_2220;
+
+    /**
+     * The table <code>public.widget_7758_2466</code>.
+     */
+    public static final JWidget_7758_2466 WIDGET_7758_2466 = JWidget_7758_2466.WIDGET_7758_2466;
+
+    /**
+     * The table <code>public.widget_78789_18699</code>.
+     */
+    public static final JWidget_78789_18699 WIDGET_78789_18699 = JWidget_78789_18699.WIDGET_78789_18699;
 
     /**
      * The table <code>public.widget_filter</code>.
