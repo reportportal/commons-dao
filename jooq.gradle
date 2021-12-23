@@ -4,7 +4,7 @@ jooq {
     sample(sourceSets.main) {
         jdbc {
             driver = 'org.postgresql.Driver'
-            url = 'jdbc:postgresql://dev.epm-rpp.projects.epam.com:5432/reportportal'
+            url = 'jdbc:postgresql://localhost:5432/reportportal'
             user = 'rpuser'
             password = 'rppass'
         }
@@ -35,5 +35,5 @@ jooq {
 }
 
 generateSampleJooqSchemaSource {
-    enabled = true
+    enabled = false
 }
