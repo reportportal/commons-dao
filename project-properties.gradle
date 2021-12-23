@@ -9,7 +9,7 @@ project.ext {
     dependencyRepos = ["commons", "commons-rules", "commons-model", "commons-bom"]
     releaseMode = project.hasProperty("releaseMode")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : '5.5.0')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'develop')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'EPMRPP-68947-cloud-issue')
     //TODO refactor with archive download
     testScriptsSrc = [
             (migrationsUrl + '/migrations/0_extensions.up.sql')                        : 'V001__extensions.sql',
@@ -63,6 +63,7 @@ project.ext {
             (migrationsUrl + '/migrations/51_cluster.up.sql')                          : 'V051__cluster.sql',
             (migrationsUrl + '/migrations/52_analyzer_search_attribute.up.sql')        : 'V052__analyzer_search_attribute.sql',
             (migrationsUrl + '/migrations/54_analyzer_unique_error_attribute.up.sql')  : 'V054__analyzer_unique_error_attribute.sql',
+            (migrationsUrl + '/migrations/56_alter_ticket.up.sql')                     : 'V056__alter_ticket.sql',
 
     ]
     excludeTests = [
