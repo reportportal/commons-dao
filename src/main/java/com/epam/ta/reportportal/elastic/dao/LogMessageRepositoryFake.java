@@ -9,7 +9,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Fake repository, need in case if configuration for elastic with logs doesn't exist.
@@ -17,6 +21,8 @@ import java.util.Optional;
 @Repository
 @ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${rp.elasticsearchLogmessage.host}')")
 public class LogMessageRepositoryFake implements LogMessageRepository {
+    private final Iterable<LogMessage> logMessageIterable = () -> null;
+
     @Override
     public <S extends LogMessage> S index(S entity) {
         return null;
@@ -59,22 +65,102 @@ public class LogMessageRepositoryFake implements LogMessageRepository {
 
     @Override
     public Iterable<LogMessage> findAll(Sort sort) {
-        return null;
+        return logMessageIterable;
     }
 
     @Override
     public Page<LogMessage> findAll(Pageable pageable) {
-        return null;
+        return new Page<LogMessage>() {
+            @Override
+            public int getTotalPages() {
+                return 0;
+            }
+
+            @Override
+            public long getTotalElements() {
+                return 0;
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super LogMessage, ? extends U> converter) {
+                return Page.empty();
+            }
+
+            @Override
+            public int getNumber() {
+                return 0;
+            }
+
+            @Override
+            public int getSize() {
+                return 0;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 0;
+            }
+
+            @Override
+            public List<LogMessage> getContent() {
+                return new ArrayList<>();
+            }
+
+            @Override
+            public boolean hasContent() {
+                return false;
+            }
+
+            @Override
+            public Sort getSort() {
+                return Sort.unsorted();
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return Pageable.unpaged();
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return Pageable.unpaged();
+            }
+
+            @Override
+            public Iterator<LogMessage> iterator() {
+                return null;
+            }
+        };
     }
 
     @Override
     public <S extends LogMessage> S save(S entity) {
-        return null;
+        return entity;
     }
 
     @Override
     public <S extends LogMessage> Iterable<S> saveAll(Iterable<S> entities) {
-        return null;
+        return entities;
     }
 
     @Override
@@ -89,12 +175,12 @@ public class LogMessageRepositoryFake implements LogMessageRepository {
 
     @Override
     public Iterable<LogMessage> findAll() {
-        return null;
+        return logMessageIterable;
     }
 
     @Override
     public Iterable<LogMessage> findAllById(Iterable<Long> longs) {
-        return null;
+        return logMessageIterable;
     }
 
     @Override
