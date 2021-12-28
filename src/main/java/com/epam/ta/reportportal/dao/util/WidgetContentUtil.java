@@ -433,6 +433,19 @@ public class WidgetContentUtil {
 			})
 			.collect(Collectors.toList());
 
+	public static final Function<Result<? extends Record>, List<CriteriaHistoryItem>> CRITERIA_HISTORY_ITEM_FETCHER = result -> result.stream()
+			.map(record -> {
+				CriteriaHistoryItem entry = new CriteriaHistoryItem();
+				entry.setStatus(record.get(DSL.field(fieldName(STATUS_HISTORY)), Boolean[].class));
+				entry.setCriteria(record.get(DSL.field(fieldName(CRITERIA)), Long.class));
+				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
+				entry.setName(record.get(TEST_ITEM.NAME));
+				entry.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				return entry;
+			})
+			.collect(Collectors.toList());
+
 	public static final Function<Result<? extends Record>, List<ChartStatisticsContent>> LAUNCHES_STATISTICS_FETCHER = result -> new ArrayList<>(
 			STATISTICS_FETCHER.apply(result).values());
 
