@@ -41,7 +41,7 @@ public class CriteriaHistoryItem implements Serializable {
 	private Long criteria;
 
 	@Column(name = STATUS_HISTORY)
-	private List<Boolean> status;
+	private Boolean[] status;
 
 	@Column(name = START_TIME_HISTORY)
 	private List<Date> startTime;
@@ -78,11 +78,11 @@ public class CriteriaHistoryItem implements Serializable {
 		this.criteria = criteria;
 	}
 
-	public List<Boolean> getStatus() {
+	public Boolean[] getStatus() {
 		return status;
 	}
 
-	public void setStatus(List<Boolean> status) {
+	public void setStatus(Boolean[] status) {
 		this.status = status;
 	}
 
