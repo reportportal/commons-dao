@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.config;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,31 +13,28 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories(
-        basePackages = "com.epam.ta.reportportal.elastic.dao"
-)
+@EnableElasticsearchRepositories(basePackages = "com.epam.ta.reportportal.elastic.dao")
+@ConditionalOnClass(value = { RestHighLevelClient.class, ElasticsearchOperations.class })
 @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 public class ElasticConfiguration {
 
-    @Bean
-    @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
-    public RestHighLevelClient client(@Value("${rp.elasticsearchLogmessage.host}") String host,
-                                      @Value("${rp.elasticsearchLogmessage.port}") int port,
-                                      @Value("${rp.elasticsearchLogmessage.username}") String username,
-                                      @Value("${rp.elasticsearchLogmessage.password}") String password) {
+	@Bean
+	@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
+	public RestHighLevelClient client(@Value("${rp.elasticsearchLogmessage.host}") String host,
+			@Value("${rp.elasticsearchLogmessage.port}") int port, @Value("${rp.elasticsearchLogmessage.username}") String username,
+			@Value("${rp.elasticsearchLogmessage.password}") String password) {
 
-        ClientConfiguration clientConfiguration
-                = ClientConfiguration.builder()
-                .connectedTo(host + ":" + port)
-                .withBasicAuth(username, password)
-                .build();
+		ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+				.connectedTo(host + ":" + port)
+				.withBasicAuth(username, password)
+				.build();
 
-        return RestClients.create(clientConfiguration).rest();
-    }
+		return RestClients.create(clientConfiguration).rest();
+	}
 
-    @Bean
-    @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
-    public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient restHighLevelClient) {
-        return new ElasticsearchRestTemplate(restHighLevelClient);
-    }
+	@Bean
+	@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
+	public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient restHighLevelClient) {
+		return new ElasticsearchRestTemplate(restHighLevelClient);
+	}
 }
