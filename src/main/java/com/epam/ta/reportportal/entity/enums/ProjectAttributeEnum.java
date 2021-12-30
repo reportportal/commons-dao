@@ -41,7 +41,7 @@ public enum ProjectAttributeEnum {
 	NUMBER_OF_LOG_LINES(Prefix.ANALYZER + "numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
 	INDEXING_RUNNING(Prefix.ANALYZER + "indexingRunning", String.valueOf(false)),
 	AUTO_PATTERN_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoPatternAnalyzerEnabled", String.valueOf(false)),
-	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(false)),
+	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(true)),
 	AUTO_ANALYZER_MODE(Prefix.ANALYZER + "autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue()),
 	ALL_MESSAGES_SHOULD_MATCH(Prefix.ANALYZER + "allMessagesShouldMatch", String.valueOf(false)),
 	SEARCH_LOGS_MIN_SHOULD_MATCH(Prefix.ANALYZER + "searchLogsMinShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
