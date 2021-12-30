@@ -13,14 +13,13 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableElasticsearchRepositories(basePackages = "com.epam.ta.reportportal.elastic.dao")
 @ConditionalOnClass({ ElasticsearchTemplate.class })
 @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 public class ElasticConfiguration {
 
 	@Bean
-	@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 	public RestHighLevelClient client(@Value("${rp.elasticsearchLogmessage.host}") String host,
 			@Value("${rp.elasticsearchLogmessage.port}") int port, @Value("${rp.elasticsearchLogmessage.username}") String username,
 			@Value("${rp.elasticsearchLogmessage.password}") String password) {
@@ -34,7 +33,6 @@ public class ElasticConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 	public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient restHighLevelClient) {
 		return new ElasticsearchRestTemplate(restHighLevelClient);
 	}
