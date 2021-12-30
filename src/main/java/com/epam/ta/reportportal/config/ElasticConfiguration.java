@@ -15,6 +15,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(
         basePackages = "com.epam.ta.reportportal.elastic.dao"
 )
+@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 public class ElasticConfiguration {
 
     @Bean
@@ -24,11 +25,6 @@ public class ElasticConfiguration {
                                       @Value("${rp.elasticsearchLogmessage.username}") String username,
                                       @Value("${rp.elasticsearchLogmessage.password}") String password) {
 
-        System.out.println("HELLO FRIEND");
-        System.out.println("HELLO FRIEND");
-        System.out.println("HELLO FRIEND");
-        System.out.println("HELLO FRIEND");
-        System.out.println("HELLO FRIEND");
         ClientConfiguration clientConfiguration
                 = ClientConfiguration.builder()
                 .connectedTo(host + ":" + port)
