@@ -19,7 +19,7 @@ import java.util.function.Function;
  * Fake repository, need in case if configuration for elastic with logs doesn't exist.
  */
 @Repository
-@ConditionalOnMissingBean(name = "elasticsearchTemplate")
+@ConditionalOnMissingBean(name = "logMessageRepository")
 public class LogMessageRepositoryFake implements LogMessageRepository {
     private final Iterable<LogMessage> logMessageIterable = () -> null;
 
