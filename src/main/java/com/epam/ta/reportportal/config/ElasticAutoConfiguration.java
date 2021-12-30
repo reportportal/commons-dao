@@ -13,27 +13,32 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @EnableElasticsearchRepositories(basePackages = "com.epam.ta.reportportal.elastic.dao")
 @ConditionalOnClass({ RestClient.class })
 @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
-public class ElasticConfiguration {
+public class ElasticAutoConfiguration {
 
-	@Bean
-	public RestHighLevelClient client(@Value("${rp.elasticsearchLogmessage.host}") String host,
-			@Value("${rp.elasticsearchLogmessage.port}") int port, @Value("${rp.elasticsearchLogmessage.username}") String username,
-			@Value("${rp.elasticsearchLogmessage.password}") String password) {
+	@Configuration
+	@ConditionalOnClass({ RestClient.class })
+	@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
+	public static class ElasticClientConfiguration {
+		@Bean
+		public RestHighLevelClient client(@Value("${rp.elasticsearchLogmessage.host}") String host,
+				@Value("${rp.elasticsearchLogmessage.port}") int port, @Value("${rp.elasticsearchLogmessage.username}") String username,
+				@Value("${rp.elasticsearchLogmessage.password}") String password) {
 
-		ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-				.connectedTo(host + ":" + port)
-				.withBasicAuth(username, password)
-				.build();
+			ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+					.connectedTo(host + ":" + port)
+					.withBasicAuth(username, password)
+					.build();
 
-		return RestClients.create(clientConfiguration).rest();
-	}
+			return RestClients.create(clientConfiguration).rest();
+		}
 
-	@Bean
-	public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient restHighLevelClient) {
-		return new ElasticsearchRestTemplate(restHighLevelClient);
+		@Bean
+		public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient restHighLevelClient) {
+			return new ElasticsearchRestTemplate(restHighLevelClient);
+		}
 	}
 }
