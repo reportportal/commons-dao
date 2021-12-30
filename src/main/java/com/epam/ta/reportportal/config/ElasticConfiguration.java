@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.config;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
@@ -18,11 +18,17 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 public class ElasticConfiguration {
 
     @Bean
-    @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${rp.elasticsearchLogmessage.host}')")
+    @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
     public RestHighLevelClient client(@Value("${rp.elasticsearchLogmessage.host}") String host,
                                       @Value("${rp.elasticsearchLogmessage.port}") int port,
                                       @Value("${rp.elasticsearchLogmessage.username}") String username,
                                       @Value("${rp.elasticsearchLogmessage.password}") String password) {
+
+        System.out.println("HELLO FRIEND");
+        System.out.println("HELLO FRIEND");
+        System.out.println("HELLO FRIEND");
+        System.out.println("HELLO FRIEND");
+        System.out.println("HELLO FRIEND");
         ClientConfiguration clientConfiguration
                 = ClientConfiguration.builder()
                 .connectedTo(host + ":" + port)
@@ -33,7 +39,7 @@ public class ElasticConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${rp.elasticsearchLogmessage.host}')")
+    @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
     public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient restHighLevelClient) {
         return new ElasticsearchRestTemplate(restHighLevelClient);
     }
