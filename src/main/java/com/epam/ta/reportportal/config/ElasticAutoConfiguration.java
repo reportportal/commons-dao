@@ -14,13 +14,13 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "com.epam.ta.reportportal.elastic.dao")
 @ConditionalOnClass({ RestClient.class })
 @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 public class ElasticAutoConfiguration {
 
 	@Configuration
 	@ConditionalOnClass({ RestClient.class })
+	@EnableElasticsearchRepositories(basePackages = "com.epam.ta.reportportal.elastic.dao")
 	@ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 	public static class ElasticClientConfiguration {
 		@Bean

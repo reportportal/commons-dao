@@ -1,13 +1,11 @@
 package com.epam.ta.reportportal.elastic.dao;
 
 import com.epam.ta.reportportal.entity.log.LogMessage;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +19,7 @@ import java.util.function.Function;
  * Fake repository, need in case if configuration for elastic with logs doesn't exist.
  */
 @Repository
-@ConditionalOnMissingBean(value = { ElasticsearchOperations.class, RestHighLevelClient.class })
+@ConditionalOnMissingBean(name = "elasticsearchTemplate")
 public class LogMessageRepositoryFake implements LogMessageRepository {
     private final Iterable<LogMessage> logMessageIterable = () -> null;
 
