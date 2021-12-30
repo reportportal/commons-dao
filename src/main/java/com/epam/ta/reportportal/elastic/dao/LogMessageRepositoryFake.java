@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.elastic.dao;
 
 import com.epam.ta.reportportal.entity.log.LogMessage;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,7 +19,7 @@ import java.util.function.Function;
  * Fake repository, need in case if configuration for elastic with logs doesn't exist.
  */
 @Repository
-@ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${rp.elasticsearchLogmessage.host}')")
+@ConditionalOnMissingBean(name = "elasticsearchTemplate")
 public class LogMessageRepositoryFake implements LogMessageRepository {
     private final Iterable<LogMessage> logMessageIterable = () -> null;
 
