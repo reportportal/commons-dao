@@ -131,12 +131,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
 		Table<Record2<Long, BigDecimal>> criteriaTable = getTopItemsCriteriaTable(filter, criteria, limit, includeMethods);
 
-		return dsl.select(TEST_ITEM.UNIQUE_ID,
+		return CRITERIA_HISTORY_ITEM_FETCHER.apply(dsl.select(TEST_ITEM.UNIQUE_ID,
 				TEST_ITEM.NAME,
 				DSL.arrayAgg(when(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1), true).otherwise(false))
 						.orderBy(LAUNCH.NUMBER.asc())
 						.as(STATUS_HISTORY),
-				DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
+				DSL.max(TEST_ITEM.START_TIME).filterWhere(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1)).as(START_TIME_HISTORY),
 				DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
 				DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
 		)
@@ -149,7 +149,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.having(DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).greaterThan(BigDecimal.ZERO))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(MOST_FAILED_CRITERIA_LIMIT)
-				.fetchInto(CriteriaHistoryItem.class);
+				.fetch());
 	}
 
 	private Table<Record2<Long, BigDecimal>> getTopItemsCriteriaTable(Filter filter, String criteria, int limit, boolean includeMethods) {
