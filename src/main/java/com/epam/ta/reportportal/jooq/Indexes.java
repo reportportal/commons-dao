@@ -4,67 +4,12 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAttachment;
-import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
-import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JClusters;
-import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
-import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRecipients;
-import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
-import com.epam.ta.reportportal.jooq.tables.JUserPreference;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-
-import javax.annotation.processing.Generated;
-
+import com.epam.ta.reportportal.jooq.tables.*;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
+
+import javax.annotation.processing.Generated;
 
 
 /**
@@ -186,6 +131,9 @@ public class Indexes {
     public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
     public static final Index SHARED_ENTITY_OWNERX = Indexes0.SHARED_ENTITY_OWNERX;
     public static final Index SHARED_ENTITY_PROJECT_IDX = Indexes0.SHARED_ENTITY_PROJECT_IDX;
+    public static final Index STALE_MATERIALIZED_VIEW_NAME_KEY = Indexes0.STALE_MATERIALIZED_VIEW_NAME_KEY;
+    public static final Index STALE_MATERIALIZED_VIEW_PKEY = Indexes0.STALE_MATERIALIZED_VIEW_PKEY;
+    public static final Index STALE_MV_CREATION_DATE_IDX = Indexes0.STALE_MV_CREATION_DATE_IDX;
     public static final Index STATISTICS_LAUNCH_IDX = Indexes0.STATISTICS_LAUNCH_IDX;
     public static final Index STATISTICS_PK = Indexes0.STATISTICS_PK;
     public static final Index STATISTICS_TI_IDX = Indexes0.STATISTICS_TI_IDX;
@@ -324,6 +272,9 @@ public class Indexes {
         public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.ID }, true);
         public static Index SHARED_ENTITY_OWNERX = Internal.createIndex("shared_entity_ownerx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.OWNER }, false);
         public static Index SHARED_ENTITY_PROJECT_IDX = Internal.createIndex("shared_entity_project_idx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.PROJECT_ID }, false);
+        public static Index STALE_MATERIALIZED_VIEW_NAME_KEY = Internal.createIndex("stale_materialized_view_name_key", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.NAME }, true);
+        public static Index STALE_MATERIALIZED_VIEW_PKEY = Internal.createIndex("stale_materialized_view_pkey", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.ID }, true);
+        public static Index STALE_MV_CREATION_DATE_IDX = Internal.createIndex("stale_mv_creation_date_idx", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.CREATION_DATE }, false);
         public static Index STATISTICS_LAUNCH_IDX = Internal.createIndex("statistics_launch_idx", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.LAUNCH_ID }, false);
         public static Index STATISTICS_PK = Internal.createIndex("statistics_pk", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
         public static Index STATISTICS_TI_IDX = Internal.createIndex("statistics_ti_idx", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.ITEM_ID }, false);

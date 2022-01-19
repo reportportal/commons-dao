@@ -4,77 +4,15 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
-import com.epam.ta.reportportal.jooq.tables.JActivity;
-import com.epam.ta.reportportal.jooq.tables.JAttachment;
-import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
-import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JClusters;
-import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
-import com.epam.ta.reportportal.jooq.tables.JContentField;
-import com.epam.ta.reportportal.jooq.tables.JDashboard;
-import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
-import com.epam.ta.reportportal.jooq.tables.JFilter;
-import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
-import com.epam.ta.reportportal.jooq.tables.JFilterSort;
-import com.epam.ta.reportportal.jooq.tables.JIntegration;
-import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
-import com.epam.ta.reportportal.jooq.tables.JIssue;
-import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
-import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
-import com.epam.ta.reportportal.jooq.tables.JIssueType;
-import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
-import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
-import com.epam.ta.reportportal.jooq.tables.JLaunch;
-import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
-import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
-import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
-import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
-import com.epam.ta.reportportal.jooq.tables.JParameter;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
-import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
-import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
-import com.epam.ta.reportportal.jooq.tables.JProject;
-import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
-import com.epam.ta.reportportal.jooq.tables.JProjectUser;
-import com.epam.ta.reportportal.jooq.tables.JRecipients;
-import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
-import com.epam.ta.reportportal.jooq.tables.JSenderCase;
-import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
-import com.epam.ta.reportportal.jooq.tables.JStatistics;
-import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
-import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
-import com.epam.ta.reportportal.jooq.tables.JTicket;
-import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
-import com.epam.ta.reportportal.jooq.tables.JUserPreference;
-import com.epam.ta.reportportal.jooq.tables.JUsers;
-import com.epam.ta.reportportal.jooq.tables.JWidget;
-import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+import com.epam.ta.reportportal.jooq.tables.*;
 import com.epam.ta.reportportal.jooq.tables.records.JPgpArmorHeadersRecord;
+import org.jooq.*;
+import org.jooq.impl.SchemaImpl;
 
+import javax.annotation.processing.Generated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.processing.Generated;
-
-import org.jooq.Catalog;
-import org.jooq.Configuration;
-import org.jooq.Field;
-import org.jooq.Result;
-import org.jooq.Sequence;
-import org.jooq.Table;
-import org.jooq.impl.SchemaImpl;
 
 
 /**
@@ -90,7 +28,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1164524803;
+    private static final long serialVersionUID = 784587878;
 
     /**
      * The reference instance of <code>public</code>
@@ -349,6 +287,11 @@ public class JPublic extends SchemaImpl {
     public final JShareableEntity SHAREABLE_ENTITY = com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
 
     /**
+     * The table <code>public.stale_materialized_view</code>.
+     */
+    public final JStaleMaterializedView STALE_MATERIALIZED_VIEW = com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView.STALE_MATERIALIZED_VIEW;
+
+    /**
      * The table <code>public.statistics</code>.
      */
     public final JStatistics STATISTICS = com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
@@ -451,6 +394,7 @@ public class JPublic extends SchemaImpl {
             Sequences.SENDER_CASE_PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
             Sequences.SHAREABLE_ENTITY_ID_SEQ,
+            Sequences.STALE_MATERIALIZED_VIEW_ID_SEQ,
             Sequences.STATISTICS_FIELD_SF_ID_SEQ,
             Sequences.STATISTICS_S_ID_SEQ,
             Sequences.TEST_ITEM_ITEM_ID_SEQ,
@@ -514,6 +458,7 @@ public class JPublic extends SchemaImpl {
             JSenderCase.SENDER_CASE,
             JServerSettings.SERVER_SETTINGS,
             JShareableEntity.SHAREABLE_ENTITY,
+            JStaleMaterializedView.STALE_MATERIALIZED_VIEW,
             JStatistics.STATISTICS,
             JStatisticsField.STATISTICS_FIELD,
             JTestItem.TEST_ITEM,
