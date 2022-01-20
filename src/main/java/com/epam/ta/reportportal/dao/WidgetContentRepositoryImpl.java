@@ -209,12 +209,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
 
 		return FLAKY_CASES_TABLE_FETCHER.apply(dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
-				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
-				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
-				DSL.max(field(name(FLAKY_TABLE_RESULTS, START_TIME))).as(START_TIME_HISTORY),
-				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-				count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
-		)
+						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
+						DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
+						DSL.max(field(name(FLAKY_TABLE_RESULTS, START_TIME)))
+								.filterWhere(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Integer.class).gt(ZERO_QUERY_VALUE))
+								.as(START_TIME_HISTORY),
+						sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
+						count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
+				)
 				.from(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted()))
 								.with(LAUNCH.NUMBER, SortOrder.DESC)
@@ -226,10 +228,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								TEST_ITEM.START_TIME,
 								TEST_ITEM_RESULTS.STATUS,
 								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
-										TEST_ITEM.START_TIME.desc()
-								)))
+												TEST_ITEM.START_TIME
+										)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
-												TEST_ITEM.START_TIME.desc()
+												TEST_ITEM.START_TIME
 										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)
