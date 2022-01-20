@@ -4,10 +4,10 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import javax.annotation.processing.Generated;
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
+
+import javax.annotation.processing.Generated;
 
 
 /**
@@ -177,6 +177,11 @@ public class Sequences {
      * The sequence <code>public.shareable_entity_id_seq</code>
      */
     public static final Sequence<Long> SHAREABLE_ENTITY_ID_SEQ = new SequenceImpl<Long>("shareable_entity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.stale_materialized_view_id_seq</code>
+     */
+    public static final Sequence<Long> STALE_MATERIALIZED_VIEW_ID_SEQ = new SequenceImpl<Long>("stale_materialized_view_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.statistics_field_sf_id_seq</code>
