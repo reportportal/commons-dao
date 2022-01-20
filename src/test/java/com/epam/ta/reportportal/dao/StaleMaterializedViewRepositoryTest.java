@@ -20,13 +20,13 @@ class StaleMaterializedViewRepositoryTest extends BaseTest {
 	private StaleMaterializedViewRepository staleMaterializedViewRepository;
 
 	@Test
-	void shouldSaveAndSetId() {
+	void shouldInsertAndSetId() {
 
 		final StaleMaterializedView staleMaterializedView = new StaleMaterializedView();
 		staleMaterializedView.setName("test");
 		staleMaterializedView.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
 
-		final StaleMaterializedView result = staleMaterializedViewRepository.save(staleMaterializedView);
+		final StaleMaterializedView result = staleMaterializedViewRepository.insert(staleMaterializedView);
 
 		assertNotNull(staleMaterializedView.getId());
 		assertNotNull(result.getId());

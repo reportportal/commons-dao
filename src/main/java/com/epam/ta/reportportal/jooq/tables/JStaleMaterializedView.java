@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStaleMaterializedView extends TableImpl<JStaleMaterializedViewRecord> {
 
-    private static final long serialVersionUID = -1096593251;
+    private static final long serialVersionUID = 964883742;
 
     /**
      * The reference instance of <code>public.stale_materialized_view</code>
@@ -54,7 +54,7 @@ public class JStaleMaterializedView extends TableImpl<JStaleMaterializedViewReco
     /**
      * The column <code>public.stale_materialized_view.name</code>.
      */
-    public final TableField<JStaleMaterializedViewRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+    public final TableField<JStaleMaterializedViewRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
      * The column <code>public.stale_materialized_view.creation_date</code>.

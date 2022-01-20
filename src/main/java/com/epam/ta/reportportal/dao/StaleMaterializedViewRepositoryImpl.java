@@ -32,7 +32,7 @@ public class StaleMaterializedViewRepositoryImpl implements StaleMaterializedVie
 	}
 
 	@Override
-	public StaleMaterializedView save(StaleMaterializedView view) {
+	public StaleMaterializedView insert(StaleMaterializedView view) {
 		Long id = dsl.insertInto(STALE_MATERIALIZED_VIEW)
 				.columns(STALE_MATERIALIZED_VIEW.NAME, STALE_MATERIALIZED_VIEW.CREATION_DATE)
 				.values(view.getName(), Timestamp.valueOf(view.getCreationDate()))

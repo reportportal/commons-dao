@@ -11,5 +11,5 @@ public interface StaleMaterializedViewRepository {
 
 	Optional<StaleMaterializedView> findById(Long id);
 
-	StaleMaterializedView save(StaleMaterializedView view);
+	StaleMaterializedView insert(StaleMaterializedView view);
 }
