@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.*;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -46,8 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -415,6 +413,64 @@ class LaunchRepositoryTest extends BaseTest {
 				.build());
 
 		assertTrue(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeHas() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key:value")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeHasNegative() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withNegative(true)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key1:value1")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeAny() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.ANY)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key:value")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeAnyNegative() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.ANY)
+						.withNegative(true)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key1:value1")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

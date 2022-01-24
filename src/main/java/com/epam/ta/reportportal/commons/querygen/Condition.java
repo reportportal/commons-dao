@@ -323,6 +323,14 @@ public enum Condition {
 				);
 
 			}
+			if (String[].class.equals(criteriaHolder.getDataType())) {
+				return DSL.condition(Operator.AND,
+						DSL.field(criteriaHolder.getAggregateCriteria())
+								.contains(DSL.cast(this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS),
+										String[].class
+								))
+				);
+			}
 			return DSL.condition(Operator.AND, PostgresDSL.arrayOverlap(DSL.field(criteriaHolder.getAggregateCriteria(), Object[].class),
 					DSL.array((Object[]) this.castValue(criteriaHolder, filter.getValue(), INCORRECT_FILTER_PARAMETERS))
 			));
