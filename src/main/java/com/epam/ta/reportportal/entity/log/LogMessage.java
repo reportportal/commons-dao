@@ -10,7 +10,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Document(indexName = "log_message_store", type="log_message", createIndex = false)
+/**
+ * LogMessage - entity for storing message part of log + some additional info.
+ * indexName - is only prefix, real index name in Elasticsearch will be indexName + projectId.
+ */
+@Document(indexName = "log_message_store-", type="log_message", createIndex = false)
 public class LogMessage implements Serializable {
 
     @Id
