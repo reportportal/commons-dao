@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 @ConditionalOnProperty(prefix = "rp.elasticsearchLogmessage", name = "host")
 @ConditionalOnBean(name = "elasticsearchTemplate")
-public interface LogMessageRepository extends ElasticsearchRepository<LogMessage, Long> {
+public interface LogMessageRepository extends ElasticsearchRepository<LogMessage, Long>, LogMessageRepositoryCustom<LogMessage> {
 }
