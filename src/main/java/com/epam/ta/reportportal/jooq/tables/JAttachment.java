@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = 1859892484;
+    private static final long serialVersionUID = -1988681978;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -101,7 +101,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     /**
      * The column <code>public.attachment.creation_date</code>.
      */
-    public final TableField<JAttachmentRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JAttachmentRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
 
     /**
      * Create a <code>public.attachment</code> table reference
@@ -143,7 +143,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ATT_ITEM_IDX, Indexes.ATT_LAUNCH_IDX, Indexes.ATT_PROJECT_IDX, Indexes.ATTACHMENT_PK);
+        return Arrays.<Index>asList(Indexes.ATT_ITEM_IDX, Indexes.ATT_LAUNCH_IDX, Indexes.ATT_PROJECT_IDX, Indexes.ATTACHMENT_PK, Indexes.ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX);
     }
 
     @Override

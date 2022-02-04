@@ -61,6 +61,7 @@ public class Keys {
     public static final Identity<JSenderCaseRecord, Long> IDENTITY_SENDER_CASE = Identities0.IDENTITY_SENDER_CASE;
     public static final Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Identities0.IDENTITY_SERVER_SETTINGS;
     public static final Identity<JShareableEntityRecord, Long> IDENTITY_SHAREABLE_ENTITY = Identities0.IDENTITY_SHAREABLE_ENTITY;
+    public static final Identity<JStaleMaterializedViewRecord, Long> IDENTITY_STALE_MATERIALIZED_VIEW = Identities0.IDENTITY_STALE_MATERIALIZED_VIEW;
     public static final Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Identities0.IDENTITY_STATISTICS;
     public static final Identity<JStatisticsFieldRecord, Long> IDENTITY_STATISTICS_FIELD = Identities0.IDENTITY_STATISTICS_FIELD;
     public static final Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Identities0.IDENTITY_TEST_ITEM;
@@ -82,6 +83,7 @@ public class Keys {
     public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = UniqueKeys0.UNIQUE_UK_1;
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
+    public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = UniqueKeys0.ATTACHMENT_DELETION_PKEY;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
     public static final UniqueKey<JClustersRecord> CLUSTERS_PK = UniqueKeys0.CLUSTERS_PK;
     public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = UniqueKeys0.INDEX_ID_LAUNCH_ID_UNQ;
@@ -131,6 +133,8 @@ public class Keys {
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = UniqueKeys0.SERVER_SETTINGS_ID;
     public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = UniqueKeys0.SERVER_SETTINGS_KEY_KEY;
     public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
+    public static final UniqueKey<JStaleMaterializedViewRecord> STALE_MATERIALIZED_VIEW_PKEY = UniqueKeys0.STALE_MATERIALIZED_VIEW_PKEY;
+    public static final UniqueKey<JStaleMaterializedViewRecord> STALE_MATERIALIZED_VIEW_NAME_KEY = UniqueKeys0.STALE_MATERIALIZED_VIEW_NAME_KEY;
     public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = UniqueKeys0.STATISTICS_PK;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = UniqueKeys0.UNIQUE_STATS_LAUNCH;
     public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = UniqueKeys0.UNIQUE_STATS_ITEM;
@@ -251,6 +255,7 @@ public class Keys {
         public static Identity<JSenderCaseRecord, Long> IDENTITY_SENDER_CASE = Internal.createIdentity(JSenderCase.SENDER_CASE, JSenderCase.SENDER_CASE.ID);
         public static Identity<JServerSettingsRecord, Short> IDENTITY_SERVER_SETTINGS = Internal.createIdentity(JServerSettings.SERVER_SETTINGS, JServerSettings.SERVER_SETTINGS.ID);
         public static Identity<JShareableEntityRecord, Long> IDENTITY_SHAREABLE_ENTITY = Internal.createIdentity(JShareableEntity.SHAREABLE_ENTITY, JShareableEntity.SHAREABLE_ENTITY.ID);
+        public static Identity<JStaleMaterializedViewRecord, Long> IDENTITY_STALE_MATERIALIZED_VIEW = Internal.createIdentity(JStaleMaterializedView.STALE_MATERIALIZED_VIEW, JStaleMaterializedView.STALE_MATERIALIZED_VIEW.ID);
         public static Identity<JStatisticsRecord, Long> IDENTITY_STATISTICS = Internal.createIdentity(JStatistics.STATISTICS, JStatistics.STATISTICS.S_ID);
         public static Identity<JStatisticsFieldRecord, Long> IDENTITY_STATISTICS_FIELD = Internal.createIdentity(JStatisticsField.STATISTICS_FIELD, JStatisticsField.STATISTICS_FIELD.SF_ID);
         public static Identity<JTestItemRecord, Long> IDENTITY_TEST_ITEM = Internal.createIdentity(JTestItem.TEST_ITEM, JTestItem.TEST_ITEM.ITEM_ID);
@@ -270,6 +275,7 @@ public class Keys {
         public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = Internal.createUniqueKey(JAclSid.ACL_SID, "unique_uk_1", JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL);
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
+        public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = Internal.createUniqueKey(JAttachmentDeletion.ATTACHMENT_DELETION, "attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
         public static final UniqueKey<JClustersRecord> CLUSTERS_PK = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pk", JClusters.CLUSTERS.ID);
         public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = Internal.createUniqueKey(JClusters.CLUSTERS, "index_id_launch_id_unq", JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID);
@@ -319,6 +325,8 @@ public class Keys {
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_ID = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_id", JServerSettings.SERVER_SETTINGS.ID);
         public static final UniqueKey<JServerSettingsRecord> SERVER_SETTINGS_KEY_KEY = Internal.createUniqueKey(JServerSettings.SERVER_SETTINGS, "server_settings_key_key", JServerSettings.SERVER_SETTINGS.KEY);
         public static final UniqueKey<JShareableEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JShareableEntity.SHAREABLE_ENTITY, "shareable_pk", JShareableEntity.SHAREABLE_ENTITY.ID);
+        public static final UniqueKey<JStaleMaterializedViewRecord> STALE_MATERIALIZED_VIEW_PKEY = Internal.createUniqueKey(JStaleMaterializedView.STALE_MATERIALIZED_VIEW, "stale_materialized_view_pkey", JStaleMaterializedView.STALE_MATERIALIZED_VIEW.ID);
+        public static final UniqueKey<JStaleMaterializedViewRecord> STALE_MATERIALIZED_VIEW_NAME_KEY = Internal.createUniqueKey(JStaleMaterializedView.STALE_MATERIALIZED_VIEW, "stale_materialized_view_name_key", JStaleMaterializedView.STALE_MATERIALIZED_VIEW.NAME);
         public static final UniqueKey<JStatisticsRecord> STATISTICS_PK = Internal.createUniqueKey(JStatistics.STATISTICS, "statistics_pk", JStatistics.STATISTICS.S_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_LAUNCH = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_launch", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.LAUNCH_ID);
         public static final UniqueKey<JStatisticsRecord> UNIQUE_STATS_ITEM = Internal.createUniqueKey(JStatistics.STATISTICS, "unique_stats_item", JStatistics.STATISTICS.STATISTICS_FIELD_ID, JStatistics.STATISTICS.ITEM_ID);

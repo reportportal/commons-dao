@@ -47,6 +47,7 @@ public class Indexes {
     public static final Index ATT_PROJECT_IDX = Indexes0.ATT_PROJECT_IDX;
     public static final Index ATTACHMENT_PK = Indexes0.ATTACHMENT_PK;
     public static final Index ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX = Indexes0.ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX;
+    public static final Index ATTACHMENT_DELETION_PKEY = Indexes0.ATTACHMENT_DELETION_PKEY;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
     public static final Index CLUSTER_INDEX_ID_IDX = Indexes0.CLUSTER_INDEX_ID_IDX;
     public static final Index CLUSTER_LAUNCH_IDX = Indexes0.CLUSTER_LAUNCH_IDX;
@@ -130,6 +131,9 @@ public class Indexes {
     public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
     public static final Index SHARED_ENTITY_OWNERX = Indexes0.SHARED_ENTITY_OWNERX;
     public static final Index SHARED_ENTITY_PROJECT_IDX = Indexes0.SHARED_ENTITY_PROJECT_IDX;
+    public static final Index STALE_MATERIALIZED_VIEW_NAME_KEY = Indexes0.STALE_MATERIALIZED_VIEW_NAME_KEY;
+    public static final Index STALE_MATERIALIZED_VIEW_PKEY = Indexes0.STALE_MATERIALIZED_VIEW_PKEY;
+    public static final Index STALE_MV_CREATION_DATE_IDX = Indexes0.STALE_MV_CREATION_DATE_IDX;
     public static final Index STATISTICS_LAUNCH_IDX = Indexes0.STATISTICS_LAUNCH_IDX;
     public static final Index STATISTICS_PK = Indexes0.STATISTICS_PK;
     public static final Index STATISTICS_TI_IDX = Indexes0.STATISTICS_TI_IDX;
@@ -184,6 +188,7 @@ public class Indexes {
         public static Index ATT_PROJECT_IDX = Internal.createIndex("att_project_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID }, false);
         public static Index ATTACHMENT_PK = Internal.createIndex("attachment_pk", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ID }, true);
         public static Index ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX = Internal.createIndex("attachment_project_id_creation_time_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID, JAttachment.ATTACHMENT.CREATION_DATE }, false);
+        public static Index ATTACHMENT_DELETION_PKEY = Internal.createIndex("attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION, new OrderField[] { JAttachmentDeletion.ATTACHMENT_DELETION.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
         public static Index CLUSTER_INDEX_ID_IDX = Internal.createIndex("cluster_index_id_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.INDEX_ID }, false);
         public static Index CLUSTER_LAUNCH_IDX = Internal.createIndex("cluster_launch_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.LAUNCH_ID }, false);
@@ -267,6 +272,9 @@ public class Indexes {
         public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.ID }, true);
         public static Index SHARED_ENTITY_OWNERX = Internal.createIndex("shared_entity_ownerx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.OWNER }, false);
         public static Index SHARED_ENTITY_PROJECT_IDX = Internal.createIndex("shared_entity_project_idx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.PROJECT_ID }, false);
+        public static Index STALE_MATERIALIZED_VIEW_NAME_KEY = Internal.createIndex("stale_materialized_view_name_key", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.NAME }, true);
+        public static Index STALE_MATERIALIZED_VIEW_PKEY = Internal.createIndex("stale_materialized_view_pkey", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.ID }, true);
+        public static Index STALE_MV_CREATION_DATE_IDX = Internal.createIndex("stale_mv_creation_date_idx", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.CREATION_DATE }, false);
         public static Index STATISTICS_LAUNCH_IDX = Internal.createIndex("statistics_launch_idx", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.LAUNCH_ID }, false);
         public static Index STATISTICS_PK = Internal.createIndex("statistics_pk", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.S_ID }, true);
         public static Index STATISTICS_TI_IDX = Internal.createIndex("statistics_ti_idx", JStatistics.STATISTICS, new OrderField[] { JStatistics.STATISTICS.ITEM_ID }, false);

@@ -1236,4 +1236,44 @@ class WidgetContentRepositoryTest extends BaseTest {
 		assertTrue(fetch1.isEmpty());
 
 	}
+
+	@Test
+	void componentHealthCheckTableCompositeAttributeWithoutAny() {
+
+		String sortingColumn = "statistics$defects$no_defect$nd001";
+
+		Filter launchFilter = buildDefaultFilter(1L);
+		List<Sort.Order> orderings = Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, sortingColumn),
+				new Sort.Order(Sort.Direction.DESC, CRITERIA_START_TIME)
+		);
+		Sort sort = Sort.by(orderings);
+
+		HealthCheckTableInitParams initParams = HealthCheckTableInitParams.of("test_view",
+				com.google.common.collect.Lists.newArrayList("build")
+		);
+
+		initParams.setCustomKey("build");
+
+		launchFilter.withCondition(FilterCondition.builder()
+				.withCondition(Condition.ANY)
+				.withNegative(true)
+				.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+				.withValue("build:1")
+				.build());
+
+		widgetContentRepository.generateComponentHealthCheckTable(false, initParams, launchFilter, sort, 600, false);
+
+		List<HealthCheckTableContent> healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(HealthCheckTableGetParams.of(
+				initParams.getViewName(),
+				"build",
+				Sort.by(Sort.Direction.DESC, "customColumn"),
+				true,
+				new ArrayList<>()
+		));
+
+		assertFalse(healthCheckTableContents.isEmpty());
+
+		widgetContentRepository.removeWidgetView(initParams.getViewName());
+
+	}
 }

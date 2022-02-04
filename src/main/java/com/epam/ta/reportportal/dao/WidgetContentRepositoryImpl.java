@@ -131,12 +131,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<CriteriaHistoryItem> topItemsByCriteria(Filter filter, String criteria, int limit, boolean includeMethods) {
 		Table<Record2<Long, BigDecimal>> criteriaTable = getTopItemsCriteriaTable(filter, criteria, limit, includeMethods);
 
-		return dsl.select(TEST_ITEM.UNIQUE_ID,
+		return CRITERIA_HISTORY_ITEM_FETCHER.apply(dsl.select(TEST_ITEM.UNIQUE_ID,
 				TEST_ITEM.NAME,
 				DSL.arrayAgg(when(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1), true).otherwise(false))
 						.orderBy(LAUNCH.NUMBER.asc())
 						.as(STATUS_HISTORY),
-				DSL.arrayAgg(TEST_ITEM.START_TIME).orderBy(LAUNCH.NUMBER.asc()).as(START_TIME_HISTORY),
+				DSL.max(TEST_ITEM.START_TIME).filterWhere(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1)).as(START_TIME_HISTORY),
 				DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
 				DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
 		)
@@ -149,7 +149,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 				.having(DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).greaterThan(BigDecimal.ZERO))
 				.orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
 				.limit(MOST_FAILED_CRITERIA_LIMIT)
-				.fetchInto(CriteriaHistoryItem.class);
+				.fetch());
 	}
 
 	private Table<Record2<Long, BigDecimal>> getTopItemsCriteriaTable(Filter filter, String criteria, int limit, boolean includeMethods) {
@@ -209,12 +209,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 	public List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods, int limit) {
 
 		return FLAKY_CASES_TABLE_FETCHER.apply(dsl.select(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())).as(UNIQUE_ID),
-				field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
-				DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
-				DSL.max(field(name(FLAKY_TABLE_RESULTS, START_TIME))).as(START_TIME_HISTORY),
-				sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-				count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
-		)
+						field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.NAME.getName())).as(ITEM_NAME),
+						DSL.arrayAgg(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM_RESULTS.STATUS.getName()))).as(STATUSES),
+						DSL.max(field(name(FLAKY_TABLE_RESULTS, START_TIME)))
+								.filterWhere(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Integer.class).gt(ZERO_QUERY_VALUE))
+								.as(START_TIME_HISTORY),
+						sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
+						count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
+				)
 				.from(dsl.with(LAUNCHES)
 						.as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted()))
 								.with(LAUNCH.NUMBER, SortOrder.DESC)
@@ -226,10 +228,10 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 								TEST_ITEM.START_TIME,
 								TEST_ITEM_RESULTS.STATUS,
 								when(TEST_ITEM_RESULTS.STATUS.notEqual(lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
-										TEST_ITEM.START_TIME.desc()
-								)))
+												TEST_ITEM.START_TIME
+										)))
 										.and(TEST_ITEM.UNIQUE_ID.equal(lag(TEST_ITEM.UNIQUE_ID).over(orderBy(TEST_ITEM.UNIQUE_ID,
-												TEST_ITEM.START_TIME.desc()
+												TEST_ITEM.START_TIME
 										)))), 1).otherwise(ZERO_QUERY_VALUE).as(SWITCH_FLAG)
 						)
 						.from(LAUNCH)

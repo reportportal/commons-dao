@@ -661,6 +661,7 @@ public enum FilterTarget {
 					TICKET.BTS_URL,
 					TICKET.TICKET_ID,
 					TICKET.URL,
+					TICKET.PLUGIN_NAME,
 					PATTERN_TEMPLATE.ID,
 					PATTERN_TEMPLATE.NAME
 			);

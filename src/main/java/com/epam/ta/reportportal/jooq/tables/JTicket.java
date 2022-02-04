@@ -21,7 +21,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row7;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = -328642386;
+    private static final long serialVersionUID = -119397332;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -92,6 +92,11 @@ public class JTicket extends TableImpl<JTicketRecord> {
      * The column <code>public.ticket.url</code>.
      */
     public final TableField<JTicketRecord, String> URL = createField(DSL.name("url"), org.jooq.impl.SQLDataType.VARCHAR(1024).nullable(false), this, "");
+
+    /**
+     * The column <code>public.ticket.plugin_name</code>.
+     */
+    public final TableField<JTicketRecord, String> PLUGIN_NAME = createField(DSL.name("plugin_name"), org.jooq.impl.SQLDataType.VARCHAR(128), this, "");
 
     /**
      * Create a <code>public.ticket</code> table reference
@@ -178,11 +183,11 @@ public class JTicket extends TableImpl<JTicketRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, String, String, Timestamp, String, String, String> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Long, String, String, Timestamp, String, String, String, String> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 }
