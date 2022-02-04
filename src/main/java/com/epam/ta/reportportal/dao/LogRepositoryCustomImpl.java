@@ -137,7 +137,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
 		JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
-		return INDEX_LOG_FETCHER.apply(dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, parentItemTable.ITEM_ID.as(ROOT_ITEM_ID), CLUSTERS.INDEX_ID)
+		return INDEX_LOG_FETCHER.apply(dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME, parentItemTable.ITEM_ID.as(ROOT_ITEM_ID), CLUSTERS.INDEX_ID)
 				.on(LOG.ID)
 				.from(LOG)
 				.join(childItemTable)

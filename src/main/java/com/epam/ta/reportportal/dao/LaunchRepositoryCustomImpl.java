@@ -279,7 +279,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public List<IndexLaunch> findIndexLaunchByIds(List<Long> ids) {
-		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID)
+		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID, LAUNCH.START_TIME)
 				.from(LAUNCH)
 				.where(LAUNCH.ID.in(ids))
 				.orderBy(LAUNCH.ID)
