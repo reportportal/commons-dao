@@ -53,7 +53,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	Optional<Integration> findByNameAndTypeIdAndProjectIdIsNull(String name, Long integrationTypeId);
 
 	/**
-	 * @param id              {@link Integration#getId()} ()}
+	 * @param id                {@link Integration#getId()} ()}
 	 * @param integrationTypeId {@link Integration#getType()}#{@link IntegrationType#getId()}
 	 * @return {@link Optional} with {@link Integration}
 	 */
@@ -100,7 +100,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param integrationType {@link Integration#type}
 	 * @return @return The {@link List} of the {@link Integration}
 	 */
-	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType")
+	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType order by i.creationDate desc")
 	List<Integration> findAllGlobalByType(@Param("integrationType") IntegrationType integrationType);
 
 	/**
@@ -109,7 +109,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param integrationGroup {@link IntegrationType#integrationGroup}
 	 * @return @return The {@link List} of the {@link Integration}
 	 */
-	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project = :project AND t.integrationGroup = :integrationGroup")
+	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project = :project AND t.integrationGroup = :integrationGroup order by i.creationDate desc")
 	List<Integration> findAllProjectByGroup(@Param("project") Project project,
 			@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 
@@ -119,7 +119,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param integrationGroup {@link IntegrationType#integrationGroup}
 	 * @return @return The {@link List} of the {@link Integration}
 	 */
-	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project IS NULL AND t.integrationGroup = :integrationGroup")
+	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project IS NULL AND t.integrationGroup = :integrationGroup order by i.creationDate desc")
 	List<Integration> findAllGlobalByGroup(@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 
 	/**
@@ -127,7 +127,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 *
 	 * @return @return The {@link List} of the global {@link Integration}
 	 */
-	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL")
+	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL order by i.creationDate desc")
 	List<Integration> findAllGlobal();
 
 	/**
@@ -177,6 +177,6 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE type = :integrationTypeId", nativeQuery = true)
 	void updateEnabledStateByIntegrationTypeId(@Param("enabled") boolean enabled, @Param("integrationTypeId") Long integrationTypeId);
 
-	@Query(value = "SELECT * FROM integration i LEFT OUTER JOIN integration_type it ON i.type = it.id WHERE it.name IN (:types)", nativeQuery = true)
+	@Query(value = "SELECT * FROM integration i LEFT OUTER JOIN integration_type it ON i.type = it.id WHERE it.name IN (:types) order by i.creation_date desc", nativeQuery = true)
 	List<Integration> findAllByTypeIn(@Param("types") String... types);
 }

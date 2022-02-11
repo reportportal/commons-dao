@@ -81,6 +81,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.where(INTEGRATION_TYPE.ID.in(integrationTypeIds))
 				.and(INTEGRATION.PROJECT_ID.eq(projectId))
+				.orderBy(INTEGRATION.CREATION_DATE.desc())
 				.fetch(PROJECT_INTEGRATION_RECORD_MAPPER);
 	}
 
@@ -92,6 +93,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.where(INTEGRATION_TYPE.ID.in(integrationTypeIds))
 				.and(INTEGRATION.PROJECT_ID.isNull())
+				.orderBy(INTEGRATION.CREATION_DATE.desc())
 				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
 	}
 
@@ -103,6 +105,7 @@ public class IntegrationRepositoryCustomImpl implements IntegrationRepositoryCus
 				.on(INTEGRATION.TYPE.eq(INTEGRATION_TYPE.ID))
 				.where(INTEGRATION_TYPE.ID.notIn(integrationTypeIds))
 				.and(INTEGRATION.PROJECT_ID.isNull())
+				.orderBy(INTEGRATION.CREATION_DATE.desc())
 				.fetch(GLOBAL_INTEGRATION_RECORD_MAPPER);
 	}
 }
