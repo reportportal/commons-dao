@@ -77,7 +77,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		integrationRepository.updateEnabledStateByIntegrationTypeId(true, integrationType.getId());
 
-		List<Integration> enabledAfter = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
+		List<Integration> enabledAfter = integrationRepository.findAllByProjectIdAndTypeOrderByCreationDateDesc(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
 		enabledAfter.forEach(integration -> assertTrue(integration.isEnabled()));
 	}
@@ -103,7 +103,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
+		List<Integration> integrations = integrationRepository.findAllByProjectIdAndTypeOrderByCreationDateDesc(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
 
 		assertNotNull(integrations);
 		assertEquals(1L, integrations.size());
@@ -118,8 +118,8 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		assertThat(integrationRepository.findAllGlobalByType(integrationType), is(empty()));
 
-		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
-		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeOrderByCreationDateDesc(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeOrderByCreationDateDesc(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
 	}
 
 	@Test
@@ -129,8 +129,8 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		integrationRepository.deleteAllByProjectIdAndIntegrationTypeId(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType.getId());
 
-		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
-		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeOrderByCreationDateDesc(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeOrderByCreationDateDesc(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
 	}
 
 	@Test
