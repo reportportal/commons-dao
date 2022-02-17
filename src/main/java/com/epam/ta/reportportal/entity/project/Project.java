@@ -54,6 +54,7 @@ public class Project implements Serializable {
 	private ProjectType projectType;
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
+	@OrderBy("creationDate desc")
 	private Set<Integration> integrations = Sets.newHashSet();
 
 	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
