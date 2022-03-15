@@ -35,6 +35,10 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 
+	long countLogsByTestItemIn(List<Long> testItemIds);
+
+	long countLogsByLaunchId(Long launchId);
+
 	@Modifying
 	@Query(value = "UPDATE log SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
 	void updateLaunchIdByLaunchId(@Param("currentLaunchId") Long currentLaunchId, @Param("newLaunchId") Long newLaunchId);

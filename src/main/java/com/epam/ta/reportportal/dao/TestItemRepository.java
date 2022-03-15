@@ -163,7 +163,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param itemId Parent item id
 	 * @return True if has
 	 */
-	@Query(value = "SELECT exists(SELECT 1 FROM test_item t WHERE t.parent_id = :itemId AND t.has_stats)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.parent_id = :itemId AND t.has_stats)", nativeQuery = true)
 	boolean hasChildrenWithStats(@Param("itemId") Long itemId);
 
 	/**
@@ -314,4 +314,12 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
 	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
+
+	/**
+	 * Count items by launch id
+	 *
+	 * @param launchId Launch id
+	 * @return Number of {@link TestItem}
+	 */
+	long countTestItemByLaunchId(Long launchId);
 }
