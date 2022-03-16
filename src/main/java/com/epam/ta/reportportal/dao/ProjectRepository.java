@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.project.Project;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
@@ -36,6 +37,7 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 	@Query(value = "SELECT * FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login AND p.project_type = :projectType", nativeQuery = true)
 	List<Project> findUserProjects(@Param("login") String login, @Param("projectType") String projectType);
 
+	@Modifying
 	@Query(value = "INSERT INTO storage (project_id, total_number, current_storage) VALUES (:id, :num, :num * (SELECT value FROM billing.conventional_gb)) ON CONFLICT (project_id) DO UPDATE SET total_number = storage.total_number + :num, current_storage = :num * (SELECT value FROM billing.conventional_gb) + storage.current_storage", nativeQuery = true)
 	void updateProjectStorage(@Param("num") int number, @Param("id") Long projectId);
 }
