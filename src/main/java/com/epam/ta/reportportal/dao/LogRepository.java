@@ -35,7 +35,7 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
 
 	List<Log> findLogsByLogTime(Timestamp timestamp);
 
-	long countLogsByTestItemIn(List<Long> testItemIds);
+	long countLogsByTestItemItemIdIn(List<Long> testItemIds);
 
 	long countLogsByLaunchId(Long launchId);
 
