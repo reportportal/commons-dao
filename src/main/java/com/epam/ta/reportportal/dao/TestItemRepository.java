@@ -38,6 +38,17 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
 
 	/**
+	 * Retrieve list of test item ids for provided launch
+	 *
+	 * @param launchId Launch id
+	 * @return List of test item ids
+	 */
+	@Query(value = "SELECT item_id FROM test_item WHERE launch_id = :launchId UNION "
+			+ "SELECT item_id FROM test_item WHERE retry_of IS NOT NULL AND retry_of IN "
+			+ "(SELECT item_id FROM test_item WHERE launch_id = :launchId);", nativeQuery = true)
+	List<Long> findIdsByLaunchId(@Param("launchId") Long launchId);
+
+	/**
 	 * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} == false
 	 *
 	 * @param launchId {@link Launch#getId()}
