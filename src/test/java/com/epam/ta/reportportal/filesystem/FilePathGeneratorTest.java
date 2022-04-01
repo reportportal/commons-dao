@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.when;
@@ -52,6 +53,6 @@ class FilePathGeneratorTest {
 		//		when:
 		String pathOne = new FilePathGenerator(dateTimeProvider).generate(metaInfo);
 
-		Assertions.assertThat(pathOne).isEqualTo("1/2018-5/271b5881-9a62-4df4-b477-335a96acbe14");
+		Assertions.assertThat(pathOne).isEqualTo("1" + File.separator +"2018-5" + File.separator + "271b5881-9a62-4df4-b477-335a96acbe14");
 	}
 }
