@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,4 +53,13 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
 	 * @return @return The {@link Optional} of the {@link IntegrationType}
 	 */
 	Optional<IntegrationType> findByName(String name);
+
+	/**
+	 * Retrieve all {@link IntegrationType} by accessType
+	 *
+	 * @param accessType {@link java.lang.String}
+	 * @return The {@link List} of the {@link IntegrationType}
+	 */
+	@Query(value = "SELECT it.* FROM integration_type it WHERE (it.details -> 'details'->>'accessType' = :accessType)", nativeQuery = true)
+	List<IntegrationType> findAllByAccessType(@Param("accessType") String accessType);
 }

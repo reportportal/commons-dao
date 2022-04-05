@@ -33,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class IntegrationTypeRepositoryTest extends BaseTest {
 
 	private final static String JIRA_INTEGRATION_TYPE_NAME = "jira";
+	private final static String ACCESS_TYPE_NAME = "public";
 	private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
 	private static final long BTS_INTEGRATIONS_COUNT = 2L;
+	private static final long PUBLIC_INTEGRATIONS_COUNT = 1L;
 
 	@Autowired
 	private IntegrationTypeRepository integrationTypeRepository;
@@ -60,4 +62,12 @@ class IntegrationTypeRepositoryTest extends BaseTest {
 		assertNotNull(integrationTypes);
 		assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
 	}
+
+	@Test
+	void shouldFindAllIntegrationTypesByAccessType() {
+		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByAccessType(ACCESS_TYPE_NAME);
+		assertNotNull(integrationTypes);
+		assertEquals(PUBLIC_INTEGRATIONS_COUNT, integrationTypes.size());
+	}
+
 }
