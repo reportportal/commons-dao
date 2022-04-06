@@ -37,17 +37,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Sql("/db/fill/user-bid/user-bid-fill.sql")
 class UserCreationBidRepositoryTest extends BaseTest {
 
+	public static final String INTERNAL_TYPE = "internal";
+	public static final String UNKNOWN_TYPE = "unknown";
+
 	@Autowired
 	private UserCreationBidRepository repository;
 
 	@Test
-	void findByEmail() {
-		final String email = "superadminemail@domain.com";
+	void findByUuidAndType() {
+		final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
 
-		final Optional<UserCreationBid> userBid = repository.findByEmail(email);
+		final Optional<UserCreationBid> userBid = repository.findByUuidAndType(adminUuid, INTERNAL_TYPE);
 
 		assertTrue(userBid.isPresent(), "User bid should exists");
-		assertEquals(email, userBid.get().getEmail(), "Incorrect email");
+		assertEquals(adminUuid, userBid.get().getUuid(), "Incorrect uuid");
+		assertEquals("superadminemail@domain.com", userBid.get().getEmail(), "Incorrect email");
+	}
+
+	@Test
+	void shouldNotFindByUuidAndTypeWhenTypeNotMatched() {
+		final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
+
+		final Optional<UserCreationBid> userBid = repository.findByUuidAndType(adminUuid, UNKNOWN_TYPE);
+
+		assertTrue(userBid.isEmpty(), "User bid should not exists");
 	}
 
 	@Test
