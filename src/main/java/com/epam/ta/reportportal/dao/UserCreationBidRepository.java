@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String>, UserCreationBidRepositoryCustom {
 
-	@Query(value = "SELECT bid.* FROM public.user_creation_bid bid WHERE bid.uuid = :uuid AND (bid.metadata -> 'metadata'->>'type' = :type)", nativeQuery = true)
+	@Query(value = "SELECT bid.* FROM user_creation_bid bid WHERE bid.uuid = :uuid AND (bid.metadata -> 'metadata'->>'type' = :type)", nativeQuery = true)
 	Optional<UserCreationBid> findByUuidAndType(@Param("uuid") String uuid, @Param("type") String type);
 
 	@Modifying
