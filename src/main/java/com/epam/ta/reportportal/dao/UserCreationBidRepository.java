@@ -29,7 +29,8 @@ import java.util.Optional;
  */
 public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String>, UserCreationBidRepositoryCustom {
 
-	Optional<UserCreationBid> findByEmail(String email);
+	@Query(value = "SELECT bid.* FROM user_creation_bid bid WHERE bid.uuid = :uuid AND (bid.metadata -> 'metadata'->>'type' = :type)", nativeQuery = true)
+	Optional<UserCreationBid> findByUuidAndType(@Param("uuid") String uuid, @Param("type") String type);
 
 	@Modifying
 	@Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :date")
