@@ -56,6 +56,9 @@ public class Ticket implements Serializable {
 	@Column(name = "url")
 	private String url;
 
+	@Column(name = "plugin_name")
+	private String pluginName;
+
 	@ManyToMany(mappedBy = "tickets")
 	private Set<IssueEntity> issues = Sets.newHashSet();
 
@@ -124,6 +127,14 @@ public class Ticket implements Serializable {
 
 	public void setIssues(Set<IssueEntity> issues) {
 		this.issues = issues;
+	}
+
+	public String getPluginName() {
+		return pluginName;
+	}
+
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
 	}
 
 	@Override

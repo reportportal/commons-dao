@@ -28,10 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -137,6 +134,18 @@ class ClusterRepositoryTest extends BaseTest {
 
 		final int removed = clusterRepository.deleteClusterTestItemsByItemId(1L);
 		assertEquals(1, removed);
+	}
+
+	@Test
+	void shouldDeleteClusterTestItemsByItemIdIn() {
+		final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
+		clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
+
+		final int removed = clusterRepository.deleteClusterTestItemsByItemIds(List.of(1L));
+		assertEquals(1, removed);
+
+		final int zeroRemoved = clusterRepository.deleteClusterTestItemsByItemIds(Collections.emptyList());
+		assertEquals(0, zeroRemoved);
 	}
 
 	@Test

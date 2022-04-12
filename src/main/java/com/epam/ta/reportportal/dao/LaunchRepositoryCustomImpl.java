@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.util.SortUtils;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import org.jooq.DSLContext;
@@ -47,6 +48,7 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.RecordMappers.INDEX_LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
@@ -265,16 +267,21 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	}
 
 	@Override
-	public List<IndexLaunch> findIndexLaunchByIdsAndLogLevel(List<Long> ids, Integer logLevel) {
-		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID)
+	public boolean hasItemsWithLogsWithLogLevel(Long launchId, Collection<JTestItemTypeEnum> itemTypes, Integer logLevel) {
+		return dsl.fetchExists(DSL.selectOne()
+				.from(TEST_ITEM)
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.LAUNCH_ID.eq(launchId))
+				.and(TEST_ITEM.TYPE.in(itemTypes))
+				.and(LOG.LOG_LEVEL.ge(logLevel)));
+	}
+
+	@Override
+	public List<IndexLaunch> findIndexLaunchByIds(List<Long> ids) {
+		return dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.PROJECT_ID, LAUNCH.START_TIME)
 				.from(LAUNCH)
 				.where(LAUNCH.ID.in(ids))
-				.and(DSL.exists(DSL.selectOne()
-						.from(TEST_ITEM)
-						.join(LOG)
-						.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
-						.where(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-						.and(LOG.LOG_LEVEL.ge(logLevel))))
 				.orderBy(LAUNCH.ID)
 				.fetch(INDEX_LAUNCH_RECORD_MAPPER);
 	}

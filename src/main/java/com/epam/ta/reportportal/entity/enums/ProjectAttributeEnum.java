@@ -41,10 +41,12 @@ public enum ProjectAttributeEnum {
 	NUMBER_OF_LOG_LINES(Prefix.ANALYZER + "numberOfLogLines", String.valueOf(ProjectAnalyzerConfig.NUMBER_OF_LOG_LINES)),
 	INDEXING_RUNNING(Prefix.ANALYZER + "indexingRunning", String.valueOf(false)),
 	AUTO_PATTERN_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoPatternAnalyzerEnabled", String.valueOf(false)),
-	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(false)),
+	AUTO_ANALYZER_ENABLED(Prefix.ANALYZER + "isAutoAnalyzerEnabled", String.valueOf(true)),
 	AUTO_ANALYZER_MODE(Prefix.ANALYZER + "autoAnalyzerMode", AnalyzeMode.BY_LAUNCH_NAME.getValue()),
 	ALL_MESSAGES_SHOULD_MATCH(Prefix.ANALYZER + "allMessagesShouldMatch", String.valueOf(false)),
-	SEARCH_LOGS_MIN_SHOULD_MATCH(Prefix.ANALYZER + "searchLogsMinShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH));
+	SEARCH_LOGS_MIN_SHOULD_MATCH(Prefix.ANALYZER + "searchLogsMinShouldMatch", String.valueOf(ProjectAnalyzerConfig.MIN_SHOULD_MATCH)),
+	AUTO_UNIQUE_ERROR_ANALYZER_ENABLED(Prefix.ANALYZER + Prefix.UNIQUE_ERROR + "enabled", String.valueOf(true)),
+	UNIQUE_ERROR_ANALYZER_REMOVE_NUMBERS(Prefix.ANALYZER + Prefix.UNIQUE_ERROR + "removeNumbers", String.valueOf(true));
 
 	public static final String FOREVER_ALIAS = "0";
 	private String attribute;
@@ -74,6 +76,7 @@ public enum ProjectAttributeEnum {
 	public static class Prefix {
 		public static final String ANALYZER = "analyzer.";
 		public static final String JOB = "job.";
+		public static final String UNIQUE_ERROR = "uniqueError.";
 	}
 }
 

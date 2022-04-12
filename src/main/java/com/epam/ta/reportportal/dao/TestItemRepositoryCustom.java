@@ -57,6 +57,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	Set<Statistics> accumulateStatisticsByFilter(Queryable filter);
 
+	Set<Statistics> accumulateStatisticsByFilterNotFromBaseline(Queryable targetFilter, Queryable baselineFilter);
+
 	Optional<Long> findIdByFilter(Queryable filter, Sort sort);
 
 	/**
@@ -71,6 +73,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 */
 	Page<TestItem> findByFilter(boolean isLatest, Queryable launchFilter, Queryable testItemFilter, Pageable launchPageable,
 			Pageable testItemPageable);
+
+	Page<TestItem> findAllNotFromBaseline(Queryable targetFilter, Queryable baselineFilter, Pageable pageable);
 
 	/**
 	 * Loads items {@link TestItemHistory} - {@link TestItem} executions from the whole {@link com.epam.ta.reportportal.entity.project.Project}
@@ -311,7 +315,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @param logLevel     {@link Log#getLogLevel()}
 	 * @return The {@link List} of the {@link TestItem#getItemId()}
 	 */
-	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, Long launchId, int logLevel);
+	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId, int logLevel);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}

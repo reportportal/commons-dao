@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.Comparators;
@@ -44,8 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
@@ -283,11 +283,16 @@ class LaunchRepositoryTest extends BaseTest {
 	}
 
 	@Test
-	void findIndexLaunchByIdsAndLogLevel() {
-		final List<IndexLaunch> result = launchRepository.findIndexLaunchByIdsAndLogLevel(List.of(100L, 200L, 300L),
-				0
-		);
-		assertEquals(2, result.size());
+	void hasItemsWithLogsWithLogLevel() {
+		assertTrue(launchRepository.hasItemsWithLogsWithLogLevel(100L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+		assertTrue(launchRepository.hasItemsWithLogsWithLogLevel(200L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+		assertFalse(launchRepository.hasItemsWithLogsWithLogLevel(300L, List.of(JTestItemTypeEnum.STEP, JTestItemTypeEnum.TEST), 0));
+	}
+
+	@Test
+	void findIndexLaunchByIds() {
+		final List<IndexLaunch> result = launchRepository.findIndexLaunchByIds(List.of(100L, 200L, 300L));
+		assertEquals(3, result.size());
 	}
 
 	@Test
@@ -408,6 +413,64 @@ class LaunchRepositoryTest extends BaseTest {
 				.build());
 
 		assertTrue(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeHas() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key:value")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeHasNegative() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.HAS)
+						.withNegative(true)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key1:value1")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeAny() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.ANY)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key:value")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
+	}
+
+	@Test
+	void compositeAttributeAnyNegative() {
+		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
+				.withTarget(Launch.class)
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.ANY)
+						.withNegative(true)
+						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
+						.withValue("key1:value1")
+						.build())
+				.build());
+
+		assertFalse(launches.isEmpty());
 	}
 
 	private Filter buildDefaultFilter(Long projectId) {

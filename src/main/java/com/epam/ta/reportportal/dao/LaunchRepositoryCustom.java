@@ -23,11 +23,13 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
+import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,7 +112,9 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
     List<Long> findIdsByProjectIdAndModeAndStatusNotEqAfterId(Long projectId, JLaunchModeEnum mode, JStatusEnum status, Long launchId,
             int limit);
 
-    List<IndexLaunch> findIndexLaunchByIdsAndLogLevel(List<Long> ids, Integer logLevel);
+    boolean hasItemsWithLogsWithLogLevel(Long launchId, Collection<JTestItemTypeEnum> itemTypes, Integer logLevel);
+
+    List<IndexLaunch> findIndexLaunchByIds(List<Long> ids);
 
     Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(
             Long projectId, String name, String[] attributes, Long launchId, JLaunchModeEnum mode

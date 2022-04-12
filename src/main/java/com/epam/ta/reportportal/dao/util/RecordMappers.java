@@ -220,6 +220,7 @@ public class RecordMappers {
 			indexLog.setLogId(r.get(LOG.ID, Long.class));
 			indexLog.setMessage(r.get(LOG.LOG_MESSAGE, String.class));
 			indexLog.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
+			indexLog.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
 			indexLog.setClusterId(r.get(CLUSTERS.INDEX_ID));
 
 			ofNullable(indexLogMapping.get(itemId)).ifPresentOrElse(indexLogs -> indexLogs.add(indexLog), () -> {
@@ -269,7 +270,8 @@ public class RecordMappers {
 		return indexTestItem;
 	};
 
-	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(r.get(TEST_ITEM.ITEM_ID),
+	public static final RecordMapper<? super Record, NestedStep> NESTED_STEP_RECORD_MAPPER = r -> new NestedStep(
+			r.get(TEST_ITEM.ITEM_ID),
 			r.get(TEST_ITEM.NAME),
 			r.get(TEST_ITEM.UUID),
 			TestItemTypeEnum.valueOf(r.get(TEST_ITEM.TYPE).getLiteral()),
@@ -307,6 +309,7 @@ public class RecordMappers {
 		final IndexLaunch indexLaunch = new IndexLaunch();
 		indexLaunch.setLaunchId(record.get(LAUNCH.ID));
 		indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
+		indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME).toLocalDateTime());
 		indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
 		return indexLaunch;
 	};
@@ -479,6 +482,9 @@ public class RecordMappers {
 		dashboardWidget.setWidgetName(r.get(DASHBOARD_WIDGET.WIDGET_NAME));
 		dashboardWidget.setWidgetType(r.get(DASHBOARD_WIDGET.WIDGET_TYPE));
 		dashboardWidget.setShare(r.get(DASHBOARD_WIDGET.SHARE));
+		final Widget widget = new Widget();
+		WIDGET_OPTIONS_MAPPER.accept(widget, r);
+		dashboardWidget.setWidget(widget);
 		return Optional.of(dashboardWidget);
 	};
 

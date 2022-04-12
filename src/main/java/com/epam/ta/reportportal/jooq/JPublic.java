@@ -28,7 +28,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1370382793;
+    private static final long serialVersionUID = 784587878;
 
     /**
      * The reference instance of <code>public</code>
@@ -64,6 +64,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.attachment</code>.
      */
     public final JAttachment ATTACHMENT = com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
+
+    /**
+     * The table <code>public.attachment_deletion</code>.
+     */
+    public final JAttachmentDeletion ATTACHMENT_DELETION = com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion.ATTACHMENT_DELETION;
 
     /**
      * The table <code>public.attribute</code>.
@@ -282,6 +287,11 @@ public class JPublic extends SchemaImpl {
     public final JShareableEntity SHAREABLE_ENTITY = com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
 
     /**
+     * The table <code>public.stale_materialized_view</code>.
+     */
+    public final JStaleMaterializedView STALE_MATERIALIZED_VIEW = com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView.STALE_MATERIALIZED_VIEW;
+
+    /**
      * The table <code>public.statistics</code>.
      */
     public final JStatistics STATISTICS = com.epam.ta.reportportal.jooq.tables.JStatistics.STATISTICS;
@@ -384,6 +394,7 @@ public class JPublic extends SchemaImpl {
             Sequences.SENDER_CASE_PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
             Sequences.SHAREABLE_ENTITY_ID_SEQ,
+            Sequences.STALE_MATERIALIZED_VIEW_ID_SEQ,
             Sequences.STATISTICS_FIELD_SF_ID_SEQ,
             Sequences.STATISTICS_S_ID_SEQ,
             Sequences.TEST_ITEM_ITEM_ID_SEQ,
@@ -407,6 +418,7 @@ public class JPublic extends SchemaImpl {
             JAclSid.ACL_SID,
             JActivity.ACTIVITY,
             JAttachment.ATTACHMENT,
+            JAttachmentDeletion.ATTACHMENT_DELETION,
             JAttribute.ATTRIBUTE,
             JClusters.CLUSTERS,
             JClustersTestItem.CLUSTERS_TEST_ITEM,
@@ -446,6 +458,7 @@ public class JPublic extends SchemaImpl {
             JSenderCase.SENDER_CASE,
             JServerSettings.SERVER_SETTINGS,
             JShareableEntity.SHAREABLE_ENTITY,
+            JStaleMaterializedView.STALE_MATERIALIZED_VIEW,
             JStatistics.STATISTICS,
             JStatisticsField.STATISTICS_FIELD,
             JTestItem.TEST_ITEM,

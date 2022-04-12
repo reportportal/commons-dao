@@ -23,6 +23,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,4 +53,8 @@ public interface ClusterRepository extends ReportPortalRepository<Cluster, Long>
 	@Modifying
 	@Query(value = "DELETE FROM clusters_test_item WHERE item_id = :itemId", nativeQuery = true)
 	int deleteClusterTestItemsByItemId(@Param("itemId") Long itemId);
+
+	@Modifying
+	@Query(value = "DELETE FROM clusters_test_item WHERE item_id IN (:itemIds)", nativeQuery = true)
+	int deleteClusterTestItemsByItemIds(@Param("itemIds") Collection<Long> itemIds);
 }

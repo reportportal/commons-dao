@@ -65,7 +65,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param projectId ID of project
 	 * @return Found integrations
 	 */
-	List<Integration> findAllByProjectId(Long projectId);
+	List<Integration> findAllByProjectIdOrderByCreationDateDesc(Long projectId);
 
 	/**
 	 * Retrieve all {@link Integration} by project ID and integration type
@@ -74,7 +74,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 * @param integrationType {@link IntegrationType}
 	 * @return The {@link List} of the {@link Integration}
 	 */
-	List<Integration> findAllByProjectIdAndType(Long projectId, IntegrationType integrationType);
+	List<Integration> findAllByProjectIdAndTypeOrderByCreationDateDesc(Long projectId, IntegrationType integrationType);
 
 	/**
 	 * Delete all {@link Integration} with {@link Integration#project} == NULL by integration type ID
