@@ -16,8 +16,10 @@
 
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
-import com.epam.ta.reportportal.entity.project.Project;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -30,6 +32,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "user_creation_bid")
+@TypeDef(name = "json", typeClass = Metadata.class)
 @EntityListeners(AuditingEntityListener.class)
 public class UserCreationBid implements Serializable, Modifiable {
 
@@ -44,12 +47,15 @@ public class UserCreationBid implements Serializable, Modifiable {
 	@Column(name = "email")
 	private String email;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "default_project_id")
-	private Project defaultProject;
+	@Column(name = "project_name")
+	private String projectName;
 
 	@Column(name = "role")
 	private String role;
+
+	@Type(type = "json")
+	@Column(name = "metadata")
+	private Metadata metadata;
 
 	public String getUuid() {
 		return uuid;
@@ -67,12 +73,12 @@ public class UserCreationBid implements Serializable, Modifiable {
 		this.email = email;
 	}
 
-	public Project getDefaultProject() {
-		return defaultProject;
+	public String getProjectName() {
+		return projectName;
 	}
 
-	public void setDefaultProject(Project defaultProject) {
-		this.defaultProject = defaultProject;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 
 	public String getRole() {
@@ -90,5 +96,13 @@ public class UserCreationBid implements Serializable, Modifiable {
 
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
+	}
+
+	public Metadata getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
 	}
 }
