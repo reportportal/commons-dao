@@ -17,8 +17,10 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.project.Project;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +36,5 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
 	@Query(value = "SELECT * FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login AND p.project_type = :projectType", nativeQuery = true)
 	List<Project> findUserProjects(@Param("login") String login, @Param("projectType") String projectType);
+
 }
