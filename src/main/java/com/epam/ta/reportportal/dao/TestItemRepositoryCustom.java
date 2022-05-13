@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.item.PathName;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.history.TestItemHistory;
+import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -309,13 +310,16 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	/**
 	 * Select item IDs by analyzed status and {@link TestItem#getLaunchId()}
 	 * with {@link Log} having {@link Log#getLogLevel()} greater than or equal to {@link com.epam.ta.reportportal.entity.enums.LogLevel#ERROR_INT}
+	 * excluding {@link TestItem} that has {@link IssueEntity} with {@link IssueEntity#getIssueType()} from excluded types
 	 *
-	 * @param autoAnalyzed {@link Issue#getAutoAnalyzed()}
-	 * @param launchId     {@link TestItem#getLaunchId()}
-	 * @param logLevel     {@link Log#getLogLevel()}
+	 * @param autoAnalyzed       {@link Issue#getAutoAnalyzed()}
+	 * @param launchId           {@link TestItem#getLaunchId()}
+	 * @param logLevel           {@link Log#getLogLevel()}
+	 * @param excludedIssueTypes {@link Collection} of {@link IssueType#getId()} to exclude {@link TestItem} with provided type id
 	 * @return The {@link List} of the {@link TestItem#getItemId()}
 	 */
-	List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId, int logLevel);
+	List<Long> selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId, int logLevel,
+			Collection<IssueType> excludedIssueTypes);
 
 	/**
 	 * @param itemId  {@link TestItem#itemId}

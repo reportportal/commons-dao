@@ -724,12 +724,16 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	 * {@link TestItem} that matched to the provided `launchId` and `autoAnalyzed` conditions
 	 */
 	@Override
-	public List<Long> selectIdsByAnalyzedWithLevelGte(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId, int logLevel) {
+	public List<Long> selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(boolean autoAnalyzed, boolean ignoreAnalyzer, Long launchId,
+			int logLevel, Collection<IssueType> excludedIssueTypes) {
 
 		JTestItem outerItemTable = TEST_ITEM.as(OUTER_ITEM_TABLE);
 		JTestItem nestedItemTable = TEST_ITEM.as(NESTED);
 
-		final Condition issueCondition = ISSUE.AUTO_ANALYZED.eq(autoAnalyzed).and(ISSUE.IGNORE_ANALYZER.eq(ignoreAnalyzer));
+		final List<Long> excludedTypeIds = excludedIssueTypes.stream().map(IssueType::getId).collect(toList());
+		final Condition issueCondition = ISSUE.AUTO_ANALYZED.eq(autoAnalyzed)
+				.and(ISSUE.IGNORE_ANALYZER.eq(ignoreAnalyzer))
+				.and(ISSUE.ISSUE_TYPE.notIn(excludedTypeIds));
 
 		return dsl.selectDistinct(fieldName(ID))
 				.from(DSL.select(outerItemTable.ITEM_ID.as(ID))
