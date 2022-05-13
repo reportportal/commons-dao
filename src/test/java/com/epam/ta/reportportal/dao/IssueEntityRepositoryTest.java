@@ -41,14 +41,14 @@ class IssueEntityRepositoryTest extends BaseTest {
 
 	@Test
 	void findAllByIssueId() {
-		final Long toInvestigateTypeId = 1L;
+		final Long automationBugTypeId = 2L;
 		final int expectedSize = 11;
 
-		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(toInvestigateTypeId);
+		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(automationBugTypeId);
 		assertEquals(expectedSize, issueEntities.size(), "Incorrect size of issue entities");
-		issueEntities.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
+		issueEntities.forEach(it -> assertEquals(TestItemIssueGroup.AUTOMATION_BUG,
 				it.getIssueType().getIssueGroup().getTestItemIssueGroup(),
-				"Issue entities should be int 'to investigate' group"
+				"Issue entities should be from 'automation bug' group"
 		));
 
 	}

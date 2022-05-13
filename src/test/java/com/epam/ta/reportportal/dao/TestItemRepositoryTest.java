@@ -65,6 +65,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -75,6 +76,9 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Autowired
 	private TestItemRepository testItemRepository;
+
+	@Autowired
+	private IssueTypeRepository issueTypeRepository;
 
 	@Autowired
 	private TicketRepository ticketRepository;
@@ -232,7 +236,7 @@ class TestItemRepositoryTest extends BaseTest {
 		Filter filter = Filter.builder()
 				.withTarget(TestItem.class)
 				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_LAUNCH_ID))
-				.withCondition(new FilterCondition(Condition.EQUALS, false, "1", CRITERIA_ISSUE_GROUP_ID))
+				.withCondition(new FilterCondition(Condition.EQUALS, false, "2", CRITERIA_ISSUE_GROUP_ID))
 				.build();
 
 		List<Long> itemIds = testItemRepository.selectIdsByFilter(1L, filter, 1, 0);
@@ -386,14 +390,37 @@ class TestItemRepositoryTest extends BaseTest {
 
 	@Test
 	void selectByAutoAnalyzedStatusNotIgnoreAnalyzer() {
-		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, false, 1L, LogLevel.ERROR.toInt());
+		final IssueType abIssueType = issueTypeRepository.findById(2L).get();
+
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(false,
+				false,
+				1L,
+				LogLevel.ERROR.toInt(),
+				List.of(abIssueType)
+		);
 		assertNotNull(itemIds);
-		assertThat(itemIds, Matchers.hasSize(1));
+		assertTrue(itemIds.isEmpty());
+
+		final IssueType tiIssueType = issueTypeRepository.findById(1L).get();
+		itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(false,
+				false,
+				1L,
+				LogLevel.ERROR.toInt(),
+				List.of(tiIssueType)
+		);
+		assertNotNull(itemIds);
+		assertThat(itemIds, hasSize(1));
+
 	}
 
 	@Test
 	void selectByAutoAnalyzedStatusIgnoreAnalyzer() {
-		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGte(false, true, 1L, LogLevel.ERROR.toInt());
+		List<Long> itemIds = testItemRepository.selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(false,
+				true,
+				1L,
+				LogLevel.ERROR.toInt(),
+				Collections.emptyList()
+		);
 		assertTrue(itemIds.isEmpty());
 	}
 
@@ -452,13 +479,13 @@ class TestItemRepositoryTest extends BaseTest {
 	@Test
 	void selectItemsInIssueByLaunch() {
 		final Long launchId = 1L;
-		final String issueType = "ti001";
+		final String issueType = "ab001";
 		final List<TestItem> items = testItemRepository.selectItemsInIssueByLaunch(launchId, issueType);
 		assertNotNull(items, "Items should not be null");
 		assertTrue(!items.isEmpty(), "Items should not be empty");
 		items.forEach(it -> {
 			assertEquals(launchId, it.getLaunchId(), "Incorrect launch id");
-			assertEquals(it.getItemResults().getIssue().getIssueType().getId(), Long.valueOf(1L), "Incorrect item issue");
+			assertThat(it.getItemResults().getIssue().getIssueType().getId(), anyOf(is(1L), is(2L)));
 		});
 	}
 

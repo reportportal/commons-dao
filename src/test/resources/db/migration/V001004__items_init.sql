@@ -122,7 +122,7 @@ BEGIN
                     THEN
                         UPDATE test_item_results SET status = 'FAILED' WHERE result_id = cur_step_id;
                         INSERT INTO issue (issue_id, issue_type, auto_analyzed, issue_description)
-                        VALUES (cur_step_id, 1, FALSE, 'issue description');
+                        VALUES (cur_step_id, 2, FALSE, 'issue description');
 
                         INSERT INTO ticket (ticket_id, submitter, submit_date, bts_url, bts_project, url)
                         VALUES (concat('ticket_id_', cur_step_id), 'superadmin', now(), 'jira.com', 'project',
