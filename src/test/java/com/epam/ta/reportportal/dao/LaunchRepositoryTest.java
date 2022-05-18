@@ -415,64 +415,6 @@ class LaunchRepositoryTest extends BaseTest {
 		assertTrue(launches.isEmpty());
 	}
 
-	@Test
-	void compositeAttributeHas() {
-		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder()
-						.withCondition(Condition.HAS)
-						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
-						.withValue("key:value")
-						.build())
-				.build());
-
-		assertFalse(launches.isEmpty());
-	}
-
-	@Test
-	void compositeAttributeHasNegative() {
-		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder()
-						.withCondition(Condition.HAS)
-						.withNegative(true)
-						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
-						.withValue("key1:value1")
-						.build())
-				.build());
-
-		assertFalse(launches.isEmpty());
-	}
-
-	@Test
-	void compositeAttributeAny() {
-		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder()
-						.withCondition(Condition.ANY)
-						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
-						.withValue("key:value")
-						.build())
-				.build());
-
-		assertFalse(launches.isEmpty());
-	}
-
-	@Test
-	void compositeAttributeAnyNegative() {
-		List<Launch> launches = launchRepository.findByFilter(Filter.builder()
-				.withTarget(Launch.class)
-				.withCondition(FilterCondition.builder()
-						.withCondition(Condition.ANY)
-						.withNegative(true)
-						.withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
-						.withValue("key1:value1")
-						.build())
-				.build());
-
-		assertFalse(launches.isEmpty());
-	}
-
 	private Filter buildDefaultFilter(Long projectId) {
 		List<ConvertibleCondition> conditionList = Lists.newArrayList(new FilterCondition(Condition.EQUALS,
 				false,
