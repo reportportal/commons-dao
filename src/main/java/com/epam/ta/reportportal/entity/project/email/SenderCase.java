@@ -38,6 +38,9 @@ public class SenderCase implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "rule_name", nullable = false)
+	private String ruleName;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "recipient")
@@ -81,6 +84,14 @@ public class SenderCase implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
 	}
 
 	public Set<String> getRecipients() {
