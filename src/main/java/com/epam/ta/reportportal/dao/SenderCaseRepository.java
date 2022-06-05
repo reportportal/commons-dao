@@ -7,11 +7,14 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface SenderCaseRepository extends ReportPortalRepository<SenderCase, Long> {
 
 	@Query(value = "SELECT sc FROM SenderCase sc WHERE sc.project.id = :projectId")
 	List<SenderCase> findAllByProjectId(@Param(value = "projectId") Long projectId);
+
+	Optional<SenderCase> findByProjectIdAndRuleNameIgnoreCase(Long projectId, String ruleName);
 
 	@Modifying
 	@Query(value = "DELETE FROM recipients WHERE sender_case_id = :id AND recipient IN (:recipients)", nativeQuery = true)
