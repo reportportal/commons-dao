@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Sql("/db/fill/sendercase/sender-case-fill.sql")
 public class SenderCaseRepositoryTest extends BaseTest {
@@ -20,6 +21,12 @@ public class SenderCaseRepositoryTest extends BaseTest {
 	void findAllByProjectId() {
 		final List<SenderCase> senderCases = senderCaseRepository.findAllByProjectId(1L);
 		Assertions.assertFalse(senderCases.isEmpty());
+	}
+
+	@Test
+	void findAllByProjectIdAndRuleNameIgnoreCase() {
+		final Optional<SenderCase> senderCases = senderCaseRepository.findByProjectIdAndRuleNameIgnoreCase(1L, "rule1");
+		Assertions.assertTrue(senderCases.isPresent());
 	}
 
 	@Test
