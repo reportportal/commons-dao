@@ -175,8 +175,8 @@ class ItemAttributeRepositoryTest extends BaseTest {
 		Assertions.assertTrue(first.isPresent());
 		Assertions.assertTrue(second.isPresent());
 
-		repository.deleteByLaunchIdAndKeyAndSystem(1L, "first", true);
-		repository.deleteByLaunchIdAndKeyAndSystem(1L, "second", false);
+		repository.deleteAllByLaunchIdAndKeyAndSystem(1L, "first", true);
+		repository.deleteAllByLaunchIdAndKeyAndSystem(1L, "second", false);
 
 		final Optional<ItemAttribute> firstAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L, "first", true);
 		final Optional<ItemAttribute> secondAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L, "second", false);
