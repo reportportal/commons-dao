@@ -163,4 +163,27 @@ class ItemAttributeRepositoryTest extends BaseTest {
 		Assertions.assertEquals("new value", attribute.get().getValue());
 		Assertions.assertEquals(false, attribute.get().isSystem());
 	}
+
+	@Test
+	void deleteByKeyAndSystem() {
+		repository.saveByLaunchId(1L, "first", "first", true);
+		repository.saveByLaunchId(1L, "second", "second", false);
+
+		final Optional<ItemAttribute> first = repository.findByLaunchIdAndKeyAndSystem(1L, "first", true);
+		final Optional<ItemAttribute> second = repository.findByLaunchIdAndKeyAndSystem(1L, "second", false);
+
+		Assertions.assertTrue(first.isPresent());
+		Assertions.assertTrue(second.isPresent());
+
+		repository.deleteAllByLaunchIdAndKeyAndSystem(1L, "first", true);
+		repository.deleteAllByLaunchIdAndKeyAndSystem(1L, "second", false);
+
+		final Optional<ItemAttribute> firstAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L, "first", true);
+		final Optional<ItemAttribute> secondAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L, "second", false);
+
+		Assertions.assertFalse(firstAfterRemove.isPresent());
+		Assertions.assertFalse(secondAfterRemove.isPresent());
+
+
+	}
 }

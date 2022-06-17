@@ -26,4 +26,6 @@ import java.util.Optional;
 public interface ItemAttributeRepository extends ReportPortalRepository<ItemAttribute, Long>, ItemAttributeRepositoryCustom {
 
 	Optional<ItemAttribute> findByLaunchIdAndKeyAndSystem(Long launchId, String key, boolean isSystem);
+
+	int deleteAllByLaunchIdAndKeyAndSystem(Long launchId, String key, boolean isSystem);
 }
