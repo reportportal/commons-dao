@@ -19,4 +19,8 @@ public interface SenderCaseRepository extends ReportPortalRepository<SenderCase,
 	@Modifying
 	@Query(value = "DELETE FROM recipients WHERE sender_case_id = :id AND recipient IN (:recipients)", nativeQuery = true)
 	int deleteRecipients(@Param(value = "id") Long id, @Param(value = "recipients") Collection<String> recipients);
+
+	@Modifying
+	@Query(value = "DELETE FROM sender_case WHERE id = :id", nativeQuery = true)
+	int deleteSenderCaseById(@Param(value = "id") Long id);
 }
