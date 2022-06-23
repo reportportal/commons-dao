@@ -343,10 +343,10 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<Long> findIdsByParentIds(@Param("parentIds") Long... parentIds);
 
 	/**
-	 * Select items with provided retry of
+	 * Select retries path with provided retry of
 	 * @param retryOf Retry of test item id
 	 * @return List of item ids
 	 */
 	@Query(value = "SELECT t.path FROM test_item t WHERE t.retry_of = :retryOf", nativeQuery = true)
-	List<Long> findPathsByRetryOf(@Param("retryOf") Long retryOf);
+	List<String> findPathsByRetryOf(@Param("retryOf") Long retryOf);
 }
