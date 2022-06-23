@@ -343,6 +343,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	List<Long> findIdsByParentIds(@Param("parentIds") Long... parentIds);
 
 	/**
+	 * Select item paths by provided parent ids
+	 * @param parentIds Parent test items id
+	 * @return List of item paths
+	 */
+	@Query(value = "SELECT t.path FROM test_item t WHERE t.parent_id IN (:parentIds)", nativeQuery = true)
+	List<String> findPathsByParentIds(@Param("parentIds") Long... parentIds);
+
+	/**
 	 * Select items ids with provided retry of
 	 * @param retryOf Retry of test item id
 	 * @return List of item ids
