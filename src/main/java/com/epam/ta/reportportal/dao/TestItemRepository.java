@@ -347,7 +347,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param parentIds Parent test items id
 	 * @return List of item paths
 	 */
-	@Query(value = "SELECT CAST(t.path) AS varchar FROM test_item t WHERE t.parent_id IN (:parentIds)", nativeQuery = true)
+	@Query(value = "SELECT CAST(t.path AS VARCHAR) FROM test_item t WHERE t.parent_id IN (:parentIds)", nativeQuery = true)
 	List<String> findPathsByParentIds(@Param("parentIds") Long... parentIds);
 
 	/**
