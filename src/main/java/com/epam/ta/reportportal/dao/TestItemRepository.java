@@ -333,4 +333,20 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @return Number of {@link TestItem}
 	 */
 	long countTestItemByLaunchId(Long launchId);
+
+	/**
+	 * Select items with provided parent ids
+	 * @param parentIds Parent test items id
+	 * @return List of item ids
+	 */
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.parent_id IN (:parentIds)", nativeQuery = true)
+	List<Long> findIdsByParentIds(@Param("parentIds") Long... parentIds);
+
+	/**
+	 * Select items with provided retry of
+	 * @param retryOf Retry of test item id
+	 * @return List of item ids
+	 */
+	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.retry_of = :retryOf", nativeQuery = true)
+	List<Long> findIdsByRetryOf(@Param("retryOf") Long retryOf);
 }
