@@ -1,15 +1,14 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.entity.project.email.LaunchAttributeRule;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Sql("/db/fill/sendercase/sender-case-fill.sql")
 public class SenderCaseRepositoryTest extends BaseTest {
@@ -37,5 +36,31 @@ public class SenderCaseRepositoryTest extends BaseTest {
 		final SenderCase updated = senderCaseRepository.findById(1L).get();
 		Assertions.assertEquals(1, updated.getRecipients().size());
 		Assertions.assertFalse(updated.getRecipients().contains("first"));
+	}
+
+	@Test
+	void saveAttributeRules() {
+		final Optional<SenderCase> senderCases = senderCaseRepository.findByProjectIdAndRuleNameIgnoreCase(1L, "rule1");
+		Assertions.assertTrue(senderCases.isPresent());
+
+		final SenderCase senderCaseDb = senderCases.get();
+		final SenderCase senderCase = new SenderCase();
+		senderCase.setId(senderCaseDb.getId());
+		senderCase.setRuleName(senderCaseDb.getRuleName());
+		senderCase.setProject(senderCase.getProject());
+		senderCase.setEnabled(senderCaseDb.isEnabled());
+		senderCase.setLaunchNames(senderCaseDb.getLaunchNames());
+		senderCase.setSendCase(senderCaseDb.getSendCase());
+		senderCase.setRecipients(senderCaseDb.getRecipients());
+		final LaunchAttributeRule attributeRule = new LaunchAttributeRule();
+		attributeRule.setValue("v1");
+		attributeRule.setSenderCase(senderCase);
+		Set<LaunchAttributeRule> rules = new HashSet<>();
+		rules.add(attributeRule);
+		senderCase.setLaunchAttributeRules(rules);
+		senderCaseRepository.save(senderCase);
+		final SenderCase found = senderCaseRepository.findById(senderCaseDb.getId()).get();
+
+		Assertions.assertFalse(found.getLaunchAttributeRules().isEmpty());
 	}
 }
