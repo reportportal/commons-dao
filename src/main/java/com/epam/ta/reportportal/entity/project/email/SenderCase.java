@@ -51,7 +51,7 @@ public class SenderCase implements Serializable {
 	@Column(name = "launch_name")
 	private Set<String> launchNames;
 
-	@OneToMany(mappedBy = "senderCase", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "senderCase", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true, fetch = FetchType.EAGER)
 	@OrderBy
 	private Set<LaunchAttributeRule> launchAttributeRules;
 
@@ -70,7 +70,8 @@ public class SenderCase implements Serializable {
 	public SenderCase() {
 	}
 
-	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase, boolean enabled) {
+	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
+			boolean enabled) {
 		this.recipients = recipients;
 		this.launchNames = launchNames;
 		this.launchAttributeRules = launchAttributeRules;
