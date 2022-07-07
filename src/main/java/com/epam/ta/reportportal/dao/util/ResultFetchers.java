@@ -108,7 +108,7 @@ public class ResultFetchers {
 			} else {
 				launch = launches.get(id);
 			}
-			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> launch.getAttributes().add(it));
+			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> launch.getAttributes().addAll(it));
 			launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			launches.put(id, launch);
 		});
@@ -128,7 +128,7 @@ public class ResultFetchers {
 			} else {
 				testItem = testItems.get(id);
 			}
-			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().add(it));
+			ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().addAll(it));
 			ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(it -> testItem.getParameters().add(record.into(Parameter.class)));
 			testItem.getItemResults().getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
 			PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(record)

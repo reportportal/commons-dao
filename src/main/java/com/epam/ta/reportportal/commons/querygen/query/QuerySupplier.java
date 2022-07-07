@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.commons.querygen.query;
 import com.google.common.collect.Lists;
 import org.jooq.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -98,6 +99,16 @@ public class QuerySupplier implements Supplier<SelectQuery<? extends Record>> {
 
 	public QuerySupplier addHaving(Condition condition) {
 		selectQuery.addHaving(condition);
+		return this;
+	}
+
+	public QuerySupplier addGroupBy(GroupField fields) {
+		selectQuery.addGroupBy(fields);
+		return this;
+	}
+
+	public QuerySupplier addGroupBy(Collection<? extends GroupField> fields) {
+		selectQuery.addGroupBy(fields);
 		return this;
 	}
 }
