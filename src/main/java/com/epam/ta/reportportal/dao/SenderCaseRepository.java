@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface SenderCaseRepository extends ReportPortalRepository<SenderCase, Long> {
 
-	@Query(value = "SELECT sc FROM SenderCase sc WHERE sc.project.id = :projectId")
+	@Query(value = "SELECT sc FROM SenderCase sc WHERE sc.project.id = :projectId ORDER BY sc.id")
 	List<SenderCase> findAllByProjectId(@Param(value = "projectId") Long projectId);
 
 	Optional<SenderCase> findByProjectIdAndRuleNameIgnoreCase(Long projectId, String ruleName);
