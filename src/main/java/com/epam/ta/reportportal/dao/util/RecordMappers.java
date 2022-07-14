@@ -64,6 +64,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -76,6 +77,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.ATTRIBUTE_ALIAS;
 import static com.epam.ta.reportportal.dao.LogRepositoryCustomImpl.ROOT_ITEM_ID;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
@@ -447,12 +449,27 @@ public class RecordMappers {
 		return Lists.newArrayList(widgetMap.values());
 	};
 
-	public static final Function<? super Record, Optional<ItemAttribute>> ITEM_ATTRIBUTE_MAPPER = r -> {
-		String key = r.get(ITEM_ATTRIBUTE.KEY);
-		String value = r.get(ITEM_ATTRIBUTE.VALUE);
-		Boolean system = r.get(ITEM_ATTRIBUTE.SYSTEM);
-		if (key != null || value != null) {
-			return Optional.of(new ItemAttribute(key, value, system));
+	public static final Function<? super Record, Optional<List<ItemAttribute>>> ITEM_ATTRIBUTE_MAPPER = r -> {
+		List<ItemAttribute> attributeList = new ArrayList<>();
+
+		if (r.get(ATTRIBUTE_ALIAS) != null) {
+			String[] attributesArray = r.get(ATTRIBUTE_ALIAS, String[].class);
+
+			for (String attributeString : attributesArray) {
+				if (Strings.isEmpty(attributeString)) continue;
+
+				// explode attributes from string "key:value:system"
+				String[] attributes = attributeString.split(":");
+				if (attributes[0] != null || attributes[1] != null) {
+					attributeList.add(
+							new ItemAttribute(attributes[0], attributes[1], Boolean.valueOf(attributes[2]))
+					);
+				}
+			}
+		}
+
+		if (attributeList.size() > 0) {
+			return Optional.of(attributeList);
 		} else {
 			return Optional.empty();
 		}

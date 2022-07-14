@@ -1,34 +1,16 @@
 package com.epam.ta.reportportal.entity.log;
 
-import org.springframework.data.elasticsearch.annotations.DateFormat;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * LogMessage - entity for storing message part of log + some additional info.
- * indexName - is only prefix, real index name in Elasticsearch will be indexName + projectId.
- */
-@Document(indexName = "log_message_store-", type="log_message", createIndex = false)
 public class LogMessage implements Serializable {
 
-    @Id
-    @Field(type = FieldType.Long)
     private Long id;
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time)
     private LocalDateTime logTime;
-    @Field(type = FieldType.Text)
     private String logMessage;
-    @Field(type = FieldType.Long)
     private Long itemId;
-    @Field(type = FieldType.Long)
     private Long launchId;
-    @Field(type = FieldType.Long)
     private Long projectId;
 
     public LogMessage(Long id, LocalDateTime logTime, String logMessage, Long itemId, Long launchId, Long projectId) {

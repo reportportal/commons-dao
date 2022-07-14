@@ -26,7 +26,10 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.util.SortUtils;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
+import com.google.common.collect.Lists;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +43,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.ATTRIBUTE_ALIAS;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
@@ -48,7 +52,6 @@ import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldNa
 import static com.epam.ta.reportportal.dao.util.RecordMappers.INDEX_LAUNCH_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.LAUNCH_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.*;
-import static com.epam.ta.reportportal.jooq.tables.JIssueType.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static java.util.Optional.ofNullable;
@@ -153,9 +156,20 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 	@Override
 	public Page<Launch> findAllLatestByFilter(Queryable filter, Pageable pageable) {
 
+		List<SortField<?>> sortFieldList = SortUtils.TO_SORT_FIELDS.apply(pageable.getSort(), filter.getTarget());
+		List<Field<?>> simpleSelectedFields = getLaunchSimpleSelectedFields();
+
+		List<Field<?>> selectFields = new ArrayList<>(simpleSelectedFields);
+		selectFields.add(getAttributeConcatedFields());
+
+		List<Field<?>> groupFields = new ArrayList<>(simpleSelectedFields);
+		for (SortField<?> sortField : sortFieldList) {
+			groupFields.add(DSL.field(sortField.getName()));
+		}
+
 		return PageableExecutionUtils.getPage(LAUNCH_FETCHER.apply(dsl.with(FILTERED_QUERY)
 						.as(QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, pageable.getSort(), true).with(pageable).build())
-						.select()
+						.select(selectFields)
 						.from(LAUNCH)
 						.join(FILTERED_QUERY)
 						.on(field(name(FILTERED_QUERY, ID), Long.class).eq(LAUNCH.ID))
@@ -167,7 +181,8 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 						.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
 						.leftJoin(USERS)
 						.on(LAUNCH.USER_ID.eq(USERS.ID))
-						.orderBy(SortUtils.TO_SORT_FIELDS.apply(pageable.getSort(), filter.getTarget()))
+						.groupBy(groupFields)
+						.orderBy(sortFieldList)
 						.fetch()),
 				pageable,
 				() -> dsl.fetchCount(dsl.with(LAUNCHES)
@@ -180,6 +195,35 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 		);
 	}
 
+	private Field<String[]> getAttributeConcatedFields() {
+		return DSL.arrayAgg(DSL.concat(
+				ITEM_ATTRIBUTE.KEY, DSL.val(":"),
+				ITEM_ATTRIBUTE.VALUE, DSL.val(":"),
+				ITEM_ATTRIBUTE.SYSTEM)).as(ATTRIBUTE_ALIAS);
+	}
+
+	private ArrayList<Field<?>> getLaunchSimpleSelectedFields() {
+		return Lists.newArrayList(LAUNCH.ID,
+				LAUNCH.UUID,
+				LAUNCH.NAME,
+				LAUNCH.DESCRIPTION,
+				LAUNCH.START_TIME,
+				LAUNCH.END_TIME,
+				LAUNCH.PROJECT_ID,
+				LAUNCH.USER_ID,
+				LAUNCH.NUMBER,
+				LAUNCH.LAST_MODIFIED,
+				LAUNCH.MODE,
+				LAUNCH.STATUS,
+				LAUNCH.HAS_RETRIES,
+				LAUNCH.RERUN,
+				LAUNCH.APPROXIMATE_DURATION,
+				STATISTICS.S_COUNTER,
+				STATISTICS_FIELD.NAME,
+				USERS.ID,
+				USERS.LOGIN);
+	}
+
 	@Override
 	public List<Long> findLaunchIdsByProjectId(Long projectId) {
 		return dsl.select(LAUNCH.ID).from(LAUNCH).where(LAUNCH.PROJECT_ID.eq(projectId)).fetchInto(Long.class);
@@ -187,6 +231,11 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
 	@Override
 	public Optional<Launch> findLastRun(Long projectId, String mode) {
+		List<Field<?>> simpleSelectedFields = getLaunchSimpleSelectedFields();
+
+		List<Field<?>> selectFields = new ArrayList<>(simpleSelectedFields);
+		selectFields.add(getAttributeConcatedFields());
+
 		return LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_QUERY)
 				.as(dsl.select(LAUNCH.ID)
 						.from(LAUNCH)
@@ -194,7 +243,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 								.and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))))
 						.orderBy(LAUNCH.START_TIME.desc())
 						.limit(1))
-				.select()
+				.select(selectFields)
 				.from(LAUNCH)
 				.join(FILTERED_QUERY)
 				.on(LAUNCH.ID.eq(fieldName(FILTERED_QUERY, ID).cast(Long.class)))
@@ -205,7 +254,9 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 				.leftJoin(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
 				.leftJoin(ITEM_ATTRIBUTE)
-				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID)))).stream().findFirst();
+				.on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+				.groupBy(simpleSelectedFields)
+		)).stream().findFirst();
 	}
 
 	@Override

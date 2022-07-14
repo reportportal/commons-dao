@@ -23,16 +23,14 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
 
@@ -273,10 +271,18 @@ public class QueryBuilder {
 			CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
 					.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
 			if (criteria.getFilterCriteria().startsWith(STATISTICS_KEY)) {
+				if (filterTarget.withGrouping()) {
+					query.addGroupBy(fieldName(FILTERED_QUERY, criteria.getFilterCriteria()));
+				}
+
 				query.addOrderBy(fieldName(FILTERED_QUERY, criteria.getFilterCriteria()).sort(order.getDirection().isDescending() ?
 						SortOrder.DESC :
 						SortOrder.ASC));
 			} else {
+				if (filterTarget.withGrouping()) {
+					query.addGroupBy(field(criteria.getQueryCriteria()));
+				}
+
 				query.addOrderBy(field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ?
 						SortOrder.DESC :
 						SortOrder.ASC));
@@ -324,5 +330,16 @@ public class QueryBuilder {
 			}
 		});
 		joinTables.forEach((key, value) -> query.addJoin(value.getTable(), value.getJoinType(), value.getJoinCondition()));
+	}
+
+	/**
+	 * Adds group by condition
+	 */
+	public QueryBuilder addGroupByFields(Collection<? extends GroupField> fields) {
+		if (CollectionUtils.isNotEmpty(fields)) {
+			query.addGroupBy(fields);
+		}
+
+		return this;
 	}
 }

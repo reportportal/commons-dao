@@ -40,10 +40,7 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
@@ -324,29 +321,11 @@ public enum FilterTarget {
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(LAUNCH.ID,
-					LAUNCH.UUID,
-					LAUNCH.NAME,
-					LAUNCH.DESCRIPTION,
-					LAUNCH.START_TIME,
-					LAUNCH.END_TIME,
-					LAUNCH.PROJECT_ID,
-					LAUNCH.USER_ID,
-					LAUNCH.NUMBER,
-					LAUNCH.LAST_MODIFIED,
-					LAUNCH.MODE,
-					LAUNCH.STATUS,
-					LAUNCH.HAS_RETRIES,
-					LAUNCH.RERUN,
-					LAUNCH.APPROXIMATE_DURATION,
-					ITEM_ATTRIBUTE.KEY,
-					ITEM_ATTRIBUTE.VALUE,
-					ITEM_ATTRIBUTE.SYSTEM,
-					STATISTICS.S_COUNTER,
-					STATISTICS_FIELD.NAME,
-					USERS.ID,
-					USERS.LOGIN
-			);
+			List<Field<?>> selectFields = new ArrayList<>();
+			selectFields.addAll(getSelectSimpleFields());
+			selectFields.addAll(getSelectAggregatedFields());
+
+			return selectFields;
 		}
 
 		@Override
@@ -369,6 +348,47 @@ public enum FilterTarget {
 		@Override
 		protected Field<Long> idField() {
 			return LAUNCH.ID;
+		}
+
+		@Override
+		protected void addGroupBy(QuerySupplier query) {
+			query.addGroupBy(getSelectSimpleFields());
+		}
+
+		@Override
+		public boolean withGrouping() {
+			return true;
+		}
+
+		private List<Field<?>> getSelectSimpleFields() {
+			return Lists.newArrayList(LAUNCH.ID,
+					LAUNCH.UUID,
+					LAUNCH.NAME,
+					LAUNCH.DESCRIPTION,
+					LAUNCH.START_TIME,
+					LAUNCH.END_TIME,
+					LAUNCH.PROJECT_ID,
+					LAUNCH.USER_ID,
+					LAUNCH.NUMBER,
+					LAUNCH.LAST_MODIFIED,
+					LAUNCH.MODE,
+					LAUNCH.STATUS,
+					LAUNCH.HAS_RETRIES,
+					LAUNCH.RERUN,
+					LAUNCH.APPROXIMATE_DURATION,
+					STATISTICS.S_COUNTER,
+					STATISTICS_FIELD.NAME,
+					USERS.ID,
+					USERS.LOGIN
+			);
+		}
+
+		private List<Field<?>> getSelectAggregatedFields() {
+			return Lists.newArrayList(DSL.arrayAgg(DSL.concat(
+					ITEM_ATTRIBUTE.KEY, DSL.val(":"),
+					ITEM_ATTRIBUTE.VALUE, DSL.val(":"),
+					ITEM_ATTRIBUTE.SYSTEM)).as(ATTRIBUTE_ALIAS)
+			);
 		}
 	},
 
@@ -618,53 +638,11 @@ public enum FilterTarget {
 	) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(TEST_ITEM.ITEM_ID,
-					TEST_ITEM.NAME,
-					TEST_ITEM.CODE_REF,
-					TEST_ITEM.TYPE,
-					TEST_ITEM.START_TIME,
-					TEST_ITEM.DESCRIPTION,
-					TEST_ITEM.LAST_MODIFIED,
-					TEST_ITEM.PATH,
-					TEST_ITEM.UNIQUE_ID,
-					TEST_ITEM.UUID,
-					TEST_ITEM.TEST_CASE_ID,
-					TEST_ITEM.TEST_CASE_HASH,
-					TEST_ITEM.PARENT_ID,
-					TEST_ITEM.RETRY_OF,
-					TEST_ITEM.HAS_CHILDREN,
-					TEST_ITEM.HAS_STATS,
-					TEST_ITEM.HAS_RETRIES,
-					TEST_ITEM.LAUNCH_ID,
-					TEST_ITEM_RESULTS.STATUS,
-					TEST_ITEM_RESULTS.END_TIME,
-					TEST_ITEM_RESULTS.DURATION,
-					ITEM_ATTRIBUTE.KEY,
-					ITEM_ATTRIBUTE.VALUE,
-					ITEM_ATTRIBUTE.SYSTEM,
-					PARAMETER.ITEM_ID,
-					PARAMETER.KEY,
-					PARAMETER.VALUE,
-					STATISTICS_FIELD.NAME,
-					STATISTICS.S_COUNTER,
-					ISSUE.ISSUE_ID,
-					ISSUE.AUTO_ANALYZED,
-					ISSUE.IGNORE_ANALYZER,
-					ISSUE.ISSUE_DESCRIPTION,
-					ISSUE_TYPE.LOCATOR,
-					ISSUE_TYPE.ABBREVIATION,
-					ISSUE_TYPE.HEX_COLOR,
-					ISSUE_TYPE.ISSUE_NAME,
-					ISSUE_GROUP.ISSUE_GROUP_,
-					TICKET.ID,
-					TICKET.BTS_PROJECT,
-					TICKET.BTS_URL,
-					TICKET.TICKET_ID,
-					TICKET.URL,
-					TICKET.PLUGIN_NAME,
-					PATTERN_TEMPLATE.ID,
-					PATTERN_TEMPLATE.NAME
-			);
+			List<Field<?>> selectFields = new ArrayList<>();
+			selectFields.addAll(getSelectSimpleFields());
+			selectFields.addAll(getSelectAggregatedFields());
+
+			return selectFields;
 		}
 
 		@Override
@@ -699,6 +677,71 @@ public enum FilterTarget {
 		@Override
 		protected void joinTablesForFilter(QuerySupplier query) {
 			query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID));
+		}
+
+		@Override
+		protected void addGroupBy(QuerySupplier query) {
+			query.addGroupBy(getSelectSimpleFields());
+		}
+
+		@Override
+		public boolean withGrouping() {
+			return true;
+		}
+
+		private List<Field<?>> getSelectSimpleFields() {
+			return Lists.newArrayList(TEST_ITEM.ITEM_ID,
+					TEST_ITEM.NAME,
+					TEST_ITEM.CODE_REF,
+					TEST_ITEM.TYPE,
+					TEST_ITEM.START_TIME,
+					TEST_ITEM.DESCRIPTION,
+					TEST_ITEM.LAST_MODIFIED,
+					TEST_ITEM.PATH,
+					TEST_ITEM.UNIQUE_ID,
+					TEST_ITEM.UUID,
+					TEST_ITEM.TEST_CASE_ID,
+					TEST_ITEM.TEST_CASE_HASH,
+					TEST_ITEM.PARENT_ID,
+					TEST_ITEM.RETRY_OF,
+					TEST_ITEM.HAS_CHILDREN,
+					TEST_ITEM.HAS_STATS,
+					TEST_ITEM.HAS_RETRIES,
+					TEST_ITEM.LAUNCH_ID,
+					TEST_ITEM_RESULTS.STATUS,
+					TEST_ITEM_RESULTS.END_TIME,
+					TEST_ITEM_RESULTS.DURATION,
+					PARAMETER.ITEM_ID,
+					PARAMETER.KEY,
+					PARAMETER.VALUE,
+					STATISTICS_FIELD.NAME,
+					STATISTICS.S_COUNTER,
+					ISSUE.ISSUE_ID,
+					ISSUE.AUTO_ANALYZED,
+					ISSUE.IGNORE_ANALYZER,
+					ISSUE.ISSUE_DESCRIPTION,
+					ISSUE_TYPE.LOCATOR,
+					ISSUE_TYPE.ABBREVIATION,
+					ISSUE_TYPE.HEX_COLOR,
+					ISSUE_TYPE.ISSUE_NAME,
+					ISSUE_GROUP.ISSUE_GROUP_,
+					TICKET.ID,
+					TICKET.BTS_PROJECT,
+					TICKET.BTS_URL,
+					TICKET.TICKET_ID,
+					TICKET.URL,
+					TICKET.PLUGIN_NAME,
+					PATTERN_TEMPLATE.ID,
+					PATTERN_TEMPLATE.NAME
+			);
+		}
+
+		private List<Field<?>> getSelectAggregatedFields() {
+			return Lists.newArrayList(DSL.arrayAgg(DSL.concat(
+					ITEM_ATTRIBUTE.KEY, DSL.val(":"),
+					ITEM_ATTRIBUTE.VALUE, DSL.val(":"),
+					ITEM_ATTRIBUTE.SYSTEM)).as(ATTRIBUTE_ALIAS)
+			);
 		}
 	},
 
@@ -1058,6 +1101,7 @@ public enum FilterTarget {
 	};
 
 	public static final String FILTERED_QUERY = "filtered";
+	public static final String ATTRIBUTE_ALIAS = "attribute";
 	public static final String FILTERED_ID = "id";
 
 	private Class<?> clazz;
@@ -1088,6 +1132,9 @@ public enum FilterTarget {
 		joinTables(query);
 	}
 
+	protected void addGroupBy(QuerySupplier query) {
+	}
+
 	protected abstract Field<Long> idField();
 
 	public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
@@ -1099,6 +1146,7 @@ public enum FilterTarget {
 				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
 		);
 		joinTables(querySupplier);
+		addGroupBy(querySupplier);
 		return querySupplier;
 	}
 
@@ -1115,6 +1163,7 @@ public enum FilterTarget {
 				idField().eq(field(DSL.name(FILTERED_QUERY, FILTERED_ID), Long.class))
 		);
 		joinTables(querySupplier);
+		addGroupBy(querySupplier);
 		return querySupplier;
 	}
 
@@ -1145,5 +1194,9 @@ public enum FilterTarget {
 				.filter(val -> val.clazz.equals(clazz))
 				.findAny()
 				.orElseThrow(() -> new IllegalArgumentException(String.format("No target query builder for clazz %s", clazz)));
+	}
+
+	public boolean withGrouping() {
+		return false;
 	}
 }
