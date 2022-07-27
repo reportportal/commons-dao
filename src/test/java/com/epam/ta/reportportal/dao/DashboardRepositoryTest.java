@@ -94,22 +94,19 @@ class DashboardRepositoryTest extends BaseTest {
 	void getPermitted() {
 		final String adminLogin = "superadmin";
 		final Page<Dashboard> superadminPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				adminLogin
+				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME))
 		);
 		assertEquals(3, superadminPermitted.getTotalElements(), "Unexpected permitted dashboards count");
 
 		final String defaultLogin = "default";
 		final Page<Dashboard> defaultPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				defaultLogin
+				PageRequest.of(0, 3)
 		);
 		assertEquals(2, defaultPermitted.getTotalElements(), "Unexpected permitted dashboards count");
 
 		final String jajaLogin = "jaja_user";
 		final Page<Dashboard> jajaPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				jajaLogin
+				PageRequest.of(0, 3)
 		);
 		assertEquals(3, jajaPermitted.getTotalElements(), "Unexpected permitted dashboards count");
 	}
@@ -118,51 +115,22 @@ class DashboardRepositoryTest extends BaseTest {
 	void getOwn() {
 		final String adminLogin = "superadmin";
 		final Page<Dashboard> superadminOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				adminLogin
+				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME))
 		);
 		assertEquals(2, superadminOwn.getTotalElements(), "Unexpected own dashboards count");
 		superadminOwn.getContent().forEach(it -> assertEquals(adminLogin, it.getOwner()));
 
 		final String defaultLogin = "default";
 		final Page<Dashboard> defaultOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				defaultLogin
+				PageRequest.of(0, 3)
 		);
 		assertEquals(2, defaultOwn.getTotalElements(), "Unexpected own dashboards count");
 		defaultOwn.getContent().forEach(it -> assertEquals(defaultLogin, it.getOwner()));
 
 		final String jajaLogin = "jaja_user";
-		final Page<Dashboard> jajaOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3), jajaLogin);
+		final Page<Dashboard> jajaOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3));
 		assertEquals(2, jajaOwn.getTotalElements(), "Unexpected own dashboards count");
 		jajaOwn.getContent().forEach(it -> assertEquals(jajaLogin, it.getOwner()));
-	}
-
-	@Test
-	void getShared() {
-		final String adminLogin = "superadmin";
-		final Page<Dashboard> superadminShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				adminLogin
-		);
-		assertEquals(2, superadminShared.getTotalElements(), "Unexpected shared dashboards count");
-		superadminShared.getContent().forEach(it -> assertTrue(it.isShared()));
-
-		final String defaultLogin = "default";
-		final Page<Dashboard> defaultShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				defaultLogin
-		);
-		assertEquals(1, defaultShared.getTotalElements(), "Unexpected shared dashboards count");
-		defaultShared.getContent().forEach(it -> assertTrue(it.isShared()));
-
-		final String jajaLogin = "jaja_user";
-		final Page<Dashboard> jajaShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				jajaLogin
-		);
-		assertEquals(2, jajaShared.getTotalElements(), "Unexpected shared dashboards count");
-		jajaShared.getContent().forEach(it -> assertTrue(it.isShared()));
 	}
 
 	@Test

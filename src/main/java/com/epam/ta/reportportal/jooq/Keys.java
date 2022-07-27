@@ -32,10 +32,6 @@ public class Keys {
     // IDENTITY definitions
     // -------------------------------------------------------------------------
 
-    public static final Identity<JAclClassRecord, Long> IDENTITY_ACL_CLASS = Identities0.IDENTITY_ACL_CLASS;
-    public static final Identity<JAclEntryRecord, Long> IDENTITY_ACL_ENTRY = Identities0.IDENTITY_ACL_ENTRY;
-    public static final Identity<JAclObjectIdentityRecord, Long> IDENTITY_ACL_OBJECT_IDENTITY = Identities0.IDENTITY_ACL_OBJECT_IDENTITY;
-    public static final Identity<JAclSidRecord, Long> IDENTITY_ACL_SID = Identities0.IDENTITY_ACL_SID;
     public static final Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Identities0.IDENTITY_ACTIVITY;
     public static final Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Identities0.IDENTITY_ATTACHMENT;
     public static final Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Identities0.IDENTITY_ATTRIBUTE;
@@ -73,14 +69,6 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<JAclClassRecord> ACL_CLASS_PKEY = UniqueKeys0.ACL_CLASS_PKEY;
-    public static final UniqueKey<JAclClassRecord> UNIQUE_UK_2 = UniqueKeys0.UNIQUE_UK_2;
-    public static final UniqueKey<JAclEntryRecord> ACL_ENTRY_PKEY = UniqueKeys0.ACL_ENTRY_PKEY;
-    public static final UniqueKey<JAclEntryRecord> UNIQUE_UK_4 = UniqueKeys0.UNIQUE_UK_4;
-    public static final UniqueKey<JAclObjectIdentityRecord> ACL_OBJECT_IDENTITY_PKEY = UniqueKeys0.ACL_OBJECT_IDENTITY_PKEY;
-    public static final UniqueKey<JAclObjectIdentityRecord> UNIQUE_UK_3 = UniqueKeys0.UNIQUE_UK_3;
-    public static final UniqueKey<JAclSidRecord> ACL_SID_PKEY = UniqueKeys0.ACL_SID_PKEY;
-    public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = UniqueKeys0.UNIQUE_UK_1;
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = UniqueKeys0.ATTACHMENT_DELETION_PKEY;
@@ -157,12 +145,6 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<JAclEntryRecord, JAclObjectIdentityRecord> ACL_ENTRY__FOREIGN_FK_4 = ForeignKeys0.ACL_ENTRY__FOREIGN_FK_4;
-    public static final ForeignKey<JAclEntryRecord, JAclSidRecord> ACL_ENTRY__FOREIGN_FK_5 = ForeignKeys0.ACL_ENTRY__FOREIGN_FK_5;
-    public static final ForeignKey<JAclObjectIdentityRecord, JAclClassRecord> ACL_OBJECT_IDENTITY__FOREIGN_FK_2 = ForeignKeys0.ACL_OBJECT_IDENTITY__FOREIGN_FK_2;
-    public static final ForeignKey<JAclObjectIdentityRecord, JAclObjectIdentityRecord> ACL_OBJECT_IDENTITY__FOREIGN_FK_1 = ForeignKeys0.ACL_OBJECT_IDENTITY__FOREIGN_FK_1;
-    public static final ForeignKey<JAclObjectIdentityRecord, JAclSidRecord> ACL_OBJECT_IDENTITY__FOREIGN_FK_3 = ForeignKeys0.ACL_OBJECT_IDENTITY__FOREIGN_FK_3;
-    public static final ForeignKey<JAclSidRecord, JUsersRecord> ACL_SID__ACL_SID_SID_FKEY = ForeignKeys0.ACL_SID__ACL_SID_SID_FKEY;
     public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_USER_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
@@ -226,10 +208,6 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     private static class Identities0 {
-        public static Identity<JAclClassRecord, Long> IDENTITY_ACL_CLASS = Internal.createIdentity(JAclClass.ACL_CLASS, JAclClass.ACL_CLASS.ID);
-        public static Identity<JAclEntryRecord, Long> IDENTITY_ACL_ENTRY = Internal.createIdentity(JAclEntry.ACL_ENTRY, JAclEntry.ACL_ENTRY.ID);
-        public static Identity<JAclObjectIdentityRecord, Long> IDENTITY_ACL_OBJECT_IDENTITY = Internal.createIdentity(JAclObjectIdentity.ACL_OBJECT_IDENTITY, JAclObjectIdentity.ACL_OBJECT_IDENTITY.ID);
-        public static Identity<JAclSidRecord, Long> IDENTITY_ACL_SID = Internal.createIdentity(JAclSid.ACL_SID, JAclSid.ACL_SID.ID);
         public static Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Internal.createIdentity(JActivity.ACTIVITY, JActivity.ACTIVITY.ID);
         public static Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Internal.createIdentity(JAttachment.ATTACHMENT, JAttachment.ATTACHMENT.ID);
         public static Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Internal.createIdentity(JAttribute.ATTRIBUTE, JAttribute.ATTRIBUTE.ID);
@@ -265,14 +243,6 @@ public class Keys {
     }
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<JAclClassRecord> ACL_CLASS_PKEY = Internal.createUniqueKey(JAclClass.ACL_CLASS, "acl_class_pkey", JAclClass.ACL_CLASS.ID);
-        public static final UniqueKey<JAclClassRecord> UNIQUE_UK_2 = Internal.createUniqueKey(JAclClass.ACL_CLASS, "unique_uk_2", JAclClass.ACL_CLASS.CLASS);
-        public static final UniqueKey<JAclEntryRecord> ACL_ENTRY_PKEY = Internal.createUniqueKey(JAclEntry.ACL_ENTRY, "acl_entry_pkey", JAclEntry.ACL_ENTRY.ID);
-        public static final UniqueKey<JAclEntryRecord> UNIQUE_UK_4 = Internal.createUniqueKey(JAclEntry.ACL_ENTRY, "unique_uk_4", JAclEntry.ACL_ENTRY.ACL_OBJECT_IDENTITY, JAclEntry.ACL_ENTRY.ACE_ORDER);
-        public static final UniqueKey<JAclObjectIdentityRecord> ACL_OBJECT_IDENTITY_PKEY = Internal.createUniqueKey(JAclObjectIdentity.ACL_OBJECT_IDENTITY, "acl_object_identity_pkey", JAclObjectIdentity.ACL_OBJECT_IDENTITY.ID);
-        public static final UniqueKey<JAclObjectIdentityRecord> UNIQUE_UK_3 = Internal.createUniqueKey(JAclObjectIdentity.ACL_OBJECT_IDENTITY, "unique_uk_3", JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS, JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY);
-        public static final UniqueKey<JAclSidRecord> ACL_SID_PKEY = Internal.createUniqueKey(JAclSid.ACL_SID, "acl_sid_pkey", JAclSid.ACL_SID.ID);
-        public static final UniqueKey<JAclSidRecord> UNIQUE_UK_1 = Internal.createUniqueKey(JAclSid.ACL_SID, "unique_uk_1", JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL);
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = Internal.createUniqueKey(JAttachmentDeletion.ATTACHMENT_DELETION, "attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION.ID);
@@ -347,12 +317,6 @@ public class Keys {
     }
 
     private static class ForeignKeys0 {
-        public static final ForeignKey<JAclEntryRecord, JAclObjectIdentityRecord> ACL_ENTRY__FOREIGN_FK_4 = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACL_OBJECT_IDENTITY_PKEY, JAclEntry.ACL_ENTRY, "acl_entry__foreign_fk_4", JAclEntry.ACL_ENTRY.ACL_OBJECT_IDENTITY);
-        public static final ForeignKey<JAclEntryRecord, JAclSidRecord> ACL_ENTRY__FOREIGN_FK_5 = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACL_SID_PKEY, JAclEntry.ACL_ENTRY, "acl_entry__foreign_fk_5", JAclEntry.ACL_ENTRY.SID);
-        public static final ForeignKey<JAclObjectIdentityRecord, JAclClassRecord> ACL_OBJECT_IDENTITY__FOREIGN_FK_2 = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACL_CLASS_PKEY, JAclObjectIdentity.ACL_OBJECT_IDENTITY, "acl_object_identity__foreign_fk_2", JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS);
-        public static final ForeignKey<JAclObjectIdentityRecord, JAclObjectIdentityRecord> ACL_OBJECT_IDENTITY__FOREIGN_FK_1 = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACL_OBJECT_IDENTITY_PKEY, JAclObjectIdentity.ACL_OBJECT_IDENTITY, "acl_object_identity__foreign_fk_1", JAclObjectIdentity.ACL_OBJECT_IDENTITY.PARENT_OBJECT);
-        public static final ForeignKey<JAclObjectIdentityRecord, JAclSidRecord> ACL_OBJECT_IDENTITY__FOREIGN_FK_3 = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ACL_SID_PKEY, JAclObjectIdentity.ACL_OBJECT_IDENTITY, "acl_object_identity__foreign_fk_3", JAclObjectIdentity.ACL_OBJECT_IDENTITY.OWNER_SID);
-        public static final ForeignKey<JAclSidRecord, JUsersRecord> ACL_SID__ACL_SID_SID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_LOGIN_KEY, JAclSid.ACL_SID, "acl_sid__acl_sid_sid_fkey", JAclSid.ACL_SID.SID);
         public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JActivity.ACTIVITY, "activity__activity_user_id_fkey", JActivity.ACTIVITY.USER_ID);
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
         public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);

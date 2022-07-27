@@ -34,21 +34,16 @@ import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 public class WidgetRepositoryCustomImpl extends AbstractShareableRepositoryImpl<Widget> implements WidgetRepositoryCustom {
 
 	@Override
-	public Page<Widget> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return getPermitted(WIDGET_FETCHER, filter, pageable, userName);
+	public Page<Widget> getPermitted(ProjectFilter filter, Pageable pageable) {
+		return getPermitted(WIDGET_FETCHER, filter, pageable);
 	}
 
 	@Override
-	public Page<Widget> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return getOwn(WIDGET_FETCHER, filter, pageable, userName);
+	public Page<Widget> getOwn(ProjectFilter filter, Pageable pageable) {
+		return getOwn(WIDGET_FETCHER, filter, pageable);
 	}
 
-	@Override
-	public Page<Widget> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return getShared(WIDGET_FETCHER, filter, pageable, userName);
-	}
-
-	@Override
+    @Override
 	public int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner) {
 		return dsl.deleteFrom(WIDGET_FILTER)
 				.where(WIDGET_FILTER.WIDGET_ID.in(dsl.select(WIDGET.ID)

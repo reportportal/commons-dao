@@ -31,17 +31,13 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER
 public class DashboardRepositoryCustomImpl extends AbstractShareableRepositoryImpl<Dashboard> implements DashboardRepositoryCustom {
 
 	@Override
-	public Page<Dashboard> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return getPermitted(DASHBOARD_FETCHER, filter, pageable, userName);
+	public Page<Dashboard> getPermitted(ProjectFilter filter, Pageable pageable) {
+		return getPermitted(DASHBOARD_FETCHER, filter, pageable);
 	}
 
 	@Override
-	public Page<Dashboard> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return getOwn(DASHBOARD_FETCHER, filter, pageable, userName);
+	public Page<Dashboard> getOwn(ProjectFilter filter, Pageable pageable) {
+		return getOwn(DASHBOARD_FETCHER, filter, pageable);
 	}
 
-	@Override
-	public Page<Dashboard> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return getShared(DASHBOARD_FETCHER, filter, pageable, userName);
-	}
 }

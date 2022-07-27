@@ -31,9 +31,6 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.epam.ta.reportportal.dao.util.ShareableUtils.*;
-import static com.epam.ta.reportportal.jooq.Tables.SHAREABLE_ENTITY;
-
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -46,51 +43,41 @@ public abstract class AbstractShareableRepositoryImpl<T extends ShareableEntity>
 		this.dsl = dsl;
 	}
 
-	protected Page<T> getPermitted(Function<Result<? extends Record>, List<T>> fetcher, Filter filter, Pageable pageable, String userName) {
-
+	protected Page<T> getPermitted(Function<Result<? extends Record>, List<T>> fetcher, Filter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(permittedCondition(userName))
 						.with(pageable)
 						.wrap()
 						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(permittedCondition(userName)).build())
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 
 	}
 
-	protected Page<T> getOwn(Function<Result<? extends Record>, List<T>> fetcher, ProjectFilter filter, Pageable pageable,
-			String userName) {
+	protected Page<T> getOwn(Function<Result<? extends Record>, List<T>> fetcher, ProjectFilter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(ownCondition(userName))
 						.with(pageable)
 						.wrap()
 						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(ownCondition(userName)).build())
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
 
-	protected Page<T> getShared(Function<Result<? extends Record>, List<T>> fetcher, ProjectFilter filter, Pageable pageable,
-			String userName) {
+	protected Page<T> getShared(Function<Result<? extends Record>, List<T>> fetcher, ProjectFilter filter, Pageable pageable) {
 		return PageableExecutionUtils.getPage(
 				fetcher.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-						.addCondition(sharedCondition(userName))
 						.with(pageable)
 						.wrap()
 						.withWrapperSort(pageable.getSort())
 						.build())),
 				pageable,
-				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).addCondition(sharedCondition(userName)).build())
+				() -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
 		);
 	}
 
-	@Override
-	public void updateSharingFlag(List<Long> ids, boolean isShared) {
-		dsl.update(SHAREABLE_ENTITY).set(SHAREABLE_ENTITY.SHARED, isShared).where(SHAREABLE_ENTITY.ID.in(ids)).execute();
-	}
 }

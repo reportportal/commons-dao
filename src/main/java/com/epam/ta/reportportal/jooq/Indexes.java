@@ -29,15 +29,6 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
-    public static final Index ACL_CLASS_PKEY = Indexes0.ACL_CLASS_PKEY;
-    public static final Index UNIQUE_UK_2 = Indexes0.UNIQUE_UK_2;
-    public static final Index ACL_ENTRY_PKEY = Indexes0.ACL_ENTRY_PKEY;
-    public static final Index UNIQUE_UK_4 = Indexes0.UNIQUE_UK_4;
-    public static final Index ACL_OBJECT_IDENTITY_PKEY = Indexes0.ACL_OBJECT_IDENTITY_PKEY;
-    public static final Index UNIQUE_UK_3 = Indexes0.UNIQUE_UK_3;
-    public static final Index ACL_SID_IDX = Indexes0.ACL_SID_IDX;
-    public static final Index ACL_SID_PKEY = Indexes0.ACL_SID_PKEY;
-    public static final Index UNIQUE_UK_1 = Indexes0.UNIQUE_UK_1;
     public static final Index ACTIVITY_CREATION_DATE_IDX = Indexes0.ACTIVITY_CREATION_DATE_IDX;
     public static final Index ACTIVITY_OBJECT_IDX = Indexes0.ACTIVITY_OBJECT_IDX;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
@@ -170,15 +161,6 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     private static class Indexes0 {
-        public static Index ACL_CLASS_PKEY = Internal.createIndex("acl_class_pkey", JAclClass.ACL_CLASS, new OrderField[] { JAclClass.ACL_CLASS.ID }, true);
-        public static Index UNIQUE_UK_2 = Internal.createIndex("unique_uk_2", JAclClass.ACL_CLASS, new OrderField[] { JAclClass.ACL_CLASS.CLASS }, true);
-        public static Index ACL_ENTRY_PKEY = Internal.createIndex("acl_entry_pkey", JAclEntry.ACL_ENTRY, new OrderField[] { JAclEntry.ACL_ENTRY.ID }, true);
-        public static Index UNIQUE_UK_4 = Internal.createIndex("unique_uk_4", JAclEntry.ACL_ENTRY, new OrderField[] { JAclEntry.ACL_ENTRY.ACL_OBJECT_IDENTITY, JAclEntry.ACL_ENTRY.ACE_ORDER }, true);
-        public static Index ACL_OBJECT_IDENTITY_PKEY = Internal.createIndex("acl_object_identity_pkey", JAclObjectIdentity.ACL_OBJECT_IDENTITY, new OrderField[] { JAclObjectIdentity.ACL_OBJECT_IDENTITY.ID }, true);
-        public static Index UNIQUE_UK_3 = Internal.createIndex("unique_uk_3", JAclObjectIdentity.ACL_OBJECT_IDENTITY, new OrderField[] { JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS, JAclObjectIdentity.ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY }, true);
-        public static Index ACL_SID_IDX = Internal.createIndex("acl_sid_idx", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID }, false);
-        public static Index ACL_SID_PKEY = Internal.createIndex("acl_sid_pkey", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.ID }, true);
-        public static Index UNIQUE_UK_1 = Internal.createIndex("unique_uk_1", JAclSid.ACL_SID, new OrderField[] { JAclSid.ACL_SID.SID, JAclSid.ACL_SID.PRINCIPAL }, true);
         public static Index ACTIVITY_CREATION_DATE_IDX = Internal.createIndex("activity_creation_date_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.CREATION_DATE }, false);
         public static Index ACTIVITY_OBJECT_IDX = Internal.createIndex("activity_object_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.OBJECT_ID }, false);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);

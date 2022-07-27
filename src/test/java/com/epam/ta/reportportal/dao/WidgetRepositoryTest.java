@@ -101,23 +101,20 @@ public class WidgetRepositoryTest extends BaseTest {
 	void getPermitted() {
 		final String adminLogin = "superadmin";
 		final Page<Widget> superadminPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				adminLogin
-		);
+				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME))
+        );
 		assertEquals(4, superadminPermitted.getTotalElements(), "Unexpected permitted widgets count");
 
 		final String defaultLogin = "default";
 		final Page<Widget> defaultPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				defaultLogin
-		);
+				PageRequest.of(0, 3)
+        );
 		assertEquals(3, defaultPermitted.getTotalElements(), "Unexpected permitted widgets count");
 
 		final String jajaLogin = "jaja_user";
 		final Page<Widget> jajaPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				jajaLogin
-		);
+				PageRequest.of(0, 3)
+        );
 		assertEquals(4, jajaPermitted.getTotalElements(), "Unexpected permitted widgets count");
 	}
 
@@ -125,45 +122,20 @@ public class WidgetRepositoryTest extends BaseTest {
 	void getOwn() {
 		final String adminLogin = "superadmin";
 		final Page<Widget> superadminOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				adminLogin
-		);
+				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME))
+        );
 		assertEquals(3, superadminOwn.getTotalElements(), "Unexpected own widgets count");
 		superadminOwn.getContent().forEach(it -> assertEquals(adminLogin, it.getOwner()));
 
 		final String defaultLogin = "default";
-		final Page<Widget> defaultOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L), PageRequest.of(0, 3), defaultLogin);
+		final Page<Widget> defaultOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L), PageRequest.of(0, 3));
 		assertEquals(3, defaultOwn.getTotalElements(), "Unexpected own widgets count");
 		defaultOwn.getContent().forEach(it -> assertEquals(defaultLogin, it.getOwner()));
 
 		final String jajaLogin = "jaja_user";
-		final Page<Widget> jajaOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3), jajaLogin);
+		final Page<Widget> jajaOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3));
 		assertEquals(2, jajaOwn.getTotalElements(), "Unexpected own widgets count");
 		jajaOwn.getContent().forEach(it -> assertEquals(jajaLogin, it.getOwner()));
-	}
-
-	@Test
-	void getShared() {
-		final String adminLogin = "superadmin";
-		final Page<Widget> superadminShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				adminLogin
-		);
-		assertEquals(3, superadminShared.getTotalElements(), "Unexpected shared widgets count");
-		superadminShared.getContent().forEach(it -> assertTrue(it.isShared()));
-
-		final String defaultLogin = "default";
-		final Page<Widget> defaultShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				defaultLogin
-		);
-		assertEquals(1, defaultShared.getTotalElements(), "Unexpected shared widgets count");
-		defaultShared.getContent().forEach(it -> assertTrue(it.isShared()));
-
-		final String jajaLogin = "jaja_user";
-		final Page<Widget> jajaShared = repository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3), jajaLogin);
-		assertEquals(3, jajaShared.getTotalElements(), "Unexpected shared widgets count");
-		jajaShared.getContent().forEach(it -> assertTrue(it.isShared()));
 	}
 
 	@Test

@@ -27,26 +27,6 @@ import javax.annotation.processing.Generated;
 public class Tables {
 
     /**
-     * The table <code>public.acl_class</code>.
-     */
-    public static final JAclClass ACL_CLASS = JAclClass.ACL_CLASS;
-
-    /**
-     * The table <code>public.acl_entry</code>.
-     */
-    public static final JAclEntry ACL_ENTRY = JAclEntry.ACL_ENTRY;
-
-    /**
-     * The table <code>public.acl_object_identity</code>.
-     */
-    public static final JAclObjectIdentity ACL_OBJECT_IDENTITY = JAclObjectIdentity.ACL_OBJECT_IDENTITY;
-
-    /**
-     * The table <code>public.acl_sid</code>.
-     */
-    public static final JAclSid ACL_SID = JAclSid.ACL_SID;
-
-    /**
      * The table <code>public.activity</code>.
      */
     public static final JActivity ACTIVITY = JActivity.ACTIVITY;

@@ -31,18 +31,13 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCH
 public class UserFilterRepositoryCustomImpl extends AbstractShareableRepositoryImpl<UserFilter> implements UserFilterRepositoryCustom {
 
 	@Override
-	public Page<UserFilter> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return getPermitted(USER_FILTER_FETCHER, filter, pageable, userName);
+	public Page<UserFilter> getPermitted(ProjectFilter filter, Pageable pageable) {
+		return getPermitted(USER_FILTER_FETCHER, filter, pageable);
 	}
 
 	@Override
-	public Page<UserFilter> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return getOwn(USER_FILTER_FETCHER, filter, pageable, userName);
-	}
-
-	@Override
-	public Page<UserFilter> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return getShared(USER_FILTER_FETCHER, filter, pageable, userName);
+	public Page<UserFilter> getOwn(ProjectFilter filter, Pageable pageable) {
+		return getOwn(USER_FILTER_FETCHER, filter, pageable);
 	}
 
 }
