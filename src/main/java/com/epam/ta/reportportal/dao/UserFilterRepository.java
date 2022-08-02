@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * @author Pavel Bortnik
  */
-public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long> {
+public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long>, UserFilterRepositoryCustom {
 
 	/**
 	 * Finds filter by 'id' and 'project id'

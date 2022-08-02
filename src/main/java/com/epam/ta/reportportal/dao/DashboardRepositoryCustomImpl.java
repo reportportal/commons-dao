@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.ta.reportportal.entity.widget.Widget;
+import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,41 +34,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
-import static com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
-import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
-import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
+public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom {
 
-	private final DSLContext dsl;
+	private DSLContext dsl;
 
 	@Autowired
-	public WidgetRepositoryCustomImpl(DSLContext dsl) {
+	public void setDsl(DSLContext dsl) {
 		this.dsl = dsl;
 	}
 
 	@Override
-	public int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner) {
-		return dsl.deleteFrom(WIDGET_FILTER)
-				.where(WIDGET_FILTER.WIDGET_ID.in(dsl.select(WIDGET.ID)
-						.from(WIDGET)
-						.join(WIDGET_FILTER)
-						.on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
-						.join(SHAREABLE_ENTITY)
-						.on(WIDGET.ID.eq(SHAREABLE_ENTITY.ID))
-						.where(WIDGET_FILTER.FILTER_ID.eq(filterId))
-						.and(SHAREABLE_ENTITY.OWNER.notEqual(owner))))
-				.execute();
-	}
-
-	@Override
-	public List<Widget> findByFilter(Queryable filter) {
-		return WIDGET_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+	public List<Dashboard> findByFilter(Queryable filter) {
+		return DASHBOARD_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
 				filter,
 				filter.getFilterConditions()
 						.stream()
@@ -80,7 +63,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 	}
 
 	@Override
-	public Page<Widget> findByFilter(Queryable filter, Pageable pageable) {
+	public Page<Dashboard> findByFilter(Queryable filter, Pageable pageable) {
 		Set<String> fields = filter.getFilterConditions()
 				.stream()
 				.map(ConvertibleCondition::getAllConditions)
@@ -89,7 +72,7 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 				.collect(Collectors.toSet());
 		fields.addAll(pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
 
-		return PageableExecutionUtils.getPage(WIDGET_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
+		return PageableExecutionUtils.getPage(DASHBOARD_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
 				.with(pageable)
 				.wrap()
 				.withWrapperSort(pageable.getSort())
