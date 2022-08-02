@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * @author Pavel Bortnik
  */
-public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
+public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long> {
 
 	/**
 	 * Finds dashboard by 'id' and 'project id'

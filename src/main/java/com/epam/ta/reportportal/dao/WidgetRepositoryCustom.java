@@ -21,7 +21,7 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface WidgetRepositoryCustom extends ShareableRepository<Widget> {
+public interface WidgetRepositoryCustom {
 
 	/**
 	 * Remove many to many relation between {@link com.epam.ta.reportportal.entity.filter.UserFilter} by specified

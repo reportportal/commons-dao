@@ -16,13 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
-import com.epam.ta.reportportal.entity.widget.Widget;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
@@ -31,19 +28,16 @@ import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class WidgetRepositoryCustomImpl extends AbstractShareableRepositoryImpl<Widget> implements WidgetRepositoryCustom {
+public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 
-	@Override
-	public Page<Widget> getPermitted(ProjectFilter filter, Pageable pageable) {
-		return getPermitted(WIDGET_FETCHER, filter, pageable);
+	private final DSLContext dsl;
+
+	@Autowired
+	public WidgetRepositoryCustomImpl(DSLContext dsl) {
+		this.dsl = dsl;
 	}
 
 	@Override
-	public Page<Widget> getOwn(ProjectFilter filter, Pageable pageable) {
-		return getOwn(WIDGET_FETCHER, filter, pageable);
-	}
-
-    @Override
 	public int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner) {
 		return dsl.deleteFrom(WIDGET_FILTER)
 				.where(WIDGET_FILTER.WIDGET_ID.in(dsl.select(WIDGET.ID)

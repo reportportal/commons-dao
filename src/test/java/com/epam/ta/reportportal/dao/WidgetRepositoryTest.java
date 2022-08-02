@@ -20,16 +20,12 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetType;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Collections;
@@ -38,7 +34,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -95,47 +90,6 @@ public class WidgetRepositoryTest extends BaseTest {
 	void existsByNameAndOwnerAndProjectId() {
 		assertTrue(repository.existsByNameAndOwnerAndProjectId("INVESTIGATED PERCENTAGE OF LAUNCHES", "superadmin", 1L));
 		assertFalse(repository.existsByNameAndOwnerAndProjectId("not exist name", "default", 2L));
-	}
-
-	@Test
-	void getPermitted() {
-		final String adminLogin = "superadmin";
-		final Page<Widget> superadminPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME))
-        );
-		assertEquals(4, superadminPermitted.getTotalElements(), "Unexpected permitted widgets count");
-
-		final String defaultLogin = "default";
-		final Page<Widget> defaultPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3)
-        );
-		assertEquals(3, defaultPermitted.getTotalElements(), "Unexpected permitted widgets count");
-
-		final String jajaLogin = "jaja_user";
-		final Page<Widget> jajaPermitted = repository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3)
-        );
-		assertEquals(4, jajaPermitted.getTotalElements(), "Unexpected permitted widgets count");
-	}
-
-	@Test
-	void getOwn() {
-		final String adminLogin = "superadmin";
-		final Page<Widget> superadminOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME))
-        );
-		assertEquals(3, superadminOwn.getTotalElements(), "Unexpected own widgets count");
-		superadminOwn.getContent().forEach(it -> assertEquals(adminLogin, it.getOwner()));
-
-		final String defaultLogin = "default";
-		final Page<Widget> defaultOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L), PageRequest.of(0, 3));
-		assertEquals(3, defaultOwn.getTotalElements(), "Unexpected own widgets count");
-		defaultOwn.getContent().forEach(it -> assertEquals(defaultLogin, it.getOwner()));
-
-		final String jajaLogin = "jaja_user";
-		final Page<Widget> jajaOwn = repository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L), PageRequest.of(0, 3));
-		assertEquals(2, jajaOwn.getTotalElements(), "Unexpected own widgets count");
-		jajaOwn.getContent().forEach(it -> assertEquals(jajaLogin, it.getOwner()));
 	}
 
 	@Test
