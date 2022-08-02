@@ -384,10 +384,14 @@ public enum FilterTarget {
 		}
 
 		private List<Field<?>> getSelectAggregatedFields() {
-			return Lists.newArrayList(DSL.arrayAgg(DSL.concat(
-					ITEM_ATTRIBUTE.KEY, DSL.val(":"),
-					ITEM_ATTRIBUTE.VALUE, DSL.val(":"),
-					ITEM_ATTRIBUTE.SYSTEM)).as(ATTRIBUTE_ALIAS)
+			return Lists.newArrayList(DSL.arrayAgg(
+					DSL.field("concat({0}, {1}, {2}, {3}, {4})",
+							ITEM_ATTRIBUTE.KEY,
+							KEY_VALUE_SEPARATOR,
+							ITEM_ATTRIBUTE.VALUE,
+							KEY_VALUE_SEPARATOR,
+							ITEM_ATTRIBUTE.SYSTEM
+					)).as(ATTRIBUTE_ALIAS)
 			);
 		}
 	},
@@ -737,10 +741,14 @@ public enum FilterTarget {
 		}
 
 		private List<Field<?>> getSelectAggregatedFields() {
-			return Lists.newArrayList(DSL.arrayAgg(DSL.concat(
-					ITEM_ATTRIBUTE.KEY, DSL.val(":"),
-					ITEM_ATTRIBUTE.VALUE, DSL.val(":"),
-					ITEM_ATTRIBUTE.SYSTEM)).as(ATTRIBUTE_ALIAS)
+			return Lists.newArrayList(DSL.arrayAgg(
+					DSL.field("concat({0}, {1}, {2}, {3}, {4})",
+							ITEM_ATTRIBUTE.KEY,
+							KEY_VALUE_SEPARATOR,
+							ITEM_ATTRIBUTE.VALUE,
+							KEY_VALUE_SEPARATOR,
+							ITEM_ATTRIBUTE.SYSTEM
+					)).as(ATTRIBUTE_ALIAS)
 			);
 		}
 	},
