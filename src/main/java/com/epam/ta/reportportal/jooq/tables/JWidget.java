@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JWidget extends TableImpl<JWidgetRecord> {
 
-    private static final long serialVersionUID = -796307886;
+    private static final long serialVersionUID = -470335520;
 
     /**
      * The reference instance of <code>public.widget</code>
@@ -145,8 +145,8 @@ public class JWidget extends TableImpl<JWidgetRecord> {
         return Arrays.<ForeignKey<JWidgetRecord, ?>>asList(Keys.WIDGET__WIDGET_ID_FK);
     }
 
-    public JShareableEntity shareableEntity() {
-        return new JShareableEntity(this, Keys.WIDGET__WIDGET_ID_FK);
+    public JBaseEntity baseEntity() {
+        return new JBaseEntity(this, Keys.WIDGET__WIDGET_ID_FK);
     }
 
     @Override

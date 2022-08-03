@@ -5,25 +5,25 @@ VALUES (3, 'jaja_user', '7c381f9d81b0e438af4e7094c6cae203', 'jaja@mail.com', nul
 
 INSERT INTO public.project_user (user_id, project_id, project_role) VALUES (3, 1, 'MEMBER');
 
-INSERT INTO public.shareable_entity (id, shared, owner, project_id) VALUES
-(1, false, 'superadmin', 1),
-(2, true, 'superadmin', 1),
-(3, false, 'default', 2),
-(4, true, 'default', 2),
-(5, true, 'superadmin', 1),
-(6, false, 'superadmin', 1),
-(7, true, 'superadmin', 1),
-(8, true, 'jaja_user', 1),
-(9, false, 'jaja_user', 1),
-(10, false, 'default', 2),
-(11, false, 'default', 2),
-(12, true, 'default', 2),
-(13, true, 'superadmin', 1),
-(14, false, 'superadmin', 1),
-(15, true, 'jaja_user', 1),
-(16, false, 'jaja_user', 1),
-(17, true, 'default', 2),
-(18, false, 'default', 2);
+INSERT INTO public.base_entity (id, owner, project_id) VALUES
+(1,'superadmin', 1),
+(2, 'superadmin', 1),
+(3, 'default', 2),
+(4, 'default', 2),
+(5, 'superadmin', 1),
+(6, 'superadmin', 1),
+(7, 'superadmin', 1),
+(8, 'jaja_user', 1),
+(9, 'jaja_user', 1),
+(10, 'default', 2),
+(11, 'default', 2),
+(12, 'default', 2),
+(13, 'superadmin', 1),
+(14, 'superadmin', 1),
+(15, 'jaja_user', 1),
+(16, 'jaja_user', 1),
+(17, 'default', 2),
+(18, 'default', 2);
 
 INSERT INTO public.filter (id, name, target, description) VALUES
 (1, 'Admin Filter', 'Launch', null),

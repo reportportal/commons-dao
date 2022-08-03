@@ -4,12 +4,67 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.*;
+import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAttachment;
+import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
+import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JBaseEntity;
+import com.epam.ta.reportportal.jooq.tables.JClusters;
+import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
+import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JDashboard;
+import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
+import com.epam.ta.reportportal.jooq.tables.JFilter;
+import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
+import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JIntegration;
+import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
+import com.epam.ta.reportportal.jooq.tables.JIssue;
+import com.epam.ta.reportportal.jooq.tables.JIssueGroup;
+import com.epam.ta.reportportal.jooq.tables.JIssueTicket;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
+import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject;
+import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
+import com.epam.ta.reportportal.jooq.tables.JLaunch;
+import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
+import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
+import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
+import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
+import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
+import com.epam.ta.reportportal.jooq.tables.JOrganization;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute;
+import com.epam.ta.reportportal.jooq.tables.JParameter;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
+import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
+import com.epam.ta.reportportal.jooq.tables.JProject;
+import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
+import com.epam.ta.reportportal.jooq.tables.JProjectUser;
+import com.epam.ta.reportportal.jooq.tables.JRecipients;
+import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
+import com.epam.ta.reportportal.jooq.tables.JSenderCase;
+import com.epam.ta.reportportal.jooq.tables.JServerSettings;
+import com.epam.ta.reportportal.jooq.tables.JShedlock;
+import com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView;
+import com.epam.ta.reportportal.jooq.tables.JStatistics;
+import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
+import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
+import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
+import com.epam.ta.reportportal.jooq.tables.JUserPreference;
+import com.epam.ta.reportportal.jooq.tables.JUsers;
+import com.epam.ta.reportportal.jooq.tables.JWidget;
+import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+
+import javax.annotation.processing.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
-
-import javax.annotation.processing.Generated;
 
 
 /**
@@ -40,6 +95,9 @@ public class Indexes {
     public static final Index ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX = Indexes0.ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX;
     public static final Index ATTACHMENT_DELETION_PKEY = Indexes0.ATTACHMENT_DELETION_PKEY;
     public static final Index ATTRIBUTE_PK = Indexes0.ATTRIBUTE_PK;
+    public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
+    public static final Index SHARED_ENTITY_OWNERX = Indexes0.SHARED_ENTITY_OWNERX;
+    public static final Index SHARED_ENTITY_PROJECT_IDX = Indexes0.SHARED_ENTITY_PROJECT_IDX;
     public static final Index CLUSTER_INDEX_ID_IDX = Indexes0.CLUSTER_INDEX_ID_IDX;
     public static final Index CLUSTER_LAUNCH_IDX = Indexes0.CLUSTER_LAUNCH_IDX;
     public static final Index CLUSTER_PROJECT_IDX = Indexes0.CLUSTER_PROJECT_IDX;
@@ -103,6 +161,8 @@ public class Indexes {
     public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Indexes0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
     public static final Index ONBOARDING_PK = Indexes0.ONBOARDING_PK;
+    public static final Index ORGANIZATION_PKEY = Indexes0.ORGANIZATION_PKEY;
+    public static final Index ORGANIZATION_ATTRIBUTE_PKEY = Indexes0.ORGANIZATION_ATTRIBUTE_PKEY;
     public static final Index PARAMETER_TI_IDX = Indexes0.PARAMETER_TI_IDX;
     public static final Index PATTERN_TEMPLATE_PK = Indexes0.PATTERN_TEMPLATE_PK;
     public static final Index UNQ_NAME_PROJECTID = Indexes0.UNQ_NAME_PROJECTID;
@@ -117,11 +177,10 @@ public class Indexes {
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
+    public static final Index UNIQUE_RULE_NAME_PER_PROJECT = Indexes0.UNIQUE_RULE_NAME_PER_PROJECT;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
     public static final Index SERVER_SETTINGS_KEY_KEY = Indexes0.SERVER_SETTINGS_KEY_KEY;
-    public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
-    public static final Index SHARED_ENTITY_OWNERX = Indexes0.SHARED_ENTITY_OWNERX;
-    public static final Index SHARED_ENTITY_PROJECT_IDX = Indexes0.SHARED_ENTITY_PROJECT_IDX;
+    public static final Index SHEDLOCK_PKEY = Indexes0.SHEDLOCK_PKEY;
     public static final Index STALE_MATERIALIZED_VIEW_NAME_KEY = Indexes0.STALE_MATERIALIZED_VIEW_NAME_KEY;
     public static final Index STALE_MATERIALIZED_VIEW_PKEY = Indexes0.STALE_MATERIALIZED_VIEW_PKEY;
     public static final Index STALE_MV_CREATION_DATE_IDX = Indexes0.STALE_MV_CREATION_DATE_IDX;
@@ -146,7 +205,6 @@ public class Indexes {
     public static final Index TICKET_ID_IDX = Indexes0.TICKET_ID_IDX;
     public static final Index TICKET_PK = Indexes0.TICKET_PK;
     public static final Index TICKET_SUBMITTER_IDX = Indexes0.TICKET_SUBMITTER_IDX;
-    public static final Index USER_BID_PROJECT_IDX = Indexes0.USER_BID_PROJECT_IDX;
     public static final Index USER_CREATION_BID_PK = Indexes0.USER_CREATION_BID_PK;
     public static final Index USER_PREFERENCE_PK = Indexes0.USER_PREFERENCE_PK;
     public static final Index USER_PREFERENCE_UQ = Indexes0.USER_PREFERENCE_UQ;
@@ -172,6 +230,9 @@ public class Indexes {
         public static Index ATTACHMENT_PROJECT_ID_CREATION_TIME_IDX = Internal.createIndex("attachment_project_id_creation_time_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID, JAttachment.ATTACHMENT.CREATION_DATE }, false);
         public static Index ATTACHMENT_DELETION_PKEY = Internal.createIndex("attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION, new OrderField[] { JAttachmentDeletion.ATTACHMENT_DELETION.ID }, true);
         public static Index ATTRIBUTE_PK = Internal.createIndex("attribute_pk", JAttribute.ATTRIBUTE, new OrderField[] { JAttribute.ATTRIBUTE.ID }, true);
+        public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JBaseEntity.BASE_ENTITY, new OrderField[] { JBaseEntity.BASE_ENTITY.ID }, true);
+        public static Index SHARED_ENTITY_OWNERX = Internal.createIndex("shared_entity_ownerx", JBaseEntity.BASE_ENTITY, new OrderField[] { JBaseEntity.BASE_ENTITY.OWNER }, false);
+        public static Index SHARED_ENTITY_PROJECT_IDX = Internal.createIndex("shared_entity_project_idx", JBaseEntity.BASE_ENTITY, new OrderField[] { JBaseEntity.BASE_ENTITY.PROJECT_ID }, false);
         public static Index CLUSTER_INDEX_ID_IDX = Internal.createIndex("cluster_index_id_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.INDEX_ID }, false);
         public static Index CLUSTER_LAUNCH_IDX = Internal.createIndex("cluster_launch_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.LAUNCH_ID }, false);
         public static Index CLUSTER_PROJECT_IDX = Internal.createIndex("cluster_project_idx", JClusters.CLUSTERS, new OrderField[] { JClusters.CLUSTERS.PROJECT_ID }, false);
@@ -235,6 +296,8 @@ public class Indexes {
         public static Index OAUTH_REGISTRATION_SCOPE_PK = Internal.createIndex("oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createIndex("oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK }, true);
         public static Index ONBOARDING_PK = Internal.createIndex("onboarding_pk", JOnboarding.ONBOARDING, new OrderField[] { JOnboarding.ONBOARDING.ID }, true);
+        public static Index ORGANIZATION_PKEY = Internal.createIndex("organization_pkey", JOrganization.ORGANIZATION, new OrderField[] { JOrganization.ORGANIZATION.ID }, true);
+        public static Index ORGANIZATION_ATTRIBUTE_PKEY = Internal.createIndex("organization_attribute_pkey", JOrganizationAttribute.ORGANIZATION_ATTRIBUTE, new OrderField[] { JOrganizationAttribute.ORGANIZATION_ATTRIBUTE.ID }, true);
         public static Index PARAMETER_TI_IDX = Internal.createIndex("parameter_ti_idx", JParameter.PARAMETER, new OrderField[] { JParameter.PARAMETER.ITEM_ID }, false);
         public static Index PATTERN_TEMPLATE_PK = Internal.createIndex("pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE, new OrderField[] { JPatternTemplate.PATTERN_TEMPLATE.ID }, true);
         public static Index UNQ_NAME_PROJECTID = Internal.createIndex("unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE, new OrderField[] { JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID }, true);
@@ -249,11 +312,10 @@ public class Indexes {
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
+        public static Index UNIQUE_RULE_NAME_PER_PROJECT = Internal.createIndex("unique_rule_name_per_project", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.RULE_NAME, JSenderCase.SENDER_CASE.PROJECT_ID }, true);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
         public static Index SERVER_SETTINGS_KEY_KEY = Internal.createIndex("server_settings_key_key", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.KEY }, true);
-        public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.ID }, true);
-        public static Index SHARED_ENTITY_OWNERX = Internal.createIndex("shared_entity_ownerx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.OWNER }, false);
-        public static Index SHARED_ENTITY_PROJECT_IDX = Internal.createIndex("shared_entity_project_idx", JShareableEntity.SHAREABLE_ENTITY, new OrderField[] { JShareableEntity.SHAREABLE_ENTITY.PROJECT_ID }, false);
+        public static Index SHEDLOCK_PKEY = Internal.createIndex("shedlock_pkey", JShedlock.SHEDLOCK, new OrderField[] { JShedlock.SHEDLOCK.NAME }, true);
         public static Index STALE_MATERIALIZED_VIEW_NAME_KEY = Internal.createIndex("stale_materialized_view_name_key", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.NAME }, true);
         public static Index STALE_MATERIALIZED_VIEW_PKEY = Internal.createIndex("stale_materialized_view_pkey", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.ID }, true);
         public static Index STALE_MV_CREATION_DATE_IDX = Internal.createIndex("stale_mv_creation_date_idx", JStaleMaterializedView.STALE_MATERIALIZED_VIEW, new OrderField[] { JStaleMaterializedView.STALE_MATERIALIZED_VIEW.CREATION_DATE }, false);
@@ -278,7 +340,6 @@ public class Indexes {
         public static Index TICKET_ID_IDX = Internal.createIndex("ticket_id_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.TICKET_ID }, false);
         public static Index TICKET_PK = Internal.createIndex("ticket_pk", JTicket.TICKET, new OrderField[] { JTicket.TICKET.ID }, true);
         public static Index TICKET_SUBMITTER_IDX = Internal.createIndex("ticket_submitter_idx", JTicket.TICKET, new OrderField[] { JTicket.TICKET.SUBMITTER }, false);
-        public static Index USER_BID_PROJECT_IDX = Internal.createIndex("user_bid_project_idx", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID }, false);
         public static Index USER_CREATION_BID_PK = Internal.createIndex("user_creation_bid_pk", JUserCreationBid.USER_CREATION_BID, new OrderField[] { JUserCreationBid.USER_CREATION_BID.UUID }, true);
         public static Index USER_PREFERENCE_PK = Internal.createIndex("user_preference_pk", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.ID }, true);
         public static Index USER_PREFERENCE_UQ = Internal.createIndex("user_preference_uq", JUserPreference.USER_PREFERENCE, new OrderField[] { JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID }, true);

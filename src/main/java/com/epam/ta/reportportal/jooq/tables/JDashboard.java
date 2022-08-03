@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboard extends TableImpl<JDashboardRecord> {
 
-    private static final long serialVersionUID = 282960554;
+    private static final long serialVersionUID = -1723213506;
 
     /**
      * The reference instance of <code>public.dashboard</code>
@@ -135,8 +135,8 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
         return Arrays.<ForeignKey<JDashboardRecord, ?>>asList(Keys.DASHBOARD__DASHBOARD_ID_FK);
     }
 
-    public JShareableEntity shareableEntity() {
-        return new JShareableEntity(this, Keys.DASHBOARD__DASHBOARD_ID_FK);
+    public JBaseEntity baseEntity() {
+        return new JBaseEntity(this, Keys.DASHBOARD__DASHBOARD_ID_FK);
     }
 
     @Override

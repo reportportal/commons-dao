@@ -16,8 +16,8 @@ BEGIN
     alter sequence ticket_id_seq restart with 1;
     alter sequence activity_id_seq restart with 1;
 
-    INSERT INTO public.shareable_entity (id, shared, owner, project_id)
-    VALUES (1, false, 'superadmin', 1);
+    INSERT INTO public.base_entity (id, owner, project_id)
+    VALUES (1, 'superadmin', 1);
     INSERT INTO public.filter (id, name, target, description)
     VALUES (1, 'filter name', 'Launch', 'filter for product status widget');
 

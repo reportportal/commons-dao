@@ -24,17 +24,15 @@ import javax.persistence.*;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Entity
-@Table(name = "shareable_entity")
+@Table(name = "base_entity")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class ShareableEntity {
+public abstract class BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String owner;
-
-	private boolean shared;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
@@ -46,14 +44,6 @@ public abstract class ShareableEntity {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public boolean isShared() {
-		return shared;
-	}
-
-	public void setShared(boolean shared) {
-		this.shared = shared;
 	}
 
 	public String getOwner() {
