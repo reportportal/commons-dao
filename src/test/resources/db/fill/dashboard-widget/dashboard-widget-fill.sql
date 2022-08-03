@@ -5,7 +5,7 @@ VALUES (3, 'jaja_user', '7c381f9d81b0e438af4e7094c6cae203', 'jaja@mail.com', nul
 
 INSERT INTO public.project_user (user_id, project_id, project_role) VALUES (3, 1, 'MEMBER');
 
-INSERT INTO public.base_entity (id, owner, project_id)
+INSERT INTO public.owned_entity (id, owner, project_id)
 VALUES (5, 'superadmin', 1),
        (6, 'superadmin', 1),
        (13, 'superadmin', 1),

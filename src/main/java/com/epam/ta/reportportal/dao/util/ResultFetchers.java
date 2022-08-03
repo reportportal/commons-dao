@@ -240,9 +240,9 @@ public class ResultFetchers {
 				userFilter = userFilterMap.get(userFilterID);
 			} else {
 				userFilter = r.into(UserFilter.class);
-				userFilter.setOwner(r.get(BASE_ENTITY.OWNER));
+				userFilter.setOwner(r.get(OWNED_ENTITY.OWNER));
 				Project project = new Project();
-				project.setId(r.get(BASE_ENTITY.PROJECT_ID, Long.class));
+				project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
 				userFilter.setProject(project);
 			}
 			userFilter.getFilterCondition().add(r.into(FilterCondition.class));
@@ -265,9 +265,9 @@ public class ResultFetchers {
 				dashboard = dashboardMap.get(dashboardId);
 			} else {
 				dashboard = r.into(Dashboard.class);
-				dashboard.setOwner(r.get(BASE_ENTITY.OWNER));
+				dashboard.setOwner(r.get(OWNED_ENTITY.OWNER));
 				Project project = new Project();
-				project.setId(r.get(BASE_ENTITY.PROJECT_ID, Long.class));
+				project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
 				dashboard.setProject(project);
 			}
 			DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(it -> dashboard.getDashboardWidgets().add(it));
@@ -285,9 +285,9 @@ public class ResultFetchers {
 				widget = widgetMap.get(widgetId);
 			} else {
 				widget = r.into(Widget.class);
-				widget.setOwner(r.get(BASE_ENTITY.OWNER));
+				widget.setOwner(r.get(OWNED_ENTITY.OWNER));
 				Project project = new Project();
-				project.setId(r.get(BASE_ENTITY.PROJECT_ID, Long.class));
+				project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
 				widget.setProject(project);
 			}
 			widgetMap.put(widgetId, widget);

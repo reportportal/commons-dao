@@ -35,7 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
-import static com.epam.ta.reportportal.jooq.tables.JBaseEntity.BASE_ENTITY;
+import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
@@ -59,10 +59,10 @@ public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
 						.from(WIDGET)
 						.join(WIDGET_FILTER)
 						.on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
-						.join(BASE_ENTITY)
-						.on(WIDGET.ID.eq(BASE_ENTITY.ID))
+						.join(OWNED_ENTITY)
+						.on(WIDGET.ID.eq(OWNED_ENTITY.ID))
 						.where(WIDGET_FILTER.FILTER_ID.eq(filterId))
-						.and(BASE_ENTITY.OWNER.notEqual(owner))))
+						.and(OWNED_ENTITY.OWNER.notEqual(owner))))
 				.execute();
 	}
 

@@ -24,9 +24,9 @@ import javax.persistence.*;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Entity
-@Table(name = "base_entity")
+@Table(name = "owned_entity")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class BaseEntity {
+public abstract class OwnedEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

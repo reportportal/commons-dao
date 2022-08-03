@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.widget;
 
-import com.epam.ta.reportportal.entity.BaseEntity;
+import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Sets;
@@ -35,7 +35,7 @@ import java.util.Set;
 @Entity
 @Table(name = "widget")
 @TypeDef(name = "widgetOptions", typeClass = WidgetOptions.class)
-public class Widget extends BaseEntity implements Serializable {
+public class Widget extends OwnedEntity implements Serializable {
 
 	@Column(name = "name")
 	private String name;

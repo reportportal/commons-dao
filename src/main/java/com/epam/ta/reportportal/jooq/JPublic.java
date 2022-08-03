@@ -8,7 +8,6 @@ import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JBaseEntity;
 import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
@@ -37,6 +36,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute;
+import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -90,7 +90,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -789330191;
+    private static final long serialVersionUID = -288445213;
 
     /**
      * The reference instance of <code>public</code>
@@ -116,11 +116,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.attribute</code>.
      */
     public final JAttribute ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
-
-    /**
-     * The table <code>public.base_entity</code>.
-     */
-    public final JBaseEntity BASE_ENTITY = com.epam.ta.reportportal.jooq.tables.JBaseEntity.BASE_ENTITY;
 
     /**
      * The table <code>public.clusters</code>.
@@ -261,6 +256,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.organization_attribute</code>.
      */
     public final JOrganizationAttribute ORGANIZATION_ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute.ORGANIZATION_ATTRIBUTE;
+
+    /**
+     * The table <code>public.owned_entity</code>.
+     */
+    public final JOwnedEntity OWNED_ENTITY = com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 
     /**
      * The table <code>public.parameter</code>.
@@ -471,7 +471,6 @@ public class JPublic extends SchemaImpl {
             JAttachment.ATTACHMENT,
             JAttachmentDeletion.ATTACHMENT_DELETION,
             JAttribute.ATTRIBUTE,
-            JBaseEntity.BASE_ENTITY,
             JClusters.CLUSTERS,
             JClustersTestItem.CLUSTERS_TEST_ITEM,
             JContentField.CONTENT_FIELD,
@@ -500,6 +499,7 @@ public class JPublic extends SchemaImpl {
             JOnboarding.ONBOARDING,
             JOrganization.ORGANIZATION,
             JOrganizationAttribute.ORGANIZATION_ATTRIBUTE,
+            JOwnedEntity.OWNED_ENTITY,
             JParameter.PARAMETER,
             JPatternTemplate.PATTERN_TEMPLATE,
             JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM,

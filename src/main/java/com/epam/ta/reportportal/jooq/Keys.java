@@ -8,7 +8,6 @@ import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JBaseEntity;
 import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
@@ -37,6 +36,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute;
+import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -63,7 +63,6 @@ import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentDeletionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttributeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JBaseEntityRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JClustersRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JClustersTestItemRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JContentFieldRecord;
@@ -92,6 +91,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecor
 import com.epam.ta.reportportal.jooq.tables.records.JOnboardingRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationAttributeRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JOwnedEntityRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JParameterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JPatternTemplateTestItemRecord;
@@ -144,7 +144,6 @@ public class Keys {
     public static final Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Identities0.IDENTITY_ACTIVITY;
     public static final Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Identities0.IDENTITY_ATTACHMENT;
     public static final Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Identities0.IDENTITY_ATTRIBUTE;
-    public static final Identity<JBaseEntityRecord, Long> IDENTITY_BASE_ENTITY = Identities0.IDENTITY_BASE_ENTITY;
     public static final Identity<JClustersRecord, Long> IDENTITY_CLUSTERS = Identities0.IDENTITY_CLUSTERS;
     public static final Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Identities0.IDENTITY_FILTER_CONDITION;
     public static final Identity<JFilterSortRecord, Long> IDENTITY_FILTER_SORT = Identities0.IDENTITY_FILTER_SORT;
@@ -163,6 +162,7 @@ public class Keys {
     public static final Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Identities0.IDENTITY_ONBOARDING;
     public static final Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Identities0.IDENTITY_ORGANIZATION;
     public static final Identity<JOrganizationAttributeRecord, Long> IDENTITY_ORGANIZATION_ATTRIBUTE = Identities0.IDENTITY_ORGANIZATION_ATTRIBUTE;
+    public static final Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Identities0.IDENTITY_OWNED_ENTITY;
     public static final Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Identities0.IDENTITY_PATTERN_TEMPLATE;
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
     public static final Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Identities0.IDENTITY_PROJECT_ATTRIBUTE;
@@ -184,7 +184,6 @@ public class Keys {
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = UniqueKeys0.ATTACHMENT_DELETION_PKEY;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
-    public static final UniqueKey<JBaseEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
     public static final UniqueKey<JClustersRecord> CLUSTERS_PK = UniqueKeys0.CLUSTERS_PK;
     public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = UniqueKeys0.INDEX_ID_LAUNCH_ID_UNQ;
     public static final UniqueKey<JClustersTestItemRecord> CLUSTER_ITEM_UNQ = UniqueKeys0.CLUSTER_ITEM_UNQ;
@@ -222,6 +221,7 @@ public class Keys {
     public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = UniqueKeys0.ONBOARDING_PK;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = UniqueKeys0.ORGANIZATION_PKEY;
     public static final UniqueKey<JOrganizationAttributeRecord> ORGANIZATION_ATTRIBUTE_PKEY = UniqueKeys0.ORGANIZATION_ATTRIBUTE_PKEY;
+    public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
     public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = UniqueKeys0.PATTERN_TEMPLATE_PK;
     public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = UniqueKeys0.UNQ_NAME_PROJECTID;
     public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = UniqueKeys0.PATTERN_ITEM_UNQ;
@@ -261,13 +261,11 @@ public class Keys {
 
     public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_USER_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
-    public static final ForeignKey<JBaseEntityRecord, JUsersRecord> BASE_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY = ForeignKeys0.BASE_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY;
-    public static final ForeignKey<JBaseEntityRecord, JProjectRecord> BASE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = ForeignKeys0.BASE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
-    public static final ForeignKey<JDashboardRecord, JBaseEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
+    public static final ForeignKey<JDashboardRecord, JOwnedEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
     public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY;
     public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY;
-    public static final ForeignKey<JFilterRecord, JBaseEntityRecord> FILTER__FILTER_ID_FK = ForeignKeys0.FILTER__FILTER_ID_FK;
+    public static final ForeignKey<JFilterRecord, JOwnedEntityRecord> FILTER__FILTER_ID_FK = ForeignKeys0.FILTER__FILTER_ID_FK;
     public static final ForeignKey<JFilterConditionRecord, JFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = ForeignKeys0.FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY;
     public static final ForeignKey<JFilterSortRecord, JFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = ForeignKeys0.FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY;
     public static final ForeignKey<JIntegrationRecord, JProjectRecord> INTEGRATION__INTEGRATION_PROJECT_ID_FKEY = ForeignKeys0.INTEGRATION__INTEGRATION_PROJECT_ID_FKEY;
@@ -293,6 +291,8 @@ public class Keys {
     public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOrganizationAttributeRecord, JOrganizationRecord> ORGANIZATION_ATTRIBUTE__ORGANIZATION_ATTRIBUTE_ORGANIZATION_ID_FKEY = ForeignKeys0.ORGANIZATION_ATTRIBUTE__ORGANIZATION_ATTRIBUTE_ORGANIZATION_ID_FKEY;
+    public static final ForeignKey<JOwnedEntityRecord, JUsersRecord> OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY = ForeignKeys0.OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY;
+    public static final ForeignKey<JOwnedEntityRecord, JProjectRecord> OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = ForeignKeys0.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JParameterRecord, JTestItemRecord> PARAMETER__PARAMETER_ITEM_ID_FKEY = ForeignKeys0.PARAMETER__PARAMETER_ITEM_ID_FKEY;
     public static final ForeignKey<JPatternTemplateRecord, JProjectRecord> PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY = ForeignKeys0.PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY;
     public static final ForeignKey<JPatternTemplateTestItemRecord, JPatternTemplateRecord> PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_PATTERN_ID_FKEY = ForeignKeys0.PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_PATTERN_ID_FKEY;
@@ -313,7 +313,7 @@ public class Keys {
     public static final ForeignKey<JUserPreferenceRecord, JProjectRecord> USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY;
-    public static final ForeignKey<JWidgetRecord, JBaseEntityRecord> WIDGET__WIDGET_ID_FK = ForeignKeys0.WIDGET__WIDGET_ID_FK;
+    public static final ForeignKey<JWidgetRecord, JOwnedEntityRecord> WIDGET__WIDGET_ID_FK = ForeignKeys0.WIDGET__WIDGET_ID_FK;
     public static final ForeignKey<JWidgetFilterRecord, JWidgetRecord> WIDGET_FILTER__WIDGET_FILTER_WIDGET_ID_FKEY = ForeignKeys0.WIDGET_FILTER__WIDGET_FILTER_WIDGET_ID_FKEY;
     public static final ForeignKey<JWidgetFilterRecord, JFilterRecord> WIDGET_FILTER__WIDGET_FILTER_FILTER_ID_FKEY = ForeignKeys0.WIDGET_FILTER__WIDGET_FILTER_FILTER_ID_FKEY;
 
@@ -325,7 +325,6 @@ public class Keys {
         public static Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Internal.createIdentity(JActivity.ACTIVITY, JActivity.ACTIVITY.ID);
         public static Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Internal.createIdentity(JAttachment.ATTACHMENT, JAttachment.ATTACHMENT.ID);
         public static Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Internal.createIdentity(JAttribute.ATTRIBUTE, JAttribute.ATTRIBUTE.ID);
-        public static Identity<JBaseEntityRecord, Long> IDENTITY_BASE_ENTITY = Internal.createIdentity(JBaseEntity.BASE_ENTITY, JBaseEntity.BASE_ENTITY.ID);
         public static Identity<JClustersRecord, Long> IDENTITY_CLUSTERS = Internal.createIdentity(JClusters.CLUSTERS, JClusters.CLUSTERS.ID);
         public static Identity<JFilterConditionRecord, Long> IDENTITY_FILTER_CONDITION = Internal.createIdentity(JFilterCondition.FILTER_CONDITION, JFilterCondition.FILTER_CONDITION.ID);
         public static Identity<JFilterSortRecord, Long> IDENTITY_FILTER_SORT = Internal.createIdentity(JFilterSort.FILTER_SORT, JFilterSort.FILTER_SORT.ID);
@@ -344,6 +343,7 @@ public class Keys {
         public static Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Internal.createIdentity(JOnboarding.ONBOARDING, JOnboarding.ONBOARDING.ID);
         public static Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Internal.createIdentity(JOrganization.ORGANIZATION, JOrganization.ORGANIZATION.ID);
         public static Identity<JOrganizationAttributeRecord, Long> IDENTITY_ORGANIZATION_ATTRIBUTE = Internal.createIdentity(JOrganizationAttribute.ORGANIZATION_ATTRIBUTE, JOrganizationAttribute.ORGANIZATION_ATTRIBUTE.ID);
+        public static Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Internal.createIdentity(JOwnedEntity.OWNED_ENTITY, JOwnedEntity.OWNED_ENTITY.ID);
         public static Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Internal.createIdentity(JPatternTemplate.PATTERN_TEMPLATE, JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
         public static Identity<JProjectAttributeRecord, Long> IDENTITY_PROJECT_ATTRIBUTE = Internal.createIdentity(JProjectAttribute.PROJECT_ATTRIBUTE, JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID);
@@ -363,7 +363,6 @@ public class Keys {
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = Internal.createUniqueKey(JAttachmentDeletion.ATTACHMENT_DELETION, "attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
-        public static final UniqueKey<JBaseEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JBaseEntity.BASE_ENTITY, "shareable_pk", JBaseEntity.BASE_ENTITY.ID);
         public static final UniqueKey<JClustersRecord> CLUSTERS_PK = Internal.createUniqueKey(JClusters.CLUSTERS, "clusters_pk", JClusters.CLUSTERS.ID);
         public static final UniqueKey<JClustersRecord> INDEX_ID_LAUNCH_ID_UNQ = Internal.createUniqueKey(JClusters.CLUSTERS, "index_id_launch_id_unq", JClusters.CLUSTERS.INDEX_ID, JClusters.CLUSTERS.LAUNCH_ID);
         public static final UniqueKey<JClustersTestItemRecord> CLUSTER_ITEM_UNQ = Internal.createUniqueKey(JClustersTestItem.CLUSTERS_TEST_ITEM, "cluster_item_unq", JClustersTestItem.CLUSTERS_TEST_ITEM.CLUSTER_ID, JClustersTestItem.CLUSTERS_TEST_ITEM.ITEM_ID);
@@ -401,6 +400,7 @@ public class Keys {
         public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = Internal.createUniqueKey(JOnboarding.ONBOARDING, "onboarding_pk", JOnboarding.ONBOARDING.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_pkey", JOrganization.ORGANIZATION.ID);
         public static final UniqueKey<JOrganizationAttributeRecord> ORGANIZATION_ATTRIBUTE_PKEY = Internal.createUniqueKey(JOrganizationAttribute.ORGANIZATION_ATTRIBUTE, "organization_attribute_pkey", JOrganizationAttribute.ORGANIZATION_ATTRIBUTE.ID);
+        public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JOwnedEntity.OWNED_ENTITY, "shareable_pk", JOwnedEntity.OWNED_ENTITY.ID);
         public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
         public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = Internal.createUniqueKey(JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID);
@@ -438,13 +438,11 @@ public class Keys {
     private static class ForeignKeys0 {
         public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JActivity.ACTIVITY, "activity__activity_user_id_fkey", JActivity.ACTIVITY.USER_ID);
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
-        public static final ForeignKey<JBaseEntityRecord, JUsersRecord> BASE_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_LOGIN_KEY, JBaseEntity.BASE_ENTITY, "base_entity__shareable_entity_owner_fkey", JBaseEntity.BASE_ENTITY.OWNER);
-        public static final ForeignKey<JBaseEntityRecord, JProjectRecord> BASE_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JBaseEntity.BASE_ENTITY, "base_entity__shareable_entity_project_id_fkey", JBaseEntity.BASE_ENTITY.PROJECT_ID);
         public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
-        public static final ForeignKey<JDashboardRecord, JBaseEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
+        public static final ForeignKey<JDashboardRecord, JOwnedEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
         public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DASHBOARD_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_dashboard_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID);
         public static final ForeignKey<JDashboardWidgetRecord, JWidgetRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_WIDGET_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_widget_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.WIDGET_ID);
-        public static final ForeignKey<JFilterRecord, JBaseEntityRecord> FILTER__FILTER_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JFilter.FILTER, "filter__filter_id_fk", JFilter.FILTER.ID);
+        public static final ForeignKey<JFilterRecord, JOwnedEntityRecord> FILTER__FILTER_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JFilter.FILTER, "filter__filter_id_fk", JFilter.FILTER.ID);
         public static final ForeignKey<JFilterConditionRecord, JFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JFilterCondition.FILTER_CONDITION, "filter_condition__filter_condition_filter_id_fkey", JFilterCondition.FILTER_CONDITION.FILTER_ID);
         public static final ForeignKey<JFilterSortRecord, JFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JFilterSort.FILTER_SORT, "filter_sort__filter_sort_filter_id_fkey", JFilterSort.FILTER_SORT.FILTER_ID);
         public static final ForeignKey<JIntegrationRecord, JProjectRecord> INTEGRATION__INTEGRATION_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JIntegration.INTEGRATION, "integration__integration_project_id_fkey", JIntegration.INTEGRATION.PROJECT_ID);
@@ -470,6 +468,8 @@ public class Keys {
         public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction__oauth_registration_restriction_oauth_registration_fk_fkey", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOrganizationAttributeRecord, JOrganizationRecord> ORGANIZATION_ATTRIBUTE__ORGANIZATION_ATTRIBUTE_ORGANIZATION_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ORGANIZATION_PKEY, JOrganizationAttribute.ORGANIZATION_ATTRIBUTE, "organization_attribute__organization_attribute_organization_id_fkey", JOrganizationAttribute.ORGANIZATION_ATTRIBUTE.ORGANIZATION_ID);
+        public static final ForeignKey<JOwnedEntityRecord, JUsersRecord> OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_LOGIN_KEY, JOwnedEntity.OWNED_ENTITY, "owned_entity__shareable_entity_owner_fkey", JOwnedEntity.OWNED_ENTITY.OWNER);
+        public static final ForeignKey<JOwnedEntityRecord, JProjectRecord> OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JOwnedEntity.OWNED_ENTITY, "owned_entity__shareable_entity_project_id_fkey", JOwnedEntity.OWNED_ENTITY.PROJECT_ID);
         public static final ForeignKey<JParameterRecord, JTestItemRecord> PARAMETER__PARAMETER_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JParameter.PARAMETER, "parameter__parameter_item_id_fkey", JParameter.PARAMETER.ITEM_ID);
         public static final ForeignKey<JPatternTemplateRecord, JProjectRecord> PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JPatternTemplate.PATTERN_TEMPLATE, "pattern_template__pattern_template_project_id_fkey", JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
         public static final ForeignKey<JPatternTemplateTestItemRecord, JPatternTemplateRecord> PATTERN_TEMPLATE_TEST_ITEM__PATTERN_TEMPLATE_TEST_ITEM_PATTERN_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PATTERN_TEMPLATE_PK, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_template_test_item__pattern_template_test_item_pattern_id_fkey", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID);
@@ -490,7 +490,7 @@ public class Keys {
         public static final ForeignKey<JUserPreferenceRecord, JProjectRecord> USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_project_id_fkey", JUserPreference.USER_PREFERENCE.PROJECT_ID);
         public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_user_id_fkey", JUserPreference.USER_PREFERENCE.USER_ID);
         public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_filter_id_fkey", JUserPreference.USER_PREFERENCE.FILTER_ID);
-        public static final ForeignKey<JWidgetRecord, JBaseEntityRecord> WIDGET__WIDGET_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JWidget.WIDGET, "widget__widget_id_fk", JWidget.WIDGET.ID);
+        public static final ForeignKey<JWidgetRecord, JOwnedEntityRecord> WIDGET__WIDGET_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JWidget.WIDGET, "widget__widget_id_fk", JWidget.WIDGET.ID);
         public static final ForeignKey<JWidgetFilterRecord, JWidgetRecord> WIDGET_FILTER__WIDGET_FILTER_WIDGET_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JWidgetFilter.WIDGET_FILTER, "widget_filter__widget_filter_widget_id_fkey", JWidgetFilter.WIDGET_FILTER.WIDGET_ID);
         public static final ForeignKey<JWidgetFilterRecord, JFilterRecord> WIDGET_FILTER__WIDGET_FILTER_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JWidgetFilter.WIDGET_FILTER, "widget_filter__widget_filter_filter_id_fkey", JWidgetFilter.WIDGET_FILTER.FILTER_ID);
     }

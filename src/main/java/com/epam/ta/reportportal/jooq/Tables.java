@@ -8,7 +8,6 @@ import com.epam.ta.reportportal.jooq.tables.JActivity;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
-import com.epam.ta.reportportal.jooq.tables.JBaseEntity;
 import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
@@ -37,6 +36,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute;
+import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -101,11 +101,6 @@ public class Tables {
      * The table <code>public.attribute</code>.
      */
     public static final JAttribute ATTRIBUTE = JAttribute.ATTRIBUTE;
-
-    /**
-     * The table <code>public.base_entity</code>.
-     */
-    public static final JBaseEntity BASE_ENTITY = JBaseEntity.BASE_ENTITY;
 
     /**
      * The table <code>public.clusters</code>.
@@ -246,6 +241,11 @@ public class Tables {
      * The table <code>public.organization_attribute</code>.
      */
     public static final JOrganizationAttribute ORGANIZATION_ATTRIBUTE = JOrganizationAttribute.ORGANIZATION_ATTRIBUTE;
+
+    /**
+     * The table <code>public.owned_entity</code>.
+     */
+    public static final JOwnedEntity OWNED_ENTITY = JOwnedEntity.OWNED_ENTITY;
 
     /**
      * The table <code>public.parameter</code>.

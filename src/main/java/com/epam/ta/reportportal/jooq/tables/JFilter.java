@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilter extends TableImpl<JFilterRecord> {
 
-    private static final long serialVersionUID = 1305273274;
+    private static final long serialVersionUID = -1242846460;
 
     /**
      * The reference instance of <code>public.filter</code>
@@ -134,8 +134,8 @@ public class JFilter extends TableImpl<JFilterRecord> {
         return Arrays.<ForeignKey<JFilterRecord, ?>>asList(Keys.FILTER__FILTER_ID_FK);
     }
 
-    public JBaseEntity baseEntity() {
-        return new JBaseEntity(this, Keys.FILTER__FILTER_ID_FK);
+    public JOwnedEntity ownedEntity() {
+        return new JOwnedEntity(this, Keys.FILTER__FILTER_ID_FK);
     }
 
     @Override
