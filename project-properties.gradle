@@ -67,6 +67,7 @@ project.ext {
             (migrationsUrl + '/migrations/59_stale_materialized_view.up.sql')          : 'V059__stale_materialized_view.sql',
             (migrationsUrl + '/migrations/60_user_bid_extension.up.sql')               : 'V060__user_bid_extension.up.sql',
             (migrationsUrl + '/migrations/62_sender_case_rule_name.up.sql')            : 'V062__sender_case_rule_name.up.sql',
+            (migrationsUrl + '/migrations/63_remove_acl.up.sql')                       : 'V063__remove_acl.up.sql',
 
     ]
     excludeTests = [
@@ -82,7 +83,7 @@ project.ext {
     ]
     limits = [
             'instruction': 70,
-            'branch'     : 36,
+            'branch'     : 35,
             'line'       : 60,
             'complexity' : 49,
             'method'     : 55,
