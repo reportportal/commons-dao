@@ -459,8 +459,8 @@ public class RecordMappers {
 				if (Strings.isEmpty(attributeString)) continue;
 
 				// explode attributes from string "key:value:system"
-				String[] attributes = attributeString.split(":");
-				if (attributes[0] != null || attributes[1] != null) {
+				String[] attributes = attributeString.split(":", -1);
+				if (attributes.length > 1 && (Strings.isNotEmpty(attributes[0]) || Strings.isNotEmpty(attributes[1]))) {
 					attributeList.add(
 							new ItemAttribute(attributes[0], attributes[1], Boolean.valueOf(attributes[2]))
 					);
