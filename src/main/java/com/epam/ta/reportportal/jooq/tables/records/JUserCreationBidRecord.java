@@ -90,6 +90,20 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     /**
+     * Setter for <code>public.user_creation_bid.project_name</code>.
+     */
+    public void setProjectName(String value) {
+        set(4, value);
+    }
+
+    /**
+     * Getter for <code>public.user_creation_bid.project_name</code>.
+     */
+    public String getProjectName() {
+        return (String) get(3);
+    }
+
+    /**
      * Setter for <code>public.user_creation_bid.inviting_user_id</code>.
      */
     public void setInvitingUserId(Long value) {
@@ -129,6 +143,20 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
      */
     public JSONB getMetadata() {
         return (JSONB) get(6);
+    }
+
+    /**
+     * Setter for <code>public.user_creation_bid.metadata</code>.
+     */
+    public void setMetadata(JSONB value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.user_creation_bid.metadata</code>.
+     */
+    public JSONB getMetadata() {
+        return (JSONB) get(5);
     }
 
     // -------------------------------------------------------------------------
