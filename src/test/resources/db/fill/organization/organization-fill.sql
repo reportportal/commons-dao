@@ -1,0 +1,1 @@
+INSERT INTO organization (id, name) VALUES (1, 'Umbrella');
