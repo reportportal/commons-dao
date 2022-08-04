@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao.util;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
@@ -54,7 +55,6 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
@@ -388,7 +388,7 @@ public class RecordMappers {
 		return activity;
 	};
 
-	public static final RecordMapper<? super Record, SharedEntity> SHARED_ENTITY_MAPPER = r -> r.into(SharedEntity.class);
+	public static final RecordMapper<? super Record, OwnedEntity> OWNED_ENTITY_RECORD_MAPPER = r -> r.into(OwnedEntity.class);
 
 	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(res.get(FILTER.ID)).ifPresent(
 			id -> {
