@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -75,9 +74,9 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private Metadata metadata;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId("organization_id")
-	private Organization organization;
+	//TODO: Remove after migration
+	@Column(name = "organization")
+	private String organization;
 
 	@Column(name = "allocated_storage", updatable = false)
 	private long allocatedStorage;
@@ -186,11 +185,11 @@ public class Project implements Serializable {
 		this.senderCases = senderCases;
 	}
 
-	public Organization getOrganization() {
+	public String getOrganization() {
 		return organization;
 	}
 
-	public void setOrganization(Organization organization) {
+	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
