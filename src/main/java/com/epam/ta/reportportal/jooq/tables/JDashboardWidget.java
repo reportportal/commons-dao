@@ -19,7 +19,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row11;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
 
-    private static final long serialVersionUID = -1430378404;
+    private static final long serialVersionUID = 2110169553;
 
     /**
      * The reference instance of <code>public.dashboard_widget</code>
@@ -105,11 +105,6 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
      * The column <code>public.dashboard_widget.is_created_on</code>.
      */
     public final TableField<JDashboardWidgetRecord, Boolean> IS_CREATED_ON = createField(DSL.name("is_created_on"), org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
-
-    /**
-     * The column <code>public.dashboard_widget.share</code>.
-     */
-    public final TableField<JDashboardWidgetRecord, Boolean> SHARE = createField(DSL.name("share"), org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
      * Create a <code>public.dashboard_widget</code> table reference
@@ -204,11 +199,11 @@ public class JDashboardWidget extends TableImpl<JDashboardWidgetRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row11 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Long, Long, String, String, String, Integer, Integer, Integer, Integer, Boolean, Boolean> fieldsRow() {
-        return (Row11) super.fieldsRow();
+    public Row10<Long, Long, String, String, String, Integer, Integer, Integer, Integer, Boolean> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 }
