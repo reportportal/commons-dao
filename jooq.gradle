@@ -35,5 +35,5 @@ jooq {
 }
 
 generateSampleJooqSchemaSource {
-    enabled = true
+    enabled = false
 }
