@@ -481,7 +481,6 @@ public class RecordMappers {
 		dashboardWidget.setWidgetOwner(r.get(DASHBOARD_WIDGET.WIDGET_OWNER));
 		dashboardWidget.setWidgetName(r.get(DASHBOARD_WIDGET.WIDGET_NAME));
 		dashboardWidget.setWidgetType(r.get(DASHBOARD_WIDGET.WIDGET_TYPE));
-		dashboardWidget.setShare(r.get(DASHBOARD_WIDGET.SHARE));
 		final Widget widget = new Widget();
 		WIDGET_OPTIONS_MAPPER.accept(widget, r);
 		dashboardWidget.setWidget(widget);
