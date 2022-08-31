@@ -70,6 +70,7 @@ project.ext {
             (migrationsUrl + '/migrations/62_sender_case_rule_name.up.sql')            : 'V062__sender_case_rule_name.up.sql',
             (migrationsUrl + '/migrations/63_remove_acl.up.sql')                       : 'V063__remove_acl.up.sql',
             (migrationsUrl + '/migrations/64_add_organization_user_ref.up.sql')        : 'V064__64_add_organization_user_ref.up.sql',
+            (migrationsUrl + '/migrations/65_organization_slug_project_key.up.sql')    : 'V065__65_organization_slug_project_key.up.sql',
 
     ]
     excludeTests = [

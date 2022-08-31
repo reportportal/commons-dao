@@ -27,7 +27,7 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
 	Optional<Project> findByName(String name);
 
-	@Query(value = "SELECT p.* FROM project p JOIN organization org on p.organization_id = org.id where org.slug = :slug and p.key = :key", nativeQuery = true)
+	@Query(value = "SELECT p.* FROM project p JOIN organization org on p.organization_id = org.id WHERE org.slug = :slug and p.key = :key", nativeQuery = true)
 	Optional<Project> findBySlugAndKey(@Param("slug") String slug, @Param("key") String key);
 
 	boolean existsByName(String name);
