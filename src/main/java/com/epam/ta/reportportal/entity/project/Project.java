@@ -78,7 +78,6 @@ public class Project implements Serializable {
 	@Column(name = "metadata")
 	private Metadata metadata;
 
-	@Id
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
 	private Organization organization;
