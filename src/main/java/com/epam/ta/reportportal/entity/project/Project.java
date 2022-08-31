@@ -50,6 +50,9 @@ public class Project implements Serializable {
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "key")
+	private String key;
+
 	@Column(name = "project_type")
 	private ProjectType projectType;
 
@@ -151,6 +154,14 @@ public class Project implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public Set<Integration> getIntegrations() {

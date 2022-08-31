@@ -31,4 +31,10 @@ public interface OrganizationRepository extends ReportPortalRepository<Organizat
 	 * @return {@link Optional} of {@link Organization}
 	 */
 	Optional<Organization> findByName(String name);
+
+	/**
+	 * @param slug slug of organization
+	 * @return {@link Optional} of {@link Organization}
+	 */
+	Optional<Organization> findBySlug(String slug);
 }
