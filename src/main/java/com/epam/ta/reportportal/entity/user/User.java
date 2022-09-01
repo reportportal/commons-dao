@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.organization.OrganizationUser;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -76,6 +77,9 @@ public class User implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	private Set<ProjectUser> projects = Sets.newHashSet();
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	private Set<OrganizationUser> organizations = Sets.newHashSet();
+
 	public User() {
 	}
 
@@ -125,6 +129,14 @@ public class User implements Serializable {
 
 	public void setProjects(Set<ProjectUser> projects) {
 		this.projects = projects;
+	}
+
+	public Set<OrganizationUser> getOrganizations() {
+		return organizations;
+	}
+
+	public void setOrganizations(Set<OrganizationUser> organizations) {
+		this.organizations = organizations;
 	}
 
 	public String getFullName() {

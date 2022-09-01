@@ -17,10 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.project.Project;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +26,9 @@ import java.util.Optional;
 public interface ProjectRepository extends ReportPortalRepository<Project, Long>, ProjectRepositoryCustom {
 
 	Optional<Project> findByName(String name);
+
+	@Query(value = "SELECT p.* FROM project p JOIN organization org on p.organization_id = org.id WHERE org.slug = :slug and p.key = :key", nativeQuery = true)
+	Optional<Project> findBySlugAndKey(@Param("slug") String slug, @Param("key") String key);
 
 	boolean existsByName(String name);
 
