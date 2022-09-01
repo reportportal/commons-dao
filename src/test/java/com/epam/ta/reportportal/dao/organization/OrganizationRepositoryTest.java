@@ -46,4 +46,16 @@ public class OrganizationRepositoryTest extends BaseTest {
 		//then
 		assertTrue("Organization found", organization.isPresent());
 	}
+
+	@Test
+	void findBySlugTest() {
+		//given
+		String slug = "umbrella";
+
+		//when
+		Optional<Organization> organization = organizationRepository.findBySlug(slug);
+
+		//then
+		assertTrue("Organization found", organization.isPresent());
+	}
 }

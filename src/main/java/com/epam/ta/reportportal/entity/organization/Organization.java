@@ -42,12 +42,16 @@ public class Organization implements Serializable {
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "slug")
+	private String slug;
+
 	public Organization() {
 	}
 
-	public Organization(Long id, String name) {
+	public Organization(Long id, String name, String slug) {
 		this.id = id;
 		this.name = name;
+		this.slug = slug;
 	}
 
 	public Long getId() {
@@ -64,6 +68,14 @@ public class Organization implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(String slug) {
+		this.slug = slug;
 	}
 
 	@Override

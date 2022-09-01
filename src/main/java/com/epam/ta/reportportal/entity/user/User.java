@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.organization.OrganizationUser;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.Objects;
@@ -86,7 +87,8 @@ public class User implements Serializable {
       CascadeType.MERGE, CascadeType.REFRESH})
   private Set<ProjectUser> projects = Sets.newHashSet();
 
-  public User() {
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	private Set<OrganizationUser> organizations = Sets.newHashSet();public User() {
   }
 
   public Long getId() {
@@ -137,7 +139,13 @@ public class User implements Serializable {
     this.projects = projects;
   }
 
-  public String getFullName() {
+  public Set<OrganizationUser> getOrganizations() {
+		return organizations;
+	}
+
+	public void setOrganizations(Set<OrganizationUser> organizations) {
+		this.organizations = organizations;
+	}public String getFullName() {
     return this.fullName;
   }
 

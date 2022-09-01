@@ -94,4 +94,43 @@ public class OrganizationUser implements Serializable {
 	public int hashCode() {
 		return Objects.hash(organization, user, organizationRole);
 	}
+
+	public static final class OrganizationUserBuilder {
+		private OrganizationUserId id;
+		private Organization organization;
+		private User user;
+		private OrganizationRole organizationRole;
+
+		public OrganizationUserBuilder() {
+		}
+
+		public OrganizationUserBuilder withId(OrganizationUserId id) {
+			this.id = id;
+			return this;
+		}
+
+		public OrganizationUserBuilder withOrganization(Organization organization) {
+			this.organization = organization;
+			return this;
+		}
+
+		public OrganizationUserBuilder withUser(User user) {
+			this.user = user;
+			return this;
+		}
+
+		public OrganizationUserBuilder withOrganizationRole(OrganizationRole organizationRole) {
+			this.organizationRole = organizationRole;
+			return this;
+		}
+
+		public OrganizationUser build() {
+			OrganizationUser organizationUser = new OrganizationUser();
+			organizationUser.setOrganization(organization);
+			organizationUser.setUser(user);
+			organizationUser.setOrganizationRole(organizationRole);
+			organizationUser.id = this.id;
+			return organizationUser;
+		}
+	}
 }

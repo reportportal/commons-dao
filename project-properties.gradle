@@ -80,6 +80,7 @@ project.ext {
             (migrationsUrl + '/migrations/78_drop_redundant_index.up.sql')             : 'V078__drop_redundant_index.sql',
             (migrationsUrl + '/migrations/64_add_organization_user_ref.up.sql')        : 'V064__64_add_organization_user_ref.up.sql',
             (migrationsUrl + '/migrations/64_add_organization_user_ref.up.sql')        : 'V064__64_add_organization_user_ref.up.sql',
+            (migrationsUrl + '/migrations/65_organization_slug_project_key.up.sql')    : 'V065__65_organization_slug_project_key.up.sql',
 
     ]
     excludeTests = [
