@@ -36,6 +36,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -90,7 +91,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -288445213;
+    private static final long serialVersionUID = -1124202048;
 
     /**
      * The reference instance of <code>public</code>
@@ -256,6 +257,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.organization_attribute</code>.
      */
     public final JOrganizationAttribute ORGANIZATION_ATTRIBUTE = com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute.ORGANIZATION_ATTRIBUTE;
+
+    /**
+     * The table <code>public.organization_user</code>.
+     */
+    public final JOrganizationUser ORGANIZATION_USER = com.epam.ta.reportportal.jooq.tables.JOrganizationUser.ORGANIZATION_USER;
 
     /**
      * The table <code>public.owned_entity</code>.
@@ -441,6 +447,7 @@ public class JPublic extends SchemaImpl {
             Sequences.ONBOARDING_ID_SEQ,
             Sequences.ORGANIZATION_ATTRIBUTE_ID_SEQ,
             Sequences.ORGANIZATION_ID_SEQ,
+            Sequences.ORGANIZATION_USER_USER_ID_SEQ,
             Sequences.PATTERN_TEMPLATE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
@@ -499,6 +506,7 @@ public class JPublic extends SchemaImpl {
             JOnboarding.ONBOARDING,
             JOrganization.ORGANIZATION,
             JOrganizationAttribute.ORGANIZATION_ATTRIBUTE,
+            JOrganizationUser.ORGANIZATION_USER,
             JOwnedEntity.OWNED_ENTITY,
             JParameter.PARAMETER,
             JPatternTemplate.PATTERN_TEMPLATE,
