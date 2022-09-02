@@ -76,30 +76,30 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     /**
+     * Setter for <code>public.user_creation_bid.default_project_id</code>.
+     */
+    public void setDefaultProjectId(Long value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.user_creation_bid.default_project_id</code>.
+     */
+    public Long getDefaultProjectId() {
+        return (Long) get(3);
+    }
+
+    /**
      * Setter for <code>public.user_creation_bid.role</code>.
      */
     public void setRole(String value) {
-        set(3, value);
+        set(4, value);
     }
 
     /**
      * Getter for <code>public.user_creation_bid.role</code>.
      */
     public String getRole() {
-        return (String) get(3);
-    }
-
-    /**
-     * Setter for <code>public.user_creation_bid.project_name</code>.
-     */
-    public void setProjectName(String value) {
-        set(4, value);
-    }
-
-    /**
-     * Getter for <code>public.user_creation_bid.project_name</code>.
-     */
-    public String getProjectName() {
         return (String) get(3);
     }
 
@@ -145,20 +145,6 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
         return (JSONB) get(6);
     }
 
-    /**
-     * Setter for <code>public.user_creation_bid.metadata</code>.
-     */
-    public void setMetadata(JSONB value) {
-        set(5, value);
-    }
-
-    /**
-     * Getter for <code>public.user_creation_bid.metadata</code>.
-     */
-    public JSONB getMetadata() {
-        return (JSONB) get(5);
-    }
-
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -198,8 +184,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public Field<String> field4() {
-        return JUserCreationBid.USER_CREATION_BID.ROLE;
+    public Field<Long> field4() {
+        return JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID;
     }
 
     @Override
@@ -233,8 +219,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public String component4() {
-        return getRole();
+    public Long component4() {
+        return getDefaultProjectId();
     }
 
     @Override
@@ -268,8 +254,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public String value4() {
-        return getRole();
+    public Long value4() {
+        return getDefaultProjectId();
     }
 
     @Override
@@ -306,8 +292,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public JUserCreationBidRecord value4(String value) {
-        setRole(value);
+    public JUserCreationBidRecord value4(Long value) {
+        setDefaultProjectId(value);
         return this;
     }
 

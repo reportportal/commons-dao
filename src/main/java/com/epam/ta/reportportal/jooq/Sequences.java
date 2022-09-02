@@ -129,6 +129,11 @@ public class Sequences {
     public static final Sequence<Long> ORGANIZATION_ID_SEQ = new SequenceImpl<Long>("organization_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
+     * The sequence <code>public.organization_user_user_id_seq</code>
+     */
+    public static final Sequence<Long> ORGANIZATION_USER_USER_ID_SEQ = new SequenceImpl<Long>("organization_user_user_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
      * The sequence <code>public.pattern_template_id_seq</code>
      */
     public static final Sequence<Long> PATTERN_TEMPLATE_ID_SEQ = new SequenceImpl<Long>("pattern_template_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));

@@ -18,7 +18,6 @@ import javax.annotation.processing.Generated;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Index;
-import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Row7;
@@ -72,6 +71,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
      * The column <code>public.user_creation_bid.email</code>.
      */
     public final TableField<JUserCreationBidRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.user_creation_bid.default_project_id</code>.
+     */
+    public final TableField<JUserCreationBidRecord, Long> DEFAULT_PROJECT_ID = createField(DSL.name("default_project_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.user_creation_bid.role</code>.
@@ -133,7 +137,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.USER_CREATION_BID_PK);
+        return Arrays.<Index>asList(Indexes.USER_BID_PROJECT_IDX, Indexes.USER_CREATION_BID_PK);
     }
 
     @Override
@@ -153,6 +157,10 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
     public JUsers users() {
         return new JUsers(this, Keys.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY);
+    }
+
+    public JProject project() {
+        return new JProject(this, Keys.USER_CREATION_BID__USER_CREATION_BID_DEFAULT_PROJECT_ID_FKEY);
     }
 
     @Override

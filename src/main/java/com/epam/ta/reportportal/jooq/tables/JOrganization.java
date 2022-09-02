@@ -20,7 +20,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row2;
+import org.jooq.Row3;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganization extends TableImpl<JOrganizationRecord> {
 
-    private static final long serialVersionUID = -239155074;
+    private static final long serialVersionUID = -1585860197;
 
     /**
      * The reference instance of <code>public.organization</code>
@@ -66,6 +66,11 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
      * The column <code>public.organization.name</code>.
      */
     public final TableField<JOrganizationRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.organization.slug</code>.
+     */
+    public final TableField<JOrganizationRecord, String> SLUG = createField(DSL.name("slug"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * Create a <code>public.organization</code> table reference
@@ -107,7 +112,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ORGANIZATION_PKEY);
+        return Arrays.<Index>asList(Indexes.ORGANIZATION_PKEY, Indexes.ORGANIZATION_SLUG_IDX);
     }
 
     @Override
@@ -152,11 +157,11 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row2 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row2<Long, String> fieldsRow() {
-        return (Row2) super.fieldsRow();
+    public Row3<Long, String, String> fieldsRow() {
+        return (Row3) super.fieldsRow();
     }
 }

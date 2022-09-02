@@ -22,7 +22,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row7;
+import org.jooq.Row9;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = 1584335243;
+    private static final long serialVersionUID = 205945708;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -75,11 +75,6 @@ public class JProject extends TableImpl<JProjectRecord> {
     public final TableField<JProjectRecord, String> PROJECT_TYPE = createField(DSL.name("project_type"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.project.organization</code>.
-     */
-    public final TableField<JProjectRecord, String> ORGANIZATION = createField(DSL.name("organization"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
-
-    /**
      * The column <code>public.project.creation_date</code>.
      */
     public final TableField<JProjectRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
@@ -93,6 +88,21 @@ public class JProject extends TableImpl<JProjectRecord> {
      * The column <code>public.project.allocated_storage</code>.
      */
     public final TableField<JProjectRecord, Long> ALLOCATED_STORAGE = createField(DSL.name("allocated_storage"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.project.organization</code>.
+     */
+    public final TableField<JProjectRecord, String> ORGANIZATION = createField(DSL.name("organization"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.project.organization_id</code>.
+     */
+    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.project.key</code>.
+     */
+    public final TableField<JProjectRecord, String> KEY = createField(DSL.name("key"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * Create a <code>public.project</code> table reference
@@ -134,7 +144,7 @@ public class JProject extends TableImpl<JProjectRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PROJECT_NAME_KEY, Indexes.PROJECT_PK);
+        return Arrays.<Index>asList(Indexes.PROJECT_KEY_IDX, Indexes.PROJECT_NAME_KEY, Indexes.PROJECT_ORGANIZATION_KEY_KEY, Indexes.PROJECT_PK);
     }
 
     @Override
@@ -149,7 +159,7 @@ public class JProject extends TableImpl<JProjectRecord> {
 
     @Override
     public List<UniqueKey<JProjectRecord>> getKeys() {
-        return Arrays.<UniqueKey<JProjectRecord>>asList(Keys.PROJECT_PK, Keys.PROJECT_NAME_KEY);
+        return Arrays.<UniqueKey<JProjectRecord>>asList(Keys.PROJECT_PK, Keys.PROJECT_NAME_KEY, Keys.PROJECT_ORGANIZATION_KEY_KEY);
     }
 
     @Override
@@ -179,11 +189,11 @@ public class JProject extends TableImpl<JProjectRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row9 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, String, String, String, Timestamp, JSONB, Long> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row9<Long, String, String, Timestamp, JSONB, Long, String, Long, String> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 }
