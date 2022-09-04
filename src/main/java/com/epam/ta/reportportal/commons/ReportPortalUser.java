@@ -102,20 +102,12 @@ public class ReportPortalUser extends User {
 		@JsonProperty(value = "name")
 		private String projectName;
 
-		@JsonProperty("key")
-		private String projectKey;
-
-		@JsonProperty("organization_id")
-		private Long organizationId;
-
 		@JsonProperty("role")
 		private ProjectRole projectRole;
 
-		public ProjectDetails(Long projectId, String projectName, String projectKey, Long organizationId, ProjectRole projectRole) {
+		public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole) {
 			this.projectId = projectId;
 			this.projectName = projectName;
-			this.projectKey = projectKey;
-			this.organizationId = organizationId;
 			this.projectRole = projectRole;
 		}
 
@@ -131,14 +123,6 @@ public class ReportPortalUser extends User {
 			return projectRole;
 		}
 
-		public String getProjectKey() {
-			return projectKey;
-		}
-
-		public Long getOrganizationId() {
-			return organizationId;
-		}
-
 		public static ProjectDetailsBuilder builder() {
 			return new ProjectDetailsBuilder();
 		}
@@ -146,8 +130,6 @@ public class ReportPortalUser extends User {
 		public static class ProjectDetailsBuilder {
 			private Long projectId;
 			private String projectName;
-			private String projectKey;
-			private Long organizationId;
 			private ProjectRole projectRole;
 
 			private ProjectDetailsBuilder() {
@@ -163,16 +145,6 @@ public class ReportPortalUser extends User {
 				return this;
 			}
 
-			public ProjectDetailsBuilder withProjectKey(String projectKey) {
-				this.projectKey = projectKey;
-				return this;
-			}
-
-			public ProjectDetailsBuilder withOrganizationId(Long organizationId) {
-				this.organizationId = organizationId;
-				return this;
-			}
-
 			public ProjectDetailsBuilder withProjectRole(String projectRole) {
 				this.projectRole = ProjectRole.forName(projectRole)
 						.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
@@ -180,7 +152,7 @@ public class ReportPortalUser extends User {
 			}
 
 			public ProjectDetails build() {
-				return new ProjectDetails(projectId, projectName, projectKey, organizationId, projectRole);
+				return new ProjectDetails(projectId, projectName, projectRole);
 			}
 		}
 	}
