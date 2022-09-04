@@ -22,13 +22,13 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
 	}
 
 	@Override
-	public Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectName(Long userId, String projectName) {
-		return dsl.select(PROJECT_USER.PROJECT_ID, PROJECT_USER.PROJECT_ROLE, PROJECT.NAME)
+	public Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectName) {
+		return dsl.select(PROJECT_USER.PROJECT_ID, PROJECT_USER.PROJECT_ROLE, PROJECT.NAME, PROJECT.KEY, PROJECT.ORGANIZATION_ID)
 				.from(PROJECT_USER)
 				.join(PROJECT)
 				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT_USER.USER_ID.eq(userId))
-				.and(PROJECT.NAME.eq(projectName))
+				.and(PROJECT.KEY.eq(projectName))
 				.fetchOptional(PROJECT_DETAILS_MAPPER);
 	}
 }
