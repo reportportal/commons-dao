@@ -1,1 +1,1 @@
-INSERT INTO organization (id, name, slug) VALUES (1, 'Umbrella', 'umbrella');
+INSERT INTO organization (id, name, slug) VALUES (42, 'Umbrella', 'umbrella');
