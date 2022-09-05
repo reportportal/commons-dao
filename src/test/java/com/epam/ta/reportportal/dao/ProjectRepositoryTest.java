@@ -79,6 +79,16 @@ class ProjectRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	void findByKey() {
+		final String projectKey = "default_personal";
+
+		final Optional<Project> projectOptional = projectRepository.findByKey(projectKey);
+
+		assertTrue(projectOptional.isPresent());
+		assertEquals(projectKey, projectOptional.get().getKey());
+	}
+
+	@Test
 	void existsByName() {
 		assertTrue(projectRepository.existsByName("default_personal"));
 		assertTrue(projectRepository.existsByName("superadmin_personal"));
