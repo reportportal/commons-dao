@@ -183,7 +183,8 @@ public enum FilterTarget {
               PROJECT.ALLOCATED_STORAGE, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
               PROJECT.ORGANIZATION, String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
               String.class).get(),
@@ -220,6 +221,7 @@ public enum FilterTarget {
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(PROJECT.ID,
           PROJECT.NAME,
+					PROJECT.KEY,
           PROJECT.ORGANIZATION,
           PROJECT.PROJECT_TYPE,
           PROJECT.CREATION_DATE,
@@ -265,7 +267,8 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
               String.class).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
@@ -310,7 +313,7 @@ public enum FilterTarget {
           PROJECT.ID,
           PROJECT.CREATION_DATE,
           PROJECT.NAME,
-          PROJECT.PROJECT_TYPE,
+          PROJECT.KEY,PROJECT.PROJECT_TYPE,
           PROJECT.ORGANIZATION
       );
     }
@@ -357,7 +360,10 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.NAME, List.class)
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, List.class)
+					.withAggregateCriteria(DSL.arrayAgg(PROJECT.KEY).toString())
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
           "(" + USERS.METADATA + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
           Long.class
       ).get(),
@@ -383,7 +389,7 @@ public enum FilterTarget {
           USERS.METADATA,
           PROJECT.NAME,
           PROJECT.PROJECT_TYPE,
-          PROJECT_USER.PROJECT_ID,
+          PROJECT.KEY,PROJECT_USER.PROJECT_ID,
           PROJECT_USER.PROJECT_ROLE,
           PROJECT_USER.USER_ID
       );

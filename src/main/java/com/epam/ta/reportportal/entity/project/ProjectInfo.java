@@ -36,7 +36,9 @@ public class ProjectInfo implements Serializable {
 
   private String name;
 
-  private String projectType;
+  private String key;
+
+	private String projectType;
 
   private String organization;
 
@@ -70,7 +72,13 @@ public class ProjectInfo implements Serializable {
     this.name = name;
   }
 
-  public String getProjectType() {
+  public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}public String getProjectType() {
     return projectType;
   }
 
