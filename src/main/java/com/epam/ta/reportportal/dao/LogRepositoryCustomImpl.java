@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
+import com.epam.ta.reportportal.entity.item.NestedItemPage;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -54,11 +55,9 @@ import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.LOG_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.NESTED_ITEM_FETCHER;
-import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.*;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
-import static com.epam.ta.reportportal.jooq.Tables.CLUSTERS;
+import static com.epam.ta.reportportal.jooq.Tables.*;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
@@ -309,7 +308,8 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.stream()
 				.filter(order -> CRITERIA_LOG_TIME.equals(order.getProperty()))
 				.findFirst()
-				.map(order -> order.isAscending() ? field(TIME).sort(SortOrder.ASC) : field(TIME).sort(SortOrder.DESC))
+				.filter(order -> !order.isAscending())
+				.map(order -> field(TIME).sort(SortOrder.DESC))
 				.orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
 		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
@@ -324,6 +324,33 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.limit(pageable.getPageSize())
 				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable)))), pageable, () -> total);
 
+	}
+
+	@Override
+	public List<NestedItemPage> findNestedItemsWithPage(Long parentId, boolean excludeEmptySteps, boolean excludeLogs,
+			Queryable filter, Pageable pageable) {
+
+		SortField<Object> sorting = pageable.getSort()
+				.stream()
+				.filter(order -> CRITERIA_LOG_TIME.equals(order.getProperty()))
+				.findFirst()
+				.filter(order -> !order.isAscending())
+				.map(order -> field(TIME).sort(SortOrder.DESC))
+				.orElseGet(() -> field(TIME).sort(SortOrder.ASC));
+
+		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
+
+		if (!excludeLogs) {
+			selectQuery = selectQuery.unionAll(buildNestedLogQuery(parentId, filter));
+		}
+
+		final Table<Record> itemsWithPages = DSL.table("item_with_pages");
+
+		return NESTED_ITEM_LOCATED_FETCHER.apply(dsl.fetch(dsl.with(itemsWithPages.getName()).as(selectQuery).select(
+				fieldName(itemsWithPages.getName(), ID),
+				fieldName(itemsWithPages.getName(), TYPE),
+				DSL.rowNumber().over(DSL.orderBy(sorting)).minus(1).div(pageable.getPageSize()).plus(1).as(PAGE_NUMBER)
+		).from(itemsWithPages)));
 	}
 
 	@Override
