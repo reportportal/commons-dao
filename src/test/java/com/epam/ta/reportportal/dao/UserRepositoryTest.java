@@ -330,7 +330,7 @@ class UserRepositoryTest extends BaseTest {
 		Project defaultProject = projectRepository.findByName("superadmin_personal").get();
 		Set<ProjectUser> projectUsers = defaultProject.getUsers();
 
-		projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.CUSTOMER).withUser(reg).withProject(defaultProject));
+		projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.MEMBER).withUser(reg).withProject(defaultProject));
 		defaultProject.setUsers(projectUsers);
 
 		userRepository.save(reg);
