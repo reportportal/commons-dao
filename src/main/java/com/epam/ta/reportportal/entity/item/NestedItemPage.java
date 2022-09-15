@@ -7,8 +7,8 @@ public class NestedItemPage extends NestedItem {
 
 	private Integer pageNumber;
 
-	public NestedItemPage(Long id, String type, Integer pageNumber) {
-		super(id, type);
+	public NestedItemPage(Long id, String type, Integer logLevel, Integer pageNumber) {
+		super(id, type, logLevel);
 		this.pageNumber = pageNumber;
 	}
 

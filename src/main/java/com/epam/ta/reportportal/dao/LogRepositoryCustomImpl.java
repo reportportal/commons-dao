@@ -312,7 +312,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.map(order -> field(TIME).sort(SortOrder.DESC))
 				.orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
-		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
+		SelectOrderByStep<Record4<Long, Timestamp, String, Integer>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
 
 		if (!excludeLogs) {
 			selectQuery = selectQuery.unionAll(buildNestedLogQuery(parentId, filter));
@@ -338,7 +338,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.map(order -> field(TIME).sort(SortOrder.DESC))
 				.orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
-		SelectOrderByStep<Record3<Long, Timestamp, String>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
+		SelectOrderByStep<Record4<Long, Timestamp, String, Integer>> selectQuery = buildNestedStepQuery(parentId, excludeEmptySteps, filter);
 
 		if (!excludeLogs) {
 			selectQuery = selectQuery.unionAll(buildNestedLogQuery(parentId, filter));
@@ -407,12 +407,13 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				.and(parentItemTable.ITEM_ID.in(itemIds));
 	}
 
-	private SelectHavingStep<Record3<Long, Timestamp, String>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
+	private SelectHavingStep<Record4<Long, Timestamp, String, Integer>> buildNestedStepQuery(Long parentId, boolean excludeEmptySteps,
 			Queryable filter) {
 
-		SelectConditionStep<Record3<Long, Timestamp, String>> nestedStepSelect = dsl.select(TEST_ITEM.ITEM_ID.as(ID),
+		SelectConditionStep<Record4<Long, Timestamp, String, Integer>> nestedStepSelect = dsl.select(TEST_ITEM.ITEM_ID.as(ID),
 						TEST_ITEM.START_TIME.as(TIME),
-						DSL.val(ITEM).as(TYPE)
+						DSL.val(ITEM).as(TYPE),
+						DSL.val(0).as(LOG_LEVEL)
 				)
 				.from(TEST_ITEM)
 				.join(TEST_ITEM_RESULTS)
@@ -446,7 +447,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return nestedStepSelect.groupBy(TEST_ITEM.ITEM_ID);
 	}
 
-	private SelectOnConditionStep<Record3<Long, Timestamp, String>> buildNestedLogQuery(Long parentId, Queryable filter) {
+	private SelectOnConditionStep<Record4<Long, Timestamp, String, Integer>> buildNestedLogQuery(Long parentId, Queryable filter) {
 
 		Queryable logFilter = filter.getFilterConditions()
 				.stream()
@@ -467,7 +468,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		return dsl.with(LOGS)
 				.as(queryBuilder.addCondition(LOG.ITEM_ID.eq(parentId)).build())
-				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE))
+				.select(LOG.ID.as(ID), LOG.LOG_TIME.as(TIME), DSL.val(LogRepositoryConstants.LOG).as(TYPE), LOG.LOG_LEVEL)
 				.from(LOG)
 				.join(LOGS)
 				.on(fieldName(LOGS, ID).cast(Long.class).eq(LOG.ID));

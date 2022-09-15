@@ -51,6 +51,7 @@ import java.util.function.Function;
 
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.PAGE_NUMBER;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.TYPE;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOG_LEVEL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -305,7 +306,8 @@ public class ResultFetchers {
 		List<NestedItem> nestedItems = Lists.newArrayListWithExpectedSize(result.size());
 		result.forEach(record -> nestedItems.add(new NestedItem(
 				record.get(ID, Long.class),
-				record.get(TYPE, String.class)
+				record.get(TYPE, String.class),
+				record.get(LOG_LEVEL, Integer.class)
 		)));
 		return nestedItems;
 	};
@@ -314,6 +316,7 @@ public class ResultFetchers {
 		List<NestedItemPage> itemWithLocation = Lists.newArrayListWithExpectedSize(result.size());
 		result.forEach(record -> itemWithLocation.add(new NestedItemPage(record.get(ID, Long.class),
 				record.get(TYPE, String.class),
+				record.get(LOG_LEVEL, Integer.class),
 				record.get(PAGE_NUMBER, Integer.class)
 		)));
 		return itemWithLocation;
