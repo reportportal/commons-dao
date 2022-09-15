@@ -349,6 +349,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 		return NESTED_ITEM_LOCATED_FETCHER.apply(dsl.fetch(dsl.with(itemsWithPages.getName()).as(selectQuery).select(
 				fieldName(itemsWithPages.getName(), ID),
 				fieldName(itemsWithPages.getName(), TYPE),
+				fieldName(itemsWithPages.getName(), LOG_LEVEL),
 				DSL.rowNumber().over(DSL.orderBy(sorting)).minus(1).div(pageable.getPageSize()).plus(1).as(PAGE_NUMBER)
 		).from(itemsWithPages)));
 	}
