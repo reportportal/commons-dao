@@ -24,10 +24,8 @@ import java.util.Optional;
  */
 public enum ProjectRole implements Comparable<ProjectRole> {
 
-  OPERATOR(0, "Operator"),
-  CUSTOMER(1, "Customer"),
-  MEMBER(2, "Member"),
-  PROJECT_MANAGER(3, "Project manager");
+	MEMBER(0),
+	PROJECT_MANAGER(1);
 
   private final int roleLevel;
   private final String roleName;
