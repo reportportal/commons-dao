@@ -26,10 +26,6 @@ import org.jooq.Schema;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public enum JProjectRoleEnum implements EnumType {
 
-    OPERATOR("OPERATOR"),
-
-    CUSTOMER("CUSTOMER"),
-
     MEMBER("MEMBER"),
 
     PROJECT_MANAGER("PROJECT_MANAGER");

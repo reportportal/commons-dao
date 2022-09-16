@@ -35,8 +35,6 @@ class ProjectRoleTest {
 	private Map<ProjectRole, List<String>> allowed;
 	private List<String> disallowed;
 
-	private final ProjectRole OPERATOR = ProjectRole.OPERATOR;
-	private final ProjectRole CUSTOMER = ProjectRole.CUSTOMER;
 	private final ProjectRole MEMBER = ProjectRole.MEMBER;
 	private final ProjectRole PROJECT_MANAGER = ProjectRole.PROJECT_MANAGER;
 
@@ -51,27 +49,23 @@ class ProjectRoleTest {
 	void higherThan() {
 		assertFalse(PROJECT_MANAGER.higherThan(PROJECT_MANAGER));
 		assertTrue(PROJECT_MANAGER.higherThan(MEMBER));
-		assertFalse(OPERATOR.higherThan(CUSTOMER));
 	}
 
 	@Test
 	void lowerThan() {
 		assertFalse(PROJECT_MANAGER.lowerThan(PROJECT_MANAGER));
 		assertTrue(MEMBER.lowerThan(PROJECT_MANAGER));
-		assertTrue(CUSTOMER.lowerThan(PROJECT_MANAGER));
 	}
 
 	@Test
 	void sameOrHigherThan() {
 		assertTrue(PROJECT_MANAGER.sameOrHigherThan(PROJECT_MANAGER));
-		assertTrue(MEMBER.sameOrHigherThan(CUSTOMER));
 		assertFalse(MEMBER.sameOrHigherThan(PROJECT_MANAGER));
 	}
 
 	@Test
 	void sameOrLowerThan() {
 		assertTrue(PROJECT_MANAGER.sameOrLowerThan(PROJECT_MANAGER));
-		assertTrue(CUSTOMER.sameOrLowerThan(MEMBER));
 		assertFalse(PROJECT_MANAGER.sameOrLowerThan(MEMBER));
 	}
 
