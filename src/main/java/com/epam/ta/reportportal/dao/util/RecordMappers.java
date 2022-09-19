@@ -461,8 +461,15 @@ public class RecordMappers {
 				// explode attributes from string "key:value:system"
 				String[] attributes = attributeString.split(":", -1);
 				if (attributes.length > 1 && (Strings.isNotEmpty(attributes[0]) || Strings.isNotEmpty(attributes[1]))) {
+					Boolean systemAttribute;
+					//Case when system attribute is retrieved as 't' or 'f'
+					if ("t".equals(attributes[2]) || "f".equals(attributes[2])) {
+						systemAttribute = "t".equals(attributes[2]) ? Boolean.TRUE : Boolean.FALSE;
+					} else {
+						systemAttribute = Boolean.parseBoolean(attributes[2]);
+					}
 					attributeList.add(
-							new ItemAttribute(attributes[0], attributes[1], Boolean.valueOf(attributes[2]))
+							new ItemAttribute(attributes[0], attributes[1], systemAttribute)
 					);
 				}
 			}
