@@ -78,6 +78,8 @@ dependencies {
     compile 'org.jooq:jooq'
     jooqRuntime 'org.postgresql:postgresql:42.2.13'
 
+    compile 'io.minio:minio:6.0.13'
+
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
