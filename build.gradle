@@ -78,8 +78,6 @@ dependencies {
     compile 'org.jooq:jooq'
     jooqRuntime 'org.postgresql:postgresql:42.2.13'
 
-    compile 'io.minio:minio:6.0.13'
-
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
@@ -93,6 +91,8 @@ dependencies {
 
     compile 'io.zonky.test:embedded-postgres:1.2.6'
     compile 'org.flywaydb:flyway-core:6.3.1'
+
+    compile 'org.apache.jclouds.api:s3:2.5.0'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
