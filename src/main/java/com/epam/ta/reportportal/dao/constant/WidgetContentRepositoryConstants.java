@@ -71,7 +71,7 @@ public class WidgetContentRepositoryConstants {
 
 	/*Flaky test table widget constants*/
 	public static final String FLAKY_TABLE_RESULTS = "flaky";
-	public static final Integer FLAKY_CASES_LIMIT = 20;
+	public static final Integer FLAKY_CASES_LIMIT = 50;
 
 	/*Activity table widget constants*/
 	public static final String ACTIVITIES = "activities";
