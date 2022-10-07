@@ -320,9 +320,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
 		int total = dsl.fetchCount(selectQuery);
 
-		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(sorting, field(ID).asc())
-				.limit(pageable.getPageSize())
-				.offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable)))), pageable, () -> total);
+		return PageableExecutionUtils.getPage(NESTED_ITEM_FETCHER.apply(dsl.fetch(selectQuery.orderBy(
+				sorting,
+				field(ID).sort(sorting.getOrder())
+		).limit(pageable.getPageSize()).offset(QueryBuilder.retrieveOffsetAndApplyBoundaries(pageable)))), pageable, () -> total);
 
 	}
 
@@ -350,7 +351,12 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				fieldName(itemsWithPages.getName(), ID),
 				fieldName(itemsWithPages.getName(), TYPE),
 				fieldName(itemsWithPages.getName(), LOG_LEVEL),
-				DSL.rowNumber().over(DSL.orderBy(sorting)).minus(1).div(pageable.getPageSize()).plus(1).as(PAGE_NUMBER)
+				DSL.rowNumber()
+						.over(DSL.orderBy(sorting, field(ID).sort(sorting.getOrder())))
+						.minus(1)
+						.div(pageable.getPageSize())
+						.plus(1)
+						.as(PAGE_NUMBER)
 		).from(itemsWithPages)));
 	}
 
