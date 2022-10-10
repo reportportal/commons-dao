@@ -22,6 +22,8 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,12 +118,11 @@ public class S3DataStore implements DataStore {
 	private Location getLocationFromString(String locationString) {
 		Location location = null;
 		if (locationString != null) {
-			for (Location loc : blobStore.listAssignableLocations()) {
-				if (loc.getId().equals(locationString)) {
-					location = loc;
-					break;
-				}
-			}
+			location = new LocationBuilder()
+					.scope(LocationScope.REGION)
+					.id(locationString)
+					.description("region")
+					.build();
 		}
 		return location;
 	}
