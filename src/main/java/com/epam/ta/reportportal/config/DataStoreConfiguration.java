@@ -46,12 +46,9 @@ public class DataStoreConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
-	public BlobStore blobStore(@Value("${datastore.s3.endpoint}") String endpoint,
-			@Value("${datastore.s3.accessKey}") String accessKey, @Value("${datastore.s3.secretKey}") String secretKey) {
-		BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("s3")
-				.endpoint(endpoint)
+	public BlobStore blobStore(@Value("${datastore.s3.accessKey}") String accessKey, @Value("${datastore.s3.secretKey}") String secretKey) {
+		BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
 				.credentials(accessKey, secretKey)
-				.apiVersion("4")
 				.buildView(BlobStoreContext.class);
 
 		return blobStoreContext.getBlobStore();
@@ -60,8 +57,7 @@ public class DataStoreConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
 	public DataStore s3DataStore(@Autowired BlobStore blobStore, @Value("${datastore.s3.bucketPrefix}") String bucketPrefix,
-			@Value("${datastore.s3.defaultBucketName}") String defaultBucketName,
-			@Value("${datastore.s3.region}") String region) {
+			@Value("${datastore.s3.defaultBucketName}") String defaultBucketName, @Value("${datastore.s3.region}") String region) {
 		return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region);
 	}
 
