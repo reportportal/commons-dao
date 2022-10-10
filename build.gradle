@@ -95,6 +95,7 @@ dependencies {
     compile 'org.flywaydb:flyway-core:6.3.1'
 
     compile 'org.apache.jclouds.api:s3:2.5.0'
+    compile 'org.apache.jclouds.provider:aws-s3:2.5.0'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
