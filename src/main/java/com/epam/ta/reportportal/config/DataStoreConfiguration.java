@@ -23,9 +23,12 @@ import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.s3.S3DataStore;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,7 +50,11 @@ public class DataStoreConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
 	public BlobStore blobStore(@Value("${datastore.s3.accessKey}") String accessKey, @Value("${datastore.s3.secretKey}") String secretKey) {
+		Iterable<Module> modules = ImmutableSet.of(
+				new SLF4JLoggingModule());
+
 		BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
+				.modules(modules)
 				.credentials(accessKey, secretKey)
 				.buildView(BlobStoreContext.class);
 
