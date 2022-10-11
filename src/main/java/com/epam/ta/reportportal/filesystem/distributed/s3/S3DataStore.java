@@ -21,6 +21,7 @@ import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -74,7 +75,7 @@ public class S3DataStore implements DataStore {
 					.contentDisposition(s3File.getFilePath())
 					.contentLength(inputStream.available())
 					.build();
-			blobStore.putBlob(s3File.getBucket(), objectBlob);
+			blobStore.putBlob(s3File.getBucket(), objectBlob, PutOptions.Builder.multipart());
 			return Paths.get(filePath).toString();
 		} catch (IOException e) {
 			LOGGER.error("Unable to save file '{}'", filePath, e);
