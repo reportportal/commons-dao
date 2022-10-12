@@ -75,7 +75,7 @@ public class S3DataStore implements DataStore {
 					.contentDisposition(s3File.getFilePath())
 					.contentLength(inputStream.available())
 					.build();
-			blobStore.putBlob(s3File.getBucket(), objectBlob, PutOptions.Builder.multipart());
+			blobStore.putBlob(s3File.getBucket(), objectBlob);
 			return Paths.get(filePath).toString();
 		} catch (IOException e) {
 			LOGGER.error("Unable to save file '{}'", filePath, e);
