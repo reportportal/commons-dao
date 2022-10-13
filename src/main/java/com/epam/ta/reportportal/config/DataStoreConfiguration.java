@@ -34,7 +34,6 @@ import org.jclouds.aws.s3.config.AWSS3HttpApiModule;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class DataStoreConfiguration {
 	private static class CustomBucketToRegion extends AWSS3HttpApiModule {
 		private final String region;
 
-		public CustomBucketToRegion(String region){
+		public CustomBucketToRegion(String region) {
 			this.region = region;
 		}
 
@@ -131,11 +130,30 @@ public class DataStoreConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+	public BlobStore minioBlobStore(@Value("${datastore.minio.accessKey}") String accessKey,
+			@Value("${datastore.minio.secretKey}") String secretKey, @Value("${datastore.minio.endpoint}") String endpoint) {
+
+		BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("s3")
+				.endpoint(endpoint)
+				.credentials(accessKey, secretKey)
+				.buildView(BlobStoreContext.class);
+
+		return blobStoreContext.getBlobStore();
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+	public DataStore minioDataStore(@Autowired BlobStore blobStore, @Value("${datastore.minio.bucketPrefix}") String bucketPrefix,
+			@Value("${datastore.minio.defaultBucketName}") String defaultBucketName, @Value("${datastore.minio.region}") String region) {
+		return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region);
+	}
+
+	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
-	public BlobStore blobStore(@Value("${datastore.s3.accessKey}") String accessKey, @Value("${datastore.s3.secretKey}") String secretKey,
+	public BlobStore s3BlobStore(@Value("${datastore.s3.accessKey}") String accessKey, @Value("${datastore.s3.secretKey}") String secretKey,
 			@Value("${datastore.s3.region}") String region) {
-		Iterable<Module> modules = ImmutableSet.of(
-				new SLF4JLoggingModule(), new CustomBucketToRegion(region));
+		Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegion(region));
 
 		BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
 				.modules(modules)
