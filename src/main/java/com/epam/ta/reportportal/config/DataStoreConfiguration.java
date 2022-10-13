@@ -50,11 +50,19 @@ import java.util.Set;
 @Configuration
 public class DataStoreConfiguration {
 
+	/**
+	 * Amazon has a general work flow they publish that allows clients to always find the correct URL endpoint for a given bucket:
+	 * 1) ask s3.amazonaws.com for the bucket location
+	 * 2) use the url returned to make the container specific request (get/put, etc)
+	 * Jclouds cache the results from the first getBucketLocation call and use that region-specific URL, as needed.
+	 * In this custom implementation of {@link AWSS3HttpApiModule} we are providing location from environment variable, so that
+	 * we don't need to make getBucketLocation call
+	 */
 	@ConfiguresHttpApi
-	private static class CustomBucketToRegion extends AWSS3HttpApiModule {
+	private static class CustomBucketToRegionModule extends AWSS3HttpApiModule {
 		private final String region;
 
-		public CustomBucketToRegion(String region) {
+		public CustomBucketToRegionModule(String region) {
 			this.region = region;
 		}
 
@@ -68,8 +76,8 @@ public class DataStoreConfiguration {
 					@Override
 					@SuppressWarnings({ "Guava", "NullableProblems" })
 					public Optional<String> load(String bucket) {
-						if (CustomBucketToRegion.this.region != null) {
-							return Optional.of(CustomBucketToRegion.this.region);
+						if (CustomBucketToRegionModule.this.region != null) {
+							return Optional.of(CustomBucketToRegionModule.this.region);
 						}
 						return Optional.absent();
 					}
@@ -88,8 +96,8 @@ public class DataStoreConfiguration {
 					@Override
 					@SuppressWarnings("NullableProblems")
 					public Optional<String> load(String bucket) {
-						if (CustomBucketToRegion.this.region != null) {
-							return Optional.of(CustomBucketToRegion.this.region);
+						if (CustomBucketToRegionModule.this.region != null) {
+							return Optional.of(CustomBucketToRegionModule.this.region);
 						}
 						return onlyRegionOption;
 					}
@@ -104,8 +112,8 @@ public class DataStoreConfiguration {
 					@Override
 					@SuppressWarnings("NullableProblems")
 					public Optional<String> load(String bucket) {
-						if (CustomBucketToRegion.this.region != null) {
-							return Optional.of(CustomBucketToRegion.this.region);
+						if (CustomBucketToRegionModule.this.region != null) {
+							return Optional.of(CustomBucketToRegionModule.this.region);
 						}
 						try {
 							return Optional.fromNullable(client.getBucketLocation(bucket));
@@ -153,7 +161,7 @@ public class DataStoreConfiguration {
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
 	public BlobStore s3BlobStore(@Value("${datastore.s3.accessKey}") String accessKey, @Value("${datastore.s3.secretKey}") String secretKey,
 			@Value("${datastore.s3.region}") String region) {
-		Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegion(region));
+		Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
 
 		BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
 				.modules(modules)
