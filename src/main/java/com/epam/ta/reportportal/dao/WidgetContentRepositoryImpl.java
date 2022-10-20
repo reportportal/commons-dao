@@ -396,14 +396,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 		return dsl.select(LAUNCH.ID,
 				LAUNCH.NUMBER.as(NUMBER),
 				sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_PASSED), STATISTICS.S_COUNTER).otherwise(0)).as(PASSED),
-				sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL), STATISTICS.S_COUNTER).otherwise(0)).as(TOTAL)
+				sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL), STATISTICS.S_COUNTER).otherwise(0)).as(TOTAL),
+				sum(when(STATISTICS_FIELD.NAME.eq(EXECUTIONS_SKIPPED), STATISTICS.S_COUNTER).otherwise(0)).as(SKIPPED)
 		)
 				.from(LAUNCH)
 				.leftJoin(STATISTICS)
 				.on(LAUNCH.ID.eq(STATISTICS.LAUNCH_ID))
 				.leftJoin(STATISTICS_FIELD)
 				.on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-				.and(STATISTICS_FIELD.NAME.in(EXECUTIONS_PASSED, EXECUTIONS_TOTAL))
+				.and(STATISTICS_FIELD.NAME.in(EXECUTIONS_PASSED, EXECUTIONS_TOTAL, EXECUTIONS_SKIPPED))
 				.where(LAUNCH.ID.eq(launchId))
 				.groupBy(LAUNCH.ID)
 				.fetchOneInto(PassingRateStatisticsResult.class);
