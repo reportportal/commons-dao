@@ -34,8 +34,8 @@ public enum LogicalOperator {
 		this.value = value;
 	}
 
-	public static Optional<SendCase> findByName(String name) {
-		return Arrays.stream(SendCase.values()).filter(val -> val.getCaseString().equalsIgnoreCase(name)).findAny();
+	public static Optional<LogicalOperator> findByName(String name) {
+		return Arrays.stream(LogicalOperator.values()).filter(val -> val.getOperator().equalsIgnoreCase(name)).findAny();
 	}
 
 	public static boolean isPresent(String name) {
