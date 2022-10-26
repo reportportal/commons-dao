@@ -44,9 +44,7 @@ public enum JLogicalOperatorEnum implements EnumType {
 
     AND("AND"),
 
-    OR("OR"),
-
-    NOT("NOT");
+    OR("OR");
 
     private final String literal;
 

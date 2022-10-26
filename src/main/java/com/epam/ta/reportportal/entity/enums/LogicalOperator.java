@@ -25,8 +25,7 @@ import java.util.Optional;
 public enum LogicalOperator {
 
 	AND("AND"),
-	OR("OR"),
-	NOT("NOT");
+	OR("OR");
 
 	private final String value;
 

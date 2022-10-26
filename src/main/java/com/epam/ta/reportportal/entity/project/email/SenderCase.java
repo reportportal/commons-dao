@@ -39,9 +39,6 @@ public class SenderCase implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "rule_name", nullable = false, length = 55)
-	private String ruleName;
-
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "recipients", joinColumns = @JoinColumn(name = "sender_case_id"))
 	@Column(name = "recipient")
