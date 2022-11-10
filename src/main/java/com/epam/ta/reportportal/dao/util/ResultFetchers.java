@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.entity.filter.FilterSort;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.NestedItem;
+import com.epam.ta.reportportal.entity.item.NestedItemPage;
 import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -48,6 +49,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.PAGE_NUMBER;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.TYPE;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOG_LEVEL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
 import static com.epam.ta.reportportal.jooq.Tables.*;
@@ -300,8 +304,22 @@ public class ResultFetchers {
 
 	public static final Function<Result<? extends Record>, List<NestedItem>> NESTED_ITEM_FETCHER = result -> {
 		List<NestedItem> nestedItems = Lists.newArrayListWithExpectedSize(result.size());
-		result.forEach(record -> nestedItems.add(new NestedItem(record.get("id", Long.class), record.get("type", String.class))));
+		result.forEach(record -> nestedItems.add(new NestedItem(
+				record.get(ID, Long.class),
+				record.get(TYPE, String.class),
+				record.get(LOG_LEVEL, Integer.class)
+		)));
 		return nestedItems;
+	};
+
+	public static final Function<Result<? extends Record>, List<NestedItemPage>> NESTED_ITEM_LOCATED_FETCHER = result -> {
+		List<NestedItemPage> itemWithLocation = Lists.newArrayListWithExpectedSize(result.size());
+		result.forEach(record -> itemWithLocation.add(new NestedItemPage(record.get(ID, Long.class),
+				record.get(TYPE, String.class),
+				record.get(LOG_LEVEL, Integer.class),
+				record.get(PAGE_NUMBER, Integer.class)
+		)));
+		return itemWithLocation;
 	};
 
 	public static final Function<Result<? extends Record>, ReportPortalUser> REPORTPORTAL_USER_FETCHER = records -> {
