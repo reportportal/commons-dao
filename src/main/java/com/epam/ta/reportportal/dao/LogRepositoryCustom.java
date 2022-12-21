@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
+import com.epam.ta.reportportal.entity.item.NestedItemPage;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -171,6 +172,22 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
 	 * @return {@link Page} with {@link NestedItem} as content
 	 */
 	Page<NestedItem> findNestedItems(Long parentId, boolean excludeEmptySteps, boolean excludeLogs, Queryable filter, Pageable pageable);
+
+	/**
+	 * Retrieve {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities' ids, differentiated by entity type
+	 * <p>
+	 * {@link Log} and {@link com.epam.ta.reportportal.entity.item.TestItem} entities filtered and sorted on the DB level
+	 * and returned as UNION parsed into the {@link NestedItemPage} entity with page where item is located
+	 *
+	 * @param parentId          {@link com.epam.ta.reportportal.entity.item.TestItem#itemId} of the parent item
+	 * @param filter            {@link Queryable}
+	 * @param excludeEmptySteps Exclude steps without content (logs and child items)
+	 * @param excludeLogs       Exclude logs selection
+	 * @param pageable          {@link Pageable}
+	 * @return {@link Page} with {@link NestedItemPage} as content
+	 */
+	List<NestedItemPage> findNestedItemsWithPage(Long parentId, boolean excludeEmptySteps, boolean excludeLogs,
+			Queryable filter, Pageable pageable);
 
 	/**
 	 * Retrieves log message of specified test item with log level greather or equals than {@code level}
