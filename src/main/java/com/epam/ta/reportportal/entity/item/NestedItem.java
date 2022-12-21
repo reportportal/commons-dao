@@ -25,7 +25,8 @@ import java.util.Objects;
 /**
  * Entity for query {@link com.epam.ta.reportportal.dao.LogRepository#findNestedItems(Long, boolean, boolean, Queryable, Pageable)}, consists from
  * either {@link com.epam.ta.reportportal.entity.log.Log#id} or {@link TestItem#itemId} as {@link NestedItem#id}
- * and {@link NestedItem#type} to identify what kind of entity is it.
+ * and {@link NestedItem#type} to identify what kind of entity is it and either {@link com.epam.ta.reportportal.entity.log.Log#logLevel} or
+ * 0 in case if it is an item
  * <p>
  * Required for applying filters and sorting on the db level for different entity types
  *
@@ -37,12 +38,15 @@ public class NestedItem implements Serializable {
 
     private String type;
 
+    private Integer logLevel;
+
     public NestedItem() {
     }
 
-    public NestedItem(Long id, String type) {
+    public NestedItem(Long id, String type, Integer logLevel) {
         this.id = id;
         this.type = type;
+        this.logLevel = logLevel;
     }
 
     public Long getId() {
@@ -61,6 +65,14 @@ public class NestedItem implements Serializable {
         this.type = type;
     }
 
+    public Integer getLogLevel() {
+        return logLevel;
+    }
+
+    public void setLogLevel(Integer logLevel) {
+        this.logLevel = logLevel;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -70,11 +82,11 @@ public class NestedItem implements Serializable {
             return false;
         }
         NestedItem that = (NestedItem) o;
-        return Objects.equals(id, that.id) && Objects.equals(type, that.type);
+        return Objects.equals(id, that.id) && Objects.equals(type, that.type) && Objects.equals(logLevel, that.logLevel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type);
+        return Objects.hash(id, type, logLevel);
     }
 }

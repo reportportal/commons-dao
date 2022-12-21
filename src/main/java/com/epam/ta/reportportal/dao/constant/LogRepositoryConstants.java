@@ -23,7 +23,9 @@ public final class LogRepositoryConstants {
 
 	public static final String DISTINCT_LOGS_TABLE = "logs_table";
 	public static final String ROW_NUMBER = "row_number";
+	public static final String PAGE_NUMBER = "page_number";
 	public static final String TIME = "time";
+	public static final String LOG_LEVEL = "log_level";
 	public static final String ITEM = "item";
 	public static final String LOG = "log";
 	public static final String TYPE = "type";
