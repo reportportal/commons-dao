@@ -21,6 +21,7 @@ plugins {
     id 'java'
     id 'nu.studer.jooq' version '3.0.3'
     id 'org.owasp.dependencycheck' version '5.3.1'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 apply from: 'project-properties.gradle'
@@ -112,6 +113,14 @@ test {
         events = ["failed"]
         exceptionFormat = "short"
     }
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "reportportal_commons-dao"
+    property "sonar.organization", "reportportal"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 checkCommitNeeded.dependsOn removeScripts
