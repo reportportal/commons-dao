@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -51,7 +52,7 @@ public class S3DataStore implements DataStore {
 	public S3DataStore(BlobStore blobStore, String bucketPrefix, String bucketPostfix, String defaultBucketName, String region) {
 		this.blobStore = blobStore;
 		this.bucketPrefix = bucketPrefix;
-		this.bucketPostfix = bucketPostfix;
+		this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
 		this.defaultBucketName = defaultBucketName;
 		this.location = getLocationFromString(region);
 	}
@@ -109,12 +110,13 @@ public class S3DataStore implements DataStore {
 	private S3File getS3File(String filePath) {
 		Path targetPath = Paths.get(filePath);
 		int nameCount = targetPath.getNameCount();
+		String bucketName = "";
 		if (nameCount > 1) {
-			return new S3File(bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix, retrievePath(targetPath, 1, nameCount));
+			bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
 		} else {
-			return new S3File(defaultBucketName, retrievePath(targetPath, 0, 1));
+			bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
 		}
-
+		return new S3File(bucketName, retrievePath(targetPath, 0, 1));
 	}
 
 	private Location getLocationFromString(String locationString) {
