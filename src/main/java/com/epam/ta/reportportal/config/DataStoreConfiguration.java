@@ -175,7 +175,7 @@ public class DataStoreConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
 	public DataStore s3DataStore(@Autowired BlobStore blobStore, @Value("${datastore.s3.bucketPrefix}") String bucketPrefix,
-			@Value("${datastore.s3.bucketPostfix") String bucketPostfix,
+			@Value("${datastore.s3.bucketPostfix}") String bucketPostfix,
 			@Value("${datastore.s3.defaultBucketName}") String defaultBucketName, @Value("${datastore.s3.region}") String region) {
 		return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region);
 	}
