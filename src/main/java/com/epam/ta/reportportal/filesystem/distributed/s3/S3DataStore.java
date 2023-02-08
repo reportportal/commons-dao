@@ -116,7 +116,7 @@ public class S3DataStore implements DataStore {
 		} else {
 			bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
 		}
-		return new S3File(bucketName, retrievePath(targetPath, 0, 1));
+		return new S3File(bucketName, retrievePath(targetPath, 0, nameCount));
 	}
 
 	private Location getLocationFromString(String locationString) {
