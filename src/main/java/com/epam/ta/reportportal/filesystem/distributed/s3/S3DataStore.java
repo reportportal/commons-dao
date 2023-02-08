@@ -44,12 +44,14 @@ public class S3DataStore implements DataStore {
 
 	private final BlobStore blobStore;
 	private final String bucketPrefix;
+	private final String bucketPostfix;
 	private final String defaultBucketName;
 	private final Location location;
 
-	public S3DataStore(BlobStore blobStore, String bucketPrefix, String defaultBucketName, String region) {
+	public S3DataStore(BlobStore blobStore, String bucketPrefix, String bucketPostfix, String defaultBucketName, String region) {
 		this.blobStore = blobStore;
 		this.bucketPrefix = bucketPrefix;
+		this.bucketPostfix = bucketPostfix;
 		this.defaultBucketName = defaultBucketName;
 		this.location = getLocationFromString(region);
 	}
@@ -108,7 +110,7 @@ public class S3DataStore implements DataStore {
 		Path targetPath = Paths.get(filePath);
 		int nameCount = targetPath.getNameCount();
 		if (nameCount > 1) {
-			return new S3File(bucketPrefix + retrievePath(targetPath, 0, 1), retrievePath(targetPath, 1, nameCount));
+			return new S3File(bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix, retrievePath(targetPath, 1, nameCount));
 		} else {
 			return new S3File(defaultBucketName, retrievePath(targetPath, 0, 1));
 		}

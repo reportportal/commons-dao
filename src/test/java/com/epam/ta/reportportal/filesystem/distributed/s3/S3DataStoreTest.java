@@ -34,6 +34,8 @@ class S3DataStoreTest {
 
 	private static final String FILE_PATH = "someFile";
 	private static final String BUCKET_PREFIX = "prj-";
+
+	private static final String BUCKET_POSTFIX = "-postfix";
 	private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
 	private static final String REGION = "us-east-1";
 	private static final int ZERO = 0;
@@ -41,7 +43,7 @@ class S3DataStoreTest {
 	private final BlobStore blobStore = mock(BlobStore.class);
 	private final InputStream inputStream = mock(InputStream.class);
 
-	private final S3DataStore s3DataStore = new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION);
+	private final S3DataStore s3DataStore = new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION);
 
 	@Test
 	void save() throws Exception {
