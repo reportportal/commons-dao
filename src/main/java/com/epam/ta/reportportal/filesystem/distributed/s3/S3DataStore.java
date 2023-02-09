@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.filesystem.distributed.s3;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -27,7 +26,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.domain.Location;
@@ -37,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Implementation of basic operations with blob storages.
+ *
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class S3DataStore implements DataStore {
@@ -50,6 +50,15 @@ public class S3DataStore implements DataStore {
   private final String defaultBucketName;
   private final Location location;
 
+  /**
+   * Creates S3DataStore with given parameters.
+   *
+   * @param blobStore         BlobStore to work with(MiniO, S3, etc.)
+   * @param bucketPrefix      Bucket name prefix
+   * @param bucketPostfix     Bucket name postfix
+   * @param defaultBucketName Default name for the bucket
+   * @param region            AWS region
+   */
   public S3DataStore(BlobStore blobStore, String bucketPrefix, String bucketPostfix,
       String defaultBucketName, String region) {
     this.blobStore = blobStore;
