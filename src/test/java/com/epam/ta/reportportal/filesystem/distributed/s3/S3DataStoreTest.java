@@ -32,60 +32,66 @@ import static org.mockito.Mockito.*;
  */
 class S3DataStoreTest {
 
-	private static final String FILE_PATH = "someFile";
-	private static final String BUCKET_PREFIX = "prj-";
+  private static final String FILE_PATH = "someFile";
+  private static final String BUCKET_PREFIX = "prj-";
 
-	private static final String BUCKET_POSTFIX = "-postfix";
-	private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
-	private static final String REGION = "us-east-1";
-	private static final int ZERO = 0;
+  private static final String BUCKET_POSTFIX = "-postfix";
+  private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
+  private static final String REGION = "us-east-1";
+  private static final int ZERO = 0;
 
-	private final BlobStore blobStore = mock(BlobStore.class);
-	private final InputStream inputStream = mock(InputStream.class);
+  private final BlobStore blobStore = mock(BlobStore.class);
+  private final InputStream inputStream = mock(InputStream.class);
 
-	private final S3DataStore s3DataStore = new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION);
+  private final S3DataStore s3DataStore =
+      new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION);
 
-	@Test
-	void save() throws Exception {
+  @Test
+  void save() throws Exception {
 
-		BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-		BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock = mock(BlobBuilder.PayloadBlobBuilder.class);
-		Blob blobMock = mock(Blob.class);
+    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
+    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
+        mock(BlobBuilder.PayloadBlobBuilder.class);
+    Blob blobMock = mock(Blob.class);
 
-		when(inputStream.available()).thenReturn(ZERO);
-		when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
-		when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
-		when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
-		when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
+    when(inputStream.available()).thenReturn(ZERO);
+    when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
+    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
+    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
+    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
 
-		when(blobStore.containerExists(any(String.class))).thenReturn(true);
-		when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
+    when(blobStore.containerExists(any(String.class))).thenReturn(true);
+    when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
 
-		s3DataStore.save(FILE_PATH, inputStream);
+    s3DataStore.save(FILE_PATH, inputStream);
 
-		verify(blobStore, times(1)).putBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
-	}
+    verify(blobStore, times(1)).putBlob(
+        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
+  }
 
-	@Test
-	void load() throws Exception {
+  @Test
+  void load() throws Exception {
 
-		Blob mockBlob = mock(Blob.class);
-		Payload mockPayload = mock(Payload.class);
+    Blob mockBlob = mock(Blob.class);
+    Payload mockPayload = mock(Payload.class);
 
-		when(mockPayload.openStream()).thenReturn(inputStream);
-		when(mockBlob.getPayload()).thenReturn(mockPayload);
+    when(mockPayload.openStream()).thenReturn(inputStream);
+    when(mockBlob.getPayload()).thenReturn(mockPayload);
 
-		when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH)).thenReturn(mockBlob);
-		InputStream loaded = s3DataStore.load(FILE_PATH);
+    when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX,
+        FILE_PATH
+    )).thenReturn(mockBlob);
+    InputStream loaded = s3DataStore.load(FILE_PATH);
 
-		Assertions.assertEquals(inputStream, loaded);
-	}
+    Assertions.assertEquals(inputStream, loaded);
+  }
 
-	@Test
-	void delete() throws Exception {
+  @Test
+  void delete() throws Exception {
 
-		s3DataStore.delete(FILE_PATH);
+    s3DataStore.delete(FILE_PATH);
 
-		verify(blobStore, times(1)).removeBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
-	}
+    verify(blobStore, times(1)).removeBlob(
+        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
+  }
 }
