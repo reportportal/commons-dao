@@ -44,6 +44,10 @@ public class PassingRateStatisticsResult implements Serializable {
 	@JsonProperty(value = TOTAL)
 	private int total;
 
+	@Column(name = SKIPPED)
+	@JsonProperty(value = SKIPPED)
+	private int skipped;
+
 	public PassingRateStatisticsResult() {
 	}
 
@@ -77,5 +81,13 @@ public class PassingRateStatisticsResult implements Serializable {
 
 	public void setTotal(int total) {
 		this.total = total;
+	}
+
+	public int getSkipped() {
+		return skipped;
+	}
+
+	public void setSkipped(int skipped) {
+		this.skipped = skipped;
 	}
 }

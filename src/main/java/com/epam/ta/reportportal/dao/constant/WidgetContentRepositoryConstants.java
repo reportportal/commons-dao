@@ -36,6 +36,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String STATISTICS_SEPARATOR = "$";
 
 	public static final String TOTAL = "total";
+	public static final String SKIPPED = "skipped";
 	public static final String EXECUTIONS_KEY = "executions";
 	public static final String DEFECTS_KEY = "defects";
 
