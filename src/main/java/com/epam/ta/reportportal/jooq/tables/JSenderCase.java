@@ -15,7 +15,17 @@ import java.util.List;
 
 import javax.annotation.processing.Generated;
 
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row5;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
@@ -33,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JSenderCase extends TableImpl<JSenderCaseRecord> {
 
-    private static final long serialVersionUID = -1483306031;
+    private static final long serialVersionUID = -15193371;
 
     /**
      * The reference instance of <code>public.sender_case</code>

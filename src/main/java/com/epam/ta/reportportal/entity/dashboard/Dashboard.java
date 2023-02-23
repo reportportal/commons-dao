@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.dashboard;
 
-import com.epam.ta.reportportal.entity.ShareableEntity;
+import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -33,7 +33,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Dashboard extends ShareableEntity implements Serializable {
+public class Dashboard extends OwnedEntity implements Serializable {
 
 	@Column(name = "name")
 	private String name;
