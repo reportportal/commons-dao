@@ -196,6 +196,7 @@ public class RecordMappers {
 		log.setLogMessage(result.get(LOG.LOG_MESSAGE, String.class));
 		log.setLastModified(result.get(LOG.LAST_MODIFIED, LocalDateTime.class));
 		log.setLogLevel(result.get(JLog.LOG.LOG_LEVEL, Integer.class));
+		log.setProjectId(result.get(LOG.PROJECT_ID, Long.class));
 		ofNullable(result.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
 		return log;
 	};

@@ -374,6 +374,19 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 	}
 
 	@Override
+	public List<Long> findIdsByLaunchIdAndItemIdAndPathAndLevelGte(Long launchId, Long itemId, String path, Integer level) {
+		return dsl.select(LOG.ID)
+				.from(LOG)
+				.join(TEST_ITEM)
+				.on(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+				.where(LOG.LOG_LEVEL.ge(level)
+						.and(TEST_ITEM.LAUNCH_ID.eq(launchId))
+						.and(TEST_ITEM.ITEM_ID.eq(itemId)
+								.or(TEST_ITEM.HAS_STATS.eq(false).and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
+				.fetch(LOG.ID);
+	}
+
+	@Override
 	public int deleteByProjectId(Long projectId) {
 		return dsl.deleteFrom(LOG).where(LOG.PROJECT_ID.eq(projectId)).execute();
 	}
@@ -390,6 +403,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 				parentItemTable.ITEM_ID.as(ROOT_ITEM_ID),
 				LOG.LAUNCH_ID,
 				LOG.LAST_MODIFIED,
+				LOG.PROJECT_ID,
 				LOG.CLUSTER_ID
 		);
 
