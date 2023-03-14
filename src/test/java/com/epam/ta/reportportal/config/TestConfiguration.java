@@ -34,29 +34,31 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties
 @EnableAutoConfiguration(exclude = QuartzAutoConfiguration.class)
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
-@PropertySource({ "classpath:test-application.properties" })
+@PropertySource({"classpath:test-application.properties"})
 public class TestConfiguration {
 
-	@Bean("attachmentThumbnailator")
-	public Thumbnailator attachmentThumbnailator(@Value("${datastore.thumbnail.attachment.width}") int width,
-			@Value("${datastore.thumbnail.attachment.height}") int height) {
-		return new ThumbnailatorImpl(width, height);
-	}
+  @Bean("attachmentThumbnailator")
+  public Thumbnailator attachmentThumbnailator(
+      @Value("${datastore.thumbnail.attachment.width}") int width,
+      @Value("${datastore.thumbnail.attachment.height}") int height) {
+    return new ThumbnailatorImpl(width, height);
+  }
 
-	@Bean("userPhotoThumbnailator")
-	public Thumbnailator userPhotoThumbnailator(@Value("${datastore.thumbnail.avatar.width}") int width,
-			@Value("${datastore.thumbnail.avatar.height}") int height) {
-		return new ThumbnailatorImpl(width, height);
-	}
+  @Bean("userPhotoThumbnailator")
+  public Thumbnailator userPhotoThumbnailator(
+      @Value("${datastore.thumbnail.avatar.width}") int width,
+      @Value("${datastore.thumbnail.avatar.height}") int height) {
+    return new ThumbnailatorImpl(width, height);
+  }
 
-	@Bean
-	public ContentTypeResolver contentTypeResolver() {
-		return new TikaContentTypeResolver();
-	}
+  @Bean
+  public ContentTypeResolver contentTypeResolver() {
+    return new TikaContentTypeResolver();
+  }
 
-	@Bean
-	public DataEncoder dataEncoder() {
-		return new DataEncoder();
-	}
+  @Bean
+  public DataEncoder dataEncoder() {
+    return new DataEncoder();
+  }
 
 }

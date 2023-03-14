@@ -16,8 +16,13 @@
 
 package com.epam.ta.reportportal.entity.cluster;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -26,63 +31,63 @@ import java.io.Serializable;
 @Table(name = "clusters", schema = "public")
 public class Cluster implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-	@Column(name = "index_id")
-	private Long indexId;
+  @Column(name = "index_id")
+  private Long indexId;
 
-	@Column(name = "project_id")
-	private Long projectId;
+  @Column(name = "project_id")
+  private Long projectId;
 
-	@Column(name = "launch_id")
-	private Long launchId;
+  @Column(name = "launch_id")
+  private Long launchId;
 
-	@Column(name = "message")
-	private String message;
+  @Column(name = "message")
+  private String message;
 
-	public Cluster() {
-	}
+  public Cluster() {
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public Long getIndexId() {
-		return indexId;
-	}
+  public Long getIndexId() {
+    return indexId;
+  }
 
-	public void setIndexId(Long indexId) {
-		this.indexId = indexId;
-	}
+  public void setIndexId(Long indexId) {
+    this.indexId = indexId;
+  }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+  public Long getProjectId() {
+    return projectId;
+  }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+  public void setProjectId(Long projectId) {
+    this.projectId = projectId;
+  }
 
-	public Long getLaunchId() {
-		return launchId;
-	}
+  public Long getLaunchId() {
+    return launchId;
+  }
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
-	}
+  public void setLaunchId(Long launchId) {
+    this.launchId = launchId;
+  }
 
-	public String getMessage() {
-		return message;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+  public void setMessage(String message) {
+    this.message = message;
+  }
 }

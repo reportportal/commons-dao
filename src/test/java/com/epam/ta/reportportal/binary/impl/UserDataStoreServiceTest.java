@@ -16,68 +16,75 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class UserDataStoreServiceTest extends BaseTest {
 
-	@Autowired
-	private UserDataStoreService userDataStoreService;
+  private static Random random = new Random();
+  @Autowired
+  private UserDataStoreService userDataStoreService;
+  @Value("${datastore.default.path:/data/store}")
+  private String storageRootPath;
 
-	@Value("${datastore.default.path:/data/store}")
-	private String storageRootPath;
+  @Test
+  void saveLoadAndDeleteTest() throws IOException {
+    InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-	private static Random random = new Random();
+    String fileId = userDataStoreService.save(random.nextLong() + "meh.jpg", inputStream);
 
-	@Test
-	void saveLoadAndDeleteTest() throws IOException {
-		InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
+    Optional<InputStream> loadedData = userDataStoreService.load(fileId);
 
-		String fileId = userDataStoreService.save(random.nextLong() + "meh.jpg", inputStream);
+    assertTrue(loadedData.isPresent());
+    assertTrue(
+        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
 
-		Optional<InputStream> loadedData = userDataStoreService.load(fileId);
+    userDataStoreService.delete(fileId);
 
-		assertTrue(loadedData.isPresent());
-		assertTrue(Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    ReportPortalException exception = assertThrows(ReportPortalException.class,
+        () -> userDataStoreService.load(fileId));
+    assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
+    assertFalse(
+        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+  }
 
-		userDataStoreService.delete(fileId);
+  @Test
+  void saveLoadAndDeleteThumbnailTest() throws IOException {
+    InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> userDataStoreService.load(fileId));
-		assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-		assertFalse(Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
-	}
+    String thumbnailId = userDataStoreService.saveThumbnail(random.nextLong() + "thmbnail.jpg",
+        inputStream);
 
-	@Test
-	void saveLoadAndDeleteThumbnailTest() throws IOException {
-		InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
+    Optional<InputStream> loadedData = userDataStoreService.load(thumbnailId);
 
-		String thumbnailId = userDataStoreService.saveThumbnail(random.nextLong() + "thmbnail.jpg", inputStream);
+    assertTrue(loadedData.isPresent());
+    assertTrue(Files.exists(
+        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
 
-		Optional<InputStream> loadedData = userDataStoreService.load(thumbnailId);
+    userDataStoreService.delete(thumbnailId);
 
-		assertTrue(loadedData.isPresent());
-		assertTrue(Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
-
-		userDataStoreService.delete(thumbnailId);
-
-		ReportPortalException exception = assertThrows(ReportPortalException.class, () -> userDataStoreService.load(thumbnailId));
-		assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-		assertFalse(Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
-	}
+    ReportPortalException exception = assertThrows(ReportPortalException.class,
+        () -> userDataStoreService.load(thumbnailId));
+    assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
+    assertFalse(Files.exists(
+        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+  }
 }

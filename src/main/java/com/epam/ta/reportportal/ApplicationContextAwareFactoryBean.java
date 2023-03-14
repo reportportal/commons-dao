@@ -25,89 +25,88 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * {@link FactoryBean} with access to {@link ApplicationContext} with lazy
- * initialization
+ * {@link FactoryBean} with access to {@link ApplicationContext} with lazy initialization
  *
  * @param <T> - type of bean
  * @author Andrei Varabyeu
  */
-public abstract class ApplicationContextAwareFactoryBean<T> implements FactoryBean<T>, ApplicationContextAware, InitializingBean {
+public abstract class ApplicationContextAwareFactoryBean<T> implements FactoryBean<T>,
+    ApplicationContextAware, InitializingBean {
 
-	/**
-	 * Application context holder
-	 */
-	private ApplicationContext applicationContext;
+  /**
+   * Application context holder
+   */
+  private ApplicationContext applicationContext;
 
-	/**
-	 * Supplier of bean to be created
-	 */
-	private Supplier<T> beanSupplier;
+  /**
+   * Supplier of bean to be created
+   */
+  private Supplier<T> beanSupplier;
 
-	/**
-	 * Whether is bean to be creates going to be singleton
-	 */
-	private boolean singleton = true;
+  /**
+   * Whether is bean to be creates going to be singleton
+   */
+  private boolean singleton = true;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.context.ApplicationContextAware#setApplicationContext
-	 * (org.springframework.context.ApplicationContext)
-	 */
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.springframework.beans.factory.FactoryBean#getObject()
+   */
+  @Override
+  public T getObject() throws Exception {
+    return beanSupplier.get();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.beans.factory.FactoryBean#getObject()
-	 */
-	@Override
-	public T getObject() throws Exception {
-		return beanSupplier.get();
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+   */
+  @Override
+  public boolean isSingleton() {
+    return this.singleton;
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-	 */
-	@Override
-	public boolean isSingleton() {
-		return this.singleton;
-	}
+  public void setSingleton(boolean singleton) {
+    this.singleton = singleton;
+  }
 
-	public void setSingleton(boolean singleton) {
-		this.singleton = singleton;
-	}
+  /**
+   * Instantiates supplier for bean to be created. This mades possible lazy-initialization
+   */
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    Supplier<T> supplier = this::createInstance;
 
-	/**
-	 * Instantiates supplier for bean to be created. This mades possible
-	 * lazy-initialization
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Supplier<T> supplier = this::createInstance;
+    this.beanSupplier = isSingleton() ? Suppliers.memoize(supplier) : supplier;
+  }
 
-		this.beanSupplier = isSingleton() ? Suppliers.memoize(supplier) : supplier;
-	}
+  protected ApplicationContext getApplicationContext() {
+    return applicationContext;
+  }
 
-	protected ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * org.springframework.context.ApplicationContextAware#setApplicationContext
+   * (org.springframework.context.ApplicationContext)
+   */
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
 
-	/**
-	 * Template method that subclasses must override to construct the object
-	 * returned by this factory.
-	 * <p>
-	 * Invoked on initialization of this FactoryBean in case of a singleton;
-	 * else, on each {@link #getObject()} call.
-	 *
-	 * @return the object returned by this factory
-	 * @see #getObject()
-	 */
-	protected abstract T createInstance();
+  /**
+   * Template method that subclasses must override to construct the object returned by this
+   * factory.
+   * <p>
+   * Invoked on initialization of this FactoryBean in case of a singleton; else, on each
+   * {@link #getObject()} call.
+   *
+   * @return the object returned by this factory
+   * @see #getObject()
+   */
+  protected abstract T createInstance();
 }

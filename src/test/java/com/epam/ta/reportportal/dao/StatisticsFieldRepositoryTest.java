@@ -16,35 +16,33 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 /**
- *
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 @Sql("/db/fill/item/items-fill.sql")
 class StatisticsFieldRepositoryTest extends BaseTest {
 
-	@Autowired
-	private StatisticsFieldRepository repository;
+  @Autowired
+  private StatisticsFieldRepository repository;
 
-	@Test
-	void deleteByName() {
-		final String fieldName = "statistics$executions$failed";
+  @Test
+  void deleteByName() {
+    final String fieldName = "statistics$executions$failed";
 
-		repository.deleteByName(fieldName);
-		final List<StatisticsField> statisticsField = repository.findAll();
+    repository.deleteByName(fieldName);
+    final List<StatisticsField> statisticsField = repository.findAll();
 
-		assertEquals(13, statisticsField.size());
-		statisticsField.forEach(it -> assertNotEquals(fieldName, it.getName()));
-	}
+    assertEquals(13, statisticsField.size());
+    statisticsField.forEach(it -> assertNotEquals(fieldName, it.getName()));
+  }
 }

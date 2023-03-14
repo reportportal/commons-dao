@@ -23,9 +23,9 @@ import java.io.InputStream;
  */
 public interface DataStore {
 
-	String save(String fileName, InputStream inputStream);
+  String save(String fileName, InputStream inputStream);
 
-	InputStream load(String filePath);
+  InputStream load(String filePath);
 
-	void delete(String filePath);
+  void delete(String filePath);
 }

@@ -18,14 +18,17 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author Ivan Budaev
@@ -36,73 +39,73 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 public class UserCreationBid implements Serializable, Modifiable {
 
-	@Id
-	@Column(name = "uuid")
-	private String uuid;
+  @Id
+  @Column(name = "uuid")
+  private String uuid;
 
-	@LastModifiedDate
-	@Column(name = LAST_MODIFIED)
-	private Date lastModified;
+  @LastModifiedDate
+  @Column(name = LAST_MODIFIED)
+  private Date lastModified;
 
-	@Column(name = "email")
-	private String email;
+  @Column(name = "email")
+  private String email;
 
-	@Column(name = "project_name")
-	private String projectName;
+  @Column(name = "project_name")
+  private String projectName;
 
-	@Column(name = "role")
-	private String role;
+  @Column(name = "role")
+  private String role;
 
-	@Type(type = "json")
-	@Column(name = "metadata")
-	private Metadata metadata;
+  @Type(type = "json")
+  @Column(name = "metadata")
+  private Metadata metadata;
 
-	public String getUuid() {
-		return uuid;
-	}
+  public String getUuid() {
+    return uuid;
+  }
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
-	public String getEmail() {
-		return email;
-	}
+  public String getEmail() {
+    return email;
+  }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-	public String getProjectName() {
-		return projectName;
-	}
+  public String getProjectName() {
+    return projectName;
+  }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
 
-	public String getRole() {
-		return role;
-	}
+  public String getRole() {
+    return role;
+  }
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+  public void setRole(String role) {
+    this.role = role;
+  }
 
-	@Override
-	public Date getLastModified() {
-		return lastModified;
-	}
+  @Override
+  public Date getLastModified() {
+    return lastModified;
+  }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
+  }
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 }

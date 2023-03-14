@@ -18,61 +18,61 @@ package com.epam.ta.reportportal.entity.attachment;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Binary data representation. Contains only input stream and data type.
- * Introduced to simplify store/retrieve operations
+ * Binary data representation. Contains only input stream and data type. Introduced to simplify
+ * store/retrieve operations
  *
  * @author Andrei Varabyeu
  */
 public class BinaryData {
 
-	/**
-	 * MIME Type of Binary Data
-	 */
-	private final String contentType;
+  /**
+   * MIME Type of Binary Data
+   */
+  private final String contentType;
 
-	/**
-	 * Data Stream
-	 */
-	private final InputStream inputStream;
+  /**
+   * Data Stream
+   */
+  private final InputStream inputStream;
 
-	/**
-	 * Content length
-	 */
-	private Long length;
+  /**
+   * Content length
+   */
+  private Long length;
 
-	public BinaryData(String contentType, Long length, InputStream inputStream) {
-		this.contentType = contentType;
-		this.length = length;
-		this.inputStream = inputStream;
-	}
+  public BinaryData(String contentType, Long length, InputStream inputStream) {
+    this.contentType = contentType;
+    this.length = length;
+    this.inputStream = inputStream;
+  }
 
-	public BinaryData(MultipartFile multipartFile) {
-		this.contentType = multipartFile.getContentType();
-		this.length = multipartFile.getSize();
+  public BinaryData(MultipartFile multipartFile) {
+    this.contentType = multipartFile.getContentType();
+    this.length = multipartFile.getSize();
 
-		try {
-			this.inputStream = multipartFile.getInputStream();
-		} catch (IOException e) {
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to create binary data from multipart file");
-		}
-	}
+    try {
+      this.inputStream = multipartFile.getInputStream();
+    } catch (IOException e) {
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST,
+          "Unable to create binary data from multipart file");
+    }
+  }
 
-	public String getContentType() {
-		return contentType;
-	}
+  public String getContentType() {
+    return contentType;
+  }
 
-	public InputStream getInputStream() {
-		return inputStream;
-	}
+  public InputStream getInputStream() {
+    return inputStream;
+  }
 
-	public Long getLength() {
-		return length;
-	}
+  public Long getLength() {
+    return length;
+  }
 
 }

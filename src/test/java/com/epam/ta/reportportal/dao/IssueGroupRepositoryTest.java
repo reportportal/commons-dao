@@ -16,31 +16,31 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class IssueGroupRepositoryTest extends BaseTest {
 
-	@Autowired
-	private IssueGroupRepository repository;
+  @Autowired
+  private IssueGroupRepository repository;
 
-	@Test
-	void findByTestItemIssueGroup() {
-		Arrays.stream(TestItemIssueGroup.values()).filter(it -> !it.equals(TestItemIssueGroup.NOT_ISSUE_FLAG)).forEach(it -> {
-			final IssueGroup issueGroup = repository.findByTestItemIssueGroup(it);
-			assertEquals(it, issueGroup.getTestItemIssueGroup(), "Incorrect issue group");
-			assertNotNull(issueGroup.getId(), "Issue group should have id");
-		});
-	}
+  @Test
+  void findByTestItemIssueGroup() {
+    Arrays.stream(TestItemIssueGroup.values())
+        .filter(it -> !it.equals(TestItemIssueGroup.NOT_ISSUE_FLAG)).forEach(it -> {
+          final IssueGroup issueGroup = repository.findByTestItemIssueGroup(it);
+          assertEquals(it, issueGroup.getTestItemIssueGroup(), "Incorrect issue group");
+          assertNotNull(issueGroup.getId(), "Issue group should have id");
+        });
+  }
 }

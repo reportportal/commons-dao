@@ -16,11 +16,16 @@
 
 package com.epam.ta.reportportal.entity.oauth;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * @author Andrei Varabyeu
@@ -29,56 +34,56 @@ import java.util.Objects;
 @Table(name = "oauth_registration_scope", schema = "public")
 public class OAuthRegistrationScope implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-	@Column(name = "scope")
-	private String scope;
+  @Column(name = "scope")
+  private String scope;
 
-	@ManyToOne
-	@JoinColumn(name = "oauth_registration_fk")
-	private OAuthRegistration registration;
+  @ManyToOne
+  @JoinColumn(name = "oauth_registration_fk")
+  private OAuthRegistration registration;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getScope() {
-		return scope;
-	}
+  public String getScope() {
+    return scope;
+  }
 
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
+  public void setScope(String scope) {
+    this.scope = scope;
+  }
 
-	public OAuthRegistration getRegistration() {
-		return registration;
-	}
+  public OAuthRegistration getRegistration() {
+    return registration;
+  }
 
-	public void setRegistration(OAuthRegistration registration) {
-		this.registration = registration;
-	}
+  public void setRegistration(OAuthRegistration registration) {
+    this.registration = registration;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		OAuthRegistrationScope that = (OAuthRegistrationScope) o;
-		return Objects.equals(scope, that.scope);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    OAuthRegistrationScope that = (OAuthRegistrationScope) o;
+    return Objects.equals(scope, that.scope);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(scope);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(scope);
+  }
 }

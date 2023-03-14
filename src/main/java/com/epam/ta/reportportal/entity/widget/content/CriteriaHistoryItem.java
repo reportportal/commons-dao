@@ -16,81 +16,85 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
-import javax.persistence.Column;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUS_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import javax.persistence.Column;
 
 /**
  * @author Ivan Budaev
  */
 public class CriteriaHistoryItem implements Serializable {
 
-	@Column(name = UNIQUE_ID)
-	private String uniqueId;
+  @Column(name = UNIQUE_ID)
+  private String uniqueId;
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	@Column(name = TOTAL)
-	private Long total;
+  @Column(name = TOTAL)
+  private Long total;
 
-	@Column(name = CRITERIA)
-	private Long criteria;
+  @Column(name = CRITERIA)
+  private Long criteria;
 
-	@Column(name = STATUS_HISTORY)
-	private Boolean[] status;
+  @Column(name = STATUS_HISTORY)
+  private Boolean[] status;
 
-	@Column(name = START_TIME_HISTORY)
-	private List<Date> startTime;
+  @Column(name = START_TIME_HISTORY)
+  private List<Date> startTime;
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+  public String getUniqueId() {
+    return uniqueId;
+  }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+  public void setUniqueId(String uniqueId) {
+    this.uniqueId = uniqueId;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Long getTotal() {
-		return total;
-	}
+  public Long getTotal() {
+    return total;
+  }
 
-	public void setTotal(Long total) {
-		this.total = total;
-	}
+  public void setTotal(Long total) {
+    this.total = total;
+  }
 
-	public Long getCriteria() {
-		return criteria;
-	}
+  public Long getCriteria() {
+    return criteria;
+  }
 
-	public void setCriteria(Long criteria) {
-		this.criteria = criteria;
-	}
+  public void setCriteria(Long criteria) {
+    this.criteria = criteria;
+  }
 
-	public Boolean[] getStatus() {
-		return status;
-	}
+  public Boolean[] getStatus() {
+    return status;
+  }
 
-	public void setStatus(Boolean[] status) {
-		this.status = status;
-	}
+  public void setStatus(Boolean[] status) {
+    this.status = status;
+  }
 
-	public List<Date> getStartTime() {
-		return startTime;
-	}
+  public List<Date> getStartTime() {
+    return startTime;
+  }
 
-	public void setStartTime(List<Date> startTime) {
-		this.startTime = startTime;
-	}
+  public void setStartTime(List<Date> startTime) {
+    this.startTime = startTime;
+  }
 }

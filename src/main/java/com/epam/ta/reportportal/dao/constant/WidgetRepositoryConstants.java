@@ -21,13 +21,13 @@ package com.epam.ta.reportportal.dao.constant;
  */
 public final class WidgetRepositoryConstants {
 
-	public static final String DISTINCT_WIDGET_TABLE = "widget_subquery";
-	public static final String ID = "id";
-	public static final String NAME = "name";
-	public static final String DESCRIPTION = "description";
-	public static final String SHARED = "shared";
-	public static final String OWNER = "owner";
-	public static final String SID = "sid";
-	public static final String PROJECT_ID = "project_id";
-	public static final String RETRIES_TABLE = "retries";
+  public static final String DISTINCT_WIDGET_TABLE = "widget_subquery";
+  public static final String ID = "id";
+  public static final String NAME = "name";
+  public static final String DESCRIPTION = "description";
+  public static final String SHARED = "shared";
+  public static final String OWNER = "owner";
+  public static final String SID = "sid";
+  public static final String PROJECT_ID = "project_id";
+  public static final String RETRIES_TABLE = "retries";
 }

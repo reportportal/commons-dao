@@ -7,7 +7,7 @@ import java.util.function.Function;
  */
 public interface WidgetProviderChain<T, R> extends Function<T, R> {
 
-	default int resolvePriority(T input) {
-		return 0;
-	}
+  default int resolvePriority(T input) {
+    return 0;
+  }
 }

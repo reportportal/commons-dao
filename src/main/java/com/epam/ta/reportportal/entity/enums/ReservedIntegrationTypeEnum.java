@@ -8,22 +8,22 @@ import java.util.Optional;
  */
 public enum ReservedIntegrationTypeEnum {
 
-	EMAIL("email"),
-	AD("ad"),
-	LDAP("ldap"),
-	SAML("saml");
+  EMAIL("email"),
+  AD("ad"),
+  LDAP("ldap"),
+  SAML("saml");
 
-	private String name;
+  private String name;
 
-	ReservedIntegrationTypeEnum(String name) {
-		this.name = name;
-	}
+  ReservedIntegrationTypeEnum(String name) {
+    this.name = name;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public static Optional<ReservedIntegrationTypeEnum> fromName(String name) {
+    return Arrays.stream(values()).filter(it -> it.getName().equalsIgnoreCase(name)).findAny();
+  }
 
-	public static Optional<ReservedIntegrationTypeEnum> fromName(String name) {
-		return Arrays.stream(values()).filter(it -> it.getName().equalsIgnoreCase(name)).findAny();
-	}
+  public String getName() {
+    return name;
+  }
 }

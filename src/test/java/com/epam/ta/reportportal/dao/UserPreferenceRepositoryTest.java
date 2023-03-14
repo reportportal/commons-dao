@@ -16,16 +16,18 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.preference.UserPreference;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -33,56 +35,61 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql("/db/fill/shareable/shareable-fill.sql")
 class UserPreferenceRepositoryTest extends BaseTest {
 
-	@Autowired
-	private UserPreferenceRepository repository;
+  @Autowired
+  private UserPreferenceRepository repository;
 
-	@Test
-	void findByProjectIdAndUserId() {
-		final Long adminProjectId = 1L;
-		final Long adminId = 1L;
+  @Test
+  void findByProjectIdAndUserId() {
+    final Long adminProjectId = 1L;
+    final Long adminId = 1L;
 
-		final List<UserPreference> adminPreferences = repository.findByProjectIdAndUserId(adminProjectId, adminId);
+    final List<UserPreference> adminPreferences = repository.findByProjectIdAndUserId(
+        adminProjectId, adminId);
 
-		assertNotNull(adminPreferences);
-		assertTrue(!adminPreferences.isEmpty());
-		adminPreferences.forEach(it -> {
-			assertEquals(adminId, it.getUser().getId());
-			assertEquals(adminProjectId, it.getProject().getId());
-		});
+    assertNotNull(adminPreferences);
+    assertTrue(!adminPreferences.isEmpty());
+    adminPreferences.forEach(it -> {
+      assertEquals(adminId, it.getUser().getId());
+      assertEquals(adminProjectId, it.getProject().getId());
+    });
 
-		final Long defaultId = 2L;
-		final Long defaultProjectId = 2L;
+    final Long defaultId = 2L;
+    final Long defaultProjectId = 2L;
 
-		final List<UserPreference> defaultPreferences = repository.findByProjectIdAndUserId(defaultProjectId, defaultId);
+    final List<UserPreference> defaultPreferences = repository.findByProjectIdAndUserId(
+        defaultProjectId, defaultId);
 
-		assertNotNull(defaultPreferences);
-		assertTrue(!defaultPreferences.isEmpty());
-		defaultPreferences.forEach(it -> {
-			assertEquals(defaultId, it.getUser().getId());
-			assertEquals(defaultProjectId, it.getProject().getId());
-		});
-	}
+    assertNotNull(defaultPreferences);
+    assertTrue(!defaultPreferences.isEmpty());
+    defaultPreferences.forEach(it -> {
+      assertEquals(defaultId, it.getUser().getId());
+      assertEquals(defaultProjectId, it.getProject().getId());
+    });
+  }
 
-	@Test
-	void findByProjectIdAndUserIdAndFilterId() {
-		Optional<UserPreference> userPreference = repository.findByProjectIdAndUserIdAndFilterId(1L, 1L, 1L);
-		assertTrue(userPreference.isPresent());
-	}
+  @Test
+  void findByProjectIdAndUserIdAndFilterId() {
+    Optional<UserPreference> userPreference = repository.findByProjectIdAndUserIdAndFilterId(1L, 1L,
+        1L);
+    assertTrue(userPreference.isPresent());
+  }
 
-	@Test
-	void findByProjectIdAndUserIdAndFilterIdNegative() {
-		Optional<UserPreference> userPreference = repository.findByProjectIdAndUserIdAndFilterId(1L, 1L, 101L);
-		assertFalse(userPreference.isPresent());
-	}
+  @Test
+  void findByProjectIdAndUserIdAndFilterIdNegative() {
+    Optional<UserPreference> userPreference = repository.findByProjectIdAndUserIdAndFilterId(1L, 1L,
+        101L);
+    assertFalse(userPreference.isPresent());
+  }
 
-	@Test
-	void removeByProjectIdAndUserId() {
-		final Long defaultId = 2L;
-		final Long defaultProjectId = 2L;
+  @Test
+  void removeByProjectIdAndUserId() {
+    final Long defaultId = 2L;
+    final Long defaultProjectId = 2L;
 
-		repository.removeByProjectIdAndUserId(defaultProjectId, defaultId);
+    repository.removeByProjectIdAndUserId(defaultProjectId, defaultId);
 
-		final List<UserPreference> defaultPreferences = repository.findByProjectIdAndUserId(defaultProjectId, defaultId);
-		assertTrue(defaultPreferences.isEmpty());
-	}
+    final List<UserPreference> defaultPreferences = repository.findByProjectIdAndUserId(
+        defaultProjectId, defaultId);
+    assertTrue(defaultPreferences.isEmpty());
+  }
 }

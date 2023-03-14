@@ -17,10 +17,10 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
-
 import java.util.List;
 
-public interface IssueEntityRepository extends ReportPortalRepository<IssueEntity, Long>, IssueEntityRepositoryCustom {
+public interface IssueEntityRepository extends ReportPortalRepository<IssueEntity, Long>,
+    IssueEntityRepositoryCustom {
 
-	List<IssueEntity> findAllByIssueTypeId(Long id);
+  List<IssueEntity> findAllByIssueTypeId(Long id);
 }

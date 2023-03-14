@@ -25,41 +25,41 @@ import java.lang.reflect.Field;
  */
 public class AccessibleField {
 
-	private final Field f;
-	private final Object bean;
+  private final Field f;
+  private final Object bean;
 
-	AccessibleField(Object bean, Field f) {
-		this.bean = bean;
-		this.f = f;
-	}
+  AccessibleField(Object bean, Field f) {
+    this.bean = bean;
+    this.f = f;
+  }
 
-	public Class<?> getType() {
-		return this.f.getType();
-	}
+  public Class<?> getType() {
+    return this.f.getType();
+  }
 
-	public void setValue(Object value) {
-		try {
-			this.f.set(this.bean, value);
-		} catch (IllegalAccessException accessException) { //NOSONAR
-			this.f.setAccessible(true);
-			try {
-				this.f.set(this.bean, value);
-			} catch (IllegalAccessException e) { //NOSONAR
-				throw new IllegalAccessError(e.getMessage());
-			}
-		}
-	}
+  public Object getValue() {
+    try {
+      return this.f.get(this.bean);
+    } catch (IllegalAccessException accessException) { //NOSONAR
+      this.f.setAccessible(true);
+      try {
+        return this.f.get(this.bean);
+      } catch (IllegalAccessException e) { //NOSONAR
+        throw new IllegalAccessError(e.getMessage());
+      }
+    }
+  }
 
-	public Object getValue() {
-		try {
-			return this.f.get(this.bean);
-		} catch (IllegalAccessException accessException) { //NOSONAR
-			this.f.setAccessible(true);
-			try {
-				return this.f.get(this.bean);
-			} catch (IllegalAccessException e) { //NOSONAR
-				throw new IllegalAccessError(e.getMessage());
-			}
-		}
-	}
+  public void setValue(Object value) {
+    try {
+      this.f.set(this.bean, value);
+    } catch (IllegalAccessException accessException) { //NOSONAR
+      this.f.setAccessible(true);
+      try {
+        this.f.set(this.bean, value);
+      } catch (IllegalAccessException e) { //NOSONAR
+        throw new IllegalAccessError(e.getMessage());
+      }
+    }
+  }
 }

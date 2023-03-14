@@ -1,1 +1,2 @@
-INSERT INTO attribute(id, name) VALUES (100, 'present');
+INSERT INTO attribute(id, name)
+VALUES (100, 'present');

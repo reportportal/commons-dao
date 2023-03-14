@@ -16,39 +16,40 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.jupiter.api.Test;
-
-import javax.persistence.AttributeConverter;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import java.util.List;
+import java.util.Map;
+import javax.persistence.AttributeConverter;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public abstract class AttributeConverterTest {
 
-	protected AttributeConverter converter;
-	protected Map<Enum, List<String>> allowedValues;
+  protected AttributeConverter converter;
+  protected Map<Enum, List<String>> allowedValues;
 
-	@Test
-	void convertToDatabaseColumn() {
-		convertToColumnTest();
-	}
+  @Test
+  void convertToDatabaseColumn() {
+    convertToColumnTest();
+  }
 
-	@Test
-	void convertToEntityAttribute() {
-		allowedValues.forEach((key, value) -> value.forEach(it -> assertEquals(key, converter.convertToEntityAttribute(it))));
-	}
+  @Test
+  void convertToEntityAttribute() {
+    allowedValues.forEach((key, value) -> value.forEach(
+        it -> assertEquals(key, converter.convertToEntityAttribute(it))));
+  }
 
-	@Test
-	void convertToEntityAttributeFail() {
+  @Test
+  void convertToEntityAttributeFail() {
 
-		assertThrows(ReportPortalException.class, () -> converter.convertToEntityAttribute("wrong parameter"));
-	}
+    assertThrows(ReportPortalException.class,
+        () -> converter.convertToEntityAttribute("wrong parameter"));
+  }
 
-	protected abstract void convertToColumnTest();
+  protected abstract void convertToColumnTest();
 }

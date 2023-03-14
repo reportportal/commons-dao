@@ -16,58 +16,63 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 class IntegrationTypeRepositoryTest extends BaseTest {
 
-	private final static String JIRA_INTEGRATION_TYPE_NAME = "jira";
-	private final static String ACCESS_TYPE_NAME = "public";
-	private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
-	private static final long BTS_INTEGRATIONS_COUNT = 2L;
-	private static final long PUBLIC_INTEGRATIONS_COUNT = 1L;
+  private final static String JIRA_INTEGRATION_TYPE_NAME = "jira";
+  private final static String ACCESS_TYPE_NAME = "public";
+  private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
+  private static final long BTS_INTEGRATIONS_COUNT = 2L;
+  private static final long PUBLIC_INTEGRATIONS_COUNT = 1L;
 
-	@Autowired
-	private IntegrationTypeRepository integrationTypeRepository;
+  @Autowired
+  private IntegrationTypeRepository integrationTypeRepository;
 
-	@Test
-	void shouldFindWhenNameExists() {
-		Optional<IntegrationType> byName = integrationTypeRepository.findByName(JIRA_INTEGRATION_TYPE_NAME);
-		assertTrue(byName.isPresent());
-	}
+  @Test
+  void shouldFindWhenNameExists() {
+    Optional<IntegrationType> byName = integrationTypeRepository.findByName(
+        JIRA_INTEGRATION_TYPE_NAME);
+    assertTrue(byName.isPresent());
+  }
 
-	@Test
-	void shouldFindAllOrderedByCreationDate() {
-		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByOrderByCreationDate();
-		assertNotNull(integrationTypes);
-		assertFalse(integrationTypes.isEmpty());
-	}
+  @Test
+  void shouldFindAllOrderedByCreationDate() {
+    List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByOrderByCreationDate();
+    assertNotNull(integrationTypes);
+    assertFalse(integrationTypes.isEmpty());
+  }
 
-	@Test
-	void shouldFindAllByIntegrationGroup() {
+  @Test
+  void shouldFindAllByIntegrationGroup() {
 
-		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByIntegrationGroup(IntegrationGroupEnum.BTS);
+    List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByIntegrationGroup(
+        IntegrationGroupEnum.BTS);
 
-		assertNotNull(integrationTypes);
-		assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
-	}
+    assertNotNull(integrationTypes);
+    assertEquals(BTS_INTEGRATIONS_COUNT, integrationTypes.size());
+  }
 
-	@Test
-	void shouldFindAllIntegrationTypesByAccessType() {
-		List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByAccessType(ACCESS_TYPE_NAME);
-		assertNotNull(integrationTypes);
-		assertEquals(PUBLIC_INTEGRATIONS_COUNT, integrationTypes.size());
-	}
+  @Test
+  void shouldFindAllIntegrationTypesByAccessType() {
+    List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByAccessType(
+        ACCESS_TYPE_NAME);
+    assertNotNull(integrationTypes);
+    assertEquals(PUBLIC_INTEGRATIONS_COUNT, integrationTypes.size());
+  }
 
 }

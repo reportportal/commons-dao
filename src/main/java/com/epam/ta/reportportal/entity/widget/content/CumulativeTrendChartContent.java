@@ -19,45 +19,44 @@ package com.epam.ta.reportportal.entity.widget.content;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.util.Map;
 import java.util.Set;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
- *
+ * <p>
  * Not a database entity. It is used to represent widget data
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CumulativeTrendChartContent {
 
-	private Set<Long> launchIds = Sets.newHashSet();
+  private Set<Long> launchIds = Sets.newHashSet();
 
-	private Map<String, Integer> statistics = Maps.newHashMap();
+  private Map<String, Integer> statistics = Maps.newHashMap();
 
-	private Set<String> tooltipContent = Sets.newHashSet();
+  private Set<String> tooltipContent = Sets.newHashSet();
 
-	public Set<Long> getLaunchIds() {
-		return launchIds;
-	}
+  public Set<Long> getLaunchIds() {
+    return launchIds;
+  }
 
-	public void setLaunchIds(Set<Long> launchIds) {
-		this.launchIds = launchIds;
-	}
+  public void setLaunchIds(Set<Long> launchIds) {
+    this.launchIds = launchIds;
+  }
 
-	public Map<String, Integer> getStatistics() {
-		return statistics;
-	}
+  public Map<String, Integer> getStatistics() {
+    return statistics;
+  }
 
-	public void setStatistics(Map<String, Integer> statistics) {
-		this.statistics = statistics;
-	}
+  public void setStatistics(Map<String, Integer> statistics) {
+    this.statistics = statistics;
+  }
 
-	public Set<String> getTooltipContent() {
-		return tooltipContent;
-	}
+  public Set<String> getTooltipContent() {
+    return tooltipContent;
+  }
 
-	public void setTooltipContent(Set<String> tooltipContent) {
-		this.tooltipContent = tooltipContent;
-	}
+  public void setTooltipContent(Set<String> tooltipContent) {
+    this.tooltipContent = tooltipContent;
+  }
 }

@@ -5,23 +5,23 @@ package com.epam.ta.reportportal.entity.widget.content.healthcheck;
  */
 public class LevelEntry {
 
-	private final String key;
-	private final String value;
+  private final String key;
+  private final String value;
 
-	private LevelEntry(String key, String value) {
-		this.key = key;
-		this.value = value;
-	}
+  private LevelEntry(String key, String value) {
+    this.key = key;
+    this.value = value;
+  }
 
-	public static LevelEntry of(String key, String value) {
-		return new LevelEntry(key, value);
-	}
+  public static LevelEntry of(String key, String value) {
+    return new LevelEntry(key, value);
+  }
 
-	public String getKey() {
-		return key;
-	}
+  public String getKey() {
+    return key;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 }

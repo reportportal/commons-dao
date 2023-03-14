@@ -16,43 +16,43 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import static org.mockito.Mockito.when;
+
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.util.DateTimeProvider;
+import java.io.File;
+import java.time.LocalDateTime;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.time.LocalDateTime;
-
-import static org.mockito.Mockito.when;
-
 class FilePathGeneratorTest {
 
-	private DateTimeProvider dateTimeProvider;
+  private DateTimeProvider dateTimeProvider;
 
-	@BeforeEach
-	void setUp() {
-		dateTimeProvider = Mockito.mock(DateTimeProvider.class);
-	}
+  @BeforeEach
+  void setUp() {
+    dateTimeProvider = Mockito.mock(DateTimeProvider.class);
+  }
 
-	@Test
-	void generate_different_even_for_same_date() {
+  @Test
+  void generate_different_even_for_same_date() {
 
-		//		given:
-		AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder()
-				.withProjectId(1L)
-				.withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
-				.build();
+    //		given:
+    AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder()
+        .withProjectId(1L)
+        .withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14")
+        .build();
 
-		LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);
-		when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
-		//
+    LocalDateTime date = LocalDateTime.of(2018, 5, 28, 3, 3);
+    when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
+    //
 
-		//		when:
-		String pathOne = new FilePathGenerator(dateTimeProvider).generate(metaInfo);
+    //		when:
+    String pathOne = new FilePathGenerator(dateTimeProvider).generate(metaInfo);
 
-		Assertions.assertThat(pathOne).isEqualTo("1" + File.separator +"2018-5" + File.separator + "271b5881-9a62-4df4-b477-335a96acbe14");
-	}
+    Assertions.assertThat(pathOne).isEqualTo(
+        "1" + File.separator + "2018-5" + File.separator + "271b5881-9a62-4df4-b477-335a96acbe14");
+  }
 }

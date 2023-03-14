@@ -24,11 +24,11 @@ import java.util.Optional;
  */
 public interface DataStoreService {
 
-	String save(String fileName, InputStream data);
+  String save(String fileName, InputStream data);
 
-	String saveThumbnail(String fileName, InputStream data);
+  String saveThumbnail(String fileName, InputStream data);
 
-	void delete(String fileId);
+  void delete(String fileId);
 
-	Optional<InputStream> load(String fileId);
+  Optional<InputStream> load(String fileId);
 }

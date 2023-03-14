@@ -16,10 +16,9 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * List of supported external systems
@@ -28,52 +27,53 @@ import java.util.Optional;
  */
 public enum ExternalSystemType {
 
-	NONE {
-		@Override
-		public String makeUrl(String base, String id) {
-			return null;
-		}
-	},
-	JIRA {
-		@Override
-		public String makeUrl(String base, String id) {
-			return StringUtils.stripEnd(base, "/") + "/browse/" + id;
-		}
-	},
-	TFS {
-		@Override
-		public String makeUrl(String base, String id) {
-			return StringUtils.stripEnd(base, "/") + "/browse/" + id;
-		}
-	},
-	RALLY {
-		@Override
-		public String makeUrl(String base, String id) {
-			return "";
-		}
-	};
+  NONE {
+    @Override
+    public String makeUrl(String base, String id) {
+      return null;
+    }
+  },
+  JIRA {
+    @Override
+    public String makeUrl(String base, String id) {
+      return StringUtils.stripEnd(base, "/") + "/browse/" + id;
+    }
+  },
+  TFS {
+    @Override
+    public String makeUrl(String base, String id) {
+      return StringUtils.stripEnd(base, "/") + "/browse/" + id;
+    }
+  },
+  RALLY {
+    @Override
+    public String makeUrl(String base, String id) {
+      return "";
+    }
+  };
 
-	public static final String ISSUE_MARKER = "#";
+  public static final String ISSUE_MARKER = "#";
 
-	public abstract String makeUrl(String base, String id);
+  ExternalSystemType() {
 
-	ExternalSystemType() {
+  }
 
-	}
+  public static Optional<String> knownIssue(String summary) {
+    if (summary.trim().startsWith(ISSUE_MARKER)) {
+      return Optional.of(StringUtils.substringAfter(summary, ISSUE_MARKER));
+    } else {
+      return Optional.empty();
+    }
+  }
 
-	public static Optional<String> knownIssue(String summary) {
-		if (summary.trim().startsWith(ISSUE_MARKER)) {
-			return Optional.of(StringUtils.substringAfter(summary, ISSUE_MARKER));
-		} else {
-			return Optional.empty();
-		}
-	}
+  public static Optional<ExternalSystemType> findByName(String name) {
+    return Arrays.stream(ExternalSystemType.values())
+        .filter(type -> type.name().equalsIgnoreCase(name)).findAny();
+  }
 
-	public static Optional<ExternalSystemType> findByName(String name) {
-		return Arrays.stream(ExternalSystemType.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
-	}
+  public static boolean isPresent(String name) {
+    return findByName(name).isPresent();
+  }
 
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
+  public abstract String makeUrl(String base, String id);
 }

@@ -26,87 +26,87 @@ import java.time.LocalDateTime;
  */
 public class ProjectInfo implements Serializable {
 
-	public static final String USERS_QUANTITY = "usersQuantity";
-	public static final String LAUNCHES_QUANTITY = "launchesQuantity";
-	public static final String LAST_RUN = "lastRun";
+  public static final String USERS_QUANTITY = "usersQuantity";
+  public static final String LAUNCHES_QUANTITY = "launchesQuantity";
+  public static final String LAST_RUN = "lastRun";
 
-	private Long id;
+  private Long id;
 
-	private LocalDateTime creationDate;
+  private LocalDateTime creationDate;
 
-	private String name;
+  private String name;
 
-	private String projectType;
+  private String projectType;
 
-	private String organization;
+  private String organization;
 
-	private int usersQuantity;
+  private int usersQuantity;
 
-	private int launchesQuantity;
+  private int launchesQuantity;
 
-	private LocalDateTime lastRun;
+  private LocalDateTime lastRun;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+  public LocalDateTime getCreationDate() {
+    return creationDate;
+  }
 
-	public void setCreationDate(LocalDateTime creationDate) {
-		this.creationDate = creationDate;
-	}
+  public void setCreationDate(LocalDateTime creationDate) {
+    this.creationDate = creationDate;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getProjectType() {
-		return projectType;
-	}
+  public String getProjectType() {
+    return projectType;
+  }
 
-	public void setProjectType(String projectType) {
-		this.projectType = projectType;
-	}
+  public void setProjectType(String projectType) {
+    this.projectType = projectType;
+  }
 
-	public String getOrganization() {
-		return organization;
-	}
+  public String getOrganization() {
+    return organization;
+  }
 
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
+  public void setOrganization(String organization) {
+    this.organization = organization;
+  }
 
-	public int getUsersQuantity() {
-		return usersQuantity;
-	}
+  public int getUsersQuantity() {
+    return usersQuantity;
+  }
 
-	public void setUsersQuantity(int usersQuantity) {
-		this.usersQuantity = usersQuantity;
-	}
+  public void setUsersQuantity(int usersQuantity) {
+    this.usersQuantity = usersQuantity;
+  }
 
-	public int getLaunchesQuantity() {
-		return launchesQuantity;
-	}
+  public int getLaunchesQuantity() {
+    return launchesQuantity;
+  }
 
-	public void setLaunchesQuantity(int launchesQuantity) {
-		this.launchesQuantity = launchesQuantity;
-	}
+  public void setLaunchesQuantity(int launchesQuantity) {
+    this.launchesQuantity = launchesQuantity;
+  }
 
-	public LocalDateTime getLastRun() {
-		return lastRun;
-	}
+  public LocalDateTime getLastRun() {
+    return lastRun;
+  }
 
-	public void setLastRun(LocalDateTime lastRun) {
-		this.lastRun = lastRun;
-	}
+  public void setLastRun(LocalDateTime lastRun) {
+    this.lastRun = lastRun;
+  }
 }

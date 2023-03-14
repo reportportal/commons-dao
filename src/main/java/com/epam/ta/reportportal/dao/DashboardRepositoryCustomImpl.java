@@ -16,32 +16,33 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER;
+
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER;
-
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class DashboardRepositoryCustomImpl extends AbstractShareableRepositoryImpl<Dashboard> implements DashboardRepositoryCustom {
+public class DashboardRepositoryCustomImpl extends
+    AbstractShareableRepositoryImpl<Dashboard> implements DashboardRepositoryCustom {
 
-	@Override
-	public Page<Dashboard> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return getPermitted(DASHBOARD_FETCHER, filter, pageable, userName);
-	}
+  @Override
+  public Page<Dashboard> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
+    return getPermitted(DASHBOARD_FETCHER, filter, pageable, userName);
+  }
 
-	@Override
-	public Page<Dashboard> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return getOwn(DASHBOARD_FETCHER, filter, pageable, userName);
-	}
+  @Override
+  public Page<Dashboard> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
+    return getOwn(DASHBOARD_FETCHER, filter, pageable, userName);
+  }
 
-	@Override
-	public Page<Dashboard> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return getShared(DASHBOARD_FETCHER, filter, pageable, userName);
-	}
+  @Override
+  public Page<Dashboard> getShared(ProjectFilter filter, Pageable pageable, String userName) {
+    return getShared(DASHBOARD_FETCHER, filter, pageable, userName);
+  }
 }

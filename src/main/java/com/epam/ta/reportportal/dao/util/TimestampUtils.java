@@ -25,11 +25,11 @@ import java.time.Instant;
  */
 public final class TimestampUtils {
 
-	private TimestampUtils() {
-		//static only
-	}
+  private TimestampUtils() {
+    //static only
+  }
 
-	public static Timestamp getTimestampBackFromNow(Duration period) {
-		return Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
-	}
+  public static Timestamp getTimestampBackFromNow(Duration period) {
+    return Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
+  }
 }
