@@ -382,6 +382,15 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	List<Long> selectIdsByRegexLogMessage(Collection<Long> itemIds, Integer logLevel, String pattern);
 
 	/**
+	 * Select Log IDs which log's level is greater than or equal to provided.
+	 *
+	 * @param itemIds  {@link Collection} of {@link TestItem#getItemId()} which logs should match
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectLogIdsWithLogLevelCondition(Collection<Long> itemIds, Integer logLevel);
+
+	/**
 	 * Select item IDs which descendants' log's level is greater than or equal to provided and log's message match to the REGEX pattern
 	 *
 	 * @param launchId {@link TestItem#getLaunchId()}
@@ -391,6 +400,16 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 	 * @return The {@link List} of the {@link TestItem#getItemId()}
 	 */
 	List<Long> selectIdsUnderByStringLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern);
+
+	/**
+	 * Select Log IDs which descendants' log's level is greater than or equal to provided.
+	 *
+	 * @param launchId {@link TestItem#getLaunchId()}
+	 * @param itemIds  {@link Collection} of {@link TestItem#getItemId()} which logs should match
+	 * @param logLevel {@link Log#getLogLevel()}
+	 * @return The {@link List} of the {@link TestItem#getItemId()}
+	 */
+	List<Long> selectLogIdsUnderWithLogLevelCondition(Long launchId, Collection<Long> itemIds, Integer logLevel);
 
 	/**
 	 * Select item IDs which descendants' log's level is greater than or equal to provided and log's message match to the REGEX pattern
