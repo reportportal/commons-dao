@@ -30,6 +30,7 @@ public class ElasticSearchClient {
     public static final String CREATE_COMMAND = "{\"create\":{ }}\n";
     public static final String ELASTIC_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS";
     public static final Integer MAX_RESULT_REQUEST = 5000;
+    public static final String LOG_MESSAGE_FIELD_NAME = "message";
     protected final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchClient.class);
 
     private final String host;
@@ -124,6 +125,63 @@ public class ElasticSearchClient {
         return logMessageMap;
     }
 
+    public List<Long> searchTestItemIdsByLogIdsAndString(Long projectId, Collection<Long> logIds, String string) {
+        JSONObject filterTerms = new JSONObject();
+        filterTerms.put("id", logIds);
+        List<String> sourceFields = List.of("itemId");
+
+        JSONObject searchJson = getSearchStringJson(string, filterTerms, sourceFields, logIds.size());
+
+        return searchTestItemIdsByConditions(projectId, searchJson);
+    }
+
+    public List<Long> searchTestItemIdsByLogIdsAndRegexp(Long projectId, Collection<Long> logIds, String pattern) {
+        JSONObject filterTerms = new JSONObject();
+        filterTerms.put("id", logIds);
+        List<String> sourceFields = List.of("itemId");
+
+        JSONObject searchJson = getSearchRegexpJson(pattern, filterTerms, sourceFields, logIds.size());
+
+        return searchTestItemIdsByConditions(projectId, searchJson);
+    }
+
+    /**
+     * Search LogIds by logIds and conditions.
+     * LogIds instead of logs was used due to optimization.
+     * @param projectId
+     * @param searchJson
+     * @return
+     */
+    private List<Long> searchTestItemIdsByConditions(Long projectId, JSONObject searchJson) {
+        String indexName = getIndexName(projectId);
+
+        Set<Long> testItemIds = new HashSet<>();
+
+        try {
+            HttpEntity<String> searchRequest = getStringHttpEntity(searchJson.toString());
+
+            LinkedHashMap<String, Object> result = restTemplate.postForObject(host + "/" + indexName + "/_search", searchRequest, LinkedHashMap.class);
+
+            List<LinkedHashMap<String, Object>> hits = (List<LinkedHashMap<String, Object>>)((LinkedHashMap<String, Object>)result.get("hits")).get("hits");
+
+            if (org.apache.commons.collections.CollectionUtils.isNotEmpty(hits)) {
+                for (LinkedHashMap<String, Object> hit : hits) {
+                    Map<String, Object> source = (Map<String, Object>)hit.get("_source");
+                    Long testItemId = ((Integer) source.get("itemId")).longValue();
+                    testItemIds.add(testItemId);
+                }
+
+            }
+
+        } catch (Exception exception) {
+            LOGGER.error("Search error " + indexName
+                    + " SearchJson: " + searchJson
+                    + " Message: " + exception.getMessage());
+        }
+
+        return new ArrayList<>(testItemIds);
+    }
+
     private Map<Long, LogMessage> getLogMessageMapBatch(Long projectId, List<Long> logIds, Integer size) {
         String indexName = getIndexName(projectId);
 
@@ -214,6 +272,47 @@ public class ElasticSearchClient {
 
         JSONObject searchJson = new JSONObject();
         searchJson.put("query", query);
+        searchJson.put("size", size);
+
+        return searchJson;
+    }
+
+
+    private JSONObject getSearchStringJson(String string, JSONObject filterTerms, List<String> sourceFields, Integer size) {
+        JSONObject postFilter = new JSONObject();
+        postFilter.put("terms", filterTerms);
+
+        JSONObject matchPhrase = new JSONObject();
+        matchPhrase.put(LOG_MESSAGE_FIELD_NAME, string);
+
+        JSONObject query = new JSONObject();
+        query.put("match_phrase", matchPhrase);
+
+        JSONObject searchJson = new JSONObject();
+        searchJson.put("_source", sourceFields);
+        searchJson.put("query", query);
+        searchJson.put("post_filter", postFilter);
+        searchJson.put("size", size);
+
+        return searchJson;
+    }
+
+    // Separated from getSearchStringJson, because possibly will be added some
+    // specific configuration for regexp optimization.
+    private JSONObject getSearchRegexpJson(String pattern, JSONObject filterTerms, List<String> sourceFields, Integer size) {
+        JSONObject postFilter = new JSONObject();
+        postFilter.put("terms", filterTerms);
+
+        JSONObject regexp = new JSONObject();
+        regexp.put(LOG_MESSAGE_FIELD_NAME, pattern);
+
+        JSONObject query = new JSONObject();
+        query.put("regexp", regexp);
+
+        JSONObject searchJson = new JSONObject();
+        searchJson.put("_source", sourceFields);
+        searchJson.put("query", query);
+        searchJson.put("post_filter", postFilter);
         searchJson.put("size", size);
 
         return searchJson;

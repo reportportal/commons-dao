@@ -855,6 +855,17 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 	}
 
 	@Override
+	public List<Long> selectLogIdsWithLogLevelCondition(Collection<Long> itemIds, Integer logLevel) {
+		return dsl.selectDistinct(LOG.ID)
+				.from(TEST_ITEM)
+				.join(LOG)
+				.on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+				.fetchInto(Long.class);
+	}
+
+	@Override
 	public List<Long> selectIdsUnderByStringLogMessage(Long launchId, Collection<Long> itemIds, Integer logLevel, String pattern) {
 		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
 
@@ -870,6 +881,23 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.and(LOG.LOG_MESSAGE.like("%" + DSL.escape(pattern, '\\') + "%"))
 				.groupBy(TEST_ITEM.ITEM_ID)
+				.fetchInto(Long.class);
+	}
+
+	@Override
+	public List<Long> selectLogIdsUnderWithLogLevelCondition(Long launchId, Collection<Long> itemIds, Integer logLevel) {
+		final JTestItem child = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+		return dsl.selectDistinct(LOG.ID)
+				.from(TEST_ITEM)
+				.join(child)
+				.on(TEST_ITEM.PATH + " @> " + child.PATH)
+				.and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
+				.join(LOG)
+				.on(child.ITEM_ID.eq(LOG.ITEM_ID))
+				.where(TEST_ITEM.ITEM_ID.in(itemIds))
+				.and(child.LAUNCH_ID.eq(launchId))
+				.and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
 				.fetchInto(Long.class);
 	}
 
