@@ -35,6 +35,7 @@ public final class GeneralCriteriaConstant {
   public static final String CRITERIA_LAUNCH_ID = "launchId";
   public static final String CRITERIA_START_TIME = "startTime";
   public static final String CRITERIA_END_TIME = "endTime";
+
   private GeneralCriteriaConstant() {
     //static only
   }

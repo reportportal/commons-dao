@@ -27,6 +27,7 @@ public final class ProjectCriteriaConstant {
   public static final String CRITERIA_PROJECT_ORGANIZATION = "organization";
   public static final String CRITERIA_PROJECT_CREATION_DATE = "creationDate";
   public static final String CRITERIA_PROJECT_ATTRIBUTE_NAME = "attributeName";
+
   private ProjectCriteriaConstant() {
     //static only
   }

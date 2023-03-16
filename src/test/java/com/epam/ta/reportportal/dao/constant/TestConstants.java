@@ -32,6 +32,7 @@ public final class TestConstants {
   public static final Long GLOBAL_EMAIL_INTEGRATION_ID = 17L;
   public static final Long RALLY_INTEGRATION_ID = 1L;
   public static final Long JIRA_INTEGRATION_ID = 2L;
+
   private TestConstants() {
     //static only
   }

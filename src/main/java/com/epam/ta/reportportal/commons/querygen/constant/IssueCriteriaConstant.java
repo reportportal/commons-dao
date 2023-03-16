@@ -26,6 +26,7 @@ public final class IssueCriteriaConstant {
   public static final String CRITERIA_ISSUE_IGNORE_ANALYZER = "ignoreAnalyzer";
   public static final String CRITERIA_ISSUE_LOCATOR = "locator";
   public static final String CRITERIA_ISSUE_COMMENT = "issueComment";
+
   private IssueCriteriaConstant() {
     //static only
   }

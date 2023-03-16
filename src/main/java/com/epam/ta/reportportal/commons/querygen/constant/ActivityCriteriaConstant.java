@@ -29,6 +29,7 @@ public final class ActivityCriteriaConstant {
   public static final String CRITERIA_ENTITY = "entity";
   public static final String CRITERIA_CREATION_DATE = "creationDate";
   public static final String CRITERIA_OBJECT_NAME = "objectName";
+
   private ActivityCriteriaConstant() {
     //static only
   }
