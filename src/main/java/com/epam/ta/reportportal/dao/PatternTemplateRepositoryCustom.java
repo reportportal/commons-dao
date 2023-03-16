@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItemPojo;
-
 import java.util.List;
 
 /**
@@ -25,5 +24,5 @@ import java.util.List;
  */
 public interface PatternTemplateRepositoryCustom {
 
-	int saveInBatch(List<PatternTemplateTestItemPojo> patternTemplateTestItemPojos);
+  int saveInBatch(List<PatternTemplateTestItemPojo> patternTemplateTestItemPojos);
 }

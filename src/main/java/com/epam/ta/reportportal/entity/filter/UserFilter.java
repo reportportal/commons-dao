@@ -20,12 +20,20 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.ShareableEntity;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.collect.Sets;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * @author Pavel Bortnik
@@ -35,63 +43,63 @@ import java.util.Set;
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 public class UserFilter extends ShareableEntity implements Serializable {
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	@Enumerated(EnumType.STRING)
-	@Type(type = "pqsql_enum")
-	@Column(name = "target")
-	private ObjectType targetClass;
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  @Column(name = "target")
+  private ObjectType targetClass;
 
-	@Column(name = "description")
-	private String description;
+  @Column(name = "description")
+  private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	@JoinColumn(name = "filter_id")
-	private Set<FilterCondition> filterCondition = Sets.newHashSet();
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @JoinColumn(name = "filter_id")
+  private Set<FilterCondition> filterCondition = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	@JoinColumn(name = "filter_id")
-	@OrderBy(value = "id")
-	private Set<FilterSort> filterSorts = Sets.newLinkedHashSet();
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @JoinColumn(name = "filter_id")
+  @OrderBy(value = "id")
+  private Set<FilterSort> filterSorts = Sets.newLinkedHashSet();
 
-	public Set<FilterCondition> getFilterCondition() {
-		return filterCondition;
-	}
+  public Set<FilterCondition> getFilterCondition() {
+    return filterCondition;
+  }
 
-	public void setFilterCondition(Set<FilterCondition> filterCondition) {
-		this.filterCondition = filterCondition;
-	}
+  public void setFilterCondition(Set<FilterCondition> filterCondition) {
+    this.filterCondition = filterCondition;
+  }
 
-	public Set<FilterSort> getFilterSorts() {
-		return filterSorts;
-	}
+  public Set<FilterSort> getFilterSorts() {
+    return filterSorts;
+  }
 
-	public void setFilterSorts(Set<FilterSort> filterSorts) {
-		this.filterSorts = filterSorts;
-	}
+  public void setFilterSorts(Set<FilterSort> filterSorts) {
+    this.filterSorts = filterSorts;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public ObjectType getTargetClass() {
-		return targetClass;
-	}
+  public ObjectType getTargetClass() {
+    return targetClass;
+  }
 
-	public void setTargetClass(ObjectType targetClass) {
-		this.targetClass = targetClass;
-	}
+  public void setTargetClass(ObjectType targetClass) {
+    this.targetClass = targetClass;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }

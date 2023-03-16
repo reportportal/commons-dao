@@ -17,24 +17,23 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.project.Project;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-public interface ProjectRepository extends ReportPortalRepository<Project, Long>, ProjectRepositoryCustom {
+public interface ProjectRepository extends ReportPortalRepository<Project, Long>,
+    ProjectRepositoryCustom {
 
-	Optional<Project> findByName(String name);
+  Optional<Project> findByName(String name);
 
-	boolean existsByName(String name);
+  boolean existsByName(String name);
 
-	@Query(value = "SELECT p.* FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login", nativeQuery = true)
-	List<Project> findUserProjects(@Param("login") String login);
+  @Query(value = "SELECT p.* FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login", nativeQuery = true)
+  List<Project> findUserProjects(@Param("login") String login);
 
-	@Query(value = "SELECT * FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login AND p.project_type = :projectType", nativeQuery = true)
-	List<Project> findUserProjects(@Param("login") String login, @Param("projectType") String projectType);
+  @Query(value = "SELECT * FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login AND p.project_type = :projectType", nativeQuery = true)
+  List<Project> findUserProjects(@Param("login") String login,
+      @Param("projectType") String projectType);
 
 }

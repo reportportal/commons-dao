@@ -32,16 +32,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateLogAttachmentService {
 
-	private final LogRepository logRepository;
+  private final LogRepository logRepository;
 
-	@Autowired
-	public CreateLogAttachmentService(LogRepository logRepository) {
-		this.logRepository = logRepository;
-	}
+  @Autowired
+  public CreateLogAttachmentService(LogRepository logRepository) {
+    this.logRepository = logRepository;
+  }
 
-	public void create(Attachment attachment, Long logId) {
-		Log log = logRepository.findById(logId).orElseThrow(() -> new ReportPortalException(ErrorType.LOG_NOT_FOUND, logId));
-		log.setAttachment(attachment);
-		logRepository.save(log);
-	}
+  public void create(Attachment attachment, Long logId) {
+    Log log = logRepository.findById(logId)
+        .orElseThrow(() -> new ReportPortalException(ErrorType.LOG_NOT_FOUND, logId));
+    log.setAttachment(attachment);
+    logRepository.save(log);
+  }
 }

@@ -18,97 +18,99 @@ package com.epam.ta.reportportal.commons;
 
 public class BinaryDataMetaInfo {
 
-	private String fileId;
+  private String fileId;
 
-	private String thumbnailFileId;
+  private String thumbnailFileId;
 
-	private String contentType;
+  private String contentType;
 
-	private long fileSize;
+  private long fileSize;
 
-	public BinaryDataMetaInfo() {
-	}
+  public BinaryDataMetaInfo() {
+  }
 
-	/**
-	 * Object to hold information about saved file.
-	 *
-	 * @param fileId
-	 * @param thumbnailFileId
-	 */
-	public BinaryDataMetaInfo(String fileId, String thumbnailFileId, String contentType, long fileSize) {
-		this.fileId = fileId;
-		this.thumbnailFileId = thumbnailFileId;
-		this.contentType = contentType;
-		this.fileSize = fileSize;
-	}
+  /**
+   * Object to hold information about saved file.
+   *
+   * @param fileId
+   * @param thumbnailFileId
+   */
+  public BinaryDataMetaInfo(String fileId, String thumbnailFileId, String contentType,
+      long fileSize) {
+    this.fileId = fileId;
+    this.thumbnailFileId = thumbnailFileId;
+    this.contentType = contentType;
+    this.fileSize = fileSize;
+  }
 
-	public String getFileId() {
-		return fileId;
-	}
+  public String getFileId() {
+    return fileId;
+  }
 
-	public String getThumbnailFileId() {
-		return thumbnailFileId;
-	}
+  public void setFileId(String fileId) {
+    this.fileId = fileId;
+  }
 
-	public String getContentType() {
-		return contentType;
-	}
+  public String getThumbnailFileId() {
+    return thumbnailFileId;
+  }
 
-	public long getFileSize() {
-		return fileSize;
-	}
+  public void setThumbnailFileId(String thumbnailFileId) {
+    this.thumbnailFileId = thumbnailFileId;
+  }
 
-	public void setFileId(String fileId) {
-		this.fileId = fileId;
-	}
+  public String getContentType() {
+    return contentType;
+  }
 
-	public void setThumbnailFileId(String thumbnailFileId) {
-		this.thumbnailFileId = thumbnailFileId;
-	}
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+  public long getFileSize() {
+    return fileSize;
+  }
 
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
+  public void setFileSize(long fileSize) {
+    this.fileSize = fileSize;
+  }
 
-	public static final class BinaryDataMetaInfoBuilder {
-		private String fileId;
-		private String thumbnailFileId;
-		private String contentType;
-		private long fileSize;
+  public static final class BinaryDataMetaInfoBuilder {
 
-		private BinaryDataMetaInfoBuilder() {
-		}
+    private String fileId;
+    private String thumbnailFileId;
+    private String contentType;
+    private long fileSize;
 
-		public static BinaryDataMetaInfoBuilder aBinaryDataMetaInfo() {
-			return new BinaryDataMetaInfoBuilder();
-		}
+    private BinaryDataMetaInfoBuilder() {
+    }
 
-		public BinaryDataMetaInfoBuilder withFileId(String fileId) {
-			this.fileId = fileId;
-			return this;
-		}
+    public static BinaryDataMetaInfoBuilder aBinaryDataMetaInfo() {
+      return new BinaryDataMetaInfoBuilder();
+    }
 
-		public BinaryDataMetaInfoBuilder withThumbnailFileId(String thumbnailFileId) {
-			this.thumbnailFileId = thumbnailFileId;
-			return this;
-		}
+    public BinaryDataMetaInfoBuilder withFileId(String fileId) {
+      this.fileId = fileId;
+      return this;
+    }
 
-		public BinaryDataMetaInfoBuilder withContentType(String contentType) {
-			this.contentType = contentType;
-			return this;
-		}
+    public BinaryDataMetaInfoBuilder withThumbnailFileId(String thumbnailFileId) {
+      this.thumbnailFileId = thumbnailFileId;
+      return this;
+    }
 
-		public BinaryDataMetaInfoBuilder withFileSize(long fileSize) {
-			this.fileSize = fileSize;
-			return this;
-		}
+    public BinaryDataMetaInfoBuilder withContentType(String contentType) {
+      this.contentType = contentType;
+      return this;
+    }
 
-		public BinaryDataMetaInfo build() {
-			return new BinaryDataMetaInfo(fileId, thumbnailFileId, contentType, fileSize);
-		}
-	}
+    public BinaryDataMetaInfoBuilder withFileSize(long fileSize) {
+      this.fileSize = fileSize;
+      return this;
+    }
+
+    public BinaryDataMetaInfo build() {
+      return new BinaryDataMetaInfo(fileId, thumbnailFileId, contentType, fileSize);
+    }
+  }
 }

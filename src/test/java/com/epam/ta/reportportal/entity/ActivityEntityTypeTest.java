@@ -16,42 +16,45 @@
 
 package com.epam.ta.reportportal.entity;
 
-import com.epam.ta.reportportal.entity.activity.Activity;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.epam.ta.reportportal.entity.activity.Activity;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class ActivityEntityTypeTest {
 
-	private Map<Activity.ActivityEntityType, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<Activity.ActivityEntityType, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		allowed = Arrays.stream(Activity.ActivityEntityType.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
-				));
-		disallowed = Arrays.asList("noSuchMode", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    allowed = Arrays.stream(Activity.ActivityEntityType.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(),
+                it.getValue().toLowerCase())
+        ));
+    disallowed = Arrays.asList("noSuchMode", "", " ", null);
+  }
 
-	@Test
-	void fromStringTest() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<Activity.ActivityEntityType> optional = Activity.ActivityEntityType.fromString(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(Activity.ActivityEntityType.fromString(it).isPresent()));
-	}
+  @Test
+  void fromStringTest() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<Activity.ActivityEntityType> optional = Activity.ActivityEntityType.fromString(
+          val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(Activity.ActivityEntityType.fromString(it).isPresent()));
+  }
 }

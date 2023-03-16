@@ -20,14 +20,23 @@ import com.epam.ta.reportportal.entity.ShareableEntity;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Sets;
+import java.io.Serializable;
+import java.util.Set;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -37,97 +46,97 @@ import java.util.Set;
 @TypeDef(name = "widgetOptions", typeClass = WidgetOptions.class)
 public class Widget extends ShareableEntity implements Serializable {
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	@Column(name = "description")
-	private String description;
+  @Column(name = "description")
+  private String description;
 
-	@Column(name = "widget_type")
-	private String widgetType;
+  @Column(name = "widget_type")
+  private String widgetType;
 
-	@Column(name = "items_count")
-	private int itemsCount;
+  @Column(name = "items_count")
+  private int itemsCount;
 
-	@ManyToMany
-	@JoinTable(name = "widget_filter", joinColumns = @JoinColumn(name = "widget_id"), inverseJoinColumns = @JoinColumn(name = "filter_id"))
-	private Set<UserFilter> filters;
+  @ManyToMany
+  @JoinTable(name = "widget_filter", joinColumns = @JoinColumn(name = "widget_id"), inverseJoinColumns = @JoinColumn(name = "filter_id"))
+  private Set<UserFilter> filters;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
-	@Column(name = "field")
-	@OrderBy(value = "id")
-	private Set<String> contentFields = Sets.newLinkedHashSet();
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "content_field", joinColumns = @JoinColumn(name = "id"))
+  @Column(name = "field")
+  @OrderBy(value = "id")
+  private Set<String> contentFields = Sets.newLinkedHashSet();
 
-	@Type(type = "widgetOptions")
-	@Column(name = "widget_options")
-	private WidgetOptions widgetOptions;
+  @Type(type = "widgetOptions")
+  @Column(name = "widget_options")
+  private WidgetOptions widgetOptions;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "widget")
-	@Fetch(value = FetchMode.JOIN)
-	private Set<DashboardWidget> dashboardWidgets = Sets.newHashSet();
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "widget")
+  @Fetch(value = FetchMode.JOIN)
+  private Set<DashboardWidget> dashboardWidgets = Sets.newHashSet();
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public String getWidgetType() {
-		return widgetType;
-	}
+  public String getWidgetType() {
+    return widgetType;
+  }
 
-	public void setWidgetType(String widgetType) {
-		this.widgetType = widgetType;
-	}
+  public void setWidgetType(String widgetType) {
+    this.widgetType = widgetType;
+  }
 
-	public int getItemsCount() {
-		return itemsCount;
-	}
+  public int getItemsCount() {
+    return itemsCount;
+  }
 
-	public void setItemsCount(int itemsCount) {
-		this.itemsCount = itemsCount;
-	}
+  public void setItemsCount(int itemsCount) {
+    this.itemsCount = itemsCount;
+  }
 
-	public Set<String> getContentFields() {
-		return contentFields;
-	}
+  public Set<String> getContentFields() {
+    return contentFields;
+  }
 
-	public void setContentFields(Set<String> contentFields) {
-		this.contentFields = contentFields;
-	}
+  public void setContentFields(Set<String> contentFields) {
+    this.contentFields = contentFields;
+  }
 
-	public WidgetOptions getWidgetOptions() {
-		return widgetOptions;
-	}
+  public WidgetOptions getWidgetOptions() {
+    return widgetOptions;
+  }
 
-	public void setWidgetOptions(WidgetOptions widgetOptions) {
-		this.widgetOptions = widgetOptions;
-	}
+  public void setWidgetOptions(WidgetOptions widgetOptions) {
+    this.widgetOptions = widgetOptions;
+  }
 
-	public Set<DashboardWidget> getDashboardWidgets() {
-		return dashboardWidgets;
-	}
+  public Set<DashboardWidget> getDashboardWidgets() {
+    return dashboardWidgets;
+  }
 
-	public void setDashboardWidgets(Set<DashboardWidget> dashboardWidgets) {
-		this.dashboardWidgets = dashboardWidgets;
-	}
+  public void setDashboardWidgets(Set<DashboardWidget> dashboardWidgets) {
+    this.dashboardWidgets = dashboardWidgets;
+  }
 
-	public Set<UserFilter> getFilters() {
-		return filters;
-	}
+  public Set<UserFilter> getFilters() {
+    return filters;
+  }
 
-	public void setFilters(Set<UserFilter> filters) {
-		this.filters = filters;
-	}
+  public void setFilters(Set<UserFilter> filters) {
+    this.filters = filters;
+  }
 }

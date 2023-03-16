@@ -16,33 +16,34 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
+
 import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
-
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class UserFilterRepositoryCustomImpl extends AbstractShareableRepositoryImpl<UserFilter> implements UserFilterRepositoryCustom {
+public class UserFilterRepositoryCustomImpl extends
+    AbstractShareableRepositoryImpl<UserFilter> implements UserFilterRepositoryCustom {
 
-	@Override
-	public Page<UserFilter> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return getPermitted(USER_FILTER_FETCHER, filter, pageable, userName);
-	}
+  @Override
+  public Page<UserFilter> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
+    return getPermitted(USER_FILTER_FETCHER, filter, pageable, userName);
+  }
 
-	@Override
-	public Page<UserFilter> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return getOwn(USER_FILTER_FETCHER, filter, pageable, userName);
-	}
+  @Override
+  public Page<UserFilter> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
+    return getOwn(USER_FILTER_FETCHER, filter, pageable, userName);
+  }
 
-	@Override
-	public Page<UserFilter> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return getShared(USER_FILTER_FETCHER, filter, pageable, userName);
-	}
+  @Override
+  public Page<UserFilter> getShared(ProjectFilter filter, Pageable pageable, String userName) {
+    return getShared(USER_FILTER_FETCHER, filter, pageable, userName);
+  }
 
 }

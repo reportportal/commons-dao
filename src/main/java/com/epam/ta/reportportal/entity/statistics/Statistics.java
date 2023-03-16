@@ -16,9 +16,18 @@
 
 package com.epam.ta.reportportal.entity.statistics;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * @author Ivan Budayeu
@@ -27,93 +36,94 @@ import java.util.Objects;
 @Table(name = "statistics")
 public class Statistics implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "s_id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "s_id")
+  private Long id;
 
-	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@JoinColumn(name = "statistics_field_id")
-	private StatisticsField statisticsField;
+  @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+  @JoinColumn(name = "statistics_field_id")
+  private StatisticsField statisticsField;
 
-	@Column(name = "s_counter")
-	private int counter;
+  @Column(name = "s_counter")
+  private int counter;
 
-	@Column(name = "launch_id")
-	private Long launchId;
+  @Column(name = "launch_id")
+  private Long launchId;
 
-	@Column(name = "item_id")
-	private Long itemId;
+  @Column(name = "item_id")
+  private Long itemId;
 
-	public Statistics() {
-	}
+  public Statistics() {
+  }
 
-	public Statistics(StatisticsField statisticsField, int counter) {
-		this.statisticsField = statisticsField;
-		this.counter = counter;
-	}
+  public Statistics(StatisticsField statisticsField, int counter) {
+    this.statisticsField = statisticsField;
+    this.counter = counter;
+  }
 
-	public Statistics(StatisticsField statisticsField, int counter, Long launchId) {
-		this.statisticsField = statisticsField;
-		this.counter = counter;
-		this.launchId = launchId;
-	}
+  public Statistics(StatisticsField statisticsField, int counter, Long launchId) {
+    this.statisticsField = statisticsField;
+    this.counter = counter;
+    this.launchId = launchId;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public StatisticsField getStatisticsField() {
-		return statisticsField;
-	}
+  public StatisticsField getStatisticsField() {
+    return statisticsField;
+  }
 
-	public void setStatisticsField(StatisticsField statisticsField) {
-		this.statisticsField = statisticsField;
-	}
+  public void setStatisticsField(StatisticsField statisticsField) {
+    this.statisticsField = statisticsField;
+  }
 
-	public int getCounter() {
-		return counter;
-	}
+  public int getCounter() {
+    return counter;
+  }
 
-	public void setCounter(int counter) {
-		this.counter = counter;
-	}
+  public void setCounter(int counter) {
+    this.counter = counter;
+  }
 
-	public Long getLaunchId() {
-		return launchId;
-	}
+  public Long getLaunchId() {
+    return launchId;
+  }
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
-	}
+  public void setLaunchId(Long launchId) {
+    this.launchId = launchId;
+  }
 
-	public Long getItemId() {
-		return itemId;
-	}
+  public Long getItemId() {
+    return itemId;
+  }
 
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
-	}
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Statistics that = (Statistics) o;
-		return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(statisticsField, that.statisticsField)
-				&& Objects.equals(launchId, that.launchId) && Objects.equals(itemId, that.itemId);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Statistics that = (Statistics) o;
+    return counter == that.counter && Objects.equals(id, that.id) && Objects.equals(statisticsField,
+        that.statisticsField)
+        && Objects.equals(launchId, that.launchId) && Objects.equals(itemId, that.itemId);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, statisticsField, counter, launchId, itemId);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, statisticsField, counter, launchId, itemId);
+  }
 }

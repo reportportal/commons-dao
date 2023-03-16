@@ -29,40 +29,41 @@ import org.jooq.impl.DSL;
  */
 public class ShareableUtils {
 
-	private ShareableUtils() {
-		//static only
-	}
+  private ShareableUtils() {
+    //static only
+  }
 
-	/**
-	 * Condition that retrieves entities only shared entities.
-	 *
-	 * @param userName Username
-	 * @return Condition for shared entities
-	 */
-	public static Condition sharedCondition(String userName) {
-		return permittedCondition(userName).and(JShareableEntity.SHAREABLE_ENTITY.SHARED);
-	}
+  /**
+   * Condition that retrieves entities only shared entities.
+   *
+   * @param userName Username
+   * @return Condition for shared entities
+   */
+  public static Condition sharedCondition(String userName) {
+    return permittedCondition(userName).and(JShareableEntity.SHAREABLE_ENTITY.SHARED);
+  }
 
-	/**
-	 * Condition that retrieves entities permitted (shared + own) entities.
-	 *
-	 * @param userName Username
-	 * @return Condition for permitted entities
-	 */
-	public static Condition permittedCondition(String userName) {
-		return JAclEntry.ACL_ENTRY.SID.in(DSL.select(JAclSid.ACL_SID.ID).from(JAclSid.ACL_SID).where(JAclSid.ACL_SID.SID.eq(userName)));
-	}
+  /**
+   * Condition that retrieves entities permitted (shared + own) entities.
+   *
+   * @param userName Username
+   * @return Condition for permitted entities
+   */
+  public static Condition permittedCondition(String userName) {
+    return JAclEntry.ACL_ENTRY.SID.in(DSL.select(JAclSid.ACL_SID.ID).from(JAclSid.ACL_SID)
+        .where(JAclSid.ACL_SID.SID.eq(userName)));
+  }
 
-	/**
-	 * Condition that retrieves entities of {@link FilterTarget} class only own entities.
-	 *
-	 * @param userName Username
-	 * @return Condition for own entities
-	 */
-	public static Condition ownCondition(String userName) {
-		return JAclObjectIdentity.ACL_OBJECT_IDENTITY.OWNER_SID.in(DSL.select(JAclSid.ACL_SID.ID)
-				.from(JAclSid.ACL_SID)
-				.where(JAclSid.ACL_SID.SID.eq(userName)));
-	}
+  /**
+   * Condition that retrieves entities of {@link FilterTarget} class only own entities.
+   *
+   * @param userName Username
+   * @return Condition for own entities
+   */
+  public static Condition ownCondition(String userName) {
+    return JAclObjectIdentity.ACL_OBJECT_IDENTITY.OWNER_SID.in(DSL.select(JAclSid.ACL_SID.ID)
+        .from(JAclSid.ACL_SID)
+        .where(JAclSid.ACL_SID.SID.eq(userName)));
+  }
 
 }

@@ -18,9 +18,6 @@ package com.epam.ta.reportportal.filesystem;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -28,70 +25,72 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Dzianis_Shybeka
  */
 public class LocalDataStore implements DataStore {
 
-	private static final Logger logger = LoggerFactory.getLogger(LocalDataStore.class);
+  private static final Logger logger = LoggerFactory.getLogger(LocalDataStore.class);
 
-	private final String storageRootPath;
+  private final String storageRootPath;
 
-	public LocalDataStore(String storageRootPath) {
-		this.storageRootPath = storageRootPath;
-	}
+  public LocalDataStore(String storageRootPath) {
+    this.storageRootPath = storageRootPath;
+  }
 
-	@Override
-	public String save(String filePath, InputStream inputStream) {
+  @Override
+  public String save(String filePath, InputStream inputStream) {
 
-		try {
+    try {
 
-			Path targetPath = Paths.get(storageRootPath, filePath);
-			Path targetDirectory = targetPath.getParent();
+      Path targetPath = Paths.get(storageRootPath, filePath);
+      Path targetDirectory = targetPath.getParent();
 
-			if (Objects.nonNull(targetDirectory) && !Files.isDirectory(targetDirectory)) {
-				Files.createDirectories(targetDirectory);
-			}
+      if (Objects.nonNull(targetDirectory) && !Files.isDirectory(targetDirectory)) {
+        Files.createDirectories(targetDirectory);
+      }
 
-			logger.debug("Saving to: {} ", targetPath.toAbsolutePath());
+      logger.debug("Saving to: {} ", targetPath.toAbsolutePath());
 
-			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-			return filePath;
-		} catch (IOException e) {
+      return filePath;
+    } catch (IOException e) {
 
-			logger.error("Unable to save log file '{}'", filePath, e);
+      logger.error("Unable to save log file '{}'", filePath, e);
 
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
-		}
-	}
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
+    }
+  }
 
-	@Override
-	public InputStream load(String filePath) {
+  @Override
+  public InputStream load(String filePath) {
 
-		try {
+    try {
 
-			return Files.newInputStream(Paths.get(storageRootPath, filePath));
-		} catch (IOException e) {
+      return Files.newInputStream(Paths.get(storageRootPath, filePath));
+    } catch (IOException e) {
 
-			logger.error("Unable to find file '{}'", filePath, e);
+      logger.error("Unable to find file '{}'", filePath, e);
 
-			throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
-		}
-	}
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
+    }
+  }
 
-	@Override
-	public void delete(String filePath) {
+  @Override
+  public void delete(String filePath) {
 
-		try {
+    try {
 
-			Files.deleteIfExists(Paths.get(storageRootPath, filePath));
-		} catch (IOException e) {
+      Files.deleteIfExists(Paths.get(storageRootPath, filePath));
+    } catch (IOException e) {
 
-			logger.error("Unable to delete file '{}'", filePath, e);
+      logger.error("Unable to delete file '{}'", filePath, e);
 
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
-		}
-	}
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
+    }
+  }
 }

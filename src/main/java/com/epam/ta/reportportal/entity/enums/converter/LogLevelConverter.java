@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.ta.reportportal.entity.enums.LogLevel;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
@@ -27,13 +26,13 @@ import javax.persistence.Converter;
 @Converter(autoApply = true)
 public class LogLevelConverter implements AttributeConverter<LogLevel, Integer> {
 
-	@Override
-	public Integer convertToDatabaseColumn(LogLevel attribute) {
-		return attribute.toInt();
-	}
+  @Override
+  public Integer convertToDatabaseColumn(LogLevel attribute) {
+    return attribute.toInt();
+  }
 
-	@Override
-	public LogLevel convertToEntityAttribute(Integer dbData) {
-		return LogLevel.toLevel(dbData);
-	}
+  @Override
+  public LogLevel convertToEntityAttribute(Integer dbData) {
+    return LogLevel.toLevel(dbData);
+  }
 }

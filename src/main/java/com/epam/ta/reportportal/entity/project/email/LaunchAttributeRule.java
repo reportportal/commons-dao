@@ -16,9 +16,16 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -27,66 +34,67 @@ import java.util.Objects;
 @Table(name = "launch_attribute_rules")
 public class LaunchAttributeRule implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "key")
-	private String key;
+  @Column(name = "key")
+  private String key;
 
-	@Column(name = "value")
-	private String value;
+  @Column(name = "value")
+  private String value;
 
-	@ManyToOne
-	@JoinColumn(name = "sender_case_id")
-	private SenderCase senderCase;
+  @ManyToOne
+  @JoinColumn(name = "sender_case_id")
+  private SenderCase senderCase;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getKey() {
-		return key;
-	}
+  public String getKey() {
+    return key;
+  }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	public SenderCase getSenderCase() {
-		return senderCase;
-	}
+  public SenderCase getSenderCase() {
+    return senderCase;
+  }
 
-	public void setSenderCase(SenderCase senderCase) {
-		this.senderCase = senderCase;
-	}
+  public void setSenderCase(SenderCase senderCase) {
+    this.senderCase = senderCase;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		LaunchAttributeRule that = (LaunchAttributeRule) o;
-		return Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    LaunchAttributeRule that = (LaunchAttributeRule) o;
+    return Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value,
+        that.value);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, key, value);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, key, value);
+  }
 }

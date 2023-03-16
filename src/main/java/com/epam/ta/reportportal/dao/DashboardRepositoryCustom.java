@@ -22,4 +22,5 @@ import com.epam.ta.reportportal.entity.dashboard.Dashboard;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public interface DashboardRepositoryCustom extends ShareableRepository<Dashboard> {
+
 }

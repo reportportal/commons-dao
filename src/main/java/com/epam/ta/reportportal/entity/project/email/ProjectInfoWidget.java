@@ -25,25 +25,26 @@ import java.util.Optional;
  * @author Andrei_Ramanchuk
  */
 public enum ProjectInfoWidget {
-	INVESTIGATED("investigated"),
-	CASES_STATISTIC("casesStats"),
-	LAUNCHES_QUANTITY("launchesQuantity"),
-	ISSUES_CHART("issuesChart"),
-	BUGS_PERCENTAGE("bugsPercentage"),
-	ACTIVITIES("activities"),
-	LAST_LAUNCH("lastLaunch");
+  INVESTIGATED("investigated"),
+  CASES_STATISTIC("casesStats"),
+  LAUNCHES_QUANTITY("launchesQuantity"),
+  ISSUES_CHART("issuesChart"),
+  BUGS_PERCENTAGE("bugsPercentage"),
+  ACTIVITIES("activities"),
+  LAST_LAUNCH("lastLaunch");
 
-	private String widgetCode;
+  private String widgetCode;
 
-	ProjectInfoWidget(String code) {
-		this.widgetCode = code;
-	}
+  ProjectInfoWidget(String code) {
+    this.widgetCode = code;
+  }
 
-	public String getWidgetCode() {
-		return widgetCode;
-	}
+  public static Optional<ProjectInfoWidget> findByCode(String code) {
+    return Arrays.stream(ProjectInfoWidget.values())
+        .filter(type -> type.getWidgetCode().equalsIgnoreCase(code)).findAny();
+  }
 
-	public static Optional<ProjectInfoWidget> findByCode(String code) {
-		return Arrays.stream(ProjectInfoWidget.values()).filter(type -> type.getWidgetCode().equalsIgnoreCase(code)).findAny();
-	}
+  public String getWidgetCode() {
+    return widgetCode;
+  }
 }

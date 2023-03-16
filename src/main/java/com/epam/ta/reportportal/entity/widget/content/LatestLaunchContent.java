@@ -16,13 +16,14 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NUMBER;
+
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
 
 /**
  * @author Ivan Budaev
@@ -30,45 +31,45 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LatestLaunchContent implements Serializable {
 
-	@JsonProperty(ID)
-	private Long id;
+  @JsonProperty(ID)
+  private Long id;
 
-	@JsonProperty(NAME)
-	private String name;
+  @JsonProperty(NAME)
+  private String name;
 
-	@JsonProperty(NUMBER)
-	private Long number;
+  @JsonProperty(NUMBER)
+  private Long number;
 
-	public Long getId() {
-		return id;
-	}
+  public LatestLaunchContent() {
+  }
 
-	public LatestLaunchContent() {
-	}
+  public LatestLaunchContent(Launch launch) {
+    this.id = launch.getId();
+    this.name = launch.getName();
+    this.number = launch.getNumber();
+  }
 
-	public LatestLaunchContent(Launch launch) {
-		this.id = launch.getId();
-		this.name = launch.getName();
-		this.number = launch.getNumber();
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Long getNumber() {
-		return number;
-	}
+  public Long getNumber() {
+    return number;
+  }
 
-	public void setNumber(Long number) {
-		this.number = number;
-	}
+  public void setNumber(Long number) {
+    this.number = number;
+  }
 }

@@ -18,11 +18,10 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Repository for {@link com.epam.ta.reportportal.entity.integration.IntegrationType} entity
@@ -31,35 +30,36 @@ import java.util.Optional;
  */
 public interface IntegrationTypeRepository extends ReportPortalRepository<IntegrationType, Long> {
 
-	/**
-	 * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
-	 *
-	 * @param integrationGroup {@link IntegrationType#integrationGroup}
-	 * @return The {@link List} of the {@link IntegrationType}
-	 */
-	List<IntegrationType> findAllByIntegrationGroup(IntegrationGroupEnum integrationGroup);
+  /**
+   * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
+   *
+   * @param integrationGroup {@link IntegrationType#integrationGroup}
+   * @return The {@link List} of the {@link IntegrationType}
+   */
+  List<IntegrationType> findAllByIntegrationGroup(IntegrationGroupEnum integrationGroup);
 
-	/**
-	 * Retrieve all {@link IntegrationType} ordered by {@link IntegrationType#creationDate} in ascending order
-	 *
-	 * @return The {@link List} of the {@link IntegrationType}
-	 */
-	List<IntegrationType> findAllByOrderByCreationDate();
+  /**
+   * Retrieve all {@link IntegrationType} ordered by {@link IntegrationType#creationDate} in
+   * ascending order
+   *
+   * @return The {@link List} of the {@link IntegrationType}
+   */
+  List<IntegrationType> findAllByOrderByCreationDate();
 
-	/**
-	 * Find integration by name
-	 *
-	 * @param name Integration name
-	 * @return @return The {@link Optional} of the {@link IntegrationType}
-	 */
-	Optional<IntegrationType> findByName(String name);
+  /**
+   * Find integration by name
+   *
+   * @param name Integration name
+   * @return @return The {@link Optional} of the {@link IntegrationType}
+   */
+  Optional<IntegrationType> findByName(String name);
 
-	/**
-	 * Retrieve all {@link IntegrationType} by accessType
-	 *
-	 * @param accessType {@link java.lang.String}
-	 * @return The {@link List} of the {@link IntegrationType}
-	 */
-	@Query(value = "SELECT it.* FROM integration_type it WHERE (it.details -> 'details'->>'accessType' = :accessType)", nativeQuery = true)
-	List<IntegrationType> findAllByAccessType(@Param("accessType") String accessType);
+  /**
+   * Retrieve all {@link IntegrationType} by accessType
+   *
+   * @param accessType {@link java.lang.String}
+   * @return The {@link List} of the {@link IntegrationType}
+   */
+  @Query(value = "SELECT it.* FROM integration_type it WHERE (it.details -> 'details'->>'accessType' = :accessType)", nativeQuery = true)
+  List<IntegrationType> findAllByAccessType(@Param("accessType") String accessType);
 }

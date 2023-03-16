@@ -21,14 +21,14 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class ProjectCriteriaConstant {
 
-	private ProjectCriteriaConstant() {
-		//static only
-	}
+  public static final String CRITERIA_PROJECT_TYPE = "type";
+  public static final String CRITERIA_PROJECT_NAME = "name";
+  public static final String CRITERIA_ALLOCATED_STORAGE = "allocatedStorage";
+  public static final String CRITERIA_PROJECT_ORGANIZATION = "organization";
+  public static final String CRITERIA_PROJECT_CREATION_DATE = "creationDate";
+  public static final String CRITERIA_PROJECT_ATTRIBUTE_NAME = "attributeName";
 
-	public static final String CRITERIA_PROJECT_TYPE = "type";
-	public static final String CRITERIA_PROJECT_NAME = "name";
-	public static final String CRITERIA_ALLOCATED_STORAGE = "allocatedStorage";
-	public static final String CRITERIA_PROJECT_ORGANIZATION = "organization";
-	public static final String CRITERIA_PROJECT_CREATION_DATE = "creationDate";
-	public static final String CRITERIA_PROJECT_ATTRIBUTE_NAME = "attributeName";
+  private ProjectCriteriaConstant() {
+    //static only
+  }
 }

@@ -21,13 +21,13 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class IssueCriteriaConstant {
 
-	private IssueCriteriaConstant() {
-		//static only
-	}
+  public static final String CRITERIA_ISSUE_ID = "issueId";
+  public static final String CRITERIA_ISSUE_AUTO_ANALYZED = "autoAnalyzed";
+  public static final String CRITERIA_ISSUE_IGNORE_ANALYZER = "ignoreAnalyzer";
+  public static final String CRITERIA_ISSUE_LOCATOR = "locator";
+  public static final String CRITERIA_ISSUE_COMMENT = "issueComment";
 
-	public static final String CRITERIA_ISSUE_ID = "issueId";
-	public static final String CRITERIA_ISSUE_AUTO_ANALYZED = "autoAnalyzed";
-	public static final String CRITERIA_ISSUE_IGNORE_ANALYZER = "ignoreAnalyzer";
-	public static final String CRITERIA_ISSUE_LOCATOR = "locator";
-	public static final String CRITERIA_ISSUE_COMMENT = "issueComment";
+  private IssueCriteriaConstant() {
+    //static only
+  }
 }

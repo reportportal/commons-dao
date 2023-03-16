@@ -26,22 +26,22 @@ import java.lang.reflect.Method;
  */
 public class Accessible {
 
-	private final Object object;
+  private final Object object;
 
-	private Accessible(Object object) {
-		this.object = object;
+  private Accessible(Object object) {
+    this.object = object;
 
-	}
+  }
 
-	public AccessibleMethod method(Method m) {
-		return new AccessibleMethod(object, m);
-	}
+  public static Accessible on(Object object) {
+    return new Accessible(object);
+  }
 
-	public AccessibleField field(Field f) {
-		return new AccessibleField(object, f);
-	}
+  public AccessibleMethod method(Method m) {
+    return new AccessibleMethod(object, m);
+  }
 
-	public static Accessible on(Object object) {
-		return new Accessible(object);
-	}
+  public AccessibleField field(Field f) {
+    return new AccessibleField(object, f);
+  }
 }

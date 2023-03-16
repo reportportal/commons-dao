@@ -16,48 +16,51 @@
 
 package com.epam.ta.reportportal.entity;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 class EmailSettingsEnumTest {
 
-	private Map<EmailSettingsEnum, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<EmailSettingsEnum, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		allowed = Arrays.stream(EmailSettingsEnum.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getAttribute(), it.getAttribute().toUpperCase(), it.getAttribute().toLowerCase())
-				));
-		disallowed = Arrays.asList("noSuchAttribute", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    allowed = Arrays.stream(EmailSettingsEnum.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getAttribute(), it.getAttribute().toUpperCase(),
+                it.getAttribute().toLowerCase())
+        ));
+    disallowed = Arrays.asList("noSuchAttribute", "", " ", null);
+  }
 
-	@Test
-	void findByAttribute() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<EmailSettingsEnum> optional = EmailSettingsEnum.findByAttribute(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(EmailSettingsEnum.findByAttribute(it).isPresent()));
-	}
+  @Test
+  void findByAttribute() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<EmailSettingsEnum> optional = EmailSettingsEnum.findByAttribute(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(EmailSettingsEnum.findByAttribute(it).isPresent()));
+  }
 
-	@Test
-	void isPresent() {
-		allowed.entrySet().stream().flatMap(it -> it.getValue().stream()).forEach(it -> assertTrue(EmailSettingsEnum.isPresent(it)));
-		disallowed.forEach(it -> assertFalse(EmailSettingsEnum.isPresent(it)));
-	}
+  @Test
+  void isPresent() {
+    allowed.entrySet().stream().flatMap(it -> it.getValue().stream())
+        .forEach(it -> assertTrue(EmailSettingsEnum.isPresent(it)));
+    disallowed.forEach(it -> assertFalse(EmailSettingsEnum.isPresent(it)));
+  }
 
 }

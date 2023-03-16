@@ -18,15 +18,18 @@ package com.epam.ta.reportportal.entity.dashboard;
 
 import com.epam.ta.reportportal.entity.ShareableEntity;
 import com.google.common.collect.Sets;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -35,49 +38,49 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 public class Dashboard extends ShareableEntity implements Serializable {
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	@Column(name = "description")
-	private String description;
+  @Column(name = "description")
+  private String description;
 
-	@CreatedDate
-	@Column(name = "creation_date")
-	private LocalDateTime creationDate;
+  @CreatedDate
+  @Column(name = "creation_date")
+  private LocalDateTime creationDate;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "dashboard")
-	@Fetch(value = FetchMode.JOIN)
-	private Set<DashboardWidget> widgets = Sets.newHashSet();
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "dashboard")
+  @Fetch(value = FetchMode.JOIN)
+  private Set<DashboardWidget> widgets = Sets.newHashSet();
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+  public LocalDateTime getCreationDate() {
+    return creationDate;
+  }
 
-	public void setCreationDate(LocalDateTime creationDate) {
-		this.creationDate = creationDate;
-	}
+  public void setCreationDate(LocalDateTime creationDate) {
+    this.creationDate = creationDate;
+  }
 
-	public Set<DashboardWidget> getDashboardWidgets() {
-		return widgets;
-	}
+  public Set<DashboardWidget> getDashboardWidgets() {
+    return widgets;
+  }
 
-	public void addWidget(DashboardWidget widget) {
-		widgets.add(widget);
-	}
+  public void addWidget(DashboardWidget widget) {
+    widgets.add(widget);
+  }
 }

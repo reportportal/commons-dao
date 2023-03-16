@@ -16,21 +16,23 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import org.junit.jupiter.api.Test;
-
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 class RecordMapperUtilsTest {
 
-	@Test
-	void fieldExcludingPredicate() {
+  @Test
+  void fieldExcludingPredicate() {
 
-		assertFalse(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.LOGIN));
-		assertTrue(RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.FULL_NAME));
-	}
+    assertFalse(
+        RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.LOGIN));
+    assertTrue(
+        RecordMapperUtils.fieldExcludingPredicate(USERS.LOGIN, USERS.EMAIL).test(USERS.FULL_NAME));
+  }
 }

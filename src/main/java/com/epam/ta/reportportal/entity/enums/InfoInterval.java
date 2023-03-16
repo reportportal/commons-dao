@@ -20,8 +20,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Get project information intervals<br>
- * Available values:
+ * Get project information intervals<br> Available values:
  * <ul>
  * <li>1 week</li>
  * <li>3 months (by default)</li>
@@ -32,33 +31,34 @@ import java.util.Optional;
  */
 public enum InfoInterval {
 
-	//@formatter:off
-	ONE_MONTH("1M", 1),
-	THREE_MONTHS("3M", 3),
-	SIX_MONTHS("6M", 6);
-	//@formatter:on
+  //@formatter:off
+  ONE_MONTH("1M", 1),
+  THREE_MONTHS("3M", 3),
+  SIX_MONTHS("6M", 6);
+  //@formatter:on
 
-	private String interval;
-	private Integer counter;
+  private String interval;
+  private Integer counter;
 
-	public String getInterval() {
-		return interval;
-	}
+  InfoInterval(String value, Integer count) {
+    this.interval = value;
+    this.counter = count;
+  }
 
-	public Integer getCount() {
-		return counter;
-	}
+  public static InfoInterval getByName(String name) {
+    return InfoInterval.valueOf(name);
+  }
 
-	InfoInterval(String value, Integer count) {
-		this.interval = value;
-		this.counter = count;
-	}
+  public static Optional<InfoInterval> findByInterval(String interval) {
+    return Arrays.stream(InfoInterval.values())
+        .filter(value -> value.getInterval().equalsIgnoreCase(interval)).findAny();
+  }
 
-	public static InfoInterval getByName(String name) {
-		return InfoInterval.valueOf(name);
-	}
+  public String getInterval() {
+    return interval;
+  }
 
-	public static Optional<InfoInterval> findByInterval(String interval) {
-		return Arrays.stream(InfoInterval.values()).filter(value -> value.getInterval().equalsIgnoreCase(interval)).findAny();
-	}
+  public Integer getCount() {
+    return counter;
+  }
 }

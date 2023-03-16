@@ -17,10 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.filter.UserFilter;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -28,38 +24,43 @@ import java.util.Optional;
 /**
  * @author Pavel Bortnik
  */
-public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long>, UserFilterRepositoryCustom {
+public interface UserFilterRepository extends ReportPortalRepository<UserFilter, Long>,
+    UserFilterRepositoryCustom {
 
-	/**
-	 * Finds filter by 'id' and 'project id'
-	 *
-	 * @param id        {@link UserFilter#id}
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filter will be extracted
-	 * @return {@link UserFilter} wrapped in the {@link Optional}
-	 */
-	Optional<UserFilter> findByIdAndProjectId(Long id, Long projectId);
+  /**
+   * Finds filter by 'id' and 'project id'
+   *
+   * @param id        {@link UserFilter#id}
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filter
+   *                  will be extracted
+   * @return {@link UserFilter} wrapped in the {@link Optional}
+   */
+  Optional<UserFilter> findByIdAndProjectId(Long id, Long projectId);
 
-	/**
-	 * @param ids       {@link Iterable} of the filter Ids
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
-	 * @return The {@link List} of the {@link UserFilter}
-	 */
-	List<UserFilter> findAllByIdInAndProjectId(Collection<Long> ids, Long projectId);
+  /**
+   * @param ids       {@link Iterable} of the filter Ids
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
+   *                  filters will be extracted
+   * @return The {@link List} of the {@link UserFilter}
+   */
+  List<UserFilter> findAllByIdInAndProjectId(Collection<Long> ids, Long projectId);
 
-	/**
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose filters will be extracted
-	 * @return The {@link List} of the {@link UserFilter}
-	 */
-	List<UserFilter> findAllByProjectId(Long projectId);
+  /**
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
+   *                  filters will be extracted
+   * @return The {@link List} of the {@link UserFilter}
+   */
+  List<UserFilter> findAllByProjectId(Long projectId);
 
-	/**
-	 * Checks the existence of the {@link UserFilter} with specified name for a user on a project
-	 *
-	 * @param name      {@link UserFilter#name}
-	 * @param owner     {@link UserFilter#owner}
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which filter existence will be checked
-	 * @return if exists 'true' else 'false'
-	 */
-	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
+  /**
+   * Checks the existence of the {@link UserFilter} with specified name for a user on a project
+   *
+   * @param name      {@link UserFilter#name}
+   * @param owner     {@link UserFilter#owner}
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
+   *                  filter existence will be checked
+   * @return if exists 'true' else 'false'
+   */
+  boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
 
 }

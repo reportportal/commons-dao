@@ -16,19 +16,18 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
-import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
+
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
+import com.epam.ta.reportportal.entity.item.issue.IssueType;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Pavel Bortnik
@@ -36,29 +35,29 @@ import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 @Repository
 public class IssueTypeRepositoryCustomImpl implements IssueTypeRepositoryCustom {
 
-	private DSLContext dsl;
+  private DSLContext dsl;
 
-	@Autowired
-	public void setDsl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+  @Autowired
+  public void setDsl(DSLContext dsl) {
+    this.dsl = dsl;
+  }
 
-	@Override
-	public List<IssueType> getDefaultIssueTypes() {
-		return dsl.select()
-				.from(ISSUE_TYPE)
-				.join(ISSUE_GROUP)
-				.on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
-				.where(ISSUE_TYPE.LOCATOR.in(Arrays.stream(TestItemIssueGroup.values())
-						.map(TestItemIssueGroup::getLocator)
-						.toArray(String[]::new)))
-				.fetch(ISSUE_TYPE_RECORD_MAPPER);
-	}
+  @Override
+  public List<IssueType> getDefaultIssueTypes() {
+    return dsl.select()
+        .from(ISSUE_TYPE)
+        .join(ISSUE_GROUP)
+        .on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+        .where(ISSUE_TYPE.LOCATOR.in(Arrays.stream(TestItemIssueGroup.values())
+            .map(TestItemIssueGroup::getLocator)
+            .toArray(String[]::new)))
+        .fetch(ISSUE_TYPE_RECORD_MAPPER);
+  }
 
-	@Override
-	public List<Long> getIssueTypeIdsByLocators(Collection<String> locators) {
-		return dsl.select(ISSUE_TYPE.ID).from(ISSUE_TYPE)
-				.where(ISSUE_TYPE.LOCATOR.in(locators))
-				.fetch(ISSUE_TYPE.ID);
-	}
+  @Override
+  public List<Long> getIssueTypeIdsByLocators(Collection<String> locators) {
+    return dsl.select(ISSUE_TYPE.ID).from(ISSUE_TYPE)
+        .where(ISSUE_TYPE.LOCATOR.in(locators))
+        .fetch(ISSUE_TYPE.ID);
+  }
 }

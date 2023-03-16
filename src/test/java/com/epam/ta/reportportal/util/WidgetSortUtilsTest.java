@@ -16,49 +16,53 @@
 
 package com.epam.ta.reportportal.util;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SF_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_COUNTER;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_TABLE;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
+import java.util.List;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 class WidgetSortUtilsTest {
 
-	private Sort sort;
-	private FilterTarget filterTarget;
+  private Sort sort;
+  private FilterTarget filterTarget;
 
-	@BeforeEach
-	void setUp() {
+  @BeforeEach
+  void setUp() {
 
-		sort = Sort.by("startTime", "name", "statistics$defects$to_investigate$ti001", "statistics$defects$system_issue$si001");
-		filterTarget = FilterTarget.LAUNCH_TARGET;
-	}
+    sort = Sort.by("startTime", "name", "statistics$defects$to_investigate$ti001",
+        "statistics$defects$system_issue$si001");
+    filterTarget = FilterTarget.LAUNCH_TARGET;
+  }
 
-	@Test
-	void widgetSortTest() {
-		List<SortField<Object>> sortFields = WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filterTarget);
+  @Test
+  void widgetSortTest() {
+    List<SortField<Object>> sortFields = WidgetSortUtils.TO_SORT_FIELDS.apply(sort, filterTarget);
 
-		assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
-		assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
+    assertEquals(LAUNCH.START_TIME.getQualifiedName().toString(), sortFields.get(0).getName());
+    assertEquals(LAUNCH.NAME.getQualifiedName().toString(), sortFields.get(1).getName());
 
-		assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
-				.filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq("statistics$defects$to_investigate$ti001")), 0)
-				.toString(), sortFields.get(2).getName());
+    assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
+            .filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class)
+                .eq("statistics$defects$to_investigate$ti001")), 0)
+        .toString(), sortFields.get(2).getName());
 
-		assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
-				.filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class).eq("statistics$defects$system_issue$si001")), 0)
-				.toString(), sortFields.get(3).getName());
-	}
+    assertEquals(DSL.coalesce(DSL.max(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER))
+            .filterWhere(fieldName(STATISTICS_TABLE, SF_NAME).cast(String.class)
+                .eq("statistics$defects$system_issue$si001")), 0)
+        .toString(), sortFields.get(3).getName());
+  }
 
 }

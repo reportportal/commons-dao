@@ -26,29 +26,30 @@ import java.util.Optional;
  */
 public enum AuthType {
 
-	//@formatter:off
-	OAUTH(false),
-	NTLM(true),
-	APIKEY(true),
-	BASIC(true);
-	//@formatter:on
+  //@formatter:off
+  OAUTH(false),
+  NTLM(true),
+  APIKEY(true),
+  BASIC(true);
+  //@formatter:on
 
-	final boolean requiresPassword;
+  final boolean requiresPassword;
 
-	AuthType(boolean requiresPassword) {
-		this.requiresPassword = requiresPassword;
-	}
+  AuthType(boolean requiresPassword) {
+    this.requiresPassword = requiresPassword;
+  }
 
-	public boolean requiresPassword() {
-		return requiresPassword;
-	}
+  public static Optional<AuthType> findByName(String name) {
+    return Optional.ofNullable(name)
+        .flatMap(string -> Arrays.stream(values()).filter(it -> it.name().equalsIgnoreCase(string))
+            .findAny());
+  }
 
-	public static Optional<AuthType> findByName(String name) {
-		return Optional.ofNullable(name)
-				.flatMap(string -> Arrays.stream(values()).filter(it -> it.name().equalsIgnoreCase(string)).findAny());
-	}
+  public static boolean isPresent(String name) {
+    return findByName(name).isPresent();
+  }
 
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
+  public boolean requiresPassword() {
+    return requiresPassword;
+  }
 }
