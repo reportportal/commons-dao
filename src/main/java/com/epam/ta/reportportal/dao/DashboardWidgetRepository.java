@@ -26,7 +26,7 @@ public interface DashboardWidgetRepository extends ReportPortalRepository<Dashbo
 
 	int countAllByWidgetId(Long widgetId);
 
-  boolean existsByWidgetNameAndWidget_Project_IdAndDashboard_Name(String name, Long projectId,
-      String dashboardName);
+  boolean existsByWidgetNameAndWidget_Project_IdAndDashboard_Id(String name, Long projectId,
+      Long dashboardId);
 
 }
