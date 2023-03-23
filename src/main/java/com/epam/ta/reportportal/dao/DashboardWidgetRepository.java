@@ -25,4 +25,8 @@ import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 public interface DashboardWidgetRepository extends ReportPortalRepository<DashboardWidget, DashboardWidgetId> {
 
 	int countAllByWidgetId(Long widgetId);
+
+  boolean existsByWidgetNameAndWidget_Project_IdAndDashboard_Name(String name, Long projectId,
+      String dashboardName);
+
 }
