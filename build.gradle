@@ -50,7 +50,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:76778372')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:f0b6bb6b')
         mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:12.9.0')
     }
 }
@@ -93,6 +93,9 @@ dependencies {
 
     compile 'io.zonky.test:embedded-postgres:1.2.6'
     compile 'org.flywaydb:flyway-core:6.3.1'
+
+    compile 'org.apache.jclouds.api:s3:2.5.0'
+    compile 'org.apache.jclouds.provider:aws-s3:2.5.0'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'

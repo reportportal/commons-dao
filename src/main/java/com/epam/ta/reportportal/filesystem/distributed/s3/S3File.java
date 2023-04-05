@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.filesystem.distributed.minio;
+package com.epam.ta.reportportal.filesystem.distributed.s3;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class MinioFile {
+public class S3File {
 
 	private final String bucket;
 	private final String filePath;
 
-	public MinioFile(String bucket, String filePath) {
+	public S3File(String bucket, String filePath) {
 		this.bucket = bucket;
 		this.filePath = filePath;
 	}
