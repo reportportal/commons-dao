@@ -29,7 +29,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JSenderCaseRecord extends UpdatableRecordImpl<JSenderCaseRecord> implements Record5<Long, String, Long, Boolean, JLogicalOperatorEnum> {
 
-    private static final long serialVersionUID = -1377318172;
+    private static final long serialVersionUID = -492653770;
 
     /**
      * Setter for <code>public.sender_case.id</code>.
@@ -111,7 +111,7 @@ public class JSenderCaseRecord extends UpdatableRecordImpl<JSenderCaseRecord> im
     }
 
     // -------------------------------------------------------------------------
-    // Record6 type implementation
+    // Record5 type implementation
     // -------------------------------------------------------------------------
 
     @Override

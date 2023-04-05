@@ -63,7 +63,7 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>, 
 	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldsContains(@Param("projectId") Long projectId,
 			@Param("widgetTypes") List<String> widgetTypes, @Param("contentField") String contentField);
 
-	@Query(value = "SELECT * FROM widget w JOIN shareable_entity se on w.id = se.id JOIN content_field cf on w.id = cf.id "
+	@Query(value = "SELECT * FROM widget w JOIN owned_entity se on w.id = se.id JOIN content_field cf on w.id = cf.id "
 			+ " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
 	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
 			@Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);

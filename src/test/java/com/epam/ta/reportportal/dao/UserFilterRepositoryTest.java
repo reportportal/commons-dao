@@ -20,21 +20,16 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,13 +40,6 @@ class UserFilterRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserFilterRepository userFilterRepository;
-
-	@Test
-	public void updateSharing() {
-		userFilterRepository.updateSharingFlag(Lists.newArrayList(1L), true);
-		final Optional<UserFilter> filter = userFilterRepository.findById(1L);
-		assertTrue(filter.get().isShared());
-	}
 
 	@Test
 	public void shouldFindByIdAndProjectIdWhenExists() {
@@ -95,75 +83,6 @@ class UserFilterRepositoryTest extends BaseTest {
 
 		assertNotNull(userFilters);
 		assertTrue(userFilters.isEmpty());
-	}
-
-	@Test
-	void getSharedFilters() {
-		Page<UserFilter> superadminSharedFilters = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				"superadmin"
-		);
-		assertEquals(0, superadminSharedFilters.getTotalElements(), "Unexpected shared filters count");
-
-		Page<UserFilter> result2 = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				"default"
-		);
-		assertEquals(1, result2.getTotalElements(), "Unexpected shared filters count");
-
-		final Page<UserFilter> jajaSharedFilters = userFilterRepository.getShared(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				"jaja_user"
-		);
-		assertEquals(1, jajaSharedFilters.getTotalElements(), "Unexpected shared filters count");
-	}
-
-	@Test
-	void getPermittedFilters() {
-		Page<UserFilter> adminPermittedFilters = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, CRITERIA_NAME)),
-				"superadmin"
-		);
-		assertEquals(2, adminPermittedFilters.getTotalElements(), "Unexpected shared filters count");
-
-		Page<UserFilter> defaultPermittedFilters = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				"default"
-		);
-		assertEquals(2, defaultPermittedFilters.getTotalElements(), "Unexpected shared filters count");
-
-		final Page<UserFilter> jajaPermittedFilters = userFilterRepository.getPermitted(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				"jaja_user"
-		);
-		assertEquals(1, jajaPermittedFilters.getTotalElements(), "Unexpected shared filters count");
-	}
-
-	@Test
-	void getOwnFilters() {
-		Page<UserFilter> superadminOwnFilters = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				"superadmin"
-		);
-		assertEquals(2, superadminOwnFilters.getTotalElements());
-
-		Page<UserFilter> defaultOwnFilters = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				"default"
-		);
-		assertEquals(2, defaultOwnFilters.getTotalElements(), "Unexpected shared filters count");
-
-		final Page<UserFilter> jajaOwnFilters = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 1L),
-				PageRequest.of(0, 3),
-				"jaja_user"
-		);
-		assertEquals(0, jajaOwnFilters.getTotalElements(), "Unexpected shared filters count");
-
-		final Page<UserFilter> jajaOwnFiltersOnForeingProject = userFilterRepository.getOwn(ProjectFilter.of(buildDefaultFilter(), 2L),
-				PageRequest.of(0, 3),
-				"jaja_user"
-		);
-		assertEquals(0, jajaOwnFiltersOnForeingProject.getTotalElements(), "Unexpected shared filters count");
 	}
 
 	@Test
