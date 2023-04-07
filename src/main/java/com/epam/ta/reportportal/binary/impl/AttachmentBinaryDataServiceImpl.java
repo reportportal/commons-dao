@@ -26,8 +26,10 @@ import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -53,125 +55,142 @@ import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSup
 @Service
 public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentBinaryDataServiceImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(AttachmentBinaryDataServiceImpl.class);
 
-	private final ContentTypeResolver contentTypeResolver;
+  private final ContentTypeResolver contentTypeResolver;
 
-	private final FilePathGenerator filePathGenerator;
+  private final FilePathGenerator filePathGenerator;
 
-	private final DataStoreService dataStoreService;
+  private final DataStoreService dataStoreService;
 
-	private final AttachmentRepository attachmentRepository;
+  private final AttachmentRepository attachmentRepository;
 
-	private final CreateLogAttachmentService createLogAttachmentService;
+  private final CreateLogAttachmentService createLogAttachmentService;
 
-	@Autowired
-	public AttachmentBinaryDataServiceImpl(ContentTypeResolver contentTypeResolver, FilePathGenerator filePathGenerator,
-			@Qualifier("attachmentDataStoreService") DataStoreService dataStoreService, AttachmentRepository attachmentRepository,
-			CreateLogAttachmentService createLogAttachmentService) {
-		this.contentTypeResolver = contentTypeResolver;
-		this.filePathGenerator = filePathGenerator;
-		this.dataStoreService = dataStoreService;
-		this.attachmentRepository = attachmentRepository;
-		this.createLogAttachmentService = createLogAttachmentService;
-	}
+  private final FeatureFlagHandler featureFlagHandler;
 
-	@Override
-	public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo, MultipartFile file) {
-		Optional<BinaryDataMetaInfo> result = Optional.empty();
-		try (InputStream inputStream = file.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-			inputStream.transferTo(outputStream);
-			String contentType = resolveContentType(file.getContentType(), outputStream);
-			String fileName = resolveFileName(metaInfo, file, contentType);
+  @Autowired
+  public AttachmentBinaryDataServiceImpl(ContentTypeResolver contentTypeResolver,
+      FilePathGenerator filePathGenerator,
+      @Qualifier("attachmentDataStoreService") DataStoreService dataStoreService,
+      AttachmentRepository attachmentRepository,
+      CreateLogAttachmentService createLogAttachmentService,
+      FeatureFlagHandler featureFlagHandler) {
+    this.contentTypeResolver = contentTypeResolver;
+    this.filePathGenerator = filePathGenerator;
+    this.dataStoreService = dataStoreService;
+    this.attachmentRepository = attachmentRepository;
+    this.createLogAttachmentService = createLogAttachmentService;
+    this.featureFlagHandler = featureFlagHandler;
+  }
 
-			String commonPath = filePathGenerator.generate(metaInfo);
-			String targetPath = Paths.get(commonPath, fileName).toString();
+  @Override
+  public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo,
+      MultipartFile file) {
+    Optional<BinaryDataMetaInfo> result = Optional.empty();
+    try (InputStream inputStream = file.getInputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+      inputStream.transferTo(outputStream);
+      String contentType = resolveContentType(file.getContentType(), outputStream);
+      String fileName = resolveFileName(metaInfo, file, contentType);
 
-			String fileId;
-			try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
-				fileId = dataStoreService.save(targetPath, copy);
-			}
+      String commonPath;
+      if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+        commonPath = Paths.get(PROJECT_PATH, filePathGenerator.generate(metaInfo)).toString();
+      } else {
+        commonPath = filePathGenerator.generate(metaInfo);
+      }
+      String targetPath = Paths.get(commonPath, fileName).toString();
 
-			result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-					.withFileId(fileId)
-					.withContentType(contentType)
-					.withFileSize(file.getSize())
-					.build());
-		} catch (IOException e) {
-			LOGGER.error("Unable to save binary data", e);
-		} finally {
-			if (file instanceof CommonsMultipartFile) {
-				((CommonsMultipartFile) file).getFileItem().delete();
-			}
-		}
-		return result;
-	}
+      String fileId;
+      try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
+        fileId = dataStoreService.save(targetPath, copy);
+      }
 
-	private String resolveFileName(AttachmentMetaInfo metaInfo, MultipartFile file, String contentType) {
-		String extension = resolveExtension(contentType).orElse(resolveExtension(true, file));
-		return metaInfo.getLogUuid() + "-" + file.getName() + extension;
-	}
+      result = Optional.of(
+          BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo().withFileId(fileId)
+              .withContentType(contentType).withFileSize(file.getSize()).build());
+    } catch (IOException e) {
+      LOGGER.error("Unable to save binary data", e);
+    } finally {
+      if (file instanceof CommonsMultipartFile) {
+        ((CommonsMultipartFile) file).getFileItem().delete();
+      }
+    }
+    return result;
+  }
 
-	@Override
-	public void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
-		saveAttachment(attachmentMetaInfo, file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
-	}
+  private String resolveFileName(AttachmentMetaInfo metaInfo, MultipartFile file,
+      String contentType) {
+    String extension = resolveExtension(contentType).orElse(resolveExtension(true, file));
+    return metaInfo.getLogUuid() + "-" + file.getName() + extension;
+  }
 
-	@Override
-	public void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo) {
-		try {
-			Attachment attachment = new Attachment();
-			attachment.setFileId(binaryDataMetaInfo.getFileId());
-			attachment.setThumbnailId(binaryDataMetaInfo.getThumbnailFileId());
-			attachment.setContentType(binaryDataMetaInfo.getContentType());
-			attachment.setFileSize(binaryDataMetaInfo.getFileSize());
+  @Override
+  public void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo) {
+    saveAttachment(attachmentMetaInfo, file).ifPresent(it -> attachToLog(it, attachmentMetaInfo));
+  }
 
-			attachment.setProjectId(attachmentMetaInfo.getProjectId());
-			attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
-			attachment.setItemId(attachmentMetaInfo.getItemId());
-			attachment.setCreationDate(attachmentMetaInfo.getCreationDate());
+  @Override
+  public void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo,
+      AttachmentMetaInfo attachmentMetaInfo) {
+    try {
+      Attachment attachment = new Attachment();
+      attachment.setFileId(binaryDataMetaInfo.getFileId());
+      attachment.setThumbnailId(binaryDataMetaInfo.getThumbnailFileId());
+      attachment.setContentType(binaryDataMetaInfo.getContentType());
+      attachment.setFileSize(binaryDataMetaInfo.getFileSize());
 
-			createLogAttachmentService.create(attachment, attachmentMetaInfo.getLogId());
-		} catch (Exception exception) {
-			LOGGER.error("Cannot save log to database, remove files ", exception);
+      attachment.setProjectId(attachmentMetaInfo.getProjectId());
+      attachment.setLaunchId(attachmentMetaInfo.getLaunchId());
+      attachment.setItemId(attachmentMetaInfo.getItemId());
+      attachment.setCreationDate(attachmentMetaInfo.getCreationDate());
 
-			dataStoreService.delete(binaryDataMetaInfo.getFileId());
-			dataStoreService.delete(binaryDataMetaInfo.getThumbnailFileId());
-			throw exception;
-		}
-	}
+      createLogAttachmentService.create(attachment, attachmentMetaInfo.getLogId());
+    } catch (Exception exception) {
+      LOGGER.error("Cannot save log to database, remove files ", exception);
 
-	@Override
-	public BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails) {
-		try {
-			Attachment attachment = attachmentRepository.findById(fileId)
-					.orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
-			InputStream data = dataStoreService.load(attachment.getFileId())
-					.orElseThrow(() -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
-			expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(ErrorType.ACCESS_DENIED,
-					formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
-			);
-			return new BinaryData(attachment.getContentType(), (long) data.available(), data);
-		} catch (IOException e) {
-			LOGGER.error("Unable to load binary data", e);
-			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load binary data");
-		}
-	}
+      dataStoreService.delete(binaryDataMetaInfo.getFileId());
+      dataStoreService.delete(binaryDataMetaInfo.getThumbnailFileId());
+      throw exception;
+    }
+  }
 
-	@Override
-	public void delete(String fileId) {
-		if (StringUtils.isNotEmpty(fileId)) {
-			dataStoreService.delete(fileId);
-			attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
-		}
-	}
+  @Override
+  public BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails) {
+    try {
+      Attachment attachment = attachmentRepository.findById(fileId)
+          .orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
+      InputStream data = dataStoreService.load(attachment.getFileId()).orElseThrow(
+          () -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
+      expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(
+          ErrorType.ACCESS_DENIED,
+          formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
+      );
+      return new BinaryData(attachment.getContentType(), (long) data.available(), data);
+    } catch (IOException e) {
+      LOGGER.error("Unable to load binary data", e);
+      throw new ReportPortalException(
+          ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load binary data");
+    }
+  }
 
-	private String resolveContentType(String contentType, ByteArrayOutputStream outputStream) throws IOException {
-		if (isContentTypePresent(contentType)) {
-			return contentType;
-		}
-		try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
-			return contentTypeResolver.detectContentType(copy);
-		}
-	}
+  @Override
+  public void delete(String fileId) {
+    if (StringUtils.isNotEmpty(fileId)) {
+      dataStoreService.delete(fileId);
+      attachmentRepository.findByFileId(fileId).ifPresent(attachmentRepository::delete);
+    }
+  }
+
+  private String resolveContentType(String contentType, ByteArrayOutputStream outputStream)
+      throws IOException {
+    if (isContentTypePresent(contentType)) {
+      return contentType;
+    }
+    try (ByteArrayInputStream copy = new ByteArrayInputStream(outputStream.toByteArray())) {
+      return contentTypeResolver.detectContentType(copy);
+    }
+  }
 }
