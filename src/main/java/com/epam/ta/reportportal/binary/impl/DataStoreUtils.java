@@ -50,6 +50,8 @@ public class DataStoreUtils {
 
 	static final String PHOTOS_PATH = "photos";
 
+	public static final String INTEGRATION_SECRETS_PATH = "integration-secrets";
+
 	private DataStoreUtils() {
 		//static only
 	}
