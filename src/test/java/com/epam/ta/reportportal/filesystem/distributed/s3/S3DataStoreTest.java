@@ -16,16 +16,21 @@
 
 package com.epam.ta.reportportal.filesystem.distributed.s3;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import java.io.InputStream;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.io.Payload;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.InputStream;
-
-import static org.mockito.Mockito.*;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -41,8 +46,10 @@ class S3DataStoreTest {
   private final BlobStore blobStore = mock(BlobStore.class);
   private final InputStream inputStream = mock(InputStream.class);
 
+  private final FeatureFlagHandler featureFlagHandler = mock(FeatureFlagHandler.class);
+
   private final S3DataStore s3DataStore =
-      new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION, "false");
+      new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION, featureFlagHandler);
 
   @Test
   void save() throws Exception {
@@ -60,6 +67,8 @@ class S3DataStoreTest {
 
     when(blobStore.containerExists(any(String.class))).thenReturn(true);
     when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
+
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
     s3DataStore.save(FILE_PATH, inputStream);
 

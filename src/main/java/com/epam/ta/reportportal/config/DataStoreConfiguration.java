@@ -23,6 +23,7 @@ import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.s3.S3DataStore;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
@@ -156,9 +157,8 @@ public class DataStoreConfiguration {
   public DataStore minioDataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.minio.bucketPrefix}") String bucketPrefix,
       @Value("${datastore.minio.defaultBucketName}") String defaultBucketName,
-      @Value("${datastore.minio.region}") String region,
-      @Value("${datastore.singlebucket.configuration}") String isSingleBucket) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, isSingleBucket);
+      @Value("${datastore.minio.region}") String region, FeatureFlagHandler featureFlagHandler) {
+    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
   }
 
   @Bean
@@ -180,9 +180,8 @@ public class DataStoreConfiguration {
   public DataStore s3DataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.s3.bucketPrefix}") String bucketPrefix,
       @Value("${datastore.s3.defaultBucketName}") String defaultBucketName,
-      @Value("${datastore.s3.region}") String region,
-      @Value("${datastore.singlebucket.configuration}") String isSingleBucket) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, isSingleBucket);
+      @Value("${datastore.s3.region}") String region, FeatureFlagHandler featureFlagHandler) {
+    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
   }
 
   @Bean("attachmentThumbnailator")

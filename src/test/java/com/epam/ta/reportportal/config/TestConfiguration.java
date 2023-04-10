@@ -53,7 +53,7 @@ public class TestConfiguration {
 
 	@Bean
 	public FeatureFlagHandler featureFlagHandler(
-			@Value("#{'${rp.feature.flags}'.split(',')") Set<String> featureFlagsSet) {
+			@Value("#{'${rp.feature.flags}'.split(',')}") Set<String> featureFlagsSet) {
 		return new FeatureFlagHandler(featureFlagsSet);
 	}
 

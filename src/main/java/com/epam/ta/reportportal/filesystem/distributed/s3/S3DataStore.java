@@ -16,8 +16,10 @@
 
 package com.epam.ta.reportportal.filesystem.distributed.s3;
 
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,15 +48,15 @@ public class S3DataStore implements DataStore {
   private final String defaultBucketName;
   private final Location location;
 
-  private final boolean isSingleBucket;
+  private final FeatureFlagHandler featureFlagHandler;
 
   public S3DataStore(BlobStore blobStore, String bucketPrefix, String defaultBucketName,
-      String region, String singleBucket) {
+      String region, FeatureFlagHandler featureFlagHandler) {
     this.blobStore = blobStore;
     this.bucketPrefix = bucketPrefix;
     this.defaultBucketName = defaultBucketName;
     this.location = getLocationFromString(region);
-    this.isSingleBucket = singleBucket != null && singleBucket.equalsIgnoreCase("true");
+    this.featureFlagHandler = featureFlagHandler;
   }
 
   @Override
@@ -110,7 +112,7 @@ public class S3DataStore implements DataStore {
   }
 
   private S3File getS3File(String filePath) {
-    if (isSingleBucket) {
+    if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
       return new S3File(defaultBucketName, filePath);
     }
     Path targetPath = Paths.get(filePath);
