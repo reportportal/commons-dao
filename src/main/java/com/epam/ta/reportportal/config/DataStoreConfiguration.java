@@ -51,11 +51,14 @@ import org.springframework.context.annotation.Configuration;
 public class DataStoreConfiguration {
 
   /**
-   * Amazon has a general work flow they publish that allows clients to always find the correct URL endpoint for a given bucket:
+   * Amazon has a general work flow they publish that allows clients to always find the correct URL
+   * endpoint for a given bucket:
    * 1) ask s3.amazonaws.com for the bucket location
    * 2) use the url returned to make the container specific request (get/put, etc)
-   * Jclouds cache the results from the first getBucketLocation call and use that region-specific URL, as needed.
-   * In this custom implementation of {@link AWSS3HttpApiModule} we are providing location from environment variable, so that
+   * Jclouds cache the results from the first getBucketLocation call and use that region-specific
+   * URL, as needed.
+   * In this custom implementation of {@link AWSS3HttpApiModule} we are providing location
+   * from environment variable, so that
    * we don't need to make getBucketLocation call
    */
   @ConfiguresHttpApi
@@ -139,6 +142,14 @@ public class DataStoreConfiguration {
     return new LocalDataStore(storagePath);
   }
 
+  /**
+   * Creates BlobStore bean, that works with MinIO
+   *
+   * @param accessKey accessKey to use
+   * @param secretKey secretKey to use
+   * @param endpoint  MinIO endpoint
+   * @return BlobStore
+   */
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
   public BlobStore minioBlobStore(@Value("${datastore.minio.accessKey}") String accessKey,
@@ -152,6 +163,16 @@ public class DataStoreConfiguration {
     return blobStoreContext.getBlobStore();
   }
 
+  /**
+   * Creates DataStore bean to work with MinIO
+   *
+   * @param blobStore          {@link BlobStore} object
+   * @param bucketPrefix       Prefix for bucket name
+   * @param defaultBucketName  Name of default bucket to use
+   * @param region             Region to store
+   * @param featureFlagHandler Instance of {@link FeatureFlagHandler} to check enabled features
+   * @return {@link DataStore} object
+   */
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
   public DataStore minioDataStore(@Autowired BlobStore blobStore,

@@ -73,6 +73,11 @@ public class EncryptConfiguration implements InitializingBean {
     this.featureFlagHandler = featureFlagHandler;
   }
 
+  /**
+   * Creates bean of {@link BasicTextEncryptor} for encrypting purposes
+   *
+   * @return {@link BasicTextEncryptor} instance
+   */
   @Bean(name = "basicEncryptor")
   public BasicTextEncryptor getBasicEncrypt() throws IOException {
     BasicTextEncryptor basic = new BasicTextEncryptor();
@@ -80,6 +85,11 @@ public class EncryptConfiguration implements InitializingBean {
     return basic;
   }
 
+  /**
+   * Creates bean of {@link StandardPBEStringEncryptor} for encrypting purposes
+   *
+   * @return {@link StandardPBEStringEncryptor} instance
+   */
   @Bean(name = "strongEncryptor")
   public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
     StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();

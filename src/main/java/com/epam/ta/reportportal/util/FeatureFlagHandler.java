@@ -8,12 +8,18 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author <a href="mailto:ivan_kustau@epam.com">Ivan Kustau</a>
+ * <p>
+ * Component for checking enabled feature flags
+ */
 @Component
 public class FeatureFlagHandler {
 
   private final Set<FeatureFlag> enabledFeatureFlagsSet = new HashSet<>();
 
-  public FeatureFlagHandler(@Value("#{'${rp.feature.flags}'.split(',')}") Set<String> featureFlags) {
+  public FeatureFlagHandler(
+      @Value("#{'${rp.feature.flags}'.split(',')}") Set<String> featureFlags) {
 
     if (!CollectionUtils.isEmpty(featureFlags)) {
       featureFlags.stream().map(FeatureFlag::fromString).filter(Optional::isPresent)
