@@ -57,7 +57,8 @@ public class DataStoreUtils {
   }
 
   /**
-   * Returns {@link Optional} of extension by contentType
+   * Returns {@link Optional} of extension by contentType.
+   *
    * @param contentType Content type
    * @return {@link Optional} of {@link String}
    */

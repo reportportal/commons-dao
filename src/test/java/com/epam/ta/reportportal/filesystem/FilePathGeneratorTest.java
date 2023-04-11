@@ -39,7 +39,7 @@ class FilePathGeneratorTest {
   @Test
   void generate_different_even_for_same_date() {
 
-    //		given:
+    //given:
     AttachmentMetaInfo metaInfo = AttachmentMetaInfo.builder().withProjectId(1L)
         .withLaunchUuid("271b5881-9a62-4df4-b477-335a96acbe14").build();
 
@@ -47,7 +47,7 @@ class FilePathGeneratorTest {
     when(dateTimeProvider.localDateTimeNow()).thenReturn(date);
     //
 
-    //		when:
+    //when:
     String pathOne = new FilePathGenerator(dateTimeProvider).generate(metaInfo);
 
     Assertions.assertThat(pathOne).isEqualTo(

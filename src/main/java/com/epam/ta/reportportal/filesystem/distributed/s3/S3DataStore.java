@@ -51,7 +51,7 @@ public class S3DataStore implements DataStore {
   private final FeatureFlagHandler featureFlagHandler;
 
   /**
-   * Initialises {@link S3DataStore}
+   * Initialises {@link S3DataStore}.
    *
    * @param blobStore          {@link BlobStore}
    * @param bucketPrefix       Prefix for bucket name

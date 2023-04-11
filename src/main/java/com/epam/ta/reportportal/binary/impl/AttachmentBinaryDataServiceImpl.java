@@ -71,13 +71,14 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
   private final FeatureFlagHandler featureFlagHandler;
 
   /**
-   * Creates {@link AttachmentBinaryDataService}
-   * @param contentTypeResolver {@link ContentTypeResolver}
-   * @param filePathGenerator {@link FilePathGenerator}
-   * @param dataStoreService {@link DataStoreService}
-   * @param attachmentRepository {@link AttachmentRepository}
+   * Creates {@link AttachmentBinaryDataService}.
+   *
+   * @param contentTypeResolver        {@link ContentTypeResolver}
+   * @param filePathGenerator          {@link FilePathGenerator}
+   * @param dataStoreService           {@link DataStoreService}
+   * @param attachmentRepository       {@link AttachmentRepository}
    * @param createLogAttachmentService {@link CreateLogAttachmentService}
-   * @param featureFlagHandler {@link FeatureFlagHandler}
+   * @param featureFlagHandler         {@link FeatureFlagHandler}
    */
   @Autowired
   public AttachmentBinaryDataServiceImpl(ContentTypeResolver contentTypeResolver,

@@ -19,7 +19,7 @@ public class FeatureFlagHandler {
   private final Set<FeatureFlag> enabledFeatureFlagsSet = new HashSet<>();
 
   /**
-   * Initialises {@link FeatureFlagHandler} by environment variable with enabled feature flags
+   * Initialises {@link FeatureFlagHandler} by environment variable with enabled feature flags.
    *
    * @param featureFlags Set of enabled feature flags
    */

@@ -22,7 +22,7 @@ public enum FeatureFlag {
   }
 
   /**
-   * Returns {@link Optional} of {@link FeatureFlag} by string
+   * Returns {@link Optional} of {@link FeatureFlag} by string.
    *
    * @param name Name of feature flag
    * @return {@link Optional} of {@link FeatureFlag} by string
