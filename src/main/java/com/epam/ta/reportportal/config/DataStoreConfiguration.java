@@ -143,12 +143,12 @@ public class DataStoreConfiguration {
   }
 
   /**
-   * Creates BlobStore bean, that works with MinIO
+   * Creates BlobStore bean, that works with MinIO.
    *
    * @param accessKey accessKey to use
    * @param secretKey secretKey to use
    * @param endpoint  MinIO endpoint
-   * @return BlobStore
+   * @return {@link BlobStore}
    */
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
@@ -164,7 +164,7 @@ public class DataStoreConfiguration {
   }
 
   /**
-   * Creates DataStore bean to work with MinIO
+   * Creates DataStore bean to work with MinIO.
    *
    * @param blobStore          {@link BlobStore} object
    * @param bucketPrefix       Prefix for bucket name
@@ -182,6 +182,14 @@ public class DataStoreConfiguration {
     return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
   }
 
+  /**
+   * Creates BlobStore bean, that works with AWS S3.
+   *
+   * @param accessKey accessKey to use
+   * @param secretKey secretKey to use
+   * @param region  AWS S3 region to use.
+   * @return {@link BlobStore}
+   */
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
   public BlobStore s3BlobStore(@Value("${datastore.s3.accessKey}") String accessKey,

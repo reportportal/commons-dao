@@ -56,6 +56,11 @@ public class DataStoreUtils {
     //static only
   }
 
+  /**
+   * Returns {@link Optional} of extension by contentType
+   * @param contentType Content type
+   * @return {@link Optional} of {@link String}
+   */
   public static Optional<String> resolveExtension(String contentType) {
     Optional<String> result = Optional.empty();
     try {

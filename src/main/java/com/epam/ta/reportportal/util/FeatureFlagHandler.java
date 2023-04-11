@@ -9,15 +9,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
+ * Component for checking enabled feature flags.
+ *
  * @author <a href="mailto:ivan_kustau@epam.com">Ivan Kustau</a>
- * <p>
- * Component for checking enabled feature flags
  */
 @Component
 public class FeatureFlagHandler {
 
   private final Set<FeatureFlag> enabledFeatureFlagsSet = new HashSet<>();
 
+  /**
+   * Initialises {@link FeatureFlagHandler} by environment variable with enabled feature flags
+   *
+   * @param featureFlags Set of enabled feature flags
+   */
   public FeatureFlagHandler(
       @Value("#{'${rp.feature.flags}'.split(',')}") Set<String> featureFlags) {
 

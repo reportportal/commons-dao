@@ -74,7 +74,7 @@ public class EncryptConfiguration implements InitializingBean {
   }
 
   /**
-   * Creates bean of {@link BasicTextEncryptor} for encrypting purposes
+   * Creates bean of {@link BasicTextEncryptor} for encrypting purposes.
    *
    * @return {@link BasicTextEncryptor} instance
    */
@@ -86,7 +86,7 @@ public class EncryptConfiguration implements InitializingBean {
   }
 
   /**
-   * Creates bean of {@link StandardPBEStringEncryptor} for encrypting purposes
+   * Creates bean of {@link StandardPBEStringEncryptor} for encrypting purposes.
    *
    * @return {@link StandardPBEStringEncryptor} instance
    */

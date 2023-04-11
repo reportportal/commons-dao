@@ -50,6 +50,15 @@ public class S3DataStore implements DataStore {
 
   private final FeatureFlagHandler featureFlagHandler;
 
+  /**
+   * Initialises {@link S3DataStore}
+   *
+   * @param blobStore          {@link BlobStore}
+   * @param bucketPrefix       Prefix for bucket name
+   * @param defaultBucketName  Name of default bucket to use
+   * @param region             Region to use
+   * @param featureFlagHandler {@link FeatureFlagHandler}
+   */
   public S3DataStore(BlobStore blobStore, String bucketPrefix, String defaultBucketName,
       String region, FeatureFlagHandler featureFlagHandler) {
     this.blobStore = blobStore;
@@ -88,12 +97,12 @@ public class S3DataStore implements DataStore {
   public InputStream load(String filePath) {
     S3File s3File = getS3File(filePath);
     try {
-		Blob fileBlob = blobStore.getBlob(s3File.getBucket(), s3File.getFilePath());
-		if (fileBlob != null) {
-			return fileBlob.getPayload().openStream();
-		} else {
-			throw new Exception();
-		}
+      Blob fileBlob = blobStore.getBlob(s3File.getBucket(), s3File.getFilePath());
+      if (fileBlob != null) {
+        return fileBlob.getPayload().openStream();
+      } else {
+        throw new Exception();
+      }
     } catch (Exception e) {
       LOGGER.error("Unable to find file '{}'", filePath, e);
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");

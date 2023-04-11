@@ -16,17 +16,16 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import static org.mockito.Mockito.when;
+
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.util.DateTimeProvider;
 import java.io.File;
+import java.time.LocalDateTime;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.time.LocalDateTime;
-
-import static org.mockito.Mockito.when;
 
 class FilePathGeneratorTest {
 

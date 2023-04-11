@@ -4,8 +4,9 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
+ * Enumeration of current feature flags.
+ *
  * @author <a href="mailto:ivan_kustau@epam.com">Ivan Kustau</a>
- * Enumeration of current feature flags
  */
 public enum FeatureFlag {
   SINGLE_BUCKET("singleBucket");
@@ -22,6 +23,7 @@ public enum FeatureFlag {
 
   /**
    * Returns {@link Optional} of {@link FeatureFlag} by string
+   *
    * @param name Name of feature flag
    * @return {@link Optional} of {@link FeatureFlag} by string
    */
