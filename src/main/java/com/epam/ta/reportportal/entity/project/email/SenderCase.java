@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
+import com.epam.ta.reportportal.entity.enums.LogicalOperator;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -64,15 +65,22 @@ public class SenderCase implements Serializable {
 	@Column(name = "enabled")
 	private boolean enabled;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "attributes_operator")
+	@Type(type = "pqsql_enum")
+	private LogicalOperator attributesOperator;
+
 	public SenderCase() {
 	}
 
-	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase, boolean enabled) {
+	public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
+			boolean enabled, LogicalOperator attributesOperator) {
 		this.recipients = recipients;
 		this.launchNames = launchNames;
 		this.launchAttributeRules = launchAttributeRules;
 		this.sendCase = sendCase;
 		this.enabled = enabled;
+		this.attributesOperator = attributesOperator;
 	}
 
 	public Long getId() {
@@ -129,5 +137,13 @@ public class SenderCase implements Serializable {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public LogicalOperator getAttributesOperator() {
+		return attributesOperator;
+	}
+
+	public void setAttributesOperator(LogicalOperator attributesOperator) {
+		this.attributesOperator = attributesOperator;
 	}
 }

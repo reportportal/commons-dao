@@ -63,7 +63,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String CRITERIA_TABLE = "criteria_table";
 	public static final String CRITERIA_FLAG = "criteria_flag";
 	public static final String ITEM_ID = "item_id";
-	public static final Integer MOST_FAILED_CRITERIA_LIMIT = 20;
+	public static final Integer MOST_FAILED_CRITERIA_LIMIT = 50;
 
 	/* Overall statistics widget constants */
 	public static final String LAUNCHES = "launches";
