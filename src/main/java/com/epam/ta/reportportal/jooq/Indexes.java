@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -86,6 +87,9 @@ public class Indexes {
     public static final Index ACTIVITY_OBJECT_IDX = Indexes0.ACTIVITY_OBJECT_IDX;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
     public static final Index ACTIVITY_PROJECT_IDX = Indexes0.ACTIVITY_PROJECT_IDX;
+    public static final Index API_KEYS_PKEY = Indexes0.API_KEYS_PKEY;
+    public static final Index HASH_API_KEYS_IDX = Indexes0.HASH_API_KEYS_IDX;
+    public static final Index USERS_API_KEYS_UNIQUE = Indexes0.USERS_API_KEYS_UNIQUE;
     public static final Index ATT_ITEM_IDX = Indexes0.ATT_ITEM_IDX;
     public static final Index ATT_LAUNCH_IDX = Indexes0.ATT_LAUNCH_IDX;
     public static final Index ATT_PROJECT_IDX = Indexes0.ATT_PROJECT_IDX;
@@ -219,6 +223,9 @@ public class Indexes {
         public static Index ACTIVITY_OBJECT_IDX = Internal.createIndex("activity_object_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.OBJECT_ID }, false);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
         public static Index ACTIVITY_PROJECT_IDX = Internal.createIndex("activity_project_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.PROJECT_ID }, false);
+        public static Index API_KEYS_PKEY = Internal.createIndex("api_keys_pkey", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.ID }, true);
+        public static Index HASH_API_KEYS_IDX = Internal.createIndex("hash_api_keys_idx", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.HASH }, false);
+        public static Index USERS_API_KEYS_UNIQUE = Internal.createIndex("users_api_keys_unique", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.NAME, JApiKeys.API_KEYS.USER_ID }, true);
         public static Index ATT_ITEM_IDX = Internal.createIndex("att_item_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.ITEM_ID }, false);
         public static Index ATT_LAUNCH_IDX = Internal.createIndex("att_launch_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.LAUNCH_ID }, false);
         public static Index ATT_PROJECT_IDX = Internal.createIndex("att_project_idx", JAttachment.ATTACHMENT, new OrderField[] { JAttachment.ATTACHMENT.PROJECT_ID }, false);

@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -84,6 +85,11 @@ public class Tables {
      * The table <code>public.activity</code>.
      */
     public static final JActivity ACTIVITY = JActivity.ACTIVITY;
+
+    /**
+     * The table <code>public.api_keys</code>.
+     */
+    public static final JApiKeys API_KEYS = JApiKeys.API_KEYS;
 
     /**
      * The table <code>public.attachment</code>.
