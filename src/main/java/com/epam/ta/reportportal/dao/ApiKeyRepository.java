@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ApiKey;
+import java.util.List;
 
 /**
  * @author Andrei Piankouski
@@ -37,4 +38,11 @@ public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndUserId(String name, Long userId);
+
+  /**
+   *
+   * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
+   * @return list of user api keys
+   */
+  List<ApiKey> findByUserId(Long userId);
 }
