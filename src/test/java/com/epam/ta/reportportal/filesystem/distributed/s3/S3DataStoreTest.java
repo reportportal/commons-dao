@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,6 @@ import org.jclouds.io.Payload;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
-
-import static org.mockito.Mockito.*;
-
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -50,25 +46,29 @@ class S3DataStoreTest {
   private final BlobStore blobStore = mock(BlobStore.class);
   private final InputStream inputStream = mock(InputStream.class);
 
-  private final S3DataStore s3DataStore = new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION);
+  private final FeatureFlagHandler featureFlagHandler = mock(FeatureFlagHandler.class);
 
-	@Test
-	void save() throws Exception {
+  private final S3DataStore s3DataStore =
+      new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION, featureFlagHandler);
 
-		BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-		BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock = mock(BlobBuilder.PayloadBlobBuilder.class);
-		Blob blobMock = mock(Blob.class);
+  @Test
+  void save() throws Exception {
 
-		when(inputStream.available()).thenReturn(ZERO);
-		when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
-		when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
-		when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
-		when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
+    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
+    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
+        mock(BlobBuilder.PayloadBlobBuilder.class);
+    Blob blobMock = mock(Blob.class);
 
-		when(blobStore.containerExists(any(String.class))).thenReturn(true);
-		when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
+    when(inputStream.available()).thenReturn(ZERO);
+    when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
+    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
+    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
+    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
 
+    when(blobStore.containerExists(any(String.class))).thenReturn(true);
+    when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
 
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
     s3DataStore.save(FILE_PATH, inputStream);
 
