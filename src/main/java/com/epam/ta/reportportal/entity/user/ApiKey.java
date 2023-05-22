@@ -25,6 +25,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
+ * Representation of ApiKeys table.
+ *
  * @author Andrei Piankouski
  */
 @Entity

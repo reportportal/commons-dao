@@ -20,6 +20,8 @@ import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.util.List;
 
 /**
+ * ApiKe yRepository
+ *
  * @author Andrei Piankouski
  */
 public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
