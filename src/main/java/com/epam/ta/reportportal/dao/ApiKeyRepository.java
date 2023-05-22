@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.util.List;
 
 /**
- * ApiKe Repository
+ * ApiKey Repository
  *
  * @author Andrei Piankouski
  */
