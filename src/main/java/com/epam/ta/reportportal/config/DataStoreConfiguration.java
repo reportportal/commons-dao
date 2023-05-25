@@ -187,7 +187,7 @@ public class DataStoreConfiguration {
    *
    * @param accessKey accessKey to use
    * @param secretKey secretKey to use
-   * @param region  AWS S3 region to use.
+   * @param region    AWS S3 region to use.
    * @return {@link BlobStore}
    */
   @Bean
