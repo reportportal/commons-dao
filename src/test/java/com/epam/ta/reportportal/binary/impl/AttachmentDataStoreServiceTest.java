@@ -40,7 +40,7 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 	@Autowired
 	private AttachmentDataStoreService attachmentDataStoreService;
 
-	@Value("${datastore.default.path:/data/store}")
+	@Value("${datastore.path:/data/store}")
 	private String storageRootPath;
 
 	private static Random random = new Random();

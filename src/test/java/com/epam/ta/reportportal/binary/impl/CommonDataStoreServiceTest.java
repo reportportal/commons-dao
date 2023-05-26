@@ -52,7 +52,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 	@Autowired
 	private DataEncoder dataEncoder;
 
-	@Value("${datastore.default.path:/data/store}")
+	@Value("${datastore.path:/data/store}")
 	private String storageRootPath;
 
 	@Test

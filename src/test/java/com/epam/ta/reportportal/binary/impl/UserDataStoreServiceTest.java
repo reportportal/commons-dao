@@ -40,7 +40,7 @@ class UserDataStoreServiceTest extends BaseTest {
 	@Autowired
 	private UserDataStoreService userDataStoreService;
 
-	@Value("${datastore.default.path:/data/store}")
+	@Value("${datastore.path:/data/store}")
 	private String storageRootPath;
 
 	private static Random random = new Random();
