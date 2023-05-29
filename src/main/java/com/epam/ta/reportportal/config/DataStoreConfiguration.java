@@ -138,7 +138,7 @@ public class DataStoreConfiguration {
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
   public DataStore localDataStore(
-      @Value("${datastore.default.path:/data/store}") String storagePath) {
+      @Value("${datastore.path:/data/store}") String storagePath) {
     return new LocalDataStore(storagePath);
   }
 
