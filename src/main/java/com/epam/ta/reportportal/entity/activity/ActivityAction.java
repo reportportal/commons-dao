@@ -51,6 +51,8 @@ public enum ActivityAction {
   UNLINK_ISSUE("unlinkIssue"),
   UPDATE_ITEM("updateItem"),
   CREATE_USER("createUser"),
+  ASSIGN_USER("assignUser"),
+  UNASSIGN_USER("unassignUser"),
   DELETE_INDEX("deleteIndex"),
   GENERATE_INDEX("generateIndex"),
   START_IMPORT("startImport"),
@@ -60,7 +62,7 @@ public enum ActivityAction {
   DELETE_PATTERN("deletePattern"),
   PATTERN_MATCHED("patternMatched");
 
-  private String value;
+  private final String value;
 
   ActivityAction(String value) {
     this.value = value;
