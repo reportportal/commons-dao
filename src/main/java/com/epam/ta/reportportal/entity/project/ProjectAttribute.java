@@ -17,10 +17,15 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * @author Andrey Plisunov
@@ -30,84 +35,84 @@ import java.util.Objects;
 @IdClass(ProjectAttributeKey.class)
 public class ProjectAttribute implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "attribute_id")
-	private Attribute attribute;
+  @Id
+  @ManyToOne
+  @JoinColumn(name = "attribute_id")
+  private Attribute attribute;
 
-	@Column(name = "value")
-	private String value;
+  @Column(name = "value")
+  private String value;
 
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "project_id")
-	private Project project;
+  @Id
+  @ManyToOne
+  @JoinColumn(name = "project_id")
+  private Project project;
 
-	public ProjectAttribute() {
-	}
+  public ProjectAttribute() {
+  }
 
-	public ProjectAttribute(Attribute attribute, String value, Project project) {
-		this.attribute = attribute;
-		this.value = value;
-		this.project = project;
-	}
+  public ProjectAttribute(Attribute attribute, String value, Project project) {
+    this.attribute = attribute;
+    this.value = value;
+    this.project = project;
+  }
 
-	public Attribute getAttribute() {
-		return attribute;
-	}
+  public Attribute getAttribute() {
+    return attribute;
+  }
 
-	public void setAttribute(Attribute attribute) {
-		this.attribute = attribute;
-	}
+  public void setAttribute(Attribute attribute) {
+    this.attribute = attribute;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	public Project getProject() {
-		return project;
-	}
+  public Project getProject() {
+    return project;
+  }
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+  public void setProject(Project project) {
+    this.project = project;
+  }
 
-	public ProjectAttribute withAttribute(Attribute attribute) {
-		this.attribute = attribute;
-		return this;
-	}
+  public ProjectAttribute withAttribute(Attribute attribute) {
+    this.attribute = attribute;
+    return this;
+  }
 
-	public ProjectAttribute withProject(Project project) {
-		this.project = project;
-		return this;
-	}
+  public ProjectAttribute withProject(Project project) {
+    this.project = project;
+    return this;
+  }
 
-	public ProjectAttribute withValue(String value) {
-		this.value = value;
-		return this;
-	}
+  public ProjectAttribute withValue(String value) {
+    this.value = value;
+    return this;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		ProjectAttribute that = (ProjectAttribute) o;
-		return Objects.equals(attribute, that.attribute) && Objects.equals(value, that.value);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ProjectAttribute that = (ProjectAttribute) o;
+    return Objects.equals(attribute, that.attribute) && Objects.equals(value, that.value);
+  }
 
-	@Override
-	public int hashCode() {
+  @Override
+  public int hashCode() {
 
-		return Objects.hash(attribute, value);
-	}
+    return Objects.hash(attribute, value);
+  }
 }

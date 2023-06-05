@@ -16,20 +16,19 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.UserCreationBid;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
-
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -37,44 +36,59 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Sql("/db/fill/user-bid/user-bid-fill.sql")
 class UserCreationBidRepositoryTest extends BaseTest {
 
-	@Autowired
-	private UserCreationBidRepository repository;
+  public static final String INTERNAL_TYPE = "internal";
+  public static final String UNKNOWN_TYPE = "unknown";
 
-	@Test
-	void findByEmail() {
-		final String email = "superadminemail@domain.com";
+  @Autowired
+  private UserCreationBidRepository repository;
 
-		final Optional<UserCreationBid> userBid = repository.findByEmail(email);
+  @Test
+  void findByUuidAndType() {
+    final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
 
-		assertTrue(userBid.isPresent(), "User bid should exists");
-		assertEquals(email, userBid.get().getEmail(), "Incorrect email");
-	}
+    final Optional<UserCreationBid> userBid = repository.findByUuidAndType(adminUuid,
+        INTERNAL_TYPE);
 
-	@Test
-	void expireBidsOlderThan() {
-		final java.util.Date date = Date.from(LocalDateTime.now().minusDays(20).atZone(ZoneId.systemDefault()).toInstant());
+    assertTrue(userBid.isPresent(), "User bid should exists");
+    assertEquals(adminUuid, userBid.get().getUuid(), "Incorrect uuid");
+    assertEquals("superadminemail@domain.com", userBid.get().getEmail(), "Incorrect email");
+  }
 
-		int deletedCount = repository.expireBidsOlderThan(date);
-		final List<UserCreationBid> bids = repository.findAll();
+  @Test
+  void shouldNotFindByUuidAndTypeWhenTypeNotMatched() {
+    final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
 
-		assertEquals(1, deletedCount);
-		bids.forEach(it -> assertTrue(it.getLastModified().after(date), "Incorrect date"));
-	}
+    final Optional<UserCreationBid> userBid = repository.findByUuidAndType(adminUuid, UNKNOWN_TYPE);
 
-	@Test
-	void findById() {
-		final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
+    assertTrue(userBid.isEmpty(), "User bid should not exists");
+  }
 
-		final Optional<UserCreationBid> bid = repository.findById(adminUuid);
+  @Test
+  void expireBidsOlderThan() {
+    final java.util.Date date = Date.from(
+        LocalDateTime.now().minusDays(20).atZone(ZoneId.systemDefault()).toInstant());
 
-		assertTrue(bid.isPresent(), "User bid should exists");
-		assertEquals(adminUuid, bid.get().getUuid(), "Incorrect uuid");
-		assertEquals("superadminemail@domain.com", bid.get().getEmail(), "Incorrect email");
-	}
+    int deletedCount = repository.expireBidsOlderThan(date);
+    final List<UserCreationBid> bids = repository.findAll();
 
-	@Test
-	void deleteAllByEmail() {
-		int deletedCount = repository.deleteAllByEmail("defaultemail@domain.com");
-		assertEquals(2, deletedCount);
-	}
+    assertEquals(1, deletedCount);
+    bids.forEach(it -> assertTrue(it.getLastModified().after(date), "Incorrect date"));
+  }
+
+  @Test
+  void findById() {
+    final String adminUuid = "0647cf8f-02e3-4acd-ba3e-f74ec9d2c5cb";
+
+    final Optional<UserCreationBid> bid = repository.findById(adminUuid);
+
+    assertTrue(bid.isPresent(), "User bid should exists");
+    assertEquals(adminUuid, bid.get().getUuid(), "Incorrect uuid");
+    assertEquals("superadminemail@domain.com", bid.get().getEmail(), "Incorrect email");
+  }
+
+  @Test
+  void deleteAllByEmail() {
+    int deletedCount = repository.deleteAllByEmail("defaultemail@domain.com");
+    assertEquals(2, deletedCount);
+  }
 }

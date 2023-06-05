@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 
 /**
@@ -27,33 +26,33 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatternTemplateStatistics implements Serializable {
 
-	@JsonProperty(value = "name")
-	private String name;
+  @JsonProperty(value = "name")
+  private String name;
 
-	@JsonProperty(value = "count")
-	private Long count;
+  @JsonProperty(value = "count")
+  private Long count;
 
-	public PatternTemplateStatistics() {
-	}
+  public PatternTemplateStatistics() {
+  }
 
-	public PatternTemplateStatistics(String name, Long count) {
-		this.name = name;
-		this.count = count;
-	}
+  public PatternTemplateStatistics(String name, Long count) {
+    this.name = name;
+    this.count = count;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Long getCount() {
-		return count;
-	}
+  public Long getCount() {
+    return count;
+  }
 
-	public void setCount(Long count) {
-		this.count = count;
-	}
+  public void setCount(Long count) {
+    this.count = count;
+  }
 }

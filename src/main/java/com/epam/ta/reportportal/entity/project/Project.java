@@ -23,14 +23,23 @@ import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * @author Ivan Budayeu
@@ -40,184 +49,188 @@ import java.util.Set;
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
-	private static final long serialVersionUID = -263516611;
+  private static final long serialVersionUID = -263516611;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", unique = true, nullable = false, precision = 64)
+  private Long id;
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	@Column(name = "project_type")
-	private ProjectType projectType;
+  @Column(name = "project_type")
+  private ProjectType projectType;
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
-	private Set<Integration> integrations = Sets.newHashSet();
+  @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+  @OrderBy("creationDate desc")
+  private Set<Integration> integrations = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
-	private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
+  @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+  private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	@OrderBy(value = "issue_type_id")
-	private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
+  @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE}, fetch = FetchType.LAZY)
+  @OrderBy(value = "issue_type_id")
+  private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "project", cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER, orphanRemoval = true)
-	private Set<SenderCase> senderCases = Sets.newHashSet();
+  @OneToMany(mappedBy = "project", cascade = {
+      CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+  private Set<SenderCase> senderCases = Sets.newHashSet();
 
-	@Column(name = "creation_date")
-	private Date creationDate;
+  @Column(name = "creation_date")
+  private Date creationDate;
 
-	@Type(type = "json")
-	@Column(name = "metadata")
-	private Metadata metadata;
+  @Type(type = "json")
+  @Column(name = "metadata")
+  private Metadata metadata;
 
-	@Column(name = "organization")
-	private String organization;
+  @Column(name = "organization")
+  private String organization;
 
-	@Column(name = "allocated_storage", updatable = false)
-	private long allocatedStorage;
+  @Column(name = "allocated_storage", updatable = false)
+  private long allocatedStorage;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
-	private Set<ProjectUser> users = Sets.newHashSet();
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
+  private Set<ProjectUser> users = Sets.newHashSet();
 
-	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
-	@JoinColumn(name = "project_id", updatable = false)
-	@OrderBy
-	private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
+  @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+  @JoinColumn(name = "project_id", updatable = false)
+  @OrderBy
+  private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
 
-	public Project(Long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
+  public Project(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
-	public Project() {
-	}
+  public Project() {
+  }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+  public Date getCreationDate() {
+    return creationDate;
+  }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
+  }
 
-	public Long getId() {
-		return this.id;
-	}
+  public Long getId() {
+    return this.id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public ProjectType getProjectType() {
-		return projectType;
-	}
+  public ProjectType getProjectType() {
+    return projectType;
+  }
 
-	public void setProjectType(ProjectType projectType) {
-		this.projectType = projectType;
-	}
+  public void setProjectType(ProjectType projectType) {
+    this.projectType = projectType;
+  }
 
-	public Set<ProjectUser> getUsers() {
-		return users;
-	}
+  public Set<ProjectUser> getUsers() {
+    return users;
+  }
 
-	public void setUsers(Set<ProjectUser> users) {
-		this.users = users;
-	}
+  public void setUsers(Set<ProjectUser> users) {
+    this.users = users;
+  }
 
-	public long getAllocatedStorage() {
-		return allocatedStorage;
-	}
+  public long getAllocatedStorage() {
+    return allocatedStorage;
+  }
 
-	public void setAllocatedStorage(long allocatedStorage) {
-		this.allocatedStorage = allocatedStorage;
-	}
+  public void setAllocatedStorage(long allocatedStorage) {
+    this.allocatedStorage = allocatedStorage;
+  }
 
-	public Set<PatternTemplate> getPatternTemplates() {
-		return patternTemplates;
-	}
+  public Set<PatternTemplate> getPatternTemplates() {
+    return patternTemplates;
+  }
 
-	public void setPatternTemplates(Set<PatternTemplate> patternTemplates) {
-		this.patternTemplates = patternTemplates;
-	}
+  public void setPatternTemplates(Set<PatternTemplate> patternTemplates) {
+    this.patternTemplates = patternTemplates;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Set<Integration> getIntegrations() {
-		return integrations;
-	}
+  public Set<Integration> getIntegrations() {
+    return integrations;
+  }
 
-	public void setIntegrations(Set<Integration> integrations) {
-		this.integrations = integrations;
-	}
+  public void setIntegrations(Set<Integration> integrations) {
+    this.integrations = integrations;
+  }
 
-	public Set<ProjectAttribute> getProjectAttributes() {
-		return projectAttributes;
-	}
+  public Set<ProjectAttribute> getProjectAttributes() {
+    return projectAttributes;
+  }
 
-	public Set<ProjectIssueType> getProjectIssueTypes() {
-		return projectIssueTypes;
-	}
+  public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
+    this.projectAttributes = projectAttributes;
+  }
 
-	public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
-		this.projectIssueTypes = projectIssueTypes;
-	}
+  public Set<ProjectIssueType> getProjectIssueTypes() {
+    return projectIssueTypes;
+  }
 
-	public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
-		this.projectAttributes = projectAttributes;
-	}
+  public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
+    this.projectIssueTypes = projectIssueTypes;
+  }
 
-	public Set<SenderCase> getSenderCases() {
-		return senderCases;
-	}
+  public Set<SenderCase> getSenderCases() {
+    return senderCases;
+  }
 
-	public void setSenderCases(Set<SenderCase> senderCases) {
-		this.senderCases = senderCases;
-	}
+  public void setSenderCases(Set<SenderCase> senderCases) {
+    this.senderCases = senderCases;
+  }
 
-	public String getOrganization() {
-		return organization;
-	}
+  public String getOrganization() {
+    return organization;
+  }
 
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
+  public void setOrganization(String organization) {
+    this.organization = organization;
+  }
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Project project = (Project) o;
-		return Objects.equals(name, project.name) && Objects.equals(allocatedStorage, project.allocatedStorage) && Objects.equals(
-				creationDate,
-				project.creationDate
-		) && Objects.equals(metadata, project.metadata);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Project project = (Project) o;
+    return Objects.equals(name, project.name) && Objects.equals(allocatedStorage,
+        project.allocatedStorage) && Objects.equals(
+        creationDate,
+        project.creationDate
+    ) && Objects.equals(metadata, project.metadata);
+  }
 
-	@Override
-	public int hashCode() {
+  @Override
+  public int hashCode() {
 
-		return Objects.hash(name, creationDate, metadata, allocatedStorage);
-	}
+    return Objects.hash(name, creationDate, metadata, allocatedStorage);
+  }
 
 }

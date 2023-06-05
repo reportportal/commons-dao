@@ -24,21 +24,22 @@ import java.util.Optional;
  */
 public enum AnalyzeMode {
 
-	ALL_LAUNCHES("ALL"),
-	BY_LAUNCH_NAME("LAUNCH_NAME"),
-	CURRENT_LAUNCH("CURRENT_LAUNCH");
+  ALL_LAUNCHES("ALL"),
+  BY_LAUNCH_NAME("LAUNCH_NAME"),
+  CURRENT_LAUNCH("CURRENT_LAUNCH");
 
-	private String value;
+  private String value;
 
-	AnalyzeMode(String value) {
-		this.value = value;
-	}
+  AnalyzeMode(String value) {
+    this.value = value;
+  }
 
-	public static Optional<AnalyzeMode> fromString(String mode) {
-		return Arrays.stream(AnalyzeMode.values()).filter(it -> it.getValue().equalsIgnoreCase(mode)).findFirst();
-	}
+  public static Optional<AnalyzeMode> fromString(String mode) {
+    return Arrays.stream(AnalyzeMode.values()).filter(it -> it.getValue().equalsIgnoreCase(mode))
+        .findFirst();
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 }

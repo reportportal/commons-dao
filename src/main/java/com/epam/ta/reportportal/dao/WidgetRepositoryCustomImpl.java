@@ -16,6 +16,11 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
+import static com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
+import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
+import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
+
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -43,28 +48,29 @@ import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class WidgetRepositoryCustomImpl implements WidgetRepositoryCustom {
+public class WidgetRepositoryCustomImpl implements
+    WidgetRepositoryCustom {
 
-	private final DSLContext dsl;
+  private final DSLContext dsl;
 
 	@Autowired
-	public WidgetRepositoryCustomImpl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+  public WidgetRepositoryCustomImpl(DSLContext dsl) {
+    this.dsl = dsl;
+  }
 
-	@Override
-	public int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner) {
-		return dsl.deleteFrom(WIDGET_FILTER)
-				.where(WIDGET_FILTER.WIDGET_ID.in(dsl.select(WIDGET.ID)
-						.from(WIDGET)
-						.join(WIDGET_FILTER)
-						.on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
-						.join(OWNED_ENTITY)
-						.on(WIDGET.ID.eq(OWNED_ENTITY.ID))
-						.where(WIDGET_FILTER.FILTER_ID.eq(filterId))
-						.and(OWNED_ENTITY.OWNER.notEqual(owner))))
-				.execute();
-	}
+  @Override
+  public int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner) {
+    return dsl.deleteFrom(WIDGET_FILTER)
+        .where(WIDGET_FILTER.WIDGET_ID.in(dsl.select(WIDGET.ID)
+            .from(WIDGET)
+            .join(WIDGET_FILTER)
+            .on(WIDGET.ID.eq(WIDGET_FILTER.WIDGET_ID))
+            .join(OWNED_ENTITY)
+            .on(WIDGET.ID.eq(OWNED_ENTITY.ID))
+            .where(WIDGET_FILTER.FILTER_ID.eq(filterId))
+            .and(OWNED_ENTITY.OWNER.notEqual(owner))))
+        .execute();
+  }
 
 	@Override
 	public List<Widget> findByFilter(Queryable filter) {

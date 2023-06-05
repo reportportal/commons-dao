@@ -23,14 +23,14 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class ActivityCriteriaConstant {
 
-	private ActivityCriteriaConstant() {
-		//static only
-	}
+  public static final String CRITERIA_ACTION = "action";
+  public static final String CRITERIA_LOGIN = "login";
+  public static final String CRITERIA_OBJECT_ID = "objectId";
+  public static final String CRITERIA_ENTITY = "entity";
+  public static final String CRITERIA_CREATION_DATE = "creationDate";
+  public static final String CRITERIA_OBJECT_NAME = "objectName";
 
-	public static final String CRITERIA_ACTION = "action";
-	public static final String CRITERIA_LOGIN = "login";
-	public static final String CRITERIA_OBJECT_ID = "objectId";
-	public static final String CRITERIA_ENTITY = "entity";
-	public static final String CRITERIA_CREATION_DATE = "creationDate";
-	public static final String CRITERIA_OBJECT_NAME = "objectName";
+  private ActivityCriteriaConstant() {
+    //static only
+  }
 }

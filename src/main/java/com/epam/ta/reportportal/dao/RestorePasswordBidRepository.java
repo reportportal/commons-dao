@@ -17,19 +17,19 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.RestorePasswordBid;
-
 import java.util.Optional;
 
 /**
  * @author Ivan Budaev
  */
-public interface RestorePasswordBidRepository extends ReportPortalRepository<RestorePasswordBid, String> {
+public interface RestorePasswordBidRepository extends
+    ReportPortalRepository<RestorePasswordBid, String> {
 
-    /**
-     * Finds bid by specified email
-     *
-     * @param email email
-     * @return Optional
-     */
-    Optional<RestorePasswordBid> findByEmail(String email);
+  /**
+   * Finds bid by specified email
+   *
+   * @param email email
+   * @return Optional
+   */
+  Optional<RestorePasswordBid> findByEmail(String email);
 }

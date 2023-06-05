@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.entity.activity;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import com.google.common.collect.Lists;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -27,44 +26,43 @@ import java.util.List;
  */
 public class ActivityDetails extends JsonbUserType implements Serializable {
 
-	@Override
-	public Class<?> returnedClass() {
-		return ActivityDetails.class;
-	}
+  private List<HistoryField> history = Lists.newArrayList();
+  private String objectName;
 
-	private List<HistoryField> history = Lists.newArrayList();
+  public ActivityDetails() {
+  }
 
-	private String objectName;
+  public ActivityDetails(String objectName) {
+    this.objectName = objectName;
+  }
 
-	public ActivityDetails() {
-	}
+  public ActivityDetails(List<HistoryField> history, String objectName) {
+    this.history = history;
+    this.objectName = objectName;
+  }
 
-	public ActivityDetails(String objectName) {
-		this.objectName = objectName;
-	}
+  @Override
+  public Class<?> returnedClass() {
+    return ActivityDetails.class;
+  }
 
-	public ActivityDetails(List<HistoryField> history, String objectName) {
-		this.history = history;
-		this.objectName = objectName;
-	}
+  public List<HistoryField> getHistory() {
+    return history;
+  }
 
-	public List<HistoryField> getHistory() {
-		return history;
-	}
+  public void setHistory(List<HistoryField> history) {
+    this.history = history;
+  }
 
-	public void setHistory(List<HistoryField> history) {
-		this.history = history;
-	}
+  public String getObjectName() {
+    return objectName;
+  }
 
-	public String getObjectName() {
-		return objectName;
-	}
+  public void setObjectName(String objectName) {
+    this.objectName = objectName;
+  }
 
-	public void setObjectName(String objectName) {
-		this.objectName = objectName;
-	}
-
-	public void addHistoryField(HistoryField historyField) {
-		history.add(historyField);
-	}
+  public void addHistoryField(HistoryField historyField) {
+    history.add(historyField);
+  }
 }

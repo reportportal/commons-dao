@@ -24,21 +24,22 @@ import java.util.Optional;
  */
 public enum PluginFileExtension {
 
-	JAR(".jar"),
-	ZIP(".zip");
+  JAR(".jar"),
+  ZIP(".zip");
 
-	private String extension;
+  private String extension;
 
-	PluginFileExtension(String extension) {
-		this.extension = extension;
-	}
+  PluginFileExtension(String extension) {
+    this.extension = extension;
+  }
 
-	public static Optional<PluginFileExtension> findByExtension(String extension) {
+  public static Optional<PluginFileExtension> findByExtension(String extension) {
 
-		return Arrays.stream(values()).filter(e -> e.getExtension().equalsIgnoreCase(extension)).findFirst();
-	}
+    return Arrays.stream(values()).filter(e -> e.getExtension().equalsIgnoreCase(extension))
+        .findFirst();
+  }
 
-	public String getExtension() {
-		return extension;
-	}
+  public String getExtension() {
+    return extension;
+  }
 }

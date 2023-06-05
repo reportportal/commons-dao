@@ -23,15 +23,16 @@ import com.epam.ta.reportportal.entity.widget.Widget;
  */
 public interface WidgetRepositoryCustom extends FilterableRepository<Widget> {
 
-	/**
-	 * Remove many to many relation between {@link com.epam.ta.reportportal.entity.filter.UserFilter} by specified
-	 * {@link com.epam.ta.reportportal.entity.filter.UserFilter#id} and {@link Widget} entities,
-	 * that are not owned by the {@link com.epam.ta.reportportal.entity.filter.UserFilter} owner
-	 *
-	 * @param filterId {@link com.epam.ta.reportportal.entity.filter.UserFilter#id}
-	 * @param owner    {@link Widget#owner}
-	 * @return count of removed {@link Widget} entities
-	 */
-	int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner);
+  /**
+   * Remove many to many relation between {@link com.epam.ta.reportportal.entity.filter.UserFilter}
+   * by specified {@link com.epam.ta.reportportal.entity.filter.UserFilter#id} and {@link Widget}
+   * entities, that are not owned by the {@link com.epam.ta.reportportal.entity.filter.UserFilter}
+   * owner
+   *
+   * @param filterId {@link com.epam.ta.reportportal.entity.filter.UserFilter#id}
+   * @param owner    {@link Widget#owner}
+   * @return count of removed {@link Widget} entities
+   */
+  int deleteRelationByFilterIdAndNotOwner(Long filterId, String owner);
 
 }

@@ -16,28 +16,29 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
-import com.epam.ta.reportportal.entity.project.ProjectRole;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class ProjectRoleConverterTest extends AttributeConverterTest {
 
-	@BeforeEach
-	void setUp() throws Exception {
-		this.converter = new ProjectRoleConverter();
-		allowedValues = Arrays.stream(ProjectRole.values())
-				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    this.converter = new ProjectRoleConverter();
+    allowedValues = Arrays.stream(ProjectRole.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
+  }
 
-	@Override
-	protected void convertToColumnTest() {
-		Arrays.stream(ProjectRole.values()).forEach(it -> assertEquals(it.name(), converter.convertToDatabaseColumn(it)));
-	}
+  @Override
+  protected void convertToColumnTest() {
+    Arrays.stream(ProjectRole.values())
+        .forEach(it -> assertEquals(it.name(), converter.convertToDatabaseColumn(it)));
+  }
 }

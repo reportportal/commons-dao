@@ -21,6 +21,13 @@ import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.INTEGRATION_SE
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import java.io.ByteArrayInputStream;
 import java.io.File;

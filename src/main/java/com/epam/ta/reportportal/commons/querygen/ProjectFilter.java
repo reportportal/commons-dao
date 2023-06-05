@@ -20,32 +20,32 @@ import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstan
 
 public class ProjectFilter extends Filter {
 
-	private ProjectFilter(Long id, Queryable filter, Long projectId) {
-		super(id, filter.getTarget(), filter.getFilterConditions());
-		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				GeneralCriteriaConstant.CRITERIA_PROJECT_ID
-		));
+  private ProjectFilter(Long id, Queryable filter, Long projectId) {
+    super(id, filter.getTarget(), filter.getFilterConditions());
+    getFilterConditions().add(new FilterCondition(Condition.EQUALS,
+        false,
+        String.valueOf(projectId),
+        GeneralCriteriaConstant.CRITERIA_PROJECT_ID
+    ));
 
-	}
+  }
 
-	private ProjectFilter(Queryable filter, Long projectId) {
-		super(filter.getTarget(), filter.getFilterConditions());
-		getFilterConditions().add(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				GeneralCriteriaConstant.CRITERIA_PROJECT_ID
-		));
+  private ProjectFilter(Queryable filter, Long projectId) {
+    super(filter.getTarget(), filter.getFilterConditions());
+    getFilterConditions().add(new FilterCondition(Condition.EQUALS,
+        false,
+        String.valueOf(projectId),
+        GeneralCriteriaConstant.CRITERIA_PROJECT_ID
+    ));
 
-	}
+  }
 
-	public static ProjectFilter of(Queryable filter, Long projectId) {
-		return new ProjectFilter(filter, projectId);
-	}
+  public static ProjectFilter of(Queryable filter, Long projectId) {
+    return new ProjectFilter(filter, projectId);
+  }
 
-	public static ProjectFilter of(Long id, Queryable filter, Long projectId) {
-		return new ProjectFilter(id, filter, projectId);
-	}
+  public static ProjectFilter of(Long id, Queryable filter, Long projectId) {
+    return new ProjectFilter(id, filter, projectId);
+  }
 
 }

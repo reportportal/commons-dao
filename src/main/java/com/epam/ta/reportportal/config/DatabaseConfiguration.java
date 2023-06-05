@@ -17,6 +17,12 @@
 package com.epam.ta.reportportal.config;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Properties;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
@@ -45,118 +51,116 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.Assert;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Properties;
-
 /**
  * @author Pavel Bortnik
  */
 @Configuration
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = {
-		"com.epam.ta.reportportal.dao" }, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
+    "com.epam.ta.reportportal.dao"}, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
 @EnableTransactionManagement
 public class DatabaseConfiguration {
 
-	@Autowired
-	private DataSource dataSource;
+  @Autowired
+  private DataSource dataSource;
 
-	@Bean
-	@Profile("unittest")
-	public Flyway flyway() throws IOException {
-		return Flyway.configure().dataSource(dataSource).validateOnMigrate(false).load();
-	}
+  @Bean
+  @Profile("unittest")
+  public Flyway flyway() throws IOException {
+    return Flyway.configure().dataSource(dataSource).validateOnMigrate(false).load();
+  }
 
-	@Bean
-	public EntityManagerFactory entityManagerFactory() {
+  @Bean
+  public EntityManagerFactory entityManagerFactory() {
 
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setGenerateDdl(false);
+    HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+    vendorAdapter.setGenerateDdl(false);
 
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("com.epam.ta.reportportal.commons", "com.epam.ta.reportportal.entity");
-		factory.setDataSource(dataSource);
+    LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+    factory.setJpaVendorAdapter(vendorAdapter);
+    factory.setPackagesToScan("com.epam.ta.reportportal.commons",
+        "com.epam.ta.reportportal.entity");
+    factory.setDataSource(dataSource);
 
-		Properties jpaProperties = new Properties();
-		jpaProperties.setProperty("hibernate.dialect", "com.epam.ta.reportportal.commons.JsonbAwarePostgresDialect");
-		factory.setJpaProperties(jpaProperties);
+    Properties jpaProperties = new Properties();
+    jpaProperties.setProperty("hibernate.dialect",
+        "com.epam.ta.reportportal.commons.JsonbAwarePostgresDialect");
+    factory.setJpaProperties(jpaProperties);
 
-		factory.afterPropertiesSet();
+    factory.afterPropertiesSet();
 
-		return factory.getObject();
-	}
+    return factory.getObject();
+  }
 
-	@Bean
-	@Primary
-	public PlatformTransactionManager transactionManager() {
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactory());
-		return transactionManager;
-	}
+  @Bean
+  @Primary
+  public PlatformTransactionManager transactionManager() {
+    JpaTransactionManager transactionManager = new JpaTransactionManager();
+    transactionManager.setEntityManagerFactory(entityManagerFactory());
+    return transactionManager;
+  }
 
-	@Bean
-	public TransactionAwareDataSourceProxy transactionAwareDataSource() {
-		return new TransactionAwareDataSourceProxy(dataSource);
-	}
+  @Bean
+  public TransactionAwareDataSourceProxy transactionAwareDataSource() {
+    return new TransactionAwareDataSourceProxy(dataSource);
+  }
 
-	@Bean
-	public DataSourceConnectionProvider connectionProvider() {
-		return new DataSourceConnectionProvider(transactionAwareDataSource());
-	}
+  @Bean
+  public DataSourceConnectionProvider connectionProvider() {
+    return new DataSourceConnectionProvider(transactionAwareDataSource());
+  }
 
-	@Bean
-	public DefaultConfiguration configuration() {
-		DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-		jooqConfiguration.set(SQLDialect.POSTGRES);
-		jooqConfiguration.setConnectionProvider(connectionProvider());
-		return jooqConfiguration;
-	}
+  @Bean
+  public DefaultConfiguration configuration() {
+    DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
+    jooqConfiguration.set(SQLDialect.POSTGRES);
+    jooqConfiguration.setConnectionProvider(connectionProvider());
+    return jooqConfiguration;
+  }
 
-	@Bean
-	public DefaultDSLContext dsl() {
-		return new DefaultDSLContext(configuration());
-	}
+  @Bean
+  public DefaultDSLContext dsl() {
+    return new DefaultDSLContext(configuration());
+  }
 
-	public static class RpRepoFactoryBean<T extends Repository<S, ID>, S, ID> extends JpaRepositoryFactoryBean {
+  public static class RpRepoFactoryBean<T extends Repository<S, ID>, S, ID> extends
+      JpaRepositoryFactoryBean {
 
-		@Autowired
-		private AutowireCapableBeanFactory beanFactory;
+    @Autowired
+    private AutowireCapableBeanFactory beanFactory;
 
-		/**
-		 * Creates a new {@link JpaRepositoryFactoryBean} for the given repository interface.
-		 *
-		 * @param repositoryInterface must not be {@literal null}.
-		 */
-		public RpRepoFactoryBean(Class repositoryInterface) {
-			super(repositoryInterface);
-		}
+    /**
+     * Creates a new {@link JpaRepositoryFactoryBean} for the given repository interface.
+     *
+     * @param repositoryInterface must not be {@literal null}.
+     */
+    public RpRepoFactoryBean(Class repositoryInterface) {
+      super(repositoryInterface);
+    }
 
-		@Override
-		protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
-			return new JpaRepositoryFactory(entityManager) {
-				@Override
-				public <T> T getRepository(Class<T> repositoryInterface) {
-					T repo = super.getRepository(repositoryInterface);
-					beanFactory.autowireBean(repo);
-					return repo;
-				}
+    @Override
+    protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
+      return new JpaRepositoryFactory(entityManager) {
+        @Override
+        public <T> T getRepository(Class<T> repositoryInterface) {
+          T repo = super.getRepository(repositoryInterface);
+          beanFactory.autowireBean(repo);
+          return repo;
+        }
 
-				@Override
-				protected JpaRepositoryImplementation<?, ?> getTargetRepository(RepositoryInformation information, EntityManager em) {
+        @Override
+        protected JpaRepositoryImplementation<?, ?> getTargetRepository(
+            RepositoryInformation information, EntityManager em) {
 
-					JpaEntityInformation<?, Serializable> entityInformation = getEntityInformation(information.getDomainType());
-					Object repository = getTargetRepositoryViaReflection(information, entityInformation, em);
+          JpaEntityInformation<?, Serializable> entityInformation = getEntityInformation(
+              information.getDomainType());
+          Object repository = getTargetRepositoryViaReflection(information, entityInformation, em);
 
-					Assert.isInstanceOf(JpaRepositoryImplementation.class, repository);
-					beanFactory.autowireBean(repository);
-					return (JpaRepositoryImplementation<?, ?>) repository;
-				}
-			};
-		}
-	}
+          Assert.isInstanceOf(JpaRepositoryImplementation.class, repository);
+          beanFactory.autowireBean(repository);
+          return (JpaRepositoryImplementation<?, ?>) repository;
+        }
+      };
+    }
+  }
 }

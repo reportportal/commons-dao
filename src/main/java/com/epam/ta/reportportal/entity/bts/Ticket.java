@@ -18,12 +18,17 @@ package com.epam.ta.reportportal.entity.bts;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.google.common.collect.Sets;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 /**
  * @author Pavel Bortnik
@@ -33,124 +38,124 @@ import java.util.Set;
 @Table(name = "ticket")
 public class Ticket implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-	@Column(name = "ticket_id")
-	private String ticketId;
+  @Column(name = "ticket_id")
+  private String ticketId;
 
-	@Column(name = "submitter")
-	private String submitter;
+  @Column(name = "submitter")
+  private String submitter;
 
-	@Column(name = "submit_date")
-	private LocalDateTime submitDate;
+  @Column(name = "submit_date")
+  private LocalDateTime submitDate;
 
-	@Column(name = "bts_url")
-	private String btsUrl;
+  @Column(name = "bts_url")
+  private String btsUrl;
 
-	@Column(name = "bts_project")
-	private String btsProject;
+  @Column(name = "bts_project")
+  private String btsProject;
 
-	@Column(name = "url")
-	private String url;
+  @Column(name = "url")
+  private String url;
 
-	@Column(name = "plugin_name")
-	private String pluginName;
+  @Column(name = "plugin_name")
+  private String pluginName;
 
-	@ManyToMany(mappedBy = "tickets")
-	private Set<IssueEntity> issues = Sets.newHashSet();
+  @ManyToMany(mappedBy = "tickets")
+  private Set<IssueEntity> issues = Sets.newHashSet();
 
-	public Ticket() {
-	}
+  public Ticket() {
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getTicketId() {
-		return ticketId;
-	}
+  public String getTicketId() {
+    return ticketId;
+  }
 
-	public void setTicketId(String ticketId) {
-		this.ticketId = ticketId;
-	}
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
+  }
 
-	public String getSubmitter() {
-		return submitter;
-	}
+  public String getSubmitter() {
+    return submitter;
+  }
 
-	public void setSubmitter(String submitter) {
-		this.submitter = submitter;
-	}
+  public void setSubmitter(String submitter) {
+    this.submitter = submitter;
+  }
 
-	public LocalDateTime getSubmitDate() {
-		return submitDate;
-	}
+  public LocalDateTime getSubmitDate() {
+    return submitDate;
+  }
 
-	public void setSubmitDate(LocalDateTime submitDate) {
-		this.submitDate = submitDate;
-	}
+  public void setSubmitDate(LocalDateTime submitDate) {
+    this.submitDate = submitDate;
+  }
 
-	public String getBtsUrl() {
-		return btsUrl;
-	}
+  public String getBtsUrl() {
+    return btsUrl;
+  }
 
-	public void setBtsUrl(String btsUrl) {
-		this.btsUrl = btsUrl;
-	}
+  public void setBtsUrl(String btsUrl) {
+    this.btsUrl = btsUrl;
+  }
 
-	public String getBtsProject() {
-		return btsProject;
-	}
+  public String getBtsProject() {
+    return btsProject;
+  }
 
-	public void setBtsProject(String btsProject) {
-		this.btsProject = btsProject;
-	}
+  public void setBtsProject(String btsProject) {
+    this.btsProject = btsProject;
+  }
 
-	public String getUrl() {
-		return url;
-	}
+  public String getUrl() {
+    return url;
+  }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-	public Set<IssueEntity> getIssues() {
-		return issues;
-	}
+  public Set<IssueEntity> getIssues() {
+    return issues;
+  }
 
-	public void setIssues(Set<IssueEntity> issues) {
-		this.issues = issues;
-	}
+  public void setIssues(Set<IssueEntity> issues) {
+    this.issues = issues;
+  }
 
-	public String getPluginName() {
-		return pluginName;
-	}
+  public String getPluginName() {
+    return pluginName;
+  }
 
-	public void setPluginName(String pluginName) {
-		this.pluginName = pluginName;
-	}
+  public void setPluginName(String pluginName) {
+    this.pluginName = pluginName;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Ticket ticket = (Ticket) o;
-		return Objects.equals(ticketId, ticket.ticketId);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Ticket ticket = (Ticket) o;
+    return Objects.equals(ticketId, ticket.ticketId);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(ticketId);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(ticketId);
+  }
 }

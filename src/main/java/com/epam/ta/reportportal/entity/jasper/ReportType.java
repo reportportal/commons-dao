@@ -20,7 +20,7 @@ package com.epam.ta.reportportal.entity.jasper;
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public enum ReportType {
-	PROJECT,
-	LAUNCH,
-	USER
+  PROJECT,
+  LAUNCH,
+  USER
 }

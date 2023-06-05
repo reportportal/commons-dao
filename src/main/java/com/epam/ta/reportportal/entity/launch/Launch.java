@@ -23,18 +23,31 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.google.common.collect.Sets;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Pavel Bortnik
@@ -44,270 +57,274 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
-		@Index(name = "launch_pk", unique = true, columnList = "id ASC"),
-		@Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
+    @UniqueConstraint(columnNames = {"name", "number", "project_id"})}, indexes = {
+    @Index(name = "launch_pk", unique = true, columnList = "id ASC"),
+    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC")})
 public class Launch implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", unique = true, nullable = false, precision = 64)
+  private Long id;
 
-	@Column(name = "uuid", unique = true, nullable = false)
-	private String uuid;
+  @Column(name = "uuid", unique = true, nullable = false)
+  private String uuid;
 
-	@Column(name = "project_id", nullable = false, precision = 32)
-	private Long projectId;
+  @Column(name = "project_id", nullable = false, precision = 32)
+  private Long projectId;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
-	@Column(name = "name", nullable = false, length = 256)
-	private String name;
+  @Column(name = "name", nullable = false, length = 256)
+  private String name;
 
-	@Column(name = "description")
-	private String description;
+  @Column(name = "description")
+  private String description;
 
-	@Column(name = "start_time", nullable = false)
-	private LocalDateTime startTime;
+  @Column(name = "start_time", nullable = false)
+  private LocalDateTime startTime;
 
-	@Column(name = "end_time")
-	private LocalDateTime endTime;
+  @Column(name = "end_time")
+  private LocalDateTime endTime;
 
-	@Column(name = "number", nullable = false, precision = 32)
-	private Long number;
+  @Column(name = "number", nullable = false, precision = 32)
+  private Long number;
 
-	@Column(name = "has_retries")
-	private boolean hasRetries;
+  @Column(name = "has_retries")
+  private boolean hasRetries;
 
-	@Column(name = "rerun")
-	private boolean rerun;
+  @Column(name = "rerun")
+  private boolean rerun;
 
-	@Column(name = "last_modified", nullable = false)
-	@LastModifiedDate
-	private LocalDateTime lastModified;
+  @Column(name = "last_modified", nullable = false)
+  @LastModifiedDate
+  private LocalDateTime lastModified;
 
-	@Column(name = "mode", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@Type(type = "pqsql_enum")
-	private LaunchModeEnum mode;
+  @Column(name = "mode", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private LaunchModeEnum mode;
 
-	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@Type(type = "pqsql_enum")
-	private StatusEnum status;
+  @Column(name = "status", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private StatusEnum status;
 
-	@OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	@Fetch(FetchMode.JOIN)
-	private Set<ItemAttribute> attributes = Sets.newHashSet();
+  @OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @Fetch(FetchMode.JOIN)
+  private Set<ItemAttribute> attributes = Sets.newHashSet();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@Fetch(FetchMode.JOIN)
-	@JoinColumn(name = "launch_id", insertable = false, updatable = false)
-	private Set<Statistics> statistics = Sets.newHashSet();
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @Fetch(FetchMode.JOIN)
+  @JoinColumn(name = "launch_id", insertable = false, updatable = false)
+  private Set<Statistics> statistics = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "launch", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Log> logs = Sets.newHashSet();
+  @OneToMany(mappedBy = "launch", fetch = FetchType.LAZY, orphanRemoval = true)
+  private Set<Log> logs = Sets.newHashSet();
 
-	@Column(name = "approximate_duration")
-	private double approximateDuration;
+  @Column(name = "approximate_duration")
+  private double approximateDuration;
 
-	public Set<ItemAttribute> getAttributes() {
-		return attributes;
-	}
+  public Launch() {
+  }
 
-	public void setAttributes(Set<ItemAttribute> tags) {
-		this.attributes.clear();
-		this.attributes.addAll(tags);
-	}
+  public Launch(Long id) {
+    this.id = id;
+  }
 
-	public Launch() {
-	}
+  public Set<ItemAttribute> getAttributes() {
+    return attributes;
+  }
 
-	public Launch(Long id) {
-		this.id = id;
-	}
+  public void setAttributes(Set<ItemAttribute> tags) {
+    this.attributes.clear();
+    this.attributes.addAll(tags);
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getUuid() {
-		return uuid;
-	}
+  public String getUuid() {
+    return uuid;
+  }
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+  public Long getProjectId() {
+    return projectId;
+  }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+  public void setProjectId(Long projectId) {
+    this.projectId = projectId;
+  }
 
-	public Long getUserId() {
-		return userId;
-	}
+  public Long getUserId() {
+    return userId;
+  }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public boolean isRerun() {
-		return rerun;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setRerun(boolean rerun) {
-		this.rerun = rerun;
-	}
+  public boolean isRerun() {
+    return rerun;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setRerun(boolean rerun) {
+    this.rerun = rerun;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public LocalDateTime getStartTime() {
-		return startTime;
-	}
+  public LocalDateTime getStartTime() {
+    return startTime;
+  }
 
-	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
-	}
+  public void setStartTime(LocalDateTime startTime) {
+    this.startTime = startTime;
+  }
 
-	public Set<Statistics> getStatistics() {
-		return statistics;
-	}
+  public Set<Statistics> getStatistics() {
+    return statistics;
+  }
 
-	public void setStatistics(Set<Statistics> statistics) {
-		this.statistics = statistics;
-	}
+  public void setStatistics(Set<Statistics> statistics) {
+    this.statistics = statistics;
+  }
 
-	public LocalDateTime getEndTime() {
-		return endTime;
-	}
+  public LocalDateTime getEndTime() {
+    return endTime;
+  }
 
-	public void setEndTime(LocalDateTime endTime) {
-		this.endTime = endTime;
-	}
+  public void setEndTime(LocalDateTime endTime) {
+    this.endTime = endTime;
+  }
 
-	public Long getNumber() {
-		return number;
-	}
+  public Long getNumber() {
+    return number;
+  }
 
-	public void setNumber(Long number) {
-		this.number = number;
-	}
+  public void setNumber(Long number) {
+    this.number = number;
+  }
 
-	public boolean isHasRetries() {
-		return hasRetries;
-	}
+  public boolean isHasRetries() {
+    return hasRetries;
+  }
 
-	public void setHasRetries(boolean hasRetries) {
-		this.hasRetries = hasRetries;
-	}
+  public void setHasRetries(boolean hasRetries) {
+    this.hasRetries = hasRetries;
+  }
 
-	public LocalDateTime getLastModified() {
-		return lastModified;
-	}
+  public LocalDateTime getLastModified() {
+    return lastModified;
+  }
 
-	public void setLastModified(LocalDateTime lastModified) {
-		this.lastModified = lastModified;
-	}
+  public void setLastModified(LocalDateTime lastModified) {
+    this.lastModified = lastModified;
+  }
 
-	public LaunchModeEnum getMode() {
-		return mode;
-	}
+  public LaunchModeEnum getMode() {
+    return mode;
+  }
 
-	public void setMode(LaunchModeEnum mode) {
-		this.mode = mode;
-	}
+  public void setMode(LaunchModeEnum mode) {
+    this.mode = mode;
+  }
 
-	public StatusEnum getStatus() {
-		return status;
-	}
+  public StatusEnum getStatus() {
+    return status;
+  }
 
-	public Set<Log> getLogs() {
-		return logs;
-	}
+  public void setStatus(StatusEnum status) {
+    this.status = status;
+  }
 
-	public void setLogs(Set<Log> logs) {
-		this.logs = logs;
-	}
+  public Set<Log> getLogs() {
+    return logs;
+  }
 
-	public void setStatus(StatusEnum status) {
-		this.status = status;
-	}
+  public void setLogs(Set<Log> logs) {
+    this.logs = logs;
+  }
 
-	public double getApproximateDuration() {
-		return approximateDuration;
-	}
+  public double getApproximateDuration() {
+    return approximateDuration;
+  }
 
-	public void setApproximateDuration(double approximateDuration) {
-		this.approximateDuration = approximateDuration;
-	}
+  public void setApproximateDuration(double approximateDuration) {
+    this.approximateDuration = approximateDuration;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Launch launch = (Launch) o;
-		return hasRetries == launch.hasRetries && rerun == launch.rerun && Objects.equals(uuid, launch.uuid) && Objects.equals(projectId,
-				launch.projectId
-		) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(startTime,
-				launch.startTime
-		) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number) && mode == launch.mode
-				&& status == launch.status;
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Launch launch = (Launch) o;
+    return hasRetries == launch.hasRetries && rerun == launch.rerun && Objects.equals(uuid,
+        launch.uuid) && Objects.equals(projectId,
+        launch.projectId
+    ) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
+        && Objects.equals(startTime,
+        launch.startTime
+    ) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number)
+        && mode == launch.mode
+        && status == launch.status;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries, rerun, mode, status);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries,
+        rerun, mode, status);
+  }
 
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("Launch{");
-		sb.append("id=").append(id);
-		sb.append(", uuid='").append(uuid).append('\'');
-		sb.append(", projectId=").append(projectId);
-		sb.append(", userId=").append(userId);
-		sb.append(", name='").append(name).append('\'');
-		sb.append(", description='").append(description).append('\'');
-		sb.append(", startTime=").append(startTime);
-		sb.append(", endTime=").append(endTime);
-		sb.append(", number=").append(number);
-		sb.append(", hasRetries=").append(hasRetries);
-		sb.append(", rerun=").append(rerun);
-		sb.append(", lastModified=").append(lastModified);
-		sb.append(", mode=").append(mode);
-		sb.append(", status=").append(status);
-		sb.append(", attributes=").append(attributes);
-		sb.append(", statistics=").append(statistics);
-		sb.append(", approximateDuration=").append(approximateDuration);
-		sb.append('}');
-		return sb.toString();
-	}
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("Launch{");
+    sb.append("id=").append(id);
+    sb.append(", uuid='").append(uuid).append('\'');
+    sb.append(", projectId=").append(projectId);
+    sb.append(", userId=").append(userId);
+    sb.append(", name='").append(name).append('\'');
+    sb.append(", description='").append(description).append('\'');
+    sb.append(", startTime=").append(startTime);
+    sb.append(", endTime=").append(endTime);
+    sb.append(", number=").append(number);
+    sb.append(", hasRetries=").append(hasRetries);
+    sb.append(", rerun=").append(rerun);
+    sb.append(", lastModified=").append(lastModified);
+    sb.append(", mode=").append(mode);
+    sb.append(", status=").append(status);
+    sb.append(", attributes=").append(attributes);
+    sb.append(", statistics=").append(statistics);
+    sb.append(", approximateDuration=").append(approximateDuration);
+    sb.append('}');
+    return sb.toString();
+  }
 }

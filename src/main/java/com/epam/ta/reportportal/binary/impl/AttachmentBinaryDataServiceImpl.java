@@ -16,6 +16,11 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.isContentTypePresent;
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.resolveExtension;
+import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
+import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
+
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.binary.CreateLogAttachmentService;
@@ -31,6 +36,13 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.epam.ta.reportportal.ws.model.ErrorType;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.function.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +52,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.*;
-import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
-import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSupplier;
-
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
@@ -56,7 +59,8 @@ import static com.epam.ta.reportportal.commons.validation.Suppliers.formattedSup
 public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataService {
 
   private static final Logger LOGGER =
-      LoggerFactory.getLogger(AttachmentBinaryDataServiceImpl.class);
+      LoggerFactory.getLogger(
+      AttachmentBinaryDataServiceImpl.class);
 
   private final ContentTypeResolver contentTypeResolver;
 

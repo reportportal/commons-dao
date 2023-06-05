@@ -16,13 +16,16 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DURATION;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.END_TIME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.Column;
 import java.io.Serializable;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import javax.persistence.Column;
 
 /**
  * @author Ivan Budaev
@@ -30,108 +33,108 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MostTimeConsumingTestCasesContent implements Serializable {
 
-	@JsonProperty(value = ID)
-	@Column(name = ID)
-	private Long id;
+  @JsonProperty(value = ID)
+  @Column(name = ID)
+  private Long id;
 
-	@JsonProperty(value = NAME)
-	@Column(name = NAME)
-	private String name;
+  @JsonProperty(value = NAME)
+  @Column(name = NAME)
+  private String name;
 
-	@Column(name = "status")
-	private String status;
+  @Column(name = "status")
+  private String status;
 
-	@Column(name = "type")
-	private String type;
+  @Column(name = "type")
+  private String type;
 
-	@Column(name = "path")
-	private String path;
+  @Column(name = "path")
+  private String path;
 
-	@JsonProperty(value = "uniqueId")
-	@Column(name = UNIQUE_ID)
-	private String uniqueId;
+  @JsonProperty(value = "uniqueId")
+  @Column(name = UNIQUE_ID)
+  private String uniqueId;
 
-	@JsonProperty(value = "startTime")
-	@Column(name = "start_time")
-	private Long startTime;
+  @JsonProperty(value = "startTime")
+  @Column(name = "start_time")
+  private Long startTime;
 
-	@JsonProperty(value = END_TIME)
-	@Column(name = "end_time")
-	private Long endTime;
+  @JsonProperty(value = END_TIME)
+  @Column(name = "end_time")
+  private Long endTime;
 
-	@JsonProperty(value = DURATION)
-	@Column(name = DURATION)
-	private Double duration;
+  @JsonProperty(value = DURATION)
+  @Column(name = DURATION)
+  private Double duration;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getStatus() {
-		return status;
-	}
+  public String getStatus() {
+    return status;
+  }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public String getPath() {
-		return path;
-	}
+  public String getPath() {
+    return path;
+  }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+  public void setPath(String path) {
+    this.path = path;
+  }
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+  public String getUniqueId() {
+    return uniqueId;
+  }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+  public void setUniqueId(String uniqueId) {
+    this.uniqueId = uniqueId;
+  }
 
-	public Long getStartTime() {
-		return startTime;
-	}
+  public Long getStartTime() {
+    return startTime;
+  }
 
-	public void setStartTime(Long startTime) {
-		this.startTime = startTime;
-	}
+  public void setStartTime(Long startTime) {
+    this.startTime = startTime;
+  }
 
-	public Long getEndTime() {
-		return endTime;
-	}
+  public Long getEndTime() {
+    return endTime;
+  }
 
-	public void setEndTime(Long endTime) {
-		this.endTime = endTime;
-	}
+  public void setEndTime(Long endTime) {
+    this.endTime = endTime;
+  }
 
-	public Double getDuration() {
-		return duration;
-	}
+  public Double getDuration() {
+    return duration;
+  }
 
-	public void setDuration(Double duration) {
-		this.duration = duration;
-	}
+  public void setDuration(Double duration) {
+    this.duration = duration;
+  }
 }

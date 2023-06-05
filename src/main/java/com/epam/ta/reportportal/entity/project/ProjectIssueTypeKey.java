@@ -17,59 +17,58 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
  */
 public class ProjectIssueTypeKey implements Serializable {
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "project_id", nullable = false, insertable = false, updatable = false)
-	private Project project;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "project_id", nullable = false, insertable = false, updatable = false)
+  private Project project;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "issue_type_id", nullable = false, insertable = false, updatable = false)
-	private IssueType issueType;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "issue_type_id", nullable = false, insertable = false, updatable = false)
+  private IssueType issueType;
 
-	public ProjectIssueTypeKey() {
-	}
+  public ProjectIssueTypeKey() {
+  }
 
-	public Project getProject() {
-		return project;
-	}
+  public Project getProject() {
+    return project;
+  }
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+  public void setProject(Project project) {
+    this.project = project;
+  }
 
-	public IssueType getIssueType() {
-		return issueType;
-	}
+  public IssueType getIssueType() {
+    return issueType;
+  }
 
-	public void setIssueType(IssueType issueType) {
-		this.issueType = issueType;
-	}
+  public void setIssueType(IssueType issueType) {
+    this.issueType = issueType;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		ProjectIssueTypeKey that = (ProjectIssueTypeKey) o;
-		return Objects.equals(project, that.project) && Objects.equals(issueType, that.issueType);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ProjectIssueTypeKey that = (ProjectIssueTypeKey) o;
+    return Objects.equals(project, that.project) && Objects.equals(issueType, that.issueType);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(project, issueType);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(project, issueType);
+  }
 }

@@ -41,21 +41,23 @@ import java.util.stream.Collectors;
  */
 public enum ImageFormat {
 
-	JPEG("JPEG"),
-	PNG("PNG"),
-	GIF("GIF");
+  JPEG("JPEG"),
+  PNG("PNG"),
+  GIF("GIF");
 
-	private String value;
+  private String value;
 
-	ImageFormat(String value) {
-		this.value = value;
-	}
+  ImageFormat(String value) {
+    this.value = value;
+  }
 
-	public static Optional<ImageFormat> fromValue(String value) {
-		return Arrays.stream(ImageFormat.values()).filter(format -> format.value.equalsIgnoreCase(value)).findAny();
-	}
+  public static Optional<ImageFormat> fromValue(String value) {
+    return Arrays.stream(ImageFormat.values())
+        .filter(format -> format.value.equalsIgnoreCase(value)).findAny();
+  }
 
-	public static List<String> getValues() {
-		return Arrays.stream(ImageFormat.values()).map(format -> format.value).collect(Collectors.toList());
-	}
+  public static List<String> getValues() {
+    return Arrays.stream(ImageFormat.values()).map(format -> format.value)
+        .collect(Collectors.toList());
+  }
 }

@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.item.issue.IssueEntityPojo;
-
 import java.util.List;
 
 /**
@@ -25,11 +24,13 @@ import java.util.List;
  */
 public interface IssueEntityRepositoryCustom {
 
-	/**
-	 * Method for batch inserting of the {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity}. Used for performance improvement
-	 *
-	 * @param issueEntities {@link IssueEntityPojo}
-	 * @return Number of inserted rows
-	 */
-	int saveMultiple(List<IssueEntityPojo> issueEntities);
+  /**
+   * Method for batch inserting of the
+   * {@link com.epam.ta.reportportal.entity.item.issue.IssueEntity}. Used for performance
+   * improvement
+   *
+   * @param issueEntities {@link IssueEntityPojo}
+   * @return Number of inserted rows
+   */
+  int saveMultiple(List<IssueEntityPojo> issueEntities);
 }

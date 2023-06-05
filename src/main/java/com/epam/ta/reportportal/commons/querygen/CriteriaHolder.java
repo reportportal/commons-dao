@@ -19,7 +19,12 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
-import com.epam.ta.reportportal.entity.enums.*;
+import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
+import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
@@ -28,15 +33,18 @@ import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.BooleanUtils;
-import org.jooq.Field;
-import org.jooq.impl.DSL;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.lang3.BooleanUtils;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 
 /**
  * Holds mapping between request search criteria and DB engine search criteria. Should be used for
@@ -46,178 +54,195 @@ import java.util.*;
  */
 public class CriteriaHolder {
 
-	public CriteriaHolder() {
-		// added for deserialization from DB
-	}
+  /**
+   * Criteria from search string
+   */
+  private String filterCriteria;
+  /**
+   * Internal Criteria to internal search be performed
+   */
+  private String queryCriteria;
+  /**
+   * Aggregate criteria for filtering. Only for fields that should be aggregated. If not - used
+   * default queryCriteria
+   */
+  private String aggregateCriteria;
+  private Class<?> dataType;
+  private List<JoinEntity> joinChain = Lists.newArrayList();
 
-	/**
-	 * Criteria from search string
-	 */
-	private String filterCriteria;
+  public CriteriaHolder() {
+    // added for deserialization from DB
+  }
 
-	/**
-	 * Internal Criteria to internal search be performed
-	 */
-	private String queryCriteria;
+  public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
+    this.filterCriteria = Preconditions.checkNotNull(filterCriteria,
+        "Filter criteria should not be null");
+    this.queryCriteria = Preconditions.checkNotNull(queryCriteria,
+        "Filter criteria should not be null");
+    this.aggregateCriteria = queryCriteria;
+    this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+  }
 
-	/**
-	 * Aggregate criteria for filtering. Only for fields that should be aggregated.
-	 * If not - used default queryCriteria
-	 */
-	private String aggregateCriteria;
+  public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType,
+      List<JoinEntity> joinChain) {
+    this.filterCriteria = Preconditions.checkNotNull(filterCriteria,
+        "Filter criteria should not be null");
+    this.queryCriteria = Preconditions.checkNotNull(queryCriteria,
+        "Filter criteria should not be null");
+    this.aggregateCriteria = queryCriteria;
+    this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+    this.joinChain = Preconditions.checkNotNull(joinChain, "Join chain should not be null");
+  }
 
-	private Class<?> dataType;
+  public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType) {
+    this.filterCriteria = Preconditions.checkNotNull(filterCriteria,
+        "Filter criteria should not be null");
+    this.queryCriteria = Preconditions.checkNotNull(queryCriteria,
+        "Filter criteria should not be null").getQualifiedName().toString();
+    this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
+    this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+  }
 
-	private List<JoinEntity> joinChain = Lists.newArrayList();
+  public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType,
+      List<JoinEntity> joinChain) {
+    this.filterCriteria = Preconditions.checkNotNull(filterCriteria,
+        "Filter criteria should not be null");
+    this.queryCriteria = Preconditions.checkNotNull(queryCriteria,
+        "Filter criteria should not be null").getQualifiedName().toString();
+    this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
+    this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
+    this.joinChain = Preconditions.checkNotNull(joinChain, "Join chain should not be null");
+  }
 
-	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType) {
-		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
-		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null");
-		this.aggregateCriteria = queryCriteria;
-		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
-	}
+  public String getFilterCriteria() {
+    return filterCriteria;
+  }
 
-	public CriteriaHolder(String filterCriteria, String queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
-		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
-		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null");
-		this.aggregateCriteria = queryCriteria;
-		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
-		this.joinChain = Preconditions.checkNotNull(joinChain, "Join chain should not be null");
-	}
+  public String getQueryCriteria() {
+    return queryCriteria;
+  }
 
-	public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType) {
-		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
-		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null").getQualifiedName().toString();
-		this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
-		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
-	}
+  public String getAggregateCriteria() {
+    return aggregateCriteria;
+  }
 
-	public CriteriaHolder(String filterCriteria, Field queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
-		this.filterCriteria = Preconditions.checkNotNull(filterCriteria, "Filter criteria should not be null");
-		this.queryCriteria = Preconditions.checkNotNull(queryCriteria, "Filter criteria should not be null").getQualifiedName().toString();
-		this.aggregateCriteria = queryCriteria.getQualifiedName().toString();
-		this.dataType = Preconditions.checkNotNull(dataType, "Data type should not be null");
-		this.joinChain = Preconditions.checkNotNull(joinChain, "Join chain should not be null");
-	}
+  public void setAggregateCriteria(String aggregateCriteria) {
+    this.aggregateCriteria = aggregateCriteria;
+  }
 
-	public String getFilterCriteria() {
-		return filterCriteria;
-	}
+  public Class<?> getDataType() {
+    return dataType;
+  }
 
-	public String getQueryCriteria() {
-		return queryCriteria;
-	}
+  public List<JoinEntity> getJoinChain() {
+    return joinChain;
+  }
 
-	public String getAggregateCriteria() {
-		return aggregateCriteria;
-	}
+  public Object castValue(String oneValue) {
+    return this.castValue(oneValue, ErrorType.INCORRECT_FILTER_PARAMETERS);
+  }
 
-	public Class<?> getDataType() {
-		return dataType;
-	}
+  /**
+   * Casting provided criteriaHolder by specified {@link Class} for specified value.
+   * <p>
+   * NOTE:<br> errorType - error which should be thrown when unable cast value
+   *
+   * @param oneValue  Value to cast
+   * @param errorType ErrorType in case of error
+   * @return Casted value
+   */
+  public Object castValue(String oneValue, ErrorType errorType) {
+    Object castedValue;
+    if (Number.class.isAssignableFrom(getDataType())) {
+      /* Verify correct number */
+      castedValue = parseLong(oneValue, errorType);
+    } else if (Date.class.isAssignableFrom(getDataType())) {
 
-	public List<JoinEntity> getJoinChain() {
-		return joinChain;
-	}
+      if (FilterRules.dateInMillis().test(oneValue)) {
 
-	public void setAggregateCriteria(String aggregateCriteria) {
-		this.aggregateCriteria = aggregateCriteria;
-	}
+        castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)),
+            ZoneId.systemDefault());
+      } else {
 
-	public Object castValue(String oneValue) {
-		return this.castValue(oneValue, ErrorType.INCORRECT_FILTER_PARAMETERS);
-	}
+        try {
+          Instant instant = Instant.parse(oneValue);
+          castedValue = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        } catch (DateTimeParseException e) {
+          throw new ReportPortalException(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue).get()
+          );
+        }
+      }
+    } else if (boolean.class.equals(getDataType()) || Boolean.class.isAssignableFrom(
+        getDataType())) {
+      castedValue = BooleanUtils.toBoolean(oneValue);
+    } else if (LogLevel.class.isAssignableFrom(getDataType())) {
+      Optional<LogLevel> level = LogLevel.toLevel(oneValue);
+      BusinessRule.expect(level, Optional::isPresent)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+      castedValue = level.get().toInt();
+      BusinessRule.expect(castedValue, Objects::nonNull)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+    } else if (JStatusEnum.class.isAssignableFrom(getDataType())) {
 
-	/**
-	 * Casting provided criteriaHolder by specified {@link Class} for specified value.
-	 * <p>
-	 * NOTE:<br>
-	 * errorType - error which should be thrown when unable cast value
-	 *
-	 * @param oneValue  Value to cast
-	 * @param errorType ErrorType in case of error
-	 * @return Casted value
-	 */
-	public Object castValue(String oneValue, ErrorType errorType) {
-		Object castedValue;
-		if (Number.class.isAssignableFrom(getDataType())) {
-			/* Verify correct number */
-			castedValue = parseLong(oneValue, errorType);
-		} else if (Date.class.isAssignableFrom(getDataType())) {
+      Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
+      BusinessRule.expect(status, Optional::isPresent)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
+      castedValue = JStatusEnum.valueOf(status.get().name());
 
-			if (FilterRules.dateInMillis().test(oneValue)) {
+    } else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
 
-				castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)), ZoneId.systemDefault());
-			} else {
+      Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
+      BusinessRule.expect(itemType, Optional::isPresent)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'",
+                  oneValue));
+      castedValue = JTestItemTypeEnum.valueOf(itemType.get().name());
 
-				try {
-					Instant instant = Instant.parse(oneValue);
-					castedValue = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-				} catch (DateTimeParseException e) {
-					throw new ReportPortalException(errorType,
-							Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue).get()
-					);
-				}
-			}
-		} else if (boolean.class.equals(getDataType()) || Boolean.class.isAssignableFrom(getDataType())) {
-			castedValue = BooleanUtils.toBoolean(oneValue);
-		} else if (LogLevel.class.isAssignableFrom(getDataType())) {
-			Optional<LogLevel> level = LogLevel.toLevel(oneValue);
-			BusinessRule.expect(level, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
-			castedValue = level.get().toInt();
-			BusinessRule.expect(castedValue, Objects::nonNull)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
-		} else if (JStatusEnum.class.isAssignableFrom(getDataType())) {
+    } else if (JLaunchModeEnum.class.isAssignableFrom(getDataType())) {
 
-			Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
-			BusinessRule.expect(status, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
-			castedValue = JStatusEnum.valueOf(status.get().name());
+      Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
+      BusinessRule.expect(launchMode, Optional::isPresent)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
+      castedValue = JLaunchModeEnum.valueOf(launchMode.get().name());
 
-		} else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
+    } else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
 
-			Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
-			BusinessRule.expect(itemType, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'", oneValue));
-			castedValue = JTestItemTypeEnum.valueOf(itemType.get().name());
+      Optional<IntegrationGroupEnum> integrationGroup = IntegrationGroupEnum.findByName(oneValue);
+      BusinessRule.expect(integrationGroup, Optional::isPresent)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Integration group",
+                  oneValue));
+      castedValue = JIntegrationGroupEnum.valueOf(integrationGroup.get().name());
 
-		} else if (JLaunchModeEnum.class.isAssignableFrom(getDataType())) {
+    } else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {
+      castedValue = TestItemIssueGroup.validate(oneValue);
+      BusinessRule.expect(castedValue, Objects::nonNull)
+          .verify(errorType,
+              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Issue Type'", oneValue));
+    } else if (Collection.class.isAssignableFrom(getDataType())) {
+      /* Collection doesn't stores objects as ObjectId */
+      castedValue = oneValue;
+    } else if (String.class.isAssignableFrom(getDataType())) {
+      castedValue = oneValue != null ? oneValue.trim() : null;
+    } else {
+      castedValue = DSL.val(oneValue).cast(getDataType());
+    }
 
-			Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
-			BusinessRule.expect(launchMode, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
-			castedValue = JLaunchModeEnum.valueOf(launchMode.get().name());
+    return castedValue;
+  }
 
-		} else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
-
-			Optional<IntegrationGroupEnum> integrationGroup = IntegrationGroupEnum.findByName(oneValue);
-			BusinessRule.expect(integrationGroup, Optional::isPresent)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Integration group", oneValue));
-			castedValue = JIntegrationGroupEnum.valueOf(integrationGroup.get().name());
-
-		} else if (TestItemIssueGroup.class.isAssignableFrom(getDataType())) {
-			castedValue = TestItemIssueGroup.validate(oneValue);
-			BusinessRule.expect(castedValue, Objects::nonNull)
-					.verify(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Issue Type'", oneValue));
-		} else if (Collection.class.isAssignableFrom(getDataType())) {
-			/* Collection doesn't stores objects as ObjectId */
-			castedValue = oneValue;
-		} else if (String.class.isAssignableFrom(getDataType())) {
-			castedValue = oneValue != null ? oneValue.trim() : null;
-		} else {
-			castedValue = DSL.val(oneValue).cast(getDataType());
-		}
-
-		return castedValue;
-	}
-
-	private Long parseLong(String value, ErrorType errorType) {
-		try {
-			return Long.parseLong(value);
-		} catch (final NumberFormatException nfe) {
-			throw new ReportPortalException(errorType, Suppliers.formattedSupplier("Cannot convert '{}' to valid number", value));
-		}
-	}
+  private Long parseLong(String value, ErrorType errorType) {
+    try {
+      return Long.parseLong(value);
+    } catch (final NumberFormatException nfe) {
+      throw new ReportPortalException(errorType,
+          Suppliers.formattedSupplier("Cannot convert '{}' to valid number", value));
+    }
+  }
 
 }

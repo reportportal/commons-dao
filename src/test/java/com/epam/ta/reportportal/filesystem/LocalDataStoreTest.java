@@ -16,80 +16,80 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.google.common.base.Charsets;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Paths;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
-
 class LocalDataStoreTest {
 
-	private static final String ROOT_PATH = System.getProperty("java.io.tmpdir");
-	private static final String TEST_FILE = "test-file.txt";
+  private static final String ROOT_PATH = System.getProperty("java.io.tmpdir");
+  private static final String TEST_FILE = "test-file.txt";
 
-	private LocalDataStore localDataStore;
+  private LocalDataStore localDataStore;
 
-	private FilePathGenerator fileNameGenerator;
+  private FilePathGenerator fileNameGenerator;
 
-	@BeforeEach
-	void setUp() {
+  @BeforeEach
+  void setUp() {
 
-		fileNameGenerator = Mockito.mock(FilePathGenerator.class);
+    fileNameGenerator = Mockito.mock(FilePathGenerator.class);
 
-		localDataStore = new LocalDataStore(ROOT_PATH);
-	}
+    localDataStore = new LocalDataStore(ROOT_PATH);
+  }
 
-	@Test
-	void save_load_delete() throws Exception {
+  @Test
+  void save_load_delete() throws Exception {
 
-		//  given:
-		AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
-				.withProjectId(1L)
-				.withLaunchId(2L)
-				.withItemId(3L)
-				.withLogId(4L)
-				.build();
-		String generatedDirectory = "/test";
-		when(fileNameGenerator.generate(attachmentMetaInfo)).thenReturn(generatedDirectory);
-		FileUtils.deleteDirectory(new File(Paths.get(ROOT_PATH, generatedDirectory).toUri()));
+    //  given:
+    AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
+        .withProjectId(1L)
+        .withLaunchId(2L)
+        .withItemId(3L)
+        .withLogId(4L)
+        .build();
+    String generatedDirectory = "/test";
+    when(fileNameGenerator.generate(attachmentMetaInfo)).thenReturn(generatedDirectory);
+    FileUtils.deleteDirectory(new File(Paths.get(ROOT_PATH, generatedDirectory).toUri()));
 
-		//  when: save new file
-		String savedFilePath = localDataStore.save(TEST_FILE, new ByteArrayInputStream("test text".getBytes(Charsets.UTF_8)));
+    //  when: save new file
+    String savedFilePath = localDataStore.save(TEST_FILE,
+        new ByteArrayInputStream("test text".getBytes(Charsets.UTF_8)));
 
-		//		and: load it back
-		InputStream loaded = localDataStore.load(savedFilePath);
+    //		and: load it back
+    InputStream loaded = localDataStore.load(savedFilePath);
 
-		//		then: saved and loaded files should be the same
-		byte[] bytes = IOUtils.toByteArray(loaded);
-		String result = new String(bytes, Charsets.UTF_8);
-		assertEquals("test text", result, "saved and loaded files should be the same");
+    //		then: saved and loaded files should be the same
+    byte[] bytes = IOUtils.toByteArray(loaded);
+    String result = new String(bytes, Charsets.UTF_8);
+    assertEquals("test text", result, "saved and loaded files should be the same");
 
-		//		when: delete saved file
-		localDataStore.delete(savedFilePath);
+    //		when: delete saved file
+    localDataStore.delete(savedFilePath);
 
-		//		and: load file again
-		boolean isNotFound = false;
-		try {
+    //		and: load file again
+    boolean isNotFound = false;
+    try {
 
-			localDataStore.load(savedFilePath);
-		} catch (ReportPortalException e) {
+      localDataStore.load(savedFilePath);
+    } catch (ReportPortalException e) {
 
-			isNotFound = true;
-		}
+      isNotFound = true;
+    }
 
-		//		then: deleted file should not be found
-		assertTrue("deleted file should not be found", isNotFound);
-	}
+    //		then: deleted file should not be found
+    assertTrue("deleted file should not be found", isNotFound);
+  }
 }

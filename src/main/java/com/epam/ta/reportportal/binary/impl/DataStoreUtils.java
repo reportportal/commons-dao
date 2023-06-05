@@ -17,6 +17,9 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.google.common.base.Strings;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
@@ -25,16 +28,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class DataStoreUtils {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
+  static final String ROOT_USER_PHOTO_DIR = "users";
+  static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
 
   private static final String THUMBNAIL_PREFIX = "thumbnail-";
 
@@ -55,7 +55,19 @@ public class DataStoreUtils {
   private DataStoreUtils() {
     //static only
   }
+  private DataStoreUtils() {
+    //static only
+  }
 
+  public static Optional<String> resolveExtension(String contentType) {
+    Optional<String> result = Optional.empty();
+    try {
+      result = Optional.of(MimeTypes.getDefaultMimeTypes().forName(contentType).getExtension());
+    } catch (MimeTypeException e) {
+      LOGGER.warn("Cannot resolve file extension from content type '{}'", contentType, e);
+    }
+    return result;
+  }
   /**
    * Returns {@link Optional} of extension by contentType.
    *

@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
+
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -49,9 +51,9 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 		this.dsl = dsl;
 	}
 
-	@Override
-	public List<UserFilter> findByFilter(Queryable filter) {
-		return USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+  @Override
+  public List<UserFilter> findByFilter(Queryable filter) {
+    return USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
 				filter,
 				filter.getFilterConditions()
 						.stream()
@@ -60,10 +62,10 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 						.map(FilterCondition::getSearchCriteria)
 						.collect(Collectors.toSet())
 		).wrap().build()));
-	}
+  }
 
-	@Override
-	public Page<UserFilter> findByFilter(Queryable filter, Pageable pageable) {
+  @Override
+  public Page<UserFilter> findByFilter(Queryable filter, Pageable pageable) {
 		Set<String> fields = filter.getFilterConditions()
 				.stream()
 				.map(ConvertibleCondition::getAllConditions)
@@ -77,6 +79,6 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
-	}
+  }
 
 }

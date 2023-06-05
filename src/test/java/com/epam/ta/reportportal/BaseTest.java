@@ -33,14 +33,16 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Pavel Bortnik
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { DataSourceConfig.class, DatabaseConfiguration.class, TestConfiguration.class })
+@ContextConfiguration(classes = {DataSourceConfig.class, DatabaseConfiguration.class,
+    TestConfiguration.class})
 @Transactional
 @ActiveProfiles("unittest")
-@TestExecutionListeners(listeners = { FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(listeners = {
+    FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class BaseTest {
 
-	@FlywayTest
-	@BeforeAll
-	static void setUp() {
-	}
+  @FlywayTest
+  @BeforeAll
+  static void setUp() {
+  }
 }

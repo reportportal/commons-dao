@@ -17,46 +17,47 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.StoredAccessToken;
-import org.springframework.stereotype.Repository;
-
 import java.util.stream.Stream;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public interface OAuth2AccessTokenRepository extends ReportPortalRepository<StoredAccessToken, Long> {
+public interface OAuth2AccessTokenRepository extends
+    ReportPortalRepository<StoredAccessToken, Long> {
 
-	/**
-	 * Find entity by token id
-	 *
-	 * @param tokenId token id
-	 * @return {@link StoredAccessToken}
-	 */
-	StoredAccessToken findByTokenId(String tokenId);
+  /**
+   * Find entity by token id
+   *
+   * @param tokenId token id
+   * @return {@link StoredAccessToken}
+   */
+  StoredAccessToken findByTokenId(String tokenId);
 
-	/**
-	 * Find entity by authentication id
-	 *
-	 * @param authenticationId authentication id
-	 * @return {@link StoredAccessToken}
-	 */
-	StoredAccessToken findByAuthenticationId(String authenticationId);
+  /**
+   * Find entity by authentication id
+   *
+   * @param authenticationId authentication id
+   * @return {@link StoredAccessToken}
+   */
+  StoredAccessToken findByAuthenticationId(String authenticationId);
 
-	/**
-	 * Find entity by client id and username
-	 *
-	 * @param clientId Client id
-	 * @param userName Username
-	 * @return Stream of {@link StoredAccessToken}
-	 */
-	Stream<StoredAccessToken> findByClientIdAndUserName(String clientId, String userName);
+  /**
+   * Find entity by client id and username
+   *
+   * @param clientId Client id
+   * @param userName Username
+   * @return Stream of {@link StoredAccessToken}
+   */
+  Stream<StoredAccessToken> findByClientIdAndUserName(String clientId, String userName);
 
-	/**
-	 * Find entity by client id
-	 * @param clientId client id
-	 * @return Stream of {@link StoredAccessToken}
-	 */
-	Stream<StoredAccessToken> findByClientId(String clientId);
+  /**
+   * Find entity by client id
+   *
+   * @param clientId client id
+   * @return Stream of {@link StoredAccessToken}
+   */
+  Stream<StoredAccessToken> findByClientId(String clientId);
 
 }

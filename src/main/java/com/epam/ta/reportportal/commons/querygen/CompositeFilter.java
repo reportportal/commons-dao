@@ -16,15 +16,18 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import static org.postgresql.shaded.com.ongres.scram.common.util.Preconditions.checkArgument;
+
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Operator;
 import org.jooq.impl.DSL;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.postgresql.shaded.com.ongres.scram.common.util.Preconditions.checkArgument;
 
 /**
  * Composite filter. Combines filters using {@link Operator} and builds query.
@@ -33,65 +36,69 @@ import static org.postgresql.shaded.com.ongres.scram.common.util.Preconditions.c
  */
 public class CompositeFilter implements Queryable {
 
-	private Operator operator;
-	private Collection<Queryable> filters;
-	private FilterTarget target;
+  private Operator operator;
+  private Collection<Queryable> filters;
+  private FilterTarget target;
 
-	public CompositeFilter(Operator operator, Collection<Queryable> filters) {
-		checkArgument(null != operator, "Operator is not specified");
-		checkArgument(null != filters && !filters.isEmpty(), "Empty filter list");
-		checkArgument(1 == filters.stream().map(Queryable::getTarget).distinct().count(), "Different targets");
-		this.operator = operator;
-		this.target = filters.iterator().next().getTarget();
-		this.filters = filters;
-	}
+  public CompositeFilter(Operator operator, Collection<Queryable> filters) {
+    checkArgument(null != operator, "Operator is not specified");
+    checkArgument(null != filters && !filters.isEmpty(), "Empty filter list");
+    checkArgument(1 == filters.stream().map(Queryable::getTarget).distinct().count(),
+        "Different targets");
+    this.operator = operator;
+    this.target = filters.iterator().next().getTarget();
+    this.filters = filters;
+  }
 
-	public CompositeFilter(Operator operator, Queryable... filters) {
-		this(operator, Arrays.asList(filters));
-	}
+  public CompositeFilter(Operator operator, Queryable... filters) {
+    this(operator, Arrays.asList(filters));
+  }
 
-	@Override
-	public QuerySupplier toQuery() {
-		QueryBuilder query = QueryBuilder.newBuilder(this.target);
-		Map<ConditionType, Condition> conditions = toCondition();
-		return query.addCondition(conditions.get(ConditionType.WHERE))
-				.addHavingCondition(conditions.get(ConditionType.HAVING))
-				.getQuerySupplier();
-	}
+  @Override
+  public QuerySupplier toQuery() {
+    QueryBuilder query = QueryBuilder.newBuilder(this.target);
+    Map<ConditionType, Condition> conditions = toCondition();
+    return query.addCondition(conditions.get(ConditionType.WHERE))
+        .addHavingCondition(conditions.get(ConditionType.HAVING))
+        .getQuerySupplier();
+  }
 
-	@Override
-	public Map<ConditionType, Condition> toCondition() {
-		Map<ConditionType, Condition> resultedConditions = new HashMap<>();
-		for (Queryable filter : filters) {
-			filter.toCondition().forEach((conditionType, condition) -> {
-				Condition compositeCondition = resultedConditions.getOrDefault(conditionType, DSL.noCondition());
-				resultedConditions.put(conditionType, DSL.condition(operator, compositeCondition, condition));
-			});
-		}
-		return resultedConditions;
-	}
+  @Override
+  public Map<ConditionType, Condition> toCondition() {
+    Map<ConditionType, Condition> resultedConditions = new HashMap<>();
+    for (Queryable filter : filters) {
+      filter.toCondition().forEach((conditionType, condition) -> {
+        Condition compositeCondition = resultedConditions.getOrDefault(conditionType,
+            DSL.noCondition());
+        resultedConditions.put(conditionType,
+            DSL.condition(operator, compositeCondition, condition));
+      });
+    }
+    return resultedConditions;
+  }
 
-	@Override
-	public FilterTarget getTarget() {
-		return target;
-	}
+  @Override
+  public FilterTarget getTarget() {
+    return target;
+  }
 
-	@Override
-	public List<ConvertibleCondition> getFilterConditions() {
-		return filters.stream().flatMap(it -> it.getFilterConditions().stream()).collect(Collectors.toList());
-	}
+  @Override
+  public List<ConvertibleCondition> getFilterConditions() {
+    return filters.stream().flatMap(it -> it.getFilterConditions().stream())
+        .collect(Collectors.toList());
+  }
 
-	public boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition) {
-		if (oldCondition == null || newCondition == null) {
-			return false;
-		}
+  public boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition) {
+    if (oldCondition == null || newCondition == null) {
+      return false;
+    }
 
-		for (Queryable filter : filters) {
-			if (filter.replaceSearchCriteria(oldCondition, newCondition)) {
-				return true;
-			}
-		}
+    for (Queryable filter : filters) {
+      if (filter.replaceSearchCriteria(oldCondition, newCondition)) {
+        return true;
+      }
+    }
 
-		return false;
-	}
+    return false;
+  }
 }

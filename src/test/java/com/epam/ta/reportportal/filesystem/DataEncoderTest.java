@@ -16,81 +16,84 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Dzianis_Shybeka
  */
 class DataEncoderTest {
 
-	private DataEncoder encoder;
+  private DataEncoder encoder;
 
-	@BeforeEach
-	void setUp() {
-		encoder = new DataEncoder();
-	}
+  @BeforeEach
+  void setUp() {
+    encoder = new DataEncoder();
+  }
 
-	@Test
-	void encode_decode_with_empty_input() throws Exception {
-		//  given:
-		String input = "";
+  @Test
+  void encode_decode_with_empty_input() throws Exception {
+    //  given:
+    String input = "";
 
-		//  when:
-		String encoded = encoder.encode(input);
+    //  when:
+    String encoded = encoder.encode(input);
 
-		//  then:
-		assertTrue(encoded.isEmpty());
+    //  then:
+    assertTrue(encoded.isEmpty());
 
-		//	and:
+    //	and:
 
-		//	when:
-		String decoded = encoder.decode(encoded);
+    //	when:
+    String decoded = encoder.decode(encoded);
 
-		//	then:
-		assertTrue(decoded.isEmpty());
-	}
+    //	then:
+    assertTrue(decoded.isEmpty());
+  }
 
-	@Test
-	void encode_decode_with_null_input() throws Exception {
-		//  given:
-		String input = null;
+  @Test
+  void encode_decode_with_null_input() throws Exception {
+    //  given:
+    String input = null;
 
-		//  when:
-		String encoded = encoder.encode(input);
+    //  when:
+    String encoded = encoder.encode(input);
 
-		//  then:
-		assertNull(encoded);
+    //  then:
+    assertNull(encoded);
 
-		//	and:
+    //	and:
 
-		//	when:
-		String decoded = encoder.decode(encoded);
+    //	when:
+    String decoded = encoder.decode(encoded);
 
-		//	then:
-		assertNull(decoded);
-	}
+    //	then:
+    assertNull(decoded);
+  }
 
-	@Test
-	void encode_decode() throws Exception {
-		//  given:
-		String input = "/data/path/file.ext";
+  @Test
+  void encode_decode() throws Exception {
+    //  given:
+    String input = "/data/path/file.ext";
 
-		//  when:
-		String encoded = encoder.encode(input);
+    //  when:
+    String encoded = encoder.encode(input);
 
-		//  then:
-		assertFalse(encoded.isEmpty());
+    //  then:
+    assertFalse(encoded.isEmpty());
 
-		//	and:
+    //	and:
 
-		//	when:
-		String decoded = encoder.decode(encoded);
+    //	when:
+    String decoded = encoder.decode(encoded);
 
-		//	then:
-		assertFalse(decoded.isEmpty());
-		assertEquals(input, decoded);
-	}
+    //	then:
+    assertFalse(decoded.isEmpty());
+    assertEquals(input, decoded);
+  }
 }

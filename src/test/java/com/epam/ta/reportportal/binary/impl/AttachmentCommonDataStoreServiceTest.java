@@ -16,71 +16,70 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class AttachmentCommonDataStoreServiceTest extends BaseTest {
 
-	@Autowired
-	private AttachmentBinaryDataService attachmentBinaryDataService;
+  @Autowired
+  private AttachmentBinaryDataService attachmentBinaryDataService;
 
-	@Autowired
-	private AttachmentRepository attachmentRepository;
+  @Autowired
+  private AttachmentRepository attachmentRepository;
 
-	@Test
-	@Sql("/db/fill/data-store/data-store-fill.sql")
-	void AttachFileToExistingLogTest() {
-		String fileID = "fileID";
-		String thumbnailID = "thumbnailID";
-		String contentType = "content-type";
-		long fileSize = 1024;
-		final LocalDateTime creationDate = LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1);
+  @Test
+  @Sql("/db/fill/data-store/data-store-fill.sql")
+  void AttachFileToExistingLogTest() {
+    String fileID = "fileID";
+    String thumbnailID = "thumbnailID";
+    String contentType = "content-type";
+    long fileSize = 1024;
+    final LocalDateTime creationDate = LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1);
 
-		BinaryDataMetaInfo binaryDataMetaInfo = new BinaryDataMetaInfo();
-		binaryDataMetaInfo.setFileId(fileID);
-		binaryDataMetaInfo.setThumbnailFileId(thumbnailID);
-		binaryDataMetaInfo.setContentType(contentType);
-		binaryDataMetaInfo.setFileSize(fileSize);
+    BinaryDataMetaInfo binaryDataMetaInfo = new BinaryDataMetaInfo();
+    binaryDataMetaInfo.setFileId(fileID);
+    binaryDataMetaInfo.setThumbnailFileId(thumbnailID);
+    binaryDataMetaInfo.setContentType(contentType);
+    binaryDataMetaInfo.setFileSize(fileSize);
 
-		Long projectId = 1L;
-		Long itemId = 1L;
-		AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
-				.withProjectId(projectId)
-				.withLaunchId(1L)
-				.withItemId(itemId)
-				.withLogId(1L)
-				.withCreationDate(creationDate)
-				.build();
+    Long projectId = 1L;
+    Long itemId = 1L;
+    AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
+        .withProjectId(projectId)
+        .withLaunchId(1L)
+        .withItemId(itemId)
+        .withLogId(1L)
+        .withCreationDate(creationDate)
+        .build();
 
-		attachmentBinaryDataService.attachToLog(binaryDataMetaInfo, attachmentMetaInfo);
+    attachmentBinaryDataService.attachToLog(binaryDataMetaInfo, attachmentMetaInfo);
 
-		Optional<Attachment> attachment = attachmentRepository.findByFileId(fileID);
+    Optional<Attachment> attachment = attachmentRepository.findByFileId(fileID);
 
-		assertTrue(attachment.isPresent());
+    assertTrue(attachment.isPresent());
 
-		assertEquals(projectId, attachment.get().getProjectId());
-		assertEquals(itemId, attachment.get().getItemId());
-		assertEquals(fileID, attachment.get().getFileId());
-		assertEquals(thumbnailID, attachment.get().getThumbnailId());
-		assertEquals(contentType, attachment.get().getContentType());
-		assertEquals(fileSize, attachment.get().getFileSize());
-		assertEquals(creationDate, attachment.get().getCreationDate());
-	}
+    assertEquals(projectId, attachment.get().getProjectId());
+    assertEquals(itemId, attachment.get().getItemId());
+    assertEquals(fileID, attachment.get().getFileId());
+    assertEquals(thumbnailID, attachment.get().getThumbnailId());
+    assertEquals(contentType, attachment.get().getContentType());
+    assertEquals(fileSize, attachment.get().getFileSize());
+    assertEquals(creationDate, attachment.get().getCreationDate());
+  }
 }

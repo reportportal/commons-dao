@@ -18,10 +18,9 @@ package com.epam.ta.reportportal.filesystem;
 
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.util.DateTimeProvider;
-import org.springframework.stereotype.Component;
-
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Dzianis_Shybeka
@@ -29,20 +28,21 @@ import java.time.LocalDateTime;
 @Component
 public class FilePathGenerator {
 
-	private final DateTimeProvider dateTimeProvider;
+  private final DateTimeProvider dateTimeProvider;
 
-	public FilePathGenerator(DateTimeProvider dateTimeProvider) {
-		this.dateTimeProvider = dateTimeProvider;
-	}
+  public FilePathGenerator(DateTimeProvider dateTimeProvider) {
+    this.dateTimeProvider = dateTimeProvider;
+  }
 
-	/**
-	 * Generate relative file path for new local file. projectId/year-month/launchUUID
-	 *
-	 * @return Generated path
-	 */
-	public String generate(AttachmentMetaInfo metaInfo) {
-		LocalDateTime localDateTime = dateTimeProvider.localDateTimeNow();
-		String date = localDateTime.getYear() + "-" + localDateTime.getMonthValue();
-		return Paths.get(String.valueOf(metaInfo.getProjectId()), date, metaInfo.getLaunchUuid()).toString();
-	}
+  /**
+   * Generate relative file path for new local file. projectId/year-month/launchUUID
+   *
+   * @return Generated path
+   */
+  public String generate(AttachmentMetaInfo metaInfo) {
+    LocalDateTime localDateTime = dateTimeProvider.localDateTimeNow();
+    String date = localDateTime.getYear() + "-" + localDateTime.getMonthValue();
+    return Paths.get(String.valueOf(metaInfo.getProjectId()), date, metaInfo.getLaunchUuid())
+        .toString();
+  }
 }

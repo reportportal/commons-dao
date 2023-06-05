@@ -16,92 +16,96 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FLAKY_COUNT;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEM_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUSES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
 
-import javax.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import javax.persistence.Column;
 
 /**
  * @author Ivan Budayeu
  */
 public class FlakyCasesTableContent implements Serializable {
 
-	@JsonProperty(value = STATUSES)
-	@Column(name = STATUSES)
-	private String[] statuses;
+  @JsonProperty(value = STATUSES)
+  @Column(name = STATUSES)
+  private String[] statuses;
 
-	@JsonProperty(value = FLAKY_COUNT)
-	@Column(name = FLAKY_COUNT)
-	private Long flakyCount;
+  @JsonProperty(value = FLAKY_COUNT)
+  @Column(name = FLAKY_COUNT)
+  private Long flakyCount;
 
-	@JsonProperty(value = TOTAL)
-	@Column(name = TOTAL)
-	private Long total;
+  @JsonProperty(value = TOTAL)
+  @Column(name = TOTAL)
+  private Long total;
 
-	@JsonProperty(value = "itemName")
-	@Column(name = ITEM_NAME)
-	private String itemName;
+  @JsonProperty(value = "itemName")
+  @Column(name = ITEM_NAME)
+  private String itemName;
 
-	@JsonProperty(value = "uniqueId")
-	@Column(name = UNIQUE_ID)
-	private String uniqueId;
+  @JsonProperty(value = "uniqueId")
+  @Column(name = UNIQUE_ID)
+  private String uniqueId;
 
-	@JsonProperty(value = "startTime")
-	@Column(name = START_TIME_HISTORY)
-	private List<Date> startTime;
+  @JsonProperty(value = "startTime")
+  @Column(name = START_TIME_HISTORY)
+  private List<Date> startTime;
 
-	public FlakyCasesTableContent() {
-	}
+  public FlakyCasesTableContent() {
+  }
 
-	public String[] getStatuses() {
-		return statuses;
-	}
+  public String[] getStatuses() {
+    return statuses;
+  }
 
-	public void setStatuses(String[] statuses) {
-		this.statuses = statuses;
-	}
+  public void setStatuses(String[] statuses) {
+    this.statuses = statuses;
+  }
 
-	public Long getFlakyCount() {
-		return flakyCount;
-	}
+  public Long getFlakyCount() {
+    return flakyCount;
+  }
 
-	public void setFlakyCount(Long flakyCount) {
-		this.flakyCount = flakyCount;
-	}
+  public void setFlakyCount(Long flakyCount) {
+    this.flakyCount = flakyCount;
+  }
 
-	public Long getTotal() {
-		return total;
-	}
+  public Long getTotal() {
+    return total;
+  }
 
-	public void setTotal(Long total) {
-		this.total = total;
-	}
+  public void setTotal(Long total) {
+    this.total = total;
+  }
 
-	public String getItemName() {
-		return itemName;
-	}
+  public String getItemName() {
+    return itemName;
+  }
 
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
+  public void setItemName(String itemName) {
+    this.itemName = itemName;
+  }
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+  public String getUniqueId() {
+    return uniqueId;
+  }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+  public void setUniqueId(String uniqueId) {
+    this.uniqueId = uniqueId;
+  }
 
-	public List<Date> getStartTime() {
-		return startTime;
-	}
+  public List<Date> getStartTime() {
+    return startTime;
+  }
 
-	public void setStartTime(List<Date> startTime) {
-		this.startTime = startTime;
-	}
+  public void setStartTime(List<Date> startTime) {
+    this.startTime = startTime;
+  }
 }

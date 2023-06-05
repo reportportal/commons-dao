@@ -17,10 +17,9 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
-import org.jooq.Field;
-
 import java.util.List;
 import java.util.function.Supplier;
+import org.jooq.Field;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -28,35 +27,39 @@ import java.util.function.Supplier;
 
 public class CriteriaHolderBuilder implements Supplier<CriteriaHolder> {
 
-	private CriteriaHolder criteriaHolder;
+  private CriteriaHolder criteriaHolder;
 
-	public CriteriaHolderBuilder newBuilder(String filterCriteria, String queryCriteria, Class<?> dataType) {
-		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType);
-		return this;
-	}
+  public CriteriaHolderBuilder newBuilder(String filterCriteria, String queryCriteria,
+      Class<?> dataType) {
+    this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType);
+    return this;
+  }
 
-	public CriteriaHolderBuilder newBuilder(String filterCriteria, String queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
-		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType, joinChain);
-		return this;
-	}
+  public CriteriaHolderBuilder newBuilder(String filterCriteria, String queryCriteria,
+      Class<?> dataType, List<JoinEntity> joinChain) {
+    this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType, joinChain);
+    return this;
+  }
 
-	public CriteriaHolderBuilder newBuilder(String filterCriteria, Field queryCriteria, Class<?> dataType) {
-		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType);
-		return this;
-	}
+  public CriteriaHolderBuilder newBuilder(String filterCriteria, Field queryCriteria,
+      Class<?> dataType) {
+    this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType);
+    return this;
+  }
 
-	public CriteriaHolderBuilder newBuilder(String filterCriteria, Field queryCriteria, Class<?> dataType, List<JoinEntity> joinChain) {
-		this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType, joinChain);
-		return this;
-	}
+  public CriteriaHolderBuilder newBuilder(String filterCriteria, Field queryCriteria,
+      Class<?> dataType, List<JoinEntity> joinChain) {
+    this.criteriaHolder = new CriteriaHolder(filterCriteria, queryCriteria, dataType, joinChain);
+    return this;
+  }
 
-	public CriteriaHolderBuilder withAggregateCriteria(String aggregateCriteria) {
-		this.criteriaHolder.setAggregateCriteria(aggregateCriteria);
-		return this;
-	}
+  public CriteriaHolderBuilder withAggregateCriteria(String aggregateCriteria) {
+    this.criteriaHolder.setAggregateCriteria(aggregateCriteria);
+    return this;
+  }
 
-	@Override
-	public CriteriaHolder get() {
-		return criteriaHolder;
-	}
+  @Override
+  public CriteriaHolder get() {
+    return criteriaHolder;
+  }
 }

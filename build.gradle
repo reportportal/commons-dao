@@ -80,6 +80,7 @@ dependencies {
 
     compile 'io.minio:minio:6.0.13'
 
+    implementation group: 'org.json', name: 'json', version: '20220320'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
@@ -99,7 +100,7 @@ dependencies {
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
-    
+
 }
 
 dependencyCheck {
