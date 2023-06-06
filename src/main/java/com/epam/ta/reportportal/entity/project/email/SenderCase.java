@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
+import com.epam.ta.reportportal.entity.enums.LogicalOperator;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.SendCase;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -81,6 +82,11 @@ public class SenderCase implements Serializable {
 
   @Column(name = "enabled")
   private boolean enabled;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "attributes_operator")
+  @Type(type = "pqsql_enum")
+  private LogicalOperator attributesOperator;
 
   public SenderCase() {
   }
@@ -157,5 +163,13 @@ public class SenderCase implements Serializable {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public LogicalOperator getAttributesOperator() {
+    return attributesOperator;
+  }
+
+  public void setAttributesOperator(LogicalOperator attributesOperator) {
+    this.attributesOperator = attributesOperator;
   }
 }
