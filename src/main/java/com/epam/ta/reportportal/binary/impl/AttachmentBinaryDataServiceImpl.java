@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.PROJECT_PATH;
 import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.isContentTypePresent;
 import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.resolveExtension;
 import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
@@ -31,8 +32,10 @@ import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,8 +59,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 @Service
 public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(
-      AttachmentBinaryDataServiceImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(AttachmentBinaryDataServiceImpl.class);
 
   private final ContentTypeResolver contentTypeResolver;
 
@@ -69,29 +72,49 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
 
   private final CreateLogAttachmentService createLogAttachmentService;
 
+  private final FeatureFlagHandler featureFlagHandler;
+
+  /**
+   * Creates {@link AttachmentBinaryDataService}.
+   *
+   * @param contentTypeResolver        {@link ContentTypeResolver}
+   * @param filePathGenerator          {@link FilePathGenerator}
+   * @param dataStoreService           {@link DataStoreService}
+   * @param attachmentRepository       {@link AttachmentRepository}
+   * @param createLogAttachmentService {@link CreateLogAttachmentService}
+   * @param featureFlagHandler         {@link FeatureFlagHandler}
+   */
   @Autowired
   public AttachmentBinaryDataServiceImpl(ContentTypeResolver contentTypeResolver,
       FilePathGenerator filePathGenerator,
       @Qualifier("attachmentDataStoreService") DataStoreService dataStoreService,
       AttachmentRepository attachmentRepository,
-      CreateLogAttachmentService createLogAttachmentService) {
+      CreateLogAttachmentService createLogAttachmentService,
+      FeatureFlagHandler featureFlagHandler) {
     this.contentTypeResolver = contentTypeResolver;
     this.filePathGenerator = filePathGenerator;
     this.dataStoreService = dataStoreService;
     this.attachmentRepository = attachmentRepository;
     this.createLogAttachmentService = createLogAttachmentService;
+    this.featureFlagHandler = featureFlagHandler;
   }
 
   @Override
   public Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo metaInfo,
       MultipartFile file) {
     Optional<BinaryDataMetaInfo> result = Optional.empty();
-    try (InputStream inputStream = file.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+    try (InputStream inputStream = file.getInputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
       inputStream.transferTo(outputStream);
       String contentType = resolveContentType(file.getContentType(), outputStream);
       String fileName = resolveFileName(metaInfo, file, contentType);
 
-      String commonPath = filePathGenerator.generate(metaInfo);
+      String commonPath;
+      if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+        commonPath = Paths.get(PROJECT_PATH, filePathGenerator.generate(metaInfo)).toString();
+      } else {
+        commonPath = filePathGenerator.generate(metaInfo);
+      }
       String targetPath = Paths.get(commonPath, fileName).toString();
 
       String fileId;
@@ -99,11 +122,9 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
         fileId = dataStoreService.save(targetPath, copy);
       }
 
-      result = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
-          .withFileId(fileId)
-          .withContentType(contentType)
-          .withFileSize(file.getSize())
-          .build());
+      result = Optional.of(
+          BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo().withFileId(fileId)
+              .withContentType(contentType).withFileSize(file.getSize()).build());
     } catch (IOException e) {
       LOGGER.error("Unable to save binary data", e);
     } finally {
@@ -155,9 +176,8 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
     try {
       Attachment attachment = attachmentRepository.findById(fileId)
           .orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
-      InputStream data = dataStoreService.load(attachment.getFileId())
-          .orElseThrow(
-              () -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
+      InputStream data = dataStoreService.load(attachment.getFileId()).orElseThrow(
+          () -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
       expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(
           ErrorType.ACCESS_DENIED,
           formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
@@ -165,8 +185,8 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
       return new BinaryData(attachment.getContentType(), (long) data.available(), data);
     } catch (IOException e) {
       LOGGER.error("Unable to load binary data", e);
-      throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR,
-          "Unable to load binary data");
+      throw new ReportPortalException(
+          ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load binary data");
     }
   }
 

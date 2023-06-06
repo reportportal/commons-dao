@@ -23,6 +23,7 @@ import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.s3.S3DataStore;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
@@ -48,79 +49,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DataStoreConfiguration {
-
-  @Bean
-  @ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
-  public DataStore localDataStore(
-      @Value("${datastore.default.path:/data/store}") String storagePath) {
-    return new LocalDataStore(storagePath);
-  }
-
-  @Bean
-  @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
-  public BlobStore minioBlobStore(@Value("${datastore.minio.accessKey}") String accessKey,
-      @Value("${datastore.minio.secretKey}") String secretKey,
-      @Value("${datastore.minio.endpoint}") String endpoint) {
-
-    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("s3")
-        .endpoint(endpoint)
-        .credentials(accessKey, secretKey)
-        .buildView(BlobStoreContext.class);
-
-    return blobStoreContext.getBlobStore();
-  }
-
-  @Bean
-  @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
-  public DataStore minioDataStore(@Autowired BlobStore blobStore,
-      @Value("${datastore.minio.bucketPrefix}") String bucketPrefix,
-      @Value("${datastore.minio.defaultBucketName}") String defaultBucketName,
-      @Value("${datastore.minio.region}") String region) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region);
-  }
-
-  @Bean
-  @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
-  public BlobStore s3BlobStore(@Value("${datastore.s3.accessKey}") String accessKey,
-      @Value("${datastore.s3.secretKey}") String secretKey,
-      @Value("${datastore.s3.region}") String region) {
-    Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
-
-    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
-        .modules(modules)
-        .credentials(accessKey, secretKey)
-        .buildView(BlobStoreContext.class);
-
-    return blobStoreContext.getBlobStore();
-  }
-
-  @Bean
-  @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
-  public DataStore s3DataStore(@Autowired BlobStore blobStore,
-      @Value("${datastore.s3.bucketPrefix}") String bucketPrefix,
-      @Value("${datastore.s3.defaultBucketName}") String defaultBucketName,
-      @Value("${datastore.s3.region}") String region) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region);
-  }
-
-  @Bean("attachmentThumbnailator")
-  public Thumbnailator attachmentThumbnailator(
-      @Value("${datastore.thumbnail.attachment.width}") int width,
-      @Value("${datastore.thumbnail.attachment.height}") int height) {
-    return new ThumbnailatorImpl(width, height);
-  }
-
-  @Bean("userPhotoThumbnailator")
-  public Thumbnailator userPhotoThumbnailator(
-      @Value("${datastore.thumbnail.avatar.width}") int width,
-      @Value("${datastore.thumbnail.avatar.height}") int height) {
-    return new ThumbnailatorImpl(width, height);
-  }
-
-  @Bean
-  public ContentTypeResolver contentTypeResolver() {
-    return new TikaContentTypeResolver();
-  }
 
   /**
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
@@ -203,5 +131,102 @@ public class DataStoreConfiguration {
         };
       }
     }
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
+  public DataStore localDataStore(
+      @Value("${datastore.path:/data/store}") String storagePath) {
+    return new LocalDataStore(storagePath);
+  }
+
+  /**
+   * Creates BlobStore bean, that works with MinIO.
+   *
+   * @param accessKey accessKey to use
+   * @param secretKey secretKey to use
+   * @param endpoint  MinIO endpoint
+   * @return {@link BlobStore}
+   */
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+  public BlobStore minioBlobStore(@Value("${datastore.accessKey}") String accessKey,
+      @Value("${datastore.secretKey}") String secretKey,
+      @Value("${datastore.endpoint}") String endpoint) {
+
+    BlobStoreContext blobStoreContext =
+        ContextBuilder.newBuilder("s3").endpoint(endpoint).credentials(accessKey, secretKey)
+            .buildView(BlobStoreContext.class);
+
+    return blobStoreContext.getBlobStore();
+  }
+
+  /**
+   * Creates DataStore bean to work with MinIO.
+   *
+   * @param blobStore          {@link BlobStore} object
+   * @param bucketPrefix       Prefix for bucket name
+   * @param defaultBucketName  Name of default bucket to use
+   * @param region             Region to store
+   * @param featureFlagHandler Instance of {@link FeatureFlagHandler} to check enabled features
+   * @return {@link DataStore} object
+   */
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
+  public DataStore minioDataStore(@Autowired BlobStore blobStore,
+      @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.defaultBucketName}") String defaultBucketName,
+      @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
+    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
+  }
+
+  /**
+   * Creates BlobStore bean, that works with AWS S3.
+   *
+   * @param accessKey accessKey to use
+   * @param secretKey secretKey to use
+   * @param region    AWS S3 region to use.
+   * @return {@link BlobStore}
+   */
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
+  public BlobStore s3BlobStore(@Value("${datastore.accessKey}") String accessKey,
+      @Value("${datastore.secretKey}") String secretKey,
+      @Value("${datastore.region}") String region) {
+    Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
+
+    BlobStoreContext blobStoreContext =
+        ContextBuilder.newBuilder("aws-s3").modules(modules).credentials(accessKey, secretKey)
+            .buildView(BlobStoreContext.class);
+
+    return blobStoreContext.getBlobStore();
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
+  public DataStore s3DataStore(@Autowired BlobStore blobStore,
+      @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.defaultBucketName}") String defaultBucketName,
+      @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
+    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
+  }
+
+  @Bean("attachmentThumbnailator")
+  public Thumbnailator attachmentThumbnailator(
+      @Value("${datastore.thumbnail.attachment.width}") int width,
+      @Value("${datastore.thumbnail.attachment.height}") int height) {
+    return new ThumbnailatorImpl(width, height);
+  }
+
+  @Bean("userPhotoThumbnailator")
+  public Thumbnailator userPhotoThumbnailator(
+      @Value("${datastore.thumbnail.avatar.width}") int width,
+      @Value("${datastore.thumbnail.avatar.height}") int height) {
+    return new ThumbnailatorImpl(width, height);
+  }
+
+  @Bean
+  public ContentTypeResolver contentTypeResolver() {
+    return new TikaContentTypeResolver();
   }
 }

@@ -32,9 +32,9 @@ import javax.persistence.Table;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Entity
-@Table(name = "shareable_entity")
+@Table(name = "owned_entity")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class ShareableEntity {
+public abstract class OwnedEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,11 +42,9 @@ public abstract class ShareableEntity {
 
   private String owner;
 
-  private boolean shared;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "project_id")
-  private Project project;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "project_id")
+	private Project project;
 
   public Long getId() {
     return id;
@@ -56,17 +54,9 @@ public abstract class ShareableEntity {
     this.id = id;
   }
 
-  public boolean isShared() {
-    return shared;
-  }
-
-  public void setShared(boolean shared) {
-    this.shared = shared;
-  }
-
   public String getOwner() {
-    return owner;
-  }
+		return owner;
+	}
 
   public void setOwner(String owner) {
     this.owner = owner;

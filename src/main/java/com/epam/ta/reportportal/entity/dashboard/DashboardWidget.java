@@ -68,12 +68,9 @@ public class DashboardWidget implements Serializable {
   @Column(name = "widget_position_y")
   private int positionY;
 
-  @Column(name = "share")
-  private boolean share;
-
   public DashboardWidgetId getId() {
-    return id;
-  }
+		return id;
+	}
 
   public void setId(DashboardWidgetId id) {
     this.id = id;
@@ -159,22 +156,14 @@ public class DashboardWidget implements Serializable {
     this.positionY = positionY;
   }
 
-  public boolean isShare() {
-    return share;
-  }
-
-  public void setShare(boolean share) {
-    this.share = share;
-  }
-
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
     DashboardWidget that = (DashboardWidget) o;
 

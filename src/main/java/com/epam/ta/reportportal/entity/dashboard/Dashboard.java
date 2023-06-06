@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.dashboard;
 
-import com.epam.ta.reportportal.entity.ShareableEntity;
+import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Dashboard extends ShareableEntity implements Serializable {
+public class Dashboard extends OwnedEntity implements Serializable {
 
   @Column(name = "name")
   private String name;

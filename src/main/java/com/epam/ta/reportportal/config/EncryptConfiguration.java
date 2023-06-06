@@ -16,6 +16,9 @@
 
 package com.epam.ta.reportportal.config;
 
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.INTEGRATION_SECRETS_PATH;
+
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import java.io.ByteArrayInputStream;
@@ -23,6 +26,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Base64;
 import org.apache.commons.io.IOUtils;
@@ -58,13 +70,21 @@ public class EncryptConfiguration implements InitializingBean {
   private String secretFilePath;
   private String migrationFilePath;
 
-  private DataStore dataStore;
+  private final DataStore dataStore;
+
+  private final FeatureFlagHandler featureFlagHandler;
 
   @Autowired
-  public EncryptConfiguration(DataStore dataStore) {
+  public EncryptConfiguration(DataStore dataStore, FeatureFlagHandler featureFlagHandler) {
     this.dataStore = dataStore;
+    this.featureFlagHandler = featureFlagHandler;
   }
 
+  /**
+   * Creates bean of {@link BasicTextEncryptor} for encrypting purposes.
+   *
+   * @return {@link BasicTextEncryptor} instance
+   */
   @Bean(name = "basicEncryptor")
   public BasicTextEncryptor getBasicEncrypt() throws IOException {
     BasicTextEncryptor basic = new BasicTextEncryptor();
@@ -72,6 +92,11 @@ public class EncryptConfiguration implements InitializingBean {
     return basic;
   }
 
+  /**
+   * Creates bean of {@link StandardPBEStringEncryptor} for encrypting purposes.
+   *
+   * @return {@link StandardPBEStringEncryptor} instance
+   */
   @Bean(name = "strongEncryptor")
   public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
     StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
@@ -82,8 +107,13 @@ public class EncryptConfiguration implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    secretFilePath = integrationSaltPath + File.separator + integrationSaltFile;
-    migrationFilePath = integrationSaltPath + File.separator + migrationFile;
+    if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, integrationSaltFile).toString();
+      migrationFilePath = Paths.get(INTEGRATION_SECRETS_PATH, migrationFile).toString();
+    } else {
+      secretFilePath = integrationSaltPath + File.separator + integrationSaltFile;
+      migrationFilePath = integrationSaltPath + File.separator + migrationFile;
+    }
     loadOrGenerateIntegrationSalt(dataStore);
   }
 

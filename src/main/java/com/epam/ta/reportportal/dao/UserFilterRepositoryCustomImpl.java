@@ -18,32 +18,67 @@ package com.epam.ta.reportportal.dao;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
 
-import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class UserFilterRepositoryCustomImpl extends
-    AbstractShareableRepositoryImpl<UserFilter> implements UserFilterRepositoryCustom {
+public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCustom {
+
+	private DSLContext dsl;
+
+	@Autowired
+	public void setDsl(DSLContext dsl) {
+		this.dsl = dsl;
+	}
 
   @Override
-  public Page<UserFilter> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-    return getPermitted(USER_FILTER_FETCHER, filter, pageable, userName);
+  public List<UserFilter> findByFilter(Queryable filter) {
+    return USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+				filter,
+				filter.getFilterConditions()
+						.stream()
+						.map(ConvertibleCondition::getAllConditions)
+						.flatMap(Collection::stream)
+						.map(FilterCondition::getSearchCriteria)
+						.collect(Collectors.toSet())
+		).wrap().build()));
   }
 
   @Override
-  public Page<UserFilter> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-    return getOwn(USER_FILTER_FETCHER, filter, pageable, userName);
-  }
+  public Page<UserFilter> findByFilter(Queryable filter, Pageable pageable) {
+		Set<String> fields = filter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
+		fields.addAll(pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
 
-  @Override
-  public Page<UserFilter> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-    return getShared(USER_FILTER_FETCHER, filter, pageable, userName);
+		return PageableExecutionUtils.getPage(USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
+				.with(pageable)
+				.wrap()
+				.withWrapperSort(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
   }
 
 }

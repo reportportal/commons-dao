@@ -39,11 +39,13 @@ import org.springframework.core.io.ClassPathResource;
  */
 class UserDataStoreServiceTest extends BaseTest {
 
-  private static Random random = new Random();
-  @Autowired
+  private static Random random = new Random();@Autowired
   private UserDataStoreService userDataStoreService;
-  @Value("${datastore.default.path:/data/store}")
+
+  @Value("${datastore.path:/data/store}")
   private String storageRootPath;
+
+
 
   @Test
   void saveLoadAndDeleteTest() throws IOException {
@@ -59,7 +61,8 @@ class UserDataStoreServiceTest extends BaseTest {
 
     userDataStoreService.delete(fileId);
 
-    ReportPortalException exception = assertThrows(ReportPortalException.class,
+    ReportPortalException exception =
+        assertThrows(ReportPortalException.class,
         () -> userDataStoreService.load(fileId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
     assertFalse(
@@ -70,7 +73,8 @@ class UserDataStoreServiceTest extends BaseTest {
   void saveLoadAndDeleteThumbnailTest() throws IOException {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-    String thumbnailId = userDataStoreService.saveThumbnail(random.nextLong() + "thmbnail.jpg",
+    String thumbnailId =
+        userDataStoreService.saveThumbnail(random.nextLong() + "thmbnail.jpg",
         inputStream);
 
     Optional<InputStream> loadedData = userDataStoreService.load(thumbnailId);
@@ -81,7 +85,8 @@ class UserDataStoreServiceTest extends BaseTest {
 
     userDataStoreService.delete(thumbnailId);
 
-    ReportPortalException exception = assertThrows(ReportPortalException.class,
+    ReportPortalException exception =
+        assertThrows(ReportPortalException.class,
         () -> userDataStoreService.load(thumbnailId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
     assertFalse(Files.exists(

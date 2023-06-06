@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.entity.ShareableEntity;
+import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
@@ -41,7 +41,7 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @Table(name = "filter")
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
-public class UserFilter extends ShareableEntity implements Serializable {
+public class UserFilter extends OwnedEntity implements Serializable {
 
   @Column(name = "name")
   private String name;

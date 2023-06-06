@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;

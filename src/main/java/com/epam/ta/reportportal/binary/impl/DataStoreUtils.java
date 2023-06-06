@@ -33,16 +33,34 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class DataStoreUtils {
 
-  static final String ROOT_USER_PHOTO_DIR = "users";
-  static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";
   private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
+
   private static final String THUMBNAIL_PREFIX = "thumbnail-";
+
   private static final String DOT = ".";
+
+  static final String ROOT_USER_PHOTO_DIR = "users";
+
+  static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";
+
+  static final String PROJECT_PATH = "project-data";
+
+  static final String USER_DATA_PATH = "user-data";
+
+  static final String PHOTOS_PATH = "photos";
+
+  public static final String INTEGRATION_SECRETS_PATH = "integration-secrets";
 
   private DataStoreUtils() {
     //static only
   }
 
+  /**
+   * Returns {@link Optional} of extension by contentType.
+   *
+   * @param contentType Content type
+   * @return {@link Optional} of {@link String}
+   */
   public static Optional<String> resolveExtension(String contentType) {
     Optional<String> result = Optional.empty();
     try {

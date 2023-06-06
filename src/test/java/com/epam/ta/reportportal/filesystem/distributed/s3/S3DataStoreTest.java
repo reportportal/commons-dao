@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import java.io.InputStream;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -44,15 +46,17 @@ class S3DataStoreTest {
   private final BlobStore blobStore = mock(BlobStore.class);
   private final InputStream inputStream = mock(InputStream.class);
 
-  private final S3DataStore s3DataStore = new S3DataStore(blobStore, BUCKET_PREFIX,
-      DEFAULT_BUCKET_NAME, REGION);
+  private final FeatureFlagHandler featureFlagHandler = mock(FeatureFlagHandler.class);
+
+  private final S3DataStore s3DataStore =
+      new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION, featureFlagHandler);
 
   @Test
   void save() throws Exception {
 
     BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock = mock(
-        BlobBuilder.PayloadBlobBuilder.class);
+    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
+        mock(BlobBuilder.PayloadBlobBuilder.class);
     Blob blobMock = mock(Blob.class);
 
     when(inputStream.available()).thenReturn(ZERO);
@@ -63,6 +67,8 @@ class S3DataStoreTest {
 
     when(blobStore.containerExists(any(String.class))).thenReturn(true);
     when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
+
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
     s3DataStore.save(FILE_PATH, inputStream);
 

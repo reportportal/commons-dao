@@ -32,7 +32,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_OWNER;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_SHARED;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
@@ -99,9 +98,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
-import static com.epam.ta.reportportal.jooq.Tables.ACL_CLASS;
-import static com.epam.ta.reportportal.jooq.Tables.ACL_ENTRY;
-import static com.epam.ta.reportportal.jooq.Tables.ACL_OBJECT_IDENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.Tables.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.Tables.ATTRIBUTE;
@@ -126,7 +122,6 @@ import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
-import static com.epam.ta.reportportal.jooq.Tables.SHAREABLE_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
@@ -134,6 +129,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
 import static com.epam.ta.reportportal.jooq.Tables.USERS;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
+import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.field;
 
@@ -1182,16 +1178,12 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED,
-              Boolean.class)
-          .withAggregateCriteria(DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID,
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
               Long.class)
-          .withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString())
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER, String.class)
-          .withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.OWNER).toString())
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
           .get()
   )) {
     @Override
@@ -1210,10 +1202,8 @@ public enum FilterTarget {
           DASHBOARD_WIDGET.WIDGET_POSITION_X,
           DASHBOARD_WIDGET.WIDGET_POSITION_Y,
           WIDGET.WIDGET_OPTIONS,
-          DASHBOARD_WIDGET.SHARE,
-          SHAREABLE_ENTITY.SHARED,
-          SHAREABLE_ENTITY.PROJECT_ID,
-          SHAREABLE_ENTITY.OWNER
+          OWNED_ENTITY.PROJECT_ID,
+          OWNED_ENTITY.OWNER
       );
     }
 
@@ -1227,12 +1217,7 @@ public enum FilterTarget {
       query.addJoin(DASHBOARD_WIDGET, JoinType.LEFT_OUTER_JOIN,
           DASHBOARD.ID.eq(DASHBOARD_WIDGET.DASHBOARD_ID));
       query.addJoin(WIDGET, JoinType.LEFT_OUTER_JOIN, DASHBOARD_WIDGET.WIDGET_ID.eq(WIDGET.ID));
-      query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(SHAREABLE_ENTITY.ID));
-      query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN,
-          DASHBOARD.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
-      query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
-      query.addJoin(ACL_ENTRY, JoinType.JOIN,
-          ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+      query.addJoin(OWNED_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(OWNED_ENTITY.ID));
     }
 
     @Override
@@ -1249,14 +1234,10 @@ public enum FilterTarget {
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION, String.class)
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED,
-              Boolean.class)
-          .withAggregateCriteria(DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID,
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
           Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER, String.class)
-          .withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.OWNER).toString())
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
           .get()
 
   )) {
@@ -1267,9 +1248,8 @@ public enum FilterTarget {
           WIDGET.WIDGET_TYPE,
           WIDGET.DESCRIPTION,
           WIDGET.ITEMS_COUNT,
-          SHAREABLE_ENTITY.PROJECT_ID,
-          SHAREABLE_ENTITY.SHARED,
-          SHAREABLE_ENTITY.OWNER
+          OWNED_ENTITY.PROJECT_ID,
+          OWNED_ENTITY.OWNER
       );
     }
 
@@ -1280,12 +1260,7 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, WIDGET.ID.eq(SHAREABLE_ENTITY.ID));
-      query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN,
-          WIDGET.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
-      query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
-      query.addJoin(ACL_ENTRY, JoinType.JOIN,
-          ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
+      query.addJoin(OWNED_ENTITY, JoinType.JOIN, WIDGET.ID.eq(OWNED_ENTITY.ID));
     }
 
     @Override
@@ -1294,23 +1269,17 @@ public enum FilterTarget {
     }
   },
 
-  USER_FILTER_TARGET(UserFilter.class,
-      Arrays.asList(
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_SHARED, SHAREABLE_ENTITY.SHARED,
-                  Boolean.class)
-              .withAggregateCriteria(DSL.boolAnd(SHAREABLE_ENTITY.SHARED).toString())
+	USER_FILTER_TARGET(UserFilter.class,
+			Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
+
+					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID, Long.class)
+              .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
               .get(),
 
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, SHAREABLE_ENTITY.PROJECT_ID,
-                  Long.class)
-              .withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.PROJECT_ID).toString())
-              .get(),
-
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, SHAREABLE_ENTITY.OWNER,
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER,
                   String.class)
-              .withAggregateCriteria(DSL.max(SHAREABLE_ENTITY.OWNER).toString())
+              .withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
               .get()
       )
   ) {
@@ -1326,9 +1295,8 @@ public enum FilterTarget {
           FILTER_CONDITION.NEGATIVE,
           FILTER_SORT.FIELD,
           FILTER_SORT.DIRECTION,
-          SHAREABLE_ENTITY.SHARED,
-          SHAREABLE_ENTITY.PROJECT_ID,
-          SHAREABLE_ENTITY.OWNER
+          OWNED_ENTITY.PROJECT_ID,
+          OWNED_ENTITY.OWNER
       );
     }
 
@@ -1339,16 +1307,10 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(SHAREABLE_ENTITY, JoinType.JOIN, FILTER.ID.eq(SHAREABLE_ENTITY.ID));
-      query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN,
-          FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
-      query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
-      query.addJoin(ACL_OBJECT_IDENTITY, JoinType.JOIN,
-          FILTER.ID.cast(String.class).eq(ACL_OBJECT_IDENTITY.OBJECT_ID_IDENTITY));
-      query.addJoin(ACL_CLASS, JoinType.JOIN, ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.OBJECT_ID_CLASS));
-      query.addJoin(ACL_ENTRY, JoinType.JOIN,
-          ACL_ENTRY.ACL_OBJECT_IDENTITY.eq(ACL_OBJECT_IDENTITY.ID));
-    }
+      query.addJoin(OWNED_ENTITY, JoinType.JOIN, FILTER.ID.eq(OWNED_ENTITY.ID));
+			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
+			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
+		}
 
     @Override
     protected Field<Long> idField() {

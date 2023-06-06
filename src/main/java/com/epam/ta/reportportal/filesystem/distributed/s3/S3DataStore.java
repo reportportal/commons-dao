@@ -16,8 +16,10 @@
 
 package com.epam.ta.reportportal.filesystem.distributed.s3;
 
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,12 +48,24 @@ public class S3DataStore implements DataStore {
   private final String defaultBucketName;
   private final Location location;
 
+  private final FeatureFlagHandler featureFlagHandler;
+
+  /**
+   * Initialises {@link S3DataStore}.
+   *
+   * @param blobStore          {@link BlobStore}
+   * @param bucketPrefix       Prefix for bucket name
+   * @param defaultBucketName  Name of default bucket to use
+   * @param region             Region to use
+   * @param featureFlagHandler {@link FeatureFlagHandler}
+   */
   public S3DataStore(BlobStore blobStore, String bucketPrefix, String defaultBucketName,
-      String region) {
+      String region, FeatureFlagHandler featureFlagHandler) {
     this.blobStore = blobStore;
     this.bucketPrefix = bucketPrefix;
     this.defaultBucketName = defaultBucketName;
     this.location = getLocationFromString(region);
+    this.featureFlagHandler = featureFlagHandler;
   }
 
   @Override
@@ -69,11 +83,8 @@ public class S3DataStore implements DataStore {
         }
       }
 
-      Blob objectBlob = blobStore.blobBuilder(s3File.getFilePath())
-          .payload(inputStream)
-          .contentDisposition(s3File.getFilePath())
-          .contentLength(inputStream.available())
-          .build();
+      Blob objectBlob = blobStore.blobBuilder(s3File.getFilePath()).payload(inputStream)
+          .contentDisposition(s3File.getFilePath()).contentLength(inputStream.available()).build();
       blobStore.putBlob(s3File.getBucket(), objectBlob);
       return Paths.get(filePath).toString();
     } catch (IOException e) {
@@ -86,7 +97,12 @@ public class S3DataStore implements DataStore {
   public InputStream load(String filePath) {
     S3File s3File = getS3File(filePath);
     try {
-      return blobStore.getBlob(s3File.getBucket(), s3File.getFilePath()).getPayload().openStream();
+      Blob fileBlob = blobStore.getBlob(s3File.getBucket(), s3File.getFilePath());
+      if (fileBlob != null) {
+        return fileBlob.getPayload().openStream();
+      } else {
+        throw new Exception();
+      }
     } catch (Exception e) {
       LOGGER.error("Unable to find file '{}'", filePath, e);
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
@@ -105,11 +121,15 @@ public class S3DataStore implements DataStore {
   }
 
   private S3File getS3File(String filePath) {
+    if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      return new S3File(defaultBucketName, filePath);
+    }
     Path targetPath = Paths.get(filePath);
     int nameCount = targetPath.getNameCount();
     if (nameCount > 1) {
       return new S3File(bucketPrefix + retrievePath(targetPath, 0, 1),
-          retrievePath(targetPath, 1, nameCount));
+          retrievePath(targetPath, 1, nameCount)
+      );
     } else {
       return new S3File(defaultBucketName, retrievePath(targetPath, 0, 1));
     }
@@ -119,11 +139,9 @@ public class S3DataStore implements DataStore {
   private Location getLocationFromString(String locationString) {
     Location location = null;
     if (locationString != null) {
-      location = new LocationBuilder()
-          .scope(LocationScope.REGION)
-          .id(locationString)
-          .description("region")
-          .build();
+      location =
+          new LocationBuilder().scope(LocationScope.REGION).id(locationString).description("region")
+              .build();
     }
     return location;
   }

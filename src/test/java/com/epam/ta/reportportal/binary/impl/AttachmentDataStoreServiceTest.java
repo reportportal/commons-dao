@@ -40,9 +40,10 @@ import org.springframework.core.io.ClassPathResource;
 class AttachmentDataStoreServiceTest extends BaseTest {
 
   private static Random random = new Random();
-  @Autowired
+	@Autowired
   private AttachmentDataStoreService attachmentDataStoreService;
-  @Value("${datastore.default.path:/data/store}")
+
+  @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
   @Test
@@ -59,7 +60,8 @@ class AttachmentDataStoreServiceTest extends BaseTest {
 
     attachmentDataStoreService.delete(fileId);
 
-    ReportPortalException exception = assertThrows(ReportPortalException.class,
+    ReportPortalException exception =
+        assertThrows(ReportPortalException.class,
         () -> attachmentDataStoreService.load(fileId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
     assertFalse(Files.exists(
@@ -70,7 +72,8 @@ class AttachmentDataStoreServiceTest extends BaseTest {
   void saveLoadAndDeleteThumbnailTest() throws IOException {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-    String thumbnailId = attachmentDataStoreService.saveThumbnail(
+    String thumbnailId =
+        attachmentDataStoreService.saveThumbnail(
         random.nextLong() + "thumbnail.jpg", inputStream);
 
     Optional<InputStream> loadedData = attachmentDataStoreService.load(thumbnailId);
@@ -82,7 +85,8 @@ class AttachmentDataStoreServiceTest extends BaseTest {
     attachmentDataStoreService.delete(thumbnailId);
 
     ReportPortalException exception = assertThrows(ReportPortalException.class,
-        () -> attachmentDataStoreService.load(thumbnailId));
+        () -> attachmentDataStoreService.load(thumbnailId)
+    );
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
     assertFalse(Files.exists(
         Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(thumbnailId))));

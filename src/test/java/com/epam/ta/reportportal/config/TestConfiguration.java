@@ -21,6 +21,8 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
@@ -49,6 +51,12 @@ public class TestConfiguration {
       @Value("${datastore.thumbnail.avatar.width}") int width,
       @Value("${datastore.thumbnail.avatar.height}") int height) {
     return new ThumbnailatorImpl(width, height);
+  }
+
+  @Bean
+  public FeatureFlagHandler featureFlagHandler(
+      @Value("#{'${rp.feature.flags}'.split(',')}") Set<String> featureFlagsSet) {
+    return new FeatureFlagHandler(featureFlagsSet);
   }
 
   @Bean
