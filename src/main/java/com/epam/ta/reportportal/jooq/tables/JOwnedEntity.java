@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
 
-    private static final long serialVersionUID = 360970636;
+    private static final long serialVersionUID = 1859921375;
 
     /**
      * The reference instance of <code>public.owned_entity</code>
@@ -65,7 +65,7 @@ public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
     /**
      * The column <code>public.owned_entity.owner</code>.
      */
-    public final TableField<JOwnedEntityRecord, String> OWNER = createField(DSL.name("owner"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<JOwnedEntityRecord, String> OWNER = createField(DSL.name("owner"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.owned_entity.project_id</code>.
@@ -132,11 +132,7 @@ public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
 
     @Override
     public List<ForeignKey<JOwnedEntityRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JOwnedEntityRecord, ?>>asList(Keys.OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
-    }
-
-    public JUsers users() {
-        return new JUsers(this, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY);
+        return Arrays.<ForeignKey<JOwnedEntityRecord, ?>>asList(Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
     }
 
     public JProject project() {

@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.PROJECT_PATH;
 import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.isContentTypePresent;
 import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.resolveExtension;
 import static com.epam.ta.reportportal.commons.validation.BusinessRule.expect;
@@ -59,8 +60,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataService {
 
   private static final Logger LOGGER =
-      LoggerFactory.getLogger(
-      AttachmentBinaryDataServiceImpl.class);
+      LoggerFactory.getLogger(AttachmentBinaryDataServiceImpl.class);
 
   private final ContentTypeResolver contentTypeResolver;
 

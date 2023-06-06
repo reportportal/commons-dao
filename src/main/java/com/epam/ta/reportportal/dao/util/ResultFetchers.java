@@ -36,7 +36,6 @@ import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
-import static com.epam.ta.reportportal.jooq.Tables.SHAREABLE_ENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -68,17 +67,25 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.function.Function;
+
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.PAGE_NUMBER;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.TYPE;
+import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOG_LEVEL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
+import static com.epam.ta.reportportal.jooq.Tables.*;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
+import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.ofNullable;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
@@ -86,6 +93,10 @@ import org.springframework.util.CollectionUtils;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public class ResultFetchers {
+
+  private ResultFetchers() {
+    //static only
+  }
 
   /**
    * Fetches records from db results into list of {@link Project} objects.
@@ -116,6 +127,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(projects.values());
   };
+
   /**
    * Fetches records from db results into list of {@link Launch} objects.
    */
@@ -135,6 +147,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(launches.values());
   };
+
   /**
    * Fetches records from db results into list of {@link TestItem} objects.
    */
@@ -164,6 +177,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(testItems.values());
   };
+
   /**
    * Fetches records from db results into list of {@link TestItem} objects.
    */
@@ -179,6 +193,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(testItems.values());
   };
+
   /**
    * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log}
    * objects.
@@ -193,6 +208,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(logs.values());
   };
+
   /**
    * Fetches records from db results into list of {@link Activity} objects.
    */
@@ -210,6 +226,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(activities.values());
   };
+
   /**
    * Fetches records from db results into list of
    * {@link com.epam.ta.reportportal.entity.integration.Integration} objects.
@@ -228,6 +245,7 @@ public class ResultFetchers {
     });
     return new ArrayList<>(integrations.values());
   };
+
   public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = records -> {
     Map<Long, User> users = Maps.newLinkedHashMap();
     records.forEach(record -> {
@@ -246,12 +264,14 @@ public class ResultFetchers {
     });
     return new ArrayList<>(users.values());
   };
+
   public static final Function<Result<? extends Record>, List<User>> USER_WITHOUT_PROJECT_FETCHER = records -> {
     Map<Long, User> users = Maps.newLinkedHashMap();
     records.forEach(
         record -> users.computeIfAbsent(record.get(USERS.ID), key -> record.map(USER_MAPPER)));
     return new ArrayList<>(users.values());
   };
+
   public static final Function<Result<? extends Record>, List<UserFilter>> USER_FILTER_FETCHER = result -> {
     Map<Long, UserFilter> userFilterMap = Maps.newLinkedHashMap();
     result.forEach(r -> {
@@ -261,10 +281,9 @@ public class ResultFetchers {
         userFilter = userFilterMap.get(userFilterID);
       } else {
         userFilter = r.into(UserFilter.class);
-        userFilter.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
-        userFilter.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+        userFilter.setOwner(r.get(OWNED_ENTITY.OWNER));
         Project project = new Project();
-        project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
+        project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         userFilter.setProject(project);
       }
       userFilter.getFilterCondition().add(r.into(FilterCondition.class));
@@ -277,6 +296,7 @@ public class ResultFetchers {
     });
     return Lists.newArrayList(userFilterMap.values());
   };
+
   public static final Function<Result<? extends Record>, List<Dashboard>> DASHBOARD_FETCHER = result -> {
     Map<Long, Dashboard> dashboardMap = Maps.newLinkedHashMap();
     result.forEach(r -> {
@@ -286,10 +306,9 @@ public class ResultFetchers {
         dashboard = dashboardMap.get(dashboardId);
       } else {
         dashboard = r.into(Dashboard.class);
-        dashboard.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
-        dashboard.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+        dashboard.setOwner(r.get(OWNED_ENTITY.OWNER));
         Project project = new Project();
-        project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
+        project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         dashboard.setProject(project);
       }
       DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(it -> dashboard.getDashboardWidgets().add(it));
@@ -297,6 +316,7 @@ public class ResultFetchers {
     });
     return Lists.newArrayList(dashboardMap.values());
   };
+
   public static final Function<Result<? extends Record>, List<Widget>> WIDGET_FETCHER = result -> {
     Map<Long, Widget> widgetMap = Maps.newLinkedHashMap();
     result.forEach(r -> {
@@ -306,16 +326,16 @@ public class ResultFetchers {
         widget = widgetMap.get(widgetId);
       } else {
         widget = r.into(Widget.class);
-        widget.setOwner(r.get(SHAREABLE_ENTITY.OWNER));
-        widget.setShared(r.get(SHAREABLE_ENTITY.SHARED));
+        widget.setOwner(r.get(OWNED_ENTITY.OWNER));
         Project project = new Project();
-        project.setId(r.get(SHAREABLE_ENTITY.PROJECT_ID, Long.class));
+        project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         widget.setProject(project);
       }
       widgetMap.put(widgetId, widget);
     });
     return Lists.newArrayList(widgetMap.values());
   };
+
   public static final Function<Result<? extends Record>, List<NestedItem>> NESTED_ITEM_FETCHER = result -> {
     List<NestedItem> nestedItems = Lists.newArrayListWithExpectedSize(result.size());
     result.forEach(record -> nestedItems.add(new NestedItem(
@@ -325,6 +345,7 @@ public class ResultFetchers {
     )));
     return nestedItems;
   };
+
   public static final Function<Result<? extends Record>, List<NestedItemPage>> NESTED_ITEM_LOCATED_FETCHER = result -> {
     List<NestedItemPage> itemWithLocation = Lists.newArrayListWithExpectedSize(result.size());
     result.forEach(record -> itemWithLocation.add(new NestedItemPage(record.get(ID, Long.class),
@@ -334,6 +355,7 @@ public class ResultFetchers {
     )));
     return itemWithLocation;
   };
+
   public static final Function<Result<? extends Record>, ReportPortalUser> REPORTPORTAL_USER_FETCHER = records -> {
     if (!CollectionUtils.isEmpty(records)) {
       ReportPortalUser user = ReportPortalUser.userBuilder()
@@ -362,9 +384,5 @@ public class ResultFetchers {
     }
     return null;
   };
-
-  private ResultFetchers() {
-    //static only
-  }
 
 }

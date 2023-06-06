@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
-import static com.epam.ta.reportportal.jooq.tables.JShareableEntity.SHAREABLE_ENTITY;
+import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
@@ -26,6 +26,10 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.widget.Widget;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,16 +37,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.WIDGET_FETCHER;
-import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
-import static com.epam.ta.reportportal.jooq.tables.JWidget.WIDGET;
-import static com.epam.ta.reportportal.jooq.tables.JWidgetFilter.WIDGET_FILTER;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -53,7 +47,7 @@ public class WidgetRepositoryCustomImpl implements
 
   private final DSLContext dsl;
 
-	@Autowired
+  @Autowired
   public WidgetRepositoryCustomImpl(DSLContext dsl) {
     this.dsl = dsl;
   }
@@ -72,33 +66,36 @@ public class WidgetRepositoryCustomImpl implements
         .execute();
   }
 
-	@Override
-	public List<Widget> findByFilter(Queryable filter) {
-		return WIDGET_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
-				filter,
-				filter.getFilterConditions()
-						.stream()
-						.map(ConvertibleCondition::getAllConditions)
-						.flatMap(Collection::stream)
-						.map(FilterCondition::getSearchCriteria)
-						.collect(Collectors.toSet())
-		).wrap().build()));
-	}
+  @Override
+  public List<Widget> findByFilter(Queryable filter) {
+    return WIDGET_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+        filter,
+        filter.getFilterConditions()
+            .stream()
+            .map(ConvertibleCondition::getAllConditions)
+            .flatMap(Collection::stream)
+            .map(FilterCondition::getSearchCriteria)
+            .collect(Collectors.toSet())
+    ).wrap().build()));
+  }
 
-	@Override
-	public Page<Widget> findByFilter(Queryable filter, Pageable pageable) {
-		Set<String> fields = filter.getFilterConditions()
-				.stream()
-				.map(ConvertibleCondition::getAllConditions)
-				.flatMap(Collection::stream)
-				.map(FilterCondition::getSearchCriteria)
-				.collect(Collectors.toSet());
-		fields.addAll(pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
+  @Override
+  public Page<Widget> findByFilter(Queryable filter, Pageable pageable) {
+    Set<String> fields = filter.getFilterConditions()
+        .stream()
+        .map(ConvertibleCondition::getAllConditions)
+        .flatMap(Collection::stream)
+        .map(FilterCondition::getSearchCriteria)
+        .collect(Collectors.toSet());
+    fields.addAll(
+        pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
 
-		return PageableExecutionUtils.getPage(WIDGET_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
-				.with(pageable)
-				.wrap()
-				.withWrapperSort(pageable.getSort())
-				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
-	}
+    return PageableExecutionUtils.getPage(
+        WIDGET_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
+            .with(pageable)
+            .wrap()
+            .withWrapperSort(pageable.getSort())
+            .build())), pageable,
+        () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
+  }
 }

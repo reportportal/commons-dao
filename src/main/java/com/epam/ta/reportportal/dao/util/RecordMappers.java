@@ -89,7 +89,6 @@ import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.SharedEntity;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
@@ -424,9 +423,6 @@ public class RecordMappers {
     return activity;
   };
 
-  public static final RecordMapper<? super Record, SharedEntity> SHARED_ENTITY_MAPPER = r -> r.into(
-      SharedEntity.class);
-
   private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(
       res.get(FILTER.ID)).ifPresent(
       id -> {
@@ -548,7 +544,6 @@ public class RecordMappers {
     dashboardWidget.setWidgetOwner(r.get(DASHBOARD_WIDGET.WIDGET_OWNER));
     dashboardWidget.setWidgetName(r.get(DASHBOARD_WIDGET.WIDGET_NAME));
     dashboardWidget.setWidgetType(r.get(DASHBOARD_WIDGET.WIDGET_TYPE));
-    dashboardWidget.setShare(r.get(DASHBOARD_WIDGET.SHARE));
     final Widget widget = new Widget();
     WIDGET_OPTIONS_MAPPER.accept(widget, r);
     dashboardWidget.setWidget(widget);

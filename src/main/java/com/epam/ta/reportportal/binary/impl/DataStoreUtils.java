@@ -33,8 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class DataStoreUtils {
 
-  static final String ROOT_USER_PHOTO_DIR = "users";
-  static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreUtils.class);
 
   private static final String THUMBNAIL_PREFIX = "thumbnail-";
 
@@ -55,19 +54,7 @@ public class DataStoreUtils {
   private DataStoreUtils() {
     //static only
   }
-  private DataStoreUtils() {
-    //static only
-  }
 
-  public static Optional<String> resolveExtension(String contentType) {
-    Optional<String> result = Optional.empty();
-    try {
-      result = Optional.of(MimeTypes.getDefaultMimeTypes().forName(contentType).getExtension());
-    } catch (MimeTypeException e) {
-      LOGGER.warn("Cannot resolve file extension from content type '{}'", contentType, e);
-    }
-    return result;
-  }
   /**
    * Returns {@link Optional} of extension by contentType.
    *

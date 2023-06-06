@@ -60,8 +60,6 @@ public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 
   private FeatureFlagHandler featureFlagHandler;
 
-  private static final String DEFAULT_USER_PHOTO = "image/defaultAvatar.png";
-
   @Autowired
   public UserBinaryDataServiceImpl(
       @Qualifier("userDataStoreService") DataStoreService dataStoreService,

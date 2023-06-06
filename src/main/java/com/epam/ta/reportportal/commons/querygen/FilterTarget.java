@@ -32,7 +32,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_OWNER;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_SHARED;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
@@ -99,9 +98,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
-import static com.epam.ta.reportportal.jooq.Tables.ACL_CLASS;
-import static com.epam.ta.reportportal.jooq.Tables.ACL_ENTRY;
-import static com.epam.ta.reportportal.jooq.Tables.ACL_OBJECT_IDENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.Tables.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.Tables.ATTRIBUTE;
@@ -126,7 +122,6 @@ import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
-import static com.epam.ta.reportportal.jooq.Tables.SHAREABLE_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
@@ -134,6 +129,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
 import static com.epam.ta.reportportal.jooq.Tables.USERS;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
+import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.field;
 
