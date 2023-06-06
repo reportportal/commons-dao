@@ -91,14 +91,14 @@ public class SenderCase implements Serializable {
   public SenderCase() {
   }
 
-  public SenderCase(Set<String> recipients, Set<String> launchNames,
-      Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
-      boolean enabled) {
+  public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
+      boolean enabled, LogicalOperator attributesOperator) {
     this.recipients = recipients;
     this.launchNames = launchNames;
     this.launchAttributeRules = launchAttributeRules;
     this.sendCase = sendCase;
     this.enabled = enabled;
+    this.attributesOperator = attributesOperator;
   }
 
   public Long getId() {
