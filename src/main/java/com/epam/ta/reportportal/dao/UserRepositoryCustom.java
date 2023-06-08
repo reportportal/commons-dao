@@ -20,10 +20,11 @@ import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
-import java.util.Map;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
@@ -54,5 +55,7 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
    */
   Optional<ReportPortalUser> findUserDetails(String login);
 
-  Optional<ReportPortalUser> findReportPortalUser(String login);
+	Optional<ReportPortalUser> findReportPortalUser(String login);
+
+	Optional<ReportPortalUser> findReportPortalUser(Long userId);
 }

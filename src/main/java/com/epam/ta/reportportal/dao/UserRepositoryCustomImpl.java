@@ -142,4 +142,11 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         .fetchOptional(REPORT_PORTAL_USER_MAPPER);
   }
 
+	@Override
+	public Optional<ReportPortalUser> findReportPortalUser(Long userId) {
+		return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL)
+				.from(USERS)
+				.where(USERS.ID.eq(userId))
+				.fetchOptional(REPORT_PORTAL_USER_MAPPER);
+	}
 }
