@@ -63,21 +63,15 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
   @Override
   public Page<User> findByFilter(Queryable filter, Pageable pageable) {
-    return PageableExecutionUtils.getPage(
-        USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-            .with(pageable)
-            .wrap()
-            .withWrapperSort(pageable.getSort())
+    return PageableExecutionUtils.getPage(USER_FETCHER.apply(dsl.fetch(
+        QueryBuilder.newBuilder(filter).with(pageable).wrap().withWrapperSort(pageable.getSort())
             .build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
   }
 
   @Override
   public Page<User> findByFilterExcludingProjects(Queryable filter, Pageable pageable) {
-    return PageableExecutionUtils.getPage(
-        USER_WITHOUT_PROJECT_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-            .with(pageable)
-            .wrap()
-            .withWrapperSort(pageable.getSort())
+    return PageableExecutionUtils.getPage(USER_WITHOUT_PROJECT_FETCHER.apply(dsl.fetch(
+        QueryBuilder.newBuilder(filter).with(pageable).wrap().withWrapperSort(pageable.getSort())
             .build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
   }
 
@@ -89,64 +83,42 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
   @Override
   public Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude) {
     return PageableExecutionUtils.getPage(
-        USER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
-            .with(pageable)
-            .wrapExcludingFields(exclude)
-            .withWrapperSort(pageable.getSort())
-            .build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
+        USER_FETCHER.apply(dsl.fetch(
+            QueryBuilder.newBuilder(filter).with(pageable).wrapExcludingFields(exclude)
+                .withWrapperSort(pageable.getSort()).build())), pageable,
+        () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+    );
   }
 
   @Override
   public Map<String, ProjectRole> findUsernamesWithProjectRolesByProjectId(Long projectId) {
-    return dsl.select(USERS.LOGIN, PROJECT_USER.PROJECT_ROLE)
-        .from(USERS)
-        .join(PROJECT_USER)
-        .on(USERS.ID.eq(PROJECT_USER.USER_ID))
-        .where(PROJECT_USER.PROJECT_ID.eq(projectId))
-        .fetch()
-        .stream()
-        .collect(Collectors.toMap(r -> r.get(USERS.LOGIN), r -> {
+    return dsl.select(USERS.LOGIN, PROJECT_USER.PROJECT_ROLE).from(USERS).join(PROJECT_USER)
+        .on(USERS.ID.eq(PROJECT_USER.USER_ID)).where(PROJECT_USER.PROJECT_ID.eq(projectId)).fetch()
+        .stream().collect(Collectors.toMap(r -> r.get(USERS.LOGIN), r -> {
           String projectRoleName = r.get(PROJECT_USER.PROJECT_ROLE).getLiteral();
-          return ProjectRole.forName(projectRoleName)
-              .orElseThrow(
-                  () -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRoleName));
+          return ProjectRole.forName(projectRoleName).orElseThrow(
+              () -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRoleName));
         }));
   }
 
   @Override
   public Optional<ReportPortalUser> findUserDetails(String login) {
-    return Optional.ofNullable(REPORTPORTAL_USER_FETCHER.apply(dsl.select(
-            USERS.ID,
-            USERS.LOGIN,
-            USERS.PASSWORD,
-            USERS.ROLE,
-            USERS.EMAIL,
-            PROJECT_USER.PROJECT_ID,
-            PROJECT_USER.PROJECT_ROLE,
-            PROJECT.NAME
-        )
-        .from(USERS)
-        .leftJoin(PROJECT_USER)
-        .on(USERS.ID.eq(PROJECT_USER.USER_ID))
-        .leftJoin(PROJECT)
-        .on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
-        .where(USERS.LOGIN.eq(login))
-        .fetch()));
+    return Optional.ofNullable(REPORTPORTAL_USER_FETCHER.apply(
+        dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL,
+                PROJECT_USER.PROJECT_ID, PROJECT_USER.PROJECT_ROLE, PROJECT.NAME
+            ).from(USERS).leftJoin(PROJECT_USER).on(USERS.ID.eq(PROJECT_USER.USER_ID)).leftJoin(PROJECT)
+            .on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID)).where(USERS.LOGIN.eq(login)).fetch()));
   }
 
   @Override
   public Optional<ReportPortalUser> findReportPortalUser(String login) {
-    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL)
-        .from(USERS)
-        .where(USERS.LOGIN.eq(login))
-        .fetchOptional(REPORT_PORTAL_USER_MAPPER);
+    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL).from(USERS)
+        .where(USERS.LOGIN.eq(login)).fetchOptional(REPORT_PORTAL_USER_MAPPER);
   }
 
-	@Override
-	public Optional<ReportPortalUser> findReportPortalUser(Long userId) {
-		return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL)
-				.from(USERS)
-				.where(USERS.ID.eq(userId))
-				.fetchOptional(REPORT_PORTAL_USER_MAPPER);
-	}
+  @Override
+  public Optional<ReportPortalUser> findReportPortalUser(Long userId) {
+    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL).from(USERS)
+        .where(USERS.ID.eq(userId)).fetchOptional(REPORT_PORTAL_USER_MAPPER);
+  }
 }
