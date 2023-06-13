@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,6 +35,7 @@ public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
    * @param hash hash of api key
    * @return {@link ApiKey}
    */
+  @Cacheable(value = "apiKeyCache", key = "#hash")
   ApiKey findByHash(String hash);
 
   /**
