@@ -17,7 +17,11 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ApiKey;
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * ApiKey Repository
@@ -47,4 +51,8 @@ public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
    * @return list of user api keys
    */
   List<ApiKey> findByUserId(Long userId);
+
+  @Modifying
+  @Query("UPDATE ApiKey ak SET ak.lastUsedAt = :lastUsedAt WHERE ak.id = :id")
+  void updateLastUsedAt(@Param("id") Long id, @Param("lastUsedAt") LocalDate lastUsedAt);
 }
