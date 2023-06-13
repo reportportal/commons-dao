@@ -31,27 +31,30 @@ import org.springframework.data.repository.query.Param;
 public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
 
   /**
-   *
    * @param hash hash of api key
    * @return {@link ApiKey}
    */
   ApiKey findByHash(String hash);
 
   /**
-   *
-   * @param name name of user Api key
+   * @param name   name of user Api key
    * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndUserId(String name, Long userId);
 
   /**
-   *
    * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
    * @return list of user api keys
    */
   List<ApiKey> findByUserId(Long userId);
 
+  /**
+   * Update lastUsedAt for apiKey
+   *
+   * @param id         id of the ApiKey to update
+   * @param lastUsedAt {@link LocalDate}
+   */
   @Modifying
   @Query("UPDATE ApiKey ak SET ak.lastUsedAt = :lastUsedAt WHERE ak.id = :id")
   void updateLastUsedAt(@Param("id") Long id, @Param("lastUsedAt") LocalDate lastUsedAt);
