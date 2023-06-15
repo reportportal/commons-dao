@@ -15,6 +15,38 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_DESCRIPTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DEFECTS_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DELTA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.INVESTIGATED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TO_INVESTIGATE;
+import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.AFTER_METHOD;
+import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.BEFORE_METHOD;
+import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.STEP;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
@@ -24,13 +56,36 @@ import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import com.epam.ta.reportportal.entity.widget.content.*;
-import com.epam.ta.reportportal.entity.widget.content.healthcheck.*;
+import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
+import com.epam.ta.reportportal.entity.widget.content.FlakyCasesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.LaunchesDurationContent;
+import com.epam.ta.reportportal.entity.widget.content.LaunchesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.MostTimeConsumingTestCasesContent;
+import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
+import com.epam.ta.reportportal.entity.widget.content.OverallStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.PassingRateStatisticsResult;
+import com.epam.ta.reportportal.entity.widget.content.ProductStatusStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.TopPatternTemplatesContent;
+import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.LevelEntry;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.assertj.core.util.Lists;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -40,27 +95,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
-import static com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Ivan Budayeu
@@ -262,15 +296,16 @@ class WidgetContentRepositoryTest extends BaseTest {
 		assertEquals(4, chartStatisticsContents.size());
 
 		chartStatisticsContents.forEach(res -> {
-			Map<String, Integer> stats = statistics.get(res.getId());
-			Map<String, String> resStatistics = res.getValues();
+      Map<String, Integer> stats = statistics.get(res.getId());
+      Map<String, String> resStatistics = res.getValues();
 
-			long total = stats.values().stream().mapToInt(Integer::intValue).sum();
+      long total = stats.values().stream().mapToInt(Integer::intValue).sum();
 
-			stats.keySet().forEach(key -> assertEquals((long) stats.get(key), (long) Integer.parseInt(resStatistics.get(key))));
+      stats.keySet().forEach(key -> assertEquals((long) stats.get(key),
+          Integer.parseInt(resStatistics.get(key))));
 
-			assertEquals(String.valueOf(total), resStatistics.get(TOTAL));
-		});
+      assertEquals(String.valueOf(total), resStatistics.get(TOTAL));
+    });
 	}
 
 	@Test
@@ -384,40 +419,44 @@ class WidgetContentRepositoryTest extends BaseTest {
 		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
 				contentFields,
 				sort,
-				3
-		);
-		assertNotNull(launchStatisticsContents);
-		assertEquals(3, launchStatisticsContents.size());
+        3
+    );
+    assertNotNull(launchStatisticsContents);
+    assertEquals(3, launchStatisticsContents.size());
 
-		List<String> tableContentFields = Lists.newArrayList(CRITERIA_END_TIME,
-				CRITERIA_LAST_MODIFIED,
-				CRITERIA_USER
-		);
+    List<String> tableContentFields = Lists.newArrayList(CRITERIA_END_TIME,
+        CRITERIA_LAST_MODIFIED,
+        CRITERIA_USER
+    );
 
-		launchStatisticsContents.forEach(content -> {
-			Map<String, Object> values = content.getValues();
-			tableContentFields.forEach(tcf -> {
-				assertTrue(values.containsKey(tcf));
-				assertNotNull(values.get(tcf));
-			});
-		});
+    launchStatisticsContents.forEach(content -> {
+      Map<String, Object> values = content.getValues();
+      tableContentFields.forEach(tcf -> {
+        assertTrue(values.containsKey(tcf));
+        assertNotNull(values.get(tcf));
+      });
+    });
 
-	}
+  }
 
-	@Test
-	void activityStatistics() {
-		Filter filter = buildDefaultActivityFilter(1L);
-		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_CREATION_DATE)));
-		List<String> contentFields = buildActivityContentFields();
+  @Test
+  void activityStatistics() {
+    Filter filter = buildDefaultActivityFilter(1L);
+    Sort sort = Sort.by(
+        Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_CREATED_AT)));
 
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
-				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), CRITERIA_ACTION));
+    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "CREATE"),
+            CRITERIA_ACTION))
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),
+            CRITERIA_OBJECT_TYPE));
 
-		List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
+    List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter,
+        sort, 4);
 
-		assertNotNull(activityContentList);
-		assertEquals(4, activityContentList.size());
-	}
+    assertNotNull(activityContentList);
+    assertEquals(4, activityContentList.size());
+  }
 
 	@Test
 	void uniqueBugStatistics() {
@@ -734,45 +773,49 @@ class WidgetContentRepositoryTest extends BaseTest {
 	@Test
 	void launchesTableStatisticsSorting() {
 		String sortingColumn = "statistics$defects$no_defect$nd001";
-		Filter filter = buildDefaultFilter(1L);
-		List<Sort.Order> orders = filter.getTarget()
-				.getCriteriaHolders()
-				.stream()
-				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
-				.collect(Collectors.toList());
-		orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
-		Sort sort = Sort.by(orders);
-		List<String> contentFields = buildLaunchesTableContentFields();
+    Filter filter = buildDefaultFilter(1L);
+    List<Sort.Order> orders = filter.getTarget()
+        .getCriteriaHolders()
+        .stream()
+        .map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+        .collect(Collectors.toList());
+    orders.add(new Sort.Order(Sort.Direction.DESC, sortingColumn));
+    Sort sort = Sort.by(orders);
+    List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
-				contentFields,
-				sort,
-				3
-		);
-		assertNotNull(launchStatisticsContents);
-		assertEquals(3, launchStatisticsContents.size());
+    List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(
+        filter,
+        contentFields,
+        sort,
+        3
+    );
+    assertNotNull(launchStatisticsContents);
+    assertEquals(3, launchStatisticsContents.size());
 
-	}
+  }
 
-	@Test
-	void activityStatisticsSorting() {
-		Filter filter = buildDefaultActivityFilter(1L);
-		List<Sort.Order> orders = filter.getTarget()
-				.getCriteriaHolders()
-				.stream()
-				.map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
-				.collect(Collectors.toList());
-		Sort sort = Sort.by(orders);
-		List<String> contentFields = buildActivityContentFields();
+  @Test
+  void activityStatisticsSorting() {
+    Filter filter = buildDefaultActivityFilter(1L);
+    List<Sort.Order> orders = filter.getTarget()
+        .getCriteriaHolders()
+        .stream()
+        .map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
+        .collect(Collectors.toList());
+    Sort sort = Sort.by(orders);
 
-		filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
-				.withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields), CRITERIA_ACTION));
+    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "CREATE"),
+            CRITERIA_ACTION))
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),
+            CRITERIA_OBJECT_TYPE));
 
-		List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
+    List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter,
+        sort, 4);
 
-		assertNotNull(activityContentList);
-		assertEquals(4, activityContentList.size());
-	}
+    assertNotNull(activityContentList);
+    assertEquals(4, activityContentList.size());
+  }
 
 	@Test
 	void uniqueBugStatisticsSorting() {
@@ -1000,50 +1043,46 @@ class WidgetContentRepositoryTest extends BaseTest {
 
 	private List<String> buildProductStatusContentFields() {
 		return Lists.newArrayList("statistics$defects$no_defect$nd001",
-				"statistics$defects$product_bug$pb001",
-				"statistics$defects$automation_bug$ab001",
-				"statistics$defects$system_issue$si001",
-				"statistics$defects$to_investigate$ti001",
-				"statistics$executions$failed",
-				"statistics$executions$skipped",
-				"statistics$executions$total",
-				"startTime",
-				"status",
-				"statistics$defects$no_defect$total",
-				"statistics$defects$product_bug$total",
-				"statistics$defects$automation_bug$total",
-				"statistics$defects$system_issue$total",
-				"statistics$defects$to_investigate$total"
+        "statistics$defects$product_bug$pb001",
+        "statistics$defects$automation_bug$ab001",
+        "statistics$defects$system_issue$si001",
+        "statistics$defects$to_investigate$ti001",
+        "statistics$executions$failed",
+        "statistics$executions$skipped",
+        "statistics$executions$total",
+        "startTime",
+        "status",
+        "statistics$defects$no_defect$total",
+        "statistics$defects$product_bug$total",
+        "statistics$defects$automation_bug$total",
+        "statistics$defects$system_issue$total",
+        "statistics$defects$to_investigate$total"
 
-		);
-	}
+    );
+  }
 
-	private List<String> buildActivityContentFields() {
-		return Lists.newArrayList("createLaunch", "createItem");
-	}
+  private Map<Long, Map<String, Integer>> buildTotalDefectsMap() {
+    Map<Long, Map<String, Integer>> investigatedTrendMap = Maps.newLinkedHashMap();
 
-	private Map<Long, Map<String, Integer>> buildTotalDefectsMap() {
-		Map<Long, Map<String, Integer>> investigatedTrendMap = Maps.newLinkedHashMap();
-
-		investigatedTrendMap.put(1L,
-				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 2)
-						.put("statistics$defects$system_issue$total", 8)
-						.put("statistics$defects$automation_bug$total", 7)
-						.put("statistics$defects$product_bug$total", 13)
-						.put("statistics$defects$no_defect$total", 2)
-						.build()
-		);
-		investigatedTrendMap.put(2L,
-				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
-						.put("statistics$defects$system_issue$total", 3)
-						.put("statistics$defects$automation_bug$total", 1)
-						.put("statistics$defects$product_bug$total", 1)
-						.put("statistics$defects$no_defect$total", 2)
-						.build()
-		);
-		investigatedTrendMap.put(3L,
-				ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 1)
-						.put("statistics$defects$system_issue$total", 1)
+    investigatedTrendMap.put(1L,
+        ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 2)
+            .put("statistics$defects$system_issue$total", 8)
+            .put("statistics$defects$automation_bug$total", 7)
+            .put("statistics$defects$product_bug$total", 13)
+            .put("statistics$defects$no_defect$total", 2)
+            .build()
+    );
+    investigatedTrendMap.put(2L,
+        ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 3)
+            .put("statistics$defects$system_issue$total", 3)
+            .put("statistics$defects$automation_bug$total", 1)
+            .put("statistics$defects$product_bug$total", 1)
+            .put("statistics$defects$no_defect$total", 2)
+            .build()
+    );
+    investigatedTrendMap.put(3L,
+        ImmutableMap.<String, Integer>builder().put("statistics$defects$to_investigate$total", 1)
+            .put("statistics$defects$system_issue$total", 1)
 						.put("statistics$defects$automation_bug$total", 1)
 						.put("statistics$defects$product_bug$total", 1)
 						.put("statistics$defects$no_defect$total", 1)

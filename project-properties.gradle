@@ -9,7 +9,7 @@ project.ext {
     dependencyRepos = ["commons", "commons-rules", "commons-model", "commons-bom"]
     releaseMode = project.hasProperty("releaseMode")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'master')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'hotfix/next')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : '23.2')
     //TODO refactor with archive download
     testScriptsSrc = [
             (migrationsUrl + '/migrations/0_extensions.up.sql')                        : 'V001__extensions.sql',
@@ -69,6 +69,7 @@ project.ext {
             (migrationsUrl + '/migrations/61_remove_acl.up.sql')                       : 'V061__remove_acl.sql',
             (migrationsUrl + '/migrations/62_remove_dashboard_cascade_drop.up.sql')    : 'V062__remove_dashboard_cascade_drop.sql',
             (migrationsUrl + '/migrations/67_api_keys.up.sql')                         : 'V067__api_keys.sql',
+            (migrationsUrl + '/migrations/68_replace_activity_table.up.sql')           : 'V068__replace_activity_table.sql',
 
     ]
     excludeTests = [

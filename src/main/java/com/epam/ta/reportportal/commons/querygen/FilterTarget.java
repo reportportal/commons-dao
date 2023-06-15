@@ -16,10 +16,132 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_EVENT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_PRIORITY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_DESCRIPTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_OWNER;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_USER_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_AUTO_ANALYZED;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_COMMENT;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_IGNORE_ANALYZER;
+import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_LOCATOR;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_LEVEL_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.LAUNCH_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_NUMBER;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_ITEM_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_BINARY_CONTENT;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_LEVEL;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ALLOCATED_STORAGE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_CREATION_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_CLUSTER_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_DURATION;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_CHILDREN;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_RETRIES;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_STATS;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_ISSUE_GROUP_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_ISSUE_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_ISSUE_TYPE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PARAMETER_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PARAMETER_VALUE;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PARENT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PATH;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PATTERN_TEMPLATE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_RETRY_PARENT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_RETRY_PARENT_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TEST_CASE_HASH;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TEST_CASE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_TICKET_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UUID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.RETRY_PARENT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXPIRED;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ROLE;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_SYNCHRONIZATION_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
+import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
+import static com.epam.ta.reportportal.jooq.Tables.ACTIVITY;
+import static com.epam.ta.reportportal.jooq.Tables.ATTACHMENT;
+import static com.epam.ta.reportportal.jooq.Tables.ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.CLUSTERS_TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.Tables.DASHBOARD;
+import static com.epam.ta.reportportal.jooq.Tables.DASHBOARD_WIDGET;
+import static com.epam.ta.reportportal.jooq.Tables.FILTER;
+import static com.epam.ta.reportportal.jooq.Tables.FILTER_CONDITION;
+import static com.epam.ta.reportportal.jooq.Tables.FILTER_SORT;
+import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
+import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION_TYPE;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TICKET;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
+import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
+import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
+import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
+import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
+import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
+import static com.epam.ta.reportportal.jooq.Tables.TICKET;
+import static com.epam.ta.reportportal.jooq.Tables.USERS;
+import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
+import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
+import static org.jooq.impl.DSL.choose;
+import static org.jooq.impl.DSL.field;
+
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.entity.activity.Activity;
+import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -36,32 +158,18 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.collect.Lists;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.*;
-import static com.epam.ta.reportportal.entity.project.ProjectInfo.*;
-import static com.epam.ta.reportportal.jooq.Tables.*;
-import static org.jooq.impl.DSL.choose;
-import static org.jooq.impl.DSL.field;
+import org.jooq.Field;
+import org.jooq.JoinType;
+import org.jooq.Record;
+import org.jooq.SelectField;
+import org.jooq.SelectQuery;
+import org.jooq.impl.DSL;
 
 public enum FilterTarget {
 
@@ -807,32 +915,52 @@ public enum FilterTarget {
 	ACTIVITY_TARGET(Activity.class, Arrays.asList(
 
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ACTIVITY.ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT,
+					Timestamp.class).get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME,
+							String.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE,
+							String.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME,
+							String.class)
+					.get(),
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE,
+					String.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, Long.class)
 					.withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
 					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ID, ACTIVITY.USER_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ENTITY, ACTIVITY.ENTITY, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_LOGIN, ACTIVITY.USERNAME, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE, Timestamp.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class).get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
 					.withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
 					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.DETAILS + " ->> 'objectName'", String.class).get()
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
+					.get()
 	)) {
 		@Override
 		protected Collection<? extends SelectField> selectFields() {
 			return Lists.newArrayList(ACTIVITY.ID,
-					ACTIVITY.PROJECT_ID,
-					ACTIVITY.USERNAME,
-					ACTIVITY.USER_ID,
-					ACTIVITY.ENTITY,
 					ACTIVITY.ACTION,
-					ACTIVITY.CREATION_DATE,
+					ACTIVITY.EVENT_NAME,
+					ACTIVITY.CREATED_AT,
 					ACTIVITY.DETAILS,
 					ACTIVITY.OBJECT_ID,
+					ACTIVITY.OBJECT_NAME,
+					ACTIVITY.OBJECT_TYPE,
+					ACTIVITY.PRIORITY,
+					ACTIVITY.PROJECT_ID,
+					ACTIVITY.SUBJECT_ID,
+					ACTIVITY.SUBJECT_NAME,
+					ACTIVITY.SUBJECT_TYPE,
 					USERS.LOGIN,
 					PROJECT.NAME
 			);
@@ -845,7 +973,8 @@ public enum FilterTarget {
 
 		@Override
 		protected void joinTables(QuerySupplier query) {
-			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
+			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID))
+					.addCondition(ACTIVITY.SUBJECT_TYPE.eq(EventSubject.USER.toString()));
 			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
 		}
 
@@ -1038,8 +1167,8 @@ public enum FilterTarget {
 	public static final String FILTERED_QUERY = "filtered";
 	public static final String FILTERED_ID = "id";
 
-	private Class<?> clazz;
-	private List<CriteriaHolder> criteriaHolders;
+	private final Class<?> clazz;
+	private final List<CriteriaHolder> criteriaHolders;
 
 	FilterTarget(Class<?> clazz, List<CriteriaHolder> criteriaHolders) {
 		this.clazz = clazz;

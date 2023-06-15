@@ -112,9 +112,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JUserPreferenceRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JWidgetFilterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JWidgetRecord;
-
 import javax.annotation.processing.Generated;
-
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
@@ -256,7 +254,6 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_USER_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JApiKeysRecord, JUsersRecord> API_KEYS__API_KEYS_USER_ID_FKEY = ForeignKeys0.API_KEYS__API_KEYS_USER_ID_FKEY;
     public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
@@ -288,7 +285,6 @@ public class Keys {
     public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = ForeignKeys0.OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY;
     public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
-    public static final ForeignKey<JOwnedEntityRecord, JUsersRecord> OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY = ForeignKeys0.OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY;
     public static final ForeignKey<JOwnedEntityRecord, JProjectRecord> OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = ForeignKeys0.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JParameterRecord, JTestItemRecord> PARAMETER__PARAMETER_ITEM_ID_FKEY = ForeignKeys0.PARAMETER__PARAMETER_ITEM_ID_FKEY;
     public static final ForeignKey<JPatternTemplateRecord, JProjectRecord> PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY = ForeignKeys0.PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY;
@@ -433,7 +429,6 @@ public class Keys {
     }
 
     private static class ForeignKeys0 {
-        public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JActivity.ACTIVITY, "activity__activity_user_id_fkey", JActivity.ACTIVITY.USER_ID);
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
         public static final ForeignKey<JApiKeysRecord, JUsersRecord> API_KEYS__API_KEYS_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JApiKeys.API_KEYS, "api_keys__api_keys_user_id_fkey", JApiKeys.API_KEYS.USER_ID);
         public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
@@ -465,7 +460,6 @@ public class Keys {
         public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JOauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token__oauth_access_token_user_id_fkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
         public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction__oauth_registration_restriction_oauth_registration_fk_fkey", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
-        public static final ForeignKey<JOwnedEntityRecord, JUsersRecord> OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_LOGIN_KEY, JOwnedEntity.OWNED_ENTITY, "owned_entity__shareable_entity_owner_fkey", JOwnedEntity.OWNED_ENTITY.OWNER);
         public static final ForeignKey<JOwnedEntityRecord, JProjectRecord> OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JOwnedEntity.OWNED_ENTITY, "owned_entity__shareable_entity_project_id_fkey", JOwnedEntity.OWNED_ENTITY.PROJECT_ID);
         public static final ForeignKey<JParameterRecord, JTestItemRecord> PARAMETER__PARAMETER_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JParameter.PARAMETER, "parameter__parameter_item_id_fkey", JParameter.PARAMETER.ITEM_ID);
         public static final ForeignKey<JPatternTemplateRecord, JProjectRecord> PATTERN_TEMPLATE__PATTERN_TEMPLATE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JPatternTemplate.PATTERN_TEMPLATE, "pattern_template__pattern_template_project_id_fkey", JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
